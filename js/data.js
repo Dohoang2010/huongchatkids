@@ -233,6 +233,13 @@ window.PRODUCTS = [
     usage: "Bé uống 1–2 gói/ngày, có thể hâm ấm khi trời lạnh. Dùng theo hướng dẫn trên bao bì." }
 ];
 
+/* Feedback thực tế của khách (ảnh chụp tin nhắn/bình luận/ảnh bé dùng sản phẩm) – đặt file vào img/feedback/.
+   Chỉ dùng ảnh đã được khách đồng ý; nên làm mờ tên/avatar; không dùng ảnh có tuyên bố chữa bệnh, "cao thêm X cm" (quy định quảng cáo TPCN).
+   Mỗi mục: image (bắt buộc), name (VD 'Mẹ Hà · Hà Nội'), product (mã sản phẩm, tuỳ chọn), text (trích ngắn, tuỳ chọn), date (tuỳ chọn). Để mảng rỗng → mục tự ẩn. */
+window.FEEDBACKS = [
+  // { image: 'img/feedback/fb-01.jpg', name: 'Mẹ Hà · Hà Nội', product: '22644617070', text: 'Bé uống hồng sâm đều 2 tháng, đi lớp ít ốm vặt hẳn.', date: '09/2026' },
+];
+
 window.BANNERS = [
   { title: 'Freeship toàn quốc\ncho đơn từ 3 triệu', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Nhập mã <b>HCK10</b> giảm 10% (tối đa 100K, đơn từ 300K).', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
   { title: 'Dinh dưỡng Hàn Quốc\nchính hãng cho bé', sub: 'Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.', cta: 'Xem sản phẩm', link: 'collections.html', theme: 'teal', badge: 'Chính hãng 100%', image: 'img/thumb/22644617070.jpg' },

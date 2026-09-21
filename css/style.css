@@ -991,3 +991,15 @@ body { padding-bottom: 0; }
 .review-card--shopee:hover { border-color: #EE4D2D; box-shadow: var(--shadow); }
 .prod--shopee { color: #EE4D2D; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
 .prod--shopee svg { width: 14px; height: 14px; }
+
+/* ---------- Feedback thực tế ---------- */
+.fb-card { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+.fb-card__img { display: block; width: 100%; aspect-ratio: 4 / 5; background: var(--bg-gray); overflow: hidden; cursor: zoom-in; }
+.fb-card__img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.fb-card:hover .fb-card__img img { transform: scale(1.03); }
+.fb-card figcaption { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+.fb-card figcaption p { font-size: 13px; color: var(--ink-2); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.fb-card__who { font-size: 12.5px; } .fb-card__who small { color: var(--muted); }
+.fb-card__prod { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--teal-600); font-weight: 600; }
+.fb-card__prod svg { width: 12px; height: 12px; }
+.lightbox { text-align: center; } .lightbox img { max-width: 100%; max-height: 70vh; border-radius: 12px; margin: 0 auto; }

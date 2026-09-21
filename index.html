@@ -80,6 +80,12 @@
     <div class="grid grid--4" id="reviewGrid"></div>
   </div></section>
 
+  <!-- FEEDBACK THỰC TẾ -->
+  <section class="section" id="feedbackSection"><div class="container">
+    <div class="section-head"><div><h2>Feedback thực tế từ mẹ 💬</h2><p id="feedbackSub">Ảnh phản hồi thật của khách đã mua – bấm để xem lớn</p></div></div>
+    <div class="row-scroll" id="feedbackRow"></div>
+  </div></section>
+
   <!-- BLOG -->
   <section class="section"><div class="container">
     <div class="section-head"><div><h2>Cẩm nang mẹ 📖</h2><p>Kiến thức chăm con do dược sĩ Hương Chất Kids biên soạn</p></div><a class="link" href="blog.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
@@ -183,6 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Thẻ bấm vào mở thẳng trang sản phẩm trên Shopee (phần đánh giá nằm ngay trên trang đó) */
   $('#reviewGrid').innerHTML = [...rated].sort((a, b) => b.reviews - a.reviews).slice(0, 4).map((p) => `<a class="review-card review-card--shopee" href="${p.shopeeUrl || 'product.html?id=' + p.id}" ${p.shopeeUrl ? 'target="_blank" rel="noopener"' : ''} aria-label="Xem ${p.reviews} đánh giá của ${esc(MC.shortName(p))} trên Shopee"><div class="flex items-center gap-12"><img src="${MC.productThumb(p)}" alt="" width="56" height="56" style="border-radius:12px;object-fit:cover"><div><b class="fs-14">${esc(MC.shortName(p))}</b><div class="stars">${MC.starRow(p.rating)}</div></div></div><p><b style="font-size:22px;font-family:var(--font-head);color:var(--price)">${p.rating.toFixed(1)}</b><span class="text-muted"> / 5 · ${p.reviews.toLocaleString('vi-VN')} đánh giá</span><br><span class="text-muted fs-13">Đã bán ${p.sold.toLocaleString('vi-VN')} trên Shopee</span></p><div class="prod prod--shopee">${I.external} Xem đánh giá trên Shopee</div></a>`).join('');
   if (SITE.showReviews) $('#reviewGrid').insertAdjacentHTML('beforeend', REVIEWS.map((r) => `<div class="review-card"><div class="stars">${MC.starRow(r.stars)}</div><p>"${esc(r.text)}"</p><div class="who"><div><b>${esc(r.name)} · ${esc(r.child)}</b><small>${esc(r.city)}</small></div></div></div>`).join(''));
+
+  /* Feedback thực tế: ẩn mục nếu chưa có ảnh */
+  const fbs = (window.FEEDBACKS || []).filter((f) => f && f.image);
+  if (!fbs.length) $('#feedbackSection').classList.add('hide');
+  else {
+    $('#feedbackSub').textContent = `${fbs.length} phản hồi thật từ mẹ đã mua – bấm ảnh để xem lớn`;
+    $('#feedbackRow').innerHTML = fbs.map((f, i) => { const pr = f.product ? byId(f.product) : null; return `<figure class="fb-card"><button class="fb-card__img" type="button" data-lightbox="${i}" aria-label="Xem lớn feedback ${i + 1}"><img src="${f.image}" alt="${esc(f.text || 'Feedback của ' + (f.name || 'khách hàng'))}" loading="lazy"></button><figcaption>${f.text ? `<p>“${esc(f.text)}”</p>` : ''}<div class="fb-card__who"><b>${esc(f.name || 'Khách hàng')}</b>${f.date ? `<small> · ${esc(f.date)}</small>` : ''}</div>${pr ? `<a class="fb-card__prod" href="product.html?id=${pr.id}">${I.tag} ${esc(MC.shortName(pr))}</a>` : ''}</figcaption></figure>`; }).join('');
+    $('#feedbackRow').addEventListener('click', (e) => { const b = e.target.closest('[data-lightbox]'); if (!b) return; const f = fbs[Number(b.dataset.lightbox)]; $('#callbackContent').innerHTML = `<div class="modal__head"><h3>💬 ${esc(f.name || 'Feedback từ mẹ')}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div><div class="modal__body lightbox"><img src="${f.image}" alt="">${f.text ? `<p class="mt-12">“${esc(f.text)}”</p>` : ''}</div>`; $('#callbackModal').classList.add('is-open'); $('#callbackModal').setAttribute('aria-hidden', 'false'); document.body.classList.add('no-scroll'); });
+  }
 
   /* Posts */
   $('#postGrid').innerHTML = POSTS.slice(0, 3).map((p) => `<a class="post-card" href="blog.html?id=${p.id}"><div class="post-card__thumb" style="background:${p.color}">${p.image ? `<img src="${p.image}" alt="" loading="lazy">` : p.emoji}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${p.cat}</span><span>${p.date} · ${p.read} đọc</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`).join('');
