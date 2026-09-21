@@ -302,6 +302,7 @@
       <span class="topbar__item">${I.shield}Chính hãng 100% – Tem phụ, hoá đơn VAT</span>
       <span class="topbar__item">${I.headset}Dược sĩ tư vấn miễn phí ${SITE.workingHours}</span>
       <a class="topbar__item topbar__link" href="policy.html">${I.file}Hỗ trợ & chính sách</a>
+      ${(() => { const s = shopeeSale(); return s && SITE.shopee ? `<a class="topbar__item topbar__sale" href="${SITE.shopee}" target="_blank" rel="noopener">🔥 ${esc(s.label)} trên Shopee – mua ngay</a>` : ''; })()}
     </div></div>
     <header class="header" id="header">
       <div class="container header__inner">
