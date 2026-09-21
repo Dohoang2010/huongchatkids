@@ -41,8 +41,9 @@ Hoặc mở trực tiếp `index.html`. Deploy: upload nguyên thư mục lên b
 | **Thanh mua sticky** trên mobile khi cuộn qua nút mua chính | – |
 
 ## Dữ liệu sản phẩm
-`js/data.js` hiện chứa **14 sản phẩm** nhập từ file Shopee (tên, phân loại, ngành hàng, giá gốc, giá đang
-hiển thị, ảnh, điểm đánh giá, đã bán) ngày 21/09/2026. Đã loại phân loại hết hạn/trùng lặp.
+`js/data.js` hiện chứa **30 sản phẩm** nhập từ 3 file xuất Shopee (21/09/2026) với ảnh, điểm đánh giá, đã bán; 8 danh mục.
+Giá niêm yết (gạch ngang) = giá bán × 1,40 (nước ép) / 1,35 (hồng sâm, sữa, thực phẩm, mẹ) / 1,30 (vitamin & canxi).
+Các phân loại chưa rõ tên trên Shopee được đánh dấu `// TODO xác nhận` ngay trong data.js.
 
 **Ảnh sản phẩm**: đặt file vào thư mục `img/` với tên = mã sản phẩm Shopee + `.jpg`
 (danh sách trong `img/README.txt`, VD `img/28254163202.jpg`). Chưa có file → web tự hiện ảnh minh hoạ.

@@ -263,7 +263,7 @@
         <a class="pcard__name" href="product.html?id=${p.id}" title="${esc(p.name)}">${esc(shortName(p))}</a>
         <div class="pcard__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)} <span class="text-muted">(${p.reviews})</span></span>` : ''}${p.reviews > 0 && p.sold > 0 ? '<span>·</span>' : ''}${p.sold > 0 ? `<span>Đã bán ${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'k' : p.sold}</span>` : ''}${!p.reviews && !p.sold ? `<span class="text-teal fw-600">${I.check} Chính hãng</span>` : ''}</div>
         <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${p.oldPrice ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div>
-        <div class="pcard__age">${p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}</span>` : '<span>Dành cho mẹ</span>'}</div>
+        <div class="pcard__age">${p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
         <div class="pcard__actions">
           <button class="btn btn--primary" type="button" data-buy="${p.id}" ${oos ? 'disabled' : ''}>${I.zap}Mua ngay</button>
           <button class="btn btn--outline btn--icon" type="button" data-add="${p.id}" aria-label="Thêm ${esc(shortName(p))} vào giỏ" ${oos ? 'disabled' : ''}>${I.cart}</button>
