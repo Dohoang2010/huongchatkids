@@ -15,11 +15,12 @@
 <main id="app"><div class="container" id="policyPage"></div></main>
 <script src="js/data.js"></script>
 <script src="js/policies.js"></script>
+<script src="js/qrcode.min.js"></script>
 <script src="js/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, esc, param, I } = MC;
-  const fill = (s) => String(s).replace(/\{hotline\}/g, SITE.hotline).replace(/\{zalo\}/g, SITE.hotline).replace(/\{email\}/g, SITE.email).replace(/\{address\}/g, SITE.address).replace(/\{company\}/g, SITE.company).replace(/\{freeship\}/g, fmt(SITE.freeshipFrom)).replace(/\{shipFee\}/g, fmt(SITE.shipFee)).replace(/\{expressFee\}/g, fmt(SITE.expressFee || 35000)).replace(/\{hours\}/g, SITE.workingHours);
+  const fill = (s) => String(s).replace(/\{hotline\}/g, SITE.hotline).replace(/\{zalo\}/g, SITE.hotline).replace(/\{email\}/g, SITE.email).replace(/\{address\}/g, SITE.address).replace(/\{company\}/g, SITE.company).replace(/\{freeship\}/g, fmt(SITE.freeshipFrom)).replace(/\{shipFee\}/g, fmt(SITE.shipFee)).replace(/\{expressFee\}/g, fmt(SITE.expressFee || 35000)).replace(/\{hours\}/g, SITE.workingHours).replace(/\{bankFull\}/g, (SITE.bank || {}).fullName || '').replace(/\{bankAccount\}/g, (SITE.bank || {}).account || '').replace(/\{bankHolder\}/g, (SITE.bank || {}).holder || 'đang cập nhật');
   const groups = [{ key: 'support', title: 'Hỗ trợ khách hàng', desc: 'Chính sách theo Luật Bảo vệ quyền lợi người tiêu dùng 2023 và quy định về thương mại điện tử' }, { key: 'about', title: 'Về Hương Chất Kids', desc: 'Chúng tôi là ai và cam kết gì với mẹ' }];
   const hrefOf = (p) => p.link || `policy.html?p=${p.key}`;
   const key = param('p') || (location.hash ? location.hash.slice(1) : '');

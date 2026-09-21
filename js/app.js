@@ -188,6 +188,42 @@
   }
   function deliveryEstimate() { const d = new Date(); d.setDate(d.getDate() + 1); const days = ['CN', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7']; return `${days[d.getDay()]}, ${d.getDate()}/${d.getMonth() + 1}`; }
 
+  /* ---------------- VietQR (chuẩn NAPAS/EMVCo) – tạo QR chuyển khoản ngay trên web ---------------- */
+  const stripVN = (str) => String(str || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/[^A-Za-z0-9 _-]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
+  const tlv = (id, v) => id + String(v.length).padStart(2, '0') + v;
+  function crc16(str) { let crc = 0xFFFF; for (let i = 0; i < str.length; i++) { crc ^= str.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1; crc &= 0xFFFF; } return crc.toString(16).toUpperCase().padStart(4, '0'); }
+  function vietqrPayload({ bin, account, amount, info }) {
+    const acc = tlv('00', 'A000000727') + tlv('01', tlv('00', bin) + tlv('01', account)) + tlv('02', 'QRIBFTTA');
+    let p = tlv('00', '01') + tlv('01', amount ? '12' : '11') + tlv('38', acc) + tlv('52', '0000') + tlv('53', '704');
+    if (amount) p += tlv('54', String(Math.round(amount)));
+    p += tlv('58', 'VN');
+    if (info) p += tlv('62', tlv('08', info.slice(0, 99)));
+    p += '6304'; return p + crc16(p);
+  }
+  const transferInfo = (order) => (SITE.transferFormat || '{name}_thanhtoan_{code}').replace('{name}', stripVN(order.customer?.name || 'KHACH')).replace('{code}', String(order.code || '').toUpperCase()).slice(0, 99);
+  function payQrSvg(order) {
+    if (typeof qrcode !== 'function' || !SITE.bank) return '';
+    try { const q = qrcode(0, 'M'); q.addData(vietqrPayload({ bin: SITE.bank.bin, account: SITE.bank.account, amount: order.total, info: transferInfo(order) })); q.make(); return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { return ''; }
+  }
+  /* Khối hướng dẫn chuyển khoản kèm QR cho một đơn hàng */
+  function payBox(order) {
+    const b = SITE.bank; if (!b) return '';
+    const info = transferInfo(order); const svg = payQrSvg(order);
+    return `<div class="paybox"><div class="paybox__qr">${svg || '<div class="skeleton" style="width:180px;height:180px"></div>'}<small>Quét bằng app ngân hàng / ví bất kỳ – số tiền & nội dung điền sẵn</small></div>
+      <div class="paybox__info">
+        <div class="paybox__row"><span>Ngân hàng</span><b>${esc(b.name)}</b></div>
+        <div class="paybox__row"><span>Số tài khoản</span><b>${esc(b.account)}</b><button class="btn btn--ghost btn--sm" type="button" data-copy="${esc(b.account)}">Sao chép</button></div>
+        ${b.holder ? `<div class="paybox__row"><span>Chủ tài khoản</span><b>${esc(b.holder)}</b></div>` : ''}
+        <div class="paybox__row"><span>Số tiền</span><b class="text-price">${fmt(order.total)}</b><button class="btn btn--ghost btn--sm" type="button" data-copy="${Math.round(order.total)}">Sao chép</button></div>
+        <div class="paybox__row"><span>Nội dung</span><b>${esc(info)}</b><button class="btn btn--ghost btn--sm" type="button" data-copy="${esc(info)}">Sao chép</button></div>
+        <p class="paybox__note">Sau khi chuyển, mẹ chụp màn hình giao dịch gửi Zalo <b>${SITE.hotline}</b> để được giao sớm nhất. ${SITE.name} chỉ dùng duy nhất số tài khoản này – không chuyển cho số khác.</p>
+      </div></div>`;
+  }
+  function openPayQR(order) {
+    $('#callbackContent').innerHTML = `<div class="modal__head"><h3>${I.file}Thanh toán đơn ${esc(order.code)}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div><div class="modal__body">${payBox(order)}</div>`;
+    openModal('#callbackModal');
+  }
+
   /* ---------------- Toast ---------------- */
   function toast(msg, opts = {}) {
     let wrap = $('.toasts'); if (!wrap) { wrap = document.createElement('div'); wrap.className = 'toasts'; wrap.setAttribute('aria-live', 'polite'); document.body.appendChild(wrap); }
@@ -453,7 +489,7 @@
     setTimeout(() => $('#quickBuy .qb__success h3')?.focus(), 100);
   }
   function orderSuccessHTML(order, inModal) {
-    const payNote = order.payment === 'bank' ? `<span><i>2</i>Dược sĩ gửi số tài khoản & mã QR qua Zalo/SMS; mẹ chuyển khoản <b>${fmt(order.total)}</b> với nội dung <b>${order.code}</b>.</span>` : order.payment === 'momo' ? `<span><i>2</i>Dược sĩ gửi mã QR MoMo/ZaloPay qua Zalo/SMS để mẹ thanh toán <b>${fmt(order.total)}</b>.</span>` : `<span><i>2</i>Mẹ thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</span>`;
+    const payNote = order.payment === 'bank' ? `<span><i>2</i><p>Mẹ chuyển khoản <b>${fmt(order.total)}</b> theo mã QR ở trên (số tiền và nội dung đã điền sẵn). Đơn được giao ngay khi nhận được tiền.</p></span>` : order.payment === 'momo' ? `<span><i>2</i><p>Dược sĩ gửi mã QR MoMo/ZaloPay qua Zalo/SMS để mẹ thanh toán <b>${fmt(order.total)}</b>.</p></span>` : `<span><i>2</i><p>Mẹ thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</p></span>`;
     const items = (order.items || []).map((it) => `<li>${esc(it.short || it.name)}${it.variant ? ` – ${esc(it.variant)}` : ''} <b>× ${it.qty || 1}</b></li>`).join('');
     return `${inModal ? `<div class="modal__head"><h3>${I.checkCircle}Đặt hàng thành công</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>` : ''}
       <div class="modal__body"><div class="qb__success">
@@ -462,7 +498,8 @@
         <p>Đơn hàng của mẹ đã được ghi nhận.</p>
         <div class="code">Mã đơn: ${order.code}</div>
         ${items ? `<ul class="qb__items">${items}</ul>` : ''}
-        <div class="steps"><span><i>1</i>Dược sĩ ${SITE.name} sẽ gọi số <b>${esc(order.customer.phone)}</b> để xác nhận & tư vấn liều dùng (${hoursNote()}).</span>${payNote}<span><i>3</i>Giao dự kiến <b>${deliveryEstimate()}</b> tới: ${esc(addrShow(order.customer.address))}</span></div>
+        ${order.payment === 'bank' ? payBox(order) : ''}
+        <div class="steps"><span><i>1</i><p>Dược sĩ ${SITE.name} sẽ gọi số <b>${esc(order.customer.phone)}</b> để xác nhận & tư vấn liều dùng (${hoursNote()}).</p></span>${payNote}<span><i>3</i><p>Giao dự kiến <b>${deliveryEstimate()}</b> tới: ${esc(addrShow(order.customer.address))}</p></span></div>
         <div class="actions"><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Theo dõi đơn qua Zalo</a>${inModal ? `<button class="btn btn--ghost btn--block" type="button" data-close-modal>Tiếp tục mua sắm</button>` : `<a class="btn btn--ghost btn--block" href="index.html">Tiếp tục mua sắm</a>`}</div>
       </div></div>`;
   }
@@ -508,7 +545,7 @@
   /* ---------------- Global events ---------------- */
   function bindGlobal() {
     document.addEventListener('click', (e) => {
-      const t = e.target.closest('[data-buy],[data-add],[data-open-cart],[data-close-cart],[data-close-modal],[data-callback],[data-close-menu],#btnMenu,#btnTop,[data-qty-minus],[data-qty-plus],[data-remove],[data-qb-minus],[data-qb-plus],[data-qb-variant],[data-qb-clear],[data-qb-coupon],[data-wish],[data-reorder],[data-zalo-copy]');
+      const t = e.target.closest('[data-buy],[data-add],[data-open-cart],[data-close-cart],[data-close-modal],[data-callback],[data-close-menu],#btnMenu,#btnTop,[data-qty-minus],[data-qty-plus],[data-remove],[data-qb-minus],[data-qb-plus],[data-qb-variant],[data-qb-clear],[data-qb-coupon],[data-wish],[data-reorder],[data-zalo-copy],[data-copy],[data-pay-qr]');
       if (!t) return;
       if (t.dataset.buy !== undefined) { e.preventDefault(); openQuickBuy(t.dataset.buy, { qty: Number(t.dataset.qty) || 1, variant: t.dataset.variant != null ? Number(t.dataset.variant) : undefined }); }
       else if (t.dataset.add !== undefined) { e.preventDefault(); Cart.add(t.dataset.add, Number(t.dataset.qty) || 1, t.dataset.variant != null ? Number(t.dataset.variant) : null); toast('Đã thêm vào giỏ hàng', { action: { label: 'Thanh toán ngay', onClick: () => location.href = 'checkout.html' } }); if (window.innerWidth >= 992) openCart(); }
@@ -527,6 +564,8 @@
       else if (t.dataset.qbVariant !== undefined) { QB.variant = Number(t.dataset.qbVariant); qbRefresh(); }
       else if (t.dataset.qbClear !== undefined) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); $('#qbForm input[name=name]')?.focus(); }
       else if (t.dataset.qbCoupon !== undefined) { QB.coupon = ($('#qbCoupon').value || '').trim().toUpperCase(); qbRefresh(); }
+      else if (t.dataset.copy !== undefined) { try { navigator.clipboard?.writeText(t.dataset.copy); toast('Đã sao chép: ' + t.dataset.copy); } catch (err) { /* bỏ qua */ } }
+      else if (t.dataset.payQr !== undefined) { const o = store.get('mc_orders', []).find((x) => x.code === t.dataset.payQr); if (o) openPayQR(o); }
       else if (t.dataset.zaloCopy !== undefined) { try { navigator.clipboard?.writeText(`Mình muốn đặt: ${t.dataset.zaloCopy}`); toast('Đã sao chép tên sản phẩm – mẹ dán vào Zalo là xong'); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.wish !== undefined) { e.preventDefault(); const on = Wish.toggle(t.dataset.wish); t.classList.toggle('is-on', on); toast(on ? 'Đã thêm vào yêu thích 💗' : 'Đã bỏ yêu thích'); }
       else if (t.dataset.reorder !== undefined) { const o = store.get('mc_last_order'); if (o && o.items) { o.items.forEach((it) => { const p = byId(it.id); if (p) Cart.add(it.id, it.qty || 1, it.variant && p.variants ? p.variants.findIndex((v) => v.label === it.variant) : null); }); location.href = 'checkout.html'; } }
@@ -552,5 +591,5 @@
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => { renderShell(); initSearch(); bindGlobal(); updateCartBadges(); });
 
-  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML };
+  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML };
 })();

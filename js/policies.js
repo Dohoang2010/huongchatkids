@@ -29,7 +29,8 @@ window.POLICIES = [
 <h3>1. Thanh toán khi nhận hàng (COD)</h3>
 <ul><li>Áp dụng toàn quốc. Mẹ trả tiền mặt cho nhân viên giao hàng sau khi <b>kiểm tra hàng</b> (ngoại quan, tem phụ, hạn dùng, số lượng).</li><li>Được từ chối nhận nếu hàng sai, móp rách, không đúng đơn – không mất phí.</li></ul>
 <h3>2. Chuyển khoản ngân hàng / VietQR</h3>
-<ul><li>Sau khi xác nhận đơn, chúng tôi gửi số tài khoản và mã VietQR qua Zalo/SMS từ chính số hotline {hotline}. <b>Chúng tôi không bao giờ gửi số tài khoản từ số lạ</b>; mẹ hãy đối chiếu trước khi chuyển.</li><li>Nội dung chuyển khoản: <b>mã đơn hàng</b>. Đơn được giao sau khi nhận được tiền.</li></ul>
+<table class="ptable"><tr><th>Ngân hàng</th><td>{bankFull}</td></tr><tr><th>Số tài khoản</th><td><b>{bankAccount}</b></td></tr><tr><th>Chủ tài khoản</th><td>{bankHolder}</td></tr><tr><th>Nội dung chuyển khoản</th><td><b>TÊN MẸ_thanhtoan_MÃ ĐƠN</b> (ví dụ: NGUYEN THU HA_thanhtoan_HCK260921123)</td></tr></table>
+<ul><li>Ngay sau khi bấm Đặt hàng, màn hình hiện <b>mã VietQR</b> đã điền sẵn số tiền và nội dung – mẹ mở app ngân hàng/ví bất kỳ, quét và xác nhận, không cần gõ tay. Mã QR cũng xem lại được tại <a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a>.</li><li>Đây là <b>số tài khoản duy nhất</b> của Hương Chất Kids. Chúng tôi không bao giờ nhắn số tài khoản khác hay yêu cầu chuyển cho cá nhân; nếu nhận được yêu cầu như vậy, mẹ gọi hotline {hotline} để xác minh.</li><li>Đơn được giao ngay khi nhận được tiền (thường trong vài phút với chuyển khoản nhanh 24/7).</li></ul>
 <h3>3. Ví điện tử MoMo / ZaloPay</h3>
 <p>Quét mã QR được gửi qua Zalo/SMS. Không thu thêm phí.</p>
 <h3>Hoá đơn giá trị gia tăng</h3>

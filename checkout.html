@@ -17,6 +17,7 @@
   <div id="checkoutPage"></div>
 </div></main>
 <script src="js/data.js"></script>
+<script src="js/qrcode.min.js"></script>
 <script src="js/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div></div>
         <div class="card card--pad"><h3><span class="num">3</span>Thanh toán</h3><div class="pay-options">
           <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') === 'cod' ? 'checked' : ''}><span class="ico">💵</span><div><b>Thanh toán khi nhận hàng (COD)</b><small>Được kiểm tra hàng trước khi trả tiền</small></div><span class="badge badge--teal tagr">Phổ biến</span></label>
-          <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><div><b>Chuyển khoản ngân hàng / VietQR</b><small>Dược sĩ gửi số tài khoản & mã QR qua Zalo/SMS sau khi đặt</small></div></label>
+          <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><div><b>Chuyển khoản ngân hàng / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} ${SITE.bank.account} – mã QR đúng số tiền hiện ngay sau khi đặt hàng` : 'Mã QR hiện sau khi đặt hàng'}</small></div></label>
           <label class="pay-option"><input type="radio" name="payment" value="momo" ${c.payment === 'momo' ? 'checked' : ''}><span class="ico">📱</span><div><b>Ví MoMo / ZaloPay</b><small>Quét mã QR được gửi qua Zalo/SMS</small></div></label>
         </div></div>
       </div>
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = $('#coForm');
   renderSummary(); syncExpress();
   $('#stickySubmit').addEventListener('click', () => form.requestSubmit());
-  const io = new IntersectionObserver(([en]) => $('#stickyOrder').classList.toggle('hide', en.isIntersecting), { threshold: 0 }); io.observe($('#coSubmit'));
+  const io = new IntersectionObserver(([en]) => { const so = $('#stickyOrder'); if (so) so.classList.toggle('hide', en.isIntersecting); }, { threshold: 0 }); io.observe($('#coSubmit'));
   form.addEventListener('change', (e) => { if (e.target.name === 'ship') { shipMethod = e.target.value; renderSummary(); } if (e.target.name === 'city') syncExpress(); });
   form.addEventListener('click', (e) => { if (e.target.id === 'applyCoupon') { coupon = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(coupon, sub); store.set('mc_coupon', r.ok ? coupon : ''); if (!r.ok) coupon = ''; toast(r.ok ? 'Đã áp dụng mã ' + r.code : r.msg, { type: r.ok ? 'ok' : 'error' }); renderSummary(); } const cb = e.target.closest('[data-coupon]'); if (cb) { coupon = cb.dataset.coupon; $('#couponInput').value = coupon; store.set('mc_coupon', coupon); renderSummary(); } if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); } });
   form.addEventListener('submit', async (e) => {
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = $('#coSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang xử lý đơn hàng…</span>';
     const { r, discount, ship, total } = calc();
     const order = await submitOrder({ type: 'checkout', customer: { name: v.name.trim(), phone: v.phone.trim(), address: fullAddress, email: v.email }, note: v.note, shipMethod, payment: v.payment, coupon: r && r.ok ? r.code : '', items: lines.map((l) => ({ id: l.id, name: l.name, short: shortName(l.p), variant: l.variantLabel, qty: l.qty, price: l.price })), subtotal: sub, discount: multi + discount, ship, total });
-    $('#stickyOrder')?.remove();
+    io.disconnect(); $('#stickyOrder')?.remove();
     Cart.clear(); store.set('mc_coupon', '');
     $('#checkoutPage').innerHTML = `<div class="success-page card">${orderSuccessHTML(order, false)}</div>`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
