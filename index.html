@@ -95,7 +95,7 @@
   <!-- ZALO SUBSCRIBE -->
   <section class="section"><div class="container">
     <div class="subscribe">
-      <div><h2>Nhận ưu đãi & kiến thức chăm con qua Zalo</h2><p>Để lại số điện thoại, Hương Chất Kids gửi mã giảm 50K cho đơn đầu tiên và nhắc lịch bổ sung vitamin cho bé.</p></div>
+      <div><h2>Nhận ưu đãi & kiến thức chăm con qua Zalo</h2><p>Để lại số điện thoại, nhận ngay mã giảm 50K cho đơn đầu tiên từ 500K và nhắc lịch bổ sung vitamin cho bé.</p></div>
       <form id="subForm"><label class="sr-only" for="subPhone">Số điện thoại của mẹ</label><input class="input" id="subPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" required><button class="btn" type="submit">Nhận mã 50K</button></form>
     </div>
   </div></section>
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ].map(([ic, t, s]) => `<div class="trust__item"><span class="trust__icon">${ic}</span><div><b>${t}</b><small>${s}</small></div></div>`).join('');
 
   /* Ages */
-  $('#ageGrid').innerHTML = AGES.map((a) => `<a class="age-card" href="collections.html?age=${a.key}" style="background:${a.color}"><span class="emoji">${a.emoji}</span><b>${a.label}</b><small>${a.desc} · ${PRODUCTS.filter((p) => p.ages.includes(a.key)).length} SP</small></a>`).join('');
+  $('#ageGrid').innerHTML = AGES.map((a) => { const list = PRODUCTS.filter((p) => p.ages.includes(a.key)); const href = list.length === 1 ? 'product.html?id=' + list[0].id : 'collections.html?age=' + a.key; return `<a class="age-card" href="${href}" style="background:${a.color}"><span class="emoji">${a.emoji}</span><b>${a.label}</b><small>${list.length === 1 ? esc(MC.shortName(list[0])) : a.desc + ' · ' + list.length + ' sản phẩm'}</small></a>`; }).join('');
 
   /* Categories */
   $('#catGrid').innerHTML = CATEGORIES.map((c) => `<a class="cat-tile" href="collections.html?cat=${c.key}" style="background:${c.color}">${c.image ? `<img class="cat-tile__img" src="${c.image}" alt="" loading="lazy">` : `<span class="icon">${c.icon}</span>`}<h3>${c.label}</h3><p>${c.desc}</p><span class="link">Xem ${PRODUCTS.filter((p) => p.cat === c.key).length} sản phẩm ${I.arrowR}</span></a>`).join('');
@@ -183,13 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (SITE.showReviews) $('#reviewGrid').insertAdjacentHTML('beforeend', REVIEWS.map((r) => `<div class="review-card"><div class="stars">${MC.starRow(r.stars)}</div><p>"${esc(r.text)}"</p><div class="who"><div><b>${esc(r.name)} · ${esc(r.child)}</b><small>${esc(r.city)}</small></div></div></div>`).join(''));
 
   /* Posts */
-  $('#postGrid').innerHTML = POSTS.slice(0, 3).map((p) => `<a class="post-card" href="blog.html?id=${p.id}"><div class="post-card__thumb" style="background:${p.color}">${p.emoji}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${p.cat}</span><span>${p.date} · ${p.read} đọc</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`).join('');
+  $('#postGrid').innerHTML = POSTS.slice(0, 3).map((p) => `<a class="post-card" href="blog.html?id=${p.id}"><div class="post-card__thumb" style="background:${p.color}">${p.image ? `<img src="${p.image}" alt="" loading="lazy">` : p.emoji}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${p.cat}</span><span>${p.date} · ${p.read} đọc</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`).join('');
 
   /* Brands */
   $('#brandRow').innerHTML = BRANDS.map((b) => `<a href="collections.html?brand=${b.key}">${b.label}</a>`).join('');
 
   /* Subscribe */
-  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ! Mã giảm 50K cho đơn đầu tiên từ 500K: <b>MOI50</b><br><small>Mã cũng được gửi qua Zalo ${esc(v)}. Nhập mã ở bước thanh toán.</small></div>`; });
+  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); store.set('mc_coupon', 'MOI50'); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ! Mã giảm 50K cho đơn đầu tiên từ 500K: <b>MOI50</b><br><small>Mã cũng được gửi qua Zalo ${esc(v)}. Nhập mã ở bước thanh toán.</small></div>`; });
 });
 </script>
 </body>

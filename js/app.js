@@ -165,7 +165,7 @@
   function submitOrder(order) {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const code = 'MC' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 900) + 100);
+        const code = 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 900) + 100);
         const saved = { ...order, code, createdAt: new Date().toISOString() };
         const orders = store.get('mc_orders', []); orders.unshift(saved); store.set('mc_orders', orders.slice(0, 20));
         store.set('mc_last_order', saved);
@@ -175,6 +175,7 @@
   }
   function shipFee(subtotal, method = 'standard') { if (method === 'express') return SITE.expressFee || 35000; return subtotal >= SITE.freeshipFrom || subtotal === 0 ? 0 : SITE.shipFee; }
   const productThumb = (p) => p.thumb || productImage(p);
+  const addrShow = (a) => { const [cty, ...rst] = String(a || '').split('|'); return rst.length ? `${rst.join('|').trim()}, ${cty.trim()}` : String(a || ''); };
   const shortName = (p) => p.short || p.name;
   const hoursNote = () => `trong giờ làm việc ${SITE.workingHours}; ngoài giờ sẽ gọi vào sáng hôm sau`;
   function applyCoupon(code, subtotal) {
@@ -207,7 +208,7 @@
         <button class="pcard__wish ${Wish.has(p.id) ? 'is-on' : ''}" type="button" data-wish="${p.id}" aria-label="Lưu vào yêu thích" aria-pressed="${Wish.has(p.id)}">${I.heart}</button>
       </a>
       <div class="pcard__body">
-        <div class="pcard__brand">${esc(b.label)}${p.origin ? ` · ${esc(p.origin)}` : ''}</div>
+        <div class="pcard__brand">${esc(b.label)}${p.origin && p.origin !== 'Hàn Quốc' ? ` · ${esc(p.origin)}` : ''}</div>
         <a class="pcard__name" href="product.html?id=${p.id}" title="${esc(p.name)}">${esc(shortName(p))}</a>
         <div class="pcard__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)} <span class="text-muted">(${p.reviews})</span></span>` : ''}${p.reviews > 0 && p.sold > 0 ? '<span>·</span>' : ''}${p.sold > 0 ? `<span>Đã bán ${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'k' : p.sold}</span>` : ''}${!p.reviews && !p.sold ? `<span class="text-teal fw-600">${I.check} Chính hãng</span>` : ''}</div>
         <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${p.oldPrice ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div>
@@ -367,12 +368,16 @@
       <a class="btn btn--primary btn--lg btn--block" href="checkout.html">${I.zap}Thanh toán ngay · ${fmt(sub - multi + ship)}</a>
       <a class="btn btn--ghost btn--block" href="cart.html">Xem chi tiết giỏ hàng</a>`;
   }
-  function openCart() { renderDrawer(); const d = $('#cartDrawer'); d.classList.add('is-open'); d.setAttribute('aria-hidden', 'false'); document.body.classList.add('no-scroll'); setTimeout(() => $('#cartDrawer [data-close-cart].modal__close')?.focus(), 50); }
-  function closeCart() { const d = $('#cartDrawer'); d.classList.remove('is-open'); d.setAttribute('aria-hidden', 'true'); document.body.classList.remove('no-scroll'); }
+  function openCart() { renderDrawer(); const d = $('#cartDrawer'); d.classList.add('is-open'); d.setAttribute('aria-hidden', 'false'); lockScroll(); setTimeout(() => $('#cartDrawer [data-close-cart].modal__close')?.focus(), 50); }
+  function closeCart() { const d = $('#cartDrawer'); d.classList.remove('is-open'); d.setAttribute('aria-hidden', 'true'); unlockScroll(); }
 
   /* ---------------- Modal helpers ---------------- */
-  function openModal(id) { const m = $(id); m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); document.body.classList.add('no-scroll'); }
-  function closeModal(el) { const m = el.closest ? el.closest('.modal') : $(el); if (m) { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); } if (!$('.modal.is-open')) document.body.classList.remove('no-scroll'); }
+  /* Khoá cuộn nền khi mở modal/drawer (cả iOS Safari) */
+  let _lockY = 0;
+  function lockScroll() { if (document.body.classList.contains('no-scroll')) return; _lockY = window.scrollY; document.body.style.top = `-${_lockY}px`; document.body.classList.add('no-scroll'); }
+  function unlockScroll() { if ($('.modal.is-open') || $('.drawer.is-open') || $('.mmenu.is-open')) return; document.body.classList.remove('no-scroll'); document.body.style.top = ''; window.scrollTo(0, _lockY); }
+  function openModal(id) { const m = $(id); m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); lockScroll(); }
+  function closeModal(el) { const m = el.closest ? el.closest('.modal') : $(el); if (m) { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); } unlockScroll(); }
 
   /* ---------------- Quick Buy (Mua nhanh 1-chạm) ---------------- */
   const QB = { id: null, variant: null, qty: 1, coupon: '' };
@@ -398,8 +403,8 @@
         <form class="qb__form" id="qbForm" novalidate>
           ${known ? `<div class="qb__saved" id="qbSaved">👋 Chào ${esc(c.name || 'mẹ')}, thông tin giao hàng đã điền sẵn từ lần trước <button type="button" data-qb-clear>Sửa</button></div>` : ''}
           <div class="grid-2 ${known ? 'hide' : ''}" id="qbFields1"><input class="input" name="name" placeholder="Họ tên mẹ / ba *" aria-label="Họ tên" value="${esc(c.name || '')}" required autocomplete="name"><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại *" aria-label="Số điện thoại" value="${esc(c.phone || '')}" required autocomplete="tel"></div>
-          <input class="input ${known ? 'hide' : ''}" id="qbFields2" name="address" placeholder="Địa chỉ nhận hàng (số nhà, đường, phường, quận, tỉnh) *" aria-label="Địa chỉ nhận hàng" value="${esc((c.address || '').replace('|', ', '))}" required autocomplete="street-address">
-          ${known ? `<div class="qb__savedinfo" id="qbSavedInfo"><b>${esc(c.name || '')}</b> · ${esc(c.phone)}<br>${esc((c.address || '').replace('|', ', '))}</div>` : ''}
+          <input class="input ${known ? 'hide' : ''}" id="qbFields2" name="address" placeholder="Địa chỉ nhận hàng (số nhà, đường, phường, quận, tỉnh) *" aria-label="Địa chỉ nhận hàng" value="${esc(addrShow(c.address))}" required autocomplete="street-address">
+          ${known ? `<div class="qb__savedinfo" id="qbSavedInfo"><b>${esc(c.name || '')}</b> · ${esc(c.phone)}<br>${esc(addrShow(c.address))}</div>` : ''}
           <div class="pay-options pay-options--row" role="radiogroup" aria-label="Hình thức thanh toán">
             <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') === 'cod' ? 'checked' : ''}><span class="ico">💵</span><b>Khi nhận hàng</b></label>
             <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><b>Chuyển khoản</b></label>
@@ -455,7 +460,7 @@
         <p>Đơn hàng của mẹ đã được ghi nhận.</p>
         <div class="code">Mã đơn: ${order.code}</div>
         ${items ? `<ul class="qb__items">${items}</ul>` : ''}
-        <div class="steps"><span><i>1</i>Dược sĩ ${SITE.name} sẽ gọi số <b>${esc(order.customer.phone)}</b> để xác nhận & tư vấn liều dùng (${hoursNote()}).</span>${payNote}<span><i>3</i>Giao dự kiến <b>${deliveryEstimate()}</b> tới: ${esc(String(order.customer.address || '').replace('|', ', '))}</span></div>
+        <div class="steps"><span><i>1</i>Dược sĩ ${SITE.name} sẽ gọi số <b>${esc(order.customer.phone)}</b> để xác nhận & tư vấn liều dùng (${hoursNote()}).</span>${payNote}<span><i>3</i>Giao dự kiến <b>${deliveryEstimate()}</b> tới: ${esc(addrShow(order.customer.address))}</span></div>
         <div class="actions"><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Theo dõi đơn qua Zalo</a>${inModal ? `<button class="btn btn--ghost btn--block" type="button" data-close-modal>Tiếp tục mua sắm</button>` : `<a class="btn btn--ghost btn--block" href="index.html">Tiếp tục mua sắm</a>`}</div>
       </div></div>`;
   }
@@ -466,7 +471,7 @@
     $('#callbackContent').innerHTML = `<div class="modal__head"><h3>${I.headset}Dược sĩ gọi lại cho mẹ</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
       <div class="modal__body"><p class="fs-14 text-muted mb-12">Mẹ chỉ cần để lại số điện thoại, dược sĩ sẽ gọi tư vấn ${p ? `về <b class="text-primary">${esc(p.short || p.name)}</b>` : 'sản phẩm phù hợp với bé'} — miễn phí, thường trong <b>10 phút</b> ${hoursNote()}.</p>
       <form id="cbForm" class="qb__form" novalidate><label class="sr-only" for="cbPhone">Số điện thoại của mẹ</label><div class="input-group">${I.phone}<input class="input" id="cbPhone" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" value="${esc(c.phone || '')}" required autofocus></div>
-      <div class="form-error hide" id="cbError"></div>
+      <div class="form-error hide" id="cbError" role="alert"></div>
       <button class="btn btn--teal btn--lg btn--block" type="submit">${I.phoneCall}Gọi lại cho tôi</button>
       <p class="fs-13 text-muted" style="text-align:center">Hoặc gọi ngay <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> · ${SITE.workingHours}</p></form>
       ${SITE.zaloQr ? `<div class="qr-box"><img src="${SITE.zaloQr}" width="96" height="96" alt="QR Zalo"><div><b>Chat Zalo ${SITE.hotline}</b><small>Quét mã hoặc <a href="${SITE.zalo}" target="_blank" rel="noopener">bấm vào đây</a> để mở Zalo</small></div></div>` : ''}</div>`;
@@ -509,8 +514,8 @@
       else if (t.dataset.closeCart !== undefined) closeCart();
       else if (t.dataset.closeModal !== undefined) closeModal(t);
       else if (t.dataset.callback !== undefined) { e.preventDefault(); openCallback(t.dataset.callback || null); }
-      else if (t.id === 'btnMenu') { $('#mmenu').classList.add('is-open'); document.body.classList.add('no-scroll'); }
-      else if (t.dataset.closeMenu !== undefined) { $('#mmenu').classList.remove('is-open'); document.body.classList.remove('no-scroll'); }
+      else if (t.id === 'btnMenu') { $('#mmenu').classList.add('is-open'); $('#mmenu').setAttribute('aria-hidden', 'false'); lockScroll(); }
+      else if (t.dataset.closeMenu !== undefined) { $('#mmenu').classList.remove('is-open'); $('#mmenu').setAttribute('aria-hidden', 'true'); unlockScroll(); }
       else if (t.id === 'btnTop') window.scrollTo({ top: 0, behavior: 'smooth' });
       else if (t.dataset.qtyMinus !== undefined) { const l = Cart.lines().find((x) => x.id === t.dataset.qtyMinus && x.variant === t.dataset.variant); if (l) { Cart.setQty(l.id, l.variant, l.qty - 1); renderDrawer(); } }
       else if (t.dataset.qtyPlus !== undefined) { const l = Cart.lines().find((x) => x.id === t.dataset.qtyPlus && x.variant === t.dataset.variant); if (l) { Cart.setQty(l.id, l.variant, l.qty + 1); renderDrawer(); } }
@@ -528,7 +533,7 @@
     document.addEventListener('submit', (e) => { if (e.target.id === 'qbForm') { e.preventDefault(); qbSubmit(e.target); } });
     document.addEventListener('input', (e) => { if (e.target.id === 'qbQty') { QB.qty = Math.max(1, Math.min(99, Number(e.target.value) || 1)); qbRefresh(); } });
     document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'qbCoupon') { e.preventDefault(); $('[data-qb-coupon]')?.click(); } });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $$('.modal.is-open').forEach((m) => { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); }); closeCart(); $('#mmenu').classList.remove('is-open'); document.body.classList.remove('no-scroll'); } });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $$('.modal.is-open').forEach((m) => { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); }); $('#cartDrawer').classList.remove('is-open'); $('#mmenu').classList.remove('is-open'); unlockScroll(); } });
     window.addEventListener('scroll', () => { const y = window.scrollY; $('#header').classList.toggle('is-scrolled', y > 10); $('#btnTop').classList.toggle('is-visible', y > 500); }, { passive: true });
   }
 
@@ -545,5 +550,5 @@
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => { renderShell(); initSearch(); bindGlobal(); updateCartBadges(); });
 
-  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, hoursNote, MULTI_RATE, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML };
+  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML };
 })();

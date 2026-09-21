@@ -30,6 +30,7 @@ window.SITE = {
   expressCities: ['Hà Nội'],            // tỉnh/thành có giao hoả tốc trong ngày
   workingHours: '8:00 – 22:00 (cả T7, CN)',
   hotSearches: ['Hồng sâm ChuChu', 'Nước ép Lotte', 'D3K2', 'Rong biển', 'Váng sữa canxi', 'Gạc hươu Sumo'],
+  advisor: 'Dược sĩ',                 // danh xưng người tư vấn – chỉ dùng 'Dược sĩ' khi shop có dược sĩ có chứng chỉ hành nghề, nếu không đổi thành 'Chuyên viên tư vấn'
   showReviews: false,                 // true → hiện thêm mảng REVIEWS (đánh giá do shop nhập) ở trang chủ & trang sản phẩm
   flashSaleEnd: '2026-09-30T23:59:59+07:00',  // hạn chót flash sale thật; qua ngày này countdown tự ẩn
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
@@ -50,7 +51,7 @@ window.CATEGORIES = [
   { key: 'hong-sam',  label: 'Hồng sâm cho bé',            icon: '🌿', color: '#FFE9EF', desc: 'ChuChu Hàn Quốc – đề kháng, phục hồi sau ốm', tpcn: true, image: 'img/thumb/22644617070.jpg' },
   { key: 'vitamin',   label: 'Vitamin & canxi',            icon: '💊', color: '#EAF0FF', desc: 'D3K2 nhỏ giọt, váng sữa canxi Calciumore', tpcn: true, image: 'img/thumb/42878618667.jpg' },
   { key: 'tang-can',  label: 'Tăng cân, ăn ngon',          icon: '🍯', color: '#EEF8E6', desc: 'Gạc hươu non Sumo cho bé chậm tăng cân, biếng ăn', tpcn: true, image: 'img/thumb/26156646705.jpg' },
-  { key: 'rong-bien', label: 'Rong biển ăn dặm',           icon: '🍙', color: '#E0F5F2', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
+  { key: 'rong-bien', label: 'Rong biển cho bé (từ 1 tuổi)',           icon: '🍙', color: '#E0F5F2', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
   { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Nghệ nano Curcumin 365 Plus', tpcn: true, image: 'img/thumb/49061985399.jpg' },
 ];
 
@@ -100,7 +101,8 @@ window.NAV = [
   { label: 'Cẩm nang mẹ', link: 'blog.html' },
 ];
 
-/* image: ảnh thật (img/<mã Shopee>.jpg); thumb: ảnh cắt gọn 420px dùng cho thẻ sản phẩm/giỏ/tìm kiếm. variants: phân loại từ Shopee, sắp theo giá tăng dần.
+/* importer / congBo (tuỳ chọn): nhà nhập khẩu & số công bố ghi trên tem phụ – điền để hiện ở bảng thông tin.
+   image: ảnh thật (img/<mã Shopee>.jpg); thumb: ảnh cắt gọn 420px dùng cho thẻ sản phẩm/giỏ/tìm kiếm. variants: phân loại từ Shopee, sắp theo giá tăng dần.
    price/oldPrice = phân loại rẻ nhất (giá "từ"). shape/color: dùng vẽ ảnh minh hoạ khi chưa có ảnh. */
 window.PRODUCTS = [
   { id: "41002695070", name: "Rong Biển Vụn Ăn Liền Sung Gyung - Lựa Chọn Hoàn Hảo Cho Bữa Ăn Nhanh Gọn và Bổ Dưỡng", short: "Rong biển vụn Sung Gyung", brand: "sunggyung", cat: "rong-bien",
@@ -122,7 +124,7 @@ window.PRODUCTS = [
     usage: "Bé uống 1–2 gói/ngày, ngon hơn khi để mát. Dùng theo hướng dẫn trên bao bì." },
 
   { id: "42878618667", name: "Vitamin D3K2– Hỗ Trợ Phát Triển Xương Răng, Tăng Đề Kháng, Tim Mạch – Lọ 30ml", short: "Vitamin D3K2 Pure Vitality 30ml", brand: "purevitality", cat: "vitamin",
-    ages: ["0-6m", "6-12m", "1-3y", "3-6y", "6-12y"], needs: ["d3k2", "tang-chieu-cao", "canxi", "de-khang"], price: 468000, oldPrice: null, rating: 5.0, reviews: 69, sold: 356, stock: 50,
+    ages: ["0-6m", "6-12m", "1-3y", "3-6y", "6-12y"], needs: ["d3k2", "tang-chieu-cao", "canxi", "de-khang"], price: 468000, oldPrice: 500000, rating: 5.0, reviews: 69, sold: 356, stock: 50,
     shape: "bottle", color: "#E0A526", weight: "Lọ 30ml", origin: "New Zealand", tags: ["Bán chạy"],
     image: "img/42878618667.jpg", thumb: "img/thumb/42878618667.jpg", images: ["img/42878618667.jpg", "img/42878618667-2.jpg", "img/42878618667-3.jpg", "img/42878618667-4.jpg", "img/42878618667-5.jpg"], shopeeId: "42878618667", shopeeUrl: "https://shopee.vn/product/837223358/42878618667", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
     variants: [{ label: "1 lọ", price: 468000, oldPrice: 500000 }, { label: "2 lọ", price: 936000, oldPrice: 1000000 }],
@@ -135,7 +137,7 @@ window.PRODUCTS = [
     shape: "box", color: "#00695C", weight: "Gói 40g", origin: "Hàn Quốc", tags: [],
     image: "img/45462512687.jpg", thumb: "img/thumb/45462512687.jpg", images: ["img/45462512687.jpg", "img/45462512687-2.jpg", "img/45462512687-3.jpg", "img/45462512687-4.jpg", "img/45462512687-5.jpg"], shopeeId: "45462512687", shopeeUrl: "https://shopee.vn/product/837223358/45462512687", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Các loại rong biển ăn liền",
     variants: [{ label: "1 gói", price: 589000, oldPrice: 600000 }, { label: "2 gói", price: 1178000, oldPrice: 1200000 }, { label: "3 gói", price: 1767000, oldPrice: 1800000 }, { label: "4 gói", price: 2356000, oldPrice: 2400000 }, { label: "5 gói", price: 2945000, oldPrice: 3000000 }],
-    desc: "Rong biển Busan trộn cơm Hàn Quốc, bổ sung chất xơ và vitamin từ rong biển, theo nhà sản xuất hỗ trợ bé cao lớn. Vị mặn nhẹ, giòn, trộn cơm là bé ăn hết bát.",
+    desc: "Rong biển Busan trộn cơm Hàn Quốc, bổ sung chất xơ và vitamin tự nhiên từ rong biển. Vị mặn nhẹ, giòn, trộn cơm là bé ăn hết bát.",
     highlights: ["Rong biển Busan – vùng rong biển nổi tiếng Hàn Quốc", "Bổ sung chất xơ, vitamin tự nhiên", "Trộn cơm, làm cơm nắm, kimbap cho bé"],
     usage: "Trộn 1 gói nhỏ với cơm nóng hoặc rắc lên cháo. Bảo quản nơi khô ráo, dùng hết sau khi mở gói." },
 
@@ -161,7 +163,7 @@ window.PRODUCTS = [
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["de-khang", "tang-can", "phuc-hoi"], price: 350000, oldPrice: null, rating: 4.92, reviews: 165, sold: 699, stock: 50,
     shape: "box", color: "#C62828", weight: "Gói 20ml", origin: "Hàn Quốc", tags: ["Bán chạy"],
     image: "img/22644617070.jpg", thumb: "img/thumb/22644617070.jpg", images: ["img/22644617070.jpg", "img/22644617070-4.jpg", "img/22644617070-5.jpg"], shopeeId: "22644617070", shopeeUrl: "https://shopee.vn/product/837223358/22644617070", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
-    variants: [{ label: "10 gói Việt Quất-Nho", price: 350000, oldPrice: null }, { label: "10 gói táo lê", price: 350000, oldPrice: null }, { label: "Nửa thùng– Mix vị", price: 680000, oldPrice: null }, { label: "Nửa thùng táo lê", price: 680000, oldPrice: null }, { label: "Nửa thùng việt quất", price: 680000, oldPrice: null }, { label: "Mix vị (1 thùng)", price: 1340000, oldPrice: null }, { label: "Việt Quất Nho 1 thùng", price: 1340000, oldPrice: null }, { label: "Táo Lê (1 thùng)", price: 1340000, oldPrice: null }],
+    variants: [{ label: "Việt quất – nho · 10 gói", price: 350000, oldPrice: null }, { label: "Táo lê · 10 gói", price: 350000, oldPrice: null }, { label: "Mix vị · 20 gói (nửa thùng)", price: 680000, oldPrice: null }, { label: "Táo lê · 20 gói (nửa thùng)", price: 680000, oldPrice: null }, { label: "Việt quất – nho · 20 gói (nửa thùng)", price: 680000, oldPrice: null }, { label: "Mix vị · 40 gói (1 thùng)", price: 1340000, oldPrice: null }, { label: "Việt quất – nho · 40 gói (1 thùng)", price: 1340000, oldPrice: null }, { label: "Táo lê · 40 gói (1 thùng)", price: 1340000, oldPrice: null }],
     desc: "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm giúp trẻ tăng sức đề kháng, ăn ngon và phục hồi sức khoẻ sau khi bị ốm. Có gói 10, nửa thùng và nguyên thùng.",
     highlights: ["Cho bé hay ốm vặt, mới ốm dậy, biếng ăn", "Vị táo lê, việt quất – nho hoặc mix", "Nửa thùng / 1 thùng giá tốt hơn"],
     usage: "Bé uống 1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì." },
@@ -184,21 +186,21 @@ window.PRODUCTS = [
     highlights: ["Bổ sung vitamin từ cam", "Vị cam ngọt dịu, bé thích uống", "Giảm giá sâu cho thùng 30 gói"],
     usage: "Bé uống 1–2 gói/ngày. Dùng theo hướng dẫn trên bao bì." },
 
-  { id: "26060839019", name: "Váng Sữa Canxi Hữu Cơ 30 Gói CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Xương Phát Triển, Bé Cao Tối Đa", short: "Váng sữa canxi hữu cơ Calciumore 30 gói", brand: "calciumore", cat: "vitamin",
+  { id: "26060839019", name: "Váng Sữa Canxi Hữu Cơ 30 Gói CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Xương Phát Triển, Bé Cao Tối Đa", short: "Canxi hữu cơ Calciumore (dạng váng sữa) 30 gói", brand: "calciumore", cat: "vitamin",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["canxi", "tang-chieu-cao", "organic"], price: 1100000, oldPrice: null, rating: 4.92, reviews: 156, sold: 663, stock: 50,
     shape: "box", color: "#F9A825", weight: "30 gói", origin: "Hàn Quốc", tags: [],
     image: "img/26060839019.jpg", thumb: "img/thumb/26060839019.jpg", images: ["img/26060839019.jpg", "img/26060839019-3.jpg", "img/26060839019-4.jpg", "img/26060839019-5.jpg"], shopeeId: "26060839019", shopeeUrl: "https://shopee.vn/product/837223358/26060839019", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Đồ ăn nhẹ cho bé",
     variants: [{ label: "30 gói (không hộp)", price: 1100000, oldPrice: null }, { label: "1 hộp 90 gói", price: 3225000, oldPrice: 3500000 }],
-    desc: "Váng sữa canxi hữu cơ Calciumore Calcium Supplement Hàn Quốc dạng gói. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
+    desc: "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
     highlights: ["Canxi hữu cơ dễ hấp thu", "Dạng váng sữa thơm ngon, bé không sợ uống", "Hộp 90 gói dùng trong 3 tháng"],
     usage: "Bé dùng 1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì." },
 
-  { id: "22376269734", name: "Váng Sữa Canxi Hữu Cơ CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Bé Lớn Khỏe Dành Cho Trẻ & Người Lớn", short: "Váng sữa canxi Calciumore (trẻ & người lớn)", brand: "calciumore", cat: "vitamin",
+  { id: "22376269734", name: "Váng Sữa Canxi Hữu Cơ CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Bé Lớn Khỏe Dành Cho Trẻ & Người Lớn", short: "Canxi hữu cơ Calciumore (dạng váng sữa) hộp 90 gói – bé & cả nhà", brand: "calciumore", cat: "vitamin",
     ages: ["3-6y", "6-12y", "12-18y"], needs: ["canxi", "tang-chieu-cao", "cho-me"], price: 3225000, oldPrice: 3500000, rating: 4.9, reviews: 132, sold: 554, stock: 50,
     shape: "box", color: "#FBC02D", weight: "Hộp 90 gói", origin: "Hàn Quốc", tags: [],
     image: "img/22376269734.jpg", thumb: "img/thumb/22376269734.jpg", images: ["img/22376269734.jpg", "img/22376269734-2.jpg", "img/22376269734-3.jpg", "img/22376269734-4.jpg", "img/22376269734-5.jpg"], shopeeId: "22376269734", shopeeUrl: "https://shopee.vn/product/837223358/22376269734", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
     variants: [{ label: "1 hộp 90 gói", price: 3225000, oldPrice: 3500000 }, { label: "2 hộp 180 gói", price: 6448000, oldPrice: 7000000 }],
-    desc: "Váng sữa canxi hữu cơ Calciumore Hàn Quốc “Bé lớn khoẻ” dành cho cả trẻ em và người lớn. Bổ sung canxi hữu cơ cho tuổi dậy thì tăng chiều cao và cho mẹ sau sinh, người lớn tuổi.",
+    desc: "Canxi hữu cơ dạng gói vị váng sữa (không phải váng sữa tráng miệng) Calciumore Hàn Quốc “Bé lớn khoẻ”, dùng được cho cả trẻ em và người lớn. Bổ sung canxi hữu cơ cho tuổi dậy thì tăng chiều cao và cho mẹ sau sinh, người lớn tuổi.",
     highlights: ["Dùng được cho cả gia đình: bé, mẹ, ông bà", "Canxi hữu cơ hỗ trợ xương chắc khoẻ", "Mua 2 hộp tiết kiệm hơn"],
     usage: "1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì." },
 
@@ -229,7 +231,7 @@ window.PRODUCTS = [
 ];
 
 window.BANNERS = [
-  { title: 'Freeship toàn quốc\ncho đơn từ 499K', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Nhập mã <b>HCK10</b> giảm thêm 10%.', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
+  { title: 'Freeship toàn quốc\ncho đơn từ 499K', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Nhập mã <b>HCK10</b> giảm 10% (tối đa 100K, đơn từ 300K).', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
   { title: 'Dinh dưỡng Hàn Quốc\nchính hãng cho bé', sub: 'Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.', cta: 'Xem sản phẩm', link: 'collections.html', theme: 'teal', badge: 'Chính hãng 100%', image: 'img/thumb/22644617070.jpg' },
   { title: 'Nước ép Lotte Organic\ngiảm đến 38%', sub: 'Giúp bé ăn ngon, tăng chiều cao – giá tốt nhất tháng này, thùng 30 gói chỉ từ <b>1.490.000₫</b>.', cta: 'Mua ngay', link: 'collections.html?cat=nuoc-ep', theme: 'amber', badge: 'Flash sale', image: 'img/thumb/22686115682.jpg' },
 ];
@@ -243,22 +245,22 @@ window.REVIEWS = [
 ];
 
 window.POSTS = [
-  { id: 'chon-dinh-duong-theo-thang-tuoi', title: 'Bé mấy tháng thì dùng được nước ép, hồng sâm, D3K2? Lộ trình bổ sung theo độ tuổi', cat: 'Dinh dưỡng', date: '12/09/2026', read: '5 phút', emoji: '🍼', color: '#FFE9EF',
+  { id: 'chon-dinh-duong-theo-thang-tuoi', title: 'Bé mấy tháng thì dùng được nước ép, hồng sâm, D3K2? Lộ trình bổ sung theo độ tuổi', cat: 'Dinh dưỡng', date: '12/09/2026', read: '5 phút', emoji: '🍼', color: '#FFE9EF', image: 'img/thumb/22686115682.jpg',
     excerpt: 'Không phải sản phẩm nào cũng dùng được cho bé sơ sinh. Dược sĩ Hương Chất Kids gợi ý lộ trình bổ sung an toàn theo từng mốc tuổi.',
     body: ['0–6 tháng: sữa mẹ (hoặc sữa công thức) là nguồn dinh dưỡng chính. Chỉ nên bổ sung vitamin D3 (có thể kèm K2) dạng nhỏ giọt theo khuyến cáo 400IU/ngày; không dùng nước ép, hồng sâm hay thực phẩm bổ sung khác.', '6–12 tháng: bắt đầu ăn dặm. Có thể tập cho bé nước ép hoa quả – rau củ hữu cơ loại dành cho bé từ 6 tháng (pha loãng, 1/2 gói/ngày), rong biển vụn rắc cháo với lượng nhỏ.', '1–3 tuổi: bé hay ốm vặt khi đi nhà trẻ. Hồng sâm cho trẻ em, váng sữa canxi, D3K2 có thể dùng theo liều trên bao bì; ưu tiên sản phẩm ghi rõ độ tuổi.', '3–6 tuổi và tiểu học: giai đoạn tăng chiều cao nhanh, chú ý canxi + D3K2 + vận động; bé biếng ăn có thể cân nhắc gạc hươu, kẽm.', 'Nguyên tắc chung: đọc kỹ độ tuổi trên bao bì, không dùng cùng lúc nhiều sản phẩm cùng công dụng, ngưng và hỏi bác sĩ nếu bé dị ứng. Dược sĩ Hương Chất Kids tư vấn miễn phí qua Zalo trước khi mẹ đặt hàng.'] },
-  { id: 'vitamin-d3-k2-cho-be', title: 'Vitamin D3 K2: vì sao bé cần bổ sung ngay từ sơ sinh?', cat: 'Vitamin', date: '08/09/2026', read: '4 phút', emoji: '☀️', color: '#FFF3D6',
-    excerpt: 'Hơn 50% trẻ em Việt Nam thiếu vitamin D. Cùng tìm hiểu liều dùng chuẩn và cách bổ sung D3 K2 hiệu quả nhất cho bé.',
+  { id: 'vitamin-d3-k2-cho-be', title: 'Vitamin D3 K2: vì sao bé cần bổ sung ngay từ sơ sinh?', cat: 'Vitamin', date: '08/09/2026', read: '4 phút', emoji: '☀️', color: '#FFF3D6', image: 'img/thumb/42878618667.jpg',
+    excerpt: 'Theo Viện Dinh dưỡng Quốc gia, tỷ lệ trẻ em Việt Nam thiếu vitamin D còn cao. Cùng tìm hiểu liều 400IU/ngày và cách nhỏ D3 K2 đúng cho bé.',
     body: ['Vitamin D3 giúp cơ thể hấp thu canxi từ ruột, còn vitamin K2 (MK7) dẫn canxi vào đúng xương thay vì lắng đọng ở mạch máu, thận.', 'Bộ Y tế khuyến cáo bổ sung 400IU vitamin D/ngày cho trẻ từ sơ sinh, đặc biệt trẻ bú mẹ hoàn toàn.', 'Nên nhỏ D3 K2 vào buổi sáng, sau ăn để hấp thu tốt nhất. Kết hợp tắm nắng nhẹ 10–15 phút trước 9h sáng.', 'Dấu hiệu thiếu vitamin D: bé hay quấy khóc đêm, ra mồ hôi trộm, rụng tóc vành khăn, chậm mọc răng, chậm biết đi.'] },
-  { id: 'be-bieng-an', title: 'Bé biếng ăn: 7 sai lầm mẹ hay mắc và cách khắc phục', cat: 'Chăm con', date: '03/09/2026', read: '6 phút', emoji: '🥄', color: '#E0F5F2',
+  { id: 'be-bieng-an', title: 'Bé biếng ăn: 7 sai lầm mẹ hay mắc và cách khắc phục', cat: 'Chăm con', date: '03/09/2026', read: '6 phút', emoji: '🥄', color: '#E0F5F2', image: 'img/thumb/26156646705.jpg',
     excerpt: 'Ép ăn, cho xem tivi khi ăn, bữa ăn kéo dài quá 30 phút… là những thói quen khiến bé càng sợ ăn. Cùng xem cách sửa.',
     body: ['Biếng ăn ở trẻ có thể do sinh lý (mọc răng, tập đi), bệnh lý (thiếu kẽm, thiếu sắt, rối loạn tiêu hoá) hoặc tâm lý (bị ép ăn).', 'Sai lầm phổ biến: ép ăn, cho ăn vặt sát bữa chính, bữa ăn quá 30 phút, cho bé xem điện thoại khi ăn, thay đổi món liên tục, cho uống sữa quá nhiều, so sánh bé với trẻ khác.', 'Giải pháp: cho bé tự xúc, ăn cùng gia đình, tạo không khí vui vẻ, bổ sung kẽm/lysine nếu thiếu, đưa bé đi khám nếu biếng ăn kéo dài trên 1 tháng kèm sụt cân.'] },
-  { id: 'tang-chieu-cao-tuoi-day-thi', title: 'Giai đoạn vàng tăng chiều cao: mẹ đừng bỏ lỡ tuổi 10–16', cat: 'Tuổi teen', date: '28/08/2026', read: '5 phút', emoji: '📏', color: '#F3E9FF',
+  { id: 'tang-chieu-cao-tuoi-day-thi', title: 'Giai đoạn vàng tăng chiều cao: mẹ đừng bỏ lỡ tuổi 10–16', cat: 'Tuổi teen', date: '28/08/2026', read: '5 phút', emoji: '📏', color: '#F3E9FF', image: 'img/thumb/26060839019.jpg',
     excerpt: 'Tuổi dậy thì là cơ hội cuối để con tăng 8–12cm/năm. Dinh dưỡng, giấc ngủ và vận động nào giúp con cao tối đa?',
     body: ['Trước khi sụn tăng trưởng đóng lại (khoảng 16–18 tuổi ở nữ, 18–20 tuổi ở nam), con có thể tăng 8–12cm mỗi năm trong giai đoạn dậy thì.', 'Dinh dưỡng: đủ canxi (1.000–1.300mg/ngày), vitamin D3, K2, kẽm, đạm chất lượng. Sữa tươi 500ml/ngày là nguồn canxi dễ hấp thu nhất.', 'Giấc ngủ: 90% hormone tăng trưởng tiết ra khi ngủ sâu, con nên ngủ trước 22h và đủ 8–9 tiếng.', 'Vận động: bơi, bóng rổ, nhảy dây, xà đơn 30–60 phút/ngày.'] },
-  { id: 'men-vi-sinh-khi-nao', title: 'Khi nào bé cần men vi sinh? Phân biệt men vi sinh và men tiêu hoá', cat: 'Tiêu hoá', date: '20/08/2026', read: '4 phút', emoji: '🌿', color: '#EEF8E6',
+  { id: 'men-vi-sinh-khi-nao', title: 'Khi nào bé cần men vi sinh? Phân biệt men vi sinh và men tiêu hoá', cat: 'Tiêu hoá', date: '20/08/2026', read: '4 phút', emoji: '🌿', color: '#EEF8E6', image: 'img/thumb/45462512687.jpg',
     excerpt: 'Nhiều mẹ nhầm men vi sinh với men tiêu hoá. Dùng sai có thể khiến bé phụ thuộc. Dược sĩ giải thích rõ.',
     body: ['Men vi sinh (probiotics) là lợi khuẩn sống, giúp cân bằng hệ vi sinh đường ruột – dùng khi bé táo bón, tiêu chảy, sau kháng sinh, khóc dạ đề.', 'Men tiêu hoá là enzyme giúp phân giải thức ăn – chỉ dùng ngắn ngày khi bé thiếu enzyme, theo chỉ định bác sĩ.', 'Chọn men vi sinh có chủng được nghiên cứu (L. reuteri DSM 17938, B. infantis…), dùng cách kháng sinh 2 tiếng, pha với nước/sữa nguội dưới 40°C.'] },
-  { id: 'phan-biet-hang-chinh-hang', title: 'Cách kiểm tra hàng Hàn Quốc nhập khẩu chính hãng trước khi cho bé dùng', cat: 'Mua sắm', date: '15/08/2026', read: '3 phút', emoji: '🔍', color: '#EAF0FF',
+  { id: 'phan-biet-hang-chinh-hang', title: 'Cách kiểm tra hàng Hàn Quốc nhập khẩu chính hãng trước khi cho bé dùng', cat: 'Mua sắm', date: '15/08/2026', read: '3 phút', emoji: '🔍', color: '#EAF0FF', image: 'img/thumb/22644617070.jpg',
     excerpt: 'Kiểm tra tem phụ, mã QR, số lô, hạn dùng… 5 bước đơn giản để mẹ tự kiểm tra sản phẩm trước khi cho con dùng.',
     body: ['1. Tem phụ tiếng Việt: ghi rõ nhà nhập khẩu, số công bố, hạn dùng.', '2. Mã QR/mã vạch: quét được thông tin sản phẩm trùng với hộp.', '3. Bao bì: seal, nắp nguyên vẹn, không móp rách; hạn dùng còn dài.', '4. Chữ Hàn trên bao bì rõ nét, in sắc; hàng giả thường mờ, sai chính tả.', '5. Hoá đơn: yêu cầu hoá đơn VAT khi mua – Hương Chất Kids xuất hoá đơn cho mọi đơn hàng.'] },
 ];

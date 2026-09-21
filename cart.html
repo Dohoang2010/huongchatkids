@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="checkout__side"><div class="card card--pad">
         <h3>Tóm tắt đơn hàng</h3>
-        <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
+        <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá (VD: HCK10)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
         <div class="coupon-hint">${c && c.ok ? `<span class="text-teal fw-600">✓ ${c.desc}</span>` : c ? `<span class="text-red">${c.msg}</span>` : `Gợi ý: <button type="button" data-coupon="HCK10">HCK10</button><span class="text-muted">giảm 10% (tối đa 100K) cho đơn từ 300K</span>`}</div>
         <div class="divider"></div>
         <div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><span>${fmt(sub)}</span></div>

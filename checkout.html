@@ -58,13 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Đơn hàng (${Cart.count()} sản phẩm) <a class="fs-13 text-primary" style="margin-left:auto;font-weight:500" href="cart.html">Sửa</a></h3>
         <div class="order-items">${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}</div>
         <div class="divider"></div>
-        <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
+        <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá (VD: HCK10)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
         <div class="coupon-hint" id="couponHint"></div>
         <div class="divider"></div>
         <div id="summary"></div>
         <button class="btn btn--primary btn--lg btn--block btn--stack mt-16" type="submit" id="coSubmit"><span>${I.zap} ĐẶT HÀNG · <span id="coTotal"></span></span><small>Kiểm tra hàng trước khi thanh toán · Giao dự kiến ${deliveryEstimate()}</small></button>
         <div class="qb__trust"><span>${I.check}Chính hãng 100%</span><span>${I.check}Đổi trả 7 ngày</span><span>${I.check}Bảo mật thông tin</span></div>
-        <div class="form-error hide mt-8" id="coError" style="text-align:center"></div>
+        <div class="form-error hide mt-8" id="coError" style="text-align:center" role="alert"></div>
         <div class="divider"></div>
         <p class="fs-13 text-muted" style="text-align:center">Gặp khó khăn khi đặt hàng? <button class="fw-700 text-primary" type="button" data-callback>Để dược sĩ gọi lại</button> hoặc <a class="fw-700" style="color:var(--zalo)" href="${SITE.zalo}" target="_blank">đặt qua Zalo</a></p>
       </div></div>
