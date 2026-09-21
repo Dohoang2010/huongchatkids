@@ -55,6 +55,7 @@ Muốn nhiều ảnh cho gallery: thêm `images: ['img/a.jpg', 'img/b.jpg', 'img
 - **Danh mục, nhu cầu, thương hiệu, menu**: `CATEGORIES`, `NEEDS`, `BRANDS`, `NAV` – menu desktop & mobile sinh tự động từ `NAV`.
 - **Màu sắc**: biến `--primary`, `--teal`, `--amber` đầu file `css/style.css`.
 - **Mã giảm giá**: `window.COUPONS`.
+- **Feedback thực tế**: `window.FEEDBACKS` + ảnh trong `img/feedback/` – mục trang chủ tự hiện khi có ≥1 ảnh, bấm ảnh phóng to.
 - **Ngày sale Shopee**: `SITE.shopeeSale` – ngày 15, 25 và ngày đôi (1/1 … 12/12) nút "Xem trên Shopee" tự chuyển màu cam kèm tag "Siêu ưu đãi ngày …". Xem trước bằng `?demo_date=2026-09-09`.
 - **Chuyển khoản / VietQR**: `SITE.bank` (ngân hàng, BIN, số tài khoản, tên chủ TK) và `SITE.transferFormat` (mẫu nội dung, mặc định `{name}_thanhtoan_{code}`). Mã QR chuẩn NAPAS được tạo ngay trên web (`js/qrcode.min.js` + hàm `vietqrPayload` trong app.js), tự điền số tiền & nội dung cho từng đơn. BIN các ngân hàng khác: Vietcombank 970436, Techcombank 970407, MB 970422, VietinBank 970415, Agribank 970405, ACB 970416, TPBank 970423, VPBank 970432.
 
