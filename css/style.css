@@ -385,6 +385,8 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .pcard__meta { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
 .pcard__meta .star { color: var(--amber); display: inline-flex; align-items: center; gap: 2px; font-weight: 600; color: var(--ink-2); }
 .pcard__meta .star svg { width: 12px; height: 12px; color: var(--amber); fill: var(--amber); }
+.pcard__meta svg { width: 14px; height: 14px; flex: none; }
+.pcard__meta .text-teal { display: inline-flex; align-items: center; gap: 4px; }
 .pcard__price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
 .pcard__price b { font-size: 16px; color: var(--price); font-family: var(--font-head); }
 .pcard__price b small { font-size: 11px; font-weight: 500; color: var(--muted); font-family: var(--font-body); }
@@ -406,8 +408,8 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .flash__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .flash__title { display: flex; align-items: center; gap: 10px; }
 .flash__title h2 { font-size: 22px; color: #fff; text-transform: uppercase; letter-spacing: .02em; }
-.flash__title .bolt { font-size: 26px; display: inline-block; animation: boltPulse 1.6s ease-in-out infinite; }
-.flash__title h2 { animation: flashBlink 1.6s ease-in-out infinite alternate; }
+.flash__title .bolt { font-size: 26px; display: inline-block; animation: boltPulse 1.6s ease-in-out 6; }
+.flash__title h2 { animation: flashBlink 1.6s ease-in-out 6 alternate; }
 @keyframes flashBlink { 0% { color: #fff; text-shadow: 0 0 14px rgba(255, 255, 255, .8); } 100% { color: #FFE082; text-shadow: 0 0 4px rgba(255, 224, 130, .4); } }
 @keyframes boltPulse { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.25) rotate(-8deg); } }
 
@@ -878,3 +880,21 @@ body { padding-bottom: 0; }
 /* Utility for wishlist/compare small icons */
 .icon-16 svg { width: 16px; height: 16px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Mobile: rút ngắn đường tới sản phẩm đầu tiên – các hàng tuổi/danh mục/cam kết cuộn ngang */
+@media (max-width: 767px) {
+  .age-grid, #catGrid { display: flex; overflow-x: auto; gap: 10px; margin: 0 -16px; padding: 4px 16px 8px; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .age-grid::-webkit-scrollbar, #catGrid::-webkit-scrollbar { display: none; }
+  .age-card { flex: 0 0 108px; scroll-snap-align: start; padding: 14px 8px; }
+  .age-card .emoji { font-size: 30px; }
+  .cat-tile { flex: 0 0 210px; min-height: 0; scroll-snap-align: start; }
+  .trust { display: flex; overflow-x: auto; gap: 8px; scrollbar-width: none; margin: 12px -16px 0; padding: 0 16px; }
+  .trust::-webkit-scrollbar { display: none; }
+  .trust__item { flex: 0 0 auto; padding: 8px 12px; border-radius: 999px; gap: 8px; }
+  .trust__item b { white-space: nowrap; font-size: 13px; }
+  .trust__item small { display: none; }
+  .trust__icon { width: 28px; height: 28px; border-radius: 8px; }
+  .trust__icon svg { width: 16px; height: 16px; }
+  .slide h2 { font-size: 22px; }
+  .slide { min-height: 230px; padding: 22px 18px; }
+}

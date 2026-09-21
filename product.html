@@ -32,13 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Gợi ý mua kèm: cùng độ tuổi, khác danh mục, bán chạy */
   const related = PRODUCTS.filter((x) => x.id !== p.id && !x.isCombo && x.ages.some((a) => p.ages.includes(a)) && x.cat !== p.cat).sort((a, c) => c.sold - a.sold).slice(0, 2);
   const similar = PRODUCTS.filter((x) => x.id !== p.id && (x.cat === p.cat || x.needs.some((n) => p.needs.includes(n)))).sort((a, c) => c.sold - a.sold).slice(0, 5);
-  const reviewsFor = REVIEWS.filter((r) => r.product === p.id);
+  const reviewsFor = SITE.showReviews ? REVIEWS.filter((r) => r.product === p.id) : [];
 
   $('#pdp').innerHTML = `
     <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="collections.html?cat=${p.cat}">${(CATEGORIES.find((c) => c.key === p.cat) || {}).label || 'Sản phẩm'}</a><span>›</span><span>${esc(p.short || p.name)}</span></nav>
     <div class="pdp">
       <div class="gallery">
-        <div class="gallery__main"><img id="mainImg" src="${productImage(p, 0)}" alt="${esc(shortName(p))}">${d ? `<span class="badge badge--sale">-${d}%</span>` : ''}</div>
+        <div class="gallery__main"><img id="mainImg" src="${productImage(p, 0)}" alt="${esc(shortName(p))}">${d >= 5 ? `<span class="badge badge--sale">-${d}%</span>` : ''}</div>
         <div class="gallery__thumbs">${Array.from({ length: p.images && p.images.length ? Math.min(6, p.images.length) : 3 }, (_, i) => i).map((i) => `<button type="button" class="${i === 0 ? 'is-active' : ''}" data-thumb="${i}" aria-label="Ảnh ${i + 1}"><img src="${productImage(p, i)}" alt=""></button>`).join('')}</div>
       </div>
       <div class="pdp__info">

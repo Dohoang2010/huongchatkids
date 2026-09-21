@@ -33,18 +33,6 @@
     <div class="trust" id="trust"></div>
   </div></section>
 
-  <!-- AGE PICKER -->
-  <section class="section"><div class="container">
-    <div class="section-head"><div><h2>Bé nhà mình mấy tuổi? 👶</h2><p>Chọn độ tuổi để xem sản phẩm phù hợp nhất với con</p></div></div>
-    <div class="age-grid" id="ageGrid"></div>
-  </div></section>
-
-  <!-- CATEGORIES -->
-  <section class="section section--soft"><div class="container">
-    <div class="section-head"><div><h2>Danh mục sản phẩm</h2><p>Dinh dưỡng Hàn Quốc chính hãng – tem phụ tiếng Việt, hoá đơn VAT</p></div><a class="link" href="collections.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
-    <div class="grid grid--3" id="catGrid"></div>
-  </div></section>
-
   <!-- FLASH SALE -->
   <section class="section"><div class="container">
     <div class="flash">
@@ -60,6 +48,18 @@
     <div class="tabs mb-16" id="featTabs"></div>
     <div class="grid grid--4" id="featGrid"></div>
     <div style="text-align:center;margin-top:20px"><a class="btn btn--outline btn--lg" href="collections.html">Xem thêm sản phẩm</a></div>
+  </div></section>
+
+  <!-- AGE PICKER -->
+  <section class="section"><div class="container">
+    <div class="section-head"><div><h2>Bé nhà mình mấy tuổi? 👶</h2><p>Chọn độ tuổi để xem sản phẩm phù hợp nhất với con</p></div></div>
+    <div class="age-grid" id="ageGrid"></div>
+  </div></section>
+
+  <!-- CATEGORIES -->
+  <section class="section section--soft"><div class="container">
+    <div class="section-head"><div><h2>Danh mục sản phẩm</h2><p>Dinh dưỡng Hàn Quốc chính hãng – tem phụ tiếng Việt, hoá đơn VAT</p></div><a class="link" href="collections.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
+    <div class="grid grid--3" id="catGrid"></div>
   </div></section>
 
   <!-- COMBO -->
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#trust').innerHTML = [
     [I.shield, 'Chính hãng, tem phụ tiếng Việt', 'Nhập khẩu chính ngạch, hoàn tiền nếu phát hiện hàng giả'],
     [I.truck, 'Freeship từ 499K', 'Hà Nội giao trong ngày · toàn quốc 1–3 ngày'],
-    [I.refresh, 'Đổi trả 7 ngày', 'Hàng lỗi, sai, móp rách – đổi miễn phí'],
+    [I.zap, 'Mua 1 chạm, không cần tài khoản', 'Chỉ cần SĐT & địa chỉ – 30 giây là xong'],
     [I.headset, 'Dược sĩ tư vấn liều dùng', `Miễn phí qua Zalo/điện thoại ${SITE.workingHours}`],
   ].map(([ic, t, s]) => `<div class="trust__item"><span class="trust__icon">${ic}</span><div><b>${t}</b><small>${s}</small></div></div>`).join('');
 
@@ -155,7 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
     discount: () => [...PRODUCTS].filter((p) => p.oldPrice).sort((a, b) => MC.pct(b) - MC.pct(a)).slice(0, 8),
   };
   CATEGORIES.forEach((c) => { sets[c.key] = () => PRODUCTS.filter((p) => p.cat === c.key).slice(0, 8); });
-  $('#featTabs').innerHTML = `<button class="tab is-active" data-tab="best">🏆 Bán chạy</button><button class="tab" data-tab="new">✨ Mới về</button><button class="tab" data-tab="discount">🔥 Giảm sâu</button>` + CATEGORIES.map((c) => `<button class="tab" data-tab="${c.key}">${c.icon} ${c.label}</button>`).join('');
+  sets.baby = () => PRODUCTS.filter((p) => !p.isCombo && p.ages.some((a) => ['0-6m', '6-12m', '1-3y'].includes(a))).slice(0, 8);
+  $('#featTabs').innerHTML = `<button class="tab is-active" data-tab="best">🏆 Bán chạy</button><button class="tab" data-tab="discount">🔥 Giảm sâu</button><button class="tab" data-tab="baby">🍼 Bé 0–3 tuổi</button>` + CATEGORIES.filter((c) => PRODUCTS.filter((p) => p.cat === c.key).length >= 2).map((c) => `<button class="tab" data-tab="${c.key}">${c.icon} ${c.label}</button>`).join('');
   const renderFeat = (k) => { $('#featGrid').innerHTML = sets[k]().map((p) => productCard(p)).join(''); };
   $('#featTabs').addEventListener('click', (e) => { const t = e.target.closest('.tab'); if (!t) return; $$('#featTabs .tab').forEach((x) => x.classList.toggle('is-active', x === t)); renderFeat(t.dataset.tab); });
   renderFeat('best');

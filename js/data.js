@@ -1,6 +1,7 @@
 /* =====================================================================
    DỮ LIỆU CỬA HÀNG – Hương Chất Kids
-   Sản phẩm được nhập từ file Shopee (14 sản phẩm, 55 phân loại) ngày 21/09/2026.
+   Sản phẩm được nhập từ file Shopee (14 sản phẩm) ngày 21/09/2026. Gallery đã bỏ các ảnh Shopee chứa
+   tuyên bố công dụng vượt công bố / ảnh bình luận cá nhân (xem img/README.txt).
    Ảnh, điểm đánh giá, số đánh giá, đã bán: lấy từ file xuất Shopee (12/14 sản phẩm).
    - Đổi tên thương hiệu, hotline, Zalo… tại SITE. Thêm/sửa sản phẩm tại PRODUCTS.
    - Ảnh sản phẩm: đặt file img/<mã sản phẩm Shopee>.jpg (VD: img/41002695070.jpg).
@@ -29,6 +30,7 @@ window.SITE = {
   expressCities: ['Hà Nội'],            // tỉnh/thành có giao hoả tốc trong ngày
   workingHours: '8:00 – 22:00 (cả T7, CN)',
   hotSearches: ['Hồng sâm ChuChu', 'Nước ép Lotte', 'D3K2', 'Rong biển', 'Váng sữa canxi', 'Gạc hươu Sumo'],
+  showReviews: false,                 // true → hiện thêm mảng REVIEWS (đánh giá do shop nhập) ở trang chủ & trang sản phẩm
   flashSaleEnd: '2026-09-30T23:59:59+07:00',  // hạn chót flash sale thật; qua ngày này countdown tự ẩn
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
 };
@@ -81,7 +83,7 @@ window.BRANDS = [
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
 window.NAV = [
   { label: 'Nước ép & dinh dưỡng', link: 'collections.html?cat=nuoc-ep', columns: [
-    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước dinh dưỡng Organic', 'product.html?id=44353325470'], ['Lotte Khoẻ Mạnh (cam)', 'product.html?id=23660586997'], ['Lotte Xanh tăng chiều cao', 'product.html?id=41353214697'], ['Nước ép lê & rễ cát cánh', 'product.html?id=43605768422']] },
+    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước dinh dưỡng Organic', 'product.html?id=44353325470'], ['Lotte Khoẻ Mạnh (cam)', 'product.html?id=23660586997'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697'], ['Nước ép lê & rễ cát cánh', 'product.html?id=43605768422']] },
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'organic'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Hồng sâm & đề kháng', link: 'collections.html?cat=hong-sam', columns: [
@@ -113,7 +115,7 @@ window.PRODUCTS = [
   { id: "22686115682", name: "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe", short: "Nước ép Lotte Organic hoa quả & rau củ", brand: "lotte", cat: "nuoc-ep",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 495000, oldPrice: 800000, rating: 4.93, reviews: 525, sold: 3000, stock: 50,
     shape: "box", color: "#E60012", weight: "Gói 100ml", origin: "Hàn Quốc", tags: ["Giảm sâu"],
-    image: "img/22686115682.jpg", thumb: "img/thumb/22686115682.jpg", images: ["img/22686115682.jpg", "img/22686115682-2.jpg", "img/22686115682-3.jpg", "img/22686115682-4.jpg", "img/22686115682-5.jpg"], shopeeId: "22686115682", shopeeUrl: "https://shopee.vn/product/837223358/22686115682", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
+    image: "img/22686115682.jpg", thumb: "img/thumb/22686115682.jpg", images: ["img/22686115682.jpg", "img/22686115682-3.jpg", "img/22686115682-4.jpg", "img/22686115682-5.jpg"], shopeeId: "22686115682", shopeeUrl: "https://shopee.vn/product/837223358/22686115682", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
     variants: [{ label: "Khoẻ Mạnh (Cam) · 10 gói", price: 495000, oldPrice: 800000 }, { label: "Mix vị · 10 gói", price: 800000, oldPrice: null }, { label: "Mix vị · Thùng 30 gói", price: 1490000, oldPrice: 1800000 }, { label: "Khoẻ Mạnh (Cam) · Thùng 30 gói", price: 1490000, oldPrice: 1800000 }],
     desc: "Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic giúp bé ăn ngon miệng, hỗ trợ phát triển chiều cao và tăng cường sức khoẻ.",
     highlights: ["Nguyên liệu hoa quả & rau củ hữu cơ (Organic)", "Gói nhỏ có ống hút – tiện mang đi học, đi chơi", "Chọn vị cam “Khoẻ Mạnh” hoặc thùng mix vị"],
@@ -158,7 +160,7 @@ window.PRODUCTS = [
   { id: "22644617070", name: "Hồng Sâm ChuChu Hàn Quốc Giúp Trẻ Tăng Sức Đề Kháng, ăn ngon Và Phục Hồi Sức Khoẻ Sau Khi Bị Ốm", short: "Hồng sâm ChuChu ăn ngon & phục hồi sau ốm", brand: "chuchu", cat: "hong-sam",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["de-khang", "tang-can", "phuc-hoi"], price: 350000, oldPrice: null, rating: 4.92, reviews: 165, sold: 699, stock: 50,
     shape: "box", color: "#C62828", weight: "Gói 20ml", origin: "Hàn Quốc", tags: ["Bán chạy"],
-    image: "img/22644617070.jpg", thumb: "img/thumb/22644617070.jpg", images: ["img/22644617070.jpg", "img/22644617070-2.jpg", "img/22644617070-3.jpg", "img/22644617070-4.jpg", "img/22644617070-5.jpg"], shopeeId: "22644617070", shopeeUrl: "https://shopee.vn/product/837223358/22644617070", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
+    image: "img/22644617070.jpg", thumb: "img/thumb/22644617070.jpg", images: ["img/22644617070.jpg", "img/22644617070-4.jpg", "img/22644617070-5.jpg"], shopeeId: "22644617070", shopeeUrl: "https://shopee.vn/product/837223358/22644617070", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
     variants: [{ label: "10 gói Việt Quất-Nho", price: 350000, oldPrice: null }, { label: "10 gói táo lê", price: 350000, oldPrice: null }, { label: "Nửa thùng– Mix vị", price: 680000, oldPrice: null }, { label: "Nửa thùng táo lê", price: 680000, oldPrice: null }, { label: "Nửa thùng việt quất", price: 680000, oldPrice: null }, { label: "Mix vị (1 thùng)", price: 1340000, oldPrice: null }, { label: "Việt Quất Nho 1 thùng", price: 1340000, oldPrice: null }, { label: "Táo Lê (1 thùng)", price: 1340000, oldPrice: null }],
     desc: "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm giúp trẻ tăng sức đề kháng, ăn ngon và phục hồi sức khoẻ sau khi bị ốm. Có gói 10, nửa thùng và nguyên thùng.",
     highlights: ["Cho bé hay ốm vặt, mới ốm dậy, biếng ăn", "Vị táo lê, việt quất – nho hoặc mix", "Nửa thùng / 1 thùng giá tốt hơn"],
@@ -185,7 +187,7 @@ window.PRODUCTS = [
   { id: "26060839019", name: "Váng Sữa Canxi Hữu Cơ 30 Gói CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Xương Phát Triển, Bé Cao Tối Đa", short: "Váng sữa canxi hữu cơ Calciumore 30 gói", brand: "calciumore", cat: "vitamin",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["canxi", "tang-chieu-cao", "organic"], price: 1100000, oldPrice: null, rating: 4.92, reviews: 156, sold: 663, stock: 50,
     shape: "box", color: "#F9A825", weight: "30 gói", origin: "Hàn Quốc", tags: [],
-    image: "img/26060839019.jpg", thumb: "img/thumb/26060839019.jpg", images: ["img/26060839019.jpg", "img/26060839019-2.jpg", "img/26060839019-3.jpg", "img/26060839019-4.jpg", "img/26060839019-5.jpg"], shopeeId: "26060839019", shopeeUrl: "https://shopee.vn/product/837223358/26060839019", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Đồ ăn nhẹ cho bé",
+    image: "img/26060839019.jpg", thumb: "img/thumb/26060839019.jpg", images: ["img/26060839019.jpg", "img/26060839019-3.jpg", "img/26060839019-4.jpg", "img/26060839019-5.jpg"], shopeeId: "26060839019", shopeeUrl: "https://shopee.vn/product/837223358/26060839019", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Đồ ăn nhẹ cho bé",
     variants: [{ label: "30 gói (không hộp)", price: 1100000, oldPrice: null }, { label: "1 hộp 90 gói", price: 3225000, oldPrice: 3500000 }],
     desc: "Váng sữa canxi hữu cơ Calciumore Calcium Supplement Hàn Quốc dạng gói. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
     highlights: ["Canxi hữu cơ dễ hấp thu", "Dạng váng sữa thơm ngon, bé không sợ uống", "Hộp 90 gói dùng trong 3 tháng"],
@@ -208,10 +210,10 @@ window.PRODUCTS = [
     highlights: ["Nano curcumin hấp thu tốt hơn nghệ thường", "Hỗ trợ dạ dày, đẹp da, mờ thâm", "Tép nhỏ tiện dùng hằng ngày"],
     usage: "Người lớn dùng 1 tép/ngày sau ăn. Dùng theo hướng dẫn trên bao bì. Mẹ đang mang thai hoặc cho con bú cần hỏi ý kiến bác sĩ trước khi dùng." },
 
-  { id: "41353214697", name: "Nước Dinh Dưỡng LOTTE Xanh - Hỗ Trợ Phát Triển Chiều Cao Ở Trẻ Nhỏ", short: "Nước ép táo & củ dền hữu cơ Lotte (Xanh)", brand: "lotte", cat: "nuoc-ep",
-    ages: ["6-12m", "1-3y", "3-6y", "6-12y"], needs: ["tang-chieu-cao", "canxi", "organic", "an-dam"], price: 600000, oldPrice: null, rating: 5.0, reviews: 23, sold: 190, stock: 50,
+  { id: "41353214697", name: "Nước ép táo & củ dền hữu cơ Lotte Xanh – bổ sung canxi, sắt cho bé từ 6 tháng", short: "Nước ép táo & củ dền hữu cơ Lotte (Xanh)", brand: "lotte", cat: "nuoc-ep",
+    ages: ["6-12m", "1-3y", "3-6y", "6-12y"], needs: ["canxi", "organic", "an-dam"], price: 600000, oldPrice: null, rating: 5.0, reviews: 23, sold: 190, stock: 50,
     shape: "box", color: "#2E7D32", weight: "10 gói", origin: "Hàn Quốc", tags: [],
-    image: "img/41353214697.jpg", thumb: "img/thumb/41353214697.jpg", images: ["img/41353214697.jpg", "img/41353214697-2.jpg", "img/41353214697-3.jpg", "img/41353214697-4.jpg", "img/41353214697-5.jpg"], shopeeId: "41353214697", shopeeUrl: "https://shopee.vn/product/837223358/41353214697", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
+    image: "img/41353214697.jpg", thumb: "img/thumb/41353214697.jpg", images: ["img/41353214697.jpg", "img/41353214697-3.jpg", "img/41353214697-4.jpg", "img/41353214697-5.jpg"], shopeeId: "41353214697", shopeeUrl: "https://shopee.vn/product/837223358/41353214697", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
     desc: "Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
     highlights: ["Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm", "Táo & củ dền hữu cơ, chứng nhận Organic, HACCP", "Bổ sung canxi, sắt, axit folic"],
     usage: "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì." },
