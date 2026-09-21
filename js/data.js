@@ -89,7 +89,7 @@ window.BRANDS = [
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
 window.NAV = [
   { label: 'Nước ép & dinh dưỡng', link: 'collections.html?cat=nuoc-ep', columns: [
-    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước dinh dưỡng Organic', 'product.html?id=44353325470'], ['Lotte Khoẻ Mạnh (cam)', 'product.html?id=23660586997'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697'], ['Nước ép lê & rễ cát cánh', 'product.html?id=43605768422']] },
+    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước dinh dưỡng Organic', 'product.html?id=44353325470'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697']] },
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'organic'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Hồng sâm & đề kháng', link: 'collections.html?cat=hong-sam', columns: [
@@ -119,7 +119,7 @@ window.PRODUCTS = [
     usage: "Rắc trực tiếp lên cơm, cháo hoặc trộn cơm nắm cho bé. Đậy kín sau khi mở, bảo quản nơi khô ráo, tránh ẩm." },
 
   { id: "22686115682", name: "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe", short: "Nước ép Lotte Organic hoa quả & rau củ", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 495000, oldPrice: 693000, rating: 4.93, reviews: 525, sold: 3000, stock: 50,
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 495000, oldPrice: 693000, rating: 4.93, reviews: 525, sold: 3000, stock: 50,
     shape: "box", color: "#E60012", weight: "Gói 100ml", origin: "Hàn Quốc", tags: ["Giảm sâu"],
     image: "img/22686115682.jpg", thumb: "img/thumb/22686115682.jpg", images: ["img/22686115682.jpg", "img/22686115682-3.jpg", "img/22686115682-4.jpg", "img/22686115682-5.jpg"], shopeeId: "22686115682", shopeeUrl: "https://shopee.vn/product/837223358/22686115682", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
     variants: [{ label: "Khoẻ Mạnh (Cam) · 10 gói", price: 495000, oldPrice: 693000 }, { label: "Mix vị · 10 gói", price: 800000, oldPrice: 1120000 }, { label: "Mix vị · Thùng 30 gói", price: 1490000, oldPrice: 2086000 }, { label: "Khoẻ Mạnh (Cam) · Thùng 30 gói", price: 1490000, oldPrice: 2086000 }],
@@ -155,7 +155,7 @@ window.PRODUCTS = [
     usage: "Bé uống 1 gói/ngày sau bữa ăn. Lắc đều trước khi dùng. Liều dùng theo hướng dẫn trên bao bì." },
 
   { id: "44353325470", name: "Nước Dinh Dưỡng Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon, Tăng Sức Khỏe", short: "Nước dinh dưỡng Lotte Organic", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 495000, oldPrice: 693000, rating: 4.98, reviews: 416, sold: 4000, stock: 50,
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 495000, oldPrice: 693000, rating: 4.98, reviews: 416, sold: 4000, stock: 50,
     shape: "box", color: "#F57C00", weight: "Gói 100ml", origin: "Hàn Quốc", tags: [],
     image: "img/44353325470.jpg", thumb: "img/thumb/44353325470.jpg", images: ["img/44353325470.jpg", "img/44353325470-2.jpg", "img/44353325470-3.jpg", "img/44353325470-4.jpg", "img/44353325470-5.jpg"], shopeeId: "44353325470", shopeeUrl: "https://shopee.vn/product/837223358/44353325470", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
     variants: [{ label: "10 gói · Tăng đề kháng (cam)", price: 495000, oldPrice: 693000 }, { label: "10 gói · Mix vị", price: 500000, oldPrice: 700000 }, { label: "Thùng 30 gói · Mix vị", price: 1490000, oldPrice: 2086000 }, { label: "Thùng 30 gói · Tăng đề kháng (cam)", price: 1490000, oldPrice: 2086000 }],
@@ -181,14 +181,14 @@ window.PRODUCTS = [
     highlights: ["Chiết xuất nhung hươu non Hàn Quốc", "Hỗ trợ tăng cân, ăn ngon cho bé chậm lớn", "Có bản gạc canxi (thùng)"],
     usage: "Bé uống 1 gói/ngày sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc dược sĩ tư vấn." },
 
-  { id: "23660586997", name: "Nước Ép LOTTE KHOẺ MẠNH - Bổ Sung Vitamin Giúp Trẻ Ăn Ngon Miệng, Tăng Cường Hệ Miễn Dịch", short: "Nước ép Lotte Khoẻ Mạnh (cam)", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["vitamin-tong-hop", "tang-can", "de-khang"], price: 495000, oldPrice: 693000, rating: 5, reviews: 0, sold: 0, stock: 50,
-    shape: "box", color: "#FB8C00", weight: "Gói 100ml", origin: "Hàn Quốc", tags: ["Giảm sâu"],
-    image: "img/23660586997.jpg", shopeeId: "23660586997", shopeeUrl: "https://shopee.vn/product/837223358/23660586997", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
-    variants: [{ label: "10 gói (cam)", price: 495000, oldPrice: 693000 }, { label: "Thùng 30 gói (cam)", price: 1490000, oldPrice: 2086000 }],
-    desc: "Nước ép Lotte Khoẻ Mạnh vị cam bổ sung vitamin, theo nhà sản xuất giúp trẻ ăn ngon miệng và tăng cường hệ miễn dịch. Đang giảm giá sâu – mua thùng 30 gói tiết kiệm nhất.",
-    highlights: ["Bổ sung vitamin từ cam", "Vị cam ngọt dịu, bé thích uống", "Giảm giá sâu cho thùng 30 gói"],
-    usage: "Bé uống 1–2 gói/ngày. Dùng theo hướng dẫn trên bao bì." },
+  { id: "23660586997", name: "Nước ép lê & rễ cát cánh hữu cơ Lotte Khoẻ Mạnh (Pasteur) – cho bé từ 12 tháng, hộp 10 gói 80ml", short: "Nước ép lê & rễ cát cánh Lotte Khoẻ Mạnh", brand: "lotte", cat: "nuoc-ep",
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["de-khang", "tang-can", "tieu-hoa", "organic"], price: 495000, oldPrice: 693000, rating: 5, reviews: 0, sold: 0, stock: 50,
+    shape: "box", color: "#FB8C00", weight: "Gói 80ml", origin: "Hàn Quốc", tags: ["Giảm sâu"],
+    image: "img/23660586997.jpg", thumb: "img/thumb/23660586997.jpg", images: ["img/23660586997.jpg", "img/23660586997-2.jpg", "img/23660586997-3.jpg", "img/23660586997-4.jpg", "img/23660586997-5.jpg", "img/23660586997-6.jpg"], shopeeId: "23660586997", shopeeUrl: "https://shopee.vn/product/837223358/23660586997", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
+    variants: [{ label: "Hộp 10 gói", price: 495000, oldPrice: 693000 }, { label: "Thùng 30 gói (3 hộp)", price: 1490000, oldPrice: 2086000 }],
+    desc: "Nước ép lê và rễ cát cánh (doraji) hữu cơ dòng Khoẻ Mạnh (무적튼튼) của Lotte, do Viện Pasteur Hàn Quốc nghiên cứu và sản xuất, gói 80ml có ống hút, dùng cho bé từ 12 tháng tuổi. Theo nhà sản xuất: lê & rễ cát cánh hữu cơ, hồng sâm organic cô đặc và lợi khuẩn EPS Lactobacillus (được cấp bằng sáng chế); không chất bảo quản, phụ gia; chứng nhận Organic và HACCP Hàn Quốc. Bổ sung vitamin C, kali, magie, axit amin, saponin, kẽm, canxi hỗ trợ đề kháng và hấp thu dưỡng chất.",
+    highlights: ["Dùng cho bé từ 12 tháng tuổi", "Lê & rễ cát cánh hữu cơ + hồng sâm cô đặc + lợi khuẩn EPS", "Chứng nhận Organic, HACCP – không chất bảo quản, phụ gia", "Hộp 10 gói · thùng 30 gói (3 hộp), gói nhỏ có ống hút tiện mang đi"],
+    usage: "Bé từ 12 tháng: 1 gói (80ml)/ngày sau bữa ăn, lắc nhẹ trước khi uống, ngon hơn khi để mát. Đã mở gói nên dùng ngay. Theo hướng dẫn trên bao bì." },
 
   { id: "26060839019", name: "Váng Sữa Canxi Hữu Cơ 30 Gói CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Xương Phát Triển, Bé Cao Tối Đa", short: "Canxi hữu cơ Calciumore (dạng váng sữa) 30 gói", brand: "calciumore", cat: "vitamin",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["canxi", "tang-chieu-cao", "organic"], price: 1100000, oldPrice: 1430000, rating: 4.92, reviews: 156, sold: 663, stock: 50,
@@ -217,21 +217,13 @@ window.PRODUCTS = [
     usage: "Người lớn dùng 1 tép/ngày sau ăn. Dùng theo hướng dẫn trên bao bì. Mẹ đang mang thai hoặc cho con bú cần hỏi ý kiến bác sĩ trước khi dùng." },
 
   { id: "41353214697", name: "Nước ép táo & củ dền hữu cơ Lotte Xanh – bổ sung canxi, sắt cho bé từ 6 tháng", short: "Nước ép táo & củ dền hữu cơ Lotte (Xanh)", brand: "lotte", cat: "nuoc-ep",
-    ages: ["6-12m", "1-3y", "3-6y", "6-12y"], needs: ["canxi", "organic", "an-dam"], price: 600000, oldPrice: 840000, rating: 5.0, reviews: 23, sold: 190, stock: 50,
+    ages: ["6-12m", "1-3y", "3-6y", "6-12y", "12-18y"], needs: ["canxi", "organic", "an-dam"], price: 600000, oldPrice: 840000, rating: 5.0, reviews: 23, sold: 190, stock: 50,
     shape: "box", color: "#2E7D32", weight: "10 gói", origin: "Hàn Quốc", tags: [],
     image: "img/41353214697.jpg", thumb: "img/thumb/41353214697.jpg", images: ["img/41353214697.jpg", "img/41353214697-3.jpg", "img/41353214697-4.jpg", "img/41353214697-5.jpg"], shopeeId: "41353214697", shopeeUrl: "https://shopee.vn/product/837223358/41353214697", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
     desc: "Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
     highlights: ["Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm", "Táo & củ dền hữu cơ, chứng nhận Organic, HACCP", "Bổ sung canxi, sắt, axit folic"],
     usage: "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì." },
 
-  { id: "43605768422", name: "Nước ép Lê và Rễ cát cánh hữu cơ Organic LOTTE Giúp Trẻ Ăn Ngon Miệng, Tăng Cường Hệ Miễn Dịch", short: "Nước ép lê & rễ cát cánh hữu cơ Lotte", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["tang-can", "de-khang", "organic"], price: 495000, oldPrice: 693000, rating: 5, reviews: 0, sold: 0, stock: 50,
-    shape: "box", color: "#7CB342", weight: "Gói 100ml", origin: "Hàn Quốc", tags: [],
-    image: "img/43605768422.jpg", shopeeId: "43605768422", shopeeUrl: "https://shopee.vn/product/837223358/43605768422", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
-    variants: [{ label: "10 gói", price: 495000, oldPrice: 693000 }, { label: "Thùng 30 gói", price: 1490000, oldPrice: 2086000 }],
-    desc: "Nước ép lê và rễ cát cánh hữu cơ Organic Lotte – bài kết hợp quen thuộc của Hàn Quốc giúp dịu họng. Theo nhà sản xuất, sản phẩm giúp trẻ ăn ngon miệng và tăng cường hệ miễn dịch.",
-    highlights: ["Lê + rễ cát cánh: bộ đôi dịu họng của người Hàn", "Nguyên liệu hữu cơ, vị ngọt thanh", "Thùng 30 gói giá tốt"],
-    usage: "Bé uống 1–2 gói/ngày, có thể hâm ấm khi trời lạnh. Dùng theo hướng dẫn trên bao bì." }
 ];
 
 /* Feedback thực tế của khách (ảnh chụp tin nhắn/bình luận/ảnh bé dùng sản phẩm) – đặt file vào img/feedback/.
