@@ -362,7 +362,7 @@ window.PRODUCTS = [
     usage: "10–15g/ngày pha trà hoặc nấu ăn. Bảo quản kín, nơi khô mát." },
 
   { id: "57903449970", name: "Kem thắp sáng hồng da Cell Happy Co 5in1 nâng tone, bảo vệ da khỏi ánh nắng giúp da căng bóng", short: "Kem hồng da Cell Happy Co 5in1", brand: "cellhappy", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 1000000, oldPrice: 1350000, rating: 5.0, reviews: 0, sold: 11, stock: 50,
+    ages: [], needs: ["cho-me", "lam-dep"], price: 695000, oldPrice: 938000, rating: 5.0, reviews: 0, sold: 11, stock: 50,
     shape: "bottle", color: "#F06292", weight: "Tuýp", origin: "Hàn Quốc", tags: [],
     image: "img/57903449970.jpg", thumb: "img/thumb/57903449970.jpg", images: ["img/57903449970.jpg", "img/57903449970-2.jpg", "img/57903449970-3.jpg", "img/57903449970-4.jpg", "img/57903449970-5.jpg"], shopeeId: "57903449970", shopeeUrl: "https://shopee.vn/product/837223358/57903449970", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Kem dưỡng ẩm",
     desc: "Kem dưỡng hồng da Cell Happy Co 5in1 (Hàn Quốc): nâng tone, chống nắng vô cơ không gây kích ứng, dưỡng ẩm, làm sáng và bảo vệ da khỏi tia UV. Theo nhà sản xuất: cho da căng bóng, trắng hồng tự nhiên.",
