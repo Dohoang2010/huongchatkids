@@ -24,7 +24,7 @@ window.SITE = {
   email: 'huongchatkids@gmail.com',
   company: 'HƯƠNG CHẤT KIDS',        // tên pháp nhân đầy đủ khi có GPKD, VD: CÔNG TY TNHH ...
   taxCode: '',                        // mã số thuế – để trống sẽ ẩn dòng MST ở footer
-  freeshipFrom: 499000,
+  freeshipFrom: 3000000,
   shipFee: 25000,
   expressFee: 35000,
   expressCities: ['Hà Nội'],            // tỉnh/thành có giao hoả tốc trong ngày
@@ -231,7 +231,7 @@ window.PRODUCTS = [
 ];
 
 window.BANNERS = [
-  { title: 'Freeship toàn quốc\ncho đơn từ 499K', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Nhập mã <b>HCK10</b> giảm 10% (tối đa 100K, đơn từ 300K).', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
+  { title: 'Freeship toàn quốc\ncho đơn từ 3 triệu', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Nhập mã <b>HCK10</b> giảm 10% (tối đa 100K, đơn từ 300K).', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
   { title: 'Dinh dưỡng Hàn Quốc\nchính hãng cho bé', sub: 'Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.', cta: 'Xem sản phẩm', link: 'collections.html', theme: 'teal', badge: 'Chính hãng 100%', image: 'img/thumb/22644617070.jpg' },
   { title: 'Nước ép Lotte Organic\ngiảm đến 38%', sub: 'Giúp bé ăn ngon, tăng chiều cao – giá tốt nhất tháng này, thùng 30 gói chỉ từ <b>1.490.000₫</b>.', cta: 'Mua ngay', link: 'collections.html?cat=nuoc-ep', theme: 'amber', badge: 'Flash sale', image: 'img/thumb/22686115682.jpg' },
 ];
