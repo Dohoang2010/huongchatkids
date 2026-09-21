@@ -250,6 +250,7 @@
       <span class="topbar__item">${I.truck}Freeship đơn từ <b>${fmt(SITE.freeshipFrom)}</b> · Hà Nội giao trong ngày</span>
       <span class="topbar__item">${I.shield}Chính hãng 100% – Tem phụ, hoá đơn VAT</span>
       <span class="topbar__item">${I.headset}Dược sĩ tư vấn miễn phí ${SITE.workingHours}</span>
+      <a class="topbar__item topbar__link" href="policy.html">${I.file}Hỗ trợ & chính sách</a>
     </div></div>
     <header class="header" id="header">
       <div class="container header__inner">
@@ -287,6 +288,7 @@
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
         ${NAV.map(navMobile).join('')}
         <a class="mmenu__link" href="account.html">👤 Tài khoản / Đơn hàng</a>
+        <a class="mmenu__link" href="policy.html">📋 Hỗ trợ & chính sách</a>
       </div>
     </div>`;
     const footer = `
@@ -301,8 +303,8 @@
           ${SITE.taxCode ? `<p>${I.file}<span>MST: ${SITE.taxCode}</span></p>` : ''}
           ${SITE.bctUrl ? `<a class="footer__cert" href="${SITE.bctUrl}" target="_blank" rel="noopener">${I.shield} Đã thông báo Bộ Công Thương</a>` : ''}
         </div>
-        <div class="footer__col"><h4>Hỗ trợ khách hàng</h4><ul><li><a href="policy.html#mua-hang">Hướng dẫn mua hàng</a></li><li><a href="policy.html#thanh-toan">Phương thức thanh toán</a></li><li><a href="policy.html#giao-hang">Chính sách giao hàng</a></li><li><a href="policy.html#doi-tra">Chính sách đổi trả & hoàn tiền</a></li><li><a href="policy.html#bao-mat">Chính sách bảo mật</a></li><li><a href="policy.html#dieu-khoan">Điều khoản sử dụng</a></li></ul></div>
-        <div class="footer__col"><h4>Về ${SITE.name}</h4><ul><li><a href="policy.html#gioi-thieu">Giới thiệu</a></li><li><a href="policy.html#chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html#faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang mẹ</a></li><li><a href="account.html">Tra cứu đơn hàng</a></li><li><a href="mailto:${SITE.email}">Liên hệ hợp tác</a></li></ul></div>
+        <div class="footer__col"><h4><a href="policy.html">Hỗ trợ khách hàng</a></h4><ul><li><a href="policy.html?p=mua-hang">Hướng dẫn mua hàng</a></li><li><a href="policy.html?p=thanh-toan">Phương thức thanh toán</a></li><li><a href="policy.html?p=giao-hang">Chính sách giao hàng</a></li><li><a href="policy.html?p=doi-tra">Chính sách đổi trả & hoàn tiền</a></li><li><a href="policy.html?p=bao-mat">Chính sách bảo mật</a></li><li><a href="policy.html?p=dieu-khoan">Điều khoản sử dụng</a></li></ul></div>
+        <div class="footer__col"><h4><a href="policy.html?p=gioi-thieu">Về ${SITE.name}</a></h4><ul><li><a href="policy.html?p=gioi-thieu">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang mẹ</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
         <div class="footer__col"><h4>Kết nối với chúng tôi</h4>
           <p class="fs-13 text-muted">Theo dõi để nhận ưu đãi và kiến thức chăm con mỗi ngày.</p>
           ${SITE.zaloQr ? `<div class="footer__qr"><img src="${SITE.zaloQr}" width="112" height="112" alt="Mã QR Zalo ${SITE.name}" loading="lazy"><div><b>Zalo ${SITE.hotline}</b><small>Quét mã để chat với dược sĩ, đặt hàng nhanh</small><a href="${SITE.zalo}" target="_blank" rel="noopener">Mở Zalo →</a></div></div>` : ''}
@@ -312,7 +314,7 @@
         </div>
       </div>
       <p class="footer__note">* Thực phẩm bảo vệ sức khoẻ không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Hiệu quả có thể khác nhau tuỳ cơ địa. Vui lòng đọc kỹ hướng dẫn sử dụng trước khi dùng.</p>
-      <div class="footer__bottom"><span>© 2026 ${SITE.company} · ${SITE.address}</span><span><a href="policy.html#bao-mat">Bảo mật</a> · <a href="policy.html#dieu-khoan">Điều khoản</a></span></div>
+      <div class="footer__bottom"><span>© 2026 ${SITE.company} · ${SITE.address}</span><span><a href="policy.html?p=bao-mat">Bảo mật</a> · <a href="policy.html?p=dieu-khoan">Điều khoản</a></span></div>
     </div></footer>
     <div class="floating">
       <button class="fab fab--top" type="button" id="btnTop" aria-label="Lên đầu trang">${I.arrowUp}</button>
@@ -415,7 +417,7 @@
           <div class="form-error hide" id="qbError" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block btn--stack" type="submit" id="qbSubmit"><span>ĐẶT HÀNG · <span id="qbTotal"></span></span><small>Không cần tài khoản · Kiểm tra hàng trước khi thanh toán</small></button>
           <div class="qb__trust"><span>${I.check}Chính hãng, tem phụ tiếng Việt</span><span>${I.check}Đổi trả 7 ngày</span><span>${I.check}Giao dự kiến ${deliveryEstimate()}</span></div>
-          <p class="qb__privacy">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html#bao-mat" target="_blank">Chính sách bảo mật</a></p>
+          <p class="qb__privacy">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
         </form>
         <div class="qb__alt"><p>Hoặc đặt hàng qua</p><div class="row ${p.shopeeUrl ? 'row--4' : ''}">
           <a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-zalo-copy="${esc(shortName(p))}${p.variants ? ' – ' + esc(p.variants[QB.variant || 0].label) : ''}">Đặt qua Zalo</a>${p.shopeeUrl ? `<a class="btn btn--ghost" href="${p.shopeeUrl}" target="_blank" rel="noopener">Xem trên Shopee</a>` : ''}

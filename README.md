@@ -20,9 +20,10 @@ Hoặc mở trực tiếp `index.html`. Deploy: upload nguyên thư mục lên b
 | `cart.html` | Giỏ hàng + mã giảm giá |
 | `checkout.html` | Thanh toán 1 trang (không cần tài khoản) → màn hình đặt hàng thành công |
 | `blog.html` | Cẩm nang mẹ (danh sách + bài viết `?id=`) |
-| `policy.html` | Giới thiệu, hướng dẫn mua hàng, thanh toán, giao hàng, đổi trả, chính hãng, bảo mật, điều khoản, FAQ |
+| `policy.html` | Trung tâm hỗ trợ: 12 mục (hướng dẫn mua hàng, thanh toán, giao hàng, đổi trả, bảo mật, điều khoản, giới thiệu, chính hãng, FAQ, tra cứu đơn, hợp tác) – nội dung trong `js/policies.js` |
 | `account.html` | Đơn hàng gần đây (mua lại 1 chạm), yêu thích, thông tin đã lưu |
 | `css/style.css` | Design system (màu, nút, thẻ sản phẩm, modal, drawer, responsive) |
+| `js/policies.js` | Nội dung 12 mục hỗ trợ/chính sách (HTML), placeholder {hotline} {email}… tự điền từ SITE |
 | `js/data.js` | **Toàn bộ dữ liệu**: thông tin shop, độ tuổi, danh mục, nhu cầu, thương hiệu, sản phẩm, banner, đánh giá, blog, mã giảm giá, tỉnh thành |
 | `js/app.js` | Lõi dùng chung: header/menu/tìm kiếm, giỏ hàng (localStorage), Mua nhanh, Gọi lại, ảnh sản phẩm tự sinh, footer, widget nổi, bottom nav |
 
