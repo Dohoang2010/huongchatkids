@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sản phẩm – Hương Chất Kids</title>
+  <meta name="description" content="Chi tiết sản phẩm, độ tuổi phù hợp, cách dùng và đánh giá thật từ Shopee. Mua nhanh không cần tài khoản, dược sĩ tư vấn miễn phí.">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F0537A'/><text x='50' y='68' font-size='56' text-anchor='middle'>🍼</text></svg>">
+</head>
+<body>
+<main id="app"><div class="container" id="pdp"></div></main>
+<div class="sticky-buy" id="stickyBuy"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, I, starRow, productImage, productCard, Cart, toast, deliveryEstimate, openQuickBuy } = MC;
+  const p = byId(param('id'));
+  if (!p) { $('#pdp').innerHTML = `<div class="empty card" style="margin:24px 0"><div class="emoji">🔍</div><h3>Không tìm thấy sản phẩm</h3><p>Sản phẩm có thể đã ngừng bán. Mẹ xem các sản phẩm khác nhé.</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem tất cả sản phẩm</a></div>`; return; }
+  const b = brandOf(p); const d = pct(p); let variant = p.variants ? 0 : null; let qty = 1;
+  const catObj = CATEGORIES.find((c) => c.key === p.cat) || {}; const isTPCN = !!catObj.tpcn;
+  document.title = (p.short || p.name) + ' – ' + SITE.name;
+  const { productThumb, shortName } = MC; const manyVariants = p.variants && p.variants.length > 5;
+  const price = () => variant != null ? p.variants[variant].price : p.price;
+  const oldPrice = () => variant != null ? p.variants[variant].oldPrice : p.oldPrice;
+
+  /* Gợi ý mua kèm: cùng độ tuổi, khác danh mục, bán chạy */
+  const related = PRODUCTS.filter((x) => x.id !== p.id && !x.isCombo && x.ages.some((a) => p.ages.includes(a)) && x.cat !== p.cat).sort((a, c) => c.sold - a.sold).slice(0, 2);
+  const similar = PRODUCTS.filter((x) => x.id !== p.id && (x.cat === p.cat || x.needs.some((n) => p.needs.includes(n)))).sort((a, c) => c.sold - a.sold).slice(0, 5);
+  const reviewsFor = REVIEWS.filter((r) => r.product === p.id);
+
+  $('#pdp').innerHTML = `
+    <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="collections.html?cat=${p.cat}">${(CATEGORIES.find((c) => c.key === p.cat) || {}).label || 'Sản phẩm'}</a><span>›</span><span>${esc(p.short || p.name)}</span></nav>
+    <div class="pdp">
+      <div class="gallery">
+        <div class="gallery__main"><img id="mainImg" src="${productImage(p, 0)}" alt="${esc(shortName(p))}">${d ? `<span class="badge badge--sale">-${d}%</span>` : ''}</div>
+        <div class="gallery__thumbs">${Array.from({ length: p.images && p.images.length ? Math.min(6, p.images.length) : 3 }, (_, i) => i).map((i) => `<button type="button" class="${i === 0 ? 'is-active' : ''}" data-thumb="${i}" aria-label="Ảnh ${i + 1}"><img src="${productImage(p, i)}" alt=""></button>`).join('')}</div>
+      </div>
+      <div class="pdp__info">
+        <a class="pdp__brand" href="collections.html?brand=${p.brand}">${esc(b.label)}${p.origin ? ` · Xuất xứ ${esc(p.origin)}` : ''}</a>
+        <h1 class="pdp__title">${esc(shortName(p))}</h1>
+        ${p.short && p.short !== p.name ? `<p class="pdp__fullname">${esc(p.name)}</p>` : ''}
+        <div class="pdp__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)}</span><a href="#reviews" class="text-primary" data-goto-reviews>${p.reviews} đánh giá trên Shopee</a>` : `<a href="#reviews" class="text-muted" data-goto-reviews>Chưa có đánh giá</a>`}${p.sold > 0 ? `<span>Đã bán ${p.sold.toLocaleString('vi-VN')}</span>` : ''}<span>${p.stock > 0 ? `<span class="text-teal fw-600">● Còn hàng</span>` : `<span class="text-red fw-600">● Tạm hết</span>`}</span></div>
+        ${p.ages.length ? `<div class="pdp__ages">${I.user} Phù hợp cho bé <b>${MC.ageRange(p.ages)}</b> · ${p.ages.map((a) => `<a href="collections.html?age=${a}">${ageLabel(a)}</a>`).join(', ')}</div>` : `<div class="pdp__ages">${I.user} Sản phẩm dành cho <b>mẹ / người lớn</b></div>`}
+        <div class="pdp__price"><b id="pPrice">${fmt(price())}</b>${oldPrice() ? `<s id="pOld">${fmt(oldPrice())}</s><span class="badge badge--sale">Tiết kiệm ${fmt(oldPrice() - price())}</span>` : ''}</div>
+        ${p.variants ? (manyVariants ? `<div class="pdp__opt"><label for="variantSel">Phân loại</label><select class="input" id="variantSel">${p.variants.map((v, i) => `<option value="${i}">${esc(v.label)} – ${fmt(v.price)}${v.oldPrice ? ` (giá gốc ${fmt(v.oldPrice)})` : ''}</option>`).join('')}</select></div>` : `<div class="pdp__opt"><label>Phân loại</label><div class="chips" id="variants" role="group" aria-label="Phân loại">${p.variants.map((v, i) => `<button type="button" class="chip ${i === 0 ? 'is-active' : ''}" data-variant="${i}" aria-pressed="${i === 0}">${esc(v.label)} <small>· ${fmt(v.price)}</small></button>`).join('')}</div></div>`) : ''}
+        <div class="pdp__opt"><label>Số lượng</label><div class="flex items-center gap-12"><div class="qty" role="group" aria-label="Số lượng"><button type="button" id="qMinus" aria-label="Giảm số lượng">−</button><input type="number" id="qInput" value="1" min="1" max="99" inputmode="numeric" aria-label="Số lượng"><button type="button" id="qPlus" aria-label="Tăng số lượng">+</button></div><span class="fs-13 text-teal fw-600" id="qHint">Mua từ 2 giảm thêm 3%</span></div></div>
+        <div class="pdp__buy">
+          <button class="btn btn--primary btn--lg btn--block btn--stack" type="button" id="btnBuy"><span>${I.zap} MUA NGAY · <span id="buyTotal">${fmt(price())}</span></span><small>Chỉ cần SĐT & địa chỉ · Kiểm tra hàng trước khi thanh toán</small></button>
+          <div class="row"><button class="btn btn--outline btn--lg" type="button" id="btnAdd">${I.cart}Thêm vào giỏ</button><a class="btn btn--zalo btn--lg" href="${SITE.zalo}" target="_blank" rel="noopener" data-zalo-copy="${esc(shortName(p))}">Đặt qua Zalo</a></div>
+          <div class="row"><button class="btn btn--ghost btn--wrap" type="button" data-callback="${p.id}">${I.headset}Dược sĩ gọi tư vấn</button>${p.shopeeUrl ? `<a class="btn btn--ghost" href="${p.shopeeUrl}" target="_blank" rel="noopener">Xem trên Shopee ↗</a>` : `<a class="btn btn--ghost" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi đặt hàng</a>`}</div>
+        </div>
+        <div class="pdp__note">${isTPCN ? '⚠️ Thực phẩm bảo vệ sức khoẻ, không phải là thuốc và không thay thế thuốc chữa bệnh. Đọc kỹ hướng dẫn và độ tuổi trên bao bì; dược sĩ sẽ gọi tư vấn liều dùng phù hợp với bé.' : '💛 Thực phẩm bổ sung, không thay thế bữa ăn chính. Bé dưới 1 tuổi hoặc có tiền sử dị ứng nên hỏi ý kiến bác sĩ trước khi dùng.'}</div>
+        <div class="pdp__offers"><h4>${I.gift}Ưu đãi khi mua hôm nay</h4><ul><li>Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng</li><li>Nhập mã <b>HCK10</b> giảm 10% (tối đa 100K) cho đơn từ 300K</li><li>Freeship đơn từ ${fmt(SITE.freeshipFrom)} · Nội thành Hà Nội giao trong ngày</li>${isTPCN ? '<li>Dược sĩ gọi hướng dẫn liều dùng miễn phí sau khi đặt</li>' : '<li>Đổi mới miễn phí nếu hàng móp, rách, cận date khi nhận</li>'}</ul></div>
+        <div class="pdp__trust"><span>${I.shield}Chính hãng, tem phụ tiếng Việt</span><span>${I.refresh}Đổi trả miễn phí 7 ngày</span><span>${I.file}Hoá đơn VAT theo yêu cầu</span><span>${I.package}Đóng gói chống sốc</span></div>
+        <div class="pdp__delivery"><span>${I.truck}Giao dự kiến: <b>${deliveryEstimate()}</b> (Hà Nội trong ngày · tỉnh khác 1–3 ngày)</span><span>${I.mapPin}Giao tới: <span id="addrHint">${esc(((MC.Customer.get() || {}).address || 'Hà Nội, TP.HCM & 61 tỉnh thành').replace('|', ', '))}</span></span><span>${I.phoneCall}Hotline / Zalo: <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a></span></div>
+      </div>
+    </div>
+
+    ${related.length ? `<div class="bundle"><h3>🎁 Mẹ thường mua kèm – thêm cả bộ vào giỏ chỉ 1 chạm</h3><p class="fs-13 text-muted mb-12">Gợi ý theo độ tuổi của bé. Bỏ tick sản phẩm không cần.</p><div class="bundle__items">
+      <label class="bundle__item"><input type="checkbox" checked disabled><img src="${productThumb(p)}" alt=""><div><div class="n">${esc(shortName(p))} <span class="text-muted">(sản phẩm này)</span></div><div class="p" id="bundleMainPrice">${fmt(price())}</div></div></label>
+      ${related.map((r) => `<label class="bundle__item"><input type="checkbox" checked data-bundle="${r.id}" data-price="${r.price}"><img src="${productThumb(r)}" alt=""><div><div class="n">${esc(shortName(r))}</div><div class="p">${fmt(r.price)}</div></div></label>`).join('')}
+    </div><div class="bundle__foot"><div class="tot">Tổng cộng: <b id="bundleTotal"></b><span class="save" id="bundleSave"></span></div><button class="btn btn--primary" type="button" id="bundleAdd">${I.cart}Thêm <span id="bundleCount"></span> sản phẩm vào giỏ</button></div></div>` : ''}
+
+    <div class="pdp__tabs">
+      <div class="tabs" id="pdpTabs" role="tablist"><button class="tab is-active" data-panel="desc" role="tab" aria-selected="true">Mô tả sản phẩm</button><button class="tab" data-panel="usage" role="tab" aria-selected="false">Thành phần & Cách dùng</button><button class="tab" data-panel="reviews" role="tab" aria-selected="false">Đánh giá${p.reviews ? ` (${p.reviews})` : ''}</button><button class="tab" data-panel="policy" role="tab" aria-selected="false">Chính sách</button></div>
+      <div class="pdp__panel is-active" id="panel-desc"><p>${esc(p.desc)}</p><h3>Điểm nổi bật</h3><ul class="list">${(p.highlights || []).map((h) => `<li>${esc(h)}</li>`).join('')}</ul>${p.isCombo ? `<h3>Bộ sản phẩm gồm</h3><div class="grid grid--3">${p.items.map((id) => productCard(byId(id))).join('')}</div>` : ''}
+        <h3>Thông tin sản phẩm</h3><div class="spec"><div>Thương hiệu</div><div>${esc(b.label)}</div><div>Xuất xứ</div><div>${esc(p.origin)}</div><div>Quy cách</div><div>${esc(p.weight)}</div><div>Độ tuổi</div><div>${p.ages.length ? p.ages.map(ageLabel).join(', ') : 'Người lớn / mẹ'}</div><div>Nhu cầu</div><div>${p.needs.map((n) => (NEEDS.find((x) => x.key === n) || {}).label).filter(Boolean).join(', ')}</div><div>Hạn sử dụng</div><div>Còn tối thiểu 6 tháng kể từ ngày giao</div>${p.shopeeCategory ? `<div>Ngành hàng</div><div>${esc(p.shopeeCategory)}</div>` : ''}${p.shopeeId ? `<div>Mã sản phẩm</div><div>${esc(p.shopeeId)}</div>` : ''}</div>
+        ${isTPCN ? '<div class="disclaimer">⚠️ Thực phẩm này không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Hiệu quả tuỳ thuộc cơ địa từng bé.</div>' : '<div class="disclaimer">💛 Sản phẩm là thực phẩm bổ sung cho bữa ăn, không thay thế chế độ ăn đa dạng. Bé dưới 1 tuổi hoặc có tiền sử dị ứng nên hỏi ý kiến bác sĩ trước khi dùng.</div>'}</div>
+      <div class="pdp__panel" id="panel-usage"><h3>Hướng dẫn sử dụng</h3><p>${esc(p.usage)}</p><h3>Bảo quản</h3><p>Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp. Sau khi mở, đậy kín và dùng theo thời hạn ghi trên bao bì (nước ép, hồng sâm đã mở gói nên dùng ngay).</p><h3>Lưu ý</h3><ul class="list"><li>Đọc kỹ hướng dẫn sử dụng trước khi dùng.</li><li>Không dùng cho bé dị ứng với bất kỳ thành phần nào của sản phẩm.</li><li>Tham khảo ý kiến dược sĩ Hương Chất Kids để được tư vấn liều dùng phù hợp với cân nặng, độ tuổi của bé.</li></ul></div>
+      <div class="pdp__panel" id="panel-reviews">${p.reviews === 0 ? `<div class="empty"><div class="emoji">💬</div><h3>Chưa có đánh giá cho sản phẩm này</h3><p>Mẹ đã dùng sản phẩm? Hãy chia sẻ cảm nhận qua Zalo để nhận mã giảm 20K cho đơn sau.</p><a class="btn btn--zalo mt-16" href="${SITE.zalo}" target="_blank" rel="noopener">Gửi đánh giá qua Zalo</a></div>` : `<div class="rating-summary"><div class="big"><b>${p.rating.toFixed(1)}</b><div class="stars">${starRow(p.rating)}</div><small>${p.reviews} đánh giá</small></div><div class="flex flex-col gap-8" style="justify-content:center"><p style="margin:0">Điểm trung bình <b>${p.rating.toFixed(2)}/5</b> từ <b>${p.reviews.toLocaleString('vi-VN')}</b> lượt đánh giá${p.sold ? ` · đã bán <b>${p.sold.toLocaleString('vi-VN')}</b>` : ''} trên gian hàng Shopee chính thức của ${SITE.name}.</p>${p.shopeeUrl ? `<a class="btn btn--shopee" style="align-self:flex-start" href="${p.shopeeUrl}" target="_blank" rel="noopener">Xem ${p.reviews} đánh giá trên Shopee ↗</a>` : ''}</div></div>
+        ${reviewsFor.length ? `<div class="review-list">${reviewsFor.map((r) => `<div class="review-item"><div class="top"><span class="stars">${starRow(r.stars)}</span><b>${esc(r.name)}</b><small>· ${esc(r.child)} · ${esc(r.city || '')}</small></div><p>${esc(r.text)}</p></div>`).join('')}</div>` : ''}`}</div>
+      <div class="pdp__panel" id="panel-policy"><h3>Giao hàng</h3><p>Nội thành Hà Nội: giao trong ngày (đơn đặt trước 16h), có hoả tốc 2–4h phụ thu ${fmt(SITE.expressFee)}. TP.HCM và các tỉnh khác: 1–3 ngày làm việc qua đơn vị vận chuyển. Miễn phí vận chuyển cho đơn từ ${fmt(SITE.freeshipFrom)}. Chi tiết: <a class="text-primary fw-600" href="policy.html#giao-hang">Chính sách giao hàng</a>.</p><h3>Đổi trả</h3><p>Đổi trả miễn phí trong 7 ngày nếu sản phẩm lỗi do nhà sản xuất, sai hàng, hư hỏng do vận chuyển. Được kiểm tra hàng trước khi thanh toán.</p><h3>Cam kết chính hãng</h3><p>Sản phẩm nhập khẩu chính ngạch, có tem phụ tiếng Việt, hoá đơn VAT xuất theo yêu cầu. Hoàn tiền 100% và chịu toàn bộ chi phí nếu mẹ phát hiện hàng không chính hãng. Xem <a class="text-primary fw-600" href="policy.html#chinh-hang">cam kết chính hãng</a>.</p></div>
+    </div>
+
+    <section class="section"><div class="section-head"><div><h2>Sản phẩm tương tự</h2></div><a class="link" href="collections.html?cat=${p.cat}">Xem thêm ${I.arrowR}</a></div><div class="row-scroll">${similar.map((x) => productCard(x)).join('')}</div></section>`;
+
+  $('#stickyBuy').innerHTML = `<a class="btn btn--zalo btn--icon" href="${SITE.zalo}" target="_blank" rel="noopener" aria-label="Đặt qua Zalo" data-zalo-copy="${esc(shortName(p))}" style="font-weight:800;font-size:13px">Zalo</a><button class="btn btn--outline btn--icon" type="button" id="stickyAdd" aria-label="Thêm vào giỏ">${I.cart}</button><button class="btn btn--primary" type="button" id="stickyBuyBtn">${I.zap}Mua ngay · <span id="stickyPrice">${fmt(price())}</span></button>`;
+
+  /* Interactions */
+  const lineTotal = () => Math.round(price() * qty * (qty >= 2 ? 1 - MC.MULTI_RATE : 1));
+  const refreshPrice = () => { $('#pPrice').textContent = fmt(price()); const o = $('#pOld'); if (o) o.textContent = oldPrice() ? fmt(oldPrice()) : ''; $('#stickyPrice').textContent = fmt(lineTotal()); $('#buyTotal').textContent = fmt(lineTotal()); $('#qHint').textContent = qty >= 2 ? '🎉 Đã giảm thêm 3%' : 'Mua từ 2 giảm thêm 3%'; const bm = $('#bundleMainPrice'); if (bm) bm.textContent = fmt(price()); bundleCalc(); };
+  $('#variants')?.addEventListener('click', (e) => { const c = e.target.closest('[data-variant]'); if (!c) return; variant = Number(c.dataset.variant); $$('#variants .chip').forEach((x) => { x.classList.toggle('is-active', x === c); x.setAttribute('aria-pressed', x === c); }); refreshPrice(); });
+  $('#variantSel')?.addEventListener('change', (e) => { variant = Number(e.target.value); refreshPrice(); });
+  $('#qMinus').addEventListener('click', () => { qty = Math.max(1, qty - 1); $('#qInput').value = qty; refreshPrice(); });
+  $('#qPlus').addEventListener('click', () => { qty = Math.min(99, qty + 1); $('#qInput').value = qty; refreshPrice(); });
+  $('#qInput').addEventListener('change', (e) => { qty = Math.max(1, Math.min(99, Number(e.target.value) || 1)); e.target.value = qty; refreshPrice(); });
+  const buy = () => openQuickBuy(p.id, { qty, variant: variant ?? undefined });
+  const add = () => { Cart.add(p.id, qty, variant); toast('Đã thêm vào giỏ hàng', { action: { label: 'Thanh toán ngay', onClick: () => location.href = 'checkout.html' } }); if (window.innerWidth >= 992) MC.openCart(); };
+  $('#btnBuy').addEventListener('click', buy); $('#stickyBuyBtn').addEventListener('click', buy); $('#btnAdd').addEventListener('click', add); $('#stickyAdd').addEventListener('click', add);
+  $$('[data-thumb]').forEach((t) => t.addEventListener('click', () => { $$('[data-thumb]').forEach((x) => x.classList.toggle('is-active', x === t)); $('#mainImg').src = productImage(p, Number(t.dataset.thumb)); }));
+  $('#pdpTabs').addEventListener('click', (e) => { const t = e.target.closest('.tab'); if (!t) return; $$('#pdpTabs .tab').forEach((x) => { x.classList.toggle('is-active', x === t); x.setAttribute('aria-selected', x === t); }); $$('.pdp__panel').forEach((x) => x.classList.toggle('is-active', x.id === 'panel-' + t.dataset.panel)); });
+  $$('[data-goto-reviews]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); $('[data-panel=reviews]').click(); $('.pdp__tabs').scrollIntoView({ behavior: 'smooth' }); }));
+  if (location.hash === '#reviews') $('[data-panel=reviews]').click();
+
+  /* Bundle */
+  function bundleCalc() { const boxes = $$('[data-bundle]:checked'); const tot = price() + boxes.reduce((s, b) => s + Number(b.dataset.price), 0); const el = $('#bundleTotal'); if (!el) return; el.textContent = fmt(tot); $('#bundleSave').textContent = tot >= SITE.freeshipFrom ? 'Đủ điều kiện freeship' : `Mua thêm ${fmt(SITE.freeshipFrom - tot)} để được freeship`; $('#bundleCount').textContent = boxes.length + 1; }
+  $$('[data-bundle]').forEach((b) => b.addEventListener('change', bundleCalc));
+  $('#bundleAdd')?.addEventListener('click', () => { Cart.add(p.id, 1, variant); $$('[data-bundle]:checked').forEach((b) => Cart.add(b.dataset.bundle, 1)); toast(`Đã thêm ${$$('[data-bundle]:checked').length + 1} sản phẩm vào giỏ`, { action: { label: 'Thanh toán', onClick: () => location.href = 'checkout.html' } }); MC.openCart(); });
+  bundleCalc();
+
+  /* Sticky bar hiện khi cuộn qua nút mua chính */
+  const io = new IntersectionObserver(([en]) => $('#stickyBuy').classList.toggle('is-visible', !en.isIntersecting), { threshold: 0 });
+  io.observe($('#btnBuy'));
+});
+</script>
+</body>
+</html>

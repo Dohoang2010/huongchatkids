@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tài khoản – Hương Chất Kids</title>
+  <meta name="description" content="Đơn hàng gần đây và thông tin giao hàng đã lưu – Hương Chất Kids.">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F0537A'/><text x='50' y='68' font-size='56' text-anchor='middle'>🍼</text></svg>">
+</head>
+<body>
+<main id="app"><div class="container" id="acc"></div></main>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, fmt, I, esc, store, Customer, byId, productCard, Wish } = MC;
+  const c = Customer.get(); const orders = store.get('mc_orders', []).filter((o) => o.type !== 'callback'); const wish = Wish.get().map(byId).filter(Boolean);
+  const status = (o) => o.status ? [o.status, 'badge--teal'] : ['Đã tiếp nhận – dược sĩ sẽ xác nhận qua điện thoại/Zalo', 'badge--hot'];
+  $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Tài khoản</span></nav><h1 class="page-title">${c ? `Chào ${esc(c.name || 'mẹ')} 👋` : 'Tài khoản của mẹ'}</h1><p class="text-muted fs-14 mb-16">${SITE.name} không bắt buộc đăng ký – đơn hàng được nhận diện qua số điện thoại của mẹ.</p>
+    <div class="checkout">
+      <div class="flex flex-col gap-16">
+        <div class="card card--pad"><h3>📦 Đơn hàng gần đây</h3>${orders.length ? orders.map((o) => { const [s, cls] = status(o); return `<div class="cart-item" style="grid-template-columns:1fr auto"><div><b>${o.code}</b> <span class="badge ${cls}">${s}</span><div class="fs-13 text-muted mt-8">${new Date(o.createdAt).toLocaleString('vi-VN')} · ${o.items.length} sản phẩm · ${o.payment === 'cod' ? 'COD' : o.payment === 'bank' ? 'Chuyển khoản' : 'Ví điện tử'}</div><div class="fs-13 mt-8">${o.items.map((i) => esc(i.name) + ' x' + (i.qty || 1)).join('; ')}</div></div><div style="text-align:right"><b class="text-primary" style="font-size:17px">${fmt(o.total)}</b><div class="mt-8"><button class="btn btn--outline btn--sm" type="button" data-reorder-code="${o.code}">${I.refresh}Mua lại</button></div></div></div>`; }).join('') : `<div class="empty"><div class="emoji">🧾</div><p>Chưa có đơn hàng nào. <a class="text-primary fw-600" href="collections.html">Mua sắm ngay</a></p></div>`}</div>
+        <div class="card card--pad"><h3>💗 Sản phẩm yêu thích</h3>${wish.length ? `<div class="grid grid--3">${wish.map((p) => productCard(p)).join('')}</div>` : '<p class="text-muted fs-14">Nhấn ♥ trên sản phẩm để lưu lại nhé.</p>'}</div>
+      </div>
+      <div class="checkout__side"><div class="card card--pad"><h3>📍 Thông tin giao hàng đã lưu</h3>${c ? `<div class="fs-14"><b>${esc(c.name || '')}</b><br>${esc(c.phone || '')}<br>${esc((c.address || '').replace('|', ', '))}</div><button class="btn btn--ghost btn--sm mt-12" type="button" id="clearInfo">Xoá thông tin đã lưu</button>` : '<p class="text-muted fs-14">Thông tin sẽ tự lưu sau lần đặt hàng đầu tiên để lần sau mẹ chỉ cần 1 chạm.</p>'}
+        <div class="divider"></div><h3>👩‍⚕️ Hỗ trợ</h3><div class="flex flex-col gap-8"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--ghost btn--block" type="button" data-callback>${I.headset}Dược sĩ gọi lại</button></div></div></div>
+    </div>`;
+  $('#acc').addEventListener('click', (e) => { const r = e.target.closest('[data-reorder-code]'); if (r) { const o = orders.find((x) => x.code === r.dataset.reorderCode); o.items.forEach((it) => { const p = byId(it.id); if (p) MC.Cart.add(it.id, it.qty || 1, it.variant && p.variants ? Math.max(0, p.variants.findIndex((v) => v.label === it.variant)) : null); }); location.href = 'checkout.html'; } if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); } });
+});
+</script>
+</body>
+</html>

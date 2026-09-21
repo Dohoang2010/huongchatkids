@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Thanh toán – Hương Chất Kids</title>
+  <meta name="description" content="Thanh toán nhanh không cần tài khoản – Hương Chất Kids.">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F0537A'/><text x='50' y='68' font-size='56' text-anchor='middle'>🍼</text></svg>">
+</head>
+<body>
+<main id="app"><div class="container">
+  <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
+  <div id="checkoutPage"></div>
+</div></main>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote } = MC;
+  const lines = Cart.lines();
+  if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Mẹ chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
+  const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
+  const sub = Cart.subtotal(); const multi = Cart.multiDiscount();
+  const calc = () => { const r = coupon ? applyCoupon(coupon, sub - multi) : null; const discount = r && r.ok ? r.discount : 0; const ship = r && r.ok && r.freeship && shipMethod !== 'express' ? 0 : shipFee(sub - multi - discount, shipMethod); return { r, discount, ship, total: Math.max(0, sub - multi - discount) + ship }; };
+  const canExpress = (cityName) => (SITE.expressCities || []).some((x) => (cityName || '').includes(x));
+  // Địa chỉ đã lưu: "Tỉnh|địa chỉ" (từ checkout) hoặc "địa chỉ, Tỉnh" (từ mua nhanh)
+  let city = '', rest = [c.address || ''];
+  if ((c.address || '').includes('|')) [city, ...rest] = c.address.split('|');
+  else { const found = PROVINCES.find((pv) => (c.address || '').trim().toLowerCase().endsWith(pv.toLowerCase())); if (found) { city = found; rest = [c.address.trim().slice(0, -found.length).replace(/[,\s]+$/, '')]; } }
+
+  $('#checkoutPage').innerHTML = `
+    <h1 class="page-title">Thanh toán</h1><p class="text-muted fs-14 mb-16">Không cần tạo tài khoản · Chỉ mất 30 giây</p>
+    <form class="checkout" id="coForm" novalidate>
+      <div class="flex flex-col gap-16">
+        ${c.phone ? `<div class="qb__saved">👋 Chào ${esc(c.name || 'mẹ')}, thông tin giao hàng đã được điền sẵn từ lần mua trước <button type="button" id="clearInfo">Nhập lại</button></div>` : ''}
+        <div class="card card--pad"><h3><span class="num">1</span>Thông tin nhận hàng</h3>
+          <div class="form-grid form-grid--2"><div class="field"><label>Họ tên <span>*</span></label><input class="input" name="name" placeholder="VD: Nguyễn Thu Hà" value="${esc(c.name || '')}" required autocomplete="name"></div><div class="field"><label>Số điện thoại <span>*</span></label><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="VD: 0912 345 678" value="${esc(c.phone || '')}" required autocomplete="tel"></div></div>
+          <div class="form-grid form-grid--2 mt-12"><div class="field"><label>Tỉnh / Thành phố <span>*</span></label><select class="input" name="city" required><option value="">Chọn tỉnh/thành</option>${PROVINCES.map((p) => `<option ${p === city.trim() ? 'selected' : ''}>${p}</option>`).join('')}</select></div><div class="field"><label>Email (nhận hoá đơn VAT)</label><input class="input" name="email" type="email" placeholder="Không bắt buộc" value="${esc(c.email || '')}" autocomplete="email"></div></div>
+          <div class="field mt-12"><label>Địa chỉ cụ thể <span>*</span></label><input class="input" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện" value="${esc(rest.join('|').trim())}" required autocomplete="street-address"></div>
+          <div class="field mt-12"><label>Ghi chú cho shipper / dược sĩ</label><textarea class="input" name="note" placeholder="VD: Giao giờ hành chính, gọi trước khi giao, bé 2 tuổi 12kg cần tư vấn liều…"></textarea></div>
+          <p class="qb__privacy" style="text-align:left">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html#bao-mat" target="_blank">Chính sách bảo mật</a></p>
+        </div>
+        <div class="card card--pad"><h3><span class="num">2</span>Vận chuyển</h3><div class="form-grid">
+          <label class="ship-option"><input type="radio" name="ship" value="standard" checked><div><b>Giao tiêu chuẩn</b><small>Nội thành Hà Nội trong ngày · Tỉnh khác 1–3 ngày</small></div><span class="fee ${shipFee(sub - multi) ? '' : 'text-teal'}">${shipFee(sub - multi) ? fmt(shipFee(sub - multi)) : 'Miễn phí'}</span></label>
+          <label class="ship-option" id="expressOpt"><input type="radio" name="ship" value="express"><div><b>Giao hoả tốc 2–4h</b><small>Chỉ nội thành Hà Nội, đặt trước 16h</small></div><span class="fee">${fmt(SITE.expressFee || 35000)}</span></label>
+        </div></div>
+        <div class="card card--pad"><h3><span class="num">3</span>Thanh toán</h3><div class="pay-options">
+          <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') === 'cod' ? 'checked' : ''}><span class="ico">💵</span><div><b>Thanh toán khi nhận hàng (COD)</b><small>Được kiểm tra hàng trước khi trả tiền</small></div><span class="badge badge--teal tagr">Phổ biến</span></label>
+          <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><div><b>Chuyển khoản ngân hàng / VietQR</b><small>Dược sĩ gửi số tài khoản & mã QR qua Zalo/SMS sau khi đặt</small></div></label>
+          <label class="pay-option"><input type="radio" name="payment" value="momo" ${c.payment === 'momo' ? 'checked' : ''}><span class="ico">📱</span><div><b>Ví MoMo / ZaloPay</b><small>Quét mã QR được gửi qua Zalo/SMS</small></div></label>
+        </div></div>
+      </div>
+      <div class="checkout__side"><div class="card card--pad">
+        <h3>Đơn hàng (${Cart.count()} sản phẩm) <a class="fs-13 text-primary" style="margin-left:auto;font-weight:500" href="cart.html">Sửa</a></h3>
+        <div class="order-items">${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}</div>
+        <div class="divider"></div>
+        <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
+        <div class="coupon-hint" id="couponHint"></div>
+        <div class="divider"></div>
+        <div id="summary"></div>
+        <button class="btn btn--primary btn--lg btn--block btn--stack mt-16" type="submit" id="coSubmit"><span>${I.zap} ĐẶT HÀNG · <span id="coTotal"></span></span><small>Kiểm tra hàng trước khi thanh toán · Giao dự kiến ${deliveryEstimate()}</small></button>
+        <div class="qb__trust"><span>${I.check}Chính hãng 100%</span><span>${I.check}Đổi trả 7 ngày</span><span>${I.check}Bảo mật thông tin</span></div>
+        <div class="form-error hide mt-8" id="coError" style="text-align:center"></div>
+        <div class="divider"></div>
+        <p class="fs-13 text-muted" style="text-align:center">Gặp khó khăn khi đặt hàng? <button class="fw-700 text-primary" type="button" data-callback>Để dược sĩ gọi lại</button> hoặc <a class="fw-700" style="color:var(--zalo)" href="${SITE.zalo}" target="_blank">đặt qua Zalo</a></p>
+      </div></div>
+    </form>
+    <div class="sticky-order" id="stickyOrder"><div class="tot">Tổng cộng<b id="stickyTotal"></b></div><button class="btn btn--primary" type="button" id="stickySubmit">${I.zap}Đặt hàng</button></div>`;
+
+  const renderSummary = () => { const { r, discount, ship, total } = calc(); $('#summary').innerHTML = `<div class="summary-line"><span>Tạm tính</span><span>${fmt(sub)}</span></div>${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : ''}${discount ? `<div class="summary-line"><span>Giảm giá (${r.code})</span><span class="text-teal">−${fmt(discount)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển</span><span class="${ship ? '' : 'free'}">${ship ? fmt(ship) : 'Miễn phí'}</span></div><div class="summary-line total"><span>Tổng cộng</span><b>${fmt(total)}</b></div>`; $('#coTotal').textContent = fmt(total); $('#stickyTotal').textContent = fmt(total); $('#couponHint').innerHTML = r && r.ok ? `<span class="text-teal fw-600">✓ ${r.desc}</span>` : r ? `<span class="text-red">${r.msg}</span>` : `Gợi ý: <button type="button" data-coupon="HCK10">HCK10</button><span class="text-muted">giảm 10% (tối đa 100K) cho đơn từ 300K</span>`; };
+  const syncExpress = () => { const cityName = form.elements.city.value; const ok = canExpress(cityName); const opt = $('#expressOpt'); opt.classList.toggle('is-disabled', !ok); opt.querySelector('input').disabled = !ok; opt.querySelector('small').textContent = ok ? 'Nội thành Hà Nội, đặt trước 16h' : (cityName ? `Chưa hỗ trợ tại ${cityName}` : 'Chỉ nội thành Hà Nội, đặt trước 16h'); if (!ok && shipMethod === 'express') { shipMethod = 'standard'; form.elements.ship.value = 'standard'; renderSummary(); } };
+  const form = $('#coForm');
+  renderSummary(); syncExpress();
+  $('#stickySubmit').addEventListener('click', () => form.requestSubmit());
+  const io = new IntersectionObserver(([en]) => $('#stickyOrder').classList.toggle('hide', en.isIntersecting), { threshold: 0 }); io.observe($('#coSubmit'));
+  form.addEventListener('change', (e) => { if (e.target.name === 'ship') { shipMethod = e.target.value; renderSummary(); } if (e.target.name === 'city') syncExpress(); });
+  form.addEventListener('click', (e) => { if (e.target.id === 'applyCoupon') { coupon = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(coupon, sub); store.set('mc_coupon', r.ok ? coupon : ''); if (!r.ok) coupon = ''; toast(r.ok ? 'Đã áp dụng mã ' + r.code : r.msg, { type: r.ok ? 'ok' : 'error' }); renderSummary(); } const cb = e.target.closest('[data-coupon]'); if (cb) { coupon = cb.dataset.coupon; $('#couponInput').value = coupon; store.set('mc_coupon', coupon); renderSummary(); } if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); } });
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); const fd = new FormData(form); const v = Object.fromEntries(fd.entries()); const err = $('#coError'); err.classList.add('hide');
+    $$('.input', form).forEach((i) => i.classList.remove('is-invalid'));
+    const bad = []; if (!v.name.trim()) bad.push('name'); if (!phoneOk(v.phone)) bad.push('phone'); if (!v.city) bad.push('city'); if (v.address.trim().length < 8) bad.push('address');
+    if (bad.length) { bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = 'Mẹ kiểm tra lại các ô được đánh dấu đỏ nhé'; err.classList.remove('hide'); err.setAttribute('role', 'alert'); form.elements[bad[0]].scrollIntoView({ behavior: 'smooth', block: 'center' }); form.elements[bad[0]].focus(); return; }
+    const fullAddress = `${v.address.trim()}, ${v.city}`;
+    Customer.set({ name: v.name.trim(), phone: v.phone.trim(), address: v.city + '|' + v.address.trim(), email: v.email, payment: v.payment });
+    const btn = $('#coSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang xử lý đơn hàng…</span>';
+    const { r, discount, ship, total } = calc();
+    const order = await submitOrder({ type: 'checkout', customer: { name: v.name.trim(), phone: v.phone.trim(), address: fullAddress, email: v.email }, note: v.note, shipMethod, payment: v.payment, coupon: r && r.ok ? r.code : '', items: lines.map((l) => ({ id: l.id, name: l.name, short: shortName(l.p), variant: l.variantLabel, qty: l.qty, price: l.price })), subtotal: sub, discount: multi + discount, ship, total });
+    $('#stickyOrder')?.remove();
+    Cart.clear(); store.set('mc_coupon', '');
+    $('#checkoutPage').innerHTML = `<div class="success-page card">${orderSuccessHTML(order, false)}</div>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>

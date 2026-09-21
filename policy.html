@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chính sách & hỗ trợ – Hương Chất Kids</title>
+  <meta name="description" content="Hướng dẫn mua hàng, thanh toán, giao hàng, đổi trả, cam kết chính hãng, bảo mật thông tin và câu hỏi thường gặp tại Hương Chất Kids.">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F0537A'/><text x='50' y='68' font-size='56' text-anchor='middle'>🍼</text></svg>">
+  <style>
+    .policy { display: grid; gap: 24px; }
+    @media (min-width: 992px) { .policy { grid-template-columns: 240px minmax(0, 1fr); gap: 40px; } .policy__nav { position: sticky; top: calc(var(--header-h) + var(--nav-h) + 16px); align-self: start; } }
+    .policy__nav a { display: block; padding: 8px 12px; border-radius: 8px; font-size: 14px; color: var(--ink-2); }
+    .policy__nav a:hover { background: var(--primary-50); color: var(--primary-700); }
+    .policy__nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+    @media (min-width: 992px) { .policy__nav { display: block; } }
+    .policy__nav a { white-space: nowrap; }
+    .policy section { scroll-margin-top: 140px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+    .policy section h2 { font-size: 22px; margin-bottom: 12px; }
+    .policy section h3 { font-size: 16px; margin: 16px 0 6px; }
+    .policy p, .policy li { color: var(--ink-2); line-height: 1.7; font-size: 15px; }
+    .policy ul { padding-left: 20px; list-style: disc; } .policy ol { padding-left: 20px; list-style: decimal; }
+    .policy li { margin-bottom: 4px; }
+    .policy .note { background: var(--amber-100); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; color: #6b4b00; margin-top: 12px; }
+    .faq details { border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; margin-bottom: 8px; }
+    .faq summary { padding: 12px 0; font-weight: 600; cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+    .faq details p { padding-bottom: 12px; }
+  </style>
+</head>
+<body>
+<main id="app"><div class="container">
+  <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Chính sách & hỗ trợ</span></nav>
+  <h1 class="page-title">Chính sách & hỗ trợ khách hàng</h1>
+  <p class="text-muted fs-14 mb-16">Cập nhật ngày 21/09/2026. Mọi thắc mắc mẹ liên hệ hotline/Zalo <b id="hotline1"></b>.</p>
+  <div class="policy">
+    <nav class="policy__nav" aria-label="Mục lục">
+      <a href="#gioi-thieu">Giới thiệu</a><a href="#mua-hang">Hướng dẫn mua hàng</a><a href="#thanh-toan">Thanh toán</a><a href="#giao-hang">Giao hàng</a><a href="#doi-tra">Đổi trả & hoàn tiền</a><a href="#chinh-hang">Cam kết chính hãng</a><a href="#bao-mat">Bảo mật thông tin</a><a href="#dieu-khoan">Điều khoản sử dụng</a><a href="#faq">Câu hỏi thường gặp</a>
+    </nav>
+    <div>
+      <section id="gioi-thieu"><h2>Giới thiệu</h2>
+        <p><b>Hương Chất Kids</b> là cửa hàng chuyên các sản phẩm dinh dưỡng bổ sung nhập khẩu Hàn Quốc cho bé: nước ép hoa quả – rau củ hữu cơ Lotte, hồng sâm trẻ em ChuChu, vitamin D3K2, váng sữa canxi Calciumore, gạc hươu non Sumo, rong biển ăn dặm… Chúng tôi bán hàng tại website này và gian hàng Shopee chính thức.</p>
+        <ul><li>Địa chỉ: <span id="addr"></span></li><li>Hotline / Zalo: <span id="hotline2"></span> (<span id="hours"></span>)</li><li>Email: <span id="email"></span></li></ul>
+        <div class="note">Thông tin pháp nhân (tên công ty/hộ kinh doanh, mã số thuế, số ĐKKD) sẽ được cập nhật tại đây và ở chân trang sau khi hoàn tất thủ tục thông báo website với Bộ Công Thương.</div>
+      </section>
+      <section id="mua-hang"><h2>Hướng dẫn mua hàng</h2>
+        <p>Mẹ không cần tạo tài khoản. Có 4 cách đặt hàng, chọn cách nào tiện nhất:</p>
+        <ol>
+          <li><b>Mua ngay trên web (30 giây):</b> bấm <em>Mua ngay</em> ở sản phẩm → chọn phân loại, số lượng → nhập họ tên, số điện thoại, địa chỉ → <em>Đặt hàng</em>. Lần sau thông tin được điền sẵn.</li>
+          <li><b>Thêm vào giỏ</b> nhiều sản phẩm rồi <em>Thanh toán</em> một lần.</li>
+          <li><b>Đặt qua Zalo:</b> nhắn tên sản phẩm cho Zalo <span id="hotline3"></span>, dược sĩ xác nhận và lên đơn giúp mẹ.</li>
+          <li><b>Gọi điện</b> hoặc bấm <em>Gọi lại cho tôi</em> để dược sĩ gọi tư vấn và đặt hàng hộ.</li>
+        </ol>
+        <p>Sau khi đặt, dược sĩ sẽ gọi xác nhận đơn và tư vấn liều dùng trong giờ làm việc (<span id="hours2"></span>); đơn đặt ngoài giờ được xác nhận vào sáng hôm sau. Mẹ có thể tra cứu đơn tại mục <a class="text-primary fw-600" href="account.html">Tài khoản</a> trên chính thiết bị đã đặt.</p>
+      </section>
+      <section id="thanh-toan"><h2>Phương thức thanh toán</h2>
+        <ul>
+          <li><b>Thanh toán khi nhận hàng (COD):</b> mẹ được kiểm tra hàng (ngoại quan, tem, hạn dùng) trước khi trả tiền cho nhân viên giao hàng.</li>
+          <li><b>Chuyển khoản ngân hàng / VietQR:</b> sau khi xác nhận đơn, dược sĩ gửi số tài khoản và mã QR qua Zalo/SMS. Nội dung chuyển khoản ghi mã đơn hàng.</li>
+          <li><b>Ví MoMo / ZaloPay:</b> quét mã QR được gửi qua Zalo/SMS.</li>
+        </ul>
+        <p>Hoá đơn VAT được xuất theo yêu cầu, mẹ ghi thông tin xuất hoá đơn ở ô ghi chú hoặc báo dược sĩ khi xác nhận đơn.</p>
+      </section>
+      <section id="giao-hang"><h2>Chính sách giao hàng</h2>
+        <ul>
+          <li><b>Nội thành Hà Nội:</b> giao trong ngày với đơn xác nhận trước 16h; có <b>hoả tốc 2–4 giờ</b> phụ thu <span id="expressFee"></span>.</li>
+          <li><b>TP.HCM và các tỉnh khác:</b> 1–3 ngày làm việc qua đơn vị vận chuyển; vùng xa có thể 3–5 ngày.</li>
+          <li><b>Phí vận chuyển:</b> <span id="shipFee"></span>/đơn; <b>miễn phí</b> cho đơn từ <span id="freeship"></span>.</li>
+          <li>Hàng được bọc chống sốc, thùng nước ép/hồng sâm đóng thùng carton riêng. Nếu kiện hàng móp, rách, mẹ có thể từ chối nhận và báo ngay hotline.</li>
+        </ul>
+      </section>
+      <section id="doi-tra"><h2>Chính sách đổi trả & hoàn tiền</h2>
+        <p>Đổi/trả miễn phí trong <b>7 ngày</b> kể từ khi nhận hàng với các trường hợp:</p>
+        <ul><li>Giao sai sản phẩm, sai phân loại, thiếu số lượng.</li><li>Sản phẩm lỗi do nhà sản xuất, bao bì móp rách, rò rỉ, hạn dùng còn dưới 3 tháng khi giao.</li><li>Sản phẩm không đúng mô tả trên website.</li></ul>
+        <p><b>Cách thực hiện:</b> chụp ảnh sản phẩm và gửi Zalo <span id="hotline4"></span> kèm mã đơn; chúng tôi phản hồi trong 24 giờ, đổi hàng mới hoặc hoàn tiền 100% (qua chuyển khoản trong 3–5 ngày làm việc) và chịu phí vận chuyển hai chiều.</p>
+        <p>Không áp dụng đổi trả với sản phẩm đã mở gói/đã sử dụng (trừ lỗi nhà sản xuất) hoặc quá 7 ngày kể từ khi nhận.</p>
+      </section>
+      <section id="chinh-hang"><h2>Cam kết chính hãng</h2>
+        <ul><li>Toàn bộ sản phẩm nhập khẩu chính ngạch, có tem phụ tiếng Việt ghi nhà nhập khẩu, số công bố, hạn dùng.</li><li>Hoá đơn VAT xuất theo yêu cầu.</li><li>Nếu mẹ có bằng chứng sản phẩm không chính hãng, chúng tôi <b>hoàn tiền 100%</b>, nhận lại hàng và chịu toàn bộ chi phí phát sinh.</li></ul>
+        <div class="note">Thực phẩm bảo vệ sức khoẻ không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Hiệu quả tuỳ cơ địa từng bé. Đọc kỹ hướng dẫn sử dụng và độ tuổi trên bao bì; hỏi ý kiến bác sĩ với bé dưới 1 tuổi, bé có bệnh lý hoặc dị ứng.</div>
+      </section>
+      <section id="bao-mat"><h2>Chính sách bảo mật thông tin</h2>
+        <p>Khi đặt hàng hoặc yêu cầu gọi lại, chúng tôi thu thập <b>họ tên, số điện thoại, địa chỉ nhận hàng</b> (và email nếu mẹ cần hoá đơn). Thông tin chỉ dùng để giao hàng, xác nhận đơn, tư vấn sử dụng và chăm sóc sau bán.</p>
+        <ul><li>Không bán, cho thuê hay chia sẻ thông tin cho bên thứ ba, trừ đơn vị vận chuyển để giao hàng.</li><li>Thông tin đặt hàng trên website được lưu trên thiết bị của mẹ để lần sau điền sẵn; mẹ có thể xoá tại mục <a class="text-primary fw-600" href="account.html">Tài khoản → Xoá thông tin đã lưu</a>.</li><li>Mẹ có quyền yêu cầu xem, sửa, xoá dữ liệu bằng cách liên hệ hotline/email; chúng tôi xử lý trong 72 giờ theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân.</li></ul>
+      </section>
+      <section id="dieu-khoan"><h2>Điều khoản sử dụng</h2>
+        <ul><li>Giá bán hiển thị bằng VNĐ, đã gồm thuế; giá gạch ngang là giá niêm yết của sản phẩm trước khi áp dụng khuyến mãi tại cửa hàng.</li><li>Khuyến mãi (mã giảm giá, mua từ 2 giảm 3%, freeship) có điều kiện áp dụng ghi rõ tại từng chương trình và không cộng gộp ngoài quy định.</li><li>Đơn hàng chỉ có hiệu lực sau khi được dược sĩ xác nhận. Chúng tôi có quyền từ chối đơn khi sản phẩm hết hàng hoặc thông tin không hợp lệ, và sẽ thông báo cho mẹ.</li><li>Nội dung website (bài viết, hình ảnh) thuộc Hương Chất Kids, vui lòng không sao chép khi chưa được phép.</li></ul>
+      </section>
+      <section id="faq" class="faq"><h2>Câu hỏi thường gặp</h2>
+        <details><summary>Bé mấy tháng dùng được sản phẩm?</summary><p>Mỗi sản phẩm ghi rõ độ tuổi ở trang chi tiết (mục "Phù hợp cho bé"). Nước ép Lotte dòng táo & củ dền dùng từ 6 tháng; hồng sâm ChuChu, váng sữa canxi, rong biển thường từ 1 tuổi; D3K2 từ sơ sinh. Nếu chưa chắc, mẹ nhắn Zalo để dược sĩ tư vấn.</p></details>
+        <details><summary>Liều dùng bao nhiêu là đủ?</summary><p>Theo hướng dẫn trên bao bì từng sản phẩm và cân nặng của bé. Sau khi đặt hàng, dược sĩ sẽ gọi hướng dẫn liều dùng cụ thể, mẹ không phải tự tính.</p></details>
+        <details><summary>Có được kiểm tra hàng trước khi thanh toán không?</summary><p>Có. Với đơn COD mẹ kiểm tra ngoại quan, tem phụ, hạn dùng trước khi trả tiền. Hàng lỗi, móp rách mẹ có quyền từ chối nhận.</p></details>
+        <details><summary>Giá trên web và trên Shopee có giống nhau không?</summary><p>Giá cơ bản giống nhau. Trên web mẹ được thêm ưu đãi mua từ 2 giảm 3%, mã HCK10 và freeship từ <span id="freeship2"></span>; không mất phí sàn nên thường lợi hơn.</p></details>
+        <details><summary>Hạn sử dụng còn bao lâu?</summary><p>Chúng tôi cam kết giao hàng có hạn dùng còn tối thiểu 6 tháng (nước ép, hồng sâm) hoặc 12 tháng (vitamin, váng sữa). Hàng cận date (nếu có) luôn được ghi rõ ở tên phân loại và giảm giá riêng.</p></details>
+        <details><summary>Tôi muốn xuất hoá đơn VAT?</summary><p>Ghi thông tin công ty vào ô ghi chú khi đặt hàng hoặc báo dược sĩ khi xác nhận đơn. Hoá đơn điện tử được gửi qua email.</p></details>
+      </section>
+    </div>
+  </div>
+</div></main>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, $$, fmt } = MC;
+  ['hotline1', 'hotline2', 'hotline3', 'hotline4'].forEach((id) => { const el = $('#' + id); if (el) el.textContent = SITE.hotline; });
+  $('#addr').textContent = SITE.address; $('#email').textContent = SITE.email; $('#hours').textContent = SITE.workingHours; $('#hours2').textContent = SITE.workingHours;
+  $('#expressFee').textContent = fmt(SITE.expressFee || 35000); $('#shipFee').textContent = fmt(SITE.shipFee); $('#freeship').textContent = fmt(SITE.freeshipFrom); $('#freeship2').textContent = fmt(SITE.freeshipFrom);
+  if (location.hash) { const el = $(location.hash); if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100); }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Giỏ hàng – Hương Chất Kids</title>
+  <meta name="description" content="Giỏ hàng của mẹ tại Hương Chất Kids.">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F0537A'/><text x='50' y='68' font-size='56' text-anchor='middle'>🍼</text></svg>">
+</head>
+<body>
+<main id="app"><div class="container">
+  <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Giỏ hàng</span></nav>
+  <h1 class="page-title">Giỏ hàng của mẹ</h1>
+  <div class="checkout mt-16" id="cartPage"></div>
+</div></main>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, $$, fmt, I, productThumb, shortName, productCard, Cart, esc, shipFee, applyCoupon, store, toast } = MC;
+  const render = () => {
+    const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', ''); const c = coupon ? applyCoupon(coupon, sub - multi) : null;
+    const discount = c && c.ok ? c.discount : 0; const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + ship;
+    if (!lines.length) { $('#cartPage').innerHTML = `<div class="empty card" style="grid-column:1/-1"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p>Mẹ chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div><section class="section" style="grid-column:1/-1"><div class="section-head"><div><h2>Mẹ tin dùng nhất</h2></div></div><div class="grid grid--4">${[...PRODUCTS].sort((a, b) => b.sold - a.sold).slice(0, 4).map((p) => productCard(p)).join('')}</div></section>`; return; }
+    $('#cartPage').innerHTML = `
+      <div class="card card--pad cart-table">
+        <div class="freeship-bar mb-12">${sub >= SITE.freeshipFrom ? '🎉 Đơn hàng được <b>miễn phí vận chuyển</b>' : `Mua thêm <b>${fmt(SITE.freeshipFrom - sub)}</b> để được <b>freeship</b>`}<div class="bar"><i style="width:${Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>
+        ${lines.map((l) => `<div class="cart-item"><a href="product.html?id=${l.id}"><img src="${productThumb(l.p)}" alt=""></a><div><a class="name" href="product.html?id=${l.id}">${esc(shortName(l.p))}</a>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${l.oldPrice ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div></div>
+          <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div></div>
+          <div class="total">${fmt(l.total)}</div><button class="remove" type="button" data-remove="${l.id}" data-variant="${l.variant}" aria-label="Xoá ${esc(shortName(l.p))} khỏi giỏ" title="Xoá">${I.trash}</button></div>`).join('')}
+        <div class="flex justify-between items-center mt-16 wrap gap-8"><a class="btn btn--ghost" href="collections.html">${I.chevronL}Tiếp tục mua sắm</a><button class="btn btn--ghost btn--sm text-red" type="button" id="clearCart">Xoá toàn bộ giỏ</button></div>
+      </div>
+      <div class="checkout__side"><div class="card card--pad">
+        <h3>Tóm tắt đơn hàng</h3>
+        <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
+        <div class="coupon-hint">${c && c.ok ? `<span class="text-teal fw-600">✓ ${c.desc}</span>` : c ? `<span class="text-red">${c.msg}</span>` : `Gợi ý: <button type="button" data-coupon="HCK10">HCK10</button><span class="text-muted">giảm 10% (tối đa 100K) cho đơn từ 300K</span>`}</div>
+        <div class="divider"></div>
+        <div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><span>${fmt(sub)}</span></div>
+        ${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : ''}
+        ${discount ? `<div class="summary-line"><span>Giảm giá (${c.code})</span><span class="text-teal">−${fmt(discount)}</span></div>` : ''}
+        <div class="summary-line"><span>Phí vận chuyển</span><span class="${ship ? '' : 'free'}">${ship ? fmt(ship) : 'Miễn phí'}</span></div>
+        <div class="summary-line total"><span>Tổng cộng</span><b>${fmt(total)}</b></div>
+        <a class="btn btn--primary btn--lg btn--block mt-16" href="checkout.html">${I.zap}Đặt hàng · ${fmt(total)}</a>
+        <div class="qb__trust"><span>${I.check}Kiểm tra hàng trước khi thanh toán</span><span>${I.check}Đổi trả 7 ngày</span></div>
+        <div class="divider"></div>
+        <p class="fs-13 text-muted" style="text-align:center">Cần tư vấn thêm? <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> hoặc <a class="fw-700" style="color:var(--zalo)" href="${SITE.zalo}" target="_blank">Chat Zalo</a></p>
+      </div></div>`;
+  };
+  document.addEventListener('cart:change', render);
+  $('#cartPage').addEventListener('click', (e) => {
+    if (e.target.id === 'applyCoupon') { const code = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(code, Cart.subtotal() - Cart.multiDiscount()); store.set('mc_coupon', r.ok ? code : ''); toast(r.ok ? 'Đã áp dụng ' + code : r.msg, { type: r.ok ? 'ok' : 'error' }); render(); }
+    const cb = e.target.closest('[data-coupon]'); if (cb) { store.set('mc_coupon', cb.dataset.coupon); render(); }
+    if (e.target.id === 'clearCart' && confirm('Xoá toàn bộ sản phẩm trong giỏ?')) { Cart.clear(); }
+  });
+  render();
+});
+</script>
+</body>
+</html>

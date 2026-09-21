@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sản phẩm – Hương Chất Kids</title>
+  <meta name="description" content="Tất cả sản phẩm dinh dưỡng Hàn Quốc cho bé tại Hương Chất Kids: nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi, gạc hươu Sumo, rong biển. Lọc theo độ tuổi và nhu cầu của bé.">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F0537A'/><text x='50' y='68' font-size='56' text-anchor='middle'>🍼</text></svg>">
+</head>
+<body>
+<main id="app"><div class="container">
+  <nav class="breadcrumb" id="crumb"></nav>
+  <h1 class="page-title" id="title">Tất cả sản phẩm</h1>
+  <p class="text-muted fs-14 mb-16" id="subtitle"></p>
+  <div class="chips chips--scroll mb-16" id="ageChips"></div>
+
+  <div class="collection">
+    <aside class="filters" id="filters">
+      <div class="filters__head"><h3>Bộ lọc</h3><button class="modal__close" type="button" id="closeFilters" aria-label="Đóng"></button></div>
+      <div class="fgroup"><h4>Độ tuổi <button type="button" data-clear="age">Bỏ chọn</button></h4><div id="fAge"></div></div>
+      <div class="fgroup"><h4>Danh mục <button type="button" data-clear="cat">Bỏ chọn</button></h4><div id="fCat"></div></div>
+      <div class="fgroup"><h4>Nhu cầu của bé <button type="button" data-clear="need">Bỏ chọn</button></h4><div class="fgroup--scroll" id="fNeed"></div></div>
+      <div class="fgroup"><h4>Thương hiệu <button type="button" data-clear="brand">Bỏ chọn</button></h4><div class="fgroup--scroll" id="fBrand"></div></div>
+      <div class="fgroup"><h4>Khoảng giá <button type="button" data-clear="price">Bỏ chọn</button></h4><div id="fPrice"></div></div>
+      <div class="filters__foot"><button class="btn btn--ghost" type="button" id="resetAll">Xoá tất cả</button><button class="btn btn--primary" type="button" id="applyFilters">Xem kết quả</button></div>
+    </aside>
+
+    <div>
+      <div class="toolbar">
+        <span class="count" id="count"></span>
+        <div class="flex gap-8 items-center">
+          <button class="btn btn--ghost btn--sm filter-btn" type="button" id="openFilters"><span data-icon="filter"></span>Lọc</button>
+          <select class="input" id="sort" aria-label="Sắp xếp">
+            <option value="best">Bán chạy nhất</option>
+            <option value="discount">Giảm giá nhiều</option>
+            <option value="price-asc">Giá tăng dần</option>
+            <option value="price-desc">Giá giảm dần</option>
+            <option value="rating">Đánh giá cao</option>
+            <option value="new">Mới nhất</option>
+          </select>
+        </div>
+      </div>
+      <div class="active-filters" id="activeFilters"></div>
+      <div id="callout"></div>
+      <div class="grid grid--4" id="grid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+</div></main>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, $$, fmt, I, productCard, brandOf, ageLabel, esc } = MC;
+  $$('[data-icon]').forEach((el) => { el.innerHTML = I[el.dataset.icon]; });
+  $('#closeFilters').innerHTML = I.close;
+  const PER = 12;
+  const PRICE_RANGES = [{ key: 'u500', label: 'Dưới 500K', min: 0, max: 500000 }, { key: '500-1000', label: '500K – 1 triệu', min: 500000, max: 1000000 }, { key: '1000-2000', label: '1 – 2 triệu', min: 1000000, max: 2000000 }, { key: 'o2000', label: 'Trên 2 triệu', min: 2000000, max: Infinity }];
+
+  /* State from URL */
+  const url = new URLSearchParams(location.search);
+  const S = { age: url.getAll('age'), cat: url.getAll('cat'), need: url.getAll('need'), brand: url.getAll('brand'), price: url.getAll('price'), q: url.get('q') || '', tag: url.get('tag') || '', sort: url.get('sort') || 'best', page: Number(url.get('page')) || 1 };
+  // hỗ trợ dạng ?cat=a,b và chỉ giữ giá trị hợp lệ (tránh lỗi/XSS từ URL)
+  const VALID = { age: AGES.map((a) => a.key), cat: CATEGORIES.map((c) => c.key), need: NEEDS.map((n) => n.key), brand: BRANDS.map((b) => b.key), price: PRICE_RANGES.map((r) => r.key) };
+  ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => { S[k] = S[k].flatMap((v) => v.split(',')).filter((v) => VALID[k].includes(v)); });
+  S.q = S.q.slice(0, 60); S.tag = ['Combo', 'Mới', 'Bán chạy', 'Hot', 'Giảm sâu'].includes(S.tag) ? S.tag : ''; if (!['best', 'discount', 'price-asc', 'price-desc', 'rating', 'new'].includes(S.sort)) S.sort = 'best';
+
+  function syncUrl() {
+    const u = new URLSearchParams();
+    ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => S[k].forEach((v) => u.append(k, v)));
+    if (S.q) u.set('q', S.q); if (S.tag) u.set('tag', S.tag); if (S.sort !== 'best') u.set('sort', S.sort); if (S.page > 1) u.set('page', S.page);
+    history.replaceState(null, '', 'collections.html' + (u.toString() ? '?' + u : ''));
+  }
+
+  function filtered() {
+    const q = S.q.trim().toLowerCase();
+    let list = PRODUCTS.filter((p) => {
+      if (S.age.length && !S.age.some((a) => p.ages.includes(a))) return false;
+      if (S.cat.length && !S.cat.includes(p.cat)) return false;
+      if (S.need.length && !S.need.some((n) => p.needs.includes(n))) return false;
+      if (S.brand.length && !S.brand.includes(p.brand)) return false;
+      if (S.price.length && !S.price.some((k) => { const r = PRICE_RANGES.find((x) => x.key === k); return p.price >= r.min && p.price < r.max; })) return false;
+      if (S.tag && !(p.tags || []).includes(S.tag)) return false;
+      if (S.sort === 'discount' && !S.q && !MC.pct(p)) return false;
+      if (q && !(p.name + ' ' + brandOf(p).label + ' ' + p.needs.map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ') + ' ' + p.origin).toLowerCase().includes(q)) return false;
+      return true;
+    });
+    const sorters = { best: (a, b) => b.sold - a.sold, discount: (a, b) => MC.pct(b) - MC.pct(a), 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
+    return list.sort(sorters[S.sort] || sorters.best);
+  }
+
+  function titleText() {
+    if (S.q) return `Kết quả cho "${S.q}"`;
+    if (S.tag) return S.tag === 'Combo' ? 'Combo tiết kiệm' : S.tag;
+    if (S.cat.length === 1) return (CATEGORIES.find((c) => c.key === S.cat[0]) || {}).label || 'Sản phẩm';
+    if (S.need.length === 1) return (NEEDS.find((n) => n.key === S.need[0]) || {}).label || 'Sản phẩm';
+    if (S.brand.length === 1) return 'Thương hiệu ' + brandOf({ brand: S.brand[0] }).label;
+    if (S.age.length === 1) return 'Sản phẩm cho bé ' + ageLabel(S.age[0]);
+    if (S.sort === 'discount' && !S.cat.length) return '🔥 Flash sale – Giảm sâu hôm nay';
+    return 'Tất cả sản phẩm';
+  }
+
+  function renderFilters() {
+    const cb = (name, key, label, count) => `<label><input type="checkbox" name="${name}" value="${key}" ${S[name].includes(key) ? 'checked' : ''}>${label}<span class="count">${count}</span></label>`;
+    $('#fAge').innerHTML = AGES.map((a) => cb('age', a.key, `${a.emoji} ${a.label}`, PRODUCTS.filter((p) => p.ages.includes(a.key)).length)).join('');
+    $('#fCat').innerHTML = CATEGORIES.map((c) => cb('cat', c.key, c.label, PRODUCTS.filter((p) => p.cat === c.key).length)).join('');
+    $('#fNeed').innerHTML = NEEDS.map((n) => cb('need', n.key, n.label, PRODUCTS.filter((p) => p.needs.includes(n.key)).length)).join('');
+    $('#fBrand').innerHTML = BRANDS.filter((b) => PRODUCTS.some((p) => p.brand === b.key)).map((b) => cb('brand', b.key, b.label, PRODUCTS.filter((p) => p.brand === b.key).length)).join('');
+    $('#fPrice').innerHTML = PRICE_RANGES.map((r) => cb('price', r.key, r.label, PRODUCTS.filter((p) => p.price >= r.min && p.price < r.max).length)).join('');
+    $('#sort').value = S.sort;
+  }
+
+  function renderActive() {
+    const chips = [];
+    const add = (k, v, label) => chips.push(`<button class="chip chip--sm is-active" type="button" data-rm="${k}" data-val="${v}">${label} <span class="chip__x">×</span></button>`);
+    S.age.forEach((a) => add('age', a, ageLabel(a))); S.cat.forEach((c) => add('cat', c, (CATEGORIES.find((x) => x.key === c) || {}).label)); S.need.forEach((n) => add('need', n, (NEEDS.find((x) => x.key === n) || {}).label)); S.brand.forEach((b) => add('brand', b, brandOf({ brand: b }).label)); S.price.forEach((p) => add('price', p, PRICE_RANGES.find((x) => x.key === p).label));
+    if (S.q) add('q', S.q, `"${esc(S.q)}"`); if (S.tag) add('tag', S.tag, S.tag);
+    $('#activeFilters').innerHTML = chips.length ? chips.join('') + `<button class="chip chip--sm" type="button" id="clearAllChips">Xoá tất cả</button>` : '';
+  }
+
+  function render() {
+    const list = filtered(); const pages = Math.max(1, Math.ceil(list.length / PER)); S.page = Math.min(S.page, pages);
+    const t = titleText(); $('#title').textContent = t; document.title = t + ' – ' + SITE.name;
+    $('#subtitle').textContent = S.age.length === 1 ? `Dược sĩ đã chọn lọc sản phẩm phù hợp cho bé ${ageLabel(S.age[0])}` : 'Hàng chính hãng · Freeship từ 499K · Đổi trả 7 ngày';
+    $('#crumb').innerHTML = `<a href="index.html">Trang chủ</a><span>›</span><a href="collections.html">Sản phẩm</a>${t !== 'Tất cả sản phẩm' ? `<span>›</span><span>${esc(t)}</span>` : ''}`;
+    $('#ageChips').innerHTML = `<a class="chip ${!S.age.length ? 'is-active' : ''}" href="#" data-age="">Tất cả tuổi</a>` + AGES.map((a) => `<a class="chip ${S.age.length === 1 && S.age[0] === a.key ? 'is-active' : ''}" href="#" data-age="${a.key}">${a.emoji} ${a.label}</a>`).join('');
+    $('#count').textContent = `${list.length} sản phẩm`;
+    renderActive();
+    const babyAge = S.age.length === 1 && ['0-6m', '6-12m'].includes(S.age[0]);
+    $('#callout').innerHTML = babyAge ? `<div class="callout"><span class="emoji">👩‍⚕️</span><div><b>Bé dưới 1 tuổi: mẹ nên hỏi dược sĩ trước khi dùng thực phẩm bổ sung</b>Ở tuổi này sữa mẹ/sữa công thức là chính; thường chỉ cần vitamin D3 và một số sản phẩm ghi rõ "từ 6 tháng". Dược sĩ ${SITE.name} tư vấn miễn phí.</div><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại cho tôi</button></div>` : (list.length && list.length <= 2 ? `<div class="callout"><span class="emoji">💬</span><div><b>Chưa thấy sản phẩm mẹ cần?</b>Nhắn Zalo hoặc để lại số, dược sĩ sẽ gợi ý sản phẩm phù hợp với bé.</div><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a></div>` : '');
+    const slice = list.slice((S.page - 1) * PER, S.page * PER);
+    $('#grid').innerHTML = slice.length ? slice.map((p) => productCard(p)).join('') : `<div class="empty" style="grid-column:1/-1"><div class="emoji">🔍</div><h3>Chưa tìm thấy sản phẩm phù hợp</h3><p>Mẹ thử bỏ bớt bộ lọc, hoặc để dược sĩ tư vấn trực tiếp nhé.</p><div class="flex gap-8 mt-16" style="justify-content:center;flex-wrap:wrap"><button class="btn btn--ghost" type="button" id="emptyReset">Xoá bộ lọc</button><button class="btn btn--teal" type="button" data-callback>${I.headset}Dược sĩ gọi lại</button></div></div>`;
+    $('#pagination').innerHTML = pages > 1 ? `<button type="button" data-page="${S.page - 1}" ${S.page === 1 ? 'disabled' : ''}>‹</button>` + Array.from({ length: pages }, (_, i) => `<button type="button" class="${i + 1 === S.page ? 'is-active' : ''}" data-page="${i + 1}">${i + 1}</button>`).join('') + `<button type="button" data-page="${S.page + 1}" ${S.page === pages ? 'disabled' : ''}>›</button>` : '';
+    syncUrl();
+  }
+
+  /* Events */
+  $('#filters').addEventListener('change', (e) => { const i = e.target; if (i.type !== 'checkbox') return; const arr = S[i.name]; if (i.checked) { if (!arr.includes(i.value)) arr.push(i.value); } else S[i.name] = arr.filter((v) => v !== i.value); S.page = 1; if (window.innerWidth >= 992) render(); else $('#count').textContent = `${filtered().length} sản phẩm`; });
+  $('#filters').addEventListener('click', (e) => { const c = e.target.closest('[data-clear]'); if (c) { S[c.dataset.clear] = []; renderFilters(); render(); } });
+  $('#resetAll').addEventListener('click', () => { ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => S[k] = []); S.q = ''; S.tag = ''; renderFilters(); render(); });
+  $('#applyFilters').addEventListener('click', () => { $('#filters').classList.remove('is-open'); document.body.classList.remove('no-scroll'); render(); });
+  $('#openFilters').addEventListener('click', () => { $('#filters').classList.add('is-open'); document.body.classList.add('no-scroll'); });
+  $('#closeFilters').addEventListener('click', () => { $('#filters').classList.remove('is-open'); document.body.classList.remove('no-scroll'); });
+  $('#sort').addEventListener('change', (e) => { S.sort = e.target.value; S.page = 1; render(); });
+  $('#ageChips').addEventListener('click', (e) => { const a = e.target.closest('[data-age]'); if (!a) return; e.preventDefault(); S.age = a.dataset.age ? [a.dataset.age] : []; S.page = 1; renderFilters(); render(); });
+  $('#activeFilters').addEventListener('click', (e) => { const rm = e.target.closest('[data-rm]'); if (rm) { const k = rm.dataset.rm; if (k === 'q' || k === 'tag') S[k] = ''; else S[k] = S[k].filter((v) => v !== rm.dataset.val); S.page = 1; renderFilters(); render(); } if (e.target.id === 'clearAllChips') $('#resetAll').click(); });
+  $('#pagination').addEventListener('click', (e) => { const b = e.target.closest('[data-page]'); if (b && !b.disabled) { S.page = Number(b.dataset.page); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+  $('#grid').addEventListener('click', (e) => { if (e.target.id === 'emptyReset') $('#resetAll').click(); });
+  const si = $('#searchInput'); if (si && S.q) si.value = S.q;
+
+  renderFilters(); render();
+});
+</script>
+</body>
+</html>
