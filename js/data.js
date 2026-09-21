@@ -108,7 +108,7 @@ window.BRANDS = [
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
 window.NAV = [
   { label: 'Nước ép & dinh dưỡng', link: 'collections.html?cat=nuoc-ep', columns: [
-    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Nước ép mận, nho & táo (Tăng Cân)', 'product.html?id=25632276959'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697'], ['Combo Khoẻ Mạnh Lớn Khôn', 'product.html?id=26521819053']] },
+    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Nước ép mận, nho & táo (Tăng Cân)', 'product.html?id=25632276959'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697']] },
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'organic'] },
     { title: 'Theo độ tuổi', ages: ['6-12m', '1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Sữa cho bé', link: 'collections.html?cat=sua', columns: [
@@ -235,7 +235,6 @@ window.PRODUCTS = [
     ages: [], needs: ["an-vat", "cho-me"], price: 360000, oldPrice: 486000, rating: 4.9, reviews: 0, sold: 60, stock: 50,
     shape: "box", color: "#C62828", weight: "Túi 1kg", origin: "Trung Quốc", tags: [], family: true,
     image: "img/28467224687.jpg", thumb: "img/thumb/28467224687.jpg", images: ["img/28467224687.jpg", "img/28467224687-2.jpg", "img/28467224687-3.jpg", "img/28467224687-4.jpg", "img/28467224687-5.jpg"], shopeeId: "28467224687", shopeeUrl: "https://shopee.vn/product/837223358/28467224687", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Thức ăn khô › Hoa quả sấy khô",
-    // TODO xác nhận phân loại: Shopee có 5 phân loại cùng giá – chưa có tên phân loại
     desc: "Táo đỏ Hotan (Hoà Điền, Tân Cương) loại 1 size lớn, quả to dày thịt, ngọt tự nhiên, sấy khô không đường, không chất bảo quản. Dùng ăn liền, pha trà, nấu chè, hầm canh, chưng yến cho cả nhà.",
     highlights: ["100% táo đỏ Hotan Tân Cương loại 1, size big", "Không đường, không chất bảo quản", "Túi 1kg zip tiện bảo quản"],
     usage: "Ăn trực tiếp 3–5 quả/ngày, hoặc pha trà, nấu chè, hầm canh. Bảo quản nơi khô ráo, đậy kín sau khi mở." },
@@ -244,7 +243,7 @@ window.PRODUCTS = [
     ages: [], needs: ["an-vat", "cho-me"], price: 500000, oldPrice: 675000, rating: 4.95, reviews: 0, sold: 79, stock: 50,
     shape: "box", color: "#AD1457", weight: "Túi 1kg", origin: "Trung Quốc", tags: [], family: true,
     image: "img/29402041000.jpg", thumb: "img/thumb/29402041000.jpg", images: ["img/29402041000.jpg", "img/29402041000-2.jpg", "img/29402041000-3.jpg", "img/29402041000-4.jpg", "img/29402041000-5.jpg"], shopeeId: "29402041000", shopeeUrl: "https://shopee.vn/product/837223358/29402041000", shopeeCategory: "Thực phẩm và đồ uống › Nhu yếu phẩm › Thực phẩm khô › Thảo mộc truyền thống",
-    variants: [{ label: "Túi 1kg", price: 500000, oldPrice: 675000 }, { label: "Combo 3 túi (3kg)", price: 1200000, oldPrice: 1620000 }],  // TODO xác nhận: Phân loại 2 (1.200.000₫) đặt tạm là "Combo 3 túi"
+    variants: [{ label: "Túi 1kg", price: 500000, oldPrice: 675000 }, { label: "Combo 3 túi (3kg)", price: 1200000, oldPrice: 1620000 }],
     desc: "Táo đỏ Thiên Sâm Tân Cương size big thượng hạng loại 1, được chọn lọc kỹ; quả dày thịt, thơm, ngọt. 100g táo cung cấp khoảng 79 kcal, 10g chất xơ và 77% nhu cầu vitamin C hằng ngày. Ăn liền, pha trà, chưng yến, hầm canh.",
     highlights: ["Táo Tân Cương loại 1 size big, ngọt thơm", "Giàu chất xơ và vitamin C", "Túi 1kg – mua combo 3 túi tiết kiệm"],
     usage: "Ăn trực tiếp hoặc pha trà, nấu chè, hầm canh. Bảo quản nơi khô ráo." },
@@ -253,7 +252,6 @@ window.PRODUCTS = [
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "canxi", "tang-chieu-cao"], price: 1000000, oldPrice: 1350000, rating: 5.0, reviews: 0, sold: 76, stock: 50,
     shape: "carton", color: "#1565C0", weight: "Thùng 12 hộp × 1L", origin: "Úc", tags: [],
     image: "img/26523206270.jpg", thumb: "img/thumb/26523206270.jpg", images: ["img/26523206270.jpg", "img/26523206270-2.jpg", "img/26523206270-3.jpg", "img/26523206270-4.jpg", "img/26523206270-5.jpg"], shopeeId: "26523206270", shopeeUrl: "https://shopee.vn/product/837223358/26523206270", shopeeCategory: "Thực phẩm và đồ uống › Sữa - trứng › Sữa › Sữa tiệt trùng",
-    // TODO xác nhận phân loại: Shopee có 2 phân loại cùng giá (chưa rõ vị/quy cách)
     desc: "Sữa tươi tiệt trùng Norco – thương hiệu sữa hơn 128 năm của Úc, sản xuất từ đàn bò ăn cỏ nội địa Úc; sữa nguyên kem giàu canxi và đạm tự nhiên, vị béo thanh, không đường. Phù hợp bé từ 1 tuổi và cả gia đình.",
     highlights: ["Thương hiệu Norco 128 năm, hàng nội địa Úc", "Sữa bò ăn cỏ, không đường, không chất bảo quản", "Giàu canxi & đạm cho bé tăng chiều cao"],
     usage: "Bé trên 1 tuổi uống 1–2 ly (200–400ml)/ngày. Sau khi mở nắp bảo quản lạnh và dùng trong 3 ngày." },
@@ -305,7 +303,6 @@ window.PRODUCTS = [
     ages: ["3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "de-khang", "tang-can"], price: 1290000, oldPrice: 1742000, rating: 0.0, reviews: 0, sold: 1, stock: 50,
     shape: "box", color: "#EC407A", weight: "Gói 40ml", origin: "Hàn Quốc", tags: ["Mới"],
     image: "img/47357633686.jpg", thumb: "img/thumb/47357633686.jpg", images: ["img/47357633686.jpg", "img/47357633686-2.jpg", "img/47357633686-3.jpg", "img/47357633686-4.jpg", "img/47357633686-5.jpg"], shopeeId: "47357633686", shopeeUrl: "https://shopee.vn/product/837223358/47357633686", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
-    // TODO xác nhận phân loại: Quy cách hộp (số gói) chưa có trong sheet
     desc: "Sâm hữu cơ Pinkfong Kid Up gói 40ml (Hàn Quốc), hạn dùng 24 tháng. Theo nhà sản xuất: hỗ trợ bé phát triển chiều cao và thể chất, tăng đề kháng, giảm biếng ăn.",
     highlights: ["Nhân sâm organic Hàn Quốc", "Nhân vật Pinkfong bé thích", "Gói 40ml tiện mang theo"],
     usage: "Bé 3–6 tuổi: 2/3 gói/ngày; trên 7 tuổi: 1–2 gói/ngày, uống buổi sáng." },
@@ -322,7 +319,7 @@ window.PRODUCTS = [
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-can", "tieu-hoa", "organic", "de-khang"], price: 495000, oldPrice: 693000, rating: 4.9, reviews: 0, sold: 431, stock: 50,
     shape: "box", color: "#7B1FA2", weight: "Gói 80ml", origin: "Hàn Quốc", tags: ["Bán chạy"],
     image: "img/25632276959.jpg", thumb: "img/thumb/25632276959.jpg", images: ["img/25632276959.jpg", "img/25632276959-2.jpg", "img/25632276959-3.jpg", "img/25632276959-4.jpg", "img/25632276959-5.jpg", "img/25632276959-cb.jpg"], shopeeId: "25632276959", shopeeUrl: "https://shopee.vn/product/837223358/25632276959", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác", importer: "Công ty TNHH Đầu tư Xuất nhập khẩu Hoan TT (Hưng Yên)", congBo: "Bản tự công bố số 13/HOAN TT/2023",
-    variants: [{ label: "Hộp 10 gói", price: 495000, oldPrice: 693000 }, { label: "2 hộp 20 gói", price: 990000, oldPrice: 1386000 }, { label: "Thùng 30 gói (3 hộp)", price: 1490000, oldPrice: 2086000 }],  // TODO xác nhận: Phân loại giữa (20 gói) đặt tạm theo giá ×2
+    variants: [{ label: "Hộp 10 gói", price: 495000, oldPrice: 693000 }, { label: "2 hộp 20 gói", price: 990000, oldPrice: 1386000 }, { label: "Thùng 30 gói (3 hộp)", price: 1490000, oldPrice: 2086000 }],
     desc: "Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
     highlights: ["99,94% nguyên liệu hữu cơ, chứng nhận HACCP & Organic", "Mận giúp nhuận tràng, giảm táo bón", "Đã công bố ATTP tại Việt Nam (xem ảnh cuối)"],
     usage: "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay." },
@@ -356,7 +353,7 @@ window.PRODUCTS = [
     ages: [], needs: ["an-vat", "cho-me"], price: 300000, oldPrice: 405000, rating: 5.0, reviews: 0, sold: 7, stock: 50,
     shape: "box", color: "#D84315", weight: "Túi", origin: "Trung Quốc", tags: [], family: true,
     image: "img/27721793055.jpg", thumb: "img/thumb/27721793055.jpg", images: ["img/27721793055.jpg", "img/27721793055-2.jpg", "img/27721793055-3.jpg", "img/27721793055-4.jpg", "img/27721793055-5.jpg"], shopeeId: "27721793055", shopeeUrl: "https://shopee.vn/product/837223358/27721793055", shopeeCategory: "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ sức khỏe",
-    variants: [{ label: "Kỷ tử đỏ", price: 300000, oldPrice: 405000 }, { label: "Kỷ tử đen", price: 500000, oldPrice: 675000 }],  // TODO xác nhận: Shopee có 5 phân loại (300.000–500.000₫) – đặt tạm 2 loại đỏ/đen
+    variants: [{ label: "Kỷ tử đỏ", price: 300000, oldPrice: 405000 }, { label: "Kỷ tử đen", price: 500000, oldPrice: 675000 }],
     desc: "Kỷ tử hữu cơ Hoàng Gia trồng tại Ninh Hạ – vùng kỷ tử nổi tiếng nhất Trung Quốc, quả size lớn, không chất bảo quản. Có kỷ tử đỏ và kỷ tử đen. Pha trà, nấu chè, hầm canh, ngâm nước uống cho cả nhà.",
     highlights: ["Kỷ tử hữu cơ Ninh Hạ size lớn", "Không chất bảo quản", "Có loại đỏ và đen"],
     usage: "10–15g/ngày pha trà hoặc nấu ăn. Bảo quản kín, nơi khô mát." },
@@ -377,20 +374,12 @@ window.PRODUCTS = [
     highlights: ["Hồng sâm hữu cơ cho bé 2–15 tuổi", "Hỗ trợ trí não, tập trung khi đi học", "Gói 40ml uống liền, ngon hơn khi lạnh"],
     usage: "Bé uống 1 gói/ngày hoặc 2–3 ngày 1 gói, uống trực tiếp, ngon hơn khi để lạnh." },
 
-  { id: "26521819053", name: "Combo Khoẻ Mạnh Lớn Khôn - bộ sản phẩm dinh dưỡng tuyệt vời giúp trẻ phát triển toàn diện", short: "Combo Khoẻ Mạnh Lớn Khôn (Lotte Tăng Cân + sữa Norco)", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-can", "canxi", "tang-chieu-cao"], price: 1000000, oldPrice: 1400000, rating: 0.0, reviews: 0, sold: 0, stock: 50,
-    shape: "box", color: "#F0537A", weight: "Box", origin: "Hàn Quốc / Úc", tags: ["Combo"], isCombo: true, items: ["25632276959", "26523206270"],
-    image: "img/26521819053.jpg", thumb: "img/thumb/26521819053.jpg", images: ["img/26521819053.jpg", "img/26521819053-2.jpg", "img/26521819053-3.jpg", "img/26521819053-4.jpg", "img/26521819053-5.jpg"], shopeeId: "26521819053", shopeeUrl: "https://shopee.vn/product/837223358/26521819053", shopeeCategory: "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ sức khỏe",
-    variants: [{ label: "1 box (10 gói Lotte + 10 hộp Norco)", price: 1000000, oldPrice: 1400000 }, { label: "Box lớn", price: 2100000, oldPrice: 2940000 }],  // TODO xác nhận: Phân loại 2.100.000₫ chưa rõ nội dung – đặt tạm "Box lớn"
-    desc: "Combo Khoẻ Mạnh Lớn Khôn gồm 1 hộp 10 gói nước ép Lotte Tăng Cân Tự Nhiên và 10 hộp sữa tươi nguyên kem Norco – bộ đôi ăn ngon + canxi cho bé đang tuổi lớn. Mua từ 2 box giảm thêm.",
-    highlights: ["Nước ép Lotte Tăng Cân + sữa tươi Norco", "Đủ dinh dưỡng cho bé tăng cân, cao lớn", "Tiết kiệm hơn mua lẻ"],
-    usage: "Mỗi ngày 1 gói nước ép + 1–2 hộp sữa Norco." },
 
   { id: "26137781198", name: "Bò Xuyên Tiêu Cay– Thịt Bò Sấy Dẻo Cao Cấp – Thương Hiệu Chef Hải", short: "Bò xuyên tiêu sấy dẻo MasterChef", brand: "masterchef", cat: "thuc-pham",
     ages: ["12-18y"], needs: ["an-vat"], price: 500000, oldPrice: 675000, rating: 5.0, reviews: 0, sold: 28, stock: 50,
     shape: "box", color: "#BF360C", weight: "200g / 500g", origin: "Việt Nam", tags: [], family: true,
     image: "img/26137781198.jpg", thumb: "img/thumb/26137781198.jpg", images: ["img/26137781198.jpg", "img/26137781198-2.jpg", "img/26137781198-3.jpg", "img/26137781198-4.jpg", "img/26137781198-5.jpg"], shopeeId: "26137781198", shopeeUrl: "https://shopee.vn/product/837223358/26137781198", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Thức ăn khô › Thịt khô",
-    variants: [{ label: "200g", price: 500000, oldPrice: 675000 }, { label: "500g", price: 1000000, oldPrice: 1350000 }],  // TODO xác nhận: Shopee có 4 phân loại – đặt tạm 2 cỡ 200g/500g
+    variants: [{ label: "200g", price: 500000, oldPrice: 675000 }, { label: "500g", price: 1000000, oldPrice: 1350000 }],
     desc: "Bò xuyên tiêu cay MasterChef (Chef Hải) – thịt bò mông tươi 100% xé tay, sấy dẻo giữ độ mềm, không chất bảo quản, hạn dùng 6 tháng. Món ăn vặt cay đậm đà cho người lớn và bé lớn.",
     highlights: ["100% thịt bò mông tươi, xé tay thủ công", "Sấy dẻo, không chất bảo quản", "Có 200g và 500g"],
     usage: "Ăn trực tiếp. Bảo quản nơi khô ráo, đậy kín. Không dùng cho bé nhỏ (cay)." }
