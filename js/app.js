@@ -306,7 +306,7 @@
     <header class="header" id="header">
       <div class="container header__inner">
         <button class="hamburger" type="button" id="btnMenu" aria-label="Mở menu">${I.menu}</button>
-        <a class="logo" href="index.html"><span class="logo__mark">🍼</span><span>${SITE.name}<small>${SITE.slogan}</small></span></a>
+        <a class="logo" href="index.html">${SITE.logo ? `<img class="logo__img" src="${SITE.logo}" alt="" width="44" height="44">` : `<span class="logo__mark">🍼</span>`}<span>${SITE.name}<small>${SITE.slogan}</small></span></a>
         <div class="search" id="search">
           <form class="search__form" action="collections.html" method="get" role="search" autocomplete="off">
             <input type="search" name="q" id="searchInput" placeholder="Tìm sản phẩm: hồng sâm, nước ép, D3K2…" aria-label="Tìm sản phẩm">
@@ -333,7 +333,7 @@
     <div class="mmenu" id="mmenu" aria-hidden="true">
       <div class="mmenu__backdrop" data-close-menu></div>
       <div class="mmenu__panel" role="dialog" aria-label="Menu">
-        <div class="mmenu__head"><a class="logo" href="index.html"><span class="logo__mark">🍼</span>${SITE.name}</a><button class="mmenu__close" type="button" data-close-menu aria-label="Đóng">${I.close}</button></div>
+        <div class="mmenu__head"><a class="logo" href="index.html">${SITE.logo ? `<img class="logo__img" src="${SITE.logo}" alt="" width="44" height="44">` : `<span class="logo__mark">🍼</span>`}${SITE.name}</a><button class="mmenu__close" type="button" data-close-menu aria-label="Đóng">${I.close}</button></div>
         <div class="mmenu__ages">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label}</a>`).join('')}</div>
         <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với dược sĩ</a></div>
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
@@ -346,7 +346,7 @@
     <footer class="footer"><div class="container">
       <div class="footer__top">
         <div class="footer__info">
-          <a class="logo" href="index.html"><span class="logo__mark">🍼</span><span>${SITE.name}<small>${SITE.slogan}</small></span></a>
+          <a class="logo" href="index.html">${SITE.logo ? `<img class="logo__img" src="${SITE.logo}" alt="" width="44" height="44">` : `<span class="logo__mark">🍼</span>`}<span>${SITE.name}<small>${SITE.slogan}</small></span></a>
           <b>${SITE.company}</b>
           <p>${I.mapPin}<span>${SITE.address}</span></p>
           <p>${I.phoneCall}<span>Hotline: <b>${SITE.hotline}</b> (${SITE.workingHours})</span></p>

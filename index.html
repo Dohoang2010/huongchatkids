@@ -6,11 +6,11 @@
   <title>Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé 0–18 tuổi</title>
   <meta name="description" content="Hồng sâm ChuChu, nước ép Lotte Organic, vitamin D3K2, váng sữa canxi Calciumore, gạc hươu Sumo… chính hãng Hàn Quốc cho bé. Freeship từ 3 triệu, dược sĩ tư vấn miễn phí.">
   <meta name="theme-color" content="#F0537A">
-  <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, dược sĩ tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/thumb/22644617070.jpg">
+  <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, dược sĩ tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23F0537A'/><text x='50' y='68' font-size='56' text-anchor='middle'>🍼</text></svg>">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app">
@@ -140,8 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     [I.shield, 'Chính hãng, tem phụ tiếng Việt', 'Nhập khẩu chính ngạch, hoàn tiền nếu phát hiện hàng giả'],
     [I.truck, 'Freeship từ 3 triệu', 'Hà Nội giao trong ngày · toàn quốc 1–3 ngày'],
     [I.zap, 'Mua 1 chạm, không cần tài khoản', 'Chỉ cần SĐT & địa chỉ – 30 giây là xong'],
-    [I.headset, 'Dược sĩ tư vấn liều dùng', `Miễn phí qua Zalo/điện thoại ${SITE.workingHours}`],
-  ].map(([ic, t, s]) => `<div class="trust__item"><span class="trust__icon">${ic}</span><div><b>${t}</b><small>${s}</small></div></div>`).join('');
+  ].map(([ic, t, s]) => `<div class="trust__item"><span class="trust__icon">${ic}</span><div><b>${t}</b><small>${s}</small></div></div>`).join('') + (SITE.expert ? `<a class="trust__item trust__item--cta" href="tel:${SITE.expert.phone}"><span class="trust__icon">${I.phoneCall}</span><div><b>Gặp trực tiếp ${SITE.expert.title.toLowerCase()}</b><small>Gọi / Zalo ${SITE.expert.display}</small><span class="trust__call">Bấm để gọi ngay ${I.arrowR}</span></div></a>` : '');
 
   /* Ages */
   $('#ageGrid').innerHTML = AGES.map((a) => { const list = PRODUCTS.filter((p) => p.ages.includes(a.key)); const href = list.length === 1 ? 'product.html?id=' + list[0].id : 'collections.html?age=' + a.key; return `<a class="age-card" href="${href}" style="background:${a.color}"><span class="emoji">${a.emoji}</span><b>${a.label}</b><small>${list.length === 1 ? esc(MC.shortName(list[0])) : a.desc + ' · ' + list.length + ' sản phẩm'}</small></a>`; }).join('');
