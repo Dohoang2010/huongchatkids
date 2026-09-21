@@ -111,7 +111,7 @@ window.PRODUCTS = [
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["an-dam", "tang-can"], price: 624000, oldPrice: 1000000, rating: 4.94, reviews: 53, sold: 423, stock: 50,
     shape: "box", color: "#1B5E20", weight: "Gói 500g", origin: "Hàn Quốc", tags: ["Giảm sâu"],
     image: "img/41002695070.jpg", thumb: "img/thumb/41002695070.jpg", images: ["img/41002695070.jpg", "img/41002695070-2.jpg", "img/41002695070-3.jpg", "img/41002695070-4.jpg", "img/41002695070-5.jpg"], shopeeId: "41002695070", shopeeUrl: "https://shopee.vn/product/837223358/41002695070", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Các loại rong biển ăn liền",
-    variants: [{ label: "1 gói", price: 624000, oldPrice: 1000000 }, { label: "2 gói", price: 2000000, oldPrice: null }, { label: "3 gói", price: 3000000, oldPrice: null }],
+    variants: [{ label: "1 gói (500g)", price: 624000, oldPrice: 1000000 }, { label: "2 gói", price: 1248000, oldPrice: 2000000 }, { label: "3 gói", price: 1872000, oldPrice: 3000000 }],
     desc: "Rong biển vụn ăn liền Sung Gyung – rắc cơm, cháo hoặc trộn cơm nắm cho bé. Rong biển Hàn Quốc sấy giòn, vị nhạt, giúp bữa ăn của con nhanh gọn mà vẫn bổ dưỡng.",
     highlights: ["Rong biển Hàn Quốc sấy giòn, thơm, vị nhạt phù hợp trẻ nhỏ", "Rắc cơm, cháo, cơm nắm, kimbap – bé ăn ngon hơn", "Tiện lợi cho bữa sáng và hộp cơm đi học"],
     usage: "Rắc trực tiếp lên cơm, cháo hoặc trộn cơm nắm cho bé. Đậy kín sau khi mở, bảo quản nơi khô ráo, tránh ẩm." },
