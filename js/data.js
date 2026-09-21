@@ -99,7 +99,6 @@ window.NAV = [
     { title: 'Theo nhu cầu', needs: ['d3k2', 'canxi', 'tang-chieu-cao'] },
     { title: 'Danh mục khác', links: [['Rong biển ăn dặm', 'collections.html?cat=rong-bien'], ['Tăng cân, ăn ngon', 'collections.html?cat=tang-can'], ['Dành cho mẹ', 'collections.html?cat=cho-me']] } ] },
   { label: 'Chọn theo tuổi', ages: true },
-  { label: 'Thương hiệu', brands: true },
   { label: '🔥 Flash sale', link: 'collections.html?sort=discount', hot: true },
   { label: 'Cẩm nang mẹ', link: 'blog.html' },
 ];
