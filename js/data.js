@@ -251,9 +251,9 @@ window.PRODUCTS = [
 
   { id: "26523206270", name: "Sữa Tươi Tiệt Trùng Norco Nội Địa Úc Bổ Sung Sức Khỏe Cho Cơ Thể - Hương Vị Nguyên Chất, Dinh Dưỡng", short: "Sữa tươi tiệt trùng Norco nguyên kem nội địa Úc 1L", brand: "norco", cat: "sua",
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "canxi", "tang-chieu-cao"], price: 1000000, oldPrice: 1350000, rating: 5.0, reviews: 0, sold: 76, stock: 50,
-    shape: "carton", color: "#1565C0", weight: "Hộp", origin: "Úc", tags: [],
+    shape: "carton", color: "#1565C0", weight: "Thùng", origin: "Úc", tags: [],
     image: "img/26523206270.jpg", thumb: "img/thumb/26523206270.jpg", images: ["img/26523206270.jpg", "img/26523206270-2.jpg", "img/26523206270-3.jpg", "img/26523206270-4.jpg", "img/26523206270-5.jpg"], shopeeId: "26523206270", shopeeUrl: "https://shopee.vn/product/837223358/26523206270", shopeeCategory: "Thực phẩm và đồ uống › Sữa - trứng › Sữa › Sữa tiệt trùng",
-    variants: [{ label: "1 hộp", price: 1000000, oldPrice: 1350000 }, { label: "2 hộp", price: 2000000, oldPrice: 2700000 }],
+    variants: [{ label: "1 thùng", price: 1000000, oldPrice: 1350000 }, { label: "2 thùng", price: 2000000, oldPrice: 2700000 }],
     desc: "Sữa tươi tiệt trùng Norco – thương hiệu sữa hơn 128 năm của Úc, sản xuất từ đàn bò ăn cỏ nội địa Úc; sữa nguyên kem giàu canxi và đạm tự nhiên, vị béo thanh, không đường. Phù hợp bé từ 1 tuổi và cả gia đình.",
     highlights: ["Thương hiệu Norco 128 năm, hàng nội địa Úc", "Sữa bò ăn cỏ, không đường, không chất bảo quản", "Giàu canxi & đạm cho bé tăng chiều cao"],
     usage: "Bé trên 1 tuổi uống 1–2 ly (200–400ml)/ngày. Sau khi mở nắp bảo quản lạnh và dùng trong 3 ngày." },
