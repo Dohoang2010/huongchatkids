@@ -24,19 +24,17 @@ window.POLICIES = [
 <h3>Tra cứu đơn hàng</h3>
 <p>Vào mục <a href="account.html">Tài khoản → Đơn hàng gần đây</a> trên thiết bị đã đặt, hoặc nhắn mã đơn cho Zalo {zalo} để được cập nhật trạng thái.</p>` },
 
-  { key: 'thanh-toan', group: 'support', icon: '💳', title: 'Phương thức thanh toán', summary: 'COD, chuyển khoản/VietQR, ví điện tử, hoá đơn VAT', html: `
-<p>Giá bán hiển thị bằng <b>Đồng Việt Nam (₫)</b>, đã bao gồm thuế giá trị gia tăng, chưa bao gồm phí vận chuyển (xem <a href="policy.html?p=giao-hang">Chính sách giao hàng</a>). Mẹ chọn một trong các hình thức sau:</p>
+  { key: 'thanh-toan', group: 'support', icon: '💳', title: 'Phương thức thanh toán', summary: 'Thanh toán khi nhận hàng hoặc chuyển khoản VietQR, hoá đơn VAT', html: `
+<p>Giá bán hiển thị bằng <b>Đồng Việt Nam (₫)</b>, đã bao gồm thuế giá trị gia tăng, chưa bao gồm phí vận chuyển (xem <a href="policy.html?p=giao-hang">Chính sách giao hàng</a>). Mẹ chọn một trong <b>2 hình thức</b> sau:</p>
 <h3>1. Thanh toán khi nhận hàng (COD)</h3>
 <ul><li>Áp dụng toàn quốc. Mẹ trả tiền mặt cho nhân viên giao hàng sau khi <b>kiểm tra hàng</b> (ngoại quan, tem phụ, hạn dùng, số lượng).</li><li>Được từ chối nhận nếu hàng sai, móp rách, không đúng đơn – không mất phí.</li></ul>
 <h3>2. Chuyển khoản ngân hàng / VietQR</h3>
 <table class="ptable"><tr><th>Ngân hàng</th><td>{bankFull}</td></tr><tr><th>Số tài khoản</th><td><b>{bankAccount}</b></td></tr><tr><th>Chủ tài khoản</th><td>{bankHolder}</td></tr><tr><th>Nội dung chuyển khoản</th><td><b>TÊN MẸ_thanhtoan_MÃ ĐƠN</b> (ví dụ: NGUYEN THU HA_thanhtoan_HCK260921123)</td></tr></table>
 <ul><li>Ngay sau khi bấm Đặt hàng, màn hình hiện <b>mã VietQR</b> đã điền sẵn số tiền và nội dung – mẹ mở app ngân hàng/ví bất kỳ, quét và xác nhận, không cần gõ tay. Mã QR cũng xem lại được tại <a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a>.</li><li>Đây là <b>số tài khoản duy nhất</b> của Hương Chất Kids. Chúng tôi không bao giờ nhắn số tài khoản khác hay yêu cầu chuyển cho cá nhân; nếu nhận được yêu cầu như vậy, mẹ gọi hotline {hotline} để xác minh.</li><li>Đơn được giao ngay khi nhận được tiền (thường trong vài phút với chuyển khoản nhanh 24/7).</li></ul>
-<h3>3. Ví điện tử MoMo / ZaloPay</h3>
-<p>Quét mã QR được gửi qua Zalo/SMS. Không thu thêm phí.</p>
 <h3>Hoá đơn giá trị gia tăng</h3>
 <p>Hoá đơn điện tử được xuất theo Nghị định 123/2020/NĐ-CP khi mẹ yêu cầu (ghi thông tin xuất hoá đơn ở ô ghi chú hoặc báo khi xác nhận đơn). Hoá đơn được gửi qua email trong vòng 3 ngày làm việc kể từ khi giao hàng thành công.</p>
 <h3>An toàn thanh toán</h3>
-<ul><li>Website <b>không lưu</b> thông tin thẻ, tài khoản ngân hàng hay mật khẩu ví của khách hàng.</li><li>Mọi giao dịch chuyển khoản đều qua ngân hàng/ví điện tử được Ngân hàng Nhà nước cấp phép.</li><li>Nếu chuyển nhầm hoặc chuyển thừa, chúng tôi hoàn lại trong 1–3 ngày làm việc sau khi đối chiếu.</li></ul>` },
+<ul><li>Website <b>không lưu</b> thông tin thẻ hay tài khoản ngân hàng của khách hàng.</li><li>Mọi giao dịch chuyển khoản đều qua ngân hàng được Ngân hàng Nhà nước cấp phép.</li><li>Nếu chuyển nhầm hoặc chuyển thừa, chúng tôi hoàn lại trong 1–3 ngày làm việc sau khi đối chiếu.</li></ul>` },
 
   { key: 'giao-hang', group: 'support', icon: '🚚', title: 'Chính sách giao hàng', summary: 'Khu vực, thời gian, phí ship, freeship từ {freeship}, đồng kiểm', html: `
 <h3>Phạm vi & thời gian giao</h3>

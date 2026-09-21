@@ -973,3 +973,15 @@ body { padding-bottom: 0; }
 .paybox__row .btn { margin-left: auto; min-height: 30px; padding: 0 10px; font-size: 12px; background: #fff; }
 .paybox__row .text-price { color: var(--price); font-size: 17px; }
 .paybox__note { font-size: 12.5px; color: var(--ink-2); margin-top: 8px; line-height: 1.5; }
+
+/* ---------- 2 lựa chọn thanh toán ---------- */
+.pay-options--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pay-options--2 .pay-option { position: relative; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 12px 12px 14px; min-height: 96px; }
+.pay-options--2 .pay-option input { position: absolute; top: 12px; right: 12px; }
+.pay-options--2 .pay-option .ico { width: 34px; height: 34px; font-size: 18px; }
+.pay-options--2 .pay-option b { font-size: 13.5px; line-height: 1.3; }
+.pay-options--2 .pay-option small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.pay-options--2 .pay-option:has(input:checked) { border-color: var(--primary); background: var(--primary-50); box-shadow: 0 0 0 3px var(--primary-100); }
+.pay-option--card { min-height: 64px; }
+.pay-option--card .tagr { white-space: nowrap; }
+@media (max-width: 560px) { .pay-option--card { flex-wrap: wrap; } .pay-option--card .tagr { margin-left: 44px; } }

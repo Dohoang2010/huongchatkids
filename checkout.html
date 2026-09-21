@@ -50,9 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <label class="ship-option" id="expressOpt"><input type="radio" name="ship" value="express"><div><b>Giao hoả tốc 2–4h</b><small>Chỉ nội thành Hà Nội, đặt trước 16h</small></div><span class="fee">${fmt(SITE.expressFee || 35000)}</span></label>
         </div></div>
         <div class="card card--pad"><h3><span class="num">3</span>Thanh toán</h3><div class="pay-options">
-          <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') === 'cod' ? 'checked' : ''}><span class="ico">💵</span><div><b>Thanh toán khi nhận hàng (COD)</b><small>Được kiểm tra hàng trước khi trả tiền</small></div><span class="badge badge--teal tagr">Phổ biến</span></label>
-          <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><div><b>Chuyển khoản ngân hàng / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} ${SITE.bank.account} – mã QR đúng số tiền hiện ngay sau khi đặt hàng` : 'Mã QR hiện sau khi đặt hàng'}</small></div></label>
-          <label class="pay-option"><input type="radio" name="payment" value="momo" ${c.payment === 'momo' ? 'checked' : ''}><span class="ico">📱</span><div><b>Ví MoMo / ZaloPay</b><small>Quét mã QR được gửi qua Zalo/SMS</small></div></label>
+          <label class="pay-option pay-option--card"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') !== 'bank' ? 'checked' : ''}><span class="ico">💵</span><div><b>Thanh toán khi nhận hàng (COD)</b><small>Kiểm tra hàng rồi mới trả tiền cho shipper</small></div><span class="badge badge--teal tagr">Phổ biến</span></label>
+          <label class="pay-option pay-option--card"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><div><b>Chuyển khoản ngân hàng / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} · ${SITE.bank.account} · mã QR đúng số tiền hiện ngay sau khi đặt` : 'Mã QR hiện sau khi đặt hàng'}</small></div><span class="badge badge--soft tagr">Giao ngay khi nhận tiền</span></label>
         </div></div>
       </div>
       <div class="checkout__side"><div class="card card--pad">

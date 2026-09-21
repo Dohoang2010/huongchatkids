@@ -224,6 +224,21 @@
     openModal('#callbackModal');
   }
 
+  /* ---------------- Ngày sale Shopee (15, 25, ngày đôi) ---------------- */
+  function todayVN() { const d = param('demo_date'); const t = d ? new Date(d + 'T12:00:00') : new Date(); return isNaN(t) ? new Date() : t; }
+  function shopeeSale() {
+    const cfg = SITE.shopeeSale; if (!cfg) return null;
+    const t = todayVN(); const d = t.getDate(), m = t.getMonth() + 1; let day = null;
+    if (cfg.doubleDays !== false && d === m) day = `${d}/${m}`;
+    else if ((cfg.days || []).includes(d)) day = String(d);
+    return day ? { day, label: (cfg.label || 'Siêu ưu đãi ngày {d}').replace('{d}', day) } : null;
+  }
+  /* Nút Shopee: ngày thường màu nhạt, ngày sale nổi bật + tag */
+  function shopeeBtn(url, cls = 'btn--ghost', text = 'Xem trên Shopee') {
+    const s = shopeeSale(); if (!url) return '';
+    return s ? `<a class="btn btn--shopee btn--stack shopee-btn" href="${url}" target="_blank" rel="noopener"><span>${text} ↗</span><small class="sale-tag">🔥 ${esc(s.label)}</small></a>` : `<a class="btn ${cls} shopee-btn" href="${url}" target="_blank" rel="noopener">${text} ↗</a>`;
+  }
+
   /* ---------------- Toast ---------------- */
   function toast(msg, opts = {}) {
     let wrap = $('.toasts'); if (!wrap) { wrap = document.createElement('div'); wrap.className = 'toasts'; wrap.setAttribute('aria-live', 'polite'); document.body.appendChild(wrap); }
@@ -346,7 +361,7 @@
           ${SITE.zaloQr ? `<div class="footer__qr"><img src="${SITE.zaloQr}" width="112" height="112" alt="Mã QR Zalo ${SITE.name}" loading="lazy"><div><b>Zalo ${SITE.hotline}</b><small>Quét mã để chat với dược sĩ, đặt hàng nhanh</small><a href="${SITE.zalo}" target="_blank" rel="noopener">Mở Zalo →</a></div></div>` : ''}
           <div class="footer__social">${SITE.facebook ? `<a href="${SITE.facebook}" target="_blank" rel="noopener" aria-label="Facebook">${I.facebook}</a>` : ''}${SITE.instagram ? `<a href="${SITE.instagram}" target="_blank" rel="noopener" aria-label="Instagram">${I.instagram}</a>` : ''}${SITE.youtube ? `<a href="${SITE.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${I.youtube}</a>` : ''}${SITE.tiktok ? `<a href="${SITE.tiktok}" target="_blank" rel="noopener" aria-label="TikTok">${I.tiktok}</a>` : ''}<a class="pill" href="${SITE.zalo}" target="_blank" rel="noopener" aria-label="Zalo" style="font-weight:800;font-size:12px;color:var(--zalo)">Zalo</a>${SITE.shopee ? `<a class="pill" href="${SITE.shopee}" target="_blank" rel="noopener" aria-label="Shopee" style="font-weight:800;font-size:12px;color:#EE4D2D">Shopee</a>` : ''}</div>
           <h4 class="mt-16">Thanh toán</h4>
-          <div class="footer__pay"><span>Tiền mặt khi nhận (COD)</span><span>Chuyển khoản / VietQR</span><span>MoMo · ZaloPay</span></div>
+          <div class="footer__pay"><span>💵 Tiền mặt khi nhận hàng (COD)</span><span>🏦 Chuyển khoản / VietQR ${SITE.bank ? SITE.bank.name : ''}</span></div>
         </div>
       </div>
       <p class="footer__note">* Thực phẩm bảo vệ sức khoẻ không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Hiệu quả có thể khác nhau tuỳ cơ địa. Vui lòng đọc kỹ hướng dẫn sử dụng trước khi dùng.</p>
@@ -443,10 +458,9 @@
           <div class="grid-2 ${known ? 'hide' : ''}" id="qbFields1"><input class="input" name="name" placeholder="Họ tên mẹ / ba *" aria-label="Họ tên" value="${esc(c.name || '')}" required autocomplete="name"><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại *" aria-label="Số điện thoại" value="${esc(c.phone || '')}" required autocomplete="tel"></div>
           <input class="input ${known ? 'hide' : ''}" id="qbFields2" name="address" placeholder="Địa chỉ nhận hàng (số nhà, đường, phường, quận, tỉnh) *" aria-label="Địa chỉ nhận hàng" value="${esc(addrShow(c.address))}" required autocomplete="street-address">
           ${known ? `<div class="qb__savedinfo" id="qbSavedInfo"><b>${esc(c.name || '')}</b> · ${esc(c.phone)}<br>${esc(addrShow(c.address))}</div>` : ''}
-          <div class="pay-options pay-options--row" role="radiogroup" aria-label="Hình thức thanh toán">
-            <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') === 'cod' ? 'checked' : ''}><span class="ico">💵</span><b>Khi nhận hàng</b></label>
-            <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><b>Chuyển khoản</b></label>
-            <label class="pay-option"><input type="radio" name="payment" value="momo" ${c.payment === 'momo' ? 'checked' : ''}><span class="ico">📱</span><b>MoMo / ZaloPay</b></label>
+          <div class="pay-options pay-options--2" role="radiogroup" aria-label="Hình thức thanh toán">
+            <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') !== 'bank' ? 'checked' : ''}><span class="ico">💵</span><span><b>Thanh toán khi nhận hàng</b><small>Kiểm tra hàng rồi mới trả tiền</small></span></label>
+            <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><span><b>Chuyển khoản / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} ${SITE.bank.account} · quét QR sau khi đặt` : 'Quét mã QR sau khi đặt'}</small></span></label>
           </div>
           <details class="qb__coupon"><summary>${I.tag}Có mã giảm giá? <span class="text-muted">(VD: HCK10)</span></summary><div class="coupon mt-8"><input class="input" id="qbCoupon" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div></details>
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
@@ -456,7 +470,7 @@
           <p class="qb__privacy">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
         </form>
         <div class="qb__alt"><p>Hoặc đặt hàng qua</p><div class="row ${p.shopeeUrl ? 'row--4' : ''}">
-          <a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-zalo-copy="${esc(shortName(p))}${p.variants ? ' – ' + esc(p.variants[QB.variant || 0].label) : ''}">Đặt qua Zalo</a>${p.shopeeUrl ? `<a class="btn btn--ghost" href="${p.shopeeUrl}" target="_blank" rel="noopener">Xem trên Shopee</a>` : ''}
+          <a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-zalo-copy="${esc(shortName(p))}${p.variants ? ' – ' + esc(p.variants[QB.variant || 0].label) : ''}">Đặt qua Zalo</a>${shopeeBtn(p.shopeeUrl)}
           <a class="btn btn--ghost" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi đặt</a>
           <button class="btn btn--ghost" type="button" data-callback="${p.id}">${I.headset}Gọi lại tôi</button>
         </div></div>
@@ -489,7 +503,7 @@
     setTimeout(() => $('#quickBuy .qb__success h3')?.focus(), 100);
   }
   function orderSuccessHTML(order, inModal) {
-    const payNote = order.payment === 'bank' ? `<span><i>2</i><p>Mẹ chuyển khoản <b>${fmt(order.total)}</b> theo mã QR ở trên (số tiền và nội dung đã điền sẵn). Đơn được giao ngay khi nhận được tiền.</p></span>` : order.payment === 'momo' ? `<span><i>2</i><p>Dược sĩ gửi mã QR MoMo/ZaloPay qua Zalo/SMS để mẹ thanh toán <b>${fmt(order.total)}</b>.</p></span>` : `<span><i>2</i><p>Mẹ thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</p></span>`;
+    const payNote = order.payment === 'bank' ? `<span><i>2</i><p>Mẹ chuyển khoản <b>${fmt(order.total)}</b> theo mã QR ở trên (số tiền và nội dung đã điền sẵn). Đơn được giao ngay khi nhận được tiền.</p></span>` : `<span><i>2</i><p>Mẹ thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</p></span>`;
     const items = (order.items || []).map((it) => `<li>${esc(it.short || it.name)}${it.variant ? ` – ${esc(it.variant)}` : ''} <b>× ${it.qty || 1}</b></li>`).join('');
     return `${inModal ? `<div class="modal__head"><h3>${I.checkCircle}Đặt hàng thành công</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>` : ''}
       <div class="modal__body"><div class="qb__success">
@@ -591,5 +605,5 @@
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => { renderShell(); initSearch(); bindGlobal(); updateCartBadges(); });
 
-  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML };
+  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML };
 })();
