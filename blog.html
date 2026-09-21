@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <section class="section"><div class="section-head"><div><h2>Bài viết khác</h2></div></div><div class="grid grid--3">${POSTS.filter((p) => p.id !== id).slice(0, 3).map(card).join('')}</div></section>`;
   } else {
     const cats = [...new Set(POSTS.map((p) => p.cat))];
-    $('#blogPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Cẩm nang mẹ</span></nav><h1 class="page-title">Cẩm nang mẹ 📖</h1><p class="text-muted fs-14 mb-16">Kiến thức dinh dưỡng & chăm con được đội ngũ dược sĩ Hương Chất Kids kiểm duyệt</p>
+    $('#blogPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Cẩm nang mẹ</span></nav><h1 class="page-title">Cẩm nang mẹ 📖</h1><p class="text-muted fs-14 mb-16">Kiến thức dinh dưỡng & chăm con được dược sĩ Hương Chất Kids biên soạn, chỉ mang tính tham khảo</p>
       <div class="chips chips--scroll mb-16" id="blogChips"><button class="chip is-active" data-cat="">Tất cả</button>${cats.map((c) => `<button class="chip" data-cat="${c}">${c}</button>`).join('')}</div><div class="grid grid--3" id="blogGrid">${POSTS.map(card).join('')}</div>`;
     $('#blogChips').addEventListener('click', (e) => { const b = e.target.closest('[data-cat]'); if (!b) return; MC.$$('#blogChips .chip').forEach((x) => x.classList.toggle('is-active', x === b)); $('#blogGrid').innerHTML = POSTS.filter((p) => !b.dataset.cat || p.cat === b.dataset.cat).map(card).join(''); });
   }

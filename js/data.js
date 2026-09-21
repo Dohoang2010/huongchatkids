@@ -47,7 +47,7 @@ window.CATEGORIES = [
   { key: 'nuoc-ep',   label: 'Nước ép & nước dinh dưỡng', icon: '🧃', color: '#FFF3D6', desc: 'Lotte Organic – ăn ngon, tăng chiều cao, đề kháng', tpcn: false, image: 'img/thumb/22686115682.jpg' },
   { key: 'hong-sam',  label: 'Hồng sâm cho bé',            icon: '🌿', color: '#FFE9EF', desc: 'ChuChu Hàn Quốc – đề kháng, phục hồi sau ốm', tpcn: true, image: 'img/thumb/22644617070.jpg' },
   { key: 'vitamin',   label: 'Vitamin & canxi',            icon: '💊', color: '#EAF0FF', desc: 'D3K2 nhỏ giọt, váng sữa canxi Calciumore', tpcn: true, image: 'img/thumb/42878618667.jpg' },
-  { key: 'tang-can',  label: 'Tăng cân, ăn ngon',          icon: '🍯', color: '#EEF8E6', desc: 'Gạc hươu non Sumo cho bé còi, biếng ăn', tpcn: true, image: 'img/thumb/26156646705.jpg' },
+  { key: 'tang-can',  label: 'Tăng cân, ăn ngon',          icon: '🍯', color: '#EEF8E6', desc: 'Gạc hươu non Sumo cho bé chậm tăng cân, biếng ăn', tpcn: true, image: 'img/thumb/26156646705.jpg' },
   { key: 'rong-bien', label: 'Rong biển ăn dặm',           icon: '🍙', color: '#E0F5F2', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
   { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Nghệ nano Curcumin 365 Plus', tpcn: true, image: 'img/thumb/49061985399.jpg' },
 ];
@@ -170,7 +170,7 @@ window.PRODUCTS = [
     image: "img/26156646705.jpg", thumb: "img/thumb/26156646705.jpg", images: ["img/26156646705.jpg", "img/26156646705-2.jpg", "img/26156646705-3.jpg", "img/26156646705-4.jpg", "img/26156646705-5.jpg"], shopeeId: "26156646705", shopeeUrl: "https://shopee.vn/product/837223358/26156646705", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
     variants: [{ label: "10 gói", price: 429000, oldPrice: 500000 }, { label: "20 gói", price: 1000000, oldPrice: null }, { label: "30 gói", price: 1265000, oldPrice: 1350000 }, { label: "1 thùng gạc canxi", price: 1500000, oldPrice: null }, { label: "1 thùng 40 gói", price: 1639000, oldPrice: 1800000 }],
     desc: "Gạc hươu non Sumo chiết xuất nhung hươu Hàn Quốc dạng gói uống. Theo nhà sản xuất, sản phẩm hỗ trợ bé tăng cân, ăn ngon miệng và bổ sung canxi cho bé chậm lớn.",
-    highlights: ["Chiết xuất nhung hươu non Hàn Quốc", "Hỗ trợ tăng cân, ăn ngon cho bé còi", "Có bản gạc canxi (thùng)"],
+    highlights: ["Chiết xuất nhung hươu non Hàn Quốc", "Hỗ trợ tăng cân, ăn ngon cho bé chậm lớn", "Có bản gạc canxi (thùng)"],
     usage: "Bé uống 1 gói/ngày sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc dược sĩ tư vấn." },
 
   { id: "23660586997", name: "Nước Ép LOTTE KHOẺ MẠNH - Bổ Sung Vitamin Giúp Trẻ Ăn Ngon Miệng, Tăng Cường Hệ Miễn Dịch", short: "Nước ép Lotte Khoẻ Mạnh (cam)", brand: "lotte", cat: "nuoc-ep",
@@ -264,7 +264,7 @@ window.POSTS = [
 window.COUPONS = {
   HCK10: { type: 'percent', value: 10, max: 100000, min: 300000, desc: 'Giảm 10% (tối đa 100K) cho đơn từ 300K' },
   FREESHIP:  { type: 'ship', value: 0, min: 300000, desc: 'Miễn phí vận chuyển cho đơn từ 300K' },
-  MEMOI50:   { type: 'fixed', value: 50000, min: 500000, desc: 'Giảm 50K cho đơn đầu tiên từ 500K' },
+  MOI50:     { type: 'fixed', value: 50000, min: 500000, desc: 'Giảm 50K cho đơn đầu tiên từ 500K' },
 };
 
 window.PROVINCES = ['TP. Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái'];

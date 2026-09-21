@@ -82,7 +82,7 @@
 
   <!-- BLOG -->
   <section class="section"><div class="container">
-    <div class="section-head"><div><h2>Cẩm nang mẹ 📖</h2><p>Kiến thức chăm con được dược sĩ kiểm duyệt</p></div><a class="link" href="blog.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
+    <div class="section-head"><div><h2>Cẩm nang mẹ 📖</h2><p>Kiến thức chăm con do dược sĩ Hương Chất Kids biên soạn</p></div><a class="link" href="blog.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
     <div class="grid grid--3" id="postGrid"></div>
   </div></section>
 
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let cur = 0, timer; const n = BANNERS.length;
   $('#carouselDots').innerHTML = BANNERS.map((_, i) => `<button type="button" data-dot="${i}" aria-label="Slide ${i + 1}"></button>`).join('');
   const go = (i) => { cur = (i + n) % n; $('#carouselTrack').style.transform = `translateX(-${cur * 100}%)`; $$('[data-dot]').forEach((d, k) => d.classList.toggle('is-active', k === cur)); };
-  const auto = () => { clearInterval(timer); timer = setInterval(() => go(cur + 1), 5000); };
+  const auto = () => { clearInterval(timer); timer = setInterval(() => { if (!document.hidden && !$('#carousel').matches(':hover')) go(cur + 1); }, 6000); };
   $('#carousel').addEventListener('click', (e) => { const s = e.target.closest('[data-slide]'); const d = e.target.closest('[data-dot]'); if (s) { go(cur + Number(s.dataset.slide)); auto(); } if (d) { go(Number(d.dataset.dot)); auto(); } });
   let sx = 0; $('#carousel').addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true }); $('#carousel').addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) { go(cur + (dx < 0 ? 1 : -1)); auto(); } });
   go(0); auto();
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#brandRow').innerHTML = BRANDS.map((b) => `<a href="collections.html?brand=${b.key}">${b.label}</a>`).join('');
 
   /* Subscribe */
-  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ! Mã giảm 50K cho đơn đầu tiên từ 500K: <b>MEMOI50</b><br><small>Mã cũng được gửi qua Zalo ${esc(v)}. Nhập mã ở bước thanh toán.</small></div>`; });
+  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ! Mã giảm 50K cho đơn đầu tiên từ 500K: <b>MOI50</b><br><small>Mã cũng được gửi qua Zalo ${esc(v)}. Nhập mã ở bước thanh toán.</small></div>`; });
 });
 </script>
 </body>

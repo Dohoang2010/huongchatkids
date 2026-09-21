@@ -495,7 +495,7 @@
     input.addEventListener('input', debounce(() => render(input.value), 120));
     input.addEventListener('focus', () => render(input.value));
     document.addEventListener('click', (e) => { if (!e.target.closest('#search')) box.classList.remove('is-open'); });
-    $('#btnSearchToggle')?.addEventListener('click', () => { $('#header').classList.toggle('is-search-open'); if ($('#header').classList.contains('is-search-open')) input.focus(); });
+    $('#btnSearchToggle')?.addEventListener('click', (e) => { const open = $('#header').classList.toggle('is-search-open'); e.currentTarget.innerHTML = open ? I.close : I.search; e.currentTarget.setAttribute('aria-label', open ? 'Đóng tìm kiếm' : 'Tìm kiếm'); if (open) input.focus(); else box.classList.remove('is-open'); });
   }
 
   /* ---------------- Global events ---------------- */
