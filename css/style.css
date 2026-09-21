@@ -985,3 +985,9 @@ body { padding-bottom: 0; }
 .pay-option--card { min-height: 64px; }
 .pay-option--card .tagr { white-space: nowrap; }
 @media (max-width: 560px) { .pay-option--card { flex-wrap: wrap; } .pay-option--card .tagr { margin-left: 44px; } }
+
+/* Thẻ đánh giá → Shopee */
+.review-card--shopee { border-color: #FFD9CF; }
+.review-card--shopee:hover { border-color: #EE4D2D; box-shadow: var(--shadow); }
+.prod--shopee { color: #EE4D2D; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.prod--shopee svg { width: 14px; height: 14px; }
