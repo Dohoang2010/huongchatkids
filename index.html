@@ -36,7 +36,7 @@
   <!-- FLASH SALE -->
   <section class="section"><div class="container">
     <div class="flash">
-      <div class="flash__head"><div class="flash__title"><span class="bolt">⚡</span><h2>Flash sale hôm nay</h2></div><div class="countdown" id="countdown"></div></div>
+      <div class="flash__head"><div class="flash__title"><span class="bolt">⚡</span><h2>Flash sale hôm nay</h2><span class="flames" aria-hidden="true"><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i></span></div><div class="countdown" id="countdown"></div></div>
       <div class="row-scroll" id="flashRow"></div>
       <div class="flash__more"><a class="btn btn--light" href="collections.html?sort=discount">Xem tất cả deal giảm sâu</a></div>
     </div>
@@ -151,8 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Flash sale: chỉ sản phẩm có giảm giá thật; đếm ngược tới hạn thật trong SITE.flashSaleEnd */
   const flash = PRODUCTS.filter((p) => MC.pct(p) >= 5).sort((a, b) => MC.pct(b) - MC.pct(a)).slice(0, 8);
   $('#flashRow').innerHTML = flash.map((p) => productCard(p)).join('');
-  const end = SITE.flashSaleEnd ? new Date(SITE.flashSaleEnd).getTime() : 0;
-  if (end > Date.now()) { const days = Math.floor((end - Date.now()) / 864e5); if (days >= 1) $('#countdown').innerHTML = `Ưu đãi đến hết <b style="min-width:auto;padding:0 10px">${new Date(end).getDate()}/${new Date(end).getMonth() + 1}</b>`; else countdown($('#countdown'), end); } else $('#countdown').innerHTML = '';
+  if (SITE.flashSaleEnd === 'daily') {
+    // Ưu đãi trong hôm nay: đếm ngược tới 24:00, qua ngày mới tự đếm lại
+    const endOfToday = () => { const e = new Date(); e.setHours(24, 0, 0, 0); return e.getTime(); };
+    countdown($('#countdown'), endOfToday, 'Chỉ trong hôm nay · còn');
+  } else {
+    const end = SITE.flashSaleEnd ? new Date(SITE.flashSaleEnd).getTime() : 0;
+    if (end > Date.now()) { const days = Math.floor((end - Date.now()) / 864e5); if (days >= 1) $('#countdown').innerHTML = `Ưu đãi đến hết <b style="min-width:auto;padding:0 10px">${new Date(end).getDate()}/${new Date(end).getMonth() + 1}</b>`; else countdown($('#countdown'), end); } else $('#countdown').innerHTML = '';
+  }
 
   /* Featured tabs */
   const sets = {

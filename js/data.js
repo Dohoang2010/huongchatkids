@@ -37,7 +37,7 @@ window.SITE = {
   hotSearches: ['Hồng sâm ChuChu', 'Nước ép Lotte', 'Sữa Biostime', 'D3K2', 'Táo đỏ Tân Cương', 'Men vi sinh'],
   advisor: 'Dược sĩ',                 // danh xưng người tư vấn – chỉ dùng 'Dược sĩ' khi shop có dược sĩ có chứng chỉ hành nghề, nếu không đổi thành 'Chuyên viên tư vấn'
   showReviews: false,                 // true → hiện thêm mảng REVIEWS (đánh giá do shop nhập) ở trang chủ & trang sản phẩm
-  flashSaleEnd: '2026-09-30T23:59:59+07:00',  // hạn chót flash sale thật; qua ngày này countdown tự ẩn
+  flashSaleEnd: 'daily',  // 'daily' = ưu đãi trong hôm nay (đếm ngược tới 24:00, mỗi ngày tự đếm lại); hoặc đặt hạn cụ thể '2026-09-30T23:59:59+07:00' (qua ngày này countdown tự ẩn)
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
 };
 

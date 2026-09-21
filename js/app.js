@@ -594,8 +594,9 @@
   }
 
   /* ---------------- Countdown ---------------- */
-  function countdown(el, endTs) {
-    const tick = () => { const d = Math.max(0, endTs - Date.now()); const h = Math.floor(d / 36e5), m = Math.floor(d % 36e5 / 6e4), s = Math.floor(d % 6e4 / 1e3); el.innerHTML = `Kết thúc sau <b>${String(h).padStart(2, '0')}</b><i>:</i><b>${String(m).padStart(2, '0')}</b><i>:</i><b>${String(s).padStart(2, '0')}</b>`; };
+  // endTs: mốc thời gian (ms) hoặc hàm trả về mốc (tính lại mỗi giây → tự sang ngày mới với ưu đãi 'daily')
+  function countdown(el, endTs, label = 'Kết thúc sau') {
+    const tick = () => { const end = typeof endTs === 'function' ? endTs() : endTs; const d = Math.max(0, end - Date.now()); const h = Math.floor(d / 36e5), m = Math.floor(d % 36e5 / 6e4), s = Math.floor(d % 6e4 / 1e3); el.innerHTML = `${label} <b>${String(h).padStart(2, '0')}</b><i>:</i><b>${String(m).padStart(2, '0')}</b><i>:</i><b>${String(s).padStart(2, '0')}</b>`; };
     tick(); return setInterval(tick, 1000);
   }
 
