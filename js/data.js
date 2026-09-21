@@ -231,12 +231,13 @@ window.PRODUCTS = [
     highlights: ["Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm", "Táo & củ dền hữu cơ, chứng nhận Organic, HACCP", "Bổ sung canxi, sắt, axit folic"],
     usage: "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì." },
 
-  { id: "28467224687", name: "TẢO ĐÔ HOÀNG GIA Hotan Tân Cương bigsize hàng loại 1 cao cấp giúp bồi bổ sức khoẻ, hỗ trợ giấc ngủ", short: "Táo đỏ Hoàng Gia Hotan Tân Cương 1kg", brand: "primefood", cat: "thuc-pham",
+  { id: "28467224687", name: "TẢO ĐÔ HOÀNG GIA Hotan Tân Cương bigsize hàng loại 1 cao cấp giúp bồi bổ sức khoẻ, hỗ trợ giấc ngủ", short: "Táo đỏ Hoàng Gia Hotan Tân Cương gói 1kg", brand: "primefood", cat: "thuc-pham",
     ages: [], needs: ["an-vat", "cho-me"], price: 360000, oldPrice: 486000, rating: 4.9, reviews: 0, sold: 60, stock: 50,
-    shape: "box", color: "#C62828", weight: "Túi 1kg", origin: "Trung Quốc", tags: [], family: true,
+    shape: "box", color: "#C62828", weight: "Gói 1kg", origin: "Trung Quốc", tags: [], family: true,
     image: "img/28467224687.jpg", thumb: "img/thumb/28467224687.jpg", images: ["img/28467224687.jpg", "img/28467224687-2.jpg", "img/28467224687-3.jpg", "img/28467224687-4.jpg", "img/28467224687-5.jpg"], shopeeId: "28467224687", shopeeUrl: "https://shopee.vn/product/837223358/28467224687", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Thức ăn khô › Hoa quả sấy khô",
+    variants: [{ label: "1 gói", price: 360000, oldPrice: 486000 }, { label: "2 gói", price: 720000, oldPrice: 972000 }],
     desc: "Táo đỏ Hotan (Hoà Điền, Tân Cương) loại 1 size lớn, quả to dày thịt, ngọt tự nhiên, sấy khô không đường, không chất bảo quản. Dùng ăn liền, pha trà, nấu chè, hầm canh, chưng yến cho cả nhà.",
-    highlights: ["100% táo đỏ Hotan Tân Cương loại 1, size big", "Không đường, không chất bảo quản", "Túi 1kg zip tiện bảo quản"],
+    highlights: ["100% táo đỏ Hotan Tân Cương loại 1, size big", "Không đường, không chất bảo quản", "Gói 1kg – mua 2 gói tiết kiệm hơn"],
     usage: "Ăn trực tiếp 3–5 quả/ngày, hoặc pha trà, nấu chè, hầm canh. Bảo quản nơi khô ráo, đậy kín sau khi mở." },
 
   { id: "29402041000", name: "Táo Đỏ Thiên Sâm Tân Cương Big Size Thượng Hạng Loại 1 Thơm, Ngọt, Bổ Máu Túi Gói 1kg", short: "Táo đỏ Thiên Sâm Tân Cương 1kg", brand: "richfoods", cat: "thuc-pham",
@@ -250,8 +251,9 @@ window.PRODUCTS = [
 
   { id: "26523206270", name: "Sữa Tươi Tiệt Trùng Norco Nội Địa Úc Bổ Sung Sức Khỏe Cho Cơ Thể - Hương Vị Nguyên Chất, Dinh Dưỡng", short: "Sữa tươi tiệt trùng Norco nguyên kem nội địa Úc 1L", brand: "norco", cat: "sua",
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "canxi", "tang-chieu-cao"], price: 1000000, oldPrice: 1350000, rating: 5.0, reviews: 0, sold: 76, stock: 50,
-    shape: "carton", color: "#1565C0", weight: "Thùng 12 hộp × 1L", origin: "Úc", tags: [],
+    shape: "carton", color: "#1565C0", weight: "Hộp", origin: "Úc", tags: [],
     image: "img/26523206270.jpg", thumb: "img/thumb/26523206270.jpg", images: ["img/26523206270.jpg", "img/26523206270-2.jpg", "img/26523206270-3.jpg", "img/26523206270-4.jpg", "img/26523206270-5.jpg"], shopeeId: "26523206270", shopeeUrl: "https://shopee.vn/product/837223358/26523206270", shopeeCategory: "Thực phẩm và đồ uống › Sữa - trứng › Sữa › Sữa tiệt trùng",
+    variants: [{ label: "1 hộp", price: 1000000, oldPrice: 1350000 }, { label: "2 hộp", price: 2000000, oldPrice: 2700000 }],
     desc: "Sữa tươi tiệt trùng Norco – thương hiệu sữa hơn 128 năm của Úc, sản xuất từ đàn bò ăn cỏ nội địa Úc; sữa nguyên kem giàu canxi và đạm tự nhiên, vị béo thanh, không đường. Phù hợp bé từ 1 tuổi và cả gia đình.",
     highlights: ["Thương hiệu Norco 128 năm, hàng nội địa Úc", "Sữa bò ăn cỏ, không đường, không chất bảo quản", "Giàu canxi & đạm cho bé tăng chiều cao"],
     usage: "Bé trên 1 tuổi uống 1–2 ly (200–400ml)/ngày. Sau khi mở nắp bảo quản lạnh và dùng trong 3 ngày." },
@@ -301,10 +303,11 @@ window.PRODUCTS = [
 
   { id: "47357633686", name: "Sâm Organic Pinkfong Kid Up 40ml – Tăng Chiều Cao, Tăng Đề Kháng, Giúp Bé Ăn Ngon Ngủ Ngon", short: "Sâm Organic Pinkfong Kid Up 40ml", brand: "pinkfong", cat: "hong-sam",
     ages: ["3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "de-khang", "tang-can"], price: 1290000, oldPrice: 1742000, rating: 0.0, reviews: 0, sold: 1, stock: 50,
-    shape: "box", color: "#EC407A", weight: "Gói 40ml", origin: "Hàn Quốc", tags: ["Mới"],
+    shape: "box", color: "#EC407A", weight: "Hộp (gói 40ml)", origin: "Hàn Quốc", tags: ["Mới"],
     image: "img/47357633686.jpg", thumb: "img/thumb/47357633686.jpg", images: ["img/47357633686.jpg", "img/47357633686-2.jpg", "img/47357633686-3.jpg", "img/47357633686-4.jpg", "img/47357633686-5.jpg"], shopeeId: "47357633686", shopeeUrl: "https://shopee.vn/product/837223358/47357633686", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
+    variants: [{ label: "1 hộp", price: 1290000, oldPrice: 1742000 }, { label: "2 hộp", price: 2580000, oldPrice: 3483000 }],
     desc: "Sâm hữu cơ Pinkfong Kid Up gói 40ml (Hàn Quốc), hạn dùng 24 tháng. Theo nhà sản xuất: hỗ trợ bé phát triển chiều cao và thể chất, tăng đề kháng, giảm biếng ăn.",
-    highlights: ["Nhân sâm organic Hàn Quốc", "Nhân vật Pinkfong bé thích", "Gói 40ml tiện mang theo"],
+    highlights: ["Nhân sâm organic Hàn Quốc", "Nhân vật Pinkfong bé thích", "Hộp gói 40ml tiện mang theo – mua 2 hộp tiết kiệm hơn"],
     usage: "Bé 3–6 tuổi: 2/3 gói/ngày; trên 7 tuổi: 1–2 gói/ngày, uống buổi sáng." },
 
   { id: "48112514210", name: "SUPER COLLAGEN ALPHA 90 Gói Collagen Peptide VERISOL Đức, Hỗ Trợ Đẹp Da, Tăng Độ Đàn Hồi, Dưỡng Ẩm", short: "Super Collagen Alpha 90 gói (Đức)", brand: "alpha", cat: "cho-me",
