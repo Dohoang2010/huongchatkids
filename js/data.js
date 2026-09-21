@@ -89,7 +89,7 @@ window.BRANDS = [
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
 window.NAV = [
   { label: 'Nước ép & dinh dưỡng', link: 'collections.html?cat=nuoc-ep', columns: [
-    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước dinh dưỡng Organic', 'product.html?id=44353325470'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697']] },
+    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697']] },
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'organic'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Hồng sâm & đề kháng', link: 'collections.html?cat=hong-sam', columns: [
@@ -97,7 +97,7 @@ window.NAV = [
     { title: 'Theo nhu cầu', needs: ['de-khang', 'phuc-hoi', 'tang-can'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y'] } ] },
   { label: 'Vitamin & canxi', link: 'collections.html?cat=vitamin', columns: [
-    { title: 'Sản phẩm', links: [['Vitamin D3K2 nhỏ giọt 30ml', 'product.html?id=42878618667'], ['Váng sữa canxi Calciumore 30 gói', 'product.html?id=26060839019'], ['Váng sữa canxi Calciumore (trẻ & người lớn)', 'product.html?id=22376269734']] },
+    { title: 'Sản phẩm', links: [['Vitamin D3K2 nhỏ giọt 30ml', 'product.html?id=42878618667'], ['Váng sữa canxi Calciumore 30 gói', 'product.html?id=26060839019']] },
     { title: 'Theo nhu cầu', needs: ['d3k2', 'canxi', 'tang-chieu-cao'] },
     { title: 'Danh mục khác', links: [['Rong biển ăn dặm', 'collections.html?cat=rong-bien'], ['Tăng cân, ăn ngon', 'collections.html?cat=tang-can'], ['Dành cho mẹ', 'collections.html?cat=cho-me']] } ] },
   { label: 'Chọn theo tuổi', ages: true },
@@ -154,14 +154,6 @@ window.PRODUCTS = [
     highlights: ["Hồng sâm Hàn Quốc cho trẻ em, vị trái cây dễ uống", "3 vị: Táo lê, Nho – việt quất, Mix", "Mua thùng 40 gói tiết kiệm hơn"],
     usage: "Bé uống 1 gói/ngày sau bữa ăn. Lắc đều trước khi dùng. Liều dùng theo hướng dẫn trên bao bì." },
 
-  { id: "44353325470", name: "Nước Dinh Dưỡng Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon, Tăng Sức Khỏe", short: "Nước dinh dưỡng Lotte Organic", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 495000, oldPrice: 693000, rating: 4.98, reviews: 416, sold: 4000, stock: 50,
-    shape: "box", color: "#F57C00", weight: "Gói 100ml", origin: "Hàn Quốc", tags: [],
-    image: "img/44353325470.jpg", thumb: "img/thumb/44353325470.jpg", images: ["img/44353325470.jpg", "img/44353325470-2.jpg", "img/44353325470-3.jpg", "img/44353325470-4.jpg", "img/44353325470-5.jpg"], shopeeId: "44353325470", shopeeUrl: "https://shopee.vn/product/837223358/44353325470", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
-    variants: [{ label: "10 gói · Tăng đề kháng (cam)", price: 495000, oldPrice: 693000 }, { label: "10 gói · Mix vị", price: 500000, oldPrice: 700000 }, { label: "Thùng 30 gói · Mix vị", price: 1490000, oldPrice: 2086000 }, { label: "Thùng 30 gói · Tăng đề kháng (cam)", price: 1490000, oldPrice: 2086000 }],
-    desc: "Nước dinh dưỡng Lotte từ hoa quả và rau củ hữu cơ, vị cam “Tăng đề kháng” hoặc mix vị. Theo nhà sản xuất, sản phẩm giúp bé phát triển chiều cao, ăn ngon và tăng sức khoẻ.",
-    highlights: ["Hoa quả & rau củ Organic Hàn Quốc", "Vị cam tăng đề kháng hoặc thùng mix vị", "Thùng 30 gói đủ dùng cả tháng"],
-    usage: "Bé uống 1–2 gói/ngày. Dùng theo hướng dẫn trên bao bì." },
 
   { id: "22644617070", name: "Hồng Sâm ChuChu Hàn Quốc Giúp Trẻ Tăng Sức Đề Kháng, ăn ngon Và Phục Hồi Sức Khoẻ Sau Khi Bị Ốm", short: "Hồng sâm ChuChu ăn ngon & phục hồi sau ốm", brand: "chuchu", cat: "hong-sam",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["de-khang", "tang-can", "phuc-hoi"], price: 350000, oldPrice: 473000, rating: 4.92, reviews: 165, sold: 699, stock: 50,
@@ -191,22 +183,14 @@ window.PRODUCTS = [
     usage: "Bé từ 12 tháng: 1 gói (80ml)/ngày sau bữa ăn, lắc nhẹ trước khi uống, ngon hơn khi để mát. Đã mở gói nên dùng ngay. Theo hướng dẫn trên bao bì." },
 
   { id: "26060839019", name: "Váng Sữa Canxi Hữu Cơ 30 Gói CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Xương Phát Triển, Bé Cao Tối Đa", short: "Canxi hữu cơ Calciumore (dạng váng sữa) 30 gói", brand: "calciumore", cat: "vitamin",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["canxi", "tang-chieu-cao", "organic"], price: 1100000, oldPrice: 1430000, rating: 4.92, reviews: 156, sold: 663, stock: 50,
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["canxi", "tang-chieu-cao", "organic", "cho-me"], price: 1100000, oldPrice: 1430000, rating: 4.92, reviews: 156, sold: 663, stock: 50,
     shape: "box", color: "#F9A825", weight: "30 gói", origin: "Hàn Quốc", tags: [],
     image: "img/26060839019.jpg", thumb: "img/thumb/26060839019.jpg", images: ["img/26060839019.jpg", "img/26060839019-3.jpg", "img/26060839019-4.jpg", "img/26060839019-5.jpg"], shopeeId: "26060839019", shopeeUrl: "https://shopee.vn/product/837223358/26060839019", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Đồ ăn nhẹ cho bé",
-    variants: [{ label: "30 gói (không hộp)", price: 1100000, oldPrice: 1430000 }, { label: "1 hộp 90 gói", price: 3225000, oldPrice: 4192000 }],
+    variants: [{ label: "30 gói (không hộp)", price: 1100000, oldPrice: 1430000 }, { label: "1 hộp 90 gói", price: 3225000, oldPrice: 4192000 }, { label: "2 hộp 180 gói", price: 6448000, oldPrice: 8382000 }],
     desc: "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
-    highlights: ["Canxi hữu cơ dễ hấp thu", "Dạng váng sữa thơm ngon, bé không sợ uống", "Hộp 90 gói dùng trong 3 tháng"],
+    highlights: ["Canxi hữu cơ dễ hấp thu", "Dạng váng sữa thơm ngon, bé không sợ uống", "Hộp 90 gói dùng trong 3 tháng; dùng được cho cả mẹ và người lớn"],
     usage: "Bé dùng 1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì." },
 
-  { id: "22376269734", name: "Váng Sữa Canxi Hữu Cơ CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Bé Lớn Khỏe Dành Cho Trẻ & Người Lớn", short: "Canxi hữu cơ Calciumore (dạng váng sữa) hộp 90 gói – bé & cả nhà", brand: "calciumore", cat: "vitamin",
-    ages: ["3-6y", "6-12y", "12-18y"], needs: ["canxi", "tang-chieu-cao", "cho-me"], price: 3225000, oldPrice: 4192000, rating: 4.9, reviews: 132, sold: 554, stock: 50,
-    shape: "box", color: "#FBC02D", weight: "Hộp 90 gói", origin: "Hàn Quốc", tags: [],
-    image: "img/22376269734.jpg", thumb: "img/thumb/22376269734.jpg", images: ["img/22376269734.jpg", "img/22376269734-2.jpg", "img/22376269734-3.jpg", "img/22376269734-4.jpg", "img/22376269734-5.jpg"], shopeeId: "22376269734", shopeeUrl: "https://shopee.vn/product/837223358/22376269734", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
-    variants: [{ label: "1 hộp 90 gói", price: 3225000, oldPrice: 4192000 }, { label: "2 hộp 180 gói", price: 6448000, oldPrice: 8382000 }],
-    desc: "Canxi hữu cơ dạng gói vị váng sữa (không phải váng sữa tráng miệng) Calciumore Hàn Quốc “Bé lớn khoẻ”, dùng được cho cả trẻ em và người lớn. Bổ sung canxi hữu cơ cho tuổi dậy thì tăng chiều cao và cho mẹ sau sinh, người lớn tuổi.",
-    highlights: ["Dùng được cho cả gia đình: bé, mẹ, ông bà", "Canxi hữu cơ hỗ trợ xương chắc khoẻ", "Mua 2 hộp tiết kiệm hơn"],
-    usage: "1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì." },
 
   { id: "49061985399", name: "Tinh Chất Nghệ Nano Curcumin 365 Plus Hàn Quốc 32 Tép/Hộp - Hỗ Trợ Dạ Dày, Đẹp Da, Mờ Thâm Sẹo", short: "Nghệ nano Curcumin 365 Plus", brand: "365plus", cat: "cho-me",
     ages: [], needs: ["cho-me"], price: 1548000, oldPrice: 2090000, rating: 0.0, reviews: 0, sold: 5, stock: 50,
