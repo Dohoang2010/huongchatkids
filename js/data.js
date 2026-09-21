@@ -31,7 +31,7 @@ window.SITE = {
   expressFee: 35000,
   expressCities: ['Hà Nội'],            // tỉnh/thành có giao hoả tốc trong ngày
   expert: { title: 'Chuyên gia dinh dưỡng', phone: '+84392312796', display: '(+84) 392 312 796', zalo: 'https://zalo.me/0392312796' },  // gặp trực tiếp chuyên gia
-  bank: { name: 'BIDV', fullName: 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', bin: '970418', account: '8855349222', holder: '' },  // holder: tên chủ tài khoản in hoa không dấu (VD: NGUYEN VAN A) – hiện cạnh mã QR
+  bank: { name: 'BIDV', fullName: 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', bin: '970418', account: '8855349222', holder: 'DO VAN HOANG' },  // holder: tên chủ tài khoản in hoa không dấu (VD: NGUYEN VAN A) – hiện cạnh mã QR
   transferFormat: '{name}_thanhtoan_{code}',   // nội dung chuyển khoản; {name} = tên khách (không dấu, in hoa), {code} = mã đơn
   workingHours: '8:00 – 22:00 (cả T7, CN)',
   hotSearches: ['Hồng sâm ChuChu', 'Nước ép Lotte', 'D3K2', 'Rong biển', 'Váng sữa canxi', 'Gạc hươu Sumo'],
