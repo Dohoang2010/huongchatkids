@@ -1153,3 +1153,26 @@ body { padding-bottom: 0; }
 .kolbar__names--left { justify-content: flex-start; margin-bottom: 8px; }
 .kolbar__name--sm { font-size: 12.5px; padding: 5px 10px; }
 .kolbar__name--sm svg { width: 13px; height: 13px; }
+
+/* Banner ảnh feedback tự xoay */
+.fbslider { position: relative; }
+.fbslider__viewport { overflow: hidden; border-radius: var(--radius); }
+.fbslider__track { display: flex; transition: transform .6s cubic-bezier(.4, 0, .2, 1); }
+.fbslide { flex: 0 0 100%; min-width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 560px) { .fbslide { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 992px) { .fbslide { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; } }
+.fbslider__dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+.fbslider__dots button { width: 9px; height: 9px; border-radius: 999px; background: var(--line); transition: width .2s, background .2s; }
+.fbslider__dots button.is-active { width: 24px; background: var(--primary); }
+.fbslider__arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; background: #fff; box-shadow: var(--shadow); display: none; align-items: center; justify-content: center; color: var(--ink-2); z-index: 2; }
+.fbslider__arrow svg { width: 20px; height: 20px; }
+.fbslider__arrow--prev { left: -8px; transform: translateY(-50%) rotate(90deg); }
+.fbslider__arrow--next { right: -8px; transform: translateY(-50%) rotate(-90deg); }
+@media (min-width: 992px) { .fbslider__arrow { display: inline-flex; } }
+@media (hover: hover) and (pointer: fine) { .fbslider__arrow:hover { color: var(--primary); box-shadow: 0 8px 22px rgba(240, 83, 122, .25); } }
+
+.kolslide { flex: 0 0 100%; min-width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; }
+@media (min-width: 560px) { .kolslide { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 992px) { .kolslide { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
+.fbslider--kol .fbslider__viewport { border-radius: var(--radius); }
+.fbslider--kol .fb-card { height: 100%; }

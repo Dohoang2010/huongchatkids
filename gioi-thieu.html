@@ -43,7 +43,12 @@
       <p>Những mẹ bỉm quen mặt với hàng triệu người Việt đã chọn sản phẩm bên Hương Chất Kids cho con mình</p>
     </div>
     <div class="kolbar__names" id="kolNames"></div>
-    <div class="row-scroll" id="kolTopRow"></div>
+    <div class="fbslider fbslider--kol" id="kolSlider">
+      <div class="fbslider__viewport"><div class="fbslider__track" id="kolTrack"></div></div>
+      <button class="fbslider__arrow fbslider__arrow--prev" type="button" id="kolPrev" aria-label="Bài trước"></button>
+      <button class="fbslider__arrow fbslider__arrow--next" type="button" id="kolNext" aria-label="Bài tiếp theo"></button>
+      <div class="fbslider__dots" id="kolDots" role="tablist" aria-label="Chuyển nhóm bài đăng"></div>
+    </div>
     <p class="fb-note fb-note--center">Bài đăng do các gia đình chia sẻ trên trang cá nhân, đăng lại với sự đồng ý. Đây là cảm nhận cá nhân, kết quả có thể khác nhau ở mỗi bé.</p>
   </div></section>
 
@@ -77,7 +82,12 @@
   <!-- ẢNH THẬT -->
   <section class="section section--gray" id="feedbackSection"><div class="container">
     <div class="section-head"><div><h2>Mẹ và bé đã dùng 💬</h2><p id="feedbackSub">Ảnh thật khách hàng gửi về</p></div></div>
-    <div class="fb-grid" id="feedbackGrid"></div>
+    <div class="fbslider" id="fbSlider">
+      <div class="fbslider__viewport"><div class="fbslider__track" id="fbTrack"></div></div>
+      <button class="fbslider__arrow fbslider__arrow--prev" type="button" id="fbPrev" aria-label="Ảnh trước"></button>
+      <button class="fbslider__arrow fbslider__arrow--next" type="button" id="fbNext" aria-label="Ảnh tiếp theo"></button>
+      <div class="fbslider__dots" id="fbDots" role="tablist" aria-label="Chuyển nhóm ảnh"></div>
+    </div>
     <p class="fb-note">Ảnh do khách hàng và người có ảnh hưởng chia sẻ, đăng lại với sự đồng ý. Đây là cảm nhận cá nhân của từng gia đình, kết quả có thể khác nhau; sản phẩm không phải là thuốc và không thay thế chế độ ăn cân đối hay tư vấn của chuyên gia y tế.</p>
   </div></section>
 
@@ -102,11 +112,46 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#callbackModal').classList.add('is-open'); $('#callbackModal').setAttribute('aria-hidden', 'false'); document.body.classList.add('no-scroll');
   };
 
+
+  /* Banner tự xoay vòng dùng chung: mỗi mặt N phần tử, tự chạy 5 giây/lần, dừng khi rê chuột, vuốt được trên điện thoại */
+  function makeSlider({ id, items, perPage, render, slideClass }) {
+    const track = $('#' + id + 'Track'), dots = $('#' + id + 'Dots'), box = $('#' + id + 'Slider');
+    if (!track || !items.length) return;
+    const slow = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let idx = 0, per = 0, timer = null;
+    const pages = () => track.children.length;
+    const go = (i) => {
+      const n = pages(); if (!n) return;
+      idx = ((i % n) + n) % n;
+      track.style.transform = `translateX(-${idx * 100}%)`;
+      Array.from(dots.children).forEach((d, k) => { d.classList.toggle('is-active', k === idx); d.setAttribute('aria-selected', k === idx); });
+    };
+    const restart = () => { clearInterval(timer); if (!slow && pages() > 1) timer = setInterval(() => go(idx + 1), 5000); };
+    function build() {
+      const n = perPage(); if (n === per) return; per = n;
+      const total = Math.ceil(items.length / per);
+      track.innerHTML = Array.from({ length: total }, (_, pi) => `<div class="${slideClass}">${items.slice(pi * per, pi * per + per).map((it, j) => render(it, pi * per + j)).join('')}</div>`).join('');
+      dots.innerHTML = Array.from({ length: total }, (_, k) => `<button type="button" role="tab" aria-label="Nhóm ${k + 1}"></button>`).join('');
+      go(Math.min(idx, total - 1)); restart();
+    }
+    dots.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { go(Array.from(dots.children).indexOf(b)); restart(); } });
+    $('#' + id + 'Prev').addEventListener('click', () => { go(idx - 1); restart(); });
+    $('#' + id + 'Next').addEventListener('click', () => { go(idx + 1); restart(); });
+    track.addEventListener('click', (e) => { const b = e.target.closest('[data-i]'); if (b) openFb(items[Number(b.dataset.i)]); });
+    box.addEventListener('mouseenter', () => clearInterval(timer));
+    box.addEventListener('mouseleave', restart);
+    box.addEventListener('focusin', () => clearInterval(timer));
+    let x0 = null;
+    box.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; clearInterval(timer); }, { passive: true });
+    box.addEventListener('touchend', (e) => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1)); restart(); }, { passive: true });
+    build();
+    let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
+  }
+
   if (!fbAll.length) $('#feedbackSection').classList.add('hide');
   else {
     $('#feedbackSub').textContent = `${fbAll.length} ảnh thật từ các gia đình đã dùng – bấm ảnh để xem lớn`;
-    $('#feedbackGrid').innerHTML = fbs.map((f, i) => `<button class="fb-grid__item" type="button" data-fb="${i}" aria-label="Xem ảnh ${i + 1}"><img src="${f.thumb || f.image}" alt="Bé dùng sản phẩm Hương Chất Kids" loading="lazy"></button>`).join('');
-    $('#feedbackGrid').addEventListener('click', (e) => { const b = e.target.closest('[data-fb]'); if (b) openFb(fbs[Number(b.dataset.fb)]); });
+    makeSlider({ id: 'fb', items: fbs, perPage: () => (window.innerWidth < 560 ? 6 : window.innerWidth < 992 ? 8 : 10), slideClass: 'fbslide', render: (f, gi) => `<button class="fb-grid__item" type="button" data-i="${gi}" aria-label="Xem ảnh ${gi + 1}"><img src="${f.thumb || f.image}" alt="Bé dùng sản phẩm Hương Chất Kids" loading="lazy"></button>` });
     const shots = fbs.slice(0, 9);
     $('#aboutPhotos').innerHTML = shots.map((f, i) => `<button class="about__photo" type="button" data-about="${i}" aria-label="Xem ảnh ${i + 1}"><img src="${f.thumb || f.image}" alt="Bé dùng sản phẩm Hương Chất Kids" loading="lazy"></button>`).join('');
     $('#aboutPhotos').addEventListener('click', (e) => { const b = e.target.closest('[data-about]'); if (b) openFb(shots[Number(b.dataset.about)]); });
@@ -117,10 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const names = [];
     kols.forEach((f) => { if (f.name && f.name !== 'Nước dinh dưỡng Lotte' && names.indexOf(f.name) < 0) names.push(f.name); });
     $('#kolNames').innerHTML = names.map((n) => `<span class="kolbar__name">${I.checkCircle}${esc(n)}</span>`).join('');
-    $('#kolTopRow').innerHTML = kols.map((f, i) => `<figure class="fb-card fb-card--kol"><button class="fb-card__img" type="button" data-kol="${i}" aria-label="Xem lớn bài đăng của ${esc(f.name || '')}"><img src="${f.thumb || f.image}" alt="Chia sẻ của ${esc(f.name || '')}" loading="lazy"></button><figcaption><div class="fb-card__who"><b>${esc(f.name || '')}</b></div></figcaption></figure>`).join('');
-    $('#kolTopRow').addEventListener('click', (e) => { const b = e.target.closest('[data-kol]'); if (b) openFb(kols[Number(b.dataset.kol)]); });
+    makeSlider({ id: 'kol', items: kols, perPage: () => (window.innerWidth < 560 ? 1 : window.innerWidth < 992 ? 2 : 3), slideClass: 'kolslide',
+      render: (f, gi) => `<figure class="fb-card fb-card--kol"><button class="fb-card__img" type="button" data-i="${gi}" aria-label="Xem lớn bài đăng của ${esc(f.name || '')}"><img src="${f.thumb || f.image}" alt="Chia sẻ của ${esc(f.name || '')}" loading="lazy"></button><figcaption><div class="fb-card__who"><b>${esc(f.name || '')}</b></div></figcaption></figure>` });
   } else $('.kolbar').classList.add('hide');
 
+  $$('.fbslider__arrow').forEach((b) => { b.innerHTML = I.chevron; });
   $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${I.messenger}Chat với Hương Chất Kids</a>`;
 
   const why = [
