@@ -81,6 +81,7 @@
           <li><span>🌱</span><div><b>Đồng hành</b><small>Gắn bó lâu dài cùng mỗi gia đình</small></div></li>
         </ul>
         <p class="about__mission"><b>Sứ mệnh:</b> để em bé Việt nào cũng được bổ sung dinh dưỡng đúng cách, lớn lên khoẻ mạnh.</p>
+        <div class="about__kol" id="aboutKol"></div>
         <div class="about__cta" id="aboutCta"></div>
       </div>
       <div class="about__photos" id="aboutPhotos" aria-label="Ảnh các bé đang dùng sản phẩm"></div>
@@ -248,7 +249,10 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#aboutPhotos').innerHTML = shots.map((f, i) => `<button class="about__photo" type="button" data-about="${i}" aria-label="Xem ảnh ${i + 1}"><img src="${f.thumb || f.image}" alt="Bé dùng sản phẩm Hương Chất Kids" loading="lazy"></button>`).join('');
     $('#aboutPhotos').addEventListener('click', (e) => { const b = e.target.closest('[data-about]'); if (b) openFb(shots[Number(b.dataset.about)]); });
   }
-  $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${I.messenger}Chat với Hương Chất Kids</a><a class="link" href="policy.html?p=gioi-thieu">Tìm hiểu thêm về shop ${I.arrowR}</a>`;
+  const kolNames = [];
+  (window.FEEDBACKS || []).forEach((f) => { if (f.kol && f.name && f.name !== 'Nước dinh dưỡng Lotte' && kolNames.indexOf(f.name) < 0) kolNames.push(f.name); });
+  if (kolNames.length) $('#aboutKol').innerHTML = `<b>Được các gia đình nổi tiếng tin dùng 🌟</b><div class="kolbar__names kolbar__names--left">${kolNames.map((n) => `<span class="kolbar__name kolbar__name--sm">${I.checkCircle}${esc(n)}</span>`).join('')}</div><a class="link" href="gioi-thieu.html">Xem bài đăng của các gia đình ${I.arrowR}</a>`;
+  $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${I.messenger}Chat với Hương Chất Kids</a><a class="link" href="gioi-thieu.html">Tìm hiểu thêm về shop ${I.arrowR}</a>`;
 
   /* Posts */
   $('#postGrid').innerHTML = POSTS.slice(0, 3).map((p) => `<a class="post-card" href="blog.html?id=${p.id}"><div class="post-card__thumb" style="background:${p.color}">${p.image ? `<img src="${p.image}" alt="" loading="lazy">` : p.emoji}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${p.cat}</span><span>${p.date} · ${p.read} đọc</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`).join('');

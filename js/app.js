@@ -344,6 +344,7 @@
           <div><h4>&nbsp;</h4><ul>${CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>
           <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?sort=discount">Xem ưu đãi →</a></div></div></li>
+        <li class="navbar__item"><a class="navbar__link navbar__link--about" href="gioi-thieu.html">💗 Giới thiệu</a></li>
         ${NAV.map(navItem).join('')}
       </ul></div></nav>
     </header>
@@ -354,6 +355,7 @@
         <div class="mmenu__ages">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label}</a>`).join('')}</div>
         <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với dược sĩ</a></div>
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
+        <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
         <a class="mmenu__link" href="account.html">👤 Tài khoản / Đơn hàng</a>
         <a class="mmenu__link" href="policy.html">📋 Hỗ trợ & chính sách</a>
@@ -372,7 +374,7 @@
           ${SITE.bctUrl ? `<a class="footer__cert" href="${SITE.bctUrl}" target="_blank" rel="noopener">${I.shield} Đã thông báo Bộ Công Thương</a>` : ''}
         </div>
         <div class="footer__col"><h4><a href="policy.html">Hỗ trợ khách hàng</a></h4><ul><li><a href="policy.html?p=mua-hang">Hướng dẫn mua hàng</a></li><li><a href="policy.html?p=thanh-toan">Phương thức thanh toán</a></li><li><a href="policy.html?p=giao-hang">Chính sách giao hàng</a></li><li><a href="policy.html?p=doi-tra">Chính sách đổi trả & hoàn tiền</a></li><li><a href="policy.html?p=bao-mat">Chính sách bảo mật</a></li><li><a href="policy.html?p=dieu-khoan">Điều khoản sử dụng</a></li></ul></div>
-        <div class="footer__col"><h4><a href="policy.html?p=gioi-thieu">Về ${SITE.name}</a></h4><ul><li><a href="policy.html?p=gioi-thieu">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang mẹ</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
+        <div class="footer__col"><h4><a href="gioi-thieu.html">Về ${SITE.name}</a></h4><ul><li><a href="gioi-thieu.html">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang mẹ</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
         <div class="footer__col"><h4>Kết nối với chúng tôi</h4>
           <p class="fs-13 text-muted">Theo dõi để nhận ưu đãi và kiến thức chăm con mỗi ngày.</p>
           ${SITE.zaloQr ? `<div class="footer__qr"><img src="${SITE.zaloQr}" width="112" height="112" alt="Mã QR Zalo ${SITE.name}" loading="lazy"><div><b>Zalo ${SITE.hotline}</b><small>Quét mã để chat với dược sĩ, đặt hàng nhanh</small><a href="${SITE.zalo}" target="_blank" rel="noopener">Mở Zalo →</a></div></div>` : ''}
