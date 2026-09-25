@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Quản lý tồn kho – Hương Chất Kids</title>
+<link rel="icon" href="img/logo-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .adm { max-width: 760px; margin: 0 auto; padding: 16px 16px 120px; }
+  .adm h1 { font-size: 22px; margin-bottom: 4px; }
+  .adm .sub { color: var(--muted); font-size: 13.5px; margin-bottom: 16px; }
+  .adm .card--pad { margin-bottom: 14px; }
+  .prow { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .prow:last-child { border-bottom: 0; }
+  .prow img { width: 46px; height: 46px; border-radius: 10px; object-fit: cover; flex: none; background: var(--bg-gray); }
+  .prow .nm { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+  .prow .nm small { display: block; font-weight: 500; color: var(--muted); font-size: 11.5px; }
+  .sw { position: relative; flex: none; width: 118px; }
+  .sw input { position: absolute; opacity: 0; pointer-events: none; }
+  .sw span { display: flex; align-items: center; justify-content: center; min-height: 38px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1.5px solid var(--line); background: #fff; color: var(--muted); transition: all .15s; }
+  .sw input:checked + span { background: #E7F7F2; border-color: var(--teal); color: var(--teal-600); }
+  .sw input:not(:checked) + span { background: #FDECEE; border-color: var(--red); color: var(--red); }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); display: flex; gap: 8px; align-items: center; z-index: 50; }
+  .bar .btn { flex: 1; }
+  .msg { font-size: 13px; padding: 10px 12px; border-radius: 10px; margin-bottom: 10px; display: none; }
+  .msg.ok { display: block; background: #E7F7F2; color: var(--teal-600); }
+  .msg.err { display: block; background: #FDECEE; color: var(--red); }
+  .tools { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<main class="adm">
+  <h1>Quản lý tồn kho</h1>
+  <div class="sub">Bật/tắt “Còn hàng – Hết hàng”. Bấm <b>Lưu lên web</b>, khách sẽ thấy thay đổi sau khoảng 1 phút.</div>
+
+  <div id="msg" class="msg"></div>
+
+  <details class="card card--pad" id="tokenBox">
+    <summary style="cursor:pointer;font-weight:700;font-size:14px">🔑 Kết nối GitHub (chỉ cần làm 1 lần trên mỗi máy/điện thoại)</summary>
+    <p style="font-size:13px;color:var(--muted);margin:10px 0">
+      Vào <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Fine-grained token</a>:
+      Repository access = <b>Only select repositories → huongchatkids</b>; Permissions → Repository permissions → <b>Contents: Read and write</b>.
+      Tạo xong copy mã <code>github_pat_…</code> dán vào ô dưới. Mã chỉ lưu trong máy này, không gửi đi đâu khác ngoài GitHub.
+    </p>
+    <div class="input-group"><input class="input" type="password" id="token" placeholder="github_pat_..." autocomplete="off"></div>
+    <div class="tools" style="margin-top:10px">
+      <button class="btn btn--primary btn--sm" type="button" id="saveToken">Lưu mã</button>
+      <button class="btn btn--ghost btn--sm" type="button" id="clearToken">Xoá mã khỏi máy này</button>
+    </div>
+  </details>
+
+  <div class="tools">
+    <button class="btn btn--ghost btn--sm" type="button" id="allIn">Đánh dấu tất cả còn hàng</button>
+    <button class="btn btn--ghost btn--sm" type="button" id="download">Tải file stock.json</button>
+    <span style="font-size:12.5px;color:var(--muted);align-self:center" id="updated"></span>
+  </div>
+
+  <div class="card card--pad" id="list"></div>
+</main>
+
+<div class="bar">
+  <button class="btn btn--ghost" type="button" id="reload">Tải lại</button>
+  <button class="btn btn--primary" type="button" id="save">Lưu lên web</button>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const REPO = 'Dohoang2010/huongchatkids', PATH = 'data/stock.json';
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let sha = null, state = {};
+
+  const msg = (text, kind) => { const m = $('#msg'); m.textContent = text; m.className = 'msg ' + kind; if (kind === 'ok') setTimeout(() => { m.className = 'msg'; }, 6000); };
+  const token = () => localStorage.getItem('hck_gh_token') || '';
+
+  function render() {
+    $('#list').innerHTML = PRODUCTS.map((p) => `
+      <label class="prow">
+        <img src="${p.thumb || p.image}" alt="">
+        <span class="nm">${esc(p.short || p.name)}<small>${esc(p.id)} · ${new Intl.NumberFormat('vi-VN').format(p.price)}₫</small></span>
+        <span class="sw"><input type="checkbox" data-id="${p.id}" ${state[p.id] === false ? '' : 'checked'}><span></span></span>
+      </label>`).join('');
+    $('#list').querySelectorAll('input[type=checkbox]').forEach((cb) => {
+      const paint = () => { cb.nextElementSibling.textContent = cb.checked ? '● Còn hàng' : '● Hết hàng'; state[cb.dataset.id] = cb.checked; };
+      cb.addEventListener('change', paint); paint();
+    });
+  }
+
+  function load() {
+    fetch(PATH + '?t=' + Date.now(), { cache: 'no-store' }).then((r) => r.ok ? r.json() : null).then((d) => {
+      state = (d && d.items) || {};
+      $('#updated').textContent = d && d.updatedAt ? 'Cập nhật lần cuối: ' + new Date(d.updatedAt).toLocaleString('vi-VN') : '';
+      render();
+    }).catch(() => { state = {}; render(); });
+  }
+
+  function body() {
+    const items = {}; PRODUCTS.forEach((p) => { items[p.id] = state[p.id] !== false; });
+    return { updatedAt: new Date().toISOString(), source: 'manual', note: 'true = con hang, false = het hang', items };
+  }
+
+  $('#save').addEventListener('click', () => {
+    const t = token();
+    if (!t) { msg('Chưa có mã GitHub. Mở mục 🔑 Kết nối GitHub ở trên để dán mã.', 'err'); $('#tokenBox').open = true; return; }
+    const btn = $('#save'); btn.disabled = true; btn.textContent = 'Đang lưu…';
+    const json = JSON.stringify(body(), null, 2) + '\n';
+    const b64 = btoa(String.fromCharCode.apply(null, new TextEncoder().encode(json)));
+    const api = `https://api.github.com/repos/${REPO}/contents/${PATH}`;
+    fetch(api + '?t=' + Date.now(), { headers: { Authorization: 'Bearer ' + t, Accept: 'application/vnd.github+json' } })
+      .then((r) => r.ok ? r.json() : null).then((meta) => {
+        sha = meta && meta.sha;
+        return fetch(api, {
+          method: 'PUT',
+          headers: { Authorization: 'Bearer ' + t, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Cập nhật tồn kho', content: b64, sha: sha || undefined }),
+        });
+      })
+      .then((r) => r.json().then((d) => ({ ok: r.ok, status: r.status, d })))
+      .then(({ ok, status, d }) => {
+        if (ok) msg('Đã lưu. Khách sẽ thấy tồn kho mới sau khoảng 1 phút.', 'ok');
+        else msg('Lỗi ' + status + ': ' + ((d && d.message) || 'không lưu được') + '. Kiểm tra lại mã GitHub (Contents: Read and write).', 'err');
+      })
+      .catch((e) => msg('Không kết nối được GitHub: ' + e.message, 'err'))
+      .finally(() => { btn.disabled = false; btn.textContent = 'Lưu lên web'; });
+  });
+
+  $('#saveToken').addEventListener('click', () => {
+    const v = $('#token').value.trim();
+    if (!v) { msg('Chưa nhập mã.', 'err'); return; }
+    localStorage.setItem('hck_gh_token', v); $('#token').value = ''; msg('Đã lưu mã trên máy này.', 'ok'); $('#tokenBox').open = false;
+  });
+  $('#clearToken').addEventListener('click', () => { localStorage.removeItem('hck_gh_token'); msg('Đã xoá mã khỏi máy này.', 'ok'); });
+  $('#allIn').addEventListener('click', () => { PRODUCTS.forEach((p) => { state[p.id] = true; }); render(); });
+  $('#reload').addEventListener('click', load);
+  $('#download').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(body(), null, 2) + '\n'], { type: 'application/json' }));
+    a.download = 'stock.json'; a.click(); URL.revokeObjectURL(a.href);
+  });
+
+  load();
+});
+</script>
+</body>
+</html>

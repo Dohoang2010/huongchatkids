@@ -78,3 +78,27 @@ hoặc gửi tới Google Sheets / Zalo OA / Haravan / Sapo webhook. Cấu trúc
   (file còn tên nhưng rỗng trên máy) làm web mất ảnh và git treo. Nên tắt *Optimise Mac Storage* hoặc chuột phải
   thư mục → *Keep Downloaded*, hoặc chuyển dự án ra ngoài Desktop/Documents.
 - Số liệu mẫu còn lại: bài blog (nội dung tham khảo), mảng `REVIEWS` (không hiển thị – bật bằng `SITE.showReviews = true`).
+
+## Tồn kho: còn hàng / hết hàng
+
+Trạng thái tồn kho nằm ở `data/stock.json` (`true` = còn hàng, `false` = hết hàng). Web đọc file này khi mở trang và tự kiểm tra lại mỗi 3 phút, nên đổi tồn kho **không cần sửa code**.
+
+Ba cách cập nhật:
+
+1. **Trang quản lý (tiện nhất, làm được trên điện thoại)** – mở `quan-ly-ton-kho.html` trên web
+   (https://huongchatkids.vn/quan-ly-ton-kho.html), bật/tắt từng sản phẩm rồi bấm **Lưu lên web**.
+   Lần đầu cần dán 1 mã GitHub (fine-grained token, quyền *Contents: Read and write* cho repo này);
+   mã chỉ lưu trong máy/điện thoại đó. Trang này không có trong menu và có thẻ `noindex`.
+2. **Dòng lệnh trên máy**: `python3 tools/stock.py list` / `het <id hoặc tên>` / `con <id>` / `con --all`,
+   thêm `--push` để tự commit và đẩy lên web.
+3. Sửa tay `data/stock.json` rồi commit.
+
+> Shopee chặn truy cập tự động (API trả 403, trang sản phẩm chỉ render bằng JS), nên web **không thể
+> tự đọc tồn kho Shopee**. Nếu shop đăng ký Shopee Open Platform và có API key thì có thể thêm
+> GitHub Actions chạy định kỳ để ghi `data/stock.json` tự động.
+
+## Thứ tự hiển thị sản phẩm
+
+Trường `priority` trong `js/data.js` quyết định sản phẩm nào lên đầu khi khách xem *Tất cả sản phẩm*
+hoặc tìm kiếm (3 = cao nhất). Hiện đặt 3 cho nước ép Lotte, váng sữa canxi Calciumore, D3K2 và rong biển;
+2 cho sữa Lotte Kid A+.

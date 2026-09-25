@@ -547,7 +547,8 @@
     const render = (q) => {
       q = q.trim().toLowerCase();
       if (!q) { box.innerHTML = `<div class="search__hint">Tìm kiếm phổ biến<div class="chips">${hot.map((h) => `<a class="chip chip--sm" href="collections.html?q=${encodeURIComponent(h)}">${h}</a>`).join('')}</div></div>`; box.classList.add('is-open'); return; }
-      const res = PRODUCTS.filter((p) => (p.name + ' ' + brandOf(p).label + ' ' + (p.needs || []).map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ')).toLowerCase().includes(q)).slice(0, 6);
+      const res = PRODUCTS.filter((p) => (p.name + ' ' + p.short + ' ' + brandOf(p).label + ' ' + (p.needs || []).map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ')).toLowerCase().includes(q))
+        .sort((a, b) => (b.priority || 0) - (a.priority || 0) || b.sold - a.sold).slice(0, 6);
       box.innerHTML = res.length ? res.map((p) => `<a href="product.html?id=${p.id}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Mẹ thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
       box.classList.add('is-open');
     };
@@ -604,8 +605,48 @@
   const IMG_MAP = {}; PRODUCTS.forEach((p) => { if (p.image) IMG_MAP[p.image] = [p, 0]; (p.images || []).forEach((im, i) => { IMG_MAP[im] = [p, i]; }); });
   document.addEventListener('error', (e) => { const img = e.target; if (!(img instanceof HTMLImageElement) || img.dataset.fb) return; const hit = IMG_MAP[img.getAttribute('src')]; if (hit) { img.dataset.fb = '1'; img.src = productImage(hit[0], hit[1], true); } }, true);
 
-  /* ---------------- Boot ---------------- */
-  document.addEventListener('DOMContentLoaded', () => { renderShell(); initSearch(); bindGlobal(); updateCartBadges(); });
 
-  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML };
+  /* ---------------- Tồn kho realtime (data/stock.json) ---------------- */
+  const STOCK_URL = 'data/stock.json';
+  function applyStock(data) {
+    const items = (data && data.items) || {};
+    PRODUCTS.forEach((p) => {
+      if (!(p.id in items)) return;
+      const e = items[p.id];
+      const inStock = e && typeof e === 'object' ? e.in !== false : e !== false;
+      p.stock = inStock ? (p.stock > 0 ? p.stock : 50) : 0;
+      const vo = e && typeof e === 'object' ? e.variants : null;
+      if (vo && p.variants) p.variants.forEach((v) => { if (v.label in vo) v.oos = vo[v.label] === false; });
+    });
+    if (data && data.updatedAt) MC.stockUpdatedAt = data.updatedAt;
+    paintStock();
+  }
+  function paintStock() {
+    $$('.pcard[data-id]').forEach((card) => {
+      const p = byId(card.dataset.id); if (!p) return;
+      const oos = p.stock <= 0;
+      card.classList.toggle('pcard--oos', oos);
+      card.querySelectorAll('[data-buy],[data-add]').forEach((b) => { b.disabled = oos; });
+    });
+    const cur = byId(param('id'));
+    if (cur && $('.pdp__buy')) {
+      const oos = cur.stock <= 0;
+      $$('.pdp__buy [data-buy], .pdp__buy [data-add], .sticky-buy [data-buy], .sticky-buy [data-add]').forEach((b) => { b.disabled = oos; });
+      const meta = $('.pdp__meta > span:last-child');
+      if (meta) meta.innerHTML = oos ? '<span class="text-red fw-600">\u25cf T\u1ea1m h\u1ebft</span>' : '<span class="text-teal fw-600">\u25cf C\u00f2n h\u00e0ng</span>';
+    }
+  }
+  function syncStock() {
+    fetch(STOCK_URL + '?t=' + Date.now(), { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) applyStock(d); }).catch(() => {});
+  }
+
+  /* ---------------- Boot ---------------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderShell(); initSearch(); bindGlobal(); updateCartBadges();
+    syncStock(); setInterval(syncStock, 3 * 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
+  });
+
+  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock };
 })();

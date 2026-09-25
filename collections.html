@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (q && !(p.name + ' ' + brandOf(p).label + ' ' + p.needs.map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ') + ' ' + p.origin).toLowerCase().includes(q)) return false;
       return true;
     });
-    const sorters = { best: (a, b) => b.sold - a.sold, discount: (a, b) => MC.pct(b) - MC.pct(a), 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
+    const sorters = { best: (a, b) => (b.priority || 0) - (a.priority || 0) || b.sold - a.sold, discount: (a, b) => MC.pct(b) - MC.pct(a), 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
     return list.sort(sorters[S.sort] || sorters.best);
   }
 
