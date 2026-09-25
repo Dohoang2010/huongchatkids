@@ -142,7 +142,7 @@ window.PRODUCTS = [
     highlights: ["Rong biển Hàn Quốc sấy giòn, thơm, vị nhạt phù hợp trẻ nhỏ", "Rắc cơm, cháo, cơm nắm, kimbap – bé ăn ngon hơn", "Tiện lợi cho bữa sáng và hộp cơm đi học"],
     usage: "Rắc trực tiếp lên cơm, cháo hoặc trộn cơm nắm cho bé. Đậy kín sau khi mở, bảo quản nơi khô ráo, tránh ẩm." },
 
-  { id: "22686115682", name: "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe", short: "Nước ép Lotte Organic hoa quả & rau củ", brand: "lotte", cat: "nuoc-ep",
+  { id: "22686115682", name: "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe", short: "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe", brand: "lotte", cat: "nuoc-ep",
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 448000, oldPrice: 627000, rating: 4.93, reviews: 525, sold: 3000, stock: 50, priority: 3,
     shape: "box", color: "#E60012", weight: "Gói 100ml", origin: "Hàn Quốc", tags: ["Giảm sâu"],
     image: "img/22686115682.jpg", thumb: "img/thumb/22686115682.jpg", images: ["img/22686115682.jpg", "img/22686115682-3.jpg", "img/22686115682-4.jpg", "img/22686115682-5.jpg"], shopeeId: "22686115682", shopeeUrl: "https://shopee.vn/product/837223358/22686115682", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",

@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const b = brandOf(p); const d = pct(p); let variant = p.variants ? 0 : null; let qty = 1;
   const catObj = CATEGORIES.find((c) => c.key === p.cat) || {}; const isTPCN = !!catObj.tpcn;
   document.title = (p.short || p.name) + ' – ' + SITE.name;
-  const { productThumb, shortName } = MC; const manyVariants = p.variants && p.variants.length > 5;
+  const { productThumb, shortName } = MC; const manyVariants = p.variants && p.variants.length > 12;  // >12 mới dùng ô chọn; còn lại hiện nút bấm cho dễ chọn
   const price = () => variant != null ? p.variants[variant].price : p.price;
   const oldPrice = () => variant != null ? p.variants[variant].oldPrice : p.oldPrice;
 
