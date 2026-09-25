@@ -23,7 +23,9 @@ var TELEGRAM_TOKEN = '';                 // tuỳ chọn, lấy từ @BotFather
 var TELEGRAM_CHAT_ID = '';               // tuỳ chọn, lấy từ @userinfobot
 
 // ----- BÁO ĐƠN VỀ ZALO (qua Zalo OA – xem hướng dẫn ở cuối file) -----
-var ZALO_APP_ID = '2831485758862930392';   // ID ứng dụng trong developers.zalo.me
+// Để trống ZALO_APP_ID = tắt báo Zalo (mặc định). Muốn bật phải nâng gói OA "Tăng trưởng"
+// (2.500.000đ/năm) vì gói miễn phí bị Zalo chặn API gửi tin – lỗi -224.
+var ZALO_APP_ID = '';                     // ID ứng dụng trong developers.zalo.me
 var ZALO_APP_SECRET = '';                 // Secret key của ứng dụng đó (cần để tự làm mới token)
 var ZALO_USER_ID = '';                    // để trống: script tự lấy khi chị nhắn cho OA (xem mục Webhook)
 // Refresh token KHÔNG để trong code: chạy hàm zaloLuuRefreshToken('…') một lần, nó được cất trong Script Properties.
