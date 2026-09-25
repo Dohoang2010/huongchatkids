@@ -20,7 +20,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const { $, fmt, I, esc, store, Customer, byId, productCard, Wish } = MC;
   const c = Customer.get(); const orders = store.get('mc_orders', []).filter((o) => o.type !== 'callback'); const wish = Wish.get().map(byId).filter(Boolean);
-  const status = (o) => o.status ? [o.status, 'badge--teal'] : ['Đã tiếp nhận – dược sĩ sẽ xác nhận qua điện thoại/Zalo', 'badge--hot'];
+  const status = (o) => o.status ? [o.status, 'badge--teal'] : ['Đã tiếp nhận – chuyên gia dinh dưỡng sẽ xác nhận qua điện thoại/Zalo', 'badge--hot'];
   $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Tài khoản</span></nav><h1 class="page-title">${c ? `Chào ${esc(c.name || 'mẹ')} 👋` : 'Tài khoản của mẹ'}</h1><p class="text-muted fs-14 mb-16">${SITE.name} không bắt buộc đăng ký – đơn hàng được nhận diện qua số điện thoại của mẹ.</p>
     <div class="checkout">
       <div class="flex flex-col gap-16">
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="card card--pad"><h3>💗 Sản phẩm yêu thích</h3>${wish.length ? `<div class="grid grid--3">${wish.map((p) => productCard(p)).join('')}</div>` : '<p class="text-muted fs-14">Nhấn ♥ trên sản phẩm để lưu lại nhé.</p>'}</div>
       </div>
       <div class="checkout__side"><div class="card card--pad"><h3>📍 Thông tin giao hàng đã lưu</h3>${c ? `<div class="fs-14"><b>${esc(c.name || '')}</b><br>${esc(c.phone || '')}<br>${esc((c.address || '').replace('|', ', '))}</div><button class="btn btn--ghost btn--sm mt-12" type="button" id="clearInfo">Xoá thông tin đã lưu</button>` : '<p class="text-muted fs-14">Thông tin sẽ tự lưu sau lần đặt hàng đầu tiên để lần sau mẹ chỉ cần 1 chạm.</p>'}
-        <div class="divider"></div><h3>👩‍⚕️ Hỗ trợ</h3><div class="flex flex-col gap-8"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--ghost btn--block" type="button" data-callback>${I.headset}Dược sĩ gọi lại</button></div></div></div>
+        <div class="divider"></div><h3>👩‍⚕️ Hỗ trợ</h3><div class="flex flex-col gap-8"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--ghost btn--block" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div></div></div>
     </div>`;
   $('#acc').addEventListener('click', (e) => { const r = e.target.closest('[data-reorder-code]'); if (r) { const o = orders.find((x) => x.code === r.dataset.reorderCode); o.items.forEach((it) => { const p = byId(it.id); if (p) MC.Cart.add(it.id, it.qty || 1, it.variant && p.variants ? Math.max(0, p.variants.findIndex((v) => v.label === it.variant)) : null); }); location.href = 'checkout.html'; } if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); } });
 });

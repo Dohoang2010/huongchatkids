@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="form-grid form-grid--2"><div class="field"><label>Họ tên <span>*</span></label><input class="input" name="name" placeholder="VD: Nguyễn Thu Hà" value="${esc(c.name || '')}" required autocomplete="name"></div><div class="field"><label>Số điện thoại <span>*</span></label><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="VD: 0912 345 678" value="${esc(c.phone || '')}" required autocomplete="tel"></div></div>
           <div class="form-grid form-grid--2 mt-12"><div class="field"><label>Tỉnh / Thành phố <span>*</span></label><select class="input" name="city" required><option value="">Chọn tỉnh/thành</option>${PROVINCES.map((p) => `<option ${p === city.trim() ? 'selected' : ''}>${p}</option>`).join('')}</select></div><div class="field"><label>Email (nhận hoá đơn VAT)</label><input class="input" name="email" type="email" placeholder="Không bắt buộc" value="${esc(c.email || '')}" autocomplete="email"></div></div>
           <div class="field mt-12"><label>Địa chỉ cụ thể <span>*</span></label><input class="input" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện" value="${esc(rest.join('|').trim())}" required autocomplete="street-address"></div>
-          <div class="field mt-12"><label>Ghi chú cho shipper / dược sĩ</label><textarea class="input" name="note" placeholder="VD: Giao giờ hành chính, gọi trước khi giao, bé 2 tuổi 12kg cần tư vấn liều…"></textarea></div>
+          <div class="field mt-12"><label>Ghi chú cho shipper / chuyên gia dinh dưỡng</label><textarea class="input" name="note" placeholder="VD: Giao giờ hành chính, gọi trước khi giao, bé 2 tuổi 12kg cần tư vấn liều…"></textarea></div>
           <p class="qb__privacy" style="text-align:left">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
         </div>
         <div class="card card--pad"><h3><span class="num">2</span>Vận chuyển</h3><div class="form-grid">
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="qb__trust"><span>${I.check}Chính hãng 100%</span><span>${I.check}Đổi trả 7 ngày</span><span>${I.check}Bảo mật thông tin</span></div>
         <div class="form-error hide mt-8" id="coError" style="text-align:center" role="alert"></div>
         <div class="divider"></div>
-        <p class="fs-13 text-muted" style="text-align:center">Gặp khó khăn khi đặt hàng? <button class="fw-700 text-primary" type="button" data-callback>Để dược sĩ gọi lại</button> hoặc <a class="fw-700" style="color:var(--zalo)" href="${SITE.zalo}" target="_blank">đặt qua Zalo</a></p>
+        <p class="fs-13 text-muted" style="text-align:center">Gặp khó khăn khi đặt hàng? <button class="fw-700 text-primary" type="button" data-callback>Để chuyên gia dinh dưỡng gọi lại</button> hoặc <a class="fw-700" style="color:var(--zalo)" href="${SITE.zalo}" target="_blank">đặt qua Zalo</a></p>
       </div></div>
     </form>
     <div class="sticky-order" id="stickyOrder"><div class="tot">Tổng cộng<b id="stickyTotal"></b></div><button class="btn btn--primary" type="button" id="stickySubmit">${I.zap}Đặt hàng</button></div>`;

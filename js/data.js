@@ -36,7 +36,7 @@ window.SITE = {
   transferFormat: '{name}_thanhtoan_{code}',   // nội dung chuyển khoản; {name} = tên khách (không dấu, in hoa), {code} = mã đơn
   workingHours: '8:00 – 22:00 (cả T7, CN)',
   hotSearches: ['Hồng sâm ChuChu', 'Nước ép Lotte', 'Sữa Biostime', 'D3K2', 'Táo đỏ Tân Cương', 'Men vi sinh'],
-  advisor: 'Dược sĩ',                 // danh xưng người tư vấn – chỉ dùng 'Dược sĩ' khi shop có dược sĩ có chứng chỉ hành nghề, nếu không đổi thành 'Chuyên viên tư vấn'
+  advisor: 'Chuyên gia dinh dưỡng',  // danh xưng người tư vấn hiển thị trên toàn bộ website
   showReviews: false,                 // true → hiện thêm mảng REVIEWS (đánh giá do shop nhập) ở trang chủ & trang sản phẩm
   flashSaleEnd: 'daily',  // 'daily' = ưu đãi trong hôm nay (đếm ngược tới 24:00, mỗi ngày tự đếm lại); hoặc đặt hạn cụ thể '2026-09-30T23:59:59+07:00' (qua ngày này countdown tự ẩn)
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
@@ -59,7 +59,7 @@ window.CATEGORIES = [
   { key: 'vitamin',   label: 'Vitamin & canxi',            icon: '💊', color: '#E0F5F2', desc: 'D3K2 nhỏ giọt, canxi Calciumore', tpcn: true, image: 'img/thumb/42878618667.jpg' },
   { key: 'tang-can',  label: 'Ăn ngon, tăng cân & tiêu hoá', icon: '🍯', color: '#EEF8E6', desc: 'Gạc hươu Sumo, men vi sinh Biostime', tpcn: true, image: 'img/thumb/26156646705.jpg' },
   { key: 'rong-bien', label: 'Rong biển & ăn dặm',        icon: '🍙', color: '#FFF8E1', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
-  { key: 'thuc-pham', label: 'Thực phẩm gia đình',        icon: '🍎', color: '#FFEBEE', desc: 'Táo đỏ, kỷ tử, granola, bò sấy', tpcn: false, image: 'img/thumb/29402041000.jpg' },
+  { key: 'thuc-pham', label: 'Thực phẩm gia đình',        icon: '🍎', color: '#FFEBEE', desc: 'Táo đỏ Hotan, granola Nhật Bản', tpcn: false, image: 'img/thumb/28467224687.jpg' },
   { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Nghệ nano, collagen, chăm sóc da', tpcn: true, image: 'img/thumb/49061985399.jpg' },
 ];
 
@@ -97,12 +97,9 @@ window.BRANDS = [
   { key: 'kinigini',   label: 'Kinigini',    origin: 'Hàn Quốc',  color: '#5E35B1' },
   { key: 'alpha',      label: 'Alpha',       origin: 'Đức',       color: '#8E24AA' },
   { key: 'sakuma',     label: 'Sakuma Seika', origin: 'Nhật Bản', color: '#8D6E63' },
-  { key: 'hoanggia',   label: 'Hoàng Gia',   origin: 'Trung Quốc', color: '#D84315' },
   { key: 'primefood',  label: 'Prime Food',  origin: 'Trung Quốc', color: '#C62828' },
-  { key: 'richfoods',  label: 'The Rich Foods', origin: 'Trung Quốc', color: '#AD1457' },
   { key: 'kimjeongmoon', label: 'Kim Jeong Moon Aloe', origin: 'Hàn Quốc', color: '#43A047' },
   { key: 'cellhappy',  label: 'Cell Happy Co', origin: 'Hàn Quốc', color: '#F06292' },
-  { key: 'masterchef', label: 'MasterChef – Chef Hải', origin: 'Việt Nam', color: '#BF360C' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' },
 ];
 
@@ -113,7 +110,7 @@ window.NAV = [
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'organic'] },
     { title: 'Theo độ tuổi', ages: ['6-12m', '1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Sữa cho bé', link: 'collections.html?cat=sua', columns: [
-    { title: 'Sữa công thức', links: [['Biostime SN-2 Bio Plus (Úc)', 'product.html?id=19491505209'], ['Sữa dê Biostime (Úc)', 'product.html?id=19682441455'], ['Biostime Organic (Pháp)', 'product.html?id=20992159167'], ['Sữa dê Lotte Kid A+', 'product.html?id=13899935993'], ['Sữa bò Lotte Kid A+', 'product.html?id=29210696898']] },
+    { title: 'Sữa công thức', links: [['Biostime SN-2 Bio Plus (Úc)', 'product.html?id=19491505209'], ['Sữa dê Biostime (Úc)', 'product.html?id=19682441455'], ['Biostime Organic (Pháp)', 'product.html?id=20992159167'], ['Sữa dê Lotte Kid A+', 'product.html?id=13899935993']] },
     { title: 'Sữa tươi', links: [['Norco nguyên kem nội địa Úc', 'product.html?id=26523206270']] },
     { title: 'Theo độ tuổi', ages: ['0-6m', '6-12m', '1-3y', '3-6y', '6-12y'] } ] },
   { label: 'Hồng sâm & đề kháng', link: 'collections.html?cat=hong-sam', columns: [
@@ -121,7 +118,7 @@ window.NAV = [
     { title: 'Theo nhu cầu', needs: ['de-khang', 'phuc-hoi', 'tang-can', 'tri-nao'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Vitamin & canxi', link: 'collections.html?cat=vitamin', columns: [
-    { title: 'Sản phẩm', links: [['Vitamin D3K2 Pure Vitality 30ml', 'product.html?id=42878618667'], ['Canxi hữu cơ Calciumore (dạng váng sữa)', 'product.html?id=26060839019'], ['Men vi sinh Biostime 28 gói', 'product.html?id=19880841223']] },
+    { title: 'Sản phẩm', links: [['Vitamin D3K2 Pure Vitality 30ml', 'product.html?id=42878618667'], ['Canxi hữu cơ Calciumore (dạng váng sữa)', 'product.html?id=26060839019']] },
     { title: 'Theo nhu cầu', needs: ['d3k2', 'canxi', 'tieu-hoa', 'tang-chieu-cao'] },
     { title: 'Danh mục khác', links: [['Rong biển & ăn dặm', 'collections.html?cat=rong-bien'], ['Thực phẩm gia đình', 'collections.html?cat=thuc-pham'], ['Dành cho mẹ', 'collections.html?cat=cho-me']] } ] },
   { label: 'Chọn theo tuổi', ages: true },
@@ -158,7 +155,7 @@ window.PRODUCTS = [
     variants: [{ label: "1 lọ", price: 390000, oldPrice: 507000 }, { label: "2 lọ", price: 780000, oldPrice: 1014000 }],
     desc: "Vitamin D3 + K2 Pure Vitality (New Zealand) dạng nhỏ giọt 30ml, hương táo NZ. Theo nhà sản xuất, D3 hỗ trợ hấp thu canxi, K2 giúp đưa canxi vào xương, hỗ trợ phát triển xương răng và đề kháng cho bé. Có chứng nhận HACCP, GMP. Mua 2 lọ tiết kiệm hơn.",
     highlights: ["Sản xuất tại New Zealand, chứng nhận HACCP & GMP", "D3 hỗ trợ hấp thu canxi, K2 dẫn canxi vào xương", "Dạng giọt vị táo, dễ dùng cho bé từ sơ sinh"],
-    usage: "Nhỏ trực tiếp vào miệng bé hoặc pha vào sữa, dùng vào buổi sáng sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc dược sĩ tư vấn." },
+    usage: "Nhỏ trực tiếp vào miệng bé hoặc pha vào sữa, dùng vào buổi sáng sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc chuyên gia dinh dưỡng tư vấn." },
 
   { id: "45462512687", name: "Rong biển Tăng cao Busan trộn cơm Hàn Quốc, giúp bé cao lớn, bổ sung chất xơ vitamin", short: "Rong biển tăng cao Busan trộn cơm", brand: "busan", cat: "rong-bien",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["an-dam", "tang-chieu-cao", "tieu-hoa"], price: 589000, oldPrice: 795000, rating: 0.0, reviews: 0, sold: 12, stock: 50, priority: 3,
@@ -195,7 +192,7 @@ window.PRODUCTS = [
     variants: [{ label: "10 gói", price: 390000, oldPrice: 527000 }, { label: "20 gói", price: 780000, oldPrice: 1053000 }, { label: "30 gói", price: 1150000, oldPrice: 1553000 }, { label: "Thùng 40 gói", price: 1490000, oldPrice: 2012000 }],
     desc: "Gạc hươu non Sumo chiết xuất nhung hươu Hàn Quốc dạng gói uống. Theo nhà sản xuất, sản phẩm hỗ trợ bé tăng cân, ăn ngon miệng và bổ sung canxi cho bé chậm lớn.",
     highlights: ["Chiết xuất nhung hươu non Hàn Quốc", "Hỗ trợ tăng cân, ăn ngon cho bé chậm lớn", "Có bản gạc canxi (thùng)"],
-    usage: "Bé uống 1 gói/ngày sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc dược sĩ tư vấn." },
+    usage: "Bé uống 1 gói/ngày sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc chuyên gia dinh dưỡng tư vấn." },
 
   { id: "23660586997", name: "Nước ép Lotte Đề Kháng – nước ép lê & rễ cát cánh Hàn Quốc cho bé", short: "Nước ép Lotte Đề Kháng", brand: "lotte", cat: "nuoc-ep",
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["de-khang", "tang-can", "tieu-hoa", "organic"], price: 448000, oldPrice: 627000, rating: 5, reviews: 0, sold: 0, stock: 50, priority: 3,
@@ -242,15 +239,6 @@ window.PRODUCTS = [
     highlights: ["100% táo đỏ Hotan Tân Cương loại 1, size big", "Không đường, không chất bảo quản", "Gói 1kg – mua 2 gói tiết kiệm hơn"],
     usage: "Ăn trực tiếp 3–5 quả/ngày, hoặc pha trà, nấu chè, hầm canh. Bảo quản nơi khô ráo, đậy kín sau khi mở." },
 
-  { id: "29402041000", name: "Táo Đỏ Thiên Sâm Tân Cương Big Size Thượng Hạng Loại 1 Thơm, Ngọt, Bổ Máu Túi Gói 1kg", short: "Táo đỏ Thiên Sâm Tân Cương 1kg", brand: "richfoods", cat: "thuc-pham",
-    ages: [], needs: ["an-vat", "cho-me"], price: 500000, oldPrice: 675000, rating: 4.95, reviews: 0, sold: 79, stock: 50,
-    shape: "box", color: "#AD1457", weight: "Túi 1kg", origin: "Trung Quốc", tags: [], family: true,
-    image: "img/29402041000.jpg", thumb: "img/thumb/29402041000.jpg", images: ["img/29402041000.jpg", "img/29402041000-2.jpg", "img/29402041000-3.jpg", "img/29402041000-4.jpg", "img/29402041000-5.jpg"], shopeeId: "29402041000", shopeeUrl: "https://shopee.vn/product/837223358/29402041000", shopeeCategory: "Thực phẩm và đồ uống › Nhu yếu phẩm › Thực phẩm khô › Thảo mộc truyền thống",
-    variants: [{ label: "Túi 1kg", price: 500000, oldPrice: 675000 }, { label: "Combo 3 túi (3kg)", price: 1200000, oldPrice: 1620000 }],
-    desc: "Táo đỏ Thiên Sâm Tân Cương size big thượng hạng loại 1, được chọn lọc kỹ; quả dày thịt, thơm, ngọt. 100g táo cung cấp khoảng 79 kcal, 10g chất xơ và 77% nhu cầu vitamin C hằng ngày. Ăn liền, pha trà, chưng yến, hầm canh.",
-    highlights: ["Táo Tân Cương loại 1 size big, ngọt thơm", "Giàu chất xơ và vitamin C", "Túi 1kg – mua combo 3 túi tiết kiệm"],
-    usage: "Ăn trực tiếp hoặc pha trà, nấu chè, hầm canh. Bảo quản nơi khô ráo." },
-
   { id: "26523206270", name: "Sữa Tươi Tiệt Trùng Norco Nội Địa Úc Bổ Sung Sức Khỏe Cho Cơ Thể - Hương Vị Nguyên Chất, Dinh Dưỡng", short: "Sữa tươi tiệt trùng Norco nguyên kem nội địa Úc 1L", brand: "norco", cat: "sua",
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "canxi", "tang-chieu-cao"], price: 720000, oldPrice: 972000, rating: 5.0, reviews: 0, sold: 76, stock: 50,
     shape: "carton", color: "#1565C0", weight: "Thùng", origin: "Úc", tags: [],
@@ -267,14 +255,6 @@ window.PRODUCTS = [
     desc: "Sữa dê Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: bổ sung canxi, vitamin D, Alpha-lactalbumin (1.050mg/100g) hỗ trợ miễn dịch và hệ lợi khuẩn thực vật (100 triệu CFU/lon) giúp tiêu hoá tốt; đạm sữa dê dễ hấp thu, phù hợp bé chậm tăng cân.",
     highlights: ["Sữa dê dễ hấp thu, hỗ trợ tăng cân & chiều cao", "Alpha-lactalbumin + lợi khuẩn hỗ trợ miễn dịch, tiêu hoá", "Đạt tiêu chuẩn xuất khẩu nhiều thị trường"],
     usage: "Pha 7–8 muỗng gạt (muỗng trong hộp) với 180ml nước ấm 40–50°C được 1 ly 240ml. 2 ly/ngày. Dùng trong 3 tuần sau khi mở." },
-
-  { id: "29210696898", name: "Sữa Bò Lotte Kid A+ Giúp Phát Triển Chiều Cao Lon 760g Bổ Sung Canxi Giúp Ổn Định Hệ Tiêu Hóa Của Bé", short: "Sữa bò Lotte Kid A+ 760g", brand: "lotte", cat: "sua",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-cong-thuc", "canxi", "tang-chieu-cao", "tri-nao"], price: 650000, oldPrice: 878000, rating: 5.0, reviews: 0, sold: 11, stock: 50, priority: 2,
-    shape: "can", color: "#0066B3", weight: "Lon 760g", origin: "Hàn Quốc", tags: [], formula: true,
-    image: "img/29210696898.jpg", thumb: "img/thumb/29210696898.jpg", images: ["img/29210696898.jpg", "img/29210696898-2.jpg", "img/29210696898-3.jpg", "img/29210696898-4.jpg", "img/29210696898-5.jpg"], shopeeId: "29210696898", shopeeUrl: "https://shopee.vn/product/837223358/29210696898", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa công thức",
-    desc: "Sữa bò Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: đạm thuỷ phân một phần dễ tiêu, canxi 720mg/100g, vitamin D, CPP 600mg/100g giúp hấp thu canxi, DHA từ tảo biển, dầu MCT và hệ lợi khuẩn Synbiotic; không gây dậy thì sớm.",
-    highlights: ["Canxi 720mg/100g + CPP hỗ trợ chiều cao", "DHA tảo biển, đạm thuỷ phân dễ tiêu", "Lợi khuẩn Synbiotic ổn định tiêu hoá"],
-    usage: "Pha 7–8 thìa gạt với 180ml nước ấm 40–50°C, khuấy đều. 2 ly/ngày." },
 
   { id: "19491505209", name: "Sữa Bò Biostime SN-2 Bio Plus HPO- ON FORMULA LON- Tăng Cường Đề Kháng, Dưỡng Chất- Giúp Bé Ngủ Ngon, Ít Quấy Khóc", short: "Sữa bò Biostime SN-2 Bio Plus HPO 800g", brand: "biostime", cat: "sua",
     ages: ["0-6m", "6-12m", "1-3y"], needs: ["sua-cong-thuc", "de-khang", "tieu-hoa"], price: 1290000, oldPrice: 1742000, rating: 0.0, reviews: 0, sold: 0, stock: 50,
@@ -346,23 +326,6 @@ window.PRODUCTS = [
     highlights: ["Thạch lô hội mát dịu", "Niacinamide + Collagen thuỷ phân", "Phù hợp mẹ sau sinh da khô, sạm"],
     usage: "Đắp 15–20 phút, 2–3 lần/tuần sau khi rửa mặt sạch." },
 
-  { id: "19880841223", name: "Men Vi Sinh Biostime Giúp Trẻ Ăn Ngon Miệng, Tiêu Hóa Tốt, Tăng Cường Sức Đề Kháng, Phát Triển Trí Tuệ", short: "Men vi sinh Biostime 28 gói (Pháp)", brand: "biostime", cat: "tang-can",
-    ages: ["0-6m", "6-12m", "1-3y", "3-6y", "6-12y"], needs: ["tieu-hoa", "tang-can", "de-khang"], price: 995000, oldPrice: 1343000, rating: 4.98, reviews: 0, sold: 408, stock: 50,
-    shape: "box", color: "#00897B", weight: "Hộp 28 gói × 1,5g", origin: "Pháp", tags: ["Bán chạy"],
-    image: "img/19880841223.jpg", thumb: "img/thumb/19880841223.jpg", images: ["img/19880841223.jpg", "img/19880841223-2.jpg", "img/19880841223-3.jpg", "img/19880841223-4.jpg", "img/19880841223-5.jpg"], shopeeId: "19880841223", shopeeUrl: "https://shopee.vn/product/837223358/19880841223", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
-    desc: "Men vi sinh Biostime nội địa Pháp, hộp 28 gói 1,5g, bổ sung lợi khuẩn kết hợp HMO. Theo nhà sản xuất: giúp trẻ ăn ngon miệng, tiêu hoá tốt, tăng đề kháng. Dùng cho trẻ từ sơ sinh đến 7 tuổi; mẹ bầu cũng dùng được.",
-    highlights: ["Lợi khuẩn + HMO", "Từ sơ sinh, gói bột không vị dễ pha", "Nội địa Pháp"],
-    usage: "1 gói/ngày pha với sữa, nước hoặc thức ăn nguội dưới 40°C. Uống cách kháng sinh 2 giờ." },
-
-  { id: "27721793055", name: "Kỷ Tử Hữu Cơ Hoàng Gia Ninh Hạ Size Lớn Đỏ Đen, Không Chất Bảo Quản,– Bổ Dưỡng, An Toàn Cho Sức Khoẻ", short: "Kỷ tử hữu cơ Hoàng Gia Ninh Hạ (đỏ & đen)", brand: "hoanggia", cat: "thuc-pham",
-    ages: [], needs: ["an-vat", "cho-me"], price: 250000, oldPrice: 338000, rating: 5.0, reviews: 0, sold: 7, stock: 50,
-    shape: "box", color: "#D84315", weight: "Túi", origin: "Trung Quốc", tags: [], family: true,
-    image: "img/27721793055.jpg", thumb: "img/thumb/27721793055.jpg", images: ["img/27721793055.jpg", "img/27721793055-2.jpg", "img/27721793055-3.jpg", "img/27721793055-4.jpg", "img/27721793055-5.jpg"], shopeeId: "27721793055", shopeeUrl: "https://shopee.vn/product/837223358/27721793055", shopeeCategory: "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ sức khỏe",
-    variants: [{ label: "Kỷ tử đỏ", price: 250000, oldPrice: 338000 }, { label: "Kỷ tử đen", price: 417000, oldPrice: 563000 }],
-    desc: "Kỷ tử hữu cơ Hoàng Gia trồng tại Ninh Hạ – vùng kỷ tử nổi tiếng nhất Trung Quốc, quả size lớn, không chất bảo quản. Có kỷ tử đỏ và kỷ tử đen. Pha trà, nấu chè, hầm canh, ngâm nước uống cho cả nhà.",
-    highlights: ["Kỷ tử hữu cơ Ninh Hạ size lớn", "Không chất bảo quản", "Có loại đỏ và đen"],
-    usage: "10–15g/ngày pha trà hoặc nấu ăn. Bảo quản kín, nơi khô mát." },
-
   { id: "57903449970", name: "Kem thắp sáng hồng da Cell Happy Co 5in1 nâng tone, bảo vệ da khỏi ánh nắng giúp da căng bóng", short: "Kem hồng da Cell Happy Co 5in1", brand: "cellhappy", cat: "cho-me",
     ages: [], needs: ["cho-me", "lam-dep"], price: 693000, oldPrice: 936000, rating: 5.0, reviews: 0, sold: 11, stock: 50,
     shape: "bottle", color: "#F06292", weight: "Tuýp", origin: "Hàn Quốc", tags: [],
@@ -380,14 +343,6 @@ window.PRODUCTS = [
     usage: "Bé uống 1 gói/ngày hoặc 2–3 ngày 1 gói, uống trực tiếp, ngon hơn khi để lạnh." },
 
 
-  { id: "26137781198", name: "Bò Xuyên Tiêu Cay– Thịt Bò Sấy Dẻo Cao Cấp – Thương Hiệu Chef Hải", short: "Bò xuyên tiêu sấy dẻo MasterChef", brand: "masterchef", cat: "thuc-pham",
-    ages: ["12-18y"], needs: ["an-vat"], price: 339000, oldPrice: 458000, rating: 5.0, reviews: 0, sold: 28, stock: 50,
-    shape: "box", color: "#BF360C", weight: "200g / 500g", origin: "Việt Nam", tags: [], family: true,
-    image: "img/26137781198.jpg", thumb: "img/thumb/26137781198.jpg", images: ["img/26137781198.jpg", "img/26137781198-2.jpg", "img/26137781198-3.jpg", "img/26137781198-4.jpg", "img/26137781198-5.jpg"], shopeeId: "26137781198", shopeeUrl: "https://shopee.vn/product/837223358/26137781198", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Thức ăn khô › Thịt khô",
-    variants: [{ label: "200g", price: 339000, oldPrice: 458000 }, { label: "500g", price: 678000, oldPrice: 915000 }],
-    desc: "Bò xuyên tiêu cay MasterChef (Chef Hải) – thịt bò mông tươi 100% xé tay, sấy dẻo giữ độ mềm, không chất bảo quản, hạn dùng 6 tháng. Món ăn vặt cay đậm đà cho người lớn và bé lớn.",
-    highlights: ["100% thịt bò mông tươi, xé tay thủ công", "Sấy dẻo, không chất bảo quản", "Có 200g và 500g"],
-    usage: "Ăn trực tiếp. Bảo quản nơi khô ráo, đậy kín. Không dùng cho bé nhỏ (cay)." }
 ];
 
 /* Feedback thực tế của khách (ảnh chụp tin nhắn/bình luận/ảnh bé dùng sản phẩm) – đặt file vào img/feedback/.
@@ -456,15 +411,15 @@ window.BANNERS = [
 /* Đánh giá minh hoạ (KHÔNG hiển thị). Trang chủ hiện điểm đánh giá thật từ Shopee. Khi có phản hồi thật của khách, đặt SITE.showReviews = true để hiện mục này. */
 window.REVIEWS = [
   { name: 'Mẹ Thu Hà', child: 'bé Bin 3 tuổi', city: 'Q.7, TP.HCM', stars: 5, text: 'Đặt hồng sâm ChuChu buổi sáng, trưa đã có hàng. Bé uống vị táo lê rất thích, dạo này ít ốm vặt hẳn. Có tem phụ đầy đủ nên mình yên tâm.', product: '22644617070' },
-  { name: 'Mẹ Ngọc Anh', child: 'bé Sóc 8 tháng', city: 'Cầu Giấy, Hà Nội', stars: 5, text: 'Mua D3K2 nhỏ giọt cho con, bạn dược sĩ gọi hướng dẫn liều dùng rất kỹ. Giá tốt hơn mấy shop khác mà còn freeship.', product: '42878618667' },
+  { name: 'Mẹ Ngọc Anh', child: 'bé Sóc 8 tháng', city: 'Cầu Giấy, Hà Nội', stars: 5, text: 'Mua D3K2 nhỏ giọt cho con, chuyên gia dinh dưỡng gọi hướng dẫn liều dùng rất kỹ. Giá tốt hơn mấy shop khác mà còn freeship.', product: '42878618667' },
   { name: 'Mẹ Phương Linh', child: 'bé Na 4 tuổi', city: 'Đà Nẵng', stars: 5, text: 'Nút mua nhanh tiện thật, chỉ nhập số điện thoại với địa chỉ là xong, không phải đăng ký tài khoản. Lần 2 mua nước ép Lotte còn tự điền sẵn luôn.', product: '22686115682' },
   { name: 'Chị Mai Trang', child: 'con trai 6 tuổi', city: 'Thủ Đức, TP.HCM', stars: 4, text: 'Con biếng ăn nên mình mua gạc hươu Sumo. Giao hàng đúng hẹn, đóng gói cẩn thận, thùng không móp. Mong shop có thêm mã giảm.', product: '26156646705' },
 ];
 
 window.POSTS = [
   { id: 'chon-dinh-duong-theo-thang-tuoi', title: 'Bé mấy tháng thì dùng được nước ép, hồng sâm, D3K2? Lộ trình bổ sung theo độ tuổi', cat: 'Dinh dưỡng', date: '12/09/2026', read: '5 phút', emoji: '🍼', color: '#FFE9EF', image: 'img/thumb/22686115682.jpg',
-    excerpt: 'Không phải sản phẩm nào cũng dùng được cho bé sơ sinh. Dược sĩ Hương Chất Kids gợi ý lộ trình bổ sung an toàn theo từng mốc tuổi.',
-    body: ['0–6 tháng: sữa mẹ (hoặc sữa công thức) là nguồn dinh dưỡng chính. Chỉ nên bổ sung vitamin D3 (có thể kèm K2) dạng nhỏ giọt theo khuyến cáo 400IU/ngày; không dùng nước ép, hồng sâm hay thực phẩm bổ sung khác.', '6–12 tháng: bắt đầu ăn dặm. Có thể tập cho bé nước ép hoa quả – rau củ hữu cơ loại dành cho bé từ 6 tháng (pha loãng, 1/2 gói/ngày), rong biển vụn rắc cháo với lượng nhỏ.', '1–3 tuổi: bé hay ốm vặt khi đi nhà trẻ. Hồng sâm cho trẻ em, váng sữa canxi, D3K2 có thể dùng theo liều trên bao bì; ưu tiên sản phẩm ghi rõ độ tuổi.', '3–6 tuổi và tiểu học: giai đoạn tăng chiều cao nhanh, chú ý canxi + D3K2 + vận động; bé biếng ăn có thể cân nhắc gạc hươu, kẽm.', 'Nguyên tắc chung: đọc kỹ độ tuổi trên bao bì, không dùng cùng lúc nhiều sản phẩm cùng công dụng, ngưng và hỏi bác sĩ nếu bé dị ứng. Dược sĩ Hương Chất Kids tư vấn miễn phí qua Zalo trước khi mẹ đặt hàng.'] },
+    excerpt: 'Không phải sản phẩm nào cũng dùng được cho bé sơ sinh. Chuyên gia dinh dưỡng Hương Chất Kids gợi ý lộ trình bổ sung an toàn theo từng mốc tuổi.',
+    body: ['0–6 tháng: sữa mẹ (hoặc sữa công thức) là nguồn dinh dưỡng chính. Chỉ nên bổ sung vitamin D3 (có thể kèm K2) dạng nhỏ giọt theo khuyến cáo 400IU/ngày; không dùng nước ép, hồng sâm hay thực phẩm bổ sung khác.', '6–12 tháng: bắt đầu ăn dặm. Có thể tập cho bé nước ép hoa quả – rau củ hữu cơ loại dành cho bé từ 6 tháng (pha loãng, 1/2 gói/ngày), rong biển vụn rắc cháo với lượng nhỏ.', '1–3 tuổi: bé hay ốm vặt khi đi nhà trẻ. Hồng sâm cho trẻ em, váng sữa canxi, D3K2 có thể dùng theo liều trên bao bì; ưu tiên sản phẩm ghi rõ độ tuổi.', '3–6 tuổi và tiểu học: giai đoạn tăng chiều cao nhanh, chú ý canxi + D3K2 + vận động; bé biếng ăn có thể cân nhắc gạc hươu, kẽm.', 'Nguyên tắc chung: đọc kỹ độ tuổi trên bao bì, không dùng cùng lúc nhiều sản phẩm cùng công dụng, ngưng và hỏi bác sĩ nếu bé dị ứng. Chuyên gia dinh dưỡng Hương Chất Kids tư vấn miễn phí qua Zalo trước khi mẹ đặt hàng.'] },
   { id: 'vitamin-d3-k2-cho-be', title: 'Vitamin D3 K2: vì sao bé cần bổ sung ngay từ sơ sinh?', cat: 'Vitamin', date: '08/09/2026', read: '4 phút', emoji: '☀️', color: '#FFF3D6', image: 'img/thumb/42878618667.jpg',
     excerpt: 'Theo Viện Dinh dưỡng Quốc gia, tỷ lệ trẻ em Việt Nam thiếu vitamin D còn cao. Cùng tìm hiểu liều 400IU/ngày và cách nhỏ D3 K2 đúng cho bé.',
     body: ['Vitamin D3 giúp cơ thể hấp thu canxi từ ruột, còn vitamin K2 (MK7) dẫn canxi vào đúng xương thay vì lắng đọng ở mạch máu, thận.', 'Bộ Y tế khuyến cáo bổ sung 400IU vitamin D/ngày cho trẻ từ sơ sinh, đặc biệt trẻ bú mẹ hoàn toàn.', 'Nên nhỏ D3 K2 vào buổi sáng, sau ăn để hấp thu tốt nhất. Kết hợp tắm nắng nhẹ 10–15 phút trước 9h sáng.', 'Dấu hiệu thiếu vitamin D: bé hay quấy khóc đêm, ra mồ hôi trộm, rụng tóc vành khăn, chậm mọc răng, chậm biết đi.'] },
@@ -475,7 +430,7 @@ window.POSTS = [
     excerpt: 'Tuổi dậy thì là cơ hội cuối để con tăng 8–12cm/năm. Dinh dưỡng, giấc ngủ và vận động nào giúp con cao tối đa?',
     body: ['Trước khi sụn tăng trưởng đóng lại (khoảng 16–18 tuổi ở nữ, 18–20 tuổi ở nam), con có thể tăng 8–12cm mỗi năm trong giai đoạn dậy thì.', 'Dinh dưỡng: đủ canxi (1.000–1.300mg/ngày), vitamin D3, K2, kẽm, đạm chất lượng. Sữa tươi 500ml/ngày là nguồn canxi dễ hấp thu nhất.', 'Giấc ngủ: 90% hormone tăng trưởng tiết ra khi ngủ sâu, con nên ngủ trước 22h và đủ 8–9 tiếng.', 'Vận động: bơi, bóng rổ, nhảy dây, xà đơn 30–60 phút/ngày.'] },
   { id: 'men-vi-sinh-khi-nao', title: 'Khi nào bé cần men vi sinh? Phân biệt men vi sinh và men tiêu hoá', cat: 'Tiêu hoá', date: '20/08/2026', read: '4 phút', emoji: '🌿', color: '#EEF8E6', image: 'img/thumb/45462512687.jpg',
-    excerpt: 'Nhiều mẹ nhầm men vi sinh với men tiêu hoá. Dùng sai có thể khiến bé phụ thuộc. Dược sĩ giải thích rõ.',
+    excerpt: 'Nhiều mẹ nhầm men vi sinh với men tiêu hoá. Dùng sai có thể khiến bé phụ thuộc. Chuyên gia dinh dưỡng giải thích rõ.',
     body: ['Men vi sinh (probiotics) là lợi khuẩn sống, giúp cân bằng hệ vi sinh đường ruột – dùng khi bé táo bón, tiêu chảy, sau kháng sinh, khóc dạ đề.', 'Men tiêu hoá là enzyme giúp phân giải thức ăn – chỉ dùng ngắn ngày khi bé thiếu enzyme, theo chỉ định bác sĩ.', 'Chọn men vi sinh có chủng được nghiên cứu (L. reuteri DSM 17938, B. infantis…), dùng cách kháng sinh 2 tiếng, pha với nước/sữa nguội dưới 40°C.'] },
   { id: 'phan-biet-hang-chinh-hang', title: 'Cách kiểm tra hàng Hàn Quốc nhập khẩu chính hãng trước khi cho bé dùng', cat: 'Mua sắm', date: '15/08/2026', read: '3 phút', emoji: '🔍', color: '#EAF0FF', image: 'img/thumb/22644617070.jpg',
     excerpt: 'Kiểm tra tem phụ, mã QR, số lô, hạn dùng… 5 bước đơn giản để mẹ tự kiểm tra sản phẩm trước khi cho con dùng.',

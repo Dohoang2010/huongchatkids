@@ -316,7 +316,7 @@
     <div class="topbar"><div class="container topbar__inner">
       <span class="topbar__item">${I.truck}Freeship đơn từ <b>${fmt(SITE.freeshipFrom)}</b> · Hà Nội giao trong ngày</span>
       <span class="topbar__item">${I.shield}Chính hãng 100% – Tem phụ, hoá đơn VAT</span>
-      <span class="topbar__item">${I.headset}Dược sĩ tư vấn miễn phí ${SITE.workingHours}</span>
+      <span class="topbar__item">${I.headset}Chuyên gia dinh dưỡng tư vấn miễn phí ${SITE.workingHours}</span>
       <a class="topbar__item topbar__link" href="policy.html">${I.file}Hỗ trợ & chính sách</a>
       ${(() => { const s = shopeeSale(); return s && SITE.shopee ? `<a class="topbar__item topbar__sale" href="${SITE.shopee}" target="_blank" rel="noopener">🔥 ${esc(s.label)} trên Shopee – mua ngay</a>` : ''; })()}
     </div></div>
@@ -353,7 +353,7 @@
       <div class="mmenu__panel" role="dialog" aria-label="Menu">
         <div class="mmenu__head"><a class="logo" href="index.html">${SITE.logo ? `<img class="logo__img" src="${SITE.logo}" alt="" width="44" height="44">` : `<span class="logo__mark">🍼</span>`}${SITE.name}</a><button class="mmenu__close" type="button" data-close-menu aria-label="Đóng">${I.close}</button></div>
         <div class="mmenu__ages">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label}</a>`).join('')}</div>
-        <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với dược sĩ</a></div>
+        <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với chuyên gia dinh dưỡng</a></div>
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
         <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
@@ -377,7 +377,7 @@
         <div class="footer__col"><h4><a href="gioi-thieu.html">Về ${SITE.name}</a></h4><ul><li><a href="gioi-thieu.html">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang mẹ</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
         <div class="footer__col"><h4>Kết nối với chúng tôi</h4>
           <p class="fs-13 text-muted">Theo dõi để nhận ưu đãi và kiến thức chăm con mỗi ngày.</p>
-          ${SITE.zaloQr ? `<div class="footer__qr"><img src="${SITE.zaloQr}" width="112" height="112" alt="Mã QR Zalo ${SITE.name}" loading="lazy"><div><b>Zalo ${SITE.hotline}</b><small>Quét mã để chat với dược sĩ, đặt hàng nhanh</small><a href="${SITE.zalo}" target="_blank" rel="noopener">Mở Zalo →</a></div></div>` : ''}
+          ${SITE.zaloQr ? `<div class="footer__qr"><img src="${SITE.zaloQr}" width="112" height="112" alt="Mã QR Zalo ${SITE.name}" loading="lazy"><div><b>Zalo ${SITE.hotline}</b><small>Quét mã để chat với chuyên gia dinh dưỡng, đặt hàng nhanh</small><a href="${SITE.zalo}" target="_blank" rel="noopener">Mở Zalo →</a></div></div>` : ''}
           <div class="footer__social">${SITE.facebook ? `<a href="${SITE.facebook}" target="_blank" rel="noopener" aria-label="Facebook">${I.facebook}</a>` : ''}${SITE.instagram ? `<a href="${SITE.instagram}" target="_blank" rel="noopener" aria-label="Instagram">${I.instagram}</a>` : ''}${SITE.youtube ? `<a href="${SITE.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${I.youtube}</a>` : ''}${SITE.tiktok ? `<a href="${SITE.tiktok}" target="_blank" rel="noopener" aria-label="TikTok">${I.tiktok}</a>` : ''}<a class="pill" href="${SITE.zalo}" target="_blank" rel="noopener" aria-label="Zalo" style="font-weight:800;font-size:12px;color:var(--zalo)">Zalo</a>${SITE.shopee ? `<a class="pill" href="${SITE.shopee}" target="_blank" rel="noopener" aria-label="Shopee" style="font-weight:800;font-size:12px;color:#EE4D2D">Shopee</a>` : ''}</div>
           <h4 class="mt-16">Thanh toán</h4>
           <div class="footer__pay"><span>💵 Tiền mặt khi nhận hàng (COD)</span><span>🏦 Chuyển khoản / VietQR ${SITE.bank ? SITE.bank.name : ''}</span></div>
@@ -532,7 +532,7 @@
         <div class="code">Mã đơn: ${order.code}</div>
         ${items ? `<ul class="qb__items">${items}</ul>` : ''}
         ${order.payment === 'bank' ? payBox(order) : ''}
-        <div class="steps"><span><i>1</i><p>Dược sĩ ${SITE.name} sẽ gọi số <b>${esc(order.customer.phone)}</b> để xác nhận & tư vấn liều dùng (${hoursNote()}).</p></span>${payNote}<span><i>3</i><p>Giao dự kiến <b>${deliveryEstimate()}</b> tới: ${esc(addrShow(order.customer.address))}</p></span></div>
+        <div class="steps"><span><i>1</i><p>Chuyên gia dinh dưỡng ${SITE.name} sẽ gọi số <b>${esc(order.customer.phone)}</b> để xác nhận & tư vấn liều dùng (${hoursNote()}).</p></span>${payNote}<span><i>3</i><p>Giao dự kiến <b>${deliveryEstimate()}</b> tới: ${esc(addrShow(order.customer.address))}</p></span></div>
         <div class="actions"><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Theo dõi đơn qua Zalo</a>${inModal ? `<button class="btn btn--ghost btn--block" type="button" data-close-modal>Tiếp tục mua sắm</button>` : `<a class="btn btn--ghost btn--block" href="index.html">Tiếp tục mua sắm</a>`}</div>
       </div></div>`;
   }
@@ -540,8 +540,8 @@
   /* ---------------- Callback modal (chỉ cần SĐT) ---------------- */
   function openCallback(pid) {
     const c = Customer.get() || {}; const p = pid ? byId(pid) : null;
-    $('#callbackContent').innerHTML = `<div class="modal__head"><h3>${I.headset}Dược sĩ gọi lại cho mẹ</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
-      <div class="modal__body"><p class="fs-14 text-muted mb-12">Mẹ chỉ cần để lại số điện thoại, dược sĩ sẽ gọi tư vấn ${p ? `về <b class="text-primary">${esc(p.short || p.name)}</b>` : 'sản phẩm phù hợp với bé'} — miễn phí, thường trong <b>10 phút</b> ${hoursNote()}.</p>
+    $('#callbackContent').innerHTML = `<div class="modal__head"><h3>${I.headset}Chuyên gia dinh dưỡng gọi lại cho mẹ</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
+      <div class="modal__body"><p class="fs-14 text-muted mb-12">Mẹ chỉ cần để lại số điện thoại, chuyên gia dinh dưỡng sẽ gọi tư vấn ${p ? `về <b class="text-primary">${esc(p.short || p.name)}</b>` : 'sản phẩm phù hợp với bé'} — miễn phí, thường trong <b>10 phút</b> ${hoursNote()}.</p>
       <form id="cbForm" class="qb__form" novalidate><label class="sr-only" for="cbPhone">Số điện thoại của mẹ</label><div class="input-group">${I.phone}<input class="input" id="cbPhone" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" value="${esc(c.phone || '')}" required autofocus></div>
       <div class="form-error hide" id="cbError" role="alert"></div>
       <button class="btn btn--teal btn--lg btn--block" type="submit">${I.phoneCall}Gọi lại cho tôi</button>
@@ -554,7 +554,7 @@
       Customer.set({ ...(Customer.get() || {}), phone });
       const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang gửi…';
       await submitOrder({ type: 'callback', customer: { phone }, items: p ? [{ id: p.id, name: p.name }] : [], total: 0 });
-      $('#callbackContent').innerHTML = `<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Đã nhận yêu cầu!</h3><p>Dược sĩ sẽ gọi số <b>${esc(phone)}</b> ${hoursNote()}. Mẹ để ý điện thoại nhé 💗</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Đóng</button></div></div></div>`;
+      $('#callbackContent').innerHTML = `<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Đã nhận yêu cầu!</h3><p>Chuyên gia dinh dưỡng sẽ gọi số <b>${esc(phone)}</b> ${hoursNote()}. Mẹ để ý điện thoại nhé 💗</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Đóng</button></div></div></div>`;
     });
   }
 

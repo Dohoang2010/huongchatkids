@@ -30,6 +30,9 @@
   .msg.ok { display: block; background: #E7F7F2; color: var(--teal-600); }
   .msg.err { display: block; background: #FDECEE; color: var(--red); }
   .tools { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .gate { display: none; font-size: 13.5px; line-height: 1.5; padding: 12px 14px; border-radius: 12px; margin-bottom: 12px; background: #FDECEE; border: 1.5px solid var(--red); color: var(--red); }
+  .gate.on { display: block; }
+  .gate b { display: block; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -37,6 +40,7 @@
   <h1>Quản lý tồn kho</h1>
   <div class="sub">Bật/tắt “Còn hàng – Hết hàng”. Bấm <b>Lưu lên web</b>, khách sẽ thấy thay đổi sau khoảng 1 phút.</div>
 
+  <div id="gate" class="gate"></div>
   <div id="msg" class="msg"></div>
 
   <details class="card card--pad" id="tokenBox">
@@ -49,6 +53,7 @@
     <div class="input-group"><input class="input" type="password" id="token" placeholder="github_pat_..." autocomplete="off"></div>
     <div class="tools" style="margin-top:10px">
       <button class="btn btn--primary btn--sm" type="button" id="saveToken">Lưu mã</button>
+      <button class="btn btn--teal btn--sm" type="button" id="testToken">Kiểm tra kết nối</button>
       <button class="btn btn--ghost btn--sm" type="button" id="clearToken">Xoá mã khỏi máy này</button>
     </div>
   </details>
@@ -104,11 +109,35 @@ document.addEventListener('DOMContentLoaded', () => {
     return { updatedAt: new Date().toISOString(), source: 'manual', note: 'true = con hang, false = het hang', items };
   }
 
+  // Dịch mã lỗi của GitHub sang tiếng Việt dễ hiểu
+  function loiGitHub(status, d) {
+    if (status === 401) return 'Mã GitHub sai hoặc đã hết hạn. Hãy tạo mã mới rồi dán lại.';
+    if (status === 403) return 'Mã GitHub thiếu quyền. Khi tạo mã phải bật Repository permissions → Contents: Read and write.';
+    if (status === 404) return 'Mã GitHub không có quyền vào kho huongchatkids. Khi tạo mã chọn Only select repositories → huongchatkids.';
+    if (status === 409 || status === 422) return 'Có người vừa sửa tồn kho. Bấm Tải lại rồi chỉnh và lưu lại.';
+    return 'Lỗi ' + status + ': ' + ((d && d.message) || 'không lưu được') + '.';
+  }
+
+  // Sau khi lưu, chờ web thật sự cập nhật rồi mới báo xong
+  function choWebCapNhat(moc, lan) {
+    lan = lan || 0;
+    fetch(PATH + '?t=' + Date.now(), { cache: 'no-store' }).then((r) => r.ok ? r.json() : null).then((d) => {
+      if (d && d.updatedAt === moc) {
+        msg('Xong! Web đã cập nhật tồn kho mới. Khách vào xem là thấy ngay.', 'ok');
+        $('#updated').textContent = 'Cập nhật lần cuối: ' + new Date(moc).toLocaleString('vi-VN');
+        return;
+      }
+      if (lan > 30) { msg('Đã lưu lên GitHub. Web sẽ cập nhật trong ít phút nữa, chị tải lại trang sau nhé.', 'ok'); return; }
+      setTimeout(() => choWebCapNhat(moc, lan + 1), 5000);
+    }).catch(() => setTimeout(() => choWebCapNhat(moc, lan + 1), 5000));
+  }
+
   $('#save').addEventListener('click', () => {
     const t = token();
-    if (!t) { msg('Chưa có mã GitHub. Mở mục 🔑 Kết nối GitHub ở trên để dán mã.', 'err'); $('#tokenBox').open = true; return; }
+    if (!t) { msg('Chưa có mã GitHub nên KHÔNG lưu được. Mở mục 🔑 Kết nối GitHub ở trên để dán mã.', 'err'); $('#tokenBox').open = true; return; }
     const btn = $('#save'); btn.disabled = true; btn.textContent = 'Đang lưu…';
-    const json = JSON.stringify(body(), null, 2) + '\n';
+    const noiDung = body();
+    const json = JSON.stringify(noiDung, null, 2) + '\n';
     const b64 = btoa(String.fromCharCode.apply(null, new TextEncoder().encode(json)));
     const api = `https://api.github.com/repos/${REPO}/contents/${PATH}`;
     fetch(api + '?t=' + Date.now(), { headers: { Authorization: 'Bearer ' + t, Accept: 'application/vnd.github+json' } })
@@ -122,8 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then((r) => r.json().then((d) => ({ ok: r.ok, status: r.status, d })))
       .then(({ ok, status, d }) => {
-        if (ok) msg('Đã lưu. Khách sẽ thấy tồn kho mới sau khoảng 1 phút.', 'ok');
-        else msg('Lỗi ' + status + ': ' + ((d && d.message) || 'không lưu được') + '. Kiểm tra lại mã GitHub (Contents: Read and write).', 'err');
+        if (!ok) { msg(loiGitHub(status, d), 'err'); $('#tokenBox').open = true; return; }
+        msg('Đã gửi lên GitHub, đang chờ web cập nhật (khoảng 1 phút)…', 'ok');
+        choWebCapNhat(noiDung.updatedAt);
       })
       .catch((e) => msg('Không kết nối được GitHub: ' + e.message, 'err'))
       .finally(() => { btn.disabled = false; btn.textContent = 'Lưu lên web'; });
@@ -132,9 +162,29 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#saveToken').addEventListener('click', () => {
     const v = $('#token').value.trim();
     if (!v) { msg('Chưa nhập mã.', 'err'); return; }
-    localStorage.setItem('hck_gh_token', v); $('#token').value = ''; msg('Đã lưu mã trên máy này.', 'ok'); $('#tokenBox').open = false;
+    localStorage.setItem('hck_gh_token', v); $('#token').value = ''; msg('Đã lưu mã trên máy này. Bấm Kiểm tra kết nối để chắc chắn mã dùng được.', 'ok'); kiemTraCong();
   });
-  $('#clearToken').addEventListener('click', () => { localStorage.removeItem('hck_gh_token'); msg('Đã xoá mã khỏi máy này.', 'ok'); });
+  $('#clearToken').addEventListener('click', () => { localStorage.removeItem('hck_gh_token'); msg('Đã xoá mã khỏi máy này.', 'ok'); kiemTraCong(); });
+
+  function kiemTraCong() {
+    const co = !!token();
+    $('#gate').className = co ? 'gate' : 'gate on';
+    $('#gate').innerHTML = co ? '' : '<b>Chưa kết nối GitHub – bấm Lưu sẽ không có tác dụng.</b>Mở mục 🔑 Kết nối GitHub ngay bên dưới, tạo mã và dán vào. Chỉ cần làm 1 lần trên mỗi máy.';
+    $('#save').disabled = !co;
+    $('#save').textContent = co ? 'Lưu lên web' : 'Chưa kết nối';
+    if (!co) $('#tokenBox').open = true;
+  }
+
+  $('#testToken').addEventListener('click', () => {
+    const t = token();
+    if (!t) { msg('Chưa có mã GitHub. Dán mã vào ô trên rồi bấm Lưu mã trước.', 'err'); return; }
+    const btn = $('#testToken'); btn.disabled = true; btn.textContent = 'Đang kiểm tra…';
+    fetch(`https://api.github.com/repos/${REPO}/contents/${PATH}`, { headers: { Authorization: 'Bearer ' + t, Accept: 'application/vnd.github+json' } })
+      .then((r) => r.json().then((d) => ({ ok: r.ok, status: r.status, d })))
+      .then(({ ok, status, d }) => msg(ok ? 'Kết nối tốt! Chị chỉnh tồn kho rồi bấm Lưu lên web là được.' : loiGitHub(status, d), ok ? 'ok' : 'err'))
+      .catch((e) => msg('Không kết nối được GitHub: ' + e.message, 'err'))
+      .finally(() => { btn.disabled = false; btn.textContent = 'Kiểm tra kết nối'; });
+  });
   $('#allIn').addEventListener('click', () => { PRODUCTS.forEach((p) => { state[p.id] = true; }); render(); });
   $('#reload').addEventListener('click', load);
   $('#download').addEventListener('click', () => {
@@ -144,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   load();
+  kiemTraCong();
 });
 </script>
 </body>
