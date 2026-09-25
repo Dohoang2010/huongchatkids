@@ -23,9 +23,9 @@ var TELEGRAM_TOKEN = '';                 // tuỳ chọn, lấy từ @BotFather
 var TELEGRAM_CHAT_ID = '';               // tuỳ chọn, lấy từ @userinfobot
 
 // ----- BÁO ĐƠN VỀ ZALO (qua Zalo OA – xem hướng dẫn ở cuối file) -----
-var ZALO_APP_ID = '';        // ID ứng dụng trong developers.zalo.me
-var ZALO_APP_SECRET = '';    // Secret key của ứng dụng đó
-var ZALO_USER_ID = '';       // user_id Zalo của chủ shop trong OA (chạy hàm zaloLayUserId để lấy)
+var ZALO_APP_ID = '2831485758862930392';   // ID ứng dụng trong developers.zalo.me
+var ZALO_APP_SECRET = '';                 // Secret key của ứng dụng đó (cần để tự làm mới token)
+var ZALO_USER_ID = '';                    // để trống: script tự lấy khi chị nhắn cho OA (xem mục Webhook)
 // Refresh token KHÔNG để trong code: chạy hàm zaloLuuRefreshToken('…') một lần, nó được cất trong Script Properties.
 
 var HEADERS = ['Thời gian', 'Mã đơn', 'Loại', 'Khách', 'Điện thoại', 'Địa chỉ', 'Sản phẩm',
@@ -34,6 +34,13 @@ var HEADERS = ['Thời gian', 'Mã đơn', 'Loại', 'Khách', 'Điện thoại'
 function doPost(e) {
   try {
     var order = JSON.parse(e.postData.contents);
+
+    // Sự kiện từ Zalo OA (khi chủ shop nhắn cho OA) -> lưu user_id để gửi tin báo đơn
+    if (order && order.event_name && order.sender && order.sender.id) {
+      PropertiesService.getScriptProperties().setProperty('ZALO_USER_ID', String(order.sender.id));
+      Logger.log('Đã lưu ZALO_USER_ID: ' + order.sender.id);
+      return ContentService.createTextOutput(JSON.stringify({ ok: true, zalo: true })).setMimeType(ContentService.MimeType.JSON);
+    }
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(HEADERS);
@@ -107,7 +114,12 @@ function testDonHang() {
  *     'DAN_REFRESH_TOKEN_VAO_DAY' thành refresh token vừa copy, bấm Chạy.
  *  5. Chọn hàm zaloLayUserId, bấm Chạy, mở Nhật ký (Ctrl+Enter) để xem user_id
  *     của chị → điền vào ZALO_USER_ID ở đầu file.
- *  6. Bấm Lưu, rồi Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
+ *  6. Cài Webhook để script tự biết user_id của chị:
+ *     developers.zalo.me → ứng dụng → Official Account API → Webhook
+ *     → dán chính link /exec của script này vào ô URL
+ *     → tích sự kiện "Người dùng gửi tin văn bản cho OA" (user_send_text) → Lưu.
+ *     Sau đó mở Zalo, nhắn 1 tin bất kỳ cho OA của shop. Chạy hàm zaloXemUserId để kiểm tra.
+ *  7. Bấm Lưu, rồi Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
  *
  *  Lưu ý: Zalo chỉ cho OA nhắn cho người đã tương tác trong vòng 7 ngày. Nếu lâu
  *  không nhắn cho OA, tin báo đơn có thể bị từ chối – lúc đó chị chỉ cần mở Zalo
@@ -143,25 +155,34 @@ function zaloAccessToken() {
   return d.access_token;
 }
 
+function zaloUserId() {
+  return ZALO_USER_ID || PropertiesService.getScriptProperties().getProperty('ZALO_USER_ID') || '';
+}
+
 function zaloGuiTin(text) {
-  if (!ZALO_APP_ID || !ZALO_USER_ID) return;
+  var uid = zaloUserId();
+  if (!ZALO_APP_ID || !uid) return;
   var token = zaloAccessToken();
   if (!token) return;
   var res = UrlFetchApp.fetch('https://openapi.zalo.me/v3.0/oa/message/cs', {
     method: 'post', muteHttpExceptions: true, contentType: 'application/json',
     headers: { access_token: token },
-    payload: JSON.stringify({ recipient: { user_id: ZALO_USER_ID }, message: { text: text } })
+    payload: JSON.stringify({ recipient: { user_id: uid }, message: { text: text } })
   });
   Logger.log('Zalo: ' + res.getContentText());
 }
 
-/** Chạy 1 lần để xem user_id Zalo của những người đã quan tâm OA. */
-function zaloLayUserId() {
-  var token = zaloAccessToken();
-  if (!token) { Logger.log('Chưa cấu hình App ID / Secret / refresh token.'); return; }
-  var res = UrlFetchApp.fetch('https://openapi.zalo.me/v3.0/oa/user/getlist?data=' +
-    encodeURIComponent(JSON.stringify({ offset: 0, count: 20 })), { headers: { access_token: token }, muteHttpExceptions: true });
-  Logger.log(res.getContentText());
+/** Xem user_id đã lưu (có sau khi chị nhắn 1 tin cho OA và webhook đã cài đúng). */
+function zaloXemUserId() {
+  Logger.log('ZALO_USER_ID = ' + (zaloUserId() || '(chưa có – hãy nhắn 1 tin cho OA rồi chạy lại)'));
+}
+
+/** Lưu tạm access token Zalo (dùng được ~1 giờ) để thử ngay khi chưa có Secret key. */
+function zaloLuuAccessTokenTam(token) {
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty('ZALO_ACCESS_TOKEN', token || 'DAN_ACCESS_TOKEN_VAO_DAY');
+  props.setProperty('ZALO_TOKEN_EXP', String(Date.now() + 55 * 60 * 1000));
+  Logger.log('Đã lưu access token tạm.');
 }
 
 /** Chạy để thử gửi 1 tin Zalo. */
