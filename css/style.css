@@ -455,6 +455,30 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .pcard__soldtxt { font-size: 11.5px; color: var(--primary-700); font-weight: 600; }
 .pcard--oos .pcard__media::after { content: 'TẠM HẾT HÀNG'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .6); font-weight: 800; color: var(--ink-2); font-size: 13px; letter-spacing: .06em; }
 
+/* Hàng mới về – cùng kiểu với thanh flash sale nhưng trang trí khác (xanh mint, lấp lánh) */
+.fresh { position: relative; overflow: hidden; background: linear-gradient(135deg, #0FA98F 0%, #2CC3A5 45%, #6FD8C8 100%); border-radius: var(--radius); padding: 18px 16px; color: #fff; }
+@media (min-width: 768px) { .fresh { padding: 26px 24px; } }
+.fresh__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; position: relative; z-index: 1; }
+.fresh__title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fresh__title h2 { font-size: 22px; color: #fff; text-transform: uppercase; letter-spacing: .02em; }
+.fresh__box { font-size: 26px; display: inline-block; animation: boxBob 1.6s ease-in-out infinite; }
+.fresh__tag { background: #fff; color: #0C8F79; font-weight: 800; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; padding: 5px 11px; border-radius: 999px; box-shadow: 0 2px 10px rgba(0, 0, 0, .12); animation: tagPop 1.8s ease-in-out infinite; }
+.fresh__note { font-size: 13px; color: rgba(255, 255, 255, .92); font-weight: 600; }
+.fresh__more { text-align: center; margin-top: 12px; position: relative; z-index: 1; }
+.fresh .row-scroll { position: relative; z-index: 1; }
+.sparkles { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.sparkles i { position: absolute; top: 10%; font-size: 16px; opacity: 0; animation: twinkle 3.2s ease-in-out infinite; }
+.sparkles i:nth-child(1) { left: 6%; animation-delay: 0s; }
+.sparkles i:nth-child(2) { left: 22%; top: 68%; animation-delay: .5s; }
+.sparkles i:nth-child(3) { left: 38%; top: 16%; animation-delay: 1s; }
+.sparkles i:nth-child(4) { left: 54%; top: 72%; animation-delay: 1.5s; }
+.sparkles i:nth-child(5) { left: 70%; top: 12%; animation-delay: 2s; }
+.sparkles i:nth-child(6) { left: 84%; top: 66%; animation-delay: 2.5s; }
+.sparkles i:nth-child(7) { left: 94%; top: 24%; animation-delay: 3s; }
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.6) rotate(0deg); } 50% { opacity: .95; transform: scale(1.15) rotate(12deg); } }
+@keyframes boxBob { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-5px) rotate(4deg); } }
+@keyframes tagPop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+
 /* Flash sale */
 .flash { background: linear-gradient(135deg, #FF3D71 0%, #F0537A 45%, #FF8A5C 100%); border-radius: var(--radius); padding: 18px 16px; color: #fff; }
 @media (min-width: 768px) { .flash { padding: 26px 24px; } }
@@ -970,7 +994,7 @@ body { padding-bottom: 0; }
 .icon-16 svg { width: 16px; height: 16px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
-  .flames, .flash__title::before { display: none !important; }
+  .flames, .flash__title::before, .sparkles { display: none !important; }
   .flash__title h2, .flash__title .bolt, .badge--sale { animation: none !important; }
 }
 

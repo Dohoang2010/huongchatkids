@@ -264,6 +264,32 @@
     wrap.appendChild(el); setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, opts.duration || 3200);
   }
 
+  /* Hàng sản phẩm tự xoay vòng: cứ vài giây trượt sang sản phẩm kế tiếp, hết thì quay lại đầu.
+     Dừng lại khi khách rê chuột, chạm tay, dùng bàn phím hoặc chuyển sang tab khác. */
+  function autoScrollRow(el, delay = 3200) {
+    if (!el || el.children.length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let hold = 0;
+    const pause = (ms) => { hold = Date.now() + ms; };
+    const stepWidth = () => {
+      const card = el.firstElementChild;
+      const gap = parseFloat(getComputedStyle(el).columnGap || getComputedStyle(el).gap) || 12;
+      return card ? card.getBoundingClientRect().width + gap : 0;
+    };
+    setInterval(() => {
+      if (document.hidden || Date.now() < hold || !el.isConnected || !el.clientWidth) return;
+      const max = el.scrollWidth - el.clientWidth - 4;
+      if (max <= 0) return;
+      const next = el.scrollLeft >= max ? 0 : el.scrollLeft + stepWidth();
+      el.scrollTo({ left: next, behavior: 'smooth' });
+    }, delay);
+    el.addEventListener('mouseenter', () => pause(6e5));
+    el.addEventListener('mouseleave', () => pause(1200));
+    el.addEventListener('focusin', () => pause(6e5));
+    el.addEventListener('focusout', () => pause(1200));
+    ['touchstart', 'pointerdown', 'wheel'].forEach((ev) => el.addEventListener(ev, () => pause(9000), { passive: true }));
+  }
+
   /* Thứ tự hiển thị mặc định: sản phẩm cho bé trước, sản phẩm cho mẹ xếp sau;
      trong mỗi nhóm thì hàng ưu tiên lên đầu, rồi tới hàng bán chạy, cuối cùng là hàng đăng sau. */
   const isForMom = (p) => (p.cat === 'cho-me' ? 1 : 0);
@@ -679,5 +705,5 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
 
-  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom };
+  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow };
 })();
