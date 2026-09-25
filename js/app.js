@@ -296,11 +296,13 @@
     if (col.needs) return `<div><h4>${col.title}</h4><ul>${col.needs.map(needLink).join('')}</ul></div>`;
     return `<div><h4>${col.title}</h4><ul>${(col.links || []).map(([l, h]) => `<li><a href="${h}">${l}</a></li>`).join('')}</ul></div>`;
   }
+  // Màn hình hẹp hơn thì dùng tên rút gọn để thanh menu luôn nằm gọn 1 hàng
+  const navLabel = (n) => (n.short || n.tiny ? `<span class="nv-full">${n.short || n.label}</span><span class="nv-short">${n.tiny || n.short || n.label}</span>` : n.label);
   function navItem(n) {
-    if (n.ages) return `<li class="navbar__item"><a class="navbar__link" href="collections.html">${n.label} ${I.chevron}</a><div class="mega"><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label} <small style="color:var(--muted);font-weight:500">· ${a.desc}</small></a>`).join('')}</div></div></li>`;
-    if (n.brands) return `<li class="navbar__item"><a class="navbar__link" href="collections.html">${n.label} ${I.chevron}</a><div class="mega mega--brands"><div class="brand-grid">${BRANDS.map((b) => `<a href="collections.html?brand=${b.key}">${b.label} <small style="color:var(--muted)">· ${b.origin}</small></a>`).join('')}</div></div></li>`;
-    if (n.columns) return `<li class="navbar__item"><a class="navbar__link" href="${n.link}">${n.label} ${I.chevron}</a><div class="mega mega--wide">${n.columns.map(navColumn).join('')}</div></li>`;
-    return `<li class="navbar__item"><a class="navbar__link ${n.hot ? 'navbar__link--hot' : ''}" href="${n.link}">${n.label}</a></li>`;
+    if (n.ages) return `<li class="navbar__item"><a class="navbar__link" href="collections.html">${navLabel(n)} ${I.chevron}</a><div class="mega"><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label} <small style="color:var(--muted);font-weight:500">· ${a.desc}</small></a>`).join('')}</div></div></li>`;
+    if (n.brands) return `<li class="navbar__item"><a class="navbar__link" href="collections.html">${navLabel(n)} ${I.chevron}</a><div class="mega mega--brands"><div class="brand-grid">${BRANDS.map((b) => `<a href="collections.html?brand=${b.key}">${b.label} <small style="color:var(--muted)">· ${b.origin}</small></a>`).join('')}</div></div></li>`;
+    if (n.columns) return `<li class="navbar__item"><a class="navbar__link" href="${n.link}">${navLabel(n)} ${I.chevron}</a><div class="mega mega--wide">${n.columns.map(navColumn).join('')}</div></li>`;
+    return `<li class="navbar__item"><a class="navbar__link ${n.hot ? 'navbar__link--hot' : ''}" href="${n.link}">${navLabel(n)}</a></li>`;
   }
   function navMobile(n, i) {
     const links = (n.columns || []).flatMap((c) => c.ages ? [] : c.needs ? c.needs.map((k) => { const x = NEEDS.find((y) => y.key === k); return x ? [x.label, 'collections.html?need=' + k] : null; }).filter(Boolean) : (c.links || []));
@@ -340,7 +342,7 @@
         </div>
       </div>
       <nav class="navbar" aria-label="Danh mục chính"><div class="container"><ul class="navbar__list">
-        <li class="navbar__item"><a class="navbar__link navbar__link--cat" href="collections.html">${I.grid}Danh mục sản phẩm</a>
+        <li class="navbar__item"><a class="navbar__link navbar__link--cat" href="collections.html">${I.grid}<span class="nv-full">Danh mục sản phẩm</span><span class="nv-short">Danh mục</span></a>
           <div class="mega mega--wide"><div><h4>Danh mục</h4><ul>${CATEGORIES.slice(0, Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>&nbsp;</h4><ul>${CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>

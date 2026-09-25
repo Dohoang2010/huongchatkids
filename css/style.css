@@ -274,6 +274,16 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .navbar__item { position: relative; height: 100%; }
 .navbar__link { display: inline-flex; align-items: center; gap: 6px; height: 100%; padding: 0 11px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0; color: var(--ink-2); border-radius: 8px 8px 0 0; white-space: nowrap; }
 .navbar__link svg { width: 14px; height: 14px; opacity: .6; }
+/* Thanh menu luôn gọn trong 1 hàng: màn hình càng hẹp thì chữ càng rút gọn */
+.nv-short { display: none; }
+@media (min-width: 1280px) { .navbar__link { padding: 0 9px; font-size: 12.5px; } }
+@media (min-width: 992px) and (max-width: 1279px) {
+  .navbar__list { gap: 0; }
+  .navbar__link { padding: 0 7px; font-size: 12px; }
+  .navbar__link--cat { padding: 0 12px; margin-right: 4px; }
+  .nv-full { display: none; }
+  .nv-short { display: inline; }
+}
 .navbar__item:hover .navbar__link { color: var(--primary); }
 .navbar__link--hot { color: var(--red); }
 .navbar__link--cat { background: var(--primary); color: #fff !important; border-radius: 8px; height: 36px; padding: 0 16px; margin-right: 8px; }

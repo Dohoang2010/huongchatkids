@@ -117,30 +117,30 @@ window.BRANDS = [
 
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
 window.NAV = [
-  { label: 'Nước ép & dinh dưỡng', link: 'collections.html?cat=nuoc-ep', columns: [
+  { label: 'Nước ép & dinh dưỡng', short: 'Nước ép', tiny: 'Nước ép', link: 'collections.html?cat=nuoc-ep', columns: [
     { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Nước ép mận, nho & táo (Tăng Cân)', 'product.html?id=25632276959'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697']] },
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'organic'] },
     { title: 'Theo độ tuổi', ages: ['6-12m', '1-3y', '3-6y', '6-12y', '12-18y'] } ] },
-  { label: 'Sữa cho bé', link: 'collections.html?cat=sua', columns: [
+  { label: 'Sữa cho bé', short: 'Sữa cho bé', tiny: 'Sữa bé', link: 'collections.html?cat=sua', columns: [
     { title: 'Sữa công thức', links: [['Biostime SN-2 Bio Plus (Úc)', 'product.html?id=19491505209'], ['Sữa dê Biostime (Úc)', 'product.html?id=19682441455'], ['Biostime Organic (Pháp)', 'product.html?id=20992159167'], ['Sữa dê Lotte Kid A+', 'product.html?id=13899935993']] },
     { title: 'Sữa tươi', links: [['Norco nguyên kem nội địa Úc', 'product.html?id=26523206270']] },
     { title: 'Theo độ tuổi', ages: ['0-6m', '6-12m', '1-3y', '3-6y', '6-12y'] } ] },
-  { label: 'Hồng sâm & đề kháng', link: 'collections.html?cat=hong-sam', columns: [
+  { label: 'Hồng sâm & đề kháng', short: 'Hồng sâm', tiny: 'Hồng sâm', link: 'collections.html?cat=hong-sam', columns: [
     { title: 'Sản phẩm', links: [['Hồng sâm ChuChu tăng cao & phục hồi', 'product.html?id=28254163202'], ['Hồng sâm ChuChu ăn ngon, phục hồi sau ốm', 'product.html?id=22644617070'], ['Hồng sâm Rich Kid – trí não', 'product.html?id=27355720019'], ['Sâm Organic Pinkfong Kid Up', 'product.html?id=47357633686'], ['Gạc hươu non Sumo tăng cân', 'product.html?id=26156646705']] },
     { title: 'Theo nhu cầu', needs: ['de-khang', 'phuc-hoi', 'tang-can', 'tri-nao'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
-  { label: 'Vitamin & canxi', link: 'collections.html?cat=vitamin', columns: [
+  { label: 'Vitamin & canxi', short: 'Vitamin & canxi', tiny: 'Vitamin', link: 'collections.html?cat=vitamin', columns: [
     { title: 'Sản phẩm', links: [['Vitamin D3K2 Pure Vitality 30ml', 'product.html?id=42878618667'], ['Canxi hữu cơ Calciumore (dạng váng sữa)', 'product.html?id=26060839019']] },
     { title: 'Theo nhu cầu', needs: ['d3k2', 'canxi', 'tieu-hoa', 'tang-chieu-cao'] },
     { title: 'Danh mục khác', links: [['Rong biển & ăn dặm', 'collections.html?cat=rong-bien'], ['Thực phẩm gia đình', 'collections.html?cat=thuc-pham'], ['Dành cho mẹ', 'collections.html?cat=cho-me']] } ] },
-  { label: '💖 Dành cho mẹ', link: 'collections.html?cat=cho-me', columns: [
+  { label: '💖 Dành cho mẹ', short: '💖 Dành cho mẹ', tiny: '💖 Cho mẹ', link: 'collections.html?cat=cho-me', columns: [
     { title: 'Chăm sóc da', links: [['Kem chống nắng Hiskin 5in1 SPF50+', 'product.html?id=27734205778'], ['Serum RVB LAB Hyalu C+ 30ml', 'product.html?id=24015142248'], ['Kem dưỡng RVB LAB Hyalu C+ 30ml', 'product.html?id=26800350417'], ['Mặt nạ trẻ hoá NMN Kousa', 'product.html?id=24015583018'], ['Mặt nạ thạch lô hội Cure', 'product.html?id=57413220644']] },
     { title: 'Bộ chăm sóc chuyên sâu', links: [['Combo dưỡng da Hyalu C+', 'product.html?id=26900366084'], ['Cặp Meso bạc RVB LAB', 'product.html?id=29006040615'], ['Bộ đôi Meso Retinol siêu vi', 'product.html?id=28806784125'], ['Combo Meso vàng siêu vi', 'product.html?id=24329101823'], ['Cặp tái tạo phục hồi da Dermo Ioniq', 'product.html?id=25678530796']] },
     { title: 'Sức khoẻ & cơ thể', links: [['Viên uống Pure NMN 12000mg+', 'product.html?id=24767149051'], ['Men vi sinh phụ khoa Arravite', 'product.html?id=28902157429'], ['Super Collagen Alpha 90 gói', 'product.html?id=48112514210'], ['Nghệ nano Curcumin 365 Plus', 'product.html?id=49061985399'], ['Thảm ngải cứu trị liệu', 'product.html?id=50002678694']] },
     { title: 'Tắm gội & làm đẹp', links: [['Sữa tắm dưỡng trắng Glutanex 300ml', 'product.html?id=24465090622'], ['Cặp dầu gội & xả Arganicare', 'product.html?id=27809051612'], ['Xịt phun sương Grace By Chera', 'product.html?id=51013054442'], ['Son filler RVB LAB Lip Explosion', 'product.html?id=57556697426'], ['Bột trắng răng Akiko Nhật Bản', 'product.html?id=56857599724']] } ] },
-  { label: 'Chọn theo tuổi', ages: true },
-  { label: '🔥 Flash sale', link: 'collections.html?sort=discount', hot: true },
-  { label: 'Cẩm nang mẹ', link: 'blog.html' },
+  { label: 'Chọn theo tuổi', short: 'Theo tuổi', tiny: 'Theo tuổi', ages: true },
+  { label: '🔥 Flash sale', short: '🔥 Flash sale', tiny: '🔥 Sale', link: 'collections.html?sort=discount', hot: true },
+  { label: 'Cẩm nang mẹ', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' },
 ];
 
 /* importer / congBo (tuỳ chọn): nhà nhập khẩu & số công bố ghi trên tem phụ – điền để hiện ở bảng thông tin.
