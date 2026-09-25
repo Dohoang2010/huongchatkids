@@ -102,7 +102,7 @@ function doGet() {
 /** Chạy thử trong Apps Script (menu Chạy) để xem Sheet/email có nhận được không. */
 function testDonHang() {
   doPost({ postData: { contents: JSON.stringify({
-    code: 'HCK-TEST', type: 'checkout', customer: { name: 'Khách thử', phone: '0865023003', address: 'Hà Nội' },
+    code: 'HCK-TEST', type: 'checkout', customer: { name: 'Khách thử', phone: '0967233003', address: 'Hà Nội' },
     items: [{ short: 'Nước ép Lotte Tăng Cao', variant: 'Hộp 10 gói', qty: 2 }],
     subtotal: 896000, discount: 0, ship: 25000, total: 921000, payment: 'cod', note: 'Đơn thử'
   }) } });

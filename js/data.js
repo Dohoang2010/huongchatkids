@@ -14,9 +14,9 @@ window.SITE = {
   name: 'Hương Chất Kids',
   logo: 'img/logo.png',               // ảnh logo (vuông); để trống sẽ dùng biểu tượng 🍼
   slogan: 'Mẹ nào cũng là siêu nhân',
-  hotline: '(+84) 865.023.003',
-  hotlineTel: '+84865023003',
-  zalo: 'https://zalo.me/0865023003',
+  hotline: '(+84) 967.233.003',
+  hotlineTel: '+84967233003',
+  zalo: 'https://zalo.me/0967233003',
   zaloQr: 'img/zalo-qr.png',        // mã QR Zalo (tạo từ số hotline) hiện ở footer & modal gọi lại
   messenger: '',                      // điền link m.me/... nếu có fanpage; để trống sẽ ẩn nút Messenger
   shopee: 'https://shopee.vn/shop/837223358',
