@@ -118,7 +118,24 @@ nhắn 1 câu bất kỳ cho bot của mình rồi điền 2 giá trị đó và
 
 Nếu khách mất mạng lúc đặt, đơn được xếp hàng trong máy khách và tự gửi lại ở lần mở web sau.
 
-### Báo đơn về Zalo
+### Báo đơn về Zalo (bằng Zalo Bot – cách đang dùng)
+
+Cách rẻ nhất và không cần OA trả phí: dùng **Zalo Bot**.
+
+1. Mở Zalo → tìm **Bot Creator** (https://zalo.me/s/botcreator/) → tạo bot. Zalo nhắn lại cho bạn
+   một token dạng `211668...:IEUc...`.
+2. Dán token vào `ZALO_BOT_TOKEN` trong `tools/apps-script.gs` (**không commit token lên GitHub** –
+   repo này là public, chỉ dán trong Apps Script của shop).
+3. Mở Zalo, vào đúng con bot đó và **nhắn cho bot 1 tin** (bot chỉ được nhắn lại cho người đã nhắn nó trước).
+4. Trong Apps Script chạy hàm `zaloBotLayChatId()` → xem Nhật ký để lấy mã hộp chat
+   (mã cũng được lưu tự động vào Script Properties). Dán vào `ZALO_BOT_CHAT_ID`.
+5. Chạy `zaloBotThuGuiTin()` để thử, rồi Triển khai → Phiên bản mới.
+
+API của Zalo Bot giống hệt Telegram: `POST https://bot-api.zapps.me/bot<TOKEN>/<method>` với
+`getMe`, `getUpdates`, `sendMessage` (`{chat_id, text}`), `sendPhoto`, `setWebhook`.
+`getUpdates` trả HTTP 408 "Request timeout" khi không có tin mới – đó là bình thường, không phải lỗi.
+
+### Báo đơn về Zalo OA (cách cũ, tốn phí – đang tắt)
 
 Zalo **không cho gửi tin vào Zalo cá nhân bằng API**, nên tin báo đơn phải đi qua một
 **Zalo OA** (Official Account) miễn phí của shop: tạo OA tại https://oa.zalo.me, quan tâm OA đó
