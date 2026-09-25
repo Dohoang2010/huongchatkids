@@ -1,60 +1,43 @@
 /**
- * Nhận đơn hàng từ website Hương Chất Kids.
- * Mỗi đơn khách đặt trên web sẽ: ghi 1 dòng vào Google Sheet + gửi email + nhắn về Zalo qua bot (+ tuỳ chọn Telegram).
+ * NHẬN ĐƠN HÀNG – HƯƠNG CHẤT KIDS
+ * Mỗi đơn khách đặt trên website sẽ: ghi 1 dòng vào Google Sheet + gửi email + nhắn về Zalo qua bot.
  *
- * CÁCH CÀI (làm 1 lần, miễn phí):
- *  1. Vào https://sheets.new → đặt tên "Đơn hàng Hương Chất Kids".
- *  2. Menu Tiện ích mở rộng (Extensions) → Apps Script. Xoá code mẫu, dán toàn bộ file này vào.
- *  3. Sửa EMAIL bên dưới nếu muốn nhận ở hộp thư khác. Muốn nhận Telegram thì điền
- *     TELEGRAM_TOKEN và TELEGRAM_CHAT_ID (xem hướng dẫn ở README).
- *  4. Bấm Triển khai (Deploy) → Tạo bản triển khai mới → loại "Ứng dụng web" (Web app):
- *        Thực thi với tên (Execute as): Tôi / Me
- *        Ai có quyền truy cập (Who has access): Bất kỳ ai / Anyone
- *     → Triển khai → Cho phép quyền (Authorize) → copy link dạng
- *       https://script.google.com/macros/s/..../exec
- *  5. Dán link đó vào js/data.js, dòng orderEndpoint: ''  →  orderEndpoint: 'https://script.google.com/.../exec'
- *     rồi commit & push (hoặc nhắn Claude làm giúp).
- *
- * Lưu ý: mỗi lần sửa code phải bấm Triển khai → Quản lý bản triển khai → sửa → Phiên bản mới.
+ * CÁCH DÙNG FILE NÀY (làm 1 lần):
+ *  1. Mở Google Sheet đơn hàng → menu Tiện ích mở rộng → Apps Script.
+ *  2. Bấm vào vùng code, ấn Ctrl+A (máy Mac: Cmd+A) để bôi đen HẾT, ấn Delete cho sạch,
+ *     rồi dán toàn bộ file này vào. Bấm Lưu (biểu tượng đĩa mềm).
+ *  3. Mở Zalo, vào "Bot hương chất kids", nhắn cho bot 1 tin bất kỳ (ví dụ: xin chào).
+ *     Bắt buộc, vì Zalo chỉ cho bot nhắn lại cho người đã nhắn cho nó trước.
+ *  4. Ở ô chọn hàm (đang hiện chữ doPost) chọn zaloBotLayChatId → bấm Chạy.
+ *     Lần đầu Google hỏi quyền: Xem lại quyền → chọn tài khoản → Nâng cao → Chuyển đến… → Cho phép.
+ *  5. Mở Nhật ký thực thi (Ctrl+Enter), tìm dòng "ĐÃ LƯU mã hộp chat: …".
+ *     Dán số đó vào ZALO_BOT_CHAT_ID bên dưới rồi bấm Lưu.
+ *  6. Chọn hàm zaloBotThuGuiTin → Chạy → kiểm tra Zalo đã nhận được tin thử chưa.
+ *  7. Bấm Triển khai → Quản lý bản triển khai → biểu tượng bút chì → Phiên bản mới → Triển khai.
+ *     BẮT BUỘC làm bước này mỗi lần sửa code, nếu không website vẫn chạy code cũ.
  */
 
 var EMAIL = 'huongchatkids@gmail.com';   // nơi nhận email báo đơn
-var TELEGRAM_TOKEN = '';                 // tuỳ chọn, lấy từ @BotFather
-var TELEGRAM_CHAT_ID = '';               // tuỳ chọn, lấy từ @userinfobot
 
-// ----- BÁO ĐƠN VỀ ZALO BẰNG BOT (miễn phí – cách đang dùng) -----
-// Bot "Bot hương chất kids" tạo tại https://zalo.me/s/botcreator/ .
-// Muốn đổi bot: tạo bot mới, dán token mới vào đây, rồi chạy hàm zaloBotLayChatId().
-var ZALO_BOT_TOKEN = '';       // dạng 211668...:IEUc...  (dán token của bot vào đây)
-var ZALO_BOT_CHAT_ID = '';     // để trống: chạy hàm zaloBotLayChatId() sau khi nhắn cho bot 1 tin
-
-// ----- BÁO ĐƠN VỀ ZALO (qua Zalo OA – cách cũ, đang tắt; xem hướng dẫn ở cuối file) -----
-// Để trống ZALO_APP_ID = tắt báo Zalo (mặc định). Muốn bật phải nâng gói OA "Tăng trưởng"
-// (2.500.000đ/năm) vì gói miễn phí bị Zalo chặn API gửi tin – lỗi -224.
-var ZALO_APP_ID = '';                     // ID ứng dụng trong developers.zalo.me
-var ZALO_APP_SECRET = '';                 // Secret key của ứng dụng đó (cần để tự làm mới token)
-var ZALO_USER_ID = '';                    // để trống: script tự lấy khi chị nhắn cho OA (xem mục Webhook)
-// Refresh token KHÔNG để trong code: chạy hàm zaloLuuRefreshToken('…') một lần, nó được cất trong Script Properties.
+// Bot Zalo báo đơn (tạo tại https://zalo.me/s/botcreator/)
+var ZALO_BOT_TOKEN = '';                 // dán token bot vào đây (KHÔNG commit lên GitHub)
+var ZALO_BOT_CHAT_ID = '';               // để trống: chạy hàm zaloBotLayChatId() để lấy
 
 var HEADERS = ['Thời gian', 'Mã đơn', 'Loại', 'Khách', 'Điện thoại', 'Địa chỉ', 'Sản phẩm',
                'Tiền hàng', 'Giảm', 'Ship', 'Tổng', 'Thanh toán', 'Mã giảm giá', 'Ghi chú', 'Email'];
 
+/* ============ NHẬN ĐƠN TỪ WEBSITE ============ */
+
 function doPost(e) {
   try {
     var order = JSON.parse(e.postData.contents);
-
-    // Sự kiện từ Zalo OA (khi chủ shop nhắn cho OA) -> lưu user_id để gửi tin báo đơn
-    if (order && order.event_name && order.sender && order.sender.id) {
-      PropertiesService.getScriptProperties().setProperty('ZALO_USER_ID', String(order.sender.id));
-      Logger.log('Đã lưu ZALO_USER_ID: ' + order.sender.id);
-      return ContentService.createTextOutput(JSON.stringify({ ok: true, zalo: true })).setMimeType(ContentService.MimeType.JSON);
-    }
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(HEADERS);
       sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
       sheet.setFrozenRows(1);
     }
+
     var c = order.customer || {};
     var items = (order.items || []).map(function (it) {
       return (it.short || it.name) + (it.variant ? ' – ' + it.variant : '') + ' × ' + (it.qty || 1);
@@ -79,14 +62,8 @@ function doPost(e) {
     if (EMAIL) {
       MailApp.sendEmail(EMAIL, '🛒 ' + loai + ' ' + (order.code || '') + ' – ' + tien, text);
     }
-    if (TELEGRAM_TOKEN && TELEGRAM_CHAT_ID) {
-      UrlFetchApp.fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage', {
-        method: 'post', muteHttpExceptions: true,
-        payload: { chat_id: TELEGRAM_CHAT_ID, text: text }
-      });
-    }
-    try { zaloBotGuiTin(text); } catch (e) { Logger.log('Zalo bot lỗi: ' + e); }
-    try { zaloGuiTin(text); } catch (e) { Logger.log('Zalo OA lỗi: ' + e); }
+    try { zaloBotGuiTin(text); } catch (err2) { Logger.log('Zalo bot lỗi: ' + err2); }
+
     return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) })).setMimeType(ContentService.MimeType.JSON);
@@ -98,33 +75,17 @@ function doGet() {
   return ContentService.createTextOutput('Hương Chất Kids – nơi nhận đơn đang hoạt động.');
 }
 
-/** Chạy thử trong Apps Script (menu Chạy) để xem Sheet/email có nhận được không. */
+/** Chạy thử: tạo 1 đơn giả để xem Sheet, email và Zalo có nhận được không. */
 function testDonHang() {
   doPost({ postData: { contents: JSON.stringify({
-    code: 'HCK-TEST', type: 'checkout', customer: { name: 'Khách thử', phone: '0865023003', address: 'Hà Nội' },
+    code: 'HCK-TEST', type: 'checkout',
+    customer: { name: 'Khách thử', phone: '0865023003', address: 'Hà Nội' },
     items: [{ short: 'Nước ép Lotte Tăng Cao', variant: 'Hộp 10 gói', qty: 2 }],
     subtotal: 896000, discount: 0, ship: 25000, total: 921000, payment: 'cod', note: 'Đơn thử'
   }) } });
 }
 
-/* =====================================================================
- *  BÁO ĐƠN VỀ ZALO BẰNG BOT  (miễn phí, không cần nâng gói OA)
- *
- *  Cách cài (làm 1 lần):
- *   1. Mở Zalo → tìm "Bot Creator" (https://zalo.me/s/botcreator/) → tạo bot →
- *      Zalo gửi cho chị 1 dãy token dạng 211668...:IEUc...
- *   2. Dán token đó vào ZALO_BOT_TOKEN ở đầu file.
- *   3. Mở Zalo, vào đúng con bot đó và NHẮN CHO BOT 1 TIN bất kỳ (ví dụ: xin chào).
- *      Bắt buộc, vì Zalo chỉ cho bot nhắn lại cho người đã nhắn cho nó trước.
- *   4. Trong Apps Script chọn hàm zaloBotLayChatId → bấm Chạy → mở Nhật ký
- *      (Ctrl+Enter). Mã hộp chat được lưu tự động, và cũng hiện trong nhật ký để
- *      chị dán vào ZALO_BOT_CHAT_ID cho chắc.
- *   5. Chọn hàm zaloBotThuGuiTin → Chạy → kiểm tra Zalo đã nhận được tin thử chưa.
- *   6. Bấm Lưu → Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
- *
- *  Lưu ý: nếu rất lâu không nhắn gì cho bot mà tin báo đơn bị lỗi, chị chỉ cần mở
- *  Zalo nhắn cho bot 1 tin là dùng tiếp được. Email thì không bao giờ bị giới hạn.
- * ===================================================================== */
+/* ============ BÁO ĐƠN VỀ ZALO BẰNG BOT ============ */
 
 var ZALO_BOT_API = 'https://bot-api.zapps.me/bot';
 
@@ -141,14 +102,14 @@ function zaloBotChatId() {
   return ZALO_BOT_CHAT_ID || PropertiesService.getScriptProperties().getProperty('ZALO_BOT_CHAT_ID') || '';
 }
 
-/** Gửi 1 tin nhắn về Zalo của chủ shop qua bot. */
+/** Gửi 1 tin về Zalo của chủ shop qua bot. */
 function zaloBotGuiTin(text) {
   var chat = zaloBotChatId();
   if (!ZALO_BOT_TOKEN || !chat) return;
   Logger.log('Zalo bot: ' + zaloBotGoi('sendMessage', { chat_id: chat, text: text }));
 }
 
-/** Chạy SAU KHI đã nhắn 1 tin cho bot trên Zalo, để lấy & lưu mã hộp chat. */
+/** Chạy SAU KHI đã nhắn 1 tin cho bot trên Zalo, để lấy và lưu mã hộp chat. */
 function zaloBotLayChatId() {
   if (!ZALO_BOT_TOKEN) { Logger.log('Chưa dán ZALO_BOT_TOKEN ở đầu file.'); return ''; }
   for (var lan = 0; lan < 3; lan++) {
@@ -176,95 +137,7 @@ function zaloBotThuGuiTin() {
   zaloBotGuiTin('Hương Chất Kids: thử báo đơn về Zalo qua bot. Nếu chị đọc được tin này là đã chạy tốt.');
 }
 
-/* =====================================================================
- *  BÁO ĐƠN VỀ ZALO (Zalo OA) – cách cũ, tốn phí, hiện đang tắt
- *  Zalo không cho gửi tin vào Zalo cá nhân bằng API, nên phải đi qua một
- *  Official Account (OA) miễn phí của shop. Làm 1 lần:
- *
- *  1. Tạo OA tại https://oa.zalo.me (loại Doanh nghiệp/Bán hàng, miễn phí).
- *     Dùng Zalo cá nhân của chị bấm "Quan tâm" OA đó và nhắn cho OA 1 tin bất kỳ.
- *  2. Vào https://developers.zalo.me → Tạo ứng dụng → mục "Official Account API"
- *     → Liên kết OA vừa tạo. Ghi lại App ID và Secret key → điền vào ZALO_APP_ID,
- *     ZALO_APP_SECRET ở đầu file.
- *  3. Trong ứng dụng đó, mở công cụ tạo access token (Tools / API Explorer),
- *     cấp quyền cho OA, copy REFRESH TOKEN.
- *  4. Trong Apps Script: chọn hàm zaloLuuRefreshToken ở ô chọn hàm, sửa chuỗi
- *     'DAN_REFRESH_TOKEN_VAO_DAY' thành refresh token vừa copy, bấm Chạy.
- *  5. Chọn hàm zaloLayUserId, bấm Chạy, mở Nhật ký (Ctrl+Enter) để xem user_id
- *     của chị → điền vào ZALO_USER_ID ở đầu file.
- *  6. Lấy user_id của chủ shop: vào https://oa.zalo.me → OA của shop → Quản lý khách hàng
- *     (Người quan tâm) → mở đúng người là chủ shop → xem dòng "User ID" (dãy số dài),
- *     hoặc nhìn thanh địa chỉ trình duyệt khi mở cuộc trò chuyện (…userId=…).
- *     Điền số đó vào ZALO_USER_ID ở đầu file.
- *     (Không dùng Webhook được: link /exec của Apps Script trả HTTP 302 nên Zalo báo
- *      "Đường dẫn webhook không hợp lệ".)
- *  7. Bấm Lưu, rồi Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
- *
- *  Lưu ý: Zalo chỉ cho OA nhắn cho người đã tương tác trong vòng 7 ngày. Nếu lâu
- *  không nhắn cho OA, tin báo đơn có thể bị từ chối – lúc đó chị chỉ cần mở Zalo
- *  nhắn cho OA của mình 1 tin là dùng tiếp được. Email và Telegram thì không giới hạn.
- * ===================================================================== */
-
-function zaloLuuRefreshToken(token) {
-  var t = token || 'DAN_REFRESH_TOKEN_VAO_DAY';
-  PropertiesService.getScriptProperties().setProperty('ZALO_REFRESH_TOKEN', t);
-  Logger.log('Đã lưu refresh token.');
-}
-
-function zaloAccessToken() {
-  var props = PropertiesService.getScriptProperties();
-  var token = props.getProperty('ZALO_ACCESS_TOKEN');
-  var hetHan = Number(props.getProperty('ZALO_TOKEN_EXP') || 0);
-  if (token && Date.now() < hetHan - 60000) return token;
-
-  var refresh = props.getProperty('ZALO_REFRESH_TOKEN');
-  if (!ZALO_APP_ID || !ZALO_APP_SECRET || !refresh) return '';
-
-  var res = UrlFetchApp.fetch('https://oauth.zaloapp.com/v4/oa/access_token', {
-    method: 'post', muteHttpExceptions: true,
-    headers: { secret_key: ZALO_APP_SECRET },
-    contentType: 'application/x-www-form-urlencoded',
-    payload: { refresh_token: refresh, app_id: ZALO_APP_ID, grant_type: 'refresh_token' }
-  });
-  var d = JSON.parse(res.getContentText());
-  if (!d.access_token) throw new Error('Không lấy được access token Zalo: ' + res.getContentText());
-  props.setProperty('ZALO_ACCESS_TOKEN', d.access_token);
-  props.setProperty('ZALO_TOKEN_EXP', String(Date.now() + (Number(d.expires_in || 3600) * 1000)));
-  if (d.refresh_token) props.setProperty('ZALO_REFRESH_TOKEN', d.refresh_token);
-  return d.access_token;
-}
-
-function zaloUserId() {
-  return ZALO_USER_ID || PropertiesService.getScriptProperties().getProperty('ZALO_USER_ID') || '';
-}
-
-function zaloGuiTin(text) {
-  var uid = zaloUserId();
-  if (!ZALO_APP_ID || !uid) return;
-  var token = zaloAccessToken();
-  if (!token) return;
-  var res = UrlFetchApp.fetch('https://openapi.zalo.me/v3.0/oa/message/cs', {
-    method: 'post', muteHttpExceptions: true, contentType: 'application/json',
-    headers: { access_token: token },
-    payload: JSON.stringify({ recipient: { user_id: uid }, message: { text: text } })
-  });
-  Logger.log('Zalo: ' + res.getContentText());
-}
-
-/** Xem user_id đã lưu (có sau khi chị nhắn 1 tin cho OA và webhook đã cài đúng). */
-function zaloXemUserId() {
-  Logger.log('ZALO_USER_ID = ' + (zaloUserId() || '(chưa có – hãy nhắn 1 tin cho OA rồi chạy lại)'));
-}
-
-/** Lưu tạm access token Zalo (dùng được ~1 giờ) để thử ngay khi chưa có Secret key. */
-function zaloLuuAccessTokenTam(token) {
-  var props = PropertiesService.getScriptProperties();
-  props.setProperty('ZALO_ACCESS_TOKEN', token || 'DAN_ACCESS_TOKEN_VAO_DAY');
-  props.setProperty('ZALO_TOKEN_EXP', String(Date.now() + 55 * 60 * 1000));
-  Logger.log('Đã lưu access token tạm.');
-}
-
-/** Chạy để thử gửi 1 tin Zalo. */
-function zaloThuGuiTin() {
-  zaloGuiTin('Hương Chất Kids: thử gửi tin báo đơn về Zalo.');
+/** Xem mã hộp chat đang lưu. */
+function zaloBotXemChatId() {
+  Logger.log('ZALO_BOT_CHAT_ID = ' + (zaloBotChatId() || '(chưa có)'));
 }
