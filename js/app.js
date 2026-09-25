@@ -464,14 +464,14 @@
   const qbTotal = () => qbCalc().total;
   function openQuickBuy(id, opts = {}) {
     const p = byId(id); if (!p) return;
-    QB.id = id; QB.variant = opts.variant ?? (p.variants ? 0 : null); QB.qty = opts.qty || 1; QB.coupon = '';
+    QB.id = id; QB.variant = opts.variant ?? (p.variants ? Math.max(0, p.variants.findIndex((v) => !v.oos)) : null); QB.qty = opts.qty || 1; QB.coupon = '';
     const c = Customer.get() || {}; const known = !!c.phone;
     const manyVariants = p.variants && p.variants.length > 4;
     $('#quickBuyContent').innerHTML = `
       <div class="modal__head"><h3>${I.zap}Mua nhanh · chỉ 30 giây</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
       <div class="modal__body">
         <div class="qb__product"><img src="${productThumb(p)}" alt=""><div><div class="name">${esc(shortName(p))}</div><div class="price" id="qbPrice"></div></div></div>
-        ${p.variants ? (manyVariants ? `<label class="field mb-12"><span class="fs-13 fw-600">Phân loại</span><select class="input" id="qbVariantSel" aria-label="Chọn phân loại">${p.variants.map((v, i) => `<option value="${i}" ${i === QB.variant ? 'selected' : ''}>${esc(v.label)} – ${fmt(v.price)}</option>`).join('')}</select></label>` : `<div class="qb__variants" id="qbVariants" role="group" aria-label="Phân loại">${p.variants.map((v, i) => `<button type="button" class="chip chip--sm ${i === QB.variant ? 'is-active' : ''}" data-qb-variant="${i}" aria-pressed="${i === QB.variant}">${esc(v.label)} · ${fmt(v.price)}</button>`).join('')}</div>`) : ''}
+        ${p.variants ? (manyVariants ? `<label class="field mb-12"><span class="fs-13 fw-600">Phân loại</span><select class="input" id="qbVariantSel" aria-label="Chọn phân loại">${p.variants.map((v, i) => `<option value="${i}" ${i === QB.variant ? 'selected' : ''} ${v.oos ? 'disabled' : ''}>${esc(v.label)} – ${v.oos ? 'tạm hết' : fmt(v.price)}</option>`).join('')}</select></label>` : `<div class="qb__variants" id="qbVariants" role="group" aria-label="Phân loại">${p.variants.map((v, i) => `<button type="button" class="chip chip--sm ${i === QB.variant ? 'is-active' : ''} ${v.oos ? 'chip--oos' : ''}" data-qb-variant="${i}" aria-pressed="${i === QB.variant}" ${v.oos ? 'disabled' : ''}>${esc(v.label)} · ${v.oos ? 'tạm hết' : fmt(v.price)}</button>`).join('')}</div>`) : ''}
         <div class="qb__row"><div class="qty" role="group" aria-label="Số lượng"><button type="button" data-qb-minus aria-label="Giảm số lượng">−</button><input type="number" id="qbQty" value="${QB.qty}" min="1" max="99" inputmode="numeric" aria-label="Số lượng"><button type="button" data-qb-plus aria-label="Tăng số lượng">+</button></div><span class="qb__hint" id="qbHint"></span></div>
         <form class="qb__form" id="qbForm" novalidate>
           ${known ? `<div class="qb__saved" id="qbSaved">👋 Chào ${esc(c.name || 'mẹ')}, thông tin giao hàng đã điền sẵn từ lần trước <button type="button" data-qb-clear>Sửa</button></div>` : ''}
