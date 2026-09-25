@@ -102,3 +102,18 @@ Ba cách cập nhật:
 Trường `priority` trong `js/data.js` quyết định sản phẩm nào lên đầu khi khách xem *Tất cả sản phẩm*
 hoặc tìm kiếm (3 = cao nhất). Hiện đặt 3 cho nước ép Lotte, váng sữa canxi Calciumore, D3K2 và rong biển;
 2 cho sữa Lotte Kid A+.
+
+## Nhận đơn hàng (Google Sheet + email + Telegram)
+
+Khi `SITE.orderEndpoint` trong `js/data.js` còn rỗng, đơn chỉ lưu trong máy khách – shop **không** nhận được gì.
+Cách nối (miễn phí, ~10 phút): làm theo hướng dẫn ngay đầu file `tools/apps-script.gs`
+(tạo Google Sheet → Extensions → Apps Script → dán code → Deploy dạng Web app, *Anyone* →
+copy link `.../exec` → dán vào `orderEndpoint` → commit & push).
+
+Sau đó mỗi đơn (đặt hàng, mua nhanh, yêu cầu gọi lại) sẽ tự: thêm 1 dòng vào Google Sheet,
+gửi email về `huongchatkids@gmail.com`, và nhắn Telegram nếu đã điền `TELEGRAM_TOKEN` / `TELEGRAM_CHAT_ID`.
+
+Muốn nhận Telegram: chat với **@BotFather** → `/newbot` → lấy token; chat với **@userinfobot** → lấy `Id`;
+nhắn 1 câu bất kỳ cho bot của mình rồi điền 2 giá trị đó vào `tools/apps-script.gs` và deploy lại.
+
+Nếu khách mất mạng lúc đặt, đơn được xếp hàng trong máy khách và tự gửi lại ở lần mở web sau.

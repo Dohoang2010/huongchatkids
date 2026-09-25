@@ -161,14 +161,30 @@
   const Customer = { key: 'mc_customer', get() { return store.get(this.key, null); }, set(v) { store.set(this.key, v); }, clear() { store.set(this.key, null); } };
   const Wish = { key: 'mc_wish', get() { return store.get(this.key, []); }, has(id) { return this.get().includes(id); }, toggle(id) { const w = this.get(); const i = w.indexOf(id); if (i > -1) w.splice(i, 1); else w.push(id); store.set(this.key, w); return i === -1; } };
 
-  /* Gửi đơn hàng. TODO: thay bằng fetch('/api/orders', {method:'POST', body: JSON.stringify(order)}) khi có backend. */
+  /* Gửi đơn về chỗ nhận đơn của shop (SITE.orderEndpoint – Google Apps Script). Mất mạng thì xếp hàng gửi lại. */
+  function postOrder(order) {
+    const url = SITE.orderEndpoint;
+    if (!url) return Promise.resolve(false);
+    return fetch(url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(order) })
+      .then(() => true).catch(() => false);
+  }
+  function queueOrder(order) { const q = store.get('mc_order_queue', []); q.push(order); store.set('mc_order_queue', q.slice(-20)); }
+  function flushOrders() {
+    const q = store.get('mc_order_queue', []);
+    if (!q.length || !SITE.orderEndpoint) return;
+    store.set('mc_order_queue', []);
+    q.forEach((o) => postOrder(o).then((ok) => { if (!ok) queueOrder(o); }));
+  }
+
+  /* Tạo mã đơn, lưu máy khách và gửi về shop. */
   function submitOrder(order) {
     return new Promise((resolve) => {
       setTimeout(() => {
         const code = 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 900) + 100);
-        const saved = { ...order, code, createdAt: new Date().toISOString() };
+        const saved = { ...order, code, createdAt: new Date().toISOString(), site: location.host };
         const orders = store.get('mc_orders', []); orders.unshift(saved); store.set('mc_orders', orders.slice(0, 20));
         store.set('mc_last_order', saved);
+        postOrder(saved).then((ok) => { if (!ok) queueOrder(saved); });
         resolve(saved);
       }, 700);
     });
@@ -644,7 +660,7 @@
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
     renderShell(); initSearch(); bindGlobal(); updateCartBadges();
-    syncStock(); setInterval(syncStock, 3 * 60000);
+    syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
 
