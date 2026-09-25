@@ -145,6 +145,10 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 /* Phân loại tạm hết hàng: xám, gạch ngang, không bấm được */
 .chip--oos { color: var(--muted); background: var(--bg-gray); text-decoration: line-through; opacity: .7; cursor: not-allowed; }
 .chip--oos small { text-decoration: none; }
+/* Vạch ngăn giữa phần hàng cho bé và hàng cho mẹ ở trang tất cả sản phẩm */
+.grid__sep { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 10px 0 2px; padding: 12px 16px; border-radius: 14px; background: linear-gradient(90deg, var(--primary-50), #fff); border: 1px dashed var(--primary-100); }
+.grid__sep b { font-family: var(--font-head); font-size: 17px; color: var(--primary-700); }
+.grid__sep span { font-size: 13px; color: var(--muted); }
 .badge--fire { background: linear-gradient(135deg, #FF3D71, #FF8A00); color: #fff; box-shadow: 0 2px 8px rgba(255, 90, 0, .35); }
 .badge--new { background: var(--teal); color: #fff; }
 .badge--soft { background: var(--primary-100); color: var(--primary-700); }

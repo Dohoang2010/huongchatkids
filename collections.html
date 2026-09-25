@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20260925b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -52,9 +52,9 @@
   </div>
 </div></main>
 
-<script src="js/data.js"></script>
+<script src="js/data.js?v=20260925b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js"></script>
+<script src="js/app.js?v=20260925b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productCard, brandOf, ageLabel, esc } = MC;
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (q && !(p.name + ' ' + brandOf(p).label + ' ' + p.needs.map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ') + ' ' + p.origin).toLowerCase().includes(q)) return false;
       return true;
     });
-    const sorters = { best: (a, b) => (b.priority || 0) - (a.priority || 0) || b.sold - a.sold, discount: (a, b) => MC.pct(b) - MC.pct(a), 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
+    const sorters = { best: MC.rankDefault, discount: (a, b) => MC.pct(b) - MC.pct(a), 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
     return list.sort(sorters[S.sort] || sorters.best);
   }
 
@@ -135,7 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const babyAge = S.age.length === 1 && ['0-6m', '6-12m'].includes(S.age[0]);
     $('#callout').innerHTML = babyAge ? `<div class="callout"><span class="emoji">👩‍⚕️</span><div><b>Bé dưới 1 tuổi: mẹ nên hỏi chuyên gia dinh dưỡng trước khi dùng thực phẩm bổ sung</b>Ở tuổi này sữa mẹ/sữa công thức là chính; thường chỉ cần vitamin D3 và một số sản phẩm ghi rõ "từ 6 tháng". Chuyên gia dinh dưỡng ${SITE.name} tư vấn miễn phí.</div><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại cho tôi</button></div>` : (list.length && list.length <= 2 ? `<div class="callout"><span class="emoji">💬</span><div><b>Chưa thấy sản phẩm mẹ cần?</b>Nhắn Zalo hoặc để lại số, chuyên gia dinh dưỡng sẽ gợi ý sản phẩm phù hợp với bé.</div><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a></div>` : '');
     const slice = list.slice((S.page - 1) * PER, S.page * PER);
-    $('#grid').innerHTML = slice.length ? slice.map((p) => productCard(p)).join('') : `<div class="empty" style="grid-column:1/-1"><div class="emoji">🔍</div><h3>Chưa tìm thấy sản phẩm phù hợp</h3><p>Mẹ thử bỏ bớt bộ lọc, hoặc để chuyên gia dinh dưỡng tư vấn trực tiếp nhé.</p><div class="flex gap-8 mt-16" style="justify-content:center;flex-wrap:wrap"><button class="btn btn--ghost" type="button" id="emptyReset">Xoá bộ lọc</button><button class="btn btn--teal" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div></div>`;
+    // Ở mục "Tất cả sản phẩm": hết phần hàng cho bé thì chèn một vạch ngăn trước phần hàng cho mẹ
+    const sepAt = S.sort === 'best' && !S.cat.length && !S.q ? slice.findIndex((p) => MC.isForMom(p)) : -1;
+    const sep = `<div class="grid__sep"><b>💖 Dành cho mẹ</b><span>Mỹ phẩm &amp; chăm sóc sức khoẻ cho mẹ</span></div>`;
+    $('#grid').innerHTML = slice.length ? slice.map((p, i) => (i === sepAt ? sep : '') + productCard(p)).join('') : `<div class="empty" style="grid-column:1/-1"><div class="emoji">🔍</div><h3>Chưa tìm thấy sản phẩm phù hợp</h3><p>Mẹ thử bỏ bớt bộ lọc, hoặc để chuyên gia dinh dưỡng tư vấn trực tiếp nhé.</p><div class="flex gap-8 mt-16" style="justify-content:center;flex-wrap:wrap"><button class="btn btn--ghost" type="button" id="emptyReset">Xoá bộ lọc</button><button class="btn btn--teal" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div></div>`;
     $('#pagination').innerHTML = pages > 1 ? `<button type="button" data-page="${S.page - 1}" ${S.page === 1 ? 'disabled' : ''}>‹</button>` + Array.from({ length: pages }, (_, i) => `<button type="button" class="${i + 1 === S.page ? 'is-active' : ''}" data-page="${i + 1}">${i + 1}</button>`).join('') + `<button type="button" data-page="${S.page + 1}" ${S.page === pages ? 'disabled' : ''}>›</button>` : '';
     syncUrl();
   }

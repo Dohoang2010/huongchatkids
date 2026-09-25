@@ -264,6 +264,16 @@
     wrap.appendChild(el); setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, opts.duration || 3200);
   }
 
+  /* Thứ tự hiển thị mặc định: sản phẩm cho bé trước, sản phẩm cho mẹ xếp sau;
+     trong mỗi nhóm thì hàng ưu tiên lên đầu, rồi tới hàng bán chạy, cuối cùng là hàng đăng sau. */
+  const isForMom = (p) => (p.cat === 'cho-me' ? 1 : 0);
+  function rankDefault(a, b) {
+    return isForMom(a) - isForMom(b)
+      || (b.priority || 0) - (a.priority || 0)
+      || b.sold - a.sold
+      || PRODUCTS.indexOf(a) - PRODUCTS.indexOf(b);
+  }
+
   /* ---------------- Product card ---------------- */
   function productCard(p, opts = {}) {
     const d = pct(p); const b = brandOf(p); const oos = p.stock <= 0;
@@ -569,7 +579,7 @@
       q = q.trim().toLowerCase();
       if (!q) { box.innerHTML = `<div class="search__hint">Tìm kiếm phổ biến<div class="chips">${hot.map((h) => `<a class="chip chip--sm" href="collections.html?q=${encodeURIComponent(h)}">${h}</a>`).join('')}</div></div>`; box.classList.add('is-open'); return; }
       const res = PRODUCTS.filter((p) => (p.name + ' ' + p.short + ' ' + brandOf(p).label + ' ' + (p.needs || []).map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ')).toLowerCase().includes(q))
-        .sort((a, b) => (b.priority || 0) - (a.priority || 0) || b.sold - a.sold).slice(0, 6);
+        .sort(rankDefault).slice(0, 6);
       box.innerHTML = res.length ? res.map((p) => `<a href="product.html?id=${p.id}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Mẹ thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
       box.classList.add('is-open');
     };
@@ -669,5 +679,5 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
 
-  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock };
+  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom };
 })();
