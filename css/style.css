@@ -141,6 +141,8 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .badge--sale { background: var(--red); color: #fff; animation: saleBlink 1.2s ease-in-out infinite alternate; box-shadow: 0 0 0 0 rgba(229, 57, 53, .45); }
 @keyframes saleBlink { 0% { background: var(--red); transform: scale(1); box-shadow: 0 0 0 0 rgba(229, 57, 53, .45); } 100% { background: #FF7A00; transform: scale(1.08); box-shadow: 0 0 0 6px rgba(255, 122, 0, 0); } }
 .badge--hot { background: var(--amber); color: #3a2a00; }
+/* Nhãn "Sản phẩm hot" nằm ngay dưới nhãn giảm giá trên thẻ sản phẩm */
+.badge--fire { background: linear-gradient(135deg, #FF3D71, #FF8A00); color: #fff; box-shadow: 0 2px 8px rgba(255, 90, 0, .35); }
 .badge--new { background: var(--teal); color: #fff; }
 .badge--soft { background: var(--primary-100); color: var(--primary-700); }
 .badge--teal { background: var(--teal-100); color: var(--teal-600); }

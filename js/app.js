@@ -267,11 +267,12 @@
   /* ---------------- Product card ---------------- */
   function productCard(p, opts = {}) {
     const d = pct(p); const b = brandOf(p); const oos = p.stock <= 0;
-    const tag = (p.tags || []).find((t) => t !== 'Giảm sâu') || '';
+    const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
+    const tagCls = (t) => (t === 'Mới' ? 'badge--new' : t === 'Combo' ? 'badge--teal' : t === 'Sản phẩm hot' ? 'badge--fire' : 'badge--hot');
     return `<article class="pcard ${oos ? 'pcard--oos' : ''}" data-id="${p.id}">
       <a class="pcard__media" href="product.html?id=${p.id}">
         <img src="${productThumb(p)}" alt="${esc(shortName(p))}" loading="lazy" width="420" height="420">
-        <div class="pcard__badges">${d >= 5 ? `<span class="badge badge--sale">-${d}%</span>` : ''}${tag ? `<span class="badge ${tag === 'Mới' ? 'badge--new' : tag === 'Combo' ? 'badge--teal' : 'badge--hot'}">${tag}</span>` : ''}</div>
+        <div class="pcard__badges">${d >= 5 ? `<span class="badge badge--sale">-${d}%</span>` : ''}${tags.map((t) => `<span class="badge ${tagCls(t)}">${t === 'Sản phẩm hot' ? '🔥 ' : ''}${t}</span>`).join('')}</div>
         <button class="pcard__wish ${Wish.has(p.id) ? 'is-on' : ''}" type="button" data-wish="${p.id}" aria-label="Lưu vào yêu thích" aria-pressed="${Wish.has(p.id)}">${I.heart}</button>
       </a>
       <div class="pcard__body">
