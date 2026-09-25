@@ -117,3 +117,15 @@ Muốn nhận Telegram: chat với **@BotFather** → `/newbot` → lấy token;
 nhắn 1 câu bất kỳ cho bot của mình rồi điền 2 giá trị đó vào `tools/apps-script.gs` và deploy lại.
 
 Nếu khách mất mạng lúc đặt, đơn được xếp hàng trong máy khách và tự gửi lại ở lần mở web sau.
+
+### Báo đơn về Zalo
+
+Zalo **không cho gửi tin vào Zalo cá nhân bằng API**, nên tin báo đơn phải đi qua một
+**Zalo OA** (Official Account) miễn phí của shop: tạo OA tại https://oa.zalo.me, quan tâm OA đó
+bằng Zalo cá nhân, tạo ứng dụng ở https://developers.zalo.me và liên kết OA, rồi điền
+`ZALO_APP_ID`, `ZALO_APP_SECRET`, `ZALO_USER_ID` + lưu refresh token theo hướng dẫn chi tiết
+ở cuối file `tools/apps-script.gs`.
+
+Giới hạn của Zalo: OA chỉ nhắn được cho người đã tương tác trong vòng 7 ngày. Nếu lâu không nhắn cho OA,
+tin báo đơn có thể bị từ chối – mở Zalo nhắn cho OA 1 tin là dùng tiếp được. Email và Telegram không bị giới hạn này.
+Muốn gửi chắc chắn mọi lúc thì phải dùng **ZNS (Zalo Notification Service)** – có tính phí theo tin và cần duyệt mẫu tin.

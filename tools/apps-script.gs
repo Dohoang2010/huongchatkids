@@ -22,6 +22,12 @@ var EMAIL = 'huongchatkids@gmail.com';   // nơi nhận email báo đơn
 var TELEGRAM_TOKEN = '';                 // tuỳ chọn, lấy từ @BotFather
 var TELEGRAM_CHAT_ID = '';               // tuỳ chọn, lấy từ @userinfobot
 
+// ----- BÁO ĐƠN VỀ ZALO (qua Zalo OA – xem hướng dẫn ở cuối file) -----
+var ZALO_APP_ID = '';        // ID ứng dụng trong developers.zalo.me
+var ZALO_APP_SECRET = '';    // Secret key của ứng dụng đó
+var ZALO_USER_ID = '';       // user_id Zalo của chủ shop trong OA (chạy hàm zaloLayUserId để lấy)
+// Refresh token KHÔNG để trong code: chạy hàm zaloLuuRefreshToken('…') một lần, nó được cất trong Script Properties.
+
 var HEADERS = ['Thời gian', 'Mã đơn', 'Loại', 'Khách', 'Điện thoại', 'Địa chỉ', 'Sản phẩm',
                'Tiền hàng', 'Giảm', 'Ship', 'Tổng', 'Thanh toán', 'Mã giảm giá', 'Ghi chú', 'Email'];
 
@@ -64,6 +70,7 @@ function doPost(e) {
         payload: { chat_id: TELEGRAM_CHAT_ID, text: text }
       });
     }
+    try { zaloGuiTin(text); } catch (e) { Logger.log('Zalo lỗi: ' + e); }
     return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) })).setMimeType(ContentService.MimeType.JSON);
@@ -82,4 +89,82 @@ function testDonHang() {
     items: [{ short: 'Nước ép Lotte Tăng Cao', variant: 'Hộp 10 gói', qty: 2 }],
     subtotal: 896000, discount: 0, ship: 25000, total: 921000, payment: 'cod', note: 'Đơn thử'
   }) } });
+}
+
+/* =====================================================================
+ *  BÁO ĐƠN VỀ ZALO (Zalo OA)
+ *  Zalo không cho gửi tin vào Zalo cá nhân bằng API, nên phải đi qua một
+ *  Official Account (OA) miễn phí của shop. Làm 1 lần:
+ *
+ *  1. Tạo OA tại https://oa.zalo.me (loại Doanh nghiệp/Bán hàng, miễn phí).
+ *     Dùng Zalo cá nhân của chị bấm "Quan tâm" OA đó và nhắn cho OA 1 tin bất kỳ.
+ *  2. Vào https://developers.zalo.me → Tạo ứng dụng → mục "Official Account API"
+ *     → Liên kết OA vừa tạo. Ghi lại App ID và Secret key → điền vào ZALO_APP_ID,
+ *     ZALO_APP_SECRET ở đầu file.
+ *  3. Trong ứng dụng đó, mở công cụ tạo access token (Tools / API Explorer),
+ *     cấp quyền cho OA, copy REFRESH TOKEN.
+ *  4. Trong Apps Script: chọn hàm zaloLuuRefreshToken ở ô chọn hàm, sửa chuỗi
+ *     'DAN_REFRESH_TOKEN_VAO_DAY' thành refresh token vừa copy, bấm Chạy.
+ *  5. Chọn hàm zaloLayUserId, bấm Chạy, mở Nhật ký (Ctrl+Enter) để xem user_id
+ *     của chị → điền vào ZALO_USER_ID ở đầu file.
+ *  6. Bấm Lưu, rồi Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
+ *
+ *  Lưu ý: Zalo chỉ cho OA nhắn cho người đã tương tác trong vòng 7 ngày. Nếu lâu
+ *  không nhắn cho OA, tin báo đơn có thể bị từ chối – lúc đó chị chỉ cần mở Zalo
+ *  nhắn cho OA của mình 1 tin là dùng tiếp được. Email và Telegram thì không giới hạn.
+ * ===================================================================== */
+
+function zaloLuuRefreshToken(token) {
+  var t = token || 'DAN_REFRESH_TOKEN_VAO_DAY';
+  PropertiesService.getScriptProperties().setProperty('ZALO_REFRESH_TOKEN', t);
+  Logger.log('Đã lưu refresh token.');
+}
+
+function zaloAccessToken() {
+  var props = PropertiesService.getScriptProperties();
+  var token = props.getProperty('ZALO_ACCESS_TOKEN');
+  var hetHan = Number(props.getProperty('ZALO_TOKEN_EXP') || 0);
+  if (token && Date.now() < hetHan - 60000) return token;
+
+  var refresh = props.getProperty('ZALO_REFRESH_TOKEN');
+  if (!ZALO_APP_ID || !ZALO_APP_SECRET || !refresh) return '';
+
+  var res = UrlFetchApp.fetch('https://oauth.zaloapp.com/v4/oa/access_token', {
+    method: 'post', muteHttpExceptions: true,
+    headers: { secret_key: ZALO_APP_SECRET },
+    contentType: 'application/x-www-form-urlencoded',
+    payload: { refresh_token: refresh, app_id: ZALO_APP_ID, grant_type: 'refresh_token' }
+  });
+  var d = JSON.parse(res.getContentText());
+  if (!d.access_token) throw new Error('Không lấy được access token Zalo: ' + res.getContentText());
+  props.setProperty('ZALO_ACCESS_TOKEN', d.access_token);
+  props.setProperty('ZALO_TOKEN_EXP', String(Date.now() + (Number(d.expires_in || 3600) * 1000)));
+  if (d.refresh_token) props.setProperty('ZALO_REFRESH_TOKEN', d.refresh_token);
+  return d.access_token;
+}
+
+function zaloGuiTin(text) {
+  if (!ZALO_APP_ID || !ZALO_USER_ID) return;
+  var token = zaloAccessToken();
+  if (!token) return;
+  var res = UrlFetchApp.fetch('https://openapi.zalo.me/v3.0/oa/message/cs', {
+    method: 'post', muteHttpExceptions: true, contentType: 'application/json',
+    headers: { access_token: token },
+    payload: JSON.stringify({ recipient: { user_id: ZALO_USER_ID }, message: { text: text } })
+  });
+  Logger.log('Zalo: ' + res.getContentText());
+}
+
+/** Chạy 1 lần để xem user_id Zalo của những người đã quan tâm OA. */
+function zaloLayUserId() {
+  var token = zaloAccessToken();
+  if (!token) { Logger.log('Chưa cấu hình App ID / Secret / refresh token.'); return; }
+  var res = UrlFetchApp.fetch('https://openapi.zalo.me/v3.0/oa/user/getlist?data=' +
+    encodeURIComponent(JSON.stringify({ offset: 0, count: 20 })), { headers: { access_token: token }, muteHttpExceptions: true });
+  Logger.log(res.getContentText());
+}
+
+/** Chạy để thử gửi 1 tin Zalo. */
+function zaloThuGuiTin() {
+  zaloGuiTin('Hương Chất Kids: thử gửi tin báo đơn về Zalo.');
 }
