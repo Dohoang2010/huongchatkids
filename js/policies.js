@@ -113,6 +113,11 @@ window.POLICIES = [
   /* ===================== VỀ HƯƠNG CHẤT KIDS ===================== */
   { key: 'gioi-thieu', group: 'about', icon: '🌸', title: 'Giới thiệu', summary: 'Chúng tôi là ai, bán gì, ở đâu', html: `
 <p><b>Hương Chất Kids</b> – "Mẹ nào cũng là siêu nhân" – là cửa hàng chuyên dinh dưỡng bổ sung nhập khẩu Hàn Quốc cho bé từ 6 tháng đến tuổi dậy thì, được sáng lập bởi những người mẹ từng loay hoay tìm sản phẩm chính hãng cho con mình.</p>
+<p>Sau <b>4 năm</b> hoạt động, Hương Chất Kids được <b>hơn 33.000 gia đình Việt</b> tin tưởng lựa chọn, với nguyên tắc không đổi: chỉ bán những sản phẩm được tuyển chọn kỹ lưỡng và có nguồn gốc rõ ràng.</p>
+<h3>Sứ mệnh &amp; tầm nhìn</h3>
+<ul><li><b>Sứ mệnh:</b> giúp các em bé Việt được bổ sung dinh dưỡng đúng cách để lớn lên khoẻ mạnh.</li><li><b>Tầm nhìn:</b> trở thành hệ sinh thái thương hiệu mẹ &amp; bé uy tín hàng đầu mà gia đình Việt tin cậy.</li></ul>
+<h3>Giá trị cốt lõi</h3>
+<ul><li><b>Chính trực</b> – hàng chính hãng, thông tin minh bạch.</li><li><b>Tận tâm</b> – tư vấn đặt lợi ích của bé lên trước.</li><li><b>Chất lượng</b> – tuyển chọn kỹ, ưu tiên hàng nhập khẩu.</li><li><b>Đồng hành</b> – gắn bó lâu dài cùng mỗi gia đình.</li></ul>
 <h3>Sản phẩm</h3>
 <ul><li>Nước ép hoa quả – rau củ hữu cơ Lotte (Pasteur Hàn Quốc), dùng được từ 6 tháng.</li><li>Hồng sâm trẻ em ChuChu, gạc hươu non Sumo Kids.</li><li>Vitamin D3K2 Pure Vitality (New Zealand), canxi hữu cơ Calciumore.</li><li>Rong biển rắc cơm Sung Gyung, Busan; nghệ nano Korea365 cho mẹ.</li></ul>
 <h3>Cách chúng tôi làm việc</h3>

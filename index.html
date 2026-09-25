@@ -62,6 +62,31 @@
     <div class="grid grid--4" id="catGrid"></div>
   </div></section>
 
+  <!-- VỀ HƯƠNG CHẤT KIDS -->
+  <section class="section about"><div class="container">
+    <div class="about__grid">
+      <div class="about__text">
+        <span class="about__eyebrow">💗 Về chúng tôi</span>
+        <h2>Hương Chất Kids – 4 năm đồng hành cùng mẹ Việt</h2>
+        <p>Hương Chất Kids ra đời từ chính nỗi loay hoay của những người mẹ đi tìm sản phẩm an toàn cho con. Mỗi món trên kệ đều được tuyển chọn kỹ lưỡng, nguồn gốc rõ ràng, nhập khẩu chính ngạch – để mẹ yên tâm và bé được ăn ngon, lớn khoẻ mỗi ngày.</p>
+        <div class="about__stats">
+          <div><b>33.000+</b><small>gia đình Việt tin dùng</small></div>
+          <div><b>4 năm</b><small>đồng hành cùng mẹ</small></div>
+          <div><b>100%</b><small>chính hãng, có tem phụ</small></div>
+        </div>
+        <ul class="about__values">
+          <li><span>🤝</span><div><b>Chính trực</b><small>Hàng chính hãng, thông tin minh bạch</small></div></li>
+          <li><span>💝</span><div><b>Tận tâm</b><small>Tư vấn đặt lợi ích của bé lên trước</small></div></li>
+          <li><span>✅</span><div><b>Chất lượng</b><small>Tuyển chọn kỹ, ưu tiên hàng nhập khẩu</small></div></li>
+          <li><span>🌱</span><div><b>Đồng hành</b><small>Gắn bó lâu dài cùng mỗi gia đình</small></div></li>
+        </ul>
+        <p class="about__mission"><b>Sứ mệnh:</b> để em bé Việt nào cũng được bổ sung dinh dưỡng đúng cách, lớn lên khoẻ mạnh.</p>
+        <div class="about__cta" id="aboutCta"></div>
+      </div>
+      <div class="about__photos" id="aboutPhotos" aria-label="Ảnh các bé đang dùng sản phẩm"></div>
+    </div>
+  </div></section>
+
   <!-- COMBO -->
   <section class="section section--soft" id="comboSection"><div class="container">
     <div class="section-head"><div><h2>Combo tiết kiệm 🎁</h2><p>Mua trọn bộ tiết kiệm hơn – 1 chạm là xong</p></div><a class="link" href="collections.html?tag=Combo">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
@@ -82,8 +107,13 @@
 
   <!-- FEEDBACK THỰC TẾ -->
   <section class="section" id="feedbackSection"><div class="container">
-    <div class="section-head"><div><h2>Feedback thực tế từ mẹ 💬</h2><p id="feedbackSub">Ảnh phản hồi thật của khách đã mua – bấm để xem lớn</p></div></div>
+    <div class="section-head"><div><h2>Mẹ và bé đã dùng 💬</h2><p id="feedbackSub">Ảnh thật khách hàng gửi về – bấm để xem lớn</p></div></div>
     <div class="row-scroll" id="feedbackRow"></div>
+    <div id="kolBlock" class="hide">
+      <div class="section-head section-head--sub"><div><h3>Gia đình nổi tiếng chia sẻ 🌟</h3><p>Bài đăng của các mẹ nổi tiếng đã đồng hành cùng Hương Chất Kids</p></div></div>
+      <div class="row-scroll" id="kolRow"></div>
+    </div>
+    <p class="fb-note">Ảnh do khách hàng và người có ảnh hưởng chia sẻ, đăng lại với sự đồng ý. Đây là cảm nhận cá nhân của từng gia đình, kết quả có thể khác nhau; sản phẩm không phải là thuốc và không thay thế chế độ ăn cân đối hay tư vấn của chuyên gia y tế.</p>
   </div></section>
 
   <!-- BLOG -->
@@ -196,13 +226,29 @@ document.addEventListener('DOMContentLoaded', () => {
   if (SITE.showReviews) $('#reviewGrid').insertAdjacentHTML('beforeend', REVIEWS.map((r) => `<div class="review-card"><div class="stars">${MC.starRow(r.stars)}</div><p>"${esc(r.text)}"</p><div class="who"><div><b>${esc(r.name)} · ${esc(r.child)}</b><small>${esc(r.city)}</small></div></div></div>`).join(''));
 
   /* Feedback thực tế: ẩn mục nếu chưa có ảnh */
-  const fbs = (window.FEEDBACKS || []).filter((f) => f && f.image);
-  if (!fbs.length) $('#feedbackSection').classList.add('hide');
+  const fbAll = (window.FEEDBACKS || []).filter((f) => f && f.image);
+  const fbs = fbAll.filter((f) => !f.kol), kols = fbAll.filter((f) => f.kol);
+  const fbCard = (f, i) => `<figure class="fb-card${f.kol ? ' fb-card--kol' : ''}"><button class="fb-card__img" type="button" data-lightbox="${i}" aria-label="Xem lớn ảnh ${i + 1}"><img src="${f.thumb || f.image}" alt="${esc(f.name ? 'Chia sẻ của ' + f.name : 'Ảnh bé dùng sản phẩm Hương Chất Kids')}" loading="lazy"></button>${f.name || f.text ? `<figcaption>${f.text ? `<p>“${esc(f.text)}”</p>` : ''}${f.name ? `<div class="fb-card__who"><b>${esc(f.name)}</b>${f.date ? `<small> · ${esc(f.date)}</small>` : ''}</div>` : ''}</figcaption>` : ''}</figure>`;
+  const openFb = (f) => {
+    $('#callbackContent').innerHTML = `<div class="modal__head"><h3>${f.name ? '🌟 ' + esc(f.name) : '💬 Khách hàng Hương Chất Kids'}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div><div class="modal__body lightbox"><img src="${f.image}" alt="">${f.text ? `<p class="mt-12">“${esc(f.text)}”</p>` : ''}</div>`;
+    $('#callbackModal').classList.add('is-open'); $('#callbackModal').setAttribute('aria-hidden', 'false'); document.body.classList.add('no-scroll');
+  };
+  if (!fbAll.length) $('#feedbackSection').classList.add('hide');
   else {
-    $('#feedbackSub').textContent = `${fbs.length} phản hồi thật từ mẹ đã mua – bấm ảnh để xem lớn`;
-    $('#feedbackRow').innerHTML = fbs.map((f, i) => { const pr = f.product ? byId(f.product) : null; return `<figure class="fb-card"><button class="fb-card__img" type="button" data-lightbox="${i}" aria-label="Xem lớn feedback ${i + 1}"><img src="${f.image}" alt="${esc(f.text || 'Feedback của ' + (f.name || 'khách hàng'))}" loading="lazy"></button><figcaption>${f.text ? `<p>“${esc(f.text)}”</p>` : ''}<div class="fb-card__who"><b>${esc(f.name || 'Khách hàng')}</b>${f.date ? `<small> · ${esc(f.date)}</small>` : ''}</div>${pr ? `<a class="fb-card__prod" href="product.html?id=${pr.id}">${I.tag} ${esc(MC.shortName(pr))}</a>` : ''}</figcaption></figure>`; }).join('');
-    $('#feedbackRow').addEventListener('click', (e) => { const b = e.target.closest('[data-lightbox]'); if (!b) return; const f = fbs[Number(b.dataset.lightbox)]; $('#callbackContent').innerHTML = `<div class="modal__head"><h3>💬 ${esc(f.name || 'Feedback từ mẹ')}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div><div class="modal__body lightbox"><img src="${f.image}" alt="">${f.text ? `<p class="mt-12">“${esc(f.text)}”</p>` : ''}</div>`; $('#callbackModal').classList.add('is-open'); $('#callbackModal').setAttribute('aria-hidden', 'false'); document.body.classList.add('no-scroll'); });
+    $('#feedbackSub').textContent = `${fbAll.length} ảnh thật từ các gia đình đã dùng – bấm ảnh để xem lớn`;
+    $('#feedbackRow').innerHTML = fbs.map((f, i) => fbCard(f, i)).join('');
+    $('#feedbackRow').addEventListener('click', (e) => { const b = e.target.closest('[data-lightbox]'); if (b) openFb(fbs[Number(b.dataset.lightbox)]); });
+    if (kols.length) {
+      $('#kolBlock').classList.remove('hide');
+      $('#kolRow').innerHTML = kols.map((f, i) => fbCard(f, i)).join('');
+      $('#kolRow').addEventListener('click', (e) => { const b = e.target.closest('[data-lightbox]'); if (b) openFb(kols[Number(b.dataset.lightbox)]); });
+    }
+    /* Ảnh ghép ở phần giới thiệu */
+    const shots = fbs.slice(0, 9);
+    $('#aboutPhotos').innerHTML = shots.map((f, i) => `<button class="about__photo" type="button" data-about="${i}" aria-label="Xem ảnh ${i + 1}"><img src="${f.thumb || f.image}" alt="Bé dùng sản phẩm Hương Chất Kids" loading="lazy"></button>`).join('');
+    $('#aboutPhotos').addEventListener('click', (e) => { const b = e.target.closest('[data-about]'); if (b) openFb(shots[Number(b.dataset.about)]); });
   }
+  $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${I.messenger}Chat với Hương Chất Kids</a><a class="link" href="policy.html?p=gioi-thieu">Tìm hiểu thêm về shop ${I.arrowR}</a>`;
 
   /* Posts */
   $('#postGrid').innerHTML = POSTS.slice(0, 3).map((p) => `<a class="post-card" href="blog.html?id=${p.id}"><div class="post-card__thumb" style="background:${p.color}">${p.image ? `<img src="${p.image}" alt="" loading="lazy">` : p.emoji}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${p.cat}</span><span>${p.date} · ${p.read} đọc</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`).join('');
