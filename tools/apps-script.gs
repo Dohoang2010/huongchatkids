@@ -114,11 +114,12 @@ function testDonHang() {
  *     'DAN_REFRESH_TOKEN_VAO_DAY' thành refresh token vừa copy, bấm Chạy.
  *  5. Chọn hàm zaloLayUserId, bấm Chạy, mở Nhật ký (Ctrl+Enter) để xem user_id
  *     của chị → điền vào ZALO_USER_ID ở đầu file.
- *  6. Cài Webhook để script tự biết user_id của chị:
- *     developers.zalo.me → ứng dụng → Official Account API → Webhook
- *     → dán chính link /exec của script này vào ô URL
- *     → tích sự kiện "Người dùng gửi tin văn bản cho OA" (user_send_text) → Lưu.
- *     Sau đó mở Zalo, nhắn 1 tin bất kỳ cho OA của shop. Chạy hàm zaloXemUserId để kiểm tra.
+ *  6. Lấy user_id của chủ shop: vào https://oa.zalo.me → OA của shop → Quản lý khách hàng
+ *     (Người quan tâm) → mở đúng người là chủ shop → xem dòng "User ID" (dãy số dài),
+ *     hoặc nhìn thanh địa chỉ trình duyệt khi mở cuộc trò chuyện (…userId=…).
+ *     Điền số đó vào ZALO_USER_ID ở đầu file.
+ *     (Không dùng Webhook được: link /exec của Apps Script trả HTTP 302 nên Zalo báo
+ *      "Đường dẫn webhook không hợp lệ".)
  *  7. Bấm Lưu, rồi Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
  *
  *  Lưu ý: Zalo chỉ cho OA nhắn cho người đã tương tác trong vòng 7 ngày. Nếu lâu
