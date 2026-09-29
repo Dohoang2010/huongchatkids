@@ -9,7 +9,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929d">
+  <link rel="stylesheet" href="css/style.css?v=20260929e">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -157,9 +157,9 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20260929d"></script>
+<script src="js/data.js?v=20260929e"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929d"></script>
+<script src="js/app.js?v=20260929e"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
@@ -169,12 +169,21 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Hero carousel */
   const slideArt = (b, i) => {
     const load = i ? 'lazy' : 'eager';
-    if (b.images) return `<a class="slide__stack" href="${b.link}" tabindex="-1" aria-hidden="true">${b.images.map((im) => `<span><img src="${im}" alt="" loading="${load}"></span>`).join('')}${b.sticker ? `<i class="slide__sticker">${esc(b.sticker)}</i>` : ''}</a>`;
+    if (b.images) return `<a class="slide__stack" href="${b.link}" tabindex="-1" aria-hidden="true">${b.images.map((im, k) => `<span><img src="${im}" alt="" loading="${load}">${b.imageLabels && b.imageLabels[k] ? `<b class="slide__cap">${esc(b.imageLabels[k])}</b>` : ''}</span>`).join('')}${b.sticker ? `<i class="slide__sticker">${esc(b.sticker)}</i>` : ''}</a>`;
     if (b.tiers) return `<a class="slide__tiers" href="${b.link}" tabindex="-1" aria-hidden="true">${(window.TIERS || []).filter((t) => t.discount).map((t) => `<span style="--c:${t.color}"><em>${t.icon}</em><b>${esc(t.label)}</b><small><i>Giảm </i><s>−</s>${t.discount}%<i> mọi đơn</i></small></span>`).join('')}</a>`;
     if (b.image) return `<a class="slide__img" href="${b.link}" tabindex="-1" aria-hidden="true"><img src="${b.image}" alt="" loading="${load}"></a>`;
     return '';
   };
-  $('#carouselTrack').innerHTML = BANNERS.map((b, i) => `<div class="slide slide--${b.theme} ${b.image || b.images || b.tiers ? 'slide--img' : ''}"><span class="slide__badge">${b.badge}</span><h2>${b.title}</h2><p>${b.sub}</p><a class="btn btn--light btn--lg" href="${b.link}">${b.cta} ${I.arrowR}</a>${slideArt(b, i)}</div>`).join('');
+  /* Lớp hiệu ứng trang trí (b.fx = 'gift'): pháo giấy, tia sáng, sticker bay, lấp lánh – chỉ để trang trí, không bấm được */
+  const slideFx = (b) => {
+    if (b.fx !== 'gift') return '';
+    const mau = ['#FFD54F', '#FFFFFF', '#7EE0C8', '#FFB3C7', '#FFE082'];
+    const confetti = Array.from({ length: 18 }, (_, k) => `<i class="fx-cf" style="--x:${(k * 41) % 100};--d:${((k * 0.63) % 4).toFixed(2)}s;--t:${(3.6 + (k % 4) * 0.7).toFixed(1)}s;--c:${mau[k % mau.length]};--r:${(k % 2 ? 1 : -1) * (200 + k * 23)}deg"></i>`).join('');
+    const sao = Array.from({ length: 6 }, (_, k) => `<i class="fx-s fx-s${k + 1}">✦</i>`).join('');
+    const emoji = ['🎁', '🎀', '🧃', '💝', '🎉', '⭐'].map((e, k) => `<i class="fx-e fx-e${k + 1}">${e}</i>`).join('');
+    return `<div class="slide__fx" aria-hidden="true"><i class="fx-burst"></i>${confetti}${sao}${emoji}</div>`;
+  };
+  $('#carouselTrack').innerHTML = BANNERS.map((b, i) => `<div class="slide slide--${b.theme} ${b.image || b.images || b.tiers ? 'slide--img' : ''} ${b.fx ? 'slide--fx' : ''}">${slideFx(b)}<span class="slide__badge">${b.badge}</span><h2>${b.title}</h2><p>${b.sub}</p><a class="btn btn--light btn--lg" href="${b.link}">${b.cta} ${I.arrowR}</a>${slideArt(b, i)}</div>`).join('');
   $('#promoContact').innerHTML = `Zalo / Hotline <b>${SITE.hotline}</b><br><span class="text-muted">${SITE.workingHours}</span>`;
   $('#promoBtns').innerHTML = `<a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--dark btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button>`;
   $('.carousel__arrow--prev').innerHTML = I.chevronL; $('.carousel__arrow--next').innerHTML = I.chevronR;
