@@ -318,9 +318,9 @@
 
   /* Hàng sản phẩm tự xoay vòng: cứ vài giây trượt sang sản phẩm kế tiếp, hết thì quay lại đầu.
      Dừng lại khi khách rê chuột, chạm tay, dùng bàn phím hoặc chuyển sang tab khác. */
+  /* Hàng sản phẩm tự trượt từng thẻ, hết hàng quay lại đầu. Trả về { go(±1) } cho nút ‹ › (bấm thì tạm dừng tự trượt 8 giây). */
   function autoScrollRow(el, delay = 3200) {
-    if (!el || el.children.length < 2) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!el) return null;
     let hold = 0;
     const pause = (ms) => { hold = Date.now() + ms; };
     const stepWidth = () => {
@@ -328,18 +328,23 @@
       const gap = parseFloat(getComputedStyle(el).columnGap || getComputedStyle(el).gap) || 12;
       return card ? card.getBoundingClientRect().width + gap : 0;
     };
-    setInterval(() => {
-      if (document.hidden || Date.now() < hold || !el.isConnected || !el.clientWidth) return;
+    const go = (dir = 1) => {
       const max = el.scrollWidth - el.clientWidth - 4;
       if (max <= 0) return;
-      const next = el.scrollLeft >= max ? 0 : el.scrollLeft + stepWidth();
+      const cur = el.scrollLeft;
+      const next = dir > 0 ? (cur >= max ? 0 : cur + stepWidth()) : (cur <= stepWidth() / 2 ? el.scrollWidth : Math.max(0, cur - stepWidth()));
       el.scrollTo({ left: next, behavior: 'smooth' });
+    };
+    if (el.children.length >= 2) setInterval(() => {
+      if (document.hidden || Date.now() < hold || !el.isConnected || !el.clientWidth) return;
+      go(1);
     }, delay);
     el.addEventListener('mouseenter', () => pause(6e5));
     el.addEventListener('mouseleave', () => pause(1200));
     el.addEventListener('focusin', () => pause(6e5));
     el.addEventListener('focusout', () => pause(1200));
     ['touchstart', 'pointerdown', 'wheel'].forEach((ev) => el.addEventListener(ev, () => pause(9000), { passive: true }));
+    return { go: (dir) => { pause(8000); go(dir); } };
   }
 
   /* Thứ tự hiển thị mặc định: sản phẩm cho bé trước, sản phẩm cho mẹ xếp sau;

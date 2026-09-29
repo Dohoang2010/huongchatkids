@@ -9,7 +9,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929h">
+  <link rel="stylesheet" href="css/style.css?v=20260929i">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -137,7 +137,11 @@
         <div class="fresh__title"><span class="fresh__box">📦</span><h2>Hàng mới về</h2><span class="fresh__tag">Vừa cập bến</span></div>
         <div class="fresh__note" id="freshNote"></div>
       </div>
-      <div class="row-scroll" id="freshRow"></div>
+      <div class="row-nav">
+        <button class="row-nav__btn row-nav__btn--prev" type="button" data-row-go="-1" aria-label="Xem sản phẩm trước"></button>
+        <div class="row-scroll" id="freshRow"></div>
+        <button class="row-nav__btn row-nav__btn--next" type="button" data-row-go="1" aria-label="Xem sản phẩm tiếp theo"></button>
+      </div>
       <div class="fresh__more"><a class="btn btn--light" href="collections.html?sort=new">Xem tất cả hàng mới về</a></div>
     </div>
   </div></section>
@@ -157,9 +161,9 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20260929h"></script>
+<script src="js/data.js?v=20260929i"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929h"></script>
+<script src="js/app.js?v=20260929i"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
@@ -302,7 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!freshList.length) $('#freshSection').classList.add('hide');
   $('#freshRow').innerHTML = freshList.map((p) => productCard(p)).join('');
   $('#freshNote').textContent = `${freshList.length} sản phẩm vừa lên kệ · hàng chính hãng, có tem phụ`;
-  MC.autoScrollRow($('#freshRow'), 3800);
+  const freshCtl = MC.autoScrollRow($('#freshRow'), 3800);
+  $$('#freshSection [data-row-go]').forEach((b) => { b.innerHTML = Number(b.dataset.rowGo) > 0 ? I.chevronR : I.chevronL; b.addEventListener('click', () => freshCtl && freshCtl.go(Number(b.dataset.rowGo))); });
 
   /* Posts */
   $('#postGrid').innerHTML = POSTS.slice(0, 3).map((p) => `<a class="post-card" href="blog.html?id=${p.id}"><div class="post-card__thumb" style="background:${p.color}">${p.image ? `<img src="${p.image}" alt="" loading="lazy">` : p.emoji}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${p.cat}</span><span>${p.date} · ${p.read} đọc</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`).join('');

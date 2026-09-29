@@ -1400,3 +1400,15 @@ body { padding-bottom: 0; }
 .memcol__next { font-size: 13px; line-height: 1.5; text-align: center; margin: 0; }
 .memcol__next b { color: var(--primary); }
 @media (prefers-reduced-motion: reduce) { .memcard__shine { animation: none; display: none; } }
+/* Nút ‹ › cho hàng sản phẩm tự trượt (Hàng mới về) */
+.row-nav { position: relative; z-index: 1; }
+.row-nav__btn { position: absolute; top: 42%; transform: translateY(-50%); z-index: 3; width: 38px; height: 38px; border-radius: 50%; border: 0; background: #fff; color: #0C8F79; box-shadow: 0 6px 18px rgba(0, 0, 0, .18); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .2s, background .2s, color .2s; }
+.row-nav__btn svg { width: 20px; height: 20px; }
+.row-nav__btn:hover { background: #0C8F79; color: #fff; transform: translateY(-50%) scale(1.08); }
+.row-nav__btn:focus-visible { outline: 3px solid #FFD54F; outline-offset: 2px; }
+.row-nav__btn--prev { left: -8px; }
+.row-nav__btn--next { right: -8px; animation: rowNudge 2.4s ease-in-out infinite; }
+.row-nav__btn--next:hover { animation: none; }
+@keyframes rowNudge { 0%, 70%, 100% { transform: translateY(-50%); } 80% { transform: translateY(-50%) translateX(4px); } 90% { transform: translateY(-50%) translateX(-1px); } }
+@media (min-width: 768px) { .row-nav__btn { width: 46px; height: 46px; } .row-nav__btn svg { width: 22px; height: 22px; } .row-nav__btn--prev { left: -12px; } .row-nav__btn--next { right: -12px; } }
+@media (prefers-reduced-motion: reduce) { .row-nav__btn--next { animation: none; } }
