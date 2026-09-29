@@ -365,6 +365,7 @@ window.PRODUCTS = [
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tri-nao", "de-khang"], price: 480000, oldPrice: 648000, rating: 5.0, reviews: 0, sold: 213, stock: 50,
     shape: "box", color: "#5E35B1", weight: "Hộp 10 gói × 40ml", origin: "Hàn Quốc", tags: ["Bán chạy"],
     image: "img/27355720019.jpg", thumb: "img/thumb/27355720019.jpg", images: ["img/27355720019.jpg", "img/27355720019-2.jpg", "img/27355720019-3.jpg", "img/27355720019-4.jpg", "img/27355720019-5.jpg"], shopeeId: "27355720019", shopeeUrl: "https://shopee.vn/product/837223358/27355720019", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Khác",
+    variants: [{ label: "1 hộp", price: 480000, oldPrice: 648000 }, { label: "2 hộp", price: 960000, oldPrice: 1296000 }],
     desc: "Hồng sâm hữu cơ Kinigini Kids Red Ginseng “Rich Kid” (Hàn Quốc), gói 40ml, hộp 10 gói, cho bé 2–15 tuổi. Theo nhà sản xuất: hỗ trợ phát triển trí não, tăng tập trung, tăng đề kháng.",
     highlights: ["Hồng sâm hữu cơ cho bé 2–15 tuổi", "Hỗ trợ trí não, tập trung khi đi học", "Gói 40ml uống liền, ngon hơn khi lạnh"],
     usage: "Bé uống 1 gói/ngày hoặc 2–3 ngày 1 gói, uống trực tiếp, ngon hơn khi để lạnh." },
