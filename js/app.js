@@ -701,6 +701,7 @@
     });
     if (data && data.updatedAt) MC.stockUpdatedAt = data.updatedAt;
     paintStock();
+    document.dispatchEvent(new CustomEvent('stock:change'));
   }
   function paintStock() {
     $$('.pcard[data-id]').forEach((card) => {

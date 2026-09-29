@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929b">
+  <link rel="stylesheet" href="css/style.css?v=20260929c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -16,20 +16,21 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20260929b"></script>
-<script src="js/diachi.js?v=20260929b"></script>
+<script src="js/data.js?v=20260929c"></script>
+<script src="js/diachi.js?v=20260929c"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929b"></script>
+<script src="js/app.js?v=20260929c"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
-          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox } = MC;
-  const lines = Cart.lines();
+          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, byId, isForMom, rankDefault } = MC;
+  let lines = Cart.lines();
   if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Mẹ chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
   const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
-  const sub = Cart.subtotal(); const multi = Cart.multiDiscount();
+  let sub = Cart.subtotal(); let multi = Cart.multiDiscount();
   const DIA = window.DIA_CHI || [];
-  const qua = giftFor(lines); let quaVi = (qua && qua.vi && qua.vi[0]) || '';
+  let qua = giftFor(lines); let quaVi = (qua && qua.vi && qua.vi[0]) || '';
+  const itemsHTML = () => `${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}${qua && qua.soQua ? `<div class="it it--gift"><span class="it__gift">🎁</span><div><div class="n">${esc(qua.moTa)}</div><div class="q" id="giftViNote">${esc(quaVi)}</div></div><b class="text-teal">Tặng</b></div>` : ''}`;
 
   /* ---- Ưu đãi hạng khách hàng: chỉ tính khi số điện thoại đang nhập đã xác thực OTP ---- */
   const loy = SITE.loyalty || {};
@@ -69,17 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div id="giftWrap">${giftBox(qua, true, quaVi)}</div>
         <div class="card card--pad"><h3><span class="num">2</span>Vận chuyển</h3><div class="form-grid">
-          <label class="ship-option"><input type="radio" name="ship" value="standard" checked><div><b>Giao tiêu chuẩn</b><small>Nội thành Hà Nội trong ngày · Tỉnh khác 1–3 ngày</small></div><span class="fee ${shipFee(sub - multi) ? '' : 'text-teal'}">${shipFee(sub - multi) ? fmt(shipFee(sub - multi)) : 'Miễn phí'}</span></label>
+          <label class="ship-option"><input type="radio" name="ship" value="standard" checked><div><b>Giao tiêu chuẩn</b><small>Nội thành Hà Nội trong ngày · Tỉnh khác 1–3 ngày</small></div><span class="fee ${shipFee(sub - multi) ? '' : 'text-teal'}" id="stdFee">${shipFee(sub - multi) ? fmt(shipFee(sub - multi)) : 'Miễn phí'}</span></label>
           <label class="ship-option" id="expressOpt"><input type="radio" name="ship" value="express"><div><b>Giao hoả tốc 2–4h</b><small>Chỉ nội thành Hà Nội, đặt trước 16h</small></div><span class="fee">${fmt(SITE.expressFee || 35000)}</span></label>
         </div></div>
         <div class="card card--pad"><h3><span class="num">3</span>Thanh toán</h3><div class="pay-options">
           <label class="pay-option pay-option--card"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') !== 'bank' ? 'checked' : ''}><span class="ico">💵</span><div><b>Thanh toán khi nhận hàng (COD)</b><small>Kiểm tra hàng rồi mới trả tiền cho shipper</small></div><span class="badge badge--teal tagr">Phổ biến</span></label>
           <label class="pay-option pay-option--card"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><div><b>Chuyển khoản ngân hàng / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} · ${SITE.bank.account} · mã QR đúng số tiền hiện ngay sau khi đặt` : 'Mã QR hiện sau khi đặt hàng'}</small></div><span class="badge badge--soft tagr">Giao ngay khi nhận tiền</span></label>
         </div></div>
+        <div class="card card--pad upsell hide" id="upsell"></div>
       </div>
       <div class="checkout__side"><div class="card card--pad">
-        <h3>Đơn hàng (${Cart.count()} sản phẩm) <a class="fs-13 text-primary" style="margin-left:auto;font-weight:500" href="cart.html">Sửa</a></h3>
-        <div class="order-items">${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}${qua && qua.soQua ? `<div class="it it--gift"><span class="it__gift">🎁</span><div><div class="n">${esc(qua.moTa)}</div><div class="q" id="giftViNote">${esc(quaVi)}</div></div><b class="text-teal">Tặng</b></div>` : ''}</div>
+        <h3>Đơn hàng (<span id="orderCount">${Cart.count()}</span> sản phẩm) <a class="fs-13 text-primary" style="margin-left:auto;font-weight:500" href="cart.html">Sửa</a></h3>
+        <div class="order-items" id="orderItems">${itemsHTML()}</div>
         <div class="divider"></div>
         <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá (VD: HCK10)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
         <div class="coupon-hint" id="couponHint"></div>
@@ -111,6 +113,56 @@ document.addEventListener('DOMContentLoaded', () => {
       : k.r ? `<span class="text-red">${k.r.msg}</span>`
       : `Gợi ý: <button type="button" data-coupon="HCK10">HCK10</button><span class="text-muted">giảm 10% (tối đa 100K) cho đơn từ 300K</span>`;
   };
+
+  /* ---- Sản phẩm nên mua kèm (window.MUA_KEM): gợi ý theo danh mục hàng trong giỏ, bỏ hàng đã có / hết hàng ---- */
+  const MK = window.MUA_KEM && window.MUA_KEM.enabled ? window.MUA_KEM : null;
+  const bienTheCon = (p) => (p.variants ? p.variants.findIndex((v) => !v.oos) : null);
+  const goiYMuaKem = () => {
+    if (!MK) return [];
+    const trongGio = new Set(lines.map((l) => l.id));
+    const hopLe = (p) => p && !trongGio.has(p.id) && p.stock > 0 && !p.isCombo && bienTheCon(p) !== -1;
+    const chon = new Map();
+    /* Lấy xen kẽ theo từng sản phẩm trong giỏ để đơn nhiều loại có gợi ý đa dạng */
+    const dsTheoDong = lines.map((l) => (MK.theoDanhMuc || {})[l.p.cat] || []);
+    const dai = Math.max(0, ...dsTheoDong.map((d) => d.length));
+    for (let i = 0; i < dai; i++) dsTheoDong.forEach((d) => { const [id, lyDo] = d[i] || []; const p = byId(id); if (hopLe(p) && !chon.has(id)) chon.set(id, { p, lyDo }); });
+    /* Chưa đủ → bù bằng hàng bán chạy cùng nhóm (cho bé / cho mẹ) */
+    const choMe = lines.every((l) => isForMom(l.p)) ? 1 : 0;
+    PRODUCTS.filter((p) => hopLe(p) && !chon.has(p.id) && isForMom(p) === choMe).sort(rankDefault)
+      .forEach((p) => chon.set(p.id, { p, lyDo: p.sold ? `Bán chạy · đã bán ${p.sold.toLocaleString('vi-VN')}` : 'Mẹ hay mua kèm' }));
+    return [...chon.values()].slice(0, MK.soLuong || 4);
+  };
+  const renderUpsell = () => {
+    const box = $('#upsell'); if (!box) return;
+    const ds = goiYMuaKem();
+    box.classList.toggle('hide', !ds.length);
+    if (!ds.length) { box.innerHTML = ''; return; }
+    const conFree = SITE.freeshipFrom - (sub - multi);
+    const hint = qua && qua.goiY ? `🎁 ${esc(qua.goiY)}`
+      : conFree > 0 && conFree <= 1000000 ? `🚚 Mua thêm <b>${fmt(conFree)}</b> để được miễn phí vận chuyển`
+      : 'Mẹ thường mua cùng các sản phẩm trong đơn – thêm vào đơn chỉ 1 chạm.';
+    box.innerHTML = `<h3>🛍️ Sản phẩm nên mua kèm</h3><p class="upsell__hint">${hint}</p><div class="upsell__list">${ds.map(({ p, lyDo }) => {
+      const v = p.variants ? p.variants[bienTheCon(p)] : null;
+      return `<div class="upsell__it"><a href="product.html?id=${p.id}" target="_blank"><img src="${productThumb(p)}" alt="" loading="lazy"></a><div class="upsell__info"><a class="n" href="product.html?id=${p.id}" target="_blank">${esc(shortName(p))}</a><small>${esc(lyDo)}</small><b>${fmt(v ? v.price : p.price)}${v ? ` <span>/ ${esc(v.label)}</span>` : ''}</b></div><button class="btn btn--outline btn--sm" type="button" data-upsell="${p.id}">+ Thêm</button></div>`;
+    }).join('')}</div>`;
+  };
+
+  /* Giỏ thay đổi (thêm từ "mua kèm", sửa trong giỏ nhanh…) → tính lại đơn hàng, quà, phí ship, gợi ý */
+  let daDat = false;
+  const refreshOrder = () => {
+    if (daDat) return;
+    lines = Cart.lines();
+    if (!lines.length) { location.reload(); return; }
+    sub = Cart.subtotal(); multi = Cart.multiDiscount();
+    qua = giftFor(lines); if (qua && qua.vi && !qua.vi.includes(quaVi)) quaVi = qua.vi[0] || '';
+    $('#orderCount').textContent = Cart.count();
+    $('#orderItems').innerHTML = itemsHTML();
+    $('#giftWrap').innerHTML = giftBox(qua, true, quaVi);
+    const f = shipFee(sub - multi); const fe = $('#stdFee'); fe.textContent = f ? fmt(f) : 'Miễn phí'; fe.classList.toggle('text-teal', !f);
+    renderSummary(); renderUpsell();
+  };
+  document.addEventListener('cart:change', refreshOrder);
+  document.addEventListener('stock:change', () => { if (!daDat) renderUpsell(); });
 
   /* ---- Thanh nhận diện khách quen + xác thực OTP ---- */
   let traCuu = { sdt: '', co: false, ten: '' };
@@ -149,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Có phiên đã xác thực mà ô thông tin còn trống → điền sẵn từ hồ sơ */
   if (Session.get() && !form.elements.phone.value.trim()) { const kh = Session.kh() || {}; if (kh.sdt) form.elements.phone.value = kh.sdt; if (kh.ten && !form.elements.name.value.trim()) form.elements.name.value = kh.ten; if (kh.tinh && !form.elements.city.value) { form.elements.city.value = kh.tinh; form.elements.ward.innerHTML = xaOptions(kh.tinh, kh.xa || ''); } if (kh.diaChi && !form.elements.address.value.trim()) form.elements.address.value = kh.diaChi; if (kh.email && !form.elements.email.value.trim()) form.elements.email.value = kh.email; }
-  renderSummary(); syncExpress(); renderLoyalty();
+  renderSummary(); syncExpress(); renderLoyalty(); renderUpsell();
   if (Session.get()) refreshProfile().then(() => { renderLoyalty(); renderSummary(); });
   kiemTraSdt();
   $('#stickySubmit').addEventListener('click', () => form.requestSubmit());
@@ -170,6 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'applyCoupon') { coupon = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(coupon, sub - multi); store.set('mc_coupon', r.ok ? coupon : ''); if (!r.ok) coupon = ''; toast(r.ok ? 'Đã áp dụng mã ' + r.code : r.msg, { type: r.ok ? 'ok' : 'error' }); renderSummary(); }
     const cb = e.target.closest('[data-coupon]'); if (cb) { coupon = cb.dataset.coupon; $('#couponInput').value = coupon; store.set('mc_coupon', coupon); renderSummary(); }
     if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); }
+    const up = e.target.closest('[data-upsell]');
+    if (up) { const p = byId(up.dataset.upsell); if (p) { const vi = bienTheCon(p); Cart.add(p.id, 1, vi != null && vi > -1 ? vi : null); toast(`Đã thêm ${shortName(p)} vào đơn`, { type: 'ok' }); } }
   });
   form.addEventListener('submit', async (e) => {
     e.preventDefault(); const fd = new FormData(form); const v = Object.fromEntries(fd.entries()); const err = $('#coError'); err.classList.add('hide');
@@ -191,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
       items: lines.map((l) => ({ id: l.id, name: l.name, short: shortName(l.p), variant: l.variantLabel, qty: l.qty, price: l.price })),
       subtotal: sub, discount: multi + k.discount, ship: k.ship, total: k.total });
     io.disconnect(); $('#stickyOrder')?.remove();
-    Cart.clear(); store.set('mc_coupon', '');
+    daDat = true; Cart.clear(); store.set('mc_coupon', '');
     if (Session.get()) refreshProfile();
     $('#checkoutPage').innerHTML = `<div class="success-page card">${orderSuccessHTML(order, false)}</div>`;
     window.scrollTo({ top: 0, behavior: 'smooth' });

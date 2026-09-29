@@ -630,6 +630,67 @@ window.QUA_TANG = {
   tuKhoaThung: 'thùng',                       // phân loại có chữ này được tính là 1 thùng
 };
 
+/* =====================================================================
+   SẢN PHẨM NÊN MUA KÈM – hiện ở trang thanh toán để khách thêm vào đơn 1 chạm
+   Theo DANH MỤC của sản phẩm đang có trong giỏ: [mã sản phẩm, lý do ngắn hiện dưới tên].
+   Web tự bỏ sản phẩm đã có trong giỏ / đang hết hàng, lấy tối đa `soLuong` món;
+   thiếu thì bù bằng sản phẩm bán chạy cùng nhóm (cho bé / cho mẹ).
+   ===================================================================== */
+window.MUA_KEM = {
+  enabled: true,
+  soLuong: 4,
+  theoDanhMuc: {
+    'sua': [
+      ['42878618667', 'Uống cùng sữa – D3K2 hỗ trợ hấp thu canxi'],
+      ['41353214697', 'Bộ đôi tăng chiều cao mẹ hay chọn'],
+      ['26060839019', 'Thêm canxi hữu cơ cho bé ăn vặt'],
+      ['45462512687', 'Trộn cơm giúp bé ăn ngon hơn'],
+    ],
+    'nuoc-ep': [
+      ['22644617070', 'Hồng sâm giúp bé ăn ngon, mau lại sức'],
+      ['42878618667', 'Thêm D3K2 cho bé phát triển chiều cao'],
+      ['27355720019', 'Hồng sâm hỗ trợ trí não khi đi học'],
+      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+    ],
+    'hong-sam': [
+      ['25632276959', 'Nước ép tăng cân uống xen với hồng sâm'],
+      ['42878618667', 'Thêm D3K2 cho bé phát triển chiều cao'],
+      ['26156646705', 'Gạc hươu hỗ trợ bé tăng cân'],
+      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+    ],
+    'vitamin': [
+      ['13899935993', 'Sữa dê bổ sung canxi, dễ hấp thu'],
+      ['41353214697', 'Bộ đôi tăng chiều cao mẹ hay chọn'],
+      ['42878618667', 'Mẹ hay dùng D3K2 cùng canxi'],
+      ['45462512687', 'Trộn cơm giúp bé ăn ngon hơn'],
+    ],
+    'tang-can': [
+      ['22644617070', 'Hồng sâm giúp bé ăn ngon, mau lại sức'],
+      ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
+      ['13899935993', 'Sữa dê dễ hấp thu, hỗ trợ tăng cân'],
+      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+    ],
+    'rong-bien': [
+      ['41002695070', 'Đổi vị rong biển cho bé đỡ ngán'],
+      ['45462512687', 'Đổi vị rong biển cho bé đỡ ngán'],
+      ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
+      ['22644617070', 'Hồng sâm giúp bé ăn ngon, mau lại sức'],
+    ],
+    'thuc-pham': [
+      ['43532388498', 'Ăn sáng nhanh cùng sữa chua, sữa tươi'],
+      ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà'],
+      ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
+      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+    ],
+    'cho-me': [
+      ['27734205778', 'Chống nắng mỗi ngày – bước dưỡng không thể thiếu'],
+      ['24015583018', 'Mặt nạ bán chạy, đắp 2–3 lần/tuần'],
+      ['28467224687', 'Táo đỏ hầm canh, pha trà cho mẹ'],
+      ['25632276959', 'Mua kèm cho bé – nước ép bán chạy nhất'],
+    ],
+  },
+};
+
 /* Hạng khách hàng – xét theo TỔNG TIỀN ĐÃ CHI TIÊU (cộng các đơn đã đặt, trừ đơn huỷ/hoàn).
    Sửa mốc tiền hoặc % giảm ngay tại đây, web và Apps Script đều dùng chung bảng này. */
 window.TIERS = [
