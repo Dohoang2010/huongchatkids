@@ -280,7 +280,7 @@ window.PRODUCTS = [
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-cong-thuc", "canxi", "tang-chieu-cao", "de-khang"], price: 850000, oldPrice: 1148000, rating: 5.0, reviews: 0, sold: 33, stock: 50, priority: 2,
     shape: "can", color: "#E60012", weight: "Lon 760g", origin: "Hàn Quốc", tags: [], formula: true,
     image: "img/13899935993.jpg", thumb: "img/thumb/13899935993.jpg", images: ["img/13899935993.jpg", "img/13899935993-2.jpg", "img/13899935993-3.jpg", "img/13899935993-4.jpg"], shopeeId: "13899935993", shopeeUrl: "https://shopee.vn/product/837223358/13899935993", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa công thức",
-    variants: [{ label: "1 lon", price: 850000, oldPrice: 1148000 }, { label: "2 lon", price: 1700000, oldPrice: 2296000 }],
+    variants: [{ label: "1 hộp", price: 850000, oldPrice: 1148000 }, { label: "2 hộp", price: 1700000, oldPrice: 2296000 }],
     desc: "Sữa dê Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: bổ sung canxi, vitamin D, Alpha-lactalbumin (1.050mg/100g) hỗ trợ miễn dịch và hệ lợi khuẩn thực vật (100 triệu CFU/lon) giúp tiêu hoá tốt; đạm sữa dê dễ hấp thu, phù hợp bé chậm tăng cân.",
     highlights: ["Sữa dê dễ hấp thu, hỗ trợ tăng cân & chiều cao", "Alpha-lactalbumin + lợi khuẩn hỗ trợ miễn dịch, tiêu hoá", "Đạt tiêu chuẩn xuất khẩu nhiều thị trường"],
     usage: "Pha 7–8 muỗng gạt (muỗng trong hộp) với 180ml nước ấm 40–50°C được 1 ly 240ml. 2 ly/ngày. Dùng trong 3 tuần sau khi mở." },
