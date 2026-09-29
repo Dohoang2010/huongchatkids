@@ -25,8 +25,9 @@ var TELEGRAM_CHAT_ID = '';               // tuỳ chọn, lấy từ @userinfobo
 // ----- BÁO ĐƠN VỀ ZALO BẰNG BOT (miễn phí – cách đang dùng) -----
 // Bot "Bot hương chất kids" tạo tại https://zalo.me/s/botcreator/ .
 // Muốn đổi bot: tạo bot mới, dán token mới vào đây, rồi chạy hàm zaloBotLayChatId().
-var ZALO_BOT_TOKEN = 'var ZALO_BOT_TOKEN = '211668522349874123:IEUcSHnoSIeAPCsKxvbLZasdrpnGywDOqKUqNWveMUkrTcfiowTKIiXRfSMyeKmB';
-';       // dạng 211668...:IEUc...  (dán token của bot vào đây)
+var ZALO_BOT_TOKEN = '';       // dạng 211668...:IEUc...  (dán token của bot vào đây)
+// ⚠️ KHÔNG dán token thật vào file này: thư mục này được đẩy lên GitHub công khai.
+// Token thật chỉ dán trực tiếp trong Apps Script của shop (hoặc file tools/apps-script-CUA-SHOP.gs đã được .gitignore).
 var ZALO_BOT_CHAT_ID = '';     // để trống: chạy hàm zaloBotLayChatId() sau khi nhắn cho bot 1 tin
 
 // ----- BÁO ĐƠN VỀ ZALO (qua Zalo OA – cách cũ, đang tắt; xem hướng dẫn ở cuối file) -----
