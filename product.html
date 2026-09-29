@@ -8,19 +8,19 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260926a">
+  <link rel="stylesheet" href="css/style.css?v=20260929a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="pdp"></div></main>
 <div class="sticky-buy" id="stickyBuy"></div>
 
-<script src="js/data.js?v=20260926a"></script>
+<script src="js/data.js?v=20260929a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260926a"></script>
+<script src="js/app.js?v=20260929a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, I, starRow, productImage, productCard, Cart, toast, deliveryEstimate, openQuickBuy } = MC;
+  const { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, I, starRow, productImage, productCard, Cart, toast, deliveryEstimate, openQuickBuy } = MC;
   const p = byId(param('id'));
   if (!p) { $('#pdp').innerHTML = `<div class="empty card" style="margin:24px 0"><div class="emoji">🔍</div><h3>Không tìm thấy sản phẩm</h3><p>Sản phẩm có thể đã ngừng bán. Mẹ xem các sản phẩm khác nhé.</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem tất cả sản phẩm</a></div>`; return; }
   const b = brandOf(p); const d = pct(p); let qty = 1;
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.title = (p.short || p.name) + ' – ' + SITE.name;
   const { productThumb, shortName } = MC; const manyVariants = p.variants && p.variants.length > 12;  // >12 mới dùng ô chọn; còn lại hiện nút bấm cho dễ chọn
   const price = () => variant != null ? p.variants[variant].price : p.price;
-  const oldPrice = () => variant != null ? p.variants[variant].oldPrice : p.oldPrice;
+  const oldPrice = () => listPrice(variant != null ? p.variants[variant].oldPrice : p.oldPrice, price());
 
   /* Gợi ý mua kèm: cùng độ tuổi, khác danh mục, bán chạy */
   const related = PRODUCTS.filter((x) => x.id !== p.id && !x.isCombo && x.ages.some((a) => p.ages.includes(a)) && x.cat !== p.cat).sort((a, c) => c.sold - a.sold).slice(0, 2);

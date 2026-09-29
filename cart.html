@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260926a">
+  <link rel="stylesheet" href="css/style.css?v=20260929a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -17,12 +17,12 @@
   <h1 class="page-title">Giỏ hàng của mẹ</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20260926a"></script>
+<script src="js/data.js?v=20260929a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260926a"></script>
+<script src="js/app.js?v=20260929a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const { $, $$, fmt, I, productThumb, shortName, productCard, Cart, esc, shipFee, applyCoupon, store, toast } = MC;
+  const { $, $$, fmt, I, listPrice, productThumb, shortName, productCard, Cart, esc, shipFee, applyCoupon, store, toast } = MC;
   const render = () => {
     const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', ''); const c = coupon ? applyCoupon(coupon, sub - multi) : null;
     const discount = c && c.ok ? c.discount : 0; const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + ship;
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#cartPage').innerHTML = `
       <div class="card card--pad cart-table">
         <div class="freeship-bar mb-12">${sub >= SITE.freeshipFrom ? '🎉 Đơn hàng được <b>miễn phí vận chuyển</b>' : `Mua thêm <b>${fmt(SITE.freeshipFrom - sub)}</b> để được <b>freeship</b>`}<div class="bar"><i style="width:${Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>
-        ${lines.map((l) => `<div class="cart-item"><a href="product.html?id=${l.id}"><img src="${productThumb(l.p)}" alt=""></a><div><a class="name" href="product.html?id=${l.id}">${esc(shortName(l.p))}</a>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${l.oldPrice ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div></div>
+        ${lines.map((l) => `<div class="cart-item"><a href="product.html?id=${l.id}"><img src="${productThumb(l.p)}" alt=""></a><div><a class="name" href="product.html?id=${l.id}">${esc(shortName(l.p))}</a>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${listPrice(l.oldPrice, l.price) ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div></div>
           <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div></div>
           <div class="total">${fmt(l.total)}</div><button class="remove" type="button" data-remove="${l.id}" data-variant="${l.variant}" aria-label="Xoá ${esc(shortName(l.p))} khỏi giỏ" title="Xoá">${I.trash}</button></div>`).join('')}
         <div class="flex justify-between items-center mt-16 wrap gap-8"><a class="btn btn--ghost" href="collections.html">${I.chevronL}Tiếp tục mua sắm</a><button class="btn btn--ghost btn--sm text-red" type="button" id="clearCart">Xoá toàn bộ giỏ</button></div>

@@ -13,7 +13,9 @@
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
   const fmt = (n) => (Math.round(n) || 0).toLocaleString('vi-VN') + '₫';
-  const pct = (p) => (p.oldPrice && p.oldPrice > p.price) ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+  /* Giá niêm yết: chỉ hiện khi SITE.showOldPrice = true. Mặc định tắt → web chỉ hiện giá bán. */
+  const listPrice = (old, price) => (SITE.showOldPrice && old && old > price) ? old : 0;
+  const pct = (p) => listPrice(p.oldPrice, p.price) ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
   const param = (k) => new URLSearchParams(location.search).get(k);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const byId = (id) => PRODUCTS.find((p) => p.id === id);
@@ -315,7 +317,7 @@
         <div class="pcard__brand">${esc(b.label)}${p.origin && p.origin !== 'Hàn Quốc' ? ` · ${esc(p.origin)}` : ''}</div>
         <a class="pcard__name" href="product.html?id=${p.id}" title="${esc(p.name)}">${esc(shortName(p))}</a>
         <div class="pcard__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)} <span class="text-muted">(${p.reviews})</span></span>` : ''}${p.reviews > 0 && p.sold > 0 ? '<span>·</span>' : ''}${p.sold > 0 ? `<span>Đã bán ${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'k' : p.sold}</span>` : ''}${!p.reviews && !p.sold ? `<span class="text-teal fw-600">${I.check} Chính hãng</span>` : ''}</div>
-        <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${p.oldPrice ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div>
+        <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div>
         <div class="pcard__age">${p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
         <div class="pcard__actions">
           <button class="btn btn--primary" type="button" data-buy="${p.id}" ${oos ? 'disabled' : ''}>${I.zap}Mua ngay</button>
@@ -382,7 +384,7 @@
           <div class="mega mega--wide"><div><h4>Danh mục</h4><ul>${CATEGORIES.slice(0, Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>&nbsp;</h4><ul>${CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>
-          <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?sort=discount">Xem ưu đãi →</a></div></div></li>
+          <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
         <li class="navbar__item"><a class="navbar__link navbar__link--about" href="gioi-thieu.html">💗 Giới thiệu</a></li>
         ${NAV.map(navItem).join('')}
       </ul></div></nav>
@@ -471,7 +473,7 @@
     }
     const remain = SITE.freeshipFrom - sub;
     body.innerHTML = `<div class="freeship-bar mt-12">${remain > 0 ? `Mua thêm <b>${fmt(remain)}</b> để được <b>freeship</b>` : `🎉 Đơn hàng được <b>miễn phí vận chuyển</b>`}<div class="bar"><i style="width:${Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>` +
-      lines.map((l) => `<div class="cart-item"><img src="${productThumb(l.p)}" alt=""><div><div class="name">${esc(shortName(l.p))}</div>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${l.oldPrice ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div>
+      lines.map((l) => `<div class="cart-item"><img src="${productThumb(l.p)}" alt=""><div><div class="name">${esc(shortName(l.p))}</div>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${listPrice(l.oldPrice, l.price) ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div>
         <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div><button class="remove" type="button" data-remove="${l.id}" data-variant="${l.variant}">Xoá</button></div></div>
         <div class="total">${fmt(l.total)}</div></div>`).join('');
     const multi = Cart.multiDiscount(); const ship = shipFee(sub - multi);
@@ -537,7 +539,7 @@
   }
   function qbRefresh() {
     const { price, old } = qbPrice(); const k = qbCalc();
-    $('#qbPrice').innerHTML = `<b>${fmt(price)}</b>${old ? `<s>${fmt(old)}</s>` : ''}`;
+    $('#qbPrice').innerHTML = `<b>${fmt(price)}</b>${listPrice(old, price) ? `<s>${fmt(old)}</s>` : ''}`;
     $('#qbTotal').textContent = fmt(k.total);
     $('#qbQty').value = QB.qty;
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
@@ -705,5 +707,5 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
 
-  window.MC = { $, $$, fmt, pct, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow };
+  window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow };
 })();

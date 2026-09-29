@@ -38,6 +38,7 @@ window.SITE = {
   hotSearches: ['Hồng sâm ChuChu', 'Nước ép Lotte', 'Sữa Biostime', 'D3K2', 'Táo đỏ Tân Cương', 'Men vi sinh'],
   advisor: 'Chuyên gia dinh dưỡng',  // danh xưng người tư vấn hiển thị trên toàn bộ website
   showReviews: false,                 // true → hiện thêm mảng REVIEWS (đánh giá do shop nhập) ở trang chủ & trang sản phẩm
+  showOldPrice: false,                // false → web CHỈ hiện giá bán, ẩn hết giá niêm yết (giá gạch ngang) và % giảm. Đổi thành true nếu muốn hiện lại.
   flashSaleEnd: 'daily',  // 'daily' = ưu đãi trong hôm nay (đếm ngược tới 24:00, mỗi ngày tự đếm lại); hoặc đặt hạn cụ thể '2026-09-30T23:59:59+07:00' (qua ngày này countdown tự ẩn)
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
 };
@@ -139,7 +140,7 @@ window.NAV = [
     { title: 'Sức khoẻ & cơ thể', links: [['Viên uống Pure NMN 12000mg+', 'product.html?id=24767149051'], ['Men vi sinh phụ khoa Arravite', 'product.html?id=28902157429'], ['Super Collagen Alpha 90 gói', 'product.html?id=48112514210'], ['Nghệ nano Curcumin 365 Plus', 'product.html?id=49061985399'], ['Thảm ngải cứu trị liệu', 'product.html?id=50002678694']] },
     { title: 'Tắm gội & làm đẹp', links: [['Sữa tắm dưỡng trắng Glutanex 300ml', 'product.html?id=24465090622'], ['Cặp dầu gội & xả Arganicare', 'product.html?id=27809051612'], ['Xịt phun sương Grace By Chera', 'product.html?id=51013054442'], ['Son filler RVB LAB Lip Explosion', 'product.html?id=57556697426'], ['Bột trắng răng Akiko Nhật Bản', 'product.html?id=56857599724']] } ] },
   { label: 'Chọn theo tuổi', short: 'Theo tuổi', tiny: 'Theo tuổi', ages: true },
-  { label: '🔥 Flash sale', short: '🔥 Flash sale', tiny: '🔥 Sale', link: 'collections.html?sort=discount', hot: true },
+  { label: '🔥 Flash sale', short: '🔥 Flash sale', tiny: '🔥 Sale', link: 'collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot', hot: true },
   { label: 'Cẩm nang mẹ', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' },
 ];
 
@@ -567,7 +568,7 @@ window.FEEDBACKS = [
 window.BANNERS = [
   { title: 'Freeship toàn quốc\ncho đơn từ 3 triệu', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Nhập mã <b>HCK10</b> giảm 10% (tối đa 100K, đơn từ 300K).', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
   { title: 'Dinh dưỡng Hàn Quốc\nchính hãng cho bé', sub: 'Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.', cta: 'Xem sản phẩm', link: 'collections.html', theme: 'teal', badge: 'Chính hãng 100%', image: 'img/thumb/22644617070.jpg' },
-  { title: 'Nước ép Lotte Organic\ngiảm đến 38%', sub: 'Giúp bé ăn ngon, tăng chiều cao – giá tốt nhất tháng này, thùng 30 gói chỉ từ <b>1.490.000₫</b>.', cta: 'Mua ngay', link: 'collections.html?cat=nuoc-ep', theme: 'amber', badge: 'Flash sale', image: 'img/thumb/22686115682.jpg' },
+  { title: 'Nước ép Lotte Organic\nrau củ & hoa quả Hàn Quốc', sub: 'Giúp bé ăn ngon, tăng chiều cao – hộp 10 gói <b>448.000₫</b>, thùng 30 gói <b>1.317.000₫</b>.', cta: 'Mua ngay', link: 'collections.html?cat=nuoc-ep', theme: 'amber', badge: 'Sản phẩm hot', image: 'img/thumb/22686115682.jpg' },
 ];
 
 /* Đánh giá minh hoạ (KHÔNG hiển thị). Trang chủ hiện điểm đánh giá thật từ Shopee. Khi có phản hồi thật của khách, đặt SITE.showReviews = true để hiện mục này. */

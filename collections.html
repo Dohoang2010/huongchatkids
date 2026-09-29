@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260926a">
+  <link rel="stylesheet" href="css/style.css?v=20260929a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -36,7 +36,6 @@
           <button class="btn btn--ghost btn--sm filter-btn" type="button" id="openFilters"><span data-icon="filter"></span>Lọc</button>
           <select class="input" id="sort" aria-label="Sắp xếp">
             <option value="best">Bán chạy nhất</option>
-            <option value="discount">Giảm giá nhiều</option>
             <option value="price-asc">Giá tăng dần</option>
             <option value="price-desc">Giá giảm dần</option>
             <option value="rating">Đánh giá cao</option>
@@ -52,9 +51,9 @@
   </div>
 </div></main>
 
-<script src="js/data.js?v=20260926a"></script>
+<script src="js/data.js?v=20260929a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260926a"></script>
+<script src="js/app.js?v=20260929a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productCard, brandOf, ageLabel, esc } = MC;
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // hỗ trợ dạng ?cat=a,b và chỉ giữ giá trị hợp lệ (tránh lỗi/XSS từ URL)
   const VALID = { age: AGES.map((a) => a.key), cat: CATEGORIES.map((c) => c.key), need: NEEDS.map((n) => n.key), brand: BRANDS.map((b) => b.key), price: PRICE_RANGES.map((r) => r.key) };
   ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => { S[k] = S[k].flatMap((v) => v.split(',')).filter((v) => VALID[k].includes(v)); });
-  S.q = S.q.slice(0, 60); S.tag = ['Combo', 'Mới', 'Bán chạy', 'Hot', 'Giảm sâu'].includes(S.tag) ? S.tag : ''; if (!['best', 'discount', 'price-asc', 'price-desc', 'rating', 'new'].includes(S.sort)) S.sort = 'best';
+  S.q = S.q.slice(0, 60); S.tag = ['Combo', 'Mới', 'Bán chạy', 'Hot', 'Sản phẩm hot', 'Cho mẹ', 'Giảm sâu'].includes(S.tag) ? S.tag : ''; if (!['best', 'price-asc', 'price-desc', 'rating', 'new'].includes(S.sort)) S.sort = 'best';
 
   function syncUrl() {
     const u = new URLSearchParams();
@@ -87,22 +86,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (S.brand.length && !S.brand.includes(p.brand)) return false;
       if (S.price.length && !S.price.some((k) => { const r = PRICE_RANGES.find((x) => x.key === k); return p.price >= r.min && p.price < r.max; })) return false;
       if (S.tag && !(p.tags || []).includes(S.tag)) return false;
-      if (S.sort === 'discount' && !S.q && !MC.pct(p)) return false;
       if (q && !(p.name + ' ' + brandOf(p).label + ' ' + p.needs.map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ') + ' ' + p.origin).toLowerCase().includes(q)) return false;
       return true;
     });
-    const sorters = { best: MC.rankDefault, discount: (a, b) => MC.pct(b) - MC.pct(a), 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
+    const sorters = { best: MC.rankDefault, 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
     return list.sort(sorters[S.sort] || sorters.best);
   }
 
   function titleText() {
     if (S.q) return `Kết quả cho "${S.q}"`;
-    if (S.tag) return S.tag === 'Combo' ? 'Combo tiết kiệm' : S.tag;
+    if (S.tag) return S.tag === 'Combo' ? 'Combo tiết kiệm' : (S.tag === 'Sản phẩm hot' ? '🔥 Sản phẩm hot của shop' : S.tag);
     if (S.cat.length === 1) return (CATEGORIES.find((c) => c.key === S.cat[0]) || {}).label || 'Sản phẩm';
     if (S.need.length === 1) return (NEEDS.find((n) => n.key === S.need[0]) || {}).label || 'Sản phẩm';
     if (S.brand.length === 1) return 'Thương hiệu ' + brandOf({ brand: S.brand[0] }).label;
     if (S.age.length === 1) return 'Sản phẩm cho bé ' + ageLabel(S.age[0]);
-    if (S.sort === 'discount' && !S.cat.length) return '🔥 Flash sale – Giảm sâu hôm nay';
     return 'Tất cả sản phẩm';
   }
 

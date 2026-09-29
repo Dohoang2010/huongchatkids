@@ -9,7 +9,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260926a">
+  <link rel="stylesheet" href="css/style.css?v=20260929a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -25,7 +25,7 @@
         <div class="carousel__dots" id="carouselDots"></div>
       </div>
       <div class="hero__side">
-        <a class="promo-tile" href="collections.html?sort=discount" style="background:var(--teal-100)"><span class="promo-tile__imgs"><img src="img/thumb/22686115682.jpg" alt=""><img src="img/thumb/26156646705.jpg" alt=""><img src="img/thumb/26060839019.jpg" alt=""><i>🔥</i></span><span class="arrow"></span><h3>Giảm giá hôm nay</h3><p>Nước ép Lotte giảm đến 38%, gạc hươu Sumo giảm 14%</p></a>
+        <a class="promo-tile" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot" style="background:var(--teal-100)"><span class="promo-tile__imgs"><img src="img/thumb/22686115682.jpg" alt=""><img src="img/thumb/26156646705.jpg" alt=""><img src="img/thumb/26060839019.jpg" alt=""><i>🔥</i></span><span class="arrow"></span><h3>Sản phẩm hot hôm nay</h3><p>Nước ép Lotte, rong biển Hàn Quốc, váng sữa, D3K2 – mẹ chọn nhiều nhất</p></a>
         <div class="promo-tile promo-tile--contact" style="background:var(--amber-100)"><span class="emoji">👩‍⚕️</span><h3>Tư vấn miễn phí</h3><p id="promoContact"></p><div class="promo-tile__btns" id="promoBtns"></div></div>
       </div>
     </div>
@@ -38,7 +38,7 @@
     <div class="flash">
       <div class="flash__head"><div class="flash__title"><span class="bolt">⚡</span><h2>Flash sale hôm nay</h2><span class="flames" aria-hidden="true"><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i></span></div><div class="countdown" id="countdown"></div></div>
       <div class="row-scroll" id="flashRow"></div>
-      <div class="flash__more"><a class="btn btn--light" href="collections.html?sort=discount">Xem tất cả deal giảm sâu</a></div>
+      <div class="flash__more"><a class="btn btn--light" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem tất cả sản phẩm hot</a></div>
     </div>
   </div></section>
 
@@ -157,12 +157,12 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20260926a"></script>
+<script src="js/data.js?v=20260929a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260926a"></script>
+<script src="js/app.js?v=20260929a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const { $, $$, fmt, I, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
+  const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
   $$('[data-icon]').forEach((el) => { el.innerHTML = I[el.dataset.icon]; });
   $$('.promo-tile .arrow').forEach((el) => { el.innerHTML = I.arrowR; });
 
@@ -217,18 +217,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const sets = {
     best: () => [...PRODUCTS].filter((p) => !p.isCombo).sort(MC.rankDefault).slice(0, 8),
     new: () => [...PRODUCTS].filter((p) => !p.isCombo).reverse().slice(0, 8),
-    discount: () => [...PRODUCTS].filter((p) => p.oldPrice).sort((a, b) => MC.pct(b) - MC.pct(a)).slice(0, 8),
+    hot: () => PRODUCTS.filter((p) => (p.tags || []).includes('Sản phẩm hot')).sort(MC.rankDefault).slice(0, 8),
   };
   CATEGORIES.forEach((c) => { sets[c.key] = () => PRODUCTS.filter((p) => p.cat === c.key).slice(0, 8); });
   sets.baby = () => PRODUCTS.filter((p) => !p.isCombo && p.ages.some((a) => ['0-6m', '6-12m', '1-3y'].includes(a))).slice(0, 8);
-  $('#featTabs').innerHTML = `<button class="tab is-active" data-tab="best">🏆 Bán chạy</button><button class="tab" data-tab="discount">🔥 Giảm sâu</button><button class="tab" data-tab="baby">🍼 Bé 0–3 tuổi</button>` + CATEGORIES.filter((c) => PRODUCTS.filter((p) => p.cat === c.key).length >= 2).map((c) => `<button class="tab" data-tab="${c.key}">${c.icon} ${c.label}</button>`).join('');
+  $('#featTabs').innerHTML = `<button class="tab is-active" data-tab="best">🏆 Bán chạy</button><button class="tab" data-tab="hot">🔥 Sản phẩm hot</button><button class="tab" data-tab="baby">🍼 Bé 0–3 tuổi</button>` + CATEGORIES.filter((c) => PRODUCTS.filter((p) => p.cat === c.key).length >= 2).map((c) => `<button class="tab" data-tab="${c.key}">${c.icon} ${c.label}</button>`).join('');
   const renderFeat = (k) => { $('#featGrid').innerHTML = sets[k]().map((p) => productCard(p)).join(''); };
   $('#featTabs').addEventListener('click', (e) => { const t = e.target.closest('.tab'); if (!t) return; $$('#featTabs .tab').forEach((x) => x.classList.toggle('is-active', x === t)); renderFeat(t.dataset.tab); });
   renderFeat('best');
 
   /* Combos (ẩn cả mục nếu chưa có combo) */
   if (!PRODUCTS.some((p) => p.isCombo)) $('#comboSection').classList.add('hide');
-  $('#comboGrid').innerHTML = PRODUCTS.filter((p) => p.isCombo).map((p) => `<div class="combo-card"><a href="product.html?id=${p.id}"><img src="${productImage(p)}" alt="${esc(p.name)}"></a><div><a href="product.html?id=${p.id}"><h3>${esc(p.name)}</h3></a><span class="badge badge--teal save">Tiết kiệm ${fmt(p.oldPrice - p.price)}</span><div class="items">Gồm: ${p.items.map((id) => byId(id).short).join(' + ')}</div><div class="price"><b>${fmt(p.price)}</b><s>${fmt(p.oldPrice)}</s></div><div class="flex gap-8 wrap"><button class="btn btn--primary" type="button" data-buy="${p.id}">${I.zap}Mua ngay</button><button class="btn btn--outline" type="button" data-add="${p.id}">${I.cart}Thêm giỏ</button></div></div></div>`).join('');
+  $('#comboGrid').innerHTML = PRODUCTS.filter((p) => p.isCombo).map((p) => `<div class="combo-card"><a href="product.html?id=${p.id}"><img src="${productImage(p)}" alt="${esc(p.name)}"></a><div><a href="product.html?id=${p.id}"><h3>${esc(p.name)}</h3></a>${listPrice(p.oldPrice, p.price) ? `<span class="badge badge--teal save">Tiết kiệm ${fmt(p.oldPrice - p.price)}</span>` : ''}<div class="items">Gồm: ${p.items.map((id) => byId(id).short).join(' + ')}</div><div class="price"><b>${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div><div class="flex gap-8 wrap"><button class="btn btn--primary" type="button" data-buy="${p.id}">${I.zap}Mua ngay</button><button class="btn btn--outline" type="button" data-add="${p.id}">${I.cart}Thêm giỏ</button></div></div></div>`).join('');
 
   /* Dành cho mẹ */
   const momList = PRODUCTS.filter((p) => p.cat === 'cho-me' && !p.isCombo).sort((a, b) => b.sold - a.sold).slice(0, 8);
