@@ -44,7 +44,12 @@ window.POLICIES = [
 <tr><td>Các tỉnh khác</td><td>2–3 ngày làm việc; vùng sâu, hải đảo 3–5 ngày</td><td>Có thể chậm hơn vào dịp lễ, Tết, mưa bão</td></tr></table>
 <p>Thời gian trên tính từ khi đơn được xác nhận và (với đơn chuyển khoản) đã nhận thanh toán. Chúng tôi chủ động thông báo nếu dự kiến giao chậm hơn.</p>
 <h3>Phí vận chuyển</h3>
-<ul><li><b>{shipFee}/đơn</b> toàn quốc, hiển thị rõ trước khi mẹ bấm Đặt hàng.</li><li><b>Miễn phí vận chuyển</b> cho đơn từ <b>{freeship}</b> (tính trên giá trị sau giảm giá).</li><li>Hoả tốc nội thành Hà Nội: phụ thu {expressFee}.</li></ul>
+<p>Giao tiêu chuẩn qua <b>Giao Hàng Nhanh (GHN)</b>, phí tính đúng theo bảng giá GHN (đã gồm VAT), gửi từ Hà Nội. Web tự tính theo tỉnh nhận và cân nặng đơn, hiển thị rõ trước khi mẹ bấm Đặt hàng.</p>
+<table class="ptable"><tr><th>Khu vực nhận</th><th>Đơn tới 2kg</th><th>Mỗi 500g tiếp theo</th></tr>
+<tr><td>Hà Nội</td><td>15.500₫</td><td>+2.000₫ (từ 4kg: +3.000₫)</td></tr>
+<tr><td>Các tỉnh miền Bắc</td><td>18.000₫</td><td>+3.500₫ (từ 4kg: +5.000₫)</td></tr>
+<tr><td>Miền Trung, miền Nam</td><td>19.000₫</td><td>+3.500₫ (từ 4kg: +5.000₫)</td></tr></table>
+<ul><li>Không thu thêm phí thu hộ (COD) – mẹ chỉ trả tiền hàng và phí ship ở trên.</li><li><b>Miễn phí vận chuyển</b> cho đơn từ <b>{freeship}</b> (tính trên giá trị sau giảm giá).</li><li>Hoả tốc nội thành Hà Nội: phụ thu {expressFee}.</li></ul>
 <h3>Đóng gói</h3>
 <p>Sản phẩm được bọc chống sốc, thùng nước ép/hồng sâm đóng thùng carton riêng, dán niêm phong của Hương Chất Kids. Hàng lạnh/nhạy nhiệt (nếu có) được đóng túi giữ nhiệt.</p>
 <h3>Kiểm tra hàng khi nhận (đồng kiểm)</h3>

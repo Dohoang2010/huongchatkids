@@ -30,6 +30,40 @@ window.SITE = {
   shipFee: 25000,
   expressFee: 35000,
   expressCities: ['Hà Nội'],            // tỉnh/thành có giao hoả tốc trong ngày
+  /* Phí giao tiêu chuẩn tính theo BẢNG GIÁ GHN trên Nhanh.vn (hiệu lực 07/11/2025, đã gồm VAT), gửi từ Hà Nội.
+     Phí = giá gói đầu (tới 2kg) theo vùng + mỗi 500g tiếp theo. Đơn từ freeshipFrom vẫn miễn phí.
+     Thu hộ COD: GHN miễn phí tới 1 triệu, trên 1 triệu 0,5% – shop chịu, KHÔNG cộng vào phí của khách.
+     Muốn đổi hãng: sửa bảng giá bên dưới. shipFee ở trên chỉ còn dùng khi xoá khối này. */
+  shipping: {
+    hang: 'GHN',
+    noiTinh: ['Hà Nội'],                                   // tỉnh gửi hàng
+    noiVung: ['Hải Phòng', 'Bắc Ninh', 'Cao Bằng', 'Hưng Yên', 'Lai Châu', 'Lào Cai', 'Lạng Sơn', 'Ninh Bình', 'Phú Thọ', 'Quảng Ninh', 'Sơn La', 'Thái Nguyên', 'Tuyên Quang', 'Điện Biên'],   // miền Bắc; tỉnh còn lại = liên vùng
+    goiDau: 2000,                                          // gram tính trong giá gói đầu
+    bangGia: {                                             // gia: gói đầu · moi500: mỗi 500g thêm (dưới 4kg / từ 4kg)
+      noiTinh:  { ten: 'Nội tỉnh',  gia: 15500, moi500: 2000, moi500Tu4kg: 3000 },
+      noiVung:  { ten: 'Nội vùng',  gia: 18000, moi500: 3500, moi500Tu4kg: 5000 },
+      lienVung: { ten: 'Liên vùng', gia: 19000, moi500: 3500, moi500Tu4kg: 5000 },
+    },
+    dongGoi: 100,                                          // gram thùng/hộp đóng gói cộng thêm mỗi đơn
+    /* Cân nặng ước tính (gram) cho 1 đơn vị = phân loại đầu tiên. Phân loại khác quy đổi theo tỉ lệ giá (2 hộp ≈ 2 lần). */
+    gramTheoDanhMuc: { 'nuoc-ep': 1100, 'sua': 1000, 'hong-sam': 450, 'vitamin': 200, 'tang-can': 400, 'rong-bien': 500, 'thuc-pham': 600, 'cho-me': 350 },
+    gramTheoSP: {
+      '26523206270': 12500,  // sữa tươi Norco – 1 thùng 12 hộp 1L
+      '26060839019': 700,    // váng sữa Calciumore 30 gói
+      '42878618667': 150,    // D3K2 30ml
+      '41002695070': 600,    // rong biển Sung Gyung 500g
+      '28467224687': 1100,   // táo đỏ 1kg
+      '43532388498': 300,    // granola 200g
+      '19491505209': 1050, '19682441455': 1050, '20992159167': 1050,   // sữa Biostime 800g
+      '47357633686': 1300,   // sâm Pinkfong
+      '27355720019': 550,    // hồng sâm Rich Kid 10 gói 40ml
+      '48112514210': 500,    // collagen 90 gói
+      '50002678694': 3000,   // thảm ngải cứu
+      '27809051612': 1000,   // cặp dầu gội & xả 400ml
+      '24465090622': 450,    // sữa tắm 300ml
+      '24767149051': 200,    // NMN 60 viên
+    },
+  },
   expert: { title: 'Chuyên gia dinh dưỡng', phone: '+84392312796', display: '(+84) 392 312 796', zalo: 'https://zalo.me/0392312796' },  // gặp trực tiếp chuyên gia
   bank: { name: 'BIDV', fullName: 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)', bin: '970418', account: '8855349222', holder: 'DO VAN HOANG' },  // holder: tên chủ tài khoản in hoa không dấu (VD: NGUYEN VAN A) – hiện cạnh mã QR
   orderEndpoint: 'https://script.google.com/macros/s/AKfycbzgqygxD6zYswgL8HtoBcvWvYRTQjjejhpt7H2Sqz9LcrzHVk0zt4iKf6_7JerNSUgG/exec',  // dán link Google Apps Script (đuôi /exec) để đơn tự về Google Sheet + email + Telegram; xem README

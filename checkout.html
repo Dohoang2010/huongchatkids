@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929e">
+  <link rel="stylesheet" href="css/style.css?v=20260929f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -16,14 +16,14 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20260929e"></script>
-<script src="js/diachi.js?v=20260929e"></script>
+<script src="js/data.js?v=20260929f"></script>
+<script src="js/diachi.js?v=20260929f"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929e"></script>
+<script src="js/app.js?v=20260929f"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
-          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, byId, isForMom, rankDefault } = MC;
+          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, byId, isForMom, rankDefault, shipText, ghnInfo } = MC;
   let lines = Cart.lines();
   if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Mẹ chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
   const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
@@ -46,8 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
     if (!loy.combineWithCoupon && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0);
-    const ship = r && r.ok && r.freeship && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod);
-    return { r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, discount, ship, total: Math.max(0, base - discount) + ship };
+    /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
+    const city = form.elements.city.value;
+    let ship = r && r.ok && r.freeship && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
+    if (!city && ship && shipMethod !== 'express') ship = null;
+    return { r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, discount, ship, city, total: Math.max(0, base - discount) + (ship || 0) };
   };
   const canExpress = (cityName) => (SITE.expressCities || []).some((x) => (cityName || '').includes(x));
   const dc = addrParse(c.address || '');
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div id="giftWrap">${giftBox(qua, true, quaVi)}</div>
         <div class="card card--pad"><h3><span class="num">2</span>Vận chuyển</h3><div class="form-grid">
-          <label class="ship-option"><input type="radio" name="ship" value="standard" checked><div><b>Giao tiêu chuẩn</b><small>Nội thành Hà Nội trong ngày · Tỉnh khác 1–3 ngày</small></div><span class="fee ${shipFee(sub - multi) ? '' : 'text-teal'}" id="stdFee">${shipFee(sub - multi) ? fmt(shipFee(sub - multi)) : 'Miễn phí'}</span></label>
+          <label class="ship-option"><input type="radio" name="ship" value="standard" checked><div><b>Giao tiêu chuẩn</b><small>Nội thành Hà Nội trong ngày · Tỉnh khác 1–3 ngày</small></div><span class="fee" id="stdFee"></span></label>
           <label class="ship-option" id="expressOpt"><input type="radio" name="ship" value="express"><div><b>Giao hoả tốc 2–4h</b><small>Chỉ nội thành Hà Nội, đặt trước 16h</small></div><span class="fee">${fmt(SITE.expressFee || 35000)}</span></label>
         </div></div>
         <div class="card card--pad"><h3><span class="num">3</span>Thanh toán</h3><div class="pay-options">
@@ -105,7 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
       + (k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="text-teal">−${fmt(k.hangAmt)}</span></div>` : '')
       + (k.dungMa ? `<div class="summary-line"><span>Giảm giá (${k.r.code})</span><span class="text-teal">−${fmt(k.couponAmt)}</span></div>` : '')
       + (qua && qua.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">${esc(qua.moTa)}</span></div>` : '')
-      + `<div class="summary-line"><span>Phí vận chuyển</span><span class="${k.ship ? '' : 'free'}">${k.ship ? fmt(k.ship) : 'Miễn phí'}</span></div><div class="summary-line total"><span>Tổng cộng</span><b>${fmt(k.total)}</b></div>`;
+      + `<div class="summary-line"><span>Phí vận chuyển${k.ship && shipMethod !== 'express' ? ` <small class="text-muted">(${esc(ghnInfo(k.city, lines))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div><div class="summary-line total"><span>${k.ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(k.total)}</b></div>`;
+    /* Phí ô "Giao tiêu chuẩn" theo tỉnh đang chọn */
+    const city = form.elements.city.value; let std = shipFee(sub - multi, 'standard', { tinh: city || '?', lines }); if (!city && std) std = null;
+    const fe = $('#stdFee'); fe.innerHTML = shipText(std); fe.classList.toggle('text-teal', std === 0);
     $('#coTotal').textContent = fmt(k.total); $('#stickyTotal').textContent = fmt(k.total);
     const bandMa = !loy.combineWithCoupon && k.couponAmt > 0 && !k.dungMa;
     $('#couponHint').innerHTML = bandMa ? `<span class="text-muted">Mã ${esc(k.r.code)} giảm ${fmt(k.couponAmt)} – ít hơn ưu đãi hạng ${esc(k.hang.label)} nên web đang áp dụng mức có lợi hơn cho mẹ.</span>`
@@ -158,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#orderCount').textContent = Cart.count();
     $('#orderItems').innerHTML = itemsHTML();
     $('#giftWrap').innerHTML = giftBox(qua, true, quaVi);
-    const f = shipFee(sub - multi); const fe = $('#stdFee'); fe.textContent = f ? fmt(f) : 'Miễn phí'; fe.classList.toggle('text-teal', !f);
     renderSummary(); renderUpsell();
   };
   document.addEventListener('cart:change', refreshOrder);
@@ -211,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('input', (e) => { if (e.target.name === 'phone') { clearTimeout(tPhone); tPhone = setTimeout(kiemTraSdt, 600); } });
   form.addEventListener('change', (e) => {
     if (e.target.name === 'ship') { shipMethod = e.target.value; renderSummary(); }
-    if (e.target.name === 'city') { form.elements.ward.innerHTML = xaOptions(e.target.value, ''); syncExpress(); }
+    if (e.target.name === 'city') { form.elements.ward.innerHTML = xaOptions(e.target.value, ''); syncExpress(); renderSummary(); }
     if (e.target.name === 'giftVi') { quaVi = e.target.value; $$('.giftbox__vi .chip').forEach((ch) => ch.classList.toggle('is-on', ch.querySelector('input').checked)); const n = $('#giftViNote'); if (n) n.textContent = quaVi; }
   });
   document.addEventListener('click', (e) => {

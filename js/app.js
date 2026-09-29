@@ -191,7 +191,57 @@
       }, 700);
     });
   }
-  function shipFee(subtotal, method = 'standard') { if (method === 'express') return SITE.expressFee || 35000; return subtotal >= SITE.freeshipFrom || subtotal === 0 ? 0 : SITE.shipFee; }
+  /* ---------------- Phí vận chuyển: bảng giá GHN (SITE.shipping) theo vùng + cân nặng ---------------- */
+  const vnKey = (s) => stripVN(s).replace(/^(TP|THANH PHO|TINH) /, '');
+  /* Tỉnh nhận hàng: từ địa chỉ đã lưu dạng "Tỉnh|Xã|…" hoặc tìm tên tỉnh trong địa chỉ gõ tự do */
+  function tinhTuDiaChi(addr) {
+    if (!addr) return '';
+    const a = addrParse(addr); if (a.tinh && String(addr).includes('|')) return a.tinh;
+    const s = ' ' + stripVN(addr) + ' ';
+    const S = SITE.shipping || {};
+    const ds = [...(window.DIA_CHI || []).map((p) => p.t), ...(S.noiTinh || []), ...(S.noiVung || [])];
+    const hit = ds.find((t) => s.includes(' ' + vnKey(t) + ' '));
+    return hit || (/ (HN|HA NOI) /.test(s) ? 'Hà Nội' : / (HCM|SAI GON|SG) /.test(s) ? 'TP. Hồ Chí Minh' : '');
+  }
+  function vungShip(tinh) {
+    const S = SITE.shipping || {}; const k = vnKey(tinh);
+    if ((S.noiTinh || []).some((t) => vnKey(t) === k)) return 'noiTinh';
+    if ((S.noiVung || []).some((t) => vnKey(t) === k)) return 'noiVung';
+    return 'lienVung';
+  }
+  /* Cân nặng đơn (gram): cân 1 đơn vị × tỉ lệ giá phân loại so với phân loại đầu × số lượng + đóng gói */
+  function canNang(lines) {
+    const S = SITE.shipping || {};
+    return (lines || []).reduce((sum, l) => {
+      const p = l.p || byId(l.id); if (!p) return sum;
+      const g = (S.gramTheoSP || {})[p.id] || (S.gramTheoDanhMuc || {})[p.cat] || 500;
+      const gocGia = p.variants && p.variants[0] ? p.variants[0].price : p.price;
+      const heSo = gocGia ? Math.max(0.5, (l.price || gocGia) / gocGia) : 1;
+      return sum + g * heSo * (l.qty || 1);
+    }, (lines || []).length ? S.dongGoi || 0 : 0);
+  }
+  /* Báo giá GHN: { fee, vung, tenVung, gram } */
+  function ghnQuote(lines, tinh) {
+    const S = SITE.shipping; const vung = vungShip(tinh); const b = S.bangGia[vung];
+    const gram = Math.round(canNang(lines)); let fee = b.gia;
+    for (let w = S.goiDau || 2000; w < gram; w += 500) fee += w + 500 > 4000 ? b.moi500Tu4kg : b.moi500;
+    return { fee, vung, tenVung: b.ten, gram };
+  }
+  /* Phí ship của đơn. ctx: { tinh, lines }. Chưa biết tỉnh → null (hiện "theo địa chỉ"). */
+  function shipFee(subtotal, method = 'standard', ctx = {}) {
+    if (method === 'express') return SITE.expressFee || 35000;
+    if (subtotal >= SITE.freeshipFrom || subtotal === 0) return 0;
+    if (!SITE.shipping) return SITE.shipFee;
+    const tinh = ctx.tinh || tinhTuDiaChi((Customer.get() || {}).address);
+    if (!tinh) return null;
+    return ghnQuote(ctx.lines || Cart.lines(), tinh).fee;
+  }
+  /* Phí thấp nhất (nội tỉnh, gói đầu) – hiện "từ …" khi chưa có địa chỉ */
+  const shipFrom = () => (SITE.shipping ? SITE.shipping.bangGia.noiTinh.gia : SITE.shipFee);
+  /* Ô "Phí vận chuyển" dùng chung */
+  /* Ghi chú nhỏ cạnh phí: vùng + cân nặng, VD "GHN · Nội vùng · 1,2kg" */
+  const ghnInfo = (tinh, lines) => { if (!SITE.shipping || !tinh) return ''; const q = ghnQuote(lines, tinh); return `${SITE.shipping.hang} · ${q.tenVung} · ${(q.gram / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })}kg`; };
+  const shipText = (ship) => (ship === null ? `<span class="text-muted">từ ${fmt(shipFrom())} · theo địa chỉ</span>` : ship ? fmt(ship) : 'Miễn phí');
   const productThumb = (p) => p.thumb || productImage(p);
   const addrShow = (a) => addrFull(addrParse(a));
   const shortName = (p) => p.short || p.name;
@@ -478,8 +528,8 @@
         <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div><button class="remove" type="button" data-remove="${l.id}" data-variant="${l.variant}">Xoá</button></div></div>
         <div class="total">${fmt(l.total)}</div></div>`).join('');
     const multi = Cart.multiDiscount(); const ship = shipFee(sub - multi);
-    foot.innerHTML = `<div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><b>${fmt(sub)}</b></div>${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(multi)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển</span><span class="${ship ? '' : 'free'}">${ship ? fmt(ship) : 'Miễn phí'}</span></div>
-      <a class="btn btn--primary btn--lg btn--block" href="checkout.html">${I.zap}Thanh toán ngay · ${fmt(sub - multi + ship)}</a>
+    foot.innerHTML = `<div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><b>${fmt(sub)}</b></div>${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(multi)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển</span><span class="${ship === 0 ? 'free' : ''}">${shipText(ship)}</span></div>
+      <a class="btn btn--primary btn--lg btn--block" href="checkout.html">${I.zap}Thanh toán ngay · ${fmt(sub - multi + (ship || 0))}</a>
       <a class="btn btn--ghost btn--block" href="cart.html">Xem chi tiết giỏ hàng</a>`;
   }
   function openCart() { renderDrawer(); const d = $('#cartDrawer'); d.classList.add('is-open'); d.setAttribute('aria-hidden', 'false'); lockScroll(); setTimeout(() => $('#cartDrawer [data-close-cart].modal__close')?.focus(), 50); }
@@ -496,7 +546,9 @@
   /* ---------------- Quick Buy (Mua nhanh 1-chạm) ---------------- */
   const QB = { id: null, variant: null, qty: 1, coupon: '', quaVi: '' };
   /* Dòng giỏ hàng giả lập để tính quà tặng cho đơn mua nhanh */
-  function qbLines() { const p = byId(QB.id); if (!p) return []; const { price, label } = qbPrice(); return [{ p, id: p.id, qty: QB.qty, total: price * QB.qty, variantLabel: label }]; }
+  function qbLines() { const p = byId(QB.id); if (!p) return []; const { price, label } = qbPrice(); return [{ p, id: p.id, qty: QB.qty, price, total: price * QB.qty, variantLabel: label }]; }
+  /* Tỉnh nhận của đơn mua nhanh: đoán từ ô địa chỉ; gõ đủ địa chỉ mà không nhận ra tỉnh → tính như liên vùng */
+  function qbTinh() { const f = $('#qbForm'); const a = (f && f.elements.address ? f.elements.address.value : '') || addrShow((Customer.get() || {}).address); return tinhTuDiaChi(a) || (a.trim().length >= 10 ? 'Khác' : ''); }
   function qbPhone() { const f = $('#qbForm'); const v = f && f.elements.phone ? f.elements.phone.value : ''; return v || (Customer.get() || {}).phone || ''; }
   function qbPrice() { const p = byId(QB.id); const v = QB.variant != null && p.variants ? p.variants[QB.variant] : null; return { price: v ? v.price : p.price, old: v ? v.oldPrice : p.oldPrice, label: v ? v.label : '' }; }
   function qbCalc() {
@@ -509,8 +561,8 @@
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
     if (!loy.combineWithCoupon && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0);
-    const ship = cr && cr.ok && cr.freeship ? 0 : shipFee(base - discount);
-    return { sub, multi, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, ship, total: Math.max(0, base - discount) + ship };
+    const ship = cr && cr.ok && cr.freeship ? 0 : shipFee(base - discount, 'standard', { tinh: qbTinh(), lines: qbLines() });
+    return { sub, multi, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, ship, total: Math.max(0, base - discount) + (ship || 0) };
   }
   const qbTotal = () => qbCalc().total;
   function openQuickBuy(id, opts = {}) {
@@ -547,6 +599,7 @@
           <button class="btn btn--ghost" type="button" data-callback="${p.id}">${I.headset}Gọi lại tôi</button>
         </div></div>
       </div>`;
+    $('#qbForm input[name=address]').addEventListener('input', debounce(qbRefresh, 400));
     qbRefresh(); openModal('#quickBuy'); setTimeout(() => { if (!known) $('#qbForm input[name=name]').focus(); else $('#qbSubmit').focus(); }, 300);
   }
   function qbRefresh() {
@@ -557,7 +610,7 @@
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
     const g = giftFor(qbLines()); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
     const gw = $('#qbGift'); if (gw) gw.innerHTML = giftBox(g, true, QB.quaVi);
-    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển</span><span class="${k.ship ? '' : 'free'}">${k.ship ? fmt(k.ship) : 'Miễn phí'}</span></div>`;
+    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
     const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`) : '';
     $$('#qbVariants [data-qb-variant]').forEach((b) => { const on = Number(b.dataset.qbVariant) === QB.variant; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
     const z = $('#quickBuy [data-zalo-copy]'); const p = byId(QB.id); if (z && p) z.dataset.zaloCopy = `${shortName(p)}${p.variants && QB.variant != null ? ' – ' + p.variants[QB.variant].label : ''} × ${QB.qty}`;
@@ -927,5 +980,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, laNuocLotte };
+    giftFor, giftNote, giftBox, laNuocLotte, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

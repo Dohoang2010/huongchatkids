@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929e">
+  <link rel="stylesheet" href="css/style.css?v=20260929f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -17,15 +17,15 @@
   <h1 class="page-title">Giỏ hàng của mẹ</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20260929e"></script>
+<script src="js/data.js?v=20260929f"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929e"></script>
+<script src="js/app.js?v=20260929f"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const { $, $$, fmt, I, listPrice, productThumb, shortName, productCard, Cart, esc, shipFee, applyCoupon, store, toast, giftFor, giftBox } = MC;
+  const { $, $$, fmt, I, listPrice, productThumb, shortName, productCard, Cart, esc, shipFee, shipText, applyCoupon, store, toast, giftFor, giftBox } = MC;
   const render = () => {
     const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', ''); const c = coupon ? applyCoupon(coupon, sub - multi) : null;
-    const discount = c && c.ok ? c.discount : 0; const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + ship;
+    const discount = c && c.ok ? c.discount : 0; const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + (ship || 0);
     if (!lines.length) { $('#cartPage').innerHTML = `<div class="empty card" style="grid-column:1/-1"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p>Mẹ chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div><section class="section" style="grid-column:1/-1"><div class="section-head"><div><h2>Mẹ tin dùng nhất</h2></div></div><div class="grid grid--4">${[...PRODUCTS].sort((a, b) => b.sold - a.sold).slice(0, 4).map((p) => productCard(p)).join('')}</div></section>`; return; }
     $('#cartPage').innerHTML = `
       <div class="card card--pad cart-table">
@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : ''}
         ${discount ? `<div class="summary-line"><span>Giảm giá (${c.code})</span><span class="text-teal">−${fmt(discount)}</span></div>` : ''}
         ${(() => { const g = giftFor(lines); return g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">🎁 ${esc(g.moTa)}</span></div>` : ''; })()}
-        <div class="summary-line"><span>Phí vận chuyển</span><span class="${ship ? '' : 'free'}">${ship ? fmt(ship) : 'Miễn phí'}</span></div>
-        <div class="summary-line total"><span>Tổng cộng</span><b>${fmt(total)}</b></div>
+        <div class="summary-line"><span>Phí vận chuyển</span><span class="${ship === 0 ? 'free' : ''}">${shipText(ship)}</span></div>
+        <div class="summary-line total"><span>${ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(total)}</b></div>
         <a class="btn btn--primary btn--lg btn--block mt-16" href="checkout.html">${I.zap}Đặt hàng · ${fmt(total)}</a>
         <div class="qb__trust"><span>${I.check}Kiểm tra hàng trước khi thanh toán</span><span>${I.check}Đổi trả 7 ngày</span></div>
         <div class="divider"></div>
