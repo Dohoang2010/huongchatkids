@@ -39,6 +39,15 @@ window.SITE = {
   advisor: 'Chuyên gia dinh dưỡng',  // danh xưng người tư vấn hiển thị trên toàn bộ website
   showReviews: false,                 // true → hiện thêm mảng REVIEWS (đánh giá do shop nhập) ở trang chủ & trang sản phẩm
   showOldPrice: false,                // false → web CHỈ hiện giá bán, ẩn hết giá niêm yết (giá gạch ngang) và % giảm. Đổi thành true nếu muốn hiện lại.
+  /* Khách hàng thân thiết: nhận diện bằng SỐ ĐIỆN THOẠI, xác thực bằng mã OTP.
+     Dữ liệu khách nằm trong Google Sheet của shop (qua Apps Script ở orderEndpoint). */
+  loyalty: {
+    enabled: true,
+    endpoint: '',              // để trống = dùng chung link Apps Script ở orderEndpoint
+    combineWithCoupon: false,  // false = KHÔNG cộng dồn ưu đãi hạng với mã giảm giá, web tự lấy mức có lợi nhất cho khách
+    otpPhut: 10,               // mã OTP sống bao nhiêu phút
+    nhoPhienNgay: 30,          // đăng nhập bằng OTP xong thì nhớ máy khách bao nhiêu ngày
+  },
   flashSaleEnd: 'daily',  // 'daily' = ưu đãi trong hôm nay (đếm ngược tới 24:00, mỗi ngày tự đếm lại); hoặc đặt hạn cụ thể '2026-09-30T23:59:59+07:00' (qua ngày này countdown tự ẩn)
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
 };
@@ -600,10 +609,35 @@ window.POSTS = [
     body: ['1. Tem phụ tiếng Việt: ghi rõ nhà nhập khẩu, số công bố, hạn dùng.', '2. Mã QR/mã vạch: quét được thông tin sản phẩm trùng với hộp.', '3. Bao bì: seal, nắp nguyên vẹn, không móp rách; hạn dùng còn dài.', '4. Chữ Hàn trên bao bì rõ nét, in sắc; hàng giả thường mờ, sai chính tả.', '5. Hoá đơn: yêu cầu hoá đơn VAT khi mua – Hương Chất Kids xuất hoá đơn cho mọi đơn hàng.'] },
 ];
 
+/* =====================================================================
+   QUÀ TẶNG KÈM – web tự tính và tự thêm quà vào đơn hàng
+   Hai chương trình KHÔNG áp dụng song song: web lấy chương trình tặng nhiều quà hơn.
+     1) donTu  : đơn hàng (KHÔNG tính nước dinh dưỡng Lotte) từ 1.000.000đ → tặng 5 gói
+     2) thung  : mua thùng nước dinh dưỡng Lotte → 1 thùng 5 gói, 2 thùng 10 gói, từ 3 thùng 20 gói
+   ===================================================================== */
+window.QUA_TANG = {
+  enabled: true,
+  ten: 'gói nước ép Lotte',
+  vi: ['Hồng – Tăng cân tự nhiên', 'Cam – Đề kháng'],   // khách chọn 1 vị khi đặt hàng
+  donTu: { muc: 1000000, soQua: 5 },
+  thung: [{ tu: 1, soQua: 5 }, { tu: 2, soQua: 10 }, { tu: 3, soQua: 20 }],
+  loc: { cat: 'nuoc-ep', brand: 'lotte' },   // sản phẩm được tính là "nước dinh dưỡng Lotte"
+  tuKhoaThung: 'thùng',                       // phân loại có chữ này được tính là 1 thùng
+};
+
+/* Hạng khách hàng – xét theo TỔNG TIỀN ĐÃ CHI TIÊU (cộng các đơn đã đặt, trừ đơn huỷ/hoàn).
+   Sửa mốc tiền hoặc % giảm ngay tại đây, web và Apps Script đều dùng chung bảng này. */
+window.TIERS = [
+  { key: 'moi',     label: 'Khách mới',  icon: '🌱', color: '#78909C', min: 0,         discount: 0,  desc: 'Mua đủ 5 triệu để lên hạng Silver' },
+  { key: 'silver',  label: 'Silver',     icon: '🥈', color: '#78909C', min: 5000000,   discount: 5,  desc: 'Giảm 5% mọi đơn hàng' },
+  { key: 'gold',    label: 'Gold',       icon: '🥇', color: '#C98A12', min: 50000000,  discount: 10, desc: 'Giảm 10% mọi đơn hàng' },
+  { key: 'diamond', label: 'Diamond',    icon: '💎', color: '#1E9CB8', min: 100000000, discount: 12, desc: 'Giảm 12% mọi đơn hàng' },
+];
+
 window.COUPONS = {
   HCK10: { type: 'percent', value: 10, max: 100000, min: 300000, desc: 'Giảm 10% (tối đa 100K) cho đơn từ 300K' },
   FREESHIP:  { type: 'ship', value: 0, min: 300000, desc: 'Miễn phí vận chuyển cho đơn từ 300K' },
-  MOI50:     { type: 'fixed', value: 50000, min: 500000, desc: 'Giảm 50K cho đơn đầu tiên từ 500K' },
+  MOI50:     { type: 'fixed', value: 50000, min: 500000, desc: 'Giảm 50K cho đơn đầu tiên từ 500K', donDau: true },   // donDau: chỉ dành cho khách chưa mua lần nào
 };
 
 window.PROVINCES = ['TP. Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái'];

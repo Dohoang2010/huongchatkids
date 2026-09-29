@@ -193,7 +193,7 @@
   }
   function shipFee(subtotal, method = 'standard') { if (method === 'express') return SITE.expressFee || 35000; return subtotal >= SITE.freeshipFrom || subtotal === 0 ? 0 : SITE.shipFee; }
   const productThumb = (p) => p.thumb || productImage(p);
-  const addrShow = (a) => { const [cty, ...rst] = String(a || '').split('|'); return rst.length ? `${rst.join('|').trim()}, ${cty.trim()}` : String(a || ''); };
+  const addrShow = (a) => addrFull(addrParse(a));
   const shortName = (p) => p.short || p.name;
   const hoursNote = () => `trong giờ làm việc ${SITE.workingHours}; ngoài giờ sẽ gọi vào sáng hôm sau`;
   function applyCoupon(code, subtotal) {
@@ -450,7 +450,8 @@
       </div>
     </div>
     <div class="modal" id="quickBuy" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Mua nhanh"><div class="modal__backdrop" data-close-modal></div><div class="modal__panel"><div class="modal__grip"></div><div id="quickBuyContent"></div></div></div>
-    <div class="modal" id="callbackModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Yêu cầu gọi lại"><div class="modal__backdrop" data-close-modal></div><div class="modal__panel modal__panel--sm"><div class="modal__grip"></div><div id="callbackContent"></div></div></div>`;
+    <div class="modal" id="callbackModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Yêu cầu gọi lại"><div class="modal__backdrop" data-close-modal></div><div class="modal__panel modal__panel--sm"><div class="modal__grip"></div><div id="callbackContent"></div></div></div>
+    <div class="modal" id="otpModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Xác thực số điện thoại"><div class="modal__backdrop" data-close-modal></div><div class="modal__panel modal__panel--sm"><div class="modal__grip"></div><div id="otpContent"></div></div></div>`;
     document.body.insertAdjacentHTML('afterbegin', header);
     document.body.insertAdjacentHTML('beforeend', footer);
     const page = location.pathname.split('/').pop().replace('.html', '') || 'index';
@@ -490,16 +491,26 @@
   function lockScroll() { if (document.body.classList.contains('no-scroll')) return; _lockY = window.scrollY; document.body.style.top = `-${_lockY}px`; document.body.classList.add('no-scroll'); }
   function unlockScroll() { if ($('.modal.is-open') || $('.drawer.is-open') || $('.mmenu.is-open')) return; document.body.classList.remove('no-scroll'); document.body.style.top = ''; window.scrollTo(0, _lockY); }
   function openModal(id) { const m = $(id); m.classList.add('is-open'); m.setAttribute('aria-hidden', 'false'); lockScroll(); }
-  function closeModal(el) { const m = el.closest ? el.closest('.modal') : $(el); if (m) { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); } unlockScroll(); }
+  function closeModal(el) { const m = el.closest ? el.closest('.modal') : $(el); if (m) { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); m.dispatchEvent(new CustomEvent('mc:closed')); } unlockScroll(); }
 
   /* ---------------- Quick Buy (Mua nhanh 1-chạm) ---------------- */
-  const QB = { id: null, variant: null, qty: 1, coupon: '' };
+  const QB = { id: null, variant: null, qty: 1, coupon: '', quaVi: '' };
+  /* Dòng giỏ hàng giả lập để tính quà tặng cho đơn mua nhanh */
+  function qbLines() { const p = byId(QB.id); if (!p) return []; const { price, label } = qbPrice(); return [{ p, id: p.id, qty: QB.qty, total: price * QB.qty, variantLabel: label }]; }
+  function qbPhone() { const f = $('#qbForm'); const v = f && f.elements.phone ? f.elements.phone.value : ''; return v || (Customer.get() || {}).phone || ''; }
   function qbPrice() { const p = byId(QB.id); const v = QB.variant != null && p.variants ? p.variants[QB.variant] : null; return { price: v ? v.price : p.price, old: v ? v.oldPrice : p.oldPrice, label: v ? v.label : '' }; }
   function qbCalc() {
     const { price } = qbPrice(); const sub = price * QB.qty; const multi = QB.qty >= 2 ? Math.round(sub * MULTI_RATE) : 0;
-    const cr = QB.coupon ? applyCoupon(QB.coupon, sub - multi) : null; const coupon = cr && cr.ok ? cr.discount : 0;
-    const ship = cr && cr.ok && cr.freeship ? 0 : shipFee(sub - multi - coupon);
-    return { sub, multi, coupon, cr, ship, total: Math.max(0, sub - multi - coupon) + ship };
+    const base = sub - multi;
+    const cr = QB.coupon ? applyCoupon(QB.coupon, base) : null; const couponAmt = cr && cr.ok ? cr.discount : 0;
+    const loy = SITE.loyalty || {};
+    const pct = loy.enabled ? Session.discountFor(qbPhone()) : 0;
+    const hang = tierOf(Session.spent()); const hangAmt = pct ? Math.round(base * pct / 100) : 0;
+    let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
+    if (!loy.combineWithCoupon && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
+    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0);
+    const ship = cr && cr.ok && cr.freeship ? 0 : shipFee(base - discount);
+    return { sub, multi, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, ship, total: Math.max(0, base - discount) + ship };
   }
   const qbTotal = () => qbCalc().total;
   function openQuickBuy(id, opts = {}) {
@@ -523,6 +534,7 @@
             <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><span><b>Chuyển khoản / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} ${SITE.bank.account} · quét QR sau khi đặt` : 'Quét mã QR sau khi đặt'}</small></span></label>
           </div>
           <details class="qb__coupon"><summary>${I.tag}Có mã giảm giá? <span class="text-muted">(VD: HCK10)</span></summary><div class="coupon mt-8"><input class="input" id="qbCoupon" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div></details>
+          <div id="qbGift"></div>
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
           <div class="form-error hide" id="qbError" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block btn--stack" type="submit" id="qbSubmit"><span>ĐẶT HÀNG · <span id="qbTotal"></span></span><small>Không cần tài khoản · Kiểm tra hàng trước khi thanh toán</small></button>
@@ -543,7 +555,9 @@
     $('#qbTotal').textContent = fmt(k.total);
     $('#qbQty').value = QB.qty;
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
-    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển</span><span class="${k.ship ? '' : 'free'}">${k.ship ? fmt(k.ship) : 'Miễn phí'}</span></div>`;
+    const g = giftFor(qbLines()); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
+    const gw = $('#qbGift'); if (gw) gw.innerHTML = giftBox(g, true, QB.quaVi);
+    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển</span><span class="${k.ship ? '' : 'free'}">${k.ship ? fmt(k.ship) : 'Miễn phí'}</span></div>`;
     const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`) : '';
     $$('#qbVariants [data-qb-variant]').forEach((b) => { const on = Number(b.dataset.qbVariant) === QB.variant; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
     const z = $('#quickBuy [data-zalo-copy]'); const p = byId(QB.id); if (z && p) z.dataset.zaloCopy = `${shortName(p)}${p.variants && QB.variant != null ? ' – ' + p.variants[QB.variant].label : ''} × ${QB.qty}`;
@@ -558,13 +572,21 @@
     Customer.set({ ...(Customer.get() || {}), name, phone, address, payment });
     const btn = $('#qbSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang gửi đơn…</span>';
     const p = byId(QB.id); const { price, label } = qbPrice(); const k = qbCalc();
-    const order = await submitOrder({ type: 'quick', customer: { name, phone, address }, payment, coupon: k.cr && k.cr.ok ? k.cr.code : '', items: [{ id: p.id, name: p.name, short: shortName(p), variant: label, qty: QB.qty, price }], subtotal: k.sub, discount: k.multi + k.coupon, ship: k.ship, total: k.total });
+    const g = giftFor(qbLines()); const ss = Session.get();
+    const order = await submitOrder({ type: 'quick', customer: { name, phone: phoneKey(phone), address }, payment,
+      coupon: k.dungMa && k.cr && k.cr.ok ? k.cr.code : '',
+      hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', giamHang: k.dungHang ? k.hangAmt : 0,
+      token: ss ? ss.token : '',
+      qua: g && g.soQua ? { soQua: g.soQua, ten: g.ten, vi: QB.quaVi, chuongTrinh: g.chuongTrinh, moTa: `${g.moTa} (${QB.quaVi})` } : null,
+      items: [{ id: p.id, name: p.name, short: shortName(p), variant: label, qty: QB.qty, price }], subtotal: k.sub, discount: k.multi + (k.dungHang ? k.hangAmt : 0) + k.coupon, ship: k.ship, total: k.total });
+    if (Session.get()) refreshProfile();
     $('#quickBuyContent').innerHTML = orderSuccessHTML(order, true);
     setTimeout(() => $('#quickBuy .qb__success h3')?.focus(), 100);
   }
   function orderSuccessHTML(order, inModal) {
     const payNote = order.payment === 'bank' ? `<span><i>2</i><p>Mẹ chuyển khoản <b>${fmt(order.total)}</b> theo mã QR ở trên (số tiền và nội dung đã điền sẵn). Đơn được giao ngay khi nhận được tiền.</p></span>` : `<span><i>2</i><p>Mẹ thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</p></span>`;
-    const items = (order.items || []).map((it) => `<li>${esc(it.short || it.name)}${it.variant ? ` – ${esc(it.variant)}` : ''} <b>× ${it.qty || 1}</b></li>`).join('');
+    const items = (order.items || []).map((it) => `<li>${esc(it.short || it.name)}${it.variant ? ` – ${esc(it.variant)}` : ''} <b>× ${it.qty || 1}</b></li>`).join('')
+      + (order.qua && order.qua.soQua ? `<li class="li-gift">🎁 Quà tặng: ${esc(order.qua.moTa || order.qua.ten)}</li>` : '');
     return `${inModal ? `<div class="modal__head"><h3>${I.checkCircle}Đặt hàng thành công</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>` : ''}
       <div class="modal__body"><div class="qb__success">
         <div class="check">${I.check}</div>
@@ -645,7 +667,7 @@
       else if (t.dataset.wish !== undefined) { e.preventDefault(); const on = Wish.toggle(t.dataset.wish); t.classList.toggle('is-on', on); toast(on ? 'Đã thêm vào yêu thích 💗' : 'Đã bỏ yêu thích'); }
       else if (t.dataset.reorder !== undefined) { const o = store.get('mc_last_order'); if (o && o.items) { o.items.forEach((it) => { const p = byId(it.id); if (p) Cart.add(it.id, it.qty || 1, it.variant && p.variants ? p.variants.findIndex((v) => v.label === it.variant) : null); }); location.href = 'checkout.html'; } }
     });
-    document.addEventListener('change', (e) => { const i = e.target.closest('[data-qty-input]'); if (i) { Cart.setQty(i.dataset.qtyInput, i.dataset.variant, Number(i.value) || 1); renderDrawer(); } if (e.target.id === 'qbVariantSel') { QB.variant = Number(e.target.value); qbRefresh(); } });
+    document.addEventListener('change', (e) => { const i = e.target.closest('[data-qty-input]'); if (i) { Cart.setQty(i.dataset.qtyInput, i.dataset.variant, Number(i.value) || 1); renderDrawer(); } if (e.target.id === 'qbVariantSel') { QB.variant = Number(e.target.value); qbRefresh(); } if (e.target.name === 'giftVi' && e.target.closest('#qbGift')) { QB.quaVi = e.target.value; qbRefresh(); } if (e.target.name === 'phone' && e.target.closest('#qbForm')) qbRefresh(); });
     document.addEventListener('submit', (e) => { if (e.target.id === 'qbForm') { e.preventDefault(); qbSubmit(e.target); } });
     document.addEventListener('input', (e) => { if (e.target.id === 'qbQty') { QB.qty = Math.max(1, Math.min(99, Number(e.target.value) || 1)); qbRefresh(); } });
     document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'qbCoupon') { e.preventDefault(); $('[data-qb-coupon]')?.click(); } });
@@ -707,5 +729,202 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
 
-  window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow };
+  /* =====================================================================
+     KHÁCH HÀNG THÂN THIẾT – hạng, ưu đãi, xác thực OTP, hồ sơ
+     Dữ liệu khách nằm ở Google Sheet của shop, gọi qua Apps Script (SITE.orderEndpoint).
+     Web chỉ đọc được hồ sơ sau khi khách nhập đúng mã OTP gửi về số điện thoại.
+     ===================================================================== */
+  const LOY = () => SITE.loyalty || {};
+  const tiers = () => window.TIERS || [];
+  const TIER_MAC_DINH = { key: 'moi', label: 'Khách mới', icon: '🌱', color: '#78909C', min: 0, discount: 0, desc: '' };
+  function tierOf(spent) { let cur = tiers()[0] || TIER_MAC_DINH; tiers().forEach((t) => { if ((spent || 0) >= t.min) cur = t; }); return cur; }
+  function tierByKey(key) { return tiers().find((t) => t.key === key) || TIER_MAC_DINH; }
+  const tierNext = (spent) => tiers().find((t) => t.min > (spent || 0)) || null;
+  const tierDiscount = (spent) => tierOf(spent).discount || 0;
+  const phoneKey = (v) => String(v || '').replace(/[\s.()-]/g, '').replace(/^\+84/, '0');
+  const maskPhone = (v) => { const p = phoneKey(v); return p.length >= 9 ? p.slice(0, 4) + '***' + p.slice(-2) : p; };
+  const tierBadge = (t) => `<span class="tier-badge" style="--tier:${t.color || '#78909C'}">${t.icon || ''} ${esc(t.label)}</span>`;
+
+  /* Địa chỉ lưu dạng "Tỉnh|Xã|Số nhà, đường". Bản cũ "Tỉnh|Số nhà, đường" vẫn đọc được. */
+  function addrParse(a) {
+    const parts = String(a || '').split('|').map((x) => x.trim());
+    if (parts.length >= 3) return { tinh: parts[0], xa: parts[1], chiTiet: parts.slice(2).join(', ') };
+    if (parts.length === 2) return { tinh: parts[0], xa: '', chiTiet: parts[1] };
+    return { tinh: '', xa: '', chiTiet: parts[0] || '' };
+  }
+  const addrStore = (o) => [o.tinh || '', o.xa || '', o.chiTiet || ''].join('|');
+  const addrFull = (o) => [o.chiTiet, o.xa, o.tinh].filter(Boolean).join(', ');
+
+  /* Gọi Apps Script bằng JSONP – Apps Script không gắn được header CORS cho fetch đọc kết quả. */
+  let jsonpSeq = 0;
+  function loyaltyApi(action, params = {}, timeout = 20000) {
+    const url = LOY().endpoint || SITE.orderEndpoint || '';
+    if (!url) return Promise.reject(new Error('Shop chưa cấu hình nơi lưu thông tin khách hàng'));
+    return new Promise((resolve, reject) => {
+      const cb = 'mcCb' + (++jsonpSeq) + Math.random().toString(36).slice(2, 8);
+      const sc = document.createElement('script');
+      let tid = 0;
+      const done = (fn, arg) => { clearTimeout(tid); try { delete window[cb]; } catch { window[cb] = undefined; } sc.remove(); fn(arg); };
+      tid = setTimeout(() => done(reject, new Error('Máy chủ không phản hồi, mẹ thử lại sau ít phút nhé')), timeout);
+      window[cb] = (data) => done(resolve, data || {});
+      sc.onerror = () => done(reject, new Error('Không kết nối được máy chủ của shop'));
+      const q = new URLSearchParams({ ...params, action, callback: cb });
+      sc.src = url + (url.includes('?') ? '&' : '?') + q.toString();
+      document.head.appendChild(sc);
+    });
+  }
+
+  /* Phiên đăng nhập bằng OTP – lưu ở máy khách, hết hạn theo SITE.loyalty.nhoPhienNgay */
+  const Session = {
+    key: 'mc_session',
+    get() { const s = store.get(this.key, null); if (!s || !s.token) return null; if (s.hetHan && Date.now() > s.hetHan) { this.clear(); return null; } return s; },
+    set(s) { store.set(this.key, s); },
+    patch(v) { const s = this.get(); if (s) this.set({ ...s, ...v }); },
+    clear() { store.set(this.key, null); },
+    phone() { const s = this.get(); return s ? phoneKey(s.sdt) : ''; },
+    kh() { const s = this.get(); return s ? s.kh || null : null; },
+    spent() { const k = this.kh(); return k ? Number(k.tongChiTieu) || 0 : 0; },
+    tier() { return tierOf(this.spent()); },
+    /* Ưu đãi hạng chỉ tính khi số điện thoại đang nhập trùng số đã xác thực */
+    discountFor(phone) {
+      const s = this.get(); if (!s || !LOY().enabled) return 0;
+      if (!phone || phoneKey(phone) !== phoneKey(s.sdt)) return 0;   // phải đúng số đã xác thực OTP
+      return tierDiscount(this.spent());
+    },
+  };
+  function saveSession(res) {
+    if (!res || !res.ok || !res.token) return null;
+    const ngay = Number(LOY().nhoPhienNgay) || 30;
+    const s = { sdt: phoneKey(res.kh && res.kh.sdt), token: res.token, kh: res.kh || {}, donHang: res.donHang || [], hetHan: Date.now() + ngay * 864e5, luc: Date.now() };
+    Session.set(s);
+    const k = s.kh;
+    if (k && k.sdt) Customer.set({ ...(Customer.get() || {}), name: k.ten || '', phone: phoneKey(k.sdt), email: k.email || '', address: addrStore({ tinh: k.tinh, xa: k.xa, chiTiet: k.diaChi }) });
+    return s;
+  }
+  /* Tải lại hồ sơ từ máy chủ bằng token đã có */
+  function refreshProfile() {
+    const s = Session.get(); if (!s) return Promise.resolve(null);
+    return loyaltyApi('hoSo', { token: s.token }).then((res) => (res && res.ok ? saveSession({ ...res, token: s.token }) : (res && res.loi === 'token' ? (Session.clear(), null) : s))).catch(() => s);
+  }
+
+  /* Mã giảm giá khách đang dùng được (lọc theo đơn đầu tiên / hạng) */
+  function couponsFor(kh) {
+    const soDon = kh ? Number(kh.soDon) || 0 : 0;
+    const hang = kh ? tierOf(Number(kh.tongChiTieu) || 0).key : 'moi';
+    const thuTu = tiers().map((t) => t.key);
+    return Object.keys(window.COUPONS || {}).map((ma) => ({ ma, ...window.COUPONS[ma] }))
+      .filter((c) => !(c.donDau && soDon > 0))
+      .filter((c) => !c.hang || thuTu.indexOf(hang) >= thuTu.indexOf(c.hang));
+  }
+
+  /* ---------------- Modal xác thực OTP ---------------- */
+  function openOtp(opts = {}) {
+    return new Promise((resolve) => {
+      const box = $('#otpContent'); if (!box) { resolve(null); return; }
+      let sdt = phoneKey(opts.phone || (Customer.get() || {}).phone || '');
+      let xong = false; let demNguoc = 0; let timer = 0;
+      const dong = (val) => { if (xong) return; xong = true; clearInterval(timer); resolve(val || null); };
+      const head = `<div class="modal__head"><h3>🔐 ${esc(opts.title || 'Xác thực số điện thoại')}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>`;
+
+      const buocSdt = (loi) => {
+        box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 text-muted mb-12">${esc(opts.desc || 'Để bảo mật thông tin, shop gửi mã OTP về số điện thoại của mẹ. Nhập đúng mã là xem được địa chỉ đã lưu, lịch sử đơn và ưu đãi theo hạng.')}</p>
+          <form id="otpForm1" class="qb__form" novalidate><label class="sr-only" for="otpPhone">Số điện thoại</label><div class="input-group">${I.phone}<input class="input" id="otpPhone" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" value="${esc(sdt)}" required></div>
+          <div class="form-error ${loi ? '' : 'hide'}" id="otpErr1" role="alert">${esc(loi || '')}</div>
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Gửi mã OTP</button>
+          <p class="fs-13 text-muted" style="text-align:center">Mã chỉ dùng cho số điện thoại của mẹ và có hiệu lực ${Number(LOY().otpPhut) || 10} phút.</p></form></div>`;
+        $('#otpForm1').addEventListener('submit', (e) => {
+          e.preventDefault(); const v = phoneKey(e.target.phone.value); const err = $('#otpErr1');
+          if (!phoneOk(v)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); return; }
+          sdt = v; const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang gửi mã…';
+          loyaltyApi('guiOtp', { sdt }).then((res) => {
+            if (!res || !res.ok) { buocSdt((res && res.msg) || 'Chưa gửi được mã, mẹ thử lại sau ít phút nhé'); return; }
+            buocMa(res);
+          }).catch((e2) => buocSdt(e2.message));
+        });
+        setTimeout(() => $('#otpPhone') && $('#otpPhone').focus(), 250);
+      };
+
+      const buocMa = (info, loi) => {
+        const kenh = info.kenh === 'sms' ? `tin nhắn SMS tới <b>${esc(maskPhone(sdt))}</b>`
+          : info.kenh === 'email' ? `email <b>${esc(info.emailAn || '')}</b>`
+          : `Zalo/SMS từ shop (shop gửi tay trong giờ làm việc ${esc(SITE.workingHours)})`;
+        box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 mb-12">Mã gồm 6 số đã được gửi qua ${kenh}.</p>
+          <form id="otpForm2" class="qb__form" novalidate><label class="sr-only" for="otpCode">Mã OTP</label><input class="input otp-input" id="otpCode" name="ma" inputmode="numeric" maxlength="6" placeholder="● ● ● ● ● ●" autocomplete="one-time-code" required>
+          <div class="form-error ${loi ? '' : 'hide'}" id="otpErr2" role="alert">${esc(loi || '')}</div>
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Xác nhận</button>
+          <div class="flex gap-8" style="justify-content:space-between"><button class="btn btn--ghost btn--sm" type="button" id="otpBack">← Đổi số khác</button><button class="btn btn--ghost btn--sm" type="button" id="otpResend" disabled>Gửi lại mã (60s)</button></div></form></div>`;
+        demNguoc = 60; clearInterval(timer);
+        timer = setInterval(() => { demNguoc--; const b = $('#otpResend'); if (!b) { clearInterval(timer); return; } if (demNguoc <= 0) { clearInterval(timer); b.disabled = false; b.textContent = 'Gửi lại mã'; } else b.textContent = `Gửi lại mã (${demNguoc}s)`; }, 1000);
+        $('#otpBack').addEventListener('click', () => buocSdt());
+        $('#otpResend').addEventListener('click', (e) => { e.target.disabled = true; e.target.textContent = 'Đang gửi…'; loyaltyApi('guiOtp', { sdt }).then((r) => buocMa(r && r.ok ? r : info, r && r.ok ? '' : (r && r.msg) || 'Chưa gửi lại được mã')).catch(() => buocMa(info, 'Chưa gửi lại được mã')); });
+        $('#otpForm2').addEventListener('submit', (e) => {
+          e.preventDefault(); const ma = String(e.target.ma.value || '').replace(/\D/g, '');
+          if (ma.length !== 6) { const er = $('#otpErr2'); er.textContent = 'Mã OTP gồm 6 chữ số'; er.classList.remove('hide'); return; }
+          const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang kiểm tra…';
+          loyaltyApi('xacThuc', { sdt, ma }).then((res) => {
+            if (!res || !res.ok) { buocMa(info, (res && res.msg) || 'Mã OTP không đúng hoặc đã hết hạn'); return; }
+            const s = saveSession(res); clearInterval(timer);
+            box.innerHTML = `${head}<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Xác thực thành công</h3><p>Chào ${esc((s.kh && s.kh.ten) || 'mẹ')} 👋 ${s.kh && Number(s.kh.tongChiTieu) ? `Hạng hiện tại: <b>${esc(tierOf(Number(s.kh.tongChiTieu)).label)}</b>` : 'Cảm ơn mẹ đã tin tưởng shop.'}</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Tiếp tục</button></div></div></div>`;
+            xong = true; resolve(s); if (typeof opts.onDone === 'function') opts.onDone(s);
+            setTimeout(() => { const m = $('#otpModal'); if (m && m.classList.contains('is-open')) closeModal('#otpModal'); }, 1600);
+          }).catch((e2) => buocMa(info, e2.message));
+        });
+        setTimeout(() => $('#otpCode') && $('#otpCode').focus(), 250);
+      };
+
+      const modal = $('#otpModal');
+      modal.addEventListener('mc:closed', () => dong(null), { once: true });
+      buocSdt();
+      openModal('#otpModal');
+    });
+  }
+
+  /* =====================================================================
+     QUÀ TẶNG KÈM – tính theo giỏ hàng, tự thêm vào đơn khi khách đặt
+     Hai chương trình không cộng dồn: lấy chương trình cho nhiều quà hơn.
+     ===================================================================== */
+  const QT = () => (window.QUA_TANG && window.QUA_TANG.enabled ? window.QUA_TANG : null);
+  function laNuocLotte(p) { const cfg = QT(); if (!cfg || !p) return false; const l = cfg.loc || {}; return (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand); }
+  /* Ghi chú quà hiện trên trang sản phẩm */
+  function giftNote(p) {
+    const cfg = QT(); if (!cfg) return '';
+    if (laNuocLotte(p)) return `Mua ${(cfg.thung || []).map((b) => `${b.tu} thùng tặng <b>${b.soQua} ${cfg.ten}</b>`).join(', ')} – mẹ chọn vị ${(cfg.vi || []).map((v) => v.split('–')[0].trim().toLowerCase()).join(' hoặc ')}.`;
+    return `Đơn hàng từ <b>${fmt((cfg.donTu || {}).muc || 0)}</b> được tặng <b>${(cfg.donTu || {}).soQua} ${cfg.ten}</b> (mẹ chọn vị ${(cfg.vi || []).map((v) => v.split('–')[0].trim().toLowerCase()).join(' hoặc ')}).`;
+  }
+  /* Tính quà cho giỏ hàng hiện tại */
+  function giftFor(lines) {
+    const cfg = QT(); if (!cfg) return null;
+    let thung = 0, tienKhac = 0;
+    (lines || []).forEach((l) => {
+      if (laNuocLotte(l.p)) { if (String(l.variantLabel || '').toLowerCase().includes(String(cfg.tuKhoaThung || 'thùng').toLowerCase())) thung += l.qty; }
+      else tienKhac += l.total;
+    });
+    const bac = [...(cfg.thung || [])].sort((a, b) => b.tu - a.tu);
+    const bacDat = bac.find((b) => thung >= b.tu);
+    const quaThung = bacDat ? bacDat.soQua : 0;
+    const mucDon = (cfg.donTu || {}).muc || Infinity;
+    const quaDon = tienKhac >= mucDon ? (cfg.donTu || {}).soQua || 0 : 0;
+    const soQua = Math.max(quaThung, quaDon);
+    const ct = soQua === 0 ? '' : (quaThung >= quaDon ? 'thung' : 'don');
+    /* Gợi ý mốc kế tiếp để khách biết mua thêm bao nhiêu */
+    let goiY = '';
+    const bacSau = [...(cfg.thung || [])].sort((a, b) => a.tu - b.tu).find((b) => b.tu > thung && b.soQua > soQua);
+    if (thung > 0 && bacSau) goiY = `Mua thêm ${bacSau.tu - thung} thùng nữa được tặng ${bacSau.soQua} ${cfg.ten}.`;
+    else if (!soQua && tienKhac > 0 && mucDon !== Infinity && tienKhac < mucDon) goiY = `Mua thêm ${fmt(mucDon - tienKhac)} để được tặng ${(cfg.donTu || {}).soQua} ${cfg.ten}.`;
+    return { soQua, chuongTrinh: ct, thung, vi: cfg.vi || [], ten: cfg.ten, goiY,
+      moTa: soQua ? `${soQua} ${cfg.ten}` : '',
+      lyDo: ct === 'thung' ? `Mua ${thung} thùng nước dinh dưỡng Lotte` : ct === 'don' ? `Đơn hàng từ ${fmt(mucDon)}` : '' };
+  }
+  /* Khối quà hiện ở giỏ hàng / thanh toán. chonVi = true thì cho khách chọn vị. */
+  function giftBox(g, chonVi, viDangChon) {
+    if (!g) return '';
+    if (!g.soQua) return g.goiY ? `<div class="giftbox giftbox--hint"><span class="giftbox__ico">🎁</span><div><b>Quà tặng của shop</b><p>${esc(g.goiY)}</p></div></div>` : '';
+    const vi = g.vi || [];
+    return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)}</b><p>${esc(g.lyDo)}${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>
+      ${chonVi && vi.length ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : (vi.length ? `<p class="fs-13 text-muted">Mẹ chọn vị khi thanh toán.</p>` : '')}</div></div>`;
+  }
+
+  window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    giftFor, giftNote, giftBox, laNuocLotte };
 })();

@@ -103,6 +103,39 @@ Trường `priority` trong `js/data.js` quyết định sản phẩm nào lên �
 hoặc tìm kiếm (3 = cao nhất). Hiện đặt 3 cho nước ép Lotte, váng sữa canxi Calciumore, D3K2 và rong biển;
 2 cho sữa Lotte Kid A+.
 
+## Khách hàng thân thiết, OTP & quà tặng
+
+**Hạng khách hàng** (sửa mốc tiền/% giảm ở `window.TIERS` trong `js/data.js`, nhớ sửa cả biến `HANG`
+trong `tools/apps-script.gs` cho khớp):
+
+| Hạng | Tổng đã chi tiêu | Giảm mọi đơn |
+|---|---|---|
+| 🌱 Khách mới | dưới 5 triệu | — |
+| 🥈 Silver | từ 5 triệu | 5% |
+| 🥇 Gold | từ 50 triệu | 10% |
+| 💎 Diamond | từ 100 triệu | 12% |
+
+- Tổng chi tiêu được **tính lại từ sheet "Đơn hàng"**, bỏ qua dòng có cột *Trạng thái* ghi "Huỷ"/"Hoàn".
+  Muốn không tính 1 đơn thì gõ "Huỷ" vào cột Trạng thái của đơn đó.
+- Ưu đãi hạng **không cộng dồn** với mã giảm giá – web tự lấy mức có lợi hơn cho khách.
+  Muốn cộng dồn: đổi `SITE.loyalty.combineWithCoupon = true` trong `js/data.js`.
+- Ưu đãi hạng chỉ áp dụng khi khách **đã xác thực OTP** đúng số điện thoại đang đặt hàng.
+
+**OTP**: khách bấm "Nhận mã OTP" → Apps Script sinh mã 6 số, thứ tự gửi:
+1. SMS (nếu điền `SMS_API_KEY`/`SMS_SECRET_KEY` của eSMS.vn trong Apps Script);
+2. Email của khách (nếu hồ sơ đã có email);
+3. Chưa có 2 cách trên → mã được gửi về **Zalo bot + email của shop** để shop nhắn tay cho khách.
+
+**Quà tặng** (sửa ở `window.QUA_TANG` trong `js/data.js`):
+- Đơn hàng (không tính nước dinh dưỡng Lotte) từ 1.000.000đ → tặng 5 gói nước ép Lotte.
+- Mua nước dinh dưỡng Lotte: 1 thùng → 5 gói, 2 thùng → 10 gói, từ 3 thùng → 20 gói.
+- Hai chương trình **không áp dụng song song**: web tự lấy chương trình tặng nhiều quà hơn.
+- Khách chọn vị (Hồng – tăng cân / Cam – đề kháng) ngay ở giỏ hàng, quà tự đi kèm vào đơn và
+  hiện ở cột "Quà tặng" trong Google Sheet + tin báo đơn Zalo.
+
+**Địa chỉ**: dùng danh mục hành chính 2 cấp sau sáp nhập 2025 (34 tỉnh/thành · 3.321 xã/phường)
+ở `js/diachi.js`. Đơn hàng lưu dạng `Tỉnh|Xã|Số nhà, đường`.
+
 ## Nhận đơn hàng (Google Sheet + email + Telegram)
 
 Khi `SITE.orderEndpoint` trong `js/data.js` còn rỗng, đơn chỉ lưu trong máy khách – shop **không** nhận được gì.

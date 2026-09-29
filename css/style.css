@@ -1219,3 +1219,50 @@ body { padding-bottom: 0; }
 @media (min-width: 992px) { .kolslide { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
 .fbslider--kol .fbslider__viewport { border-radius: var(--radius); }
 .fbslider--kol .fb-card { height: 100%; }
+
+/* ===================== KHÁCH HÀNG THÂN THIẾT & QUÀ TẶNG ===================== */
+.tier-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700;color:#fff;background:var(--tier,#78909C);white-space:nowrap}
+.loybar,.loybar--on{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;padding:12px 14px;border-radius:14px;border:1px dashed var(--pink-300,#F8B8C8);background:var(--pink-50,#FFF4F7)}
+.loybar--on{border-style:solid;border-color:var(--teal-200,#B9E3DC);background:var(--teal-50,#F1FAF8)}
+.loybar__l{display:flex;align-items:center;gap:10px;min-width:0}
+.loybar__ico{font-size:22px;flex:none}
+.loybar b{display:block;font-size:14.5px}
+.loybar p{margin:2px 0 0;font-size:13px;color:var(--text-muted,#6B7280)}
+.loybar__r{display:flex;gap:8px;flex:none}
+.tier-prog__head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tier-prog__sum{display:block;font-size:24px;color:var(--primary,#F0537A);font-family:Quicksand,inherit}
+.tier-prog__bar{height:10px;border-radius:999px;background:#EEF1F4;overflow:hidden;margin:12px 0 8px}
+.tier-prog__bar i{display:block;height:100%;border-radius:999px;transition:width .5s ease}
+.tier-ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.tier-ladder__col{border:1px solid var(--line,#ECEFF3);border-radius:12px;padding:10px 8px;text-align:center;background:#fff}
+.tier-ladder__col .ico{font-size:20px;display:block}
+.tier-ladder__col b{display:block;font-size:13.5px;margin-top:2px}
+.tier-ladder__col small{display:block;font-size:11.5px;color:var(--text-muted,#6B7280)}
+.tier-ladder__col em{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--teal,#12A594);margin-top:4px}
+.tier-ladder__col.is-done{background:var(--teal-50,#F1FAF8);border-color:var(--teal-200,#B9E3DC)}
+.tier-ladder__col.is-on{border-color:var(--primary,#F0537A);box-shadow:0 0 0 2px var(--pink-100,#FFE3EA)}
+.kh-view .kh-row,.kh-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line,#ECEFF3);font-size:14px}
+.kh-row:last-of-type{border-bottom:0}
+.kh-row span{color:var(--text-muted,#6B7280);flex:none}
+.kh-row b{text-align:right}
+.voucher{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px dashed var(--line,#ECEFF3);border-radius:12px;margin-bottom:8px;background:#fff}
+.voucher--tier{border-style:solid;border-color:var(--teal-200,#B9E3DC);background:var(--teal-50,#F1FAF8)}
+.voucher__l{display:flex;align-items:center;gap:8px;font-size:18px;flex:none}
+.voucher__l b{font-size:14px}
+.voucher__r{flex:1;min-width:0}
+.voucher__r b{display:block;font-size:13.5px}
+.voucher__r small{display:block;font-size:12px;color:var(--text-muted,#6B7280)}
+.otp-input{text-align:center;letter-spacing:.5em;font-size:22px;font-weight:700;font-family:Quicksand,inherit}
+.giftbox{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid var(--amber-200,#F6DFA8);background:linear-gradient(135deg,var(--amber-50,#FFF9EC),#FFFDF7)}
+.giftbox--hint{border-style:dashed;opacity:.92}
+.giftbox__ico{font-size:24px;flex:none;line-height:1.2}
+.giftbox b{display:block;font-size:14.5px}
+.giftbox p{margin:2px 0 0;font-size:13px;color:var(--text-muted,#6B7280)}
+.giftbox__vi{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip--pick{cursor:pointer;position:relative;padding:6px 12px;font-size:13px}
+.chip--pick input{position:absolute;opacity:0;width:0;height:0}
+.chip--pick.is-on{background:var(--primary,#F0537A);border-color:var(--primary,#F0537A);color:#fff}
+.order-items .it--gift{background:var(--amber-50,#FFF9EC);border-radius:10px}
+.it__gift{display:flex;align-items:center;justify-content:center;width:44px;height:44px;font-size:22px;flex:none}
+.li-gift{color:var(--teal,#12A594);font-weight:600}
+@media (max-width:640px){.tier-ladder{grid-template-columns:repeat(2,1fr)}.loybar__r{width:100%}.loybar__r .btn{flex:1}}

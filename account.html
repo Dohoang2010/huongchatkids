@@ -3,34 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Tài khoản – Hương Chất Kids</title>
+  <title>Thông tin khách hàng – Hương Chất Kids</title>
   <meta name="description" content="Đơn hàng gần đây và thông tin giao hàng đã lưu – Hương Chất Kids.">
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929a">
+  <link rel="stylesheet" href="css/style.css?v=20260929b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20260929a"></script>
+<script src="js/data.js?v=20260929b"></script>
+<script src="js/diachi.js?v=20260929b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929a"></script>
+<script src="js/app.js?v=20260929b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const { $, fmt, I, esc, store, Customer, byId, productCard, Wish } = MC;
-  const c = Customer.get(); const orders = store.get('mc_orders', []).filter((o) => o.type !== 'callback'); const wish = Wish.get().map(byId).filter(Boolean);
-  const status = (o) => o.status ? [o.status, 'badge--teal'] : ['Đã tiếp nhận – chuyên gia dinh dưỡng sẽ xác nhận qua điện thoại/Zalo', 'badge--hot'];
-  $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Tài khoản</span></nav><h1 class="page-title">${c ? `Chào ${esc(c.name || 'mẹ')} 👋` : 'Tài khoản của mẹ'}</h1><p class="text-muted fs-14 mb-16">${SITE.name} không bắt buộc đăng ký – đơn hàng được nhận diện qua số điện thoại của mẹ.</p>
-    <div class="checkout">
-      <div class="flex flex-col gap-16">
-        <div class="card card--pad"><h3>📦 Đơn hàng gần đây</h3>${orders.length ? orders.map((o) => { const [s, cls] = status(o); return `<div class="cart-item" style="grid-template-columns:1fr auto"><div><b>${o.code}</b> <span class="badge ${cls}">${s}</span><div class="fs-13 text-muted mt-8">${new Date(o.createdAt).toLocaleString('vi-VN')} · ${o.items.length} sản phẩm · ${o.payment === 'bank' ? 'Chuyển khoản' : 'COD'}</div><div class="fs-13 mt-8">${o.items.map((i) => esc(i.name) + ' x' + (i.qty || 1)).join('; ')}</div></div><div style="text-align:right"><b class="text-primary" style="font-size:17px">${fmt(o.total)}</b><div class="mt-8 flex gap-8 wrap" style="justify-content:flex-end">${o.payment === 'bank' ? `<button class="btn btn--teal btn--sm" type="button" data-pay-qr="${o.code}">Mã QR thanh toán</button>` : ''}<button class="btn btn--outline btn--sm" type="button" data-reorder-code="${o.code}">${I.refresh}Mua lại</button></div></div></div>`; }).join('') : `<div class="empty"><div class="emoji">🧾</div><p>Chưa có đơn hàng nào. <a class="text-primary fw-600" href="collections.html">Mua sắm ngay</a></p></div>`}</div>
-        <div class="card card--pad"><h3>💗 Sản phẩm yêu thích</h3>${wish.length ? `<div class="grid grid--3">${wish.map((p) => productCard(p)).join('')}</div>` : '<p class="text-muted fs-14">Nhấn ♥ trên sản phẩm để lưu lại nhé.</p>'}</div>
-      </div>
-      <div class="checkout__side"><div class="card card--pad"><h3>📍 Thông tin giao hàng đã lưu</h3>${c ? `<div class="fs-14"><b>${esc(c.name || '')}</b><br>${esc(c.phone || '')}<br>${esc((c.address || '').replace('|', ', '))}</div><button class="btn btn--ghost btn--sm mt-12" type="button" id="clearInfo">Xoá thông tin đã lưu</button>` : '<p class="text-muted fs-14">Thông tin sẽ tự lưu sau lần đặt hàng đầu tiên để lần sau mẹ chỉ cần 1 chạm.</p>'}
-        <div class="divider"></div><h3>👩‍⚕️ Hỗ trợ</h3><div class="flex flex-col gap-8"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--ghost btn--block" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div></div></div>
+  const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
+          Session, tierOf, tierNext, tierBadge, tiers, loyaltyApi, openOtp, refreshProfile, couponsFor, addrParse, addrStore, addrFull } = MC;
+  const loy = SITE.loyalty || {};
+  const DIA = window.DIA_CHI || [];
+  const donLocal = () => store.get('mc_orders', []).filter((o) => o.type !== 'callback');
+  const wishHTML = () => { const w = Wish.get().map(byId).filter(Boolean); return `<div class="card card--pad"><h3>💗 Sản phẩm yêu thích</h3>${w.length ? `<div class="grid grid--3">${w.map((p) => productCard(p)).join('')}</div>` : '<p class="text-muted fs-14">Nhấn ♥ trên sản phẩm để lưu lại nhé.</p>'}</div>`; };
+
+  /* ---------- Cột chi tiêu để lên hạng ---------- */
+  function thangHang(spent) {
+    const list = tiers(); const cur = tierOf(spent); const next = tierNext(spent);
+    const moc = next ? next.min : (list[list.length - 1] || {}).min || 1;
+    const pct = next ? Math.max(3, Math.min(100, Math.round(spent / moc * 100))) : 100;
+    return `<div class="tier-prog">
+      <div class="tier-prog__head"><div><span class="text-muted fs-13">Tổng đã chi tiêu</span><b class="tier-prog__sum">${fmt(spent)}</b></div>${tierBadge(cur)}</div>
+      <div class="tier-prog__bar"><i style="width:${pct}%;background:${cur.color}"></i></div>
+      <p class="fs-13 ${next ? '' : 'text-teal fw-600'}">${next ? `Mua thêm <b>${fmt(Math.max(0, next.min - spent))}</b> để lên hạng ${next.icon} <b>${esc(next.label)}</b> – ${esc(next.desc || '')}` : '🎉 Mẹ đang ở hạng cao nhất của shop, cảm ơn mẹ rất nhiều!'}</p>
+      <div class="tier-ladder">${list.map((t) => `<div class="tier-ladder__col ${t.key === cur.key ? 'is-on' : ''} ${spent >= t.min ? 'is-done' : ''}"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>
     </div>`;
-  $('#acc').addEventListener('click', (e) => { const r = e.target.closest('[data-reorder-code]'); if (r) { const o = orders.find((x) => x.code === r.dataset.reorderCode); o.items.forEach((it) => { const p = byId(it.id); if (p) MC.Cart.add(it.id, it.qty || 1, it.variant && p.variants ? Math.max(0, p.variants.findIndex((v) => v.label === it.variant)) : null); }); location.href = 'checkout.html'; } if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); } });
+  }
+
+  /* ---------- Chưa xác thực: mời đăng nhập bằng OTP ---------- */
+  function renderKhach() {
+    const c = Customer.get();
+    $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Thông tin khách hàng</span></nav>
+      <h1 class="page-title">Thông tin khách hàng</h1>
+      <p class="text-muted fs-14 mb-16">${esc(SITE.name)} không bắt buộc đăng ký – mẹ chỉ cần số điện thoại. Để xem hồ sơ, hạng và lịch sử đơn, mẹ xác thực mã OTP gửi về số của mình.</p>
+      <div class="checkout">
+        <div class="flex flex-col gap-16">
+          <div class="card card--pad tier-intro">
+            <h3>🎖️ Hạng khách hàng & ưu đãi</h3>
+            <div class="tier-ladder">${tiers().map((t) => `<div class="tier-ladder__col"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>
+            <p class="fs-13 text-muted mt-12">Hạng xét theo tổng tiền mẹ đã mua tại shop. Ưu đãi hạng tự động trừ vào đơn ngay khi mẹ xác thực số điện thoại ở bước thanh toán.</p>
+          </div>
+          ${donLocal().length ? `<div class="card card--pad"><h3>📦 Đơn đã đặt trên máy này</h3>${donLocal().map(donLocalHTML).join('')}<p class="fs-13 text-muted mt-12">Đây là các đơn lưu trên trình duyệt này. Xác thực OTP để xem đầy đủ lịch sử đơn của mẹ ở mọi thiết bị.</p></div>` : ''}
+          ${wishHTML()}
+        </div>
+        <div class="checkout__side"><div class="card card--pad">
+          <h3>🔐 Tra cứu hồ sơ</h3>
+          <p class="fs-14 text-muted">Nhập số điện thoại đã dùng khi mua hàng, shop gửi mã OTP để xác thực. Có mã rồi mẹ xem được địa chỉ đã lưu, tổng chi tiêu, lịch sử đơn và sửa địa chỉ.</p>
+          <button class="btn btn--primary btn--lg btn--block mt-12" type="button" id="btnOtp">Nhận mã OTP & xem hồ sơ</button>
+          ${c && c.phone ? `<p class="fs-13 text-muted mt-8" style="text-align:center">Số đã lưu trên máy: <b>${esc(maskPhone(c.phone))}</b></p>` : ''}
+          <div class="divider"></div><h3>👩‍⚕️ Hỗ trợ</h3><div class="flex flex-col gap-8"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--ghost btn--block" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div>
+        </div></div>
+      </div>`;
+  }
+
+  const donLocalHTML = (o) => `<div class="cart-item" style="grid-template-columns:1fr auto"><div><b>${esc(o.code)}</b> <span class="badge badge--hot">Đã tiếp nhận</span><div class="fs-13 text-muted mt-8">${new Date(o.createdAt).toLocaleString('vi-VN')} · ${o.items.length} sản phẩm · ${o.payment === 'bank' ? 'Chuyển khoản' : 'COD'}</div><div class="fs-13 mt-8">${o.items.map((i) => esc(i.name) + ' x' + (i.qty || 1)).join('; ')}</div>${o.qua && o.qua.soQua ? `<div class="fs-13 text-teal mt-8">🎁 ${esc(o.qua.moTa || o.qua.ten)}</div>` : ''}</div><div style="text-align:right"><b class="text-primary" style="font-size:17px">${fmt(o.total)}</b><div class="mt-8 flex gap-8 wrap" style="justify-content:flex-end">${o.payment === 'bank' ? `<button class="btn btn--teal btn--sm" type="button" data-pay-qr="${esc(o.code)}">Mã QR thanh toán</button>` : ''}<button class="btn btn--outline btn--sm" type="button" data-reorder-code="${esc(o.code)}">${I.refresh}Mua lại</button></div></div></div>`;
+
+  const donServerHTML = (o) => {
+    const tt = String(o.trangThai || '').trim();
+    const cls = /huỷ|huy|hoàn/i.test(tt) ? 'badge--soft' : /giao|hoàn thành|xong/i.test(tt) ? 'badge--teal' : 'badge--hot';
+    return `<div class="cart-item" style="grid-template-columns:1fr auto"><div><b>${esc(o.ma || '')}</b> <span class="badge ${cls}">${esc(tt || 'Đã tiếp nhận')}</span>
+      <div class="fs-13 text-muted mt-8">${esc(o.ngay || '')} · ${esc(o.thanhToan || '')}</div>
+      <div class="fs-13 mt-8">${esc(o.sanPham || '').split('\n').filter(Boolean).join(' · ')}</div>
+      ${o.qua ? `<div class="fs-13 text-teal mt-8">🎁 ${esc(o.qua)}</div>` : ''}</div>
+      <div style="text-align:right"><b class="text-primary" style="font-size:17px">${fmt(Number(o.tong) || 0)}</b></div></div>`;
+  };
+
+  /* ---------- Đã xác thực: hồ sơ đầy đủ ---------- */
+  function renderHoSo() {
+    const s = Session.get(); if (!s) { renderKhach(); return; }
+    const kh = s.kh || {}; const spent = Number(kh.tongChiTieu) || 0; const cur = tierOf(spent);
+    const don = s.donHang || []; const ma = couponsFor(kh);
+    const dc = { tinh: kh.tinh || '', xa: kh.xa || '', chiTiet: kh.diaChi || '' };
+    $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Thông tin khách hàng</span></nav>
+      <div class="flex justify-between items-center wrap gap-8 mb-16"><h1 class="page-title" style="margin:0">Chào ${esc(kh.ten || 'mẹ')} 👋</h1><button class="btn btn--ghost btn--sm" type="button" id="btnOut">Thoát khỏi máy này</button></div>
+      <div class="checkout">
+        <div class="flex flex-col gap-16">
+          <div class="card card--pad">${thangHang(spent)}</div>
+
+          <div class="card card--pad"><h3>📦 Lịch sử đơn hàng <span class="text-muted fs-13" style="font-weight:500">(${don.length} đơn · ${fmt(spent)})</span></h3>
+            ${don.length ? don.map(donServerHTML).join('') : `<div class="empty"><div class="emoji">🧾</div><p>Chưa có đơn nào được ghi nhận. <a class="text-primary fw-600" href="collections.html">Mua sắm ngay</a></p></div>`}
+            ${donLocal().length ? `<div class="divider"></div><h4 class="fs-14 text-muted mb-8">Đơn vừa đặt trên máy này</h4>${donLocal().slice(0, 3).map(donLocalHTML).join('')}` : ''}
+          </div>
+
+          <div class="card card--pad"><h3>🎟️ Mã giảm giá mẹ đang dùng được</h3>
+            ${cur.discount ? `<div class="voucher voucher--tier"><div class="voucher__l">${cur.icon}<b>Ưu đãi hạng ${esc(cur.label)}</b></div><div class="voucher__r"><b>−${cur.discount}%</b><small>Tự động áp dụng, không cần nhập mã</small></div></div>` : ''}
+            ${ma.length ? ma.map((c2) => `<div class="voucher"><div class="voucher__l">🎟️<b>${esc(c2.ma)}</b></div><div class="voucher__r"><b>${esc(c2.desc)}</b><small>${c2.min ? 'Đơn từ ' + fmt(c2.min) : 'Mọi đơn hàng'}${c2.donDau ? ' · chỉ cho đơn đầu tiên' : ''}</small></div><button class="btn btn--outline btn--sm" type="button" data-copy-coupon="${esc(c2.ma)}">Chép mã</button></div>`).join('') : '<p class="text-muted fs-14">Hiện chưa có mã nào phù hợp.</p>'}
+            ${!loy.combineWithCoupon && cur.discount ? '<p class="fs-13 text-muted mt-8">Ưu đãi hạng và mã giảm giá không cộng dồn – web tự chọn mức có lợi nhất cho mẹ.</p>' : ''}
+          </div>
+          ${wishHTML()}
+        </div>
+
+        <div class="checkout__side"><div class="card card--pad">
+          <h3>📍 Thông tin của mẹ</h3>
+          <div id="khView" class="kh-view">
+            <div class="kh-row"><span>Họ tên</span><b>${esc(kh.ten || '—')}</b></div>
+            <div class="kh-row"><span>Số điện thoại</span><b>${esc(kh.sdt || '')}</b></div>
+            <div class="kh-row"><span>Địa chỉ</span><b>${esc(addrFull(dc) || '—')}</b></div>
+            <div class="kh-row"><span>Email</span><b>${esc(kh.email || '—')}</b></div>
+            <div class="kh-row"><span>Hạng</span><b>${tierBadge(cur)}</b></div>
+            <div class="kh-row"><span>Tổng chi tiêu</span><b class="text-primary">${fmt(spent)}</b></div>
+            <div class="kh-row"><span>Số đơn đã mua</span><b>${Number(kh.soDon) || don.length || 0}</b></div>
+            <button class="btn btn--outline btn--block mt-12" type="button" id="btnEdit">✏️ Sửa thông tin / địa chỉ</button>
+          </div>
+          <form id="khForm" class="hide">
+            <div class="field"><label>Họ tên</label><input class="input" name="ten" value="${esc(kh.ten || '')}" required></div>
+            <div class="field mt-8"><label>Tỉnh / Thành phố</label><select class="input" name="tinh"><option value="">Chọn tỉnh/thành</option>${DIA.map((x) => `<option ${x.t === dc.tinh ? 'selected' : ''}>${esc(x.t)}</option>`).join('')}</select></div>
+            <div class="field mt-8"><label>Xã / Phường</label><select class="input" name="xa" id="khXa"></select></div>
+            <div class="field mt-8"><label>Địa chỉ cụ thể</label><input class="input" name="diaChi" value="${esc(dc.chiTiet)}"></div>
+            <div class="field mt-8"><label>Email</label><input class="input" name="email" type="email" value="${esc(kh.email || '')}"></div>
+            <div class="form-error hide mt-8" id="khErr" role="alert"></div>
+            <div class="flex gap-8 mt-12"><button class="btn btn--primary btn--block" type="submit">Lưu lại</button><button class="btn btn--ghost" type="button" id="btnCancel">Huỷ</button></div>
+            <p class="fs-13 text-muted mt-8">Thông tin đã được bảo vệ bằng mã OTP gửi về số ${esc(maskPhone(kh.sdt || ''))}.</p>
+          </form>
+          <div class="divider"></div><h3>👩‍⚕️ Hỗ trợ</h3><div class="flex flex-col gap-8"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--ghost btn--block" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div>
+        </div></div>
+      </div>`;
+    const xaSel = (tinh, sel) => { const p = DIA.find((x) => x.t === tinh); return p ? `<option value="">Chọn xã/phường</option>${p.x.map((x) => `<option ${x === sel ? 'selected' : ''}>${esc(x)}</option>`).join('')}` : '<option value="">Chọn tỉnh/thành trước</option>'; };
+    $('#khXa').innerHTML = xaSel(dc.tinh, dc.xa);
+    $('#khForm').addEventListener('change', (e) => { if (e.target.name === 'tinh') $('#khXa').innerHTML = xaSel(e.target.value, ''); });
+    $('#khForm').addEventListener('submit', (e) => {
+      e.preventDefault(); const f = e.target; const err = $('#khErr'); err.classList.add('hide');
+      const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Đang lưu…';
+      loyaltyApi('capNhat', { token: s.token, ten: f.ten.value.trim(), tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email: f.email.value.trim() })
+        .then((res) => {
+          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, mẹ thử lại nhé'; err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Lưu lại'; if (res && res.loi === 'token') { Session.clear(); renderKhach(); } return; }
+          Session.patch({ kh: res.kh });
+          Customer.set({ ...(Customer.get() || {}), name: res.kh.ten || '', phone: phoneKey(res.kh.sdt), email: res.kh.email || '', address: addrStore({ tinh: res.kh.tinh, xa: res.kh.xa, chiTiet: res.kh.diaChi }) });
+          toast('Đã cập nhật thông tin của mẹ', { type: 'ok' }); renderHoSo();
+        }).catch((e2) => { err.textContent = e2.message; err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Lưu lại'; });
+    });
+  }
+
+  const render = () => (Session.get() ? renderHoSo() : renderKhach());
+  render();
+  if (Session.get()) refreshProfile().then(() => render());
+
+  $('#acc').addEventListener('click', (e) => {
+    const r = e.target.closest('[data-reorder-code]');
+    if (r) { const o = donLocal().find((x) => x.code === r.dataset.reorderCode); if (o) { o.items.forEach((it) => { const p = byId(it.id); if (p) MC.Cart.add(it.id, it.qty || 1, it.variant && p.variants ? Math.max(0, p.variants.findIndex((v) => v.label === it.variant)) : null); }); location.href = 'checkout.html'; } }
+    const cp = e.target.closest('[data-copy-coupon]');
+    if (cp) { const ma = cp.dataset.copyCoupon; navigator.clipboard?.writeText(ma); store.set('mc_coupon', ma); toast('Đã chép mã ' + ma + ' – mã sẽ tự điền ở bước thanh toán', { type: 'ok' }); }
+    if (e.target.id === 'btnOtp') openOtp({ title: 'Xem hồ sơ khách hàng' }).then((s) => { if (s) render(); });
+    if (e.target.id === 'btnOut') { Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
+    if (e.target.id === 'btnEdit') { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); }
+    if (e.target.id === 'btnCancel') { $('#khForm').classList.add('hide'); $('#khView').classList.remove('hide'); }
+  });
 });
 </script>
 </body>

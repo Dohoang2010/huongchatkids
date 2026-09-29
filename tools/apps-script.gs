@@ -1,135 +1,414 @@
 /**
- * Nhận đơn hàng từ website Hương Chất Kids.
- * Mỗi đơn khách đặt trên web sẽ: ghi 1 dòng vào Google Sheet + gửi email + nhắn về Zalo qua bot (+ tuỳ chọn Telegram).
+ * HƯƠNG CHẤT KIDS – máy chủ nhỏ chạy miễn phí trên Google Apps Script.
+ * Gồm 3 việc:
+ *   1) Nhận đơn từ website  → ghi 1 dòng vào Google Sheet + gửi email + nhắn Zalo qua bot.
+ *   2) Hồ sơ khách hàng     → mỗi số điện thoại 1 dòng ở sheet "Khách hàng": tên, địa chỉ,
+ *                             tổng chi tiêu, số đơn, hạng (Silver/Gold/Diamond).
+ *   3) Xác thực OTP         → khách muốn xem hồ sơ / sửa địa chỉ phải nhập mã OTP 6 số.
  *
  * CÁCH CÀI (làm 1 lần, miễn phí):
  *  1. Vào https://sheets.new → đặt tên "Đơn hàng Hương Chất Kids".
- *  2. Menu Tiện ích mở rộng (Extensions) → Apps Script. Xoá code mẫu, dán toàn bộ file này vào.
- *  3. Sửa EMAIL bên dưới nếu muốn nhận ở hộp thư khác. Muốn nhận Telegram thì điền
- *     TELEGRAM_TOKEN và TELEGRAM_CHAT_ID (xem hướng dẫn ở README).
- *  4. Bấm Triển khai (Deploy) → Tạo bản triển khai mới → loại "Ứng dụng web" (Web app):
- *        Thực thi với tên (Execute as): Tôi / Me
- *        Ai có quyền truy cập (Who has access): Bất kỳ ai / Anyone
- *     → Triển khai → Cho phép quyền (Authorize) → copy link dạng
- *       https://script.google.com/macros/s/..../exec
- *  5. Dán link đó vào js/data.js, dòng orderEndpoint: ''  →  orderEndpoint: 'https://script.google.com/.../exec'
- *     rồi commit & push (hoặc nhắn Claude làm giúp).
+ *  2. Extensions (Tiện ích mở rộng) → Apps Script. Xoá code mẫu, dán toàn bộ file này vào.
+ *  3. Điền ZALO_BOT_TOKEN (token bot Zalo của shop) ở phần CẤU HÌNH bên dưới.
+ *  4. Deploy (Triển khai) → New deployment → loại "Web app":
+ *        Execute as (Thực thi với tên): Me / Tôi
+ *        Who has access (Ai có quyền): Anyone / Bất kỳ ai
+ *     → Deploy → Authorize → copy link dạng https://script.google.com/macros/s/..../exec
+ *  5. Dán link đó vào js/data.js ở dòng orderEndpoint.
  *
- * Lưu ý: mỗi lần sửa code phải bấm Triển khai → Quản lý bản triển khai → sửa → Phiên bản mới.
+ * ⚠️ MỖI LẦN SỬA CODE phải bấm Deploy → Manage deployments → bút chì → Version: New version → Deploy.
+ * ⚠️ KHÔNG dán token thật vào bản trong thư mục tools/ của website (thư mục đó công khai trên GitHub).
  */
 
-var EMAIL = 'huongchatkids@gmail.com';   // nơi nhận email báo đơn
-var TELEGRAM_TOKEN = '';                 // tuỳ chọn, lấy từ @BotFather
-var TELEGRAM_CHAT_ID = '';               // tuỳ chọn, lấy từ @userinfobot
+/* ===================== CẤU HÌNH ===================== */
+var EMAIL = 'huongchatkids@gmail.com';   // nơi nhận email báo đơn & báo mã OTP khi chưa có SMS
+var TEN_SHOP = 'Hương Chất Kids';
+var HOTLINE = '0967.233.003';
 
-// ----- BÁO ĐƠN VỀ ZALO BẰNG BOT (miễn phí – cách đang dùng) -----
-// Bot "Bot hương chất kids" tạo tại https://zalo.me/s/botcreator/ .
-// Muốn đổi bot: tạo bot mới, dán token mới vào đây, rồi chạy hàm zaloBotLayChatId().
-var ZALO_BOT_TOKEN = '';       // dạng 211668...:IEUc...  (dán token của bot vào đây)
-// ⚠️ KHÔNG dán token thật vào file này: thư mục này được đẩy lên GitHub công khai.
-// Token thật chỉ dán trực tiếp trong Apps Script của shop (hoặc file tools/apps-script-CUA-SHOP.gs đã được .gitignore).
-var ZALO_BOT_CHAT_ID = '';     // để trống: chạy hàm zaloBotLayChatId() sau khi nhắn cho bot 1 tin
+// Bot Zalo báo đơn (tạo tại https://zalo.me/s/botcreator/). Để trống = tắt báo Zalo.
+var ZALO_BOT_TOKEN = '';       // dạng 211668...:IEUc...
+var ZALO_BOT_CHAT_ID = '';     // để trống: nhắn cho bot 1 tin rồi chạy hàm zaloBotLayChatId()
 
-// ----- BÁO ĐƠN VỀ ZALO (qua Zalo OA – cách cũ, đang tắt; xem hướng dẫn ở cuối file) -----
-// Để trống ZALO_APP_ID = tắt báo Zalo (mặc định). Muốn bật phải nâng gói OA "Tăng trưởng"
-// (2.500.000đ/năm) vì gói miễn phí bị Zalo chặn API gửi tin – lỗi -224.
-var ZALO_APP_ID = '';                     // ID ứng dụng trong developers.zalo.me
-var ZALO_APP_SECRET = '';                 // Secret key của ứng dụng đó (cần để tự làm mới token)
-var ZALO_USER_ID = '';                    // để trống: script tự lấy khi chị nhắn cho OA (xem mục Webhook)
-// Refresh token KHÔNG để trong code: chạy hàm zaloLuuRefreshToken('…') một lần, nó được cất trong Script Properties.
+// Gửi OTP bằng SMS (tuỳ chọn – cần đăng ký dịch vụ brandname, VD eSMS.vn).
+// Để trống = shop chưa dùng SMS: mã OTP sẽ được gửi về email khách (nếu có) hoặc
+// báo về Zalo/email của shop để shop nhắn tay cho khách.
+var SMS_API_KEY = '';
+var SMS_SECRET_KEY = '';
+var SMS_BRANDNAME = '';        // tên thương hiệu đã đăng ký với nhà mạng
+
+// Bảng hạng khách hàng – phải khớp với window.TIERS trong js/data.js
+var HANG = [
+  { key: 'moi',     label: 'Khách mới', min: 0,         giam: 0 },
+  { key: 'silver',  label: 'Silver',    min: 5000000,   giam: 5 },
+  { key: 'gold',    label: 'Gold',      min: 50000000,  giam: 10 },
+  { key: 'diamond', label: 'Diamond',   min: 100000000, giam: 12 }
+];
+
+var OTP_PHUT = 10;        // mã OTP sống bao nhiêu phút
+var OTP_SAI_TOI_DA = 5;   // nhập sai quá số lần này thì phải xin mã mới
+var OTP_MOI_GIO = 5;      // mỗi số điện thoại xin tối đa bao nhiêu mã trong 1 giờ
+var PHIEN_NGAY = 30;      // token đăng nhập sống bao nhiêu ngày
+
+var SHEET_DON = 'Đơn hàng';
+var SHEET_KH = 'Khách hàng';
+var SHEET_OTP = 'OTP';
+var SHEET_PHIEN = 'Phiên';
 
 var HEADERS = ['Thời gian', 'Mã đơn', 'Loại', 'Khách', 'Điện thoại', 'Địa chỉ', 'Sản phẩm',
-               'Tiền hàng', 'Giảm', 'Ship', 'Tổng', 'Thanh toán', 'Mã giảm giá', 'Ghi chú', 'Email'];
+               'Tiền hàng', 'Giảm', 'Ship', 'Tổng', 'Thanh toán', 'Mã giảm giá', 'Ghi chú', 'Email',
+               'Hạng KH', 'Giảm theo hạng', 'Quà tặng', 'Trạng thái'];
+var H_KH = ['Điện thoại', 'Họ tên', 'Tỉnh/Thành', 'Xã/Phường', 'Địa chỉ cụ thể', 'Email',
+            'Tổng chi tiêu', 'Số đơn', 'Hạng', 'Đơn gần nhất', 'Tạo lúc', 'Ghi chú'];
 
+/* ===================== TIỆN ÍCH CHUNG ===================== */
+function ss() { return SpreadsheetApp.getActiveSpreadsheet(); }
+
+function sheetDon() {
+  var s = ss().getSheetByName(SHEET_DON);
+  if (!s) { s = ss().getSheets()[0]; if (s.getLastRow() === 0) s.setName(SHEET_DON); }
+  if (s.getLastRow() === 0) {
+    s.appendRow(HEADERS);
+    s.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+    s.setFrozenRows(1);
+  } else if (s.getLastColumn() < HEADERS.length) {
+    // sheet cũ ít cột hơn -> bổ sung tiêu đề cho các cột mới
+    s.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight('bold');
+  }
+  return s;
+}
+function sheetPhu(ten, headers) {
+  var s = ss().getSheetByName(ten);
+  if (!s) { s = ss().insertSheet(ten); s.appendRow(headers); s.getRange(1, 1, 1, headers.length).setFontWeight('bold'); s.setFrozenRows(1); }
+  return s;
+}
+function sheetKH()    { return sheetPhu(SHEET_KH, H_KH); }
+function sheetOtp()   { return sheetPhu(SHEET_OTP, ['Điện thoại', 'Mã', 'Hết hạn', 'Số lần sai', 'Gửi lúc', 'Kênh']); }
+function sheetPhien() { return sheetPhu(SHEET_PHIEN, ['Token', 'Điện thoại', 'Hết hạn', 'Tạo lúc']); }
+
+function chuanSdt(v) {
+  var s = String(v == null ? '' : v).replace(/[\s.()\-']/g, '');
+  if (s.indexOf('+84') === 0) s = '0' + s.slice(3);
+  else if (s.indexOf('84') === 0 && s.length === 11) s = '0' + s.slice(2);
+  if (s.length === 9 && s.charAt(0) !== '0') s = '0' + s;
+  return s;
+}
+function sdtHopLe(s) { return /^0(3|5|7|8|9)\d{8}$/.test(chuanSdt(s)); }
+function anTen(ten) {
+  var t = String(ten || '').trim(); if (!t) return '';
+  return t.split(/\s+/).map(function (w, i, a) { return i === a.length - 1 ? w : w.charAt(0) + '***'; }).join(' ');
+}
+function anEmail(mail) {
+  var m = String(mail || ''); var i = m.indexOf('@'); if (i < 1) return '';
+  return m.charAt(0) + '***' + m.slice(i - 1);
+}
+function hangTheoTien(tien) {
+  var h = HANG[0];
+  for (var i = 0; i < HANG.length; i++) if ((tien || 0) >= HANG[i].min) h = HANG[i];
+  return h;
+}
+function tien(n) { return (Number(n) || 0).toLocaleString('vi-VN') + 'đ'; }
+function ngayVN(d) { return Utilities.formatDate(new Date(d), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm'); }
+
+/* ===================== NHẬN ĐƠN (POST từ website) ===================== */
 function doPost(e) {
   try {
     var order = JSON.parse(e.postData.contents);
 
-    // Sự kiện từ Zalo OA (khi chủ shop nhắn cho OA) -> lưu user_id để gửi tin báo đơn
+    // Tin nhắn Zalo OA gửi tới (nếu có) – chỉ lưu lại user id
     if (order && order.event_name && order.sender && order.sender.id) {
       PropertiesService.getScriptProperties().setProperty('ZALO_USER_ID', String(order.sender.id));
-      Logger.log('Đã lưu ZALO_USER_ID: ' + order.sender.id);
       return ContentService.createTextOutput(JSON.stringify({ ok: true, zalo: true })).setMimeType(ContentService.MimeType.JSON);
     }
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(HEADERS);
-      sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
-      sheet.setFrozenRows(1);
-    }
+
     var c = order.customer || {};
+    var sdt = chuanSdt(c.phone);
     var items = (order.items || []).map(function (it) {
       return (it.short || it.name) + (it.variant ? ' – ' + it.variant : '') + ' × ' + (it.qty || 1);
     }).join('\n');
     var loai = order.type === 'callback' ? 'Yêu cầu gọi lại' : (order.type === 'quick' ? 'Mua nhanh' : 'Đặt hàng');
     var thanhToan = order.payment === 'bank' ? 'Chuyển khoản' : (order.payment ? 'COD' : '');
+    var quaText = order.qua && order.qua.soQua ? (order.qua.moTa || (order.qua.soQua + ' ' + order.qua.ten)) : '';
 
-    sheet.appendRow([
-      new Date(), order.code || '', loai, c.name || '', "'" + (c.phone || ''), c.address || '', items,
+    sheetDon().appendRow([
+      new Date(), order.code || '', loai, c.name || '', "'" + sdt, c.address || '', items,
       order.subtotal || 0, order.discount || 0, order.ship || 0, order.total || 0,
-      thanhToan, order.coupon || '', order.note || '', c.email || ''
+      thanhToan, order.coupon || '', order.note || '', c.email || '',
+      order.hangLabel || '', order.giamHang || 0, quaText, ''
     ]);
 
-    var tien = (order.total || 0).toLocaleString('vi-VN') + 'đ';
+    // Cập nhật hồ sơ khách (bỏ qua yêu cầu gọi lại)
+    if (order.type !== 'callback' && sdtHopLe(sdt)) {
+      try { capNhatKhachHang(sdt, c, order); } catch (err) { Logger.log('Cập nhật khách lỗi: ' + err); }
+    }
+
     var text = loai + ' ' + (order.code || '') + '\n'
-      + 'Khách: ' + (c.name || '(chưa có tên)') + ' – ' + (c.phone || '') + '\n'
+      + 'Khách: ' + (c.name || '(chưa có tên)') + ' – ' + sdt + '\n'
       + (c.address ? 'Địa chỉ: ' + c.address + '\n' : '')
       + (items ? items + '\n' : '')
-      + 'Tổng: ' + tien + (thanhToan ? ' (' + thanhToan + ')' : '')
+      + (quaText ? '🎁 Quà tặng: ' + quaText + '\n' : '')
+      + (order.hangLabel ? 'Hạng ' + order.hangLabel + ' – đã giảm ' + tien(order.giamHang) + '\n' : '')
+      + 'Tổng: ' + tien(order.total) + (thanhToan ? ' (' + thanhToan + ')' : '')
       + (order.note ? '\nGhi chú: ' + order.note : '');
 
-    if (EMAIL) {
-      MailApp.sendEmail(EMAIL, '🛒 ' + loai + ' ' + (order.code || '') + ' – ' + tien, text);
-    }
-    if (TELEGRAM_TOKEN && TELEGRAM_CHAT_ID) {
-      UrlFetchApp.fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage', {
-        method: 'post', muteHttpExceptions: true,
-        payload: { chat_id: TELEGRAM_CHAT_ID, text: text }
-      });
-    }
-    try { zaloBotGuiTin(text); } catch (e) { Logger.log('Zalo bot lỗi: ' + e); }
-    try { zaloGuiTin(text); } catch (e) { Logger.log('Zalo OA lỗi: ' + e); }
+    if (EMAIL) MailApp.sendEmail(EMAIL, '🛒 ' + loai + ' ' + (order.code || '') + ' – ' + tien(order.total), text);
+    try { zaloBotGuiTin(text); } catch (err2) { Logger.log('Zalo bot lỗi: ' + err2); }
+
     return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) })).setMimeType(ContentService.MimeType.JSON);
+    Logger.log('doPost lỗi: ' + err);
+    return ContentService.createTextOutput(JSON.stringify({ ok: false, msg: String(err) })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-/** Mở link /exec trên trình duyệt để kiểm tra đã cài đúng chưa. */
-function doGet() {
-  return ContentService.createTextOutput('Hương Chất Kids – nơi nhận đơn đang hoạt động.');
+/* ===================== HỒ SƠ KHÁCH HÀNG ===================== */
+/* Tổng chi tiêu tính lại từ sheet Đơn hàng (bỏ qua đơn có trạng thái huỷ/hoàn) */
+function tinhChiTieu(sdt) {
+  var s = sheetDon(); var n = s.getLastRow(); if (n < 2) return { tong: 0, soDon: 0, ganNhat: '', don: [] };
+  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues();
+  var tong = 0, soDon = 0, ganNhat = '', don = [];
+  for (var i = v.length - 1; i >= 0; i--) {
+    if (chuanSdt(v[i][4]) !== sdt) continue;
+    var loai = String(v[i][2] || '');
+    if (loai.indexOf('gọi lại') > -1) continue;
+    var tt = String(v[i][18] || '');
+    var bo = /huỷ|huy|hoàn|hoan/i.test(tt);
+    if (!bo) { tong += Number(v[i][10]) || 0; soDon++; if (!ganNhat) ganNhat = ngayVN(v[i][0]); }
+    if (don.length < 30) don.push({
+      ma: String(v[i][1] || ''), ngay: ngayVN(v[i][0]), sanPham: String(v[i][6] || ''),
+      tong: Number(v[i][10]) || 0, thanhToan: String(v[i][11] || ''), qua: String(v[i][17] || ''),
+      trangThai: tt || 'Đã tiếp nhận'
+    });
+  }
+  return { tong: tong, soDon: soDon, ganNhat: ganNhat, don: don };
 }
 
-/** Chạy thử trong Apps Script (menu Chạy) để xem Sheet/email có nhận được không. */
-function testDonHang() {
-  doPost({ postData: { contents: JSON.stringify({
-    code: 'HCK-TEST', type: 'checkout', customer: { name: 'Khách thử', phone: '0967233003', address: 'Hà Nội' },
-    items: [{ short: 'Nước ép Lotte Tăng Cao', variant: 'Hộp 10 gói', qty: 2 }],
-    subtotal: 896000, discount: 0, ship: 25000, total: 921000, payment: 'cod', note: 'Đơn thử'
-  }) } });
+function timDongKH(sdt) {
+  var s = sheetKH(); var n = s.getLastRow(); if (n < 2) return 0;
+  var v = s.getRange(2, 1, n - 1, 1).getValues();
+  for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][0]) === sdt) return i + 2;
+  return 0;
 }
 
-/* =====================================================================
- *  BÁO ĐƠN VỀ ZALO BẰNG BOT  (miễn phí, không cần nâng gói OA)
- *
- *  Cách cài (làm 1 lần):
- *   1. Mở Zalo → tìm "Bot Creator" (https://zalo.me/s/botcreator/) → tạo bot →
- *      Zalo gửi cho chị 1 dãy token dạng 211668...:IEUc...
- *   2. Dán token đó vào ZALO_BOT_TOKEN ở đầu file.
- *   3. Mở Zalo, vào đúng con bot đó và NHẮN CHO BOT 1 TIN bất kỳ (ví dụ: xin chào).
- *      Bắt buộc, vì Zalo chỉ cho bot nhắn lại cho người đã nhắn cho nó trước.
- *   4. Trong Apps Script chọn hàm zaloBotLayChatId → bấm Chạy → mở Nhật ký
- *      (Ctrl+Enter). Mã hộp chat được lưu tự động, và cũng hiện trong nhật ký để
- *      chị dán vào ZALO_BOT_CHAT_ID cho chắc.
- *   5. Chọn hàm zaloBotThuGuiTin → Chạy → kiểm tra Zalo đã nhận được tin thử chưa.
- *   6. Bấm Lưu → Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
- *
- *  Lưu ý: nếu rất lâu không nhắn gì cho bot mà tin báo đơn bị lỗi, chị chỉ cần mở
- *  Zalo nhắn cho bot 1 tin là dùng tiếp được. Email thì không bao giờ bị giới hạn.
- * ===================================================================== */
+function docKH(sdt) {
+  var s = sheetKH(); var dong = timDongKH(sdt);
+  var ct = tinhChiTieu(sdt);
+  var h = hangTheoTien(ct.tong);
+  var kh = { sdt: sdt, ten: '', tinh: '', xa: '', diaChi: '', email: '',
+             tongChiTieu: ct.tong, soDon: ct.soDon, hang: h.key, hangLabel: h.label, giam: h.giam, donGanNhat: ct.ganNhat };
+  if (dong) {
+    var v = s.getRange(dong, 1, 1, H_KH.length).getValues()[0];
+    kh.ten = String(v[1] || ''); kh.tinh = String(v[2] || ''); kh.xa = String(v[3] || '');
+    kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || '');
+  }
+  return { kh: kh, don: ct.don, dong: dong };
+}
 
+/* Tách "số nhà, xã, tỉnh" thành 3 phần khi đơn cũ không gửi kèm tinh/xa */
+function capNhatKhachHang(sdt, c, order) {
+  var s = sheetKH(); var dong = timDongKH(sdt);
+  var ct = tinhChiTieu(sdt); var h = hangTheoTien(ct.tong);
+  var tinh = c.tinh || '', xa = c.xa || '', chiTiet = c.diaChi || '';
+  if (!tinh && c.address) {
+    var p = String(c.address).split(',');
+    if (p.length >= 3) { tinh = p.pop().trim(); xa = p.pop().trim(); chiTiet = p.join(',').trim(); }
+    else chiTiet = String(c.address).trim();
+  }
+  if (dong) {
+    var cu = s.getRange(dong, 1, 1, H_KH.length).getValues()[0];
+    s.getRange(dong, 1, 1, H_KH.length).setValues([[
+      "'" + sdt, c.name || cu[1], tinh || cu[2], xa || cu[3], chiTiet || cu[4], c.email || cu[5],
+      ct.tong, ct.soDon, h.label, ct.ganNhat, cu[10] || new Date(), cu[11] || ''
+    ]]);
+  } else {
+    s.appendRow(["'" + sdt, c.name || '', tinh, xa, chiTiet, c.email || '', ct.tong, ct.soDon, h.label, ct.ganNhat, new Date(), '']);
+  }
+}
+
+/* Chạy tay khi muốn tính lại toàn bộ tổng chi tiêu & hạng cho mọi khách */
+function tinhLaiTatCaKhachHang() {
+  var s = sheetKH(); var n = s.getLastRow(); if (n < 2) return;
+  var v = s.getRange(2, 1, n - 1, H_KH.length).getValues();
+  for (var i = 0; i < v.length; i++) {
+    var sdt = chuanSdt(v[i][0]); if (!sdt) continue;
+    var ct = tinhChiTieu(sdt); var h = hangTheoTien(ct.tong);
+    s.getRange(i + 2, 7, 1, 4).setValues([[ct.tong, ct.soDon, h.label, ct.ganNhat]]);
+  }
+  SpreadsheetApp.flush();
+}
+
+/* ===================== OTP & PHIÊN ĐĂNG NHẬP ===================== */
+function taoMaOtp() { return String(Math.floor(100000 + Math.random() * 900000)); }
+function taoToken() { return Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8); }
+
+function luuOtp(sdt, ma, kenh) {
+  var s = sheetOtp(); var n = s.getLastRow();
+  var het = new Date(Date.now() + OTP_PHUT * 60000);
+  if (n >= 2) {
+    var v = s.getRange(2, 1, n - 1, 1).getValues();
+    for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][0]) === sdt) {
+      s.getRange(i + 2, 1, 1, 6).setValues([["'" + sdt, ma, het, 0, new Date(), kenh]]); return;
+    }
+  }
+  s.appendRow(["'" + sdt, ma, het, 0, new Date(), kenh]);
+}
+function kiemTraOtp(sdt, ma) {
+  var s = sheetOtp(); var n = s.getLastRow(); if (n < 2) return { ok: false, msg: 'Mã đã hết hạn, mẹ bấm gửi lại mã nhé' };
+  var v = s.getRange(2, 1, n - 1, 6).getValues();
+  for (var i = 0; i < v.length; i++) {
+    if (chuanSdt(v[i][0]) !== sdt) continue;
+    var dong = i + 2;
+    if (Number(v[i][3]) >= OTP_SAI_TOI_DA) return { ok: false, msg: 'Nhập sai quá nhiều lần, mẹ bấm gửi lại mã mới nhé' };
+    if (new Date(v[i][2]).getTime() < Date.now()) return { ok: false, msg: 'Mã đã hết hạn, mẹ bấm gửi lại mã nhé' };
+    if (String(v[i][1]) !== String(ma)) { s.getRange(dong, 4).setValue(Number(v[i][3]) + 1); return { ok: false, msg: 'Mã OTP không đúng' }; }
+    s.getRange(dong, 2, 1, 3).setValues([['', new Date(0), OTP_SAI_TOI_DA]]);  // dùng 1 lần rồi huỷ
+    return { ok: true };
+  }
+  return { ok: false, msg: 'Mẹ bấm gửi mã OTP trước nhé' };
+}
+function luuPhien(sdt) {
+  var token = taoToken();
+  sheetPhien().appendRow([token, "'" + sdt, new Date(Date.now() + PHIEN_NGAY * 864e5), new Date()]);
+  return token;
+}
+function sdtTheoToken(token) {
+  if (!token) return '';
+  var s = sheetPhien(); var n = s.getLastRow(); if (n < 2) return '';
+  var v = s.getRange(2, 1, n - 1, 3).getValues();
+  for (var i = 0; i < v.length; i++) {
+    if (String(v[i][0]) !== String(token)) continue;
+    if (new Date(v[i][2]).getTime() < Date.now()) return '';
+    return chuanSdt(v[i][1]);
+  }
+  return '';
+}
+/* Dọn mã OTP & phiên hết hạn – nên đặt trigger chạy mỗi ngày */
+function donRacOtp() {
+  [[sheetOtp(), 3], [sheetPhien(), 3]].forEach(function (x) {
+    var s = x[0], cot = x[1], n = s.getLastRow(); if (n < 2) return;
+    var v = s.getRange(2, cot, n - 1, 1).getValues();
+    for (var i = v.length - 1; i >= 0; i--) if (v[i][0] && new Date(v[i][0]).getTime() < Date.now() - 864e5) s.deleteRow(i + 2);
+  });
+}
+
+/* Gửi mã OTP: ưu tiên SMS → email khách → báo về shop để shop nhắn tay */
+function guiMaOtp(sdt, ma, emailKhach) {
+  var noiDung = 'Ma xac thuc ' + TEN_SHOP + ' cua ban la ' + ma + '. Ma co hieu luc ' + OTP_PHUT + ' phut. Khong chia se ma nay cho bat ky ai.';
+  if (SMS_API_KEY && SMS_SECRET_KEY) {
+    try {
+      var url = 'https://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_get'
+        + '?Phone=' + encodeURIComponent(sdt) + '&Content=' + encodeURIComponent(noiDung)
+        + '&ApiKey=' + encodeURIComponent(SMS_API_KEY) + '&SecretKey=' + encodeURIComponent(SMS_SECRET_KEY)
+        + '&SmsType=2' + (SMS_BRANDNAME ? '&Brandname=' + encodeURIComponent(SMS_BRANDNAME) : '');
+      var res = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+      var kq = JSON.parse(res.getContentText());
+      if (String(kq.CodeResult) === '100') return { kenh: 'sms' };
+      Logger.log('SMS lỗi: ' + res.getContentText());
+    } catch (err) { Logger.log('SMS lỗi: ' + err); }
+  }
+  if (emailKhach) {
+    try {
+      MailApp.sendEmail(emailKhach, 'Mã xác thực ' + TEN_SHOP + ': ' + ma,
+        'Mã xác thực của bạn là ' + ma + '.\nMã có hiệu lực ' + OTP_PHUT + ' phút.\nNếu không phải bạn yêu cầu, vui lòng bỏ qua email này.');
+      return { kenh: 'email', emailAn: anEmail(emailKhach) };
+    } catch (err) { Logger.log('Email OTP lỗi: ' + err); }
+  }
+  var bao = '🔐 Khách ' + sdt + ' xin mã OTP: ' + ma + ' (hiệu lực ' + OTP_PHUT + ' phút).\nShop nhắn mã này cho khách qua Zalo/SMS giúp nhé.';
+  try { zaloBotGuiTin(bao); } catch (err) { Logger.log(err); }
+  if (EMAIL) { try { MailApp.sendEmail(EMAIL, '🔐 Mã OTP cho khách ' + sdt, bao); } catch (err) { Logger.log(err); } }
+  return { kenh: 'shop' };
+}
+
+/* ===================== API CHO WEBSITE (JSONP) ===================== */
+function traVe(data, callback) {
+  var json = JSON.stringify(data);
+  if (callback && /^[A-Za-z_$][\w$]*$/.test(callback)) {
+    return ContentService.createTextOutput(callback + '(' + json + ');').setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  var p = (e && e.parameter) || {};
+  var cb = p.callback || '';
+  var action = p.action || '';
+  try {
+    if (action === 'kiemTra')  return traVe(apiKiemTra(p), cb);
+    if (action === 'guiOtp')   return traVe(apiGuiOtp(p), cb);
+    if (action === 'xacThuc')  return traVe(apiXacThuc(p), cb);
+    if (action === 'hoSo')     return traVe(apiHoSo(p), cb);
+    if (action === 'capNhat')  return traVe(apiCapNhat(p), cb);
+    return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
+  } catch (err) {
+    Logger.log('doGet lỗi: ' + err);
+    return traVe({ ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau ít phút nhé' }, cb);
+  }
+}
+
+/* Chỉ cho biết số này đã từng mua hay chưa – KHÔNG trả thông tin riêng tư */
+function apiKiemTra(p) {
+  var sdt = chuanSdt(p.sdt);
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var dong = timDongKH(sdt);
+  if (!dong) return { ok: true, coTaiKhoan: false };
+  var ten = sheetKH().getRange(dong, 2).getValue();
+  return { ok: true, coTaiKhoan: true, tenAn: anTen(ten) };
+}
+
+function apiGuiOtp(p) {
+  var sdt = chuanSdt(p.sdt);
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var cache = CacheService.getScriptCache();
+  var k = 'otp_' + sdt;
+  var dem = Number(cache.get(k) || 0);
+  if (dem >= OTP_MOI_GIO) return { ok: false, msg: 'Mẹ đã xin mã quá nhiều lần, thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
+  cache.put(k, String(dem + 1), 3600);
+
+  var lock = LockService.getScriptLock();
+  try { lock.waitLock(8000); } catch (err) { return { ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau vài giây' }; }
+  try {
+    var ma = taoMaOtp();
+    var dong = timDongKH(sdt);
+    var emailKhach = dong ? String(sheetKH().getRange(dong, 6).getValue() || '') : '';
+    var gui = guiMaOtp(sdt, ma, emailKhach);
+    luuOtp(sdt, ma, gui.kenh);
+    return { ok: true, kenh: gui.kenh, emailAn: gui.emailAn || '', hetHanGiay: OTP_PHUT * 60 };
+  } finally { lock.releaseLock(); }
+}
+
+function apiXacThuc(p) {
+  var sdt = chuanSdt(p.sdt);
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var kq = kiemTraOtp(sdt, String(p.ma || '').replace(/\D/g, ''));
+  if (!kq.ok) return { ok: false, msg: kq.msg };
+  var d = docKH(sdt);
+  if (!d.dong) capNhatKhachHang(sdt, { name: '', phone: sdt }, {});   // khách mới: tạo hồ sơ rỗng
+  var token = luuPhien(sdt);
+  return { ok: true, token: token, kh: d.kh, donHang: d.don };
+}
+
+function apiHoSo(p) {
+  var sdt = sdtTheoToken(p.token);
+  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };
+  var d = docKH(sdt);
+  return { ok: true, kh: d.kh, donHang: d.don };
+}
+
+function apiCapNhat(p) {
+  var sdt = sdtTheoToken(p.token);
+  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };
+  var s = sheetKH(); var dong = timDongKH(sdt);
+  var cat = function (v, n) { return String(v || '').slice(0, n); };
+  if (!dong) { s.appendRow(["'" + sdt, '', '', '', '', '', 0, 0, HANG[0].label, '', new Date(), '']); dong = s.getLastRow(); }
+  var cu = s.getRange(dong, 1, 1, H_KH.length).getValues()[0];
+  s.getRange(dong, 2, 1, 5).setValues([[
+    cat(p.ten || cu[1], 80), cat(p.tinh || '', 60), cat(p.xa || '', 80), cat(p.diaChi || '', 200), cat(p.email || '', 100)
+  ]]);
+  var d = docKH(sdt);
+  return { ok: true, kh: d.kh, donHang: d.don };
+}
+
+/* ===================== BOT ZALO ===================== */
 var ZALO_BOT_API = 'https://bot-api.zapps.me/bot';
-
 function zaloBotGoi(method, payload) {
   if (!ZALO_BOT_TOKEN) return '';
   var res = UrlFetchApp.fetch(ZALO_BOT_API + ZALO_BOT_TOKEN + '/' + method, {
@@ -138,135 +417,45 @@ function zaloBotGoi(method, payload) {
   });
   return res.getContentText();
 }
-
 function zaloBotChatId() {
   return ZALO_BOT_CHAT_ID || PropertiesService.getScriptProperties().getProperty('ZALO_BOT_CHAT_ID') || '';
 }
-
-/** Gửi 1 tin nhắn về Zalo của chủ shop qua bot. */
 function zaloBotGuiTin(text) {
   var chat = zaloBotChatId();
   if (!ZALO_BOT_TOKEN || !chat) return;
   Logger.log('Zalo bot: ' + zaloBotGoi('sendMessage', { chat_id: chat, text: text }));
 }
-
-/** Chạy SAU KHI đã nhắn 1 tin cho bot trên Zalo, để lấy & lưu mã hộp chat. */
+/* Nhắn cho bot 1 tin bất kỳ rồi chạy hàm này để lấy & lưu chat id */
 function zaloBotLayChatId() {
-  if (!ZALO_BOT_TOKEN) { Logger.log('Chưa dán ZALO_BOT_TOKEN ở đầu file.'); return ''; }
-  for (var lan = 0; lan < 3; lan++) {
-    var raw = zaloBotGoi('getUpdates', { offset: 0, limit: 20, timeout: 15 });
-    Logger.log(raw);
-    var d = {};
-    try { d = JSON.parse(raw || '{}'); } catch (e) {}
-    var ds = d && d.result ? (d.result.length ? d.result : [d.result]) : [];
-    for (var i = 0; i < ds.length; i++) {
-      var m = ds[i] && (ds[i].message || ds[i]);
-      var id = m && m.chat && m.chat.id;
-      if (id) {
-        PropertiesService.getScriptProperties().setProperty('ZALO_BOT_CHAT_ID', String(id));
-        Logger.log('ĐÃ LƯU mã hộp chat: ' + id + '  → dán số này vào ZALO_BOT_CHAT_ID ở đầu file.');
-        return String(id);
+  for (var i = 0; i < 3; i++) {
+    var raw = zaloBotGoi('getUpdates', { timeout: 20 });
+    Logger.log('getUpdates: ' + raw);
+    try {
+      var data = JSON.parse(raw);
+      var list = (data && data.result) || [];
+      for (var j = 0; j < list.length; j++) {
+        var m = list[j].message || (list[j].event_name ? list[j].message : null);
+        if (m && m.chat && m.chat.id) {
+          PropertiesService.getScriptProperties().setProperty('ZALO_BOT_CHAT_ID', String(m.chat.id));
+          Logger.log('✅ Đã lưu ZALO_BOT_CHAT_ID: ' + m.chat.id);
+          return String(m.chat.id);
+        }
       }
-    }
+    } catch (err) { Logger.log('Lỗi đọc getUpdates: ' + err); }
+    Utilities.sleep(2000);
   }
-  Logger.log('Chưa thấy tin nào. Hãy mở Zalo nhắn cho bot 1 tin rồi chạy lại hàm này ngay sau đó.');
+  Logger.log('⚠️ Chưa thấy tin nhắn nào. Hãy nhắn cho bot 1 tin rồi chạy lại hàm này.');
   return '';
 }
+function zaloBotThuGuiTin() { zaloBotGuiTin('✅ Bot đã kết nối với web ' + TEN_SHOP + '.'); }
+function zaloBotXemChatId() { Logger.log('ZALO_BOT_CHAT_ID hiện tại: ' + (zaloBotChatId() || '(chưa có)')); }
 
-/** Chạy để thử gửi 1 tin về Zalo qua bot. */
-function zaloBotThuGuiTin() {
-  zaloBotGuiTin('Hương Chất Kids: thử báo đơn về Zalo qua bot. Nếu chị đọc được tin này là đã chạy tốt.');
+/* ===================== CHẠY THỬ ===================== */
+function testDonHang() {
+  doPost({ postData: { contents: JSON.stringify({
+    type: 'checkout', code: 'HCK-TEST', customer: { name: 'Khách thử', phone: '0900000000', address: 'Số 1, Phường Ba Đình, Hà Nội', tinh: 'Hà Nội', xa: 'Phường Ba Đình', diaChi: 'Số 1' },
+    items: [{ short: 'Sản phẩm thử', qty: 1 }], subtotal: 100000, discount: 0, ship: 0, total: 100000, payment: 'cod',
+    qua: { soQua: 5, ten: 'gói nước ép Lotte', moTa: '5 gói nước ép Lotte (Hồng – Tăng cân tự nhiên)' }
+  }) } });
 }
-
-/* =====================================================================
- *  BÁO ĐƠN VỀ ZALO (Zalo OA) – cách cũ, tốn phí, hiện đang tắt
- *  Zalo không cho gửi tin vào Zalo cá nhân bằng API, nên phải đi qua một
- *  Official Account (OA) miễn phí của shop. Làm 1 lần:
- *
- *  1. Tạo OA tại https://oa.zalo.me (loại Doanh nghiệp/Bán hàng, miễn phí).
- *     Dùng Zalo cá nhân của chị bấm "Quan tâm" OA đó và nhắn cho OA 1 tin bất kỳ.
- *  2. Vào https://developers.zalo.me → Tạo ứng dụng → mục "Official Account API"
- *     → Liên kết OA vừa tạo. Ghi lại App ID và Secret key → điền vào ZALO_APP_ID,
- *     ZALO_APP_SECRET ở đầu file.
- *  3. Trong ứng dụng đó, mở công cụ tạo access token (Tools / API Explorer),
- *     cấp quyền cho OA, copy REFRESH TOKEN.
- *  4. Trong Apps Script: chọn hàm zaloLuuRefreshToken ở ô chọn hàm, sửa chuỗi
- *     'DAN_REFRESH_TOKEN_VAO_DAY' thành refresh token vừa copy, bấm Chạy.
- *  5. Chọn hàm zaloLayUserId, bấm Chạy, mở Nhật ký (Ctrl+Enter) để xem user_id
- *     của chị → điền vào ZALO_USER_ID ở đầu file.
- *  6. Lấy user_id của chủ shop: vào https://oa.zalo.me → OA của shop → Quản lý khách hàng
- *     (Người quan tâm) → mở đúng người là chủ shop → xem dòng "User ID" (dãy số dài),
- *     hoặc nhìn thanh địa chỉ trình duyệt khi mở cuộc trò chuyện (…userId=…).
- *     Điền số đó vào ZALO_USER_ID ở đầu file.
- *     (Không dùng Webhook được: link /exec của Apps Script trả HTTP 302 nên Zalo báo
- *      "Đường dẫn webhook không hợp lệ".)
- *  7. Bấm Lưu, rồi Triển khai → Quản lý bản triển khai → bút chì → Phiên bản mới.
- *
- *  Lưu ý: Zalo chỉ cho OA nhắn cho người đã tương tác trong vòng 7 ngày. Nếu lâu
- *  không nhắn cho OA, tin báo đơn có thể bị từ chối – lúc đó chị chỉ cần mở Zalo
- *  nhắn cho OA của mình 1 tin là dùng tiếp được. Email và Telegram thì không giới hạn.
- * ===================================================================== */
-
-function zaloLuuRefreshToken(token) {
-  var t = token || 'DAN_REFRESH_TOKEN_VAO_DAY';
-  PropertiesService.getScriptProperties().setProperty('ZALO_REFRESH_TOKEN', t);
-  Logger.log('Đã lưu refresh token.');
-}
-
-function zaloAccessToken() {
-  var props = PropertiesService.getScriptProperties();
-  var token = props.getProperty('ZALO_ACCESS_TOKEN');
-  var hetHan = Number(props.getProperty('ZALO_TOKEN_EXP') || 0);
-  if (token && Date.now() < hetHan - 60000) return token;
-
-  var refresh = props.getProperty('ZALO_REFRESH_TOKEN');
-  if (!ZALO_APP_ID || !ZALO_APP_SECRET || !refresh) return '';
-
-  var res = UrlFetchApp.fetch('https://oauth.zaloapp.com/v4/oa/access_token', {
-    method: 'post', muteHttpExceptions: true,
-    headers: { secret_key: ZALO_APP_SECRET },
-    contentType: 'application/x-www-form-urlencoded',
-    payload: { refresh_token: refresh, app_id: ZALO_APP_ID, grant_type: 'refresh_token' }
-  });
-  var d = JSON.parse(res.getContentText());
-  if (!d.access_token) throw new Error('Không lấy được access token Zalo: ' + res.getContentText());
-  props.setProperty('ZALO_ACCESS_TOKEN', d.access_token);
-  props.setProperty('ZALO_TOKEN_EXP', String(Date.now() + (Number(d.expires_in || 3600) * 1000)));
-  if (d.refresh_token) props.setProperty('ZALO_REFRESH_TOKEN', d.refresh_token);
-  return d.access_token;
-}
-
-function zaloUserId() {
-  return ZALO_USER_ID || PropertiesService.getScriptProperties().getProperty('ZALO_USER_ID') || '';
-}
-
-function zaloGuiTin(text) {
-  var uid = zaloUserId();
-  if (!ZALO_APP_ID || !uid) return;
-  var token = zaloAccessToken();
-  if (!token) return;
-  var res = UrlFetchApp.fetch('https://openapi.zalo.me/v3.0/oa/message/cs', {
-    method: 'post', muteHttpExceptions: true, contentType: 'application/json',
-    headers: { access_token: token },
-    payload: JSON.stringify({ recipient: { user_id: uid }, message: { text: text } })
-  });
-  Logger.log('Zalo: ' + res.getContentText());
-}
-
-/** Xem user_id đã lưu (có sau khi chị nhắn 1 tin cho OA và webhook đã cài đúng). */
-function zaloXemUserId() {
-  Logger.log('ZALO_USER_ID = ' + (zaloUserId() || '(chưa có – hãy nhắn 1 tin cho OA rồi chạy lại)'));
-}
-
-/** Lưu tạm access token Zalo (dùng được ~1 giờ) để thử ngay khi chưa có Secret key. */
-function zaloLuuAccessTokenTam(token) {
-  var props = PropertiesService.getScriptProperties();
-  props.setProperty('ZALO_ACCESS_TOKEN', token || 'DAN_ACCESS_TOKEN_VAO_DAY');
-  props.setProperty('ZALO_TOKEN_EXP', String(Date.now() + 55 * 60 * 1000));
-  Logger.log('Đã lưu access token tạm.');
-}
-
-/** Chạy để thử gửi 1 tin Zalo. */
-function zaloThuGuiTin() {
-  zaloGuiTin('Hương Chất Kids: thử gửi tin báo đơn về Zalo.');
-}
+function testGuiOtp() { Logger.log(JSON.stringify(apiGuiOtp({ sdt: '0900000000' }))); }
