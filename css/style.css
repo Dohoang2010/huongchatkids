@@ -1362,3 +1362,41 @@ body { padding-bottom: 0; }
   .slide--fx .slide__sticker { left: auto; right: 6px; bottom: 4px; }
 }
 @media (prefers-reduced-motion: reduce) { .slide__fx i, .slide--fx .btn, .slide--fx .btn::after, .slide--fx .slide__badge { animation: none !important; } .fx-cf { display: none; } }
+/* Trang tài khoản: thẻ thành viên + vòng tiến độ lên hạng (cột trái) */
+.tier-hero { display: grid; gap: 20px; }
+@media (min-width: 768px) { .tier-hero { grid-template-columns: 260px minmax(0, 1fr); gap: 24px; align-items: start; } }
+.tier-ladder--2 { grid-template-columns: repeat(2, 1fr); }
+.memcol { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.memcard { position: relative; overflow: hidden; aspect-ratio: 1.6; border-radius: 18px; padding: 16px 18px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 14px 30px rgba(34,32,42,.18); isolation: isolate; }
+.memcard::before { content: ''; position: absolute; z-index: -1; right: -40px; top: -50px; width: 170px; height: 170px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.memcard::after { content: ''; position: absolute; z-index: -1; left: -30px; bottom: -70px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.08); }
+.memcard--moi { background: linear-gradient(135deg, #F0537A 0%, #FF8DA8 60%, #FFB8C9 100%); }
+.memcard--silver { background: linear-gradient(135deg, #5F6F7E 0%, #9AAAB8 50%, #D5DEE6 100%); }
+.memcard--gold { background: linear-gradient(135deg, #A86B00 0%, #D9A21B 45%, #F6D56A 100%); }
+.memcard--diamond { background: linear-gradient(135deg, #1B4F9C 0%, #1E9CB8 50%, #7EE3F2 100%); }
+.memcard--khoa { background: linear-gradient(135deg, #3A3F4B 0%, #5D6474 60%, #8A92A3 100%); }
+.memcard__top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.memcard__brand { font-family: var(--font-head); font-weight: 700; font-size: 14px; white-space: nowrap; }
+.memcard__type { font-size: 8.5px; font-weight: 700; letter-spacing: .1em; opacity: .85; white-space: nowrap; padding: 3px 7px; border: 1px solid rgba(255,255,255,.5); border-radius: 999px; }
+.memcard__tier { display: flex; align-items: center; gap: 10px; }
+.memcard__ico { width: 46px; height: 46px; border-radius: 14px; background: rgba(255,255,255,.22); display: inline-flex; align-items: center; justify-content: center; font-size: 26px; backdrop-filter: blur(4px); }
+.memcard small { display: block; font-size: 10.5px; opacity: .85; letter-spacing: .02em; }
+.memcard__tier b { font-family: var(--font-head); font-size: 20px; line-height: 1.1; white-space: nowrap; }
+.memcard__foot { display: flex; justify-content: space-between; gap: 8px; }
+.memcard__foot b { font-size: 13px; letter-spacing: .03em; }
+.memcard__chip { display: none; position: absolute; right: 18px; top: 44px; width: 34px; height: 26px; border-radius: 6px; background: linear-gradient(135deg, #F7E7A1, #D4AF37); opacity: .9; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+.memcard__shine { position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.35) 50%, transparent 65%); transform: translateX(-100%); animation: memShine 4.5s ease-in-out infinite; pointer-events: none; }
+@keyframes memShine { 0%, 60% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.memring { position: relative; width: 132px; height: 132px; align-self: center; }
+.memring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.memring circle { fill: none; stroke-width: 9; }
+.memring__bg { stroke: #EEF1F4; }
+.memring__fg { stroke-linecap: round; transition: stroke-dashoffset .8s ease; }
+.memring__txt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.memring__txt b { font-family: var(--font-head); font-size: 26px; line-height: 1; color: var(--ink); }
+.memring__txt small { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+.memcol__sum { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 10px 12px; border-radius: 12px; background: var(--bg-soft); font-size: 12.5px; color: var(--muted); }
+.memcol__sum b { font-size: 17px; color: var(--primary); font-family: var(--font-head); white-space: nowrap; }
+.memcol__next { font-size: 13px; line-height: 1.5; text-align: center; margin: 0; }
+.memcol__next b { color: var(--primary); }
+@media (prefers-reduced-motion: reduce) { .memcard__shine { animation: none; display: none; } }

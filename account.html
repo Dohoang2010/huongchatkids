@@ -8,15 +8,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929f">
+  <link rel="stylesheet" href="css/style.css?v=20260929g">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20260929f"></script>
-<script src="js/diachi.js?v=20260929f"></script>
+<script src="js/data.js?v=20260929g"></script>
+<script src="js/diachi.js?v=20260929g"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929f"></script>
+<script src="js/app.js?v=20260929g"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -35,7 +35,36 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="tier-prog__head"><div><span class="text-muted fs-13">Tổng đã chi tiêu</span><b class="tier-prog__sum">${fmt(spent)}</b></div>${tierBadge(cur)}</div>
       <div class="tier-prog__bar"><i style="width:${pct}%;background:${cur.color}"></i></div>
       <p class="fs-13 ${next ? '' : 'text-teal fw-600'}">${next ? `Mua thêm <b>${fmt(Math.max(0, next.min - spent))}</b> để lên hạng ${next.icon} <b>${esc(next.label)}</b> – ${esc(next.desc || '')}` : '🎉 Mẹ đang ở hạng cao nhất của shop, cảm ơn mẹ rất nhiều!'}</p>
-      <div class="tier-ladder">${list.map((t) => `<div class="tier-ladder__col ${t.key === cur.key ? 'is-on' : ''} ${spent >= t.min ? 'is-done' : ''}"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>
+      <div class="tier-ladder tier-ladder--2">${list.map((t) => `<div class="tier-ladder__col ${t.key === cur.key ? 'is-on' : ''} ${spent >= t.min ? 'is-done' : ''}"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>
+    </div>`;
+  }
+
+  /* ---------- Cột trái: thẻ thành viên + vòng tiến độ lên hạng ----------
+     o.spent: tổng chi tiêu (null = chưa biết) · o.ten, o.sdt · o.uocTinh: số đơn trên máy (khi chưa xác thực) */
+  function theThanhVien(o) {
+    const biet = o.spent != null; const spent = biet ? o.spent : 0;
+    const cur = tierOf(spent); const next = tierNext(spent);
+    const tu = cur.min || 0; const den = next ? next.min : tu;
+    const pct = !biet ? 0 : next ? Math.max(4, Math.min(100, Math.round((spent - tu) / Math.max(1, den - tu) * 100))) : 100;
+    const C = 2 * Math.PI * 44; const offset = (C * (1 - pct / 100)).toFixed(1);
+    const conThieu = next ? Math.max(0, next.min - spent) : 0;
+    const loi = !biet ? `Xác thực số điện thoại để xem mẹ đang ở hạng nào và còn bao nhiêu để lên hạng.`
+      : next ? `Mua thêm <b>${fmt(conThieu)}</b> để lên hạng <b>${next.icon} ${esc(next.label)}</b> – giảm <b>${next.discount}%</b> mọi đơn.`
+      : `🎉 Mẹ đang ở hạng cao nhất – giảm <b>${cur.discount}%</b> mọi đơn. Cảm ơn mẹ!`;
+    return `<div class="memcol">
+      <div class="memcard memcard--${biet ? cur.key : 'khoa'}">
+        <div class="memcard__top"><span class="memcard__brand">${esc(SITE.name)}</span><span class="memcard__type">THẺ THÀNH VIÊN</span></div>
+        <div class="memcard__tier"><span class="memcard__ico">${biet ? cur.icon : '🔒'}</span><div><small>Hạng hiện tại</small><b>${biet ? esc(cur.label) : 'Chưa xác thực'}</b></div></div>
+        <div class="memcard__foot"><div><small>Chủ thẻ</small><b>${esc(o.ten || 'Mẹ của bé')}</b></div><div style="text-align:right"><small>${o.sdt ? 'SĐT' : 'Ưu đãi'}</small><b>${o.sdt ? esc(maskPhone(o.sdt)) : biet && cur.discount ? '−' + cur.discount + '%' : '—'}</b></div></div>
+        <i class="memcard__chip"></i><i class="memcard__shine"></i>
+      </div>
+      <div class="memring">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" class="memring__bg"/><circle cx="50" cy="50" r="44" class="memring__fg" style="stroke:${biet ? cur.color : '#CFD6DE'};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${offset}"/></svg>
+        <div class="memring__txt"><b>${biet ? pct + '%' : '?'}</b><small>${next ? 'tới ' + esc(next.label) : biet ? 'tối đa' : 'tiến độ'}</small></div>
+      </div>
+      <div class="memcol__sum"><span>${o.uocTinh ? `Ước tính từ ${o.uocTinh} đơn trên máy này` : 'Tổng đã chi tiêu'}</span><b>${biet ? fmt(spent) : '•••••••'}</b></div>
+      <p class="memcol__next">${loi}</p>
+      ${!biet || o.uocTinh ? `<button class="btn btn--primary btn--block btn--sm" type="button" data-otp>🔐 Xác thực OTP xem hạng chính xác</button>` : ''}
     </div>`;
   }
 
@@ -47,11 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
       <p class="text-muted fs-14 mb-16">${esc(SITE.name)} không bắt buộc đăng ký – mẹ chỉ cần số điện thoại. Để xem hồ sơ, hạng và lịch sử đơn, mẹ xác thực mã OTP gửi về số của mình.</p>
       <div class="checkout">
         <div class="flex flex-col gap-16">
-          <div class="card card--pad tier-intro">
-            <h3>🎖️ Hạng khách hàng & ưu đãi</h3>
-            <div class="tier-ladder">${tiers().map((t) => `<div class="tier-ladder__col"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>
-            <p class="fs-13 text-muted mt-12">Hạng xét theo tổng tiền mẹ đã mua tại shop. Ưu đãi hạng tự động trừ vào đơn ngay khi mẹ xác thực số điện thoại ở bước thanh toán.</p>
-          </div>
+          <div class="card card--pad tier-intro"><div class="tier-hero">
+            ${(() => { const dl = donLocal(); return theThanhVien({ spent: dl.length ? dl.reduce((s, o) => s + (Number(o.total) || 0), 0) : null, ten: c && c.name, sdt: c && c.phone, uocTinh: dl.length }); })()}
+            <div>
+              <h3>🎖️ Hạng khách hàng & ưu đãi</h3>
+              <div class="tier-ladder tier-ladder--2">${tiers().map((t) => `<div class="tier-ladder__col"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>
+              <p class="fs-13 text-muted mt-12">Hạng xét theo tổng tiền mẹ đã mua tại shop. Ưu đãi hạng tự động trừ vào đơn ngay khi mẹ xác thực số điện thoại ở bước thanh toán.</p>
+            </div>
+          </div></div>
           ${donLocal().length ? `<div class="card card--pad"><h3>📦 Đơn đã đặt trên máy này</h3>${donLocal().map(donLocalHTML).join('')}<p class="fs-13 text-muted mt-12">Đây là các đơn lưu trên trình duyệt này. Xác thực OTP để xem đầy đủ lịch sử đơn của mẹ ở mọi thiết bị.</p></div>` : ''}
           ${wishHTML()}
         </div>
@@ -87,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="flex justify-between items-center wrap gap-8 mb-16"><h1 class="page-title" style="margin:0">Chào ${esc(kh.ten || 'mẹ')} 👋</h1><button class="btn btn--ghost btn--sm" type="button" id="btnOut">Thoát khỏi máy này</button></div>
       <div class="checkout">
         <div class="flex flex-col gap-16">
-          <div class="card card--pad">${thangHang(spent)}</div>
+          <div class="card card--pad"><div class="tier-hero">${theThanhVien({ spent, ten: kh.ten, sdt: kh.sdt })}<div><h3>🎖️ Hạng khách hàng & ưu đãi</h3>${thangHang(spent)}</div></div></div>
 
           <div class="card card--pad"><h3>📦 Lịch sử đơn hàng <span class="text-muted fs-13" style="font-weight:500">(${don.length} đơn · ${fmt(spent)})</span></h3>
             ${don.length ? don.map(donServerHTML).join('') : `<div class="empty"><div class="emoji">🧾</div><p>Chưa có đơn nào được ghi nhận. <a class="text-primary fw-600" href="collections.html">Mua sắm ngay</a></p></div>`}
@@ -152,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (r) { const o = donLocal().find((x) => x.code === r.dataset.reorderCode); if (o) { o.items.forEach((it) => { const p = byId(it.id); if (p) MC.Cart.add(it.id, it.qty || 1, it.variant && p.variants ? Math.max(0, p.variants.findIndex((v) => v.label === it.variant)) : null); }); location.href = 'checkout.html'; } }
     const cp = e.target.closest('[data-copy-coupon]');
     if (cp) { const ma = cp.dataset.copyCoupon; navigator.clipboard?.writeText(ma); store.set('mc_coupon', ma); toast('Đã chép mã ' + ma + ' – mã sẽ tự điền ở bước thanh toán', { type: 'ok' }); }
-    if (e.target.id === 'btnOtp') openOtp({ title: 'Xem hồ sơ khách hàng' }).then((s) => { if (s) render(); });
+    if (e.target.id === 'btnOtp' || e.target.closest('[data-otp]')) openOtp({ title: 'Xem hồ sơ khách hàng' }).then((s) => { if (s) render(); });
     if (e.target.id === 'btnOut') { Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
     if (e.target.id === 'btnEdit') { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); }
     if (e.target.id === 'btnCancel') { $('#khForm').classList.add('hide'); $('#khView').classList.remove('hide'); }
