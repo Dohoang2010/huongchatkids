@@ -160,6 +160,25 @@ function doPost(e) {
   }
 }
 
+/* ===================== KẾT NỐI CRM (crm.huongchatkids.com) =====================
+   Sau khi khách nhập đúng OTP, hạng & tổng chi tiêu lấy theo ĐƠN THẬT trong CRM / Nhanh
+   thay vì sheet Đơn hàng. Khoá bí mật KHÔNG đặt trong mã: vào Cài đặt dự án (⚙️) →
+   Thuộc tính tập lệnh (Script Properties) → thêm CRM_KEY = <khoá ở trang Kết nối web của CRM>.
+   Chưa có CRM_KEY hoặc CRM lỗi → tự dùng sheet Đơn hàng như cũ. */
+var CRM_KHACH_URL = 'https://crm.huongchatkids.com/api/webhook/web-khach';
+function layKhachTuCRM(sdt) {
+  var key = PropertiesService.getScriptProperties().getProperty('CRM_KEY');
+  if (!key) return null;
+  try {
+    var r = UrlFetchApp.fetch(CRM_KHACH_URL + '?sdt=' + encodeURIComponent(sdt) + '&key=' + encodeURIComponent(key), { muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) return null;
+    var d = JSON.parse(r.getContentText());
+    return d && d.ok ? d : null;
+  } catch (err) { return null; }
+}
+/* Chạy thử trong trình soạn thảo: xem Nhật ký */
+function testCRM() { Logger.log(JSON.stringify(layKhachTuCRM('0900000000'))); }
+
 /* ===================== HỒ SƠ KHÁCH HÀNG ===================== */
 /* Tổng chi tiêu tính lại từ sheet Đơn hàng (bỏ qua đơn có trạng thái huỷ/hoàn) */
 function tinhChiTieu(sdt) {
@@ -192,6 +211,18 @@ function timDongKH(sdt) {
 function docKH(sdt) {
   var s = sheetKH(); var dong = timDongKH(sdt);
   var ct = tinhChiTieu(sdt);
+  /* Có CRM → tổng chi tiêu, số đơn, lịch sử đơn lấy theo CRM (trường tien của CRM → tong mà web đọc) */
+  var crm = layKhachTuCRM(sdt);
+  if (crm && crm.co && crm.kh) {
+    ct = { tong: Number(crm.kh.tongChiTieu) || 0, soDon: Number(crm.kh.soDon) || 0, ganNhat: '',
+      don: (crm.donHang || []).slice(0, 30).map(function (d) {
+        return { ma: String(d.ma || ''), ngay: String(d.ngay || ''), sanPham: String(d.sanPham || ''),
+          tong: Number(d.tien != null ? d.tien : d.tong) || 0, thanhToan: String(d.thanhToan || ''), qua: String(d.qua || ''),
+          trangThai: String(d.trangThai || 'Đã tiếp nhận') };
+      }) };
+    if (!ct.soDon) ct.soDon = ct.don.length;
+    if (ct.don.length) ct.ganNhat = ct.don[0].ngay;
+  }
   var h = hangTheoTien(ct.tong);
   var kh = { sdt: sdt, ten: '', tinh: '', xa: '', diaChi: '', email: '',
              tongChiTieu: ct.tong, soDon: ct.soDon, hang: h.key, hangLabel: h.label, giam: h.giam, donGanNhat: ct.ganNhat };
@@ -200,6 +231,7 @@ function docKH(sdt) {
     kh.ten = String(v[1] || ''); kh.tinh = String(v[2] || ''); kh.xa = String(v[3] || '');
     kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || '');
   }
+  if (crm && crm.co && crm.kh && !kh.ten) kh.ten = String(crm.kh.ten || '');   // khách mới trên web nhưng đã mua qua CRM/Nhanh
   return { kh: kh, don: ct.don, dong: dong };
 }
 
