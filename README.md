@@ -111,9 +111,10 @@ trong `tools/apps-script.gs` cho khớp):
 | Hạng | Tổng đã chi tiêu | Giảm mọi đơn |
 |---|---|---|
 | 🌱 Khách mới | dưới 5 triệu | — |
-| 🥈 Silver | từ 5 triệu | 5% |
-| 🥇 Gold | từ 50 triệu | 10% |
-| 💎 Diamond | từ 100 triệu | 12% |
+| 🥈 Silver | từ 5 đến dưới 20 triệu | 5% |
+| 🥇 Gold | từ 20 đến dưới 40 triệu | 7% |
+| 💎 Diamond | từ 40 đến dưới 100 triệu | 10% |
+| 👑 Platinum | từ 100 triệu | 12% |
 
 - Tổng chi tiêu được **tính lại từ sheet "Đơn hàng"**, bỏ qua dòng có cột *Trạng thái* ghi "Huỷ"/"Hoàn".
   Muốn không tính 1 đơn thì gõ "Huỷ" vào cột Trạng thái của đơn đó.

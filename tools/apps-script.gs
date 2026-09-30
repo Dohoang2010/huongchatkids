@@ -39,9 +39,10 @@ var SMS_BRANDNAME = '';        // tên thương hiệu đã đăng ký với nh�
 // Bảng hạng khách hàng – phải khớp với window.TIERS trong js/data.js
 var HANG = [
   { key: 'moi',     label: 'Khách mới', min: 0,         giam: 0 },
-  { key: 'silver',  label: 'Silver',    min: 5000000,   giam: 5 },
-  { key: 'gold',    label: 'Gold',      min: 50000000,  giam: 10 },
-  { key: 'diamond', label: 'Diamond',   min: 100000000, giam: 12 }
+  { key: 'silver',   label: 'Silver',    min: 5000000,   giam: 5 },
+  { key: 'gold',     label: 'Gold',      min: 20000000,  giam: 7 },
+  { key: 'diamond',  label: 'Diamond',   min: 40000000,  giam: 10 },
+  { key: 'platinum', label: 'Platinum',  min: 100000000, giam: 12 }
 ];
 
 var OTP_PHUT = 10;        // mã OTP sống bao nhiêu phút

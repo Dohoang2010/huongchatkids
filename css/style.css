@@ -1443,3 +1443,8 @@ body { padding-bottom: 0; }
 .qb__lookup-msg.is-err { color: var(--red); background: #FFEBEE; }
 .qb__lookup-msg.is-info { color: var(--ink); }
 .qb__lookup-msg .tier-badge { font-size: 11.5px; padding: 1px 8px; }
+
+/* Hạng Platinum (từ 100 triệu) + bảng bậc hạng trên banner có 4 hạng */
+.memcard--platinum { background: linear-gradient(135deg, #3B2A7A 0%, #6A4FB6 45%, #B9A6F0 100%); }
+.slide__tiers span:nth-child(1) { width: 76%; } .slide__tiers span:nth-child(2) { width: 84%; } .slide__tiers span:nth-child(3) { width: 92%; } .slide__tiers span:nth-child(4) { width: 100%; }
+@media (min-width: 768px) { .slide__tiers { gap: 10px; } .slide__tiers span { padding: 10px 16px; } .slide__tiers em { font-size: 26px; } .slide__tiers b { font-size: 16px; } .slide__tiers small { font-size: 12.5px; } }

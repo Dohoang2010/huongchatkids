@@ -733,9 +733,10 @@ window.MUA_KEM = {
    Sửa mốc tiền hoặc % giảm ngay tại đây, web và Apps Script đều dùng chung bảng này. */
 window.TIERS = [
   { key: 'moi',     label: 'Khách mới',  icon: '🌱', color: '#78909C', min: 0,         discount: 0,  desc: 'Mua đủ 5 triệu để lên hạng Silver' },
-  { key: 'silver',  label: 'Silver',     icon: '🥈', color: '#78909C', min: 5000000,   discount: 5,  desc: 'Giảm 5% mọi đơn hàng' },
-  { key: 'gold',    label: 'Gold',       icon: '🥇', color: '#C98A12', min: 50000000,  discount: 10, desc: 'Giảm 10% mọi đơn hàng' },
-  { key: 'diamond', label: 'Diamond',    icon: '💎', color: '#1E9CB8', min: 100000000, discount: 12, desc: 'Giảm 12% mọi đơn hàng' },
+  { key: 'silver',   label: 'Silver',   icon: '🥈', color: '#78909C', min: 5000000,   discount: 5,  desc: 'Giảm 5% mọi đơn hàng' },
+  { key: 'gold',     label: 'Gold',     icon: '🥇', color: '#C98A12', min: 20000000,  discount: 7,  desc: 'Giảm 7% mọi đơn hàng' },
+  { key: 'diamond',  label: 'Diamond',  icon: '💎', color: '#1E9CB8', min: 40000000,  discount: 10, desc: 'Giảm 10% mọi đơn hàng' },
+  { key: 'platinum', label: 'Platinum', icon: '👑', color: '#6A4FB6', min: 100000000, discount: 12, desc: 'Giảm 12% mọi đơn hàng' },
 ];
 
 window.COUPONS = {
