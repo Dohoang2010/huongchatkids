@@ -8,20 +8,23 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260930f">
+  <link rel="stylesheet" href="css/style.css?v=20260930g">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="pdp"></div></main>
 <div class="sticky-buy" id="stickyBuy"></div>
 
-<script src="js/data.js?v=20260930f"></script>
+<script src="js/data.js?v=20260930g"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260930f"></script>
+<script src="js/app.js?v=20260930g"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, I, starRow, productImage, productCard, Cart, toast, deliveryEstimate, openQuickBuy, giftNote } = MC;
   const p = byId(param('id'));
+  /* Sản phẩm mới đăng mà trình duyệt còn giữ bản trang/dữ liệu cũ (GitHub Pages cho nhớ 10 phút)
+     → tự tải lại 1 lần với địa chỉ mới để lấy bản mới nhất, không bắt khách bấm Ctrl+F5 */
+  if (!p && param('id') && !param('r')) { location.replace(`${location.pathname}?id=${encodeURIComponent(param('id'))}&r=${Date.now()}`); return; }
   if (!p) { $('#pdp').innerHTML = `<div class="empty card" style="margin:24px 0"><div class="emoji">🔍</div><h3>Không tìm thấy sản phẩm</h3><p>Sản phẩm có thể đã ngừng bán. Mẹ xem các sản phẩm khác nhé.</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem tất cả sản phẩm</a></div>`; return; }
   const b = brandOf(p); const d = pct(p); let qty = 1;
   // chọn sẵn phân loại còn hàng đầu tiên (phân loại hết hàng bị khoá)
