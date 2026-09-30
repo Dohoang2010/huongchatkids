@@ -582,6 +582,7 @@
         ${p.variants ? (manyVariants ? `<label class="field mb-12"><span class="fs-13 fw-600">Phân loại</span><select class="input" id="qbVariantSel" aria-label="Chọn phân loại">${p.variants.map((v, i) => `<option value="${i}" ${i === QB.variant ? 'selected' : ''} ${v.oos ? 'disabled' : ''}>${esc(v.label)} – ${v.oos ? 'tạm hết' : fmt(v.price)}</option>`).join('')}</select></label>` : `<div class="qb__variants" id="qbVariants" role="group" aria-label="Phân loại">${p.variants.map((v, i) => `<button type="button" class="chip chip--sm ${i === QB.variant ? 'is-active' : ''} ${v.oos ? 'chip--oos' : ''}" data-qb-variant="${i}" aria-pressed="${i === QB.variant}" ${v.oos ? 'disabled' : ''}>${esc(v.label)} · ${v.oos ? 'tạm hết' : fmt(v.price)}</button>`).join('')}</div>`) : ''}
         <div class="qb__row"><div class="qty" role="group" aria-label="Số lượng"><button type="button" data-qb-minus aria-label="Giảm số lượng">−</button><input type="number" id="qbQty" value="${QB.qty}" min="1" max="99" inputmode="numeric" aria-label="Số lượng"><button type="button" data-qb-plus aria-label="Tăng số lượng">+</button></div><span class="qb__hint" id="qbHint"></span></div>
         <form class="qb__form" id="qbForm" novalidate>
+          ${LOY().enabled && !Session.get() ? `<div class="qb__lookup" id="qbLookup"><div class="qb__lookup-t">🔎 <b>Mẹ đã từng mua tại shop?</b> Nhập số điện thoại để điền nhanh thông tin</div><div class="coupon"><input class="input" id="qbLookupPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại đã mua" aria-label="Số điện thoại đã mua" value="${esc(c.phone || '')}" autocomplete="tel"><button class="btn btn--dark" type="button" id="qbLookupBtn">Tra cứu</button></div><div class="qb__lookup-msg hide" id="qbLookupMsg" role="status"></div></div>` : ''}
           ${known ? `<div class="qb__saved" id="qbSaved">👋 Chào ${esc(c.name || 'mẹ')}, thông tin giao hàng đã điền sẵn từ lần trước <button type="button" data-qb-clear>Sửa</button></div>` : ''}
           <div class="grid-2 ${known ? 'hide' : ''}" id="qbFields1"><input class="input" name="name" placeholder="Họ tên mẹ / ba *" aria-label="Họ tên" value="${esc(c.name || '')}" required autocomplete="name"><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại *" aria-label="Số điện thoại" value="${esc(c.phone || '')}" required autocomplete="tel"></div>
           <input class="input ${known ? 'hide' : ''}" id="qbFields2" name="address" placeholder="Địa chỉ nhận hàng (số nhà, đường, phường, quận, tỉnh) *" aria-label="Địa chỉ nhận hàng" value="${esc(addrShow(c.address))}" required autocomplete="street-address">
@@ -605,7 +606,47 @@
         </div></div>
       </div>`;
     $('#qbForm input[name=address]').addEventListener('input', debounce(qbRefresh, 400));
+    $('#qbLookupBtn')?.addEventListener('click', qbLookup);
+    $('#qbLookupPhone')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qbLookup(); } });
     qbRefresh(); openModal('#quickBuy'); setTimeout(() => { if (!known) $('#qbForm input[name=name]').focus(); else $('#qbSubmit').focus(); }, 300);
+  }
+  /* Tra cứu khách cũ theo SĐT: có hồ sơ (Sheet/CRM) → xác thực OTP → tự điền tên, SĐT, địa chỉ.
+     Không điền khi chưa có OTP: tránh người lạ gõ số của khách khác để xem địa chỉ. */
+  function qbLookupMsg(html, kind) { const m = $('#qbLookupMsg'); if (!m) return; m.className = `qb__lookup-msg ${kind ? 'is-' + kind : ''}`; m.innerHTML = html; }
+  function qbShowFields() { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); }
+  function qbFillKh(kh) {
+    const f = $('#qbForm'); if (!f || !kh) return;
+    qbShowFields();
+    if (kh.ten) f.elements.name.value = kh.ten;
+    if (kh.sdt) f.elements.phone.value = phoneKey(kh.sdt);
+    const dc = addrFull({ tinh: kh.tinh || '', xa: kh.xa || '', chiTiet: kh.diaChi || '' });
+    if (dc) f.elements.address.value = dc;
+    const t = tierOf(Number(kh.tongChiTieu) || 0);
+    qbLookupMsg(`✓ Đã điền thông tin của <b>${esc(kh.ten || 'mẹ')}</b>${t.discount ? ` · hạng ${tierBadge(t)} giảm ${t.discount}% đơn này` : ''}${dc ? '' : '. Mẹ nhập thêm địa chỉ nhận hàng nhé'}`, 'ok');
+    qbRefresh();
+    (dc ? $('#qbSubmit') : f.elements.address).focus();
+  }
+  function qbLookup() {
+    const inp = $('#qbLookupPhone'); const btn = $('#qbLookupBtn'); if (!inp) return;
+    const sdt = phoneKey(inp.value);
+    if (!phoneOk(sdt)) { qbLookupMsg('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', 'err'); inp.focus(); return; }
+    const s = Session.get();
+    if (s && phoneKey(s.sdt) === sdt) { qbFillKh(Session.kh()); return; }
+    btn.disabled = true; btn.textContent = 'Đang tìm…';
+    const xong = () => { btn.disabled = false; btn.textContent = 'Tra cứu'; };
+    loyaltyApi('kiemTra', { sdt }).then((res) => {
+      xong();
+      if (!res || !res.ok) { qbLookupMsg(esc((res && res.msg) || 'Chưa tra cứu được, mẹ điền thông tin bên dưới nhé'), 'err'); return; }
+      if (!res.coTaiKhoan) {
+        qbShowFields(); const f = $('#qbForm'); f.elements.phone.value = sdt; qbRefresh();
+        qbLookupMsg('Số này chưa có đơn tại shop – mẹ điền tên và địa chỉ bên dưới nhé 💕', 'info'); f.elements.name.focus(); return;
+      }
+      qbLookupMsg(`Tìm thấy khách <b>${esc(res.tenAn || '')}</b> – nhập mã OTP để điền thông tin đã lưu`, 'info');
+      openOtp({ phone: sdt, autoSend: true, title: 'Xác thực để điền thông tin' }).then((ss) => {
+        if (ss) qbFillKh(ss.kh);
+        else qbLookupMsg(`Chưa xác thực OTP – mẹ bấm <b>Tra cứu</b> lại hoặc tự điền thông tin bên dưới`, 'info');
+      });
+    }).catch((e) => { xong(); qbLookupMsg(esc(e.message), 'err'); });
   }
   function qbRefresh() {
     const { price, old } = qbPrice(); const k = qbCalc();
@@ -933,7 +974,11 @@
 
       const modal = $('#otpModal');
       modal.addEventListener('mc:closed', () => dong(null), { once: true });
-      buocSdt();
+      /* autoSend: đã có số hợp lệ (VD từ ô tra cứu) → gửi mã luôn, bỏ bước nhập số */
+      if (opts.autoSend && phoneOk(sdt)) {
+        box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 text-muted" style="text-align:center;padding:24px 0">Đang gửi mã OTP tới ${esc(maskPhone(sdt))}…</p></div>`;
+        loyaltyApi('guiOtp', { sdt }).then((res) => (res && res.ok ? buocMa(res) : buocSdt((res && res.msg) || 'Chưa gửi được mã, mẹ thử lại sau ít phút nhé'))).catch((e2) => buocSdt(e2.message));
+      } else buocSdt();
       openModal('#otpModal');
     });
   }

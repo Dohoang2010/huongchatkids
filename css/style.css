@@ -1432,3 +1432,14 @@ body { padding-bottom: 0; }
 @media (prefers-reduced-motion: reduce) { .fx-bb { display: none; } .fx-chip { animation: none; } }
 .slide--sky .fx-e5, .slide--sky .fx-e6 { display: none; }
 @media (min-width: 768px) { .slide--sky .fx-chip3 { top: auto; bottom: 28px; right: 28px; } }
+
+/* Mua nhanh: ô tra cứu khách cũ theo số điện thoại */
+.qb__lookup { background: var(--primary-50); border: 1.5px dashed var(--primary-100); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; }
+.qb__lookup-t { font-size: 13px; line-height: 1.45; color: var(--ink); }
+.qb__lookup-t b { color: var(--primary); }
+.qb__lookup .coupon { margin: 0; }
+.qb__lookup-msg { font-size: 12.5px; line-height: 1.45; padding: 6px 10px; border-radius: 8px; background: #fff; }
+.qb__lookup-msg.is-ok { color: var(--teal-600); background: var(--teal-100); }
+.qb__lookup-msg.is-err { color: var(--red); background: #FFEBEE; }
+.qb__lookup-msg.is-info { color: var(--ink); }
+.qb__lookup-msg .tier-badge { font-size: 11.5px; padding: 1px 8px; }

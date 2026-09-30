@@ -231,7 +231,13 @@ function docKH(sdt) {
     kh.ten = String(v[1] || ''); kh.tinh = String(v[2] || ''); kh.xa = String(v[3] || '');
     kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || '');
   }
-  if (crm && crm.co && crm.kh && !kh.ten) kh.ten = String(crm.kh.ten || '');   // khách mới trên web nhưng đã mua qua CRM/Nhanh
+  /* Sheet chưa có → lấy tên, địa chỉ, email từ CRM (CRM trả thêm tinh / xa / diaChi / email thì tự dùng) */
+  if (crm && crm.co && crm.kh) {
+    var ck = crm.kh;
+    if (!kh.ten) kh.ten = String(ck.ten || '');
+    if (!kh.tinh && !kh.diaChi) { kh.tinh = String(ck.tinh || ''); kh.xa = String(ck.xa || ''); kh.diaChi = String(ck.diaChi || ck.diaChiChiTiet || ''); }
+    if (!kh.email) kh.email = String(ck.email || '');
+  }
   return { kh: kh, don: ct.don, dong: dong };
 }
 
@@ -381,7 +387,12 @@ function apiKiemTra(p) {
   var sdt = chuanSdt(p.sdt);
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
   var dong = timDongKH(sdt);
-  if (!dong) return { ok: true, coTaiKhoan: false };
+  if (!dong) {
+    /* Chưa có trong Sheet → hỏi CRM (khách mua qua Nhanh / CRM) */
+    var crm = layKhachTuCRM(sdt);
+    if (crm && crm.co && crm.kh) return { ok: true, coTaiKhoan: true, tenAn: anTen(crm.kh.ten || '') };
+    return { ok: true, coTaiKhoan: false };
+  }
   var ten = sheetKH().getRange(dong, 2).getValue();
   return { ok: true, coTaiKhoan: true, tenAn: anTen(ten) };
 }
@@ -413,7 +424,7 @@ function apiXacThuc(p) {
   var kq = kiemTraOtp(sdt, String(p.ma || '').replace(/\D/g, ''));
   if (!kq.ok) return { ok: false, msg: kq.msg };
   var d = docKH(sdt);
-  if (!d.dong) capNhatKhachHang(sdt, { name: '', phone: sdt }, {});   // khách mới: tạo hồ sơ rỗng
+  if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});   // khách mới trên web: tạo hồ sơ (lấy sẵn tên/địa chỉ từ CRM nếu có)
   var token = luuPhien(sdt);
   return { ok: true, token: token, kh: d.kh, donHang: d.don };
 }
