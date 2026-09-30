@@ -9,7 +9,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260929k">
+  <link rel="stylesheet" href="css/style.css?v=20260930a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -161,9 +161,9 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20260929k"></script>
+<script src="js/data.js?v=20260930a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260929k"></script>
+<script src="js/app.js?v=20260930a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
@@ -180,6 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   /* Lớp hiệu ứng trang trí (b.fx = 'gift'): pháo giấy, tia sáng, sticker bay, lấp lánh – chỉ để trang trí, không bấm được */
   const slideFx = (b) => {
+    if (b.fx === 'canxi') {
+      /* Bong bóng sữa bay lên + hạt "Ca", "D" + sticker emoji */
+      const bot = Array.from({ length: 14 }, (_, k) => `<i class="fx-bb" style="--x:${(k * 37) % 100};--d:${((k * 0.71) % 5).toFixed(2)}s;--t:${(4.2 + (k % 4) * 0.8).toFixed(1)}s;--z:${6 + (k % 4) * 5}px"></i>`).join('');
+      const hat = ['Ca', 'D', 'Ca'].map((t, k) => `<i class="fx-chip fx-chip${k + 1}">${t}</i>`).join('');
+      const sao = Array.from({ length: 6 }, (_, k) => `<i class="fx-s fx-s${k + 1}">✦</i>`).join('');
+      const emoji = ['🥛', '🦴', '📏', '💙', '⭐', '✨'].map((e, k) => `<i class="fx-e fx-e${k + 1}">${e}</i>`).join('');
+      return `<div class="slide__fx" aria-hidden="true"><i class="fx-burst"></i>${bot}${hat}${sao}${emoji}</div>`;
+    }
     if (b.fx !== 'gift') return '';
     const mau = ['#FFD54F', '#FFFFFF', '#7EE0C8', '#FFB3C7', '#FFE082'];
     const confetti = Array.from({ length: 18 }, (_, k) => `<i class="fx-cf" style="--x:${(k * 41) % 100};--d:${((k * 0.63) % 4).toFixed(2)}s;--t:${(3.6 + (k % 4) * 0.7).toFixed(1)}s;--c:${mau[k % mau.length]};--r:${(k % 2 ? 1 : -1) * (200 + k * 23)}deg"></i>`).join('');
