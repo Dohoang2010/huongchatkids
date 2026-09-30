@@ -383,19 +383,15 @@ function doGet(e) {
   }
 }
 
-/* Chỉ cho biết số này đã từng mua hay chưa – KHÔNG trả thông tin riêng tư */
+/* Cho biết số này đã từng mua chưa + HẠNG (để web áp ưu đãi hạng không cần OTP).
+   KHÔNG trả địa chỉ, email, số tiền đã chi – các thông tin đó chỉ trả sau khi nhập đúng OTP. */
 function apiKiemTra(p) {
   var sdt = chuanSdt(p.sdt);
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
-  var dong = timDongKH(sdt);
-  if (!dong) {
-    /* Chưa có trong Sheet → hỏi CRM (khách mua qua Nhanh / CRM) */
-    var crm = layKhachTuCRM(sdt);
-    if (crm && crm.co && crm.kh) return { ok: true, coTaiKhoan: true, tenAn: anTen(crm.kh.ten || '') };
-    return { ok: true, coTaiKhoan: false };
-  }
-  var ten = sheetKH().getRange(dong, 2).getValue();
-  return { ok: true, coTaiKhoan: true, tenAn: anTen(ten) };
+  var d = docKH(sdt);   // Sheet + CRM
+  var co = !!d.dong || !!d.kh.ten || Number(d.kh.soDon) > 0;
+  if (!co) return { ok: true, coTaiKhoan: false };
+  return { ok: true, coTaiKhoan: true, tenAn: anTen(d.kh.ten), hang: d.kh.hang };
 }
 
 function apiGuiOtp(p) {

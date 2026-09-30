@@ -562,7 +562,7 @@
     const cr = QB.coupon ? applyCoupon(QB.coupon, base) : null; const couponAmt = cr && cr.ok ? cr.discount : 0;
     const loy = SITE.loyalty || {};
     const pct = loy.enabled ? Session.discountFor(qbPhone()) : 0;
-    const hang = tierOf(Session.spent()); const hangAmt = pct ? Math.round(base * pct / 100) : 0;
+    const hang = hangCho(qbPhone()) || tierOf(0); const hangAmt = pct ? Math.round(base * pct / 100) : 0;
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
     if (!loy.combineWithCoupon && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0);
@@ -607,6 +607,8 @@
       </div>`;
     $('#qbForm input[name=address]').addEventListener('input', debounce(qbRefresh, 400));
     $('#qbLookupBtn')?.addEventListener('click', qbLookup);
+    $('#qbForm input[name=phone]').addEventListener('input', debounce(qbPhoneTyped, 600));
+    if (phoneOk(phoneKey(c.phone || ''))) qbPhoneTyped();   // khách cũ trên máy này: áp hạng ngay khi mở
     $('#qbLookupPhone')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qbLookup(); } });
     qbRefresh(); openModal('#quickBuy'); setTimeout(() => { if (!known) $('#qbForm input[name=name]').focus(); else $('#qbSubmit').focus(); }, 300);
   }
@@ -634,19 +636,28 @@
     if (s && phoneKey(s.sdt) === sdt) { qbFillKh(Session.kh()); return; }
     btn.disabled = true; btn.textContent = 'Đang tìm…';
     const xong = () => { btn.disabled = false; btn.textContent = 'Tra cứu'; };
-    loyaltyApi('kiemTra', { sdt }).then((res) => {
+    traHang(sdt).then((v) => {
       xong();
-      if (!res || !res.ok) { qbLookupMsg(esc((res && res.msg) || 'Chưa tra cứu được, mẹ điền thông tin bên dưới nhé'), 'err'); return; }
-      if (!res.coTaiKhoan) {
-        qbShowFields(); const f = $('#qbForm'); f.elements.phone.value = sdt; qbRefresh();
-        qbLookupMsg('Số này chưa có đơn tại shop – mẹ điền tên và địa chỉ bên dưới nhé 💕', 'info'); f.elements.name.focus(); return;
-      }
-      qbLookupMsg(`Tìm thấy khách <b>${esc(res.tenAn || '')}</b> – nhập mã OTP để điền thông tin đã lưu`, 'info');
-      openOtp({ phone: sdt, autoSend: true, title: 'Xác thực để điền thông tin' }).then((ss) => {
-        if (ss) qbFillKh(ss.kh);
-        else qbLookupMsg(`Chưa xác thực OTP – mẹ bấm <b>Tra cứu</b> lại hoặc tự điền thông tin bên dưới`, 'info');
-      });
-    }).catch((e) => { xong(); qbLookupMsg(esc(e.message), 'err'); });
+      const f = $('#qbForm'); qbShowFields(); f.elements.phone.value = sdt;
+      if (!v) { qbRefresh(); qbLookupMsg('Chưa tra cứu được lúc này – mẹ cứ điền thông tin bên dưới và đặt hàng nhé', 'info'); f.elements.name.focus(); return; }
+      if (!v.co) { qbRefresh(); qbLookupMsg('Số này chưa có đơn tại shop – mẹ điền tên và địa chỉ bên dưới nhé 💕', 'info'); f.elements.name.focus(); return; }
+      qbGreet(sdt, true);
+      (f.elements.name.value.trim() ? f.elements.address : f.elements.name).focus();
+    });
+  }
+  /* Khách cũ: chào + báo ưu đãi hạng đã trừ (không cần OTP); nút riêng để điền địa chỉ đã lưu (cần OTP) */
+  function qbGreet(sdt, coNut) {
+    const v = HangSdt.get(sdt); if (!v || !v.co) return;
+    const t = hangCho(sdt) || tierOf(0);
+    qbLookupMsg(`👋 Chào <b>${esc(v.tenAn || 'mẹ')}</b>${t.discount ? ` · hạng ${tierBadge(t)} – <b>đã giảm ${t.discount}%</b> đơn này` : ' – cảm ơn mẹ đã quay lại'}${coNut ? `<button type="button" class="qb__lookup-otp" id="qbOtpFill">📍 Điền địa chỉ đã lưu <small>(nhận mã OTP)</small></button>` : ''}`, 'ok');
+    qbRefresh();
+    $('#qbOtpFill')?.addEventListener('click', () => openOtp({ phone: sdt, autoSend: true, title: 'Xác thực để điền địa chỉ đã lưu' }).then((ss) => { if (ss) qbFillKh(ss.kh); }));
+  }
+  /* Khách tự gõ SĐT vào ô số điện thoại (không dùng ô tra cứu) → vẫn tự áp hạng */
+  function qbPhoneTyped() {
+    const sdt = phoneKey(($('#qbForm') || {}).elements?.phone?.value || '');
+    if (!phoneOk(sdt)) { qbRefresh(); return; }
+    traHang(sdt).then((v) => { if (phoneKey($('#qbForm')?.elements.phone.value || '') !== sdt) return; if (v && v.co && $('#qbLookupMsg')) qbGreet(sdt, !Session.get()); else qbRefresh(); });
   }
   function qbRefresh() {
     const { price, old } = qbPrice(); const k = qbCalc();
@@ -674,7 +685,7 @@
     const g = giftFor(qbLines()); const ss = Session.get();
     const order = await submitOrder({ type: 'quick', customer: { name, phone: phoneKey(phone), address }, payment,
       coupon: k.dungMa && k.cr && k.cr.ok ? k.cr.code : '',
-      hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', giamHang: k.dungHang ? k.hangAmt : 0,
+      hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (ss && phoneKey(ss.sdt) === phoneKey(phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
       token: ss ? ss.token : '',
       qua: g && g.soQua ? { soQua: g.soQua, ten: g.ten, vi: QB.quaVi, chuongTrinh: g.chuongTrinh, moTa: `${g.moTa} (${QB.quaVi})` } : null,
       items: [{ id: p.id, name: p.name, short: shortName(p), variant: label, qty: QB.qty, price }], subtotal: k.sub, discount: k.multi + (k.dungHang ? k.hangAmt : 0) + k.coupon, ship: k.ship, total: k.total });
@@ -885,13 +896,32 @@
     kh() { const s = this.get(); return s ? s.kh || null : null; },
     spent() { const k = this.kh(); return k ? Number(k.tongChiTieu) || 0 : 0; },
     tier() { return tierOf(this.spent()); },
-    /* Ưu đãi hạng chỉ tính khi số điện thoại đang nhập trùng số đã xác thực */
+    /* Ưu đãi hạng của số đang nhập: đã OTP → theo hồ sơ; chưa OTP → theo hạng tra bằng SĐT (hangCho) */
     discountFor(phone) {
-      const s = this.get(); if (!s || !LOY().enabled) return 0;
-      if (!phone || phoneKey(phone) !== phoneKey(s.sdt)) return 0;   // phải đúng số đã xác thực OTP
-      return tierDiscount(this.spent());
+      if (!LOY().enabled || !phone) return 0;
+      const t = hangCho(phone); return t ? t.discount || 0 : 0;
     },
   };
+  /* Tra hạng chỉ bằng số điện thoại – KHÔNG cần OTP. Máy chủ chỉ trả tên đã che + hạng,
+     không trả địa chỉ hay số tiền đã chi (các thứ đó vẫn phải OTP). Nhớ trên máy 1 ngày. */
+  const HangSdt = {
+    key: 'mc_hang_sdt',
+    get(phone) { const v = store.get(this.key, null); if (!v || !phone || phoneKey(phone) !== v.sdt || Date.now() - v.luc > 864e5) return null; return v; },
+    set(sdt, res) { store.set(this.key, { sdt, co: !!res.coTaiKhoan, tenAn: res.tenAn || '', hang: res.hang || 'moi', luc: Date.now() }); },
+  };
+  function hangCho(phone) {
+    const s = Session.get();
+    if (s && phone && phoneKey(phone) === phoneKey(s.sdt)) return tierOf(Session.spent());
+    const v = HangSdt.get(phone); return v && v.co ? tierByKey(v.hang) : null;
+  }
+  const _dangTra = {};
+  function traHang(phone) {
+    const sdt = phoneKey(phone);
+    if (!LOY().enabled || !phoneOk(sdt)) return Promise.resolve(null);
+    const v = HangSdt.get(sdt); if (v) return Promise.resolve(v);
+    if (!_dangTra[sdt]) _dangTra[sdt] = loyaltyApi('kiemTra', { sdt }).then((res) => { if (res && res.ok) HangSdt.set(sdt, res); return HangSdt.get(sdt); }).catch(() => null).finally(() => { delete _dangTra[sdt]; });
+    return _dangTra[sdt];
+  }
   /* CRM có thể trả cả địa chỉ trong 1 dòng ("Số 1 Lê Lợi, Phường Ngô Quyền, Hải Phòng") và để trống tỉnh/xã
      → tách ra theo danh mục 34 tỉnh để ô chọn tỉnh/xã ở trang thanh toán tự chọn đúng. Không nhận ra tỉnh thì giữ nguyên. */
   function tachDiaChi(kh) {
@@ -1045,5 +1075,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, laNuocLotte, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    giftFor, giftNote, giftBox, laNuocLotte, hangCho, traHang, HangSdt, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

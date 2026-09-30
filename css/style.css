@@ -1448,3 +1448,6 @@ body { padding-bottom: 0; }
 .memcard--platinum { background: linear-gradient(135deg, #3B2A7A 0%, #6A4FB6 45%, #B9A6F0 100%); }
 .slide__tiers span:nth-child(1) { width: 76%; } .slide__tiers span:nth-child(2) { width: 84%; } .slide__tiers span:nth-child(3) { width: 92%; } .slide__tiers span:nth-child(4) { width: 100%; }
 @media (min-width: 768px) { .slide__tiers { gap: 10px; } .slide__tiers span { padding: 10px 16px; } .slide__tiers em { font-size: 26px; } .slide__tiers b { font-size: 16px; } .slide__tiers small { font-size: 12.5px; } }
+.qb__lookup-otp { display: block; width: 100%; margin-top: 8px; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--teal); background: #fff; color: var(--teal-600); font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; }
+.qb__lookup-otp small { font-weight: 500; color: var(--muted); }
+.qb__lookup-otp:hover { background: var(--teal); color: #fff; } .qb__lookup-otp:hover small { color: #fff; }
