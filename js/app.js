@@ -892,8 +892,23 @@
       return tierDiscount(this.spent());
     },
   };
+  /* CRM có thể trả cả địa chỉ trong 1 dòng ("Số 1 Lê Lợi, Phường Ngô Quyền, Hải Phòng") và để trống tỉnh/xã
+     → tách ra theo danh mục 34 tỉnh để ô chọn tỉnh/xã ở trang thanh toán tự chọn đúng. Không nhận ra tỉnh thì giữ nguyên. */
+  function tachDiaChi(kh) {
+    if (!kh || kh.tinh || !kh.diaChi) return kh;
+    const parts = String(kh.diaChi).split(',').map((x) => x.trim()).filter(Boolean);
+    if (parts.length < 2) return kh;
+    const tinh = tinhTuDiaChi(parts.at(-1)); if (!tinh) return kh;
+    const p = (window.DIA_CHI || []).find((x) => x.t === tinh);
+    let xa = '', rest = parts.slice(0, -1);
+    if (rest.length >= 2 || (rest.length === 1 && p && p.x.some((x) => vnKey(x) === vnKey(rest[0])))) {
+      const raw = rest.at(-1); xa = (p && p.x.find((x) => vnKey(x) === vnKey(raw))) || raw; rest = rest.slice(0, -1);
+    }
+    return { ...kh, tinh, xa, diaChi: rest.join(', ') };
+  }
   function saveSession(res) {
     if (!res || !res.ok || !res.token) return null;
+    res = { ...res, kh: tachDiaChi(res.kh) };
     const ngay = Number(LOY().nhoPhienNgay) || 30;
     const s = { sdt: phoneKey(res.kh && res.kh.sdt), token: res.token, kh: res.kh || {}, donHang: res.donHang || [], hetHan: Date.now() + ngay * 864e5, luc: Date.now() };
     Session.set(s);
