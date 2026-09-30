@@ -8,15 +8,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260930e">
+  <link rel="stylesheet" href="css/style.css?v=20260930f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20260930e"></script>
-<script src="js/diachi.js?v=20260930e"></script>
+<script src="js/data.js?v=20260930f"></script>
+<script src="js/diachi.js?v=20260930f"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260930e"></script>
+<script src="js/app.js?v=20260930f"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="memcol__sum"><span>${o.uocTinh ? `Ước tính từ ${o.uocTinh} đơn trên máy này` : 'Tổng đã chi tiêu'}</span><b>${biet ? fmt(spent) : '•••••••'}</b></div>
       <p class="memcol__next">${loi}</p>
-      ${!biet || o.uocTinh ? `<button class="btn btn--primary btn--block btn--sm" type="button" data-otp>🔐 Xác thực OTP xem hạng chính xác</button>` : ''}
+      ${!biet || o.uocTinh ? `<button class="btn btn--primary btn--block btn--sm" type="button" data-otp>👤 Đăng nhập xem hạng chính xác</button>` : ''}
     </div>`;
   }
 
@@ -88,9 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
           ${wishHTML()}
         </div>
         <div class="checkout__side"><div class="card card--pad">
-          <h3>🔐 Tra cứu hồ sơ</h3>
-          <p class="fs-14 text-muted">Nhập số điện thoại đã dùng khi mua hàng, shop gửi mã OTP để xác thực. Có mã rồi mẹ xem được địa chỉ đã lưu, tổng chi tiêu, lịch sử đơn và sửa địa chỉ.</p>
-          <button class="btn btn--primary btn--lg btn--block mt-12" type="button" id="btnOtp">Nhận mã OTP & xem hồ sơ</button>
+          <h3>👤 Đăng nhập</h3>
+          <p class="fs-14 text-muted">Tài khoản là <b>số điện thoại mẹ đã mua hàng</b>, mật khẩu mặc định là <b>1</b> (nếu mẹ chưa đổi). Đăng nhập để xem hạng, tổng chi tiêu, lịch sử đơn và sửa địa chỉ.</p>
+          <button class="btn btn--primary btn--lg btn--block mt-12" type="button" id="btnLogin">Đăng nhập</button>
+          <p class="fs-13 text-muted mt-8" style="text-align:center">Quên mật khẩu? <button type="button" class="text-primary fw-600" id="btnOtp">Nhận mã OTP</button></p>
           ${c && c.phone ? `<p class="fs-13 text-muted mt-8" style="text-align:center">Số đã lưu trên máy: <b>${esc(maskPhone(c.phone))}</b></p>` : ''}
           <div class="divider"></div><h3>👩‍⚕️ Hỗ trợ</h3><div class="flex flex-col gap-8"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--ghost btn--block" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div>
         </div></div>
@@ -145,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="kh-row"><span>Tổng chi tiêu</span><b class="text-primary">${fmt(spent)}</b></div>
             <div class="kh-row"><span>Số đơn đã mua</span><b>${Number(kh.soDon) || don.length || 0}</b></div>
             <button class="btn btn--outline btn--block mt-12" type="button" id="btnEdit">✏️ Sửa thông tin / địa chỉ</button>
+            <button class="btn btn--ghost btn--block mt-8" type="button" id="btnDoiMk">🔑 ${s.macDinh ? 'Đặt mật khẩu riêng (đang dùng mật khẩu mặc định)' : 'Đổi mật khẩu'}</button>
           </div>
           <form id="khForm" class="hide">
             <div class="field"><label>Họ tên</label><input class="input" name="ten" value="${esc(kh.ten || '')}" required></div>
@@ -184,7 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (r) { const o = donLocal().find((x) => x.code === r.dataset.reorderCode); if (o) { o.items.forEach((it) => { const p = byId(it.id); if (p) MC.Cart.add(it.id, it.qty || 1, it.variant && p.variants ? Math.max(0, p.variants.findIndex((v) => v.label === it.variant)) : null); }); location.href = 'checkout.html'; } }
     const cp = e.target.closest('[data-copy-coupon]');
     if (cp) { const ma = cp.dataset.copyCoupon; navigator.clipboard?.writeText(ma); store.set('mc_coupon', ma); toast('Đã chép mã ' + ma + ' – mã sẽ tự điền ở bước thanh toán', { type: 'ok' }); }
-    if (e.target.id === 'btnOtp' || e.target.closest('[data-otp]')) openOtp({ title: 'Xem hồ sơ khách hàng' }).then((s) => { if (s) render(); });
+    if (e.target.id === 'btnLogin' || e.target.closest('[data-otp]')) MC.openLogin({ title: 'Đăng nhập xem hồ sơ' }).then((s) => { if (s) render(); });
+    if (e.target.id === 'btnOtp') openOtp({ title: 'Xem hồ sơ khách hàng' }).then((s) => { if (s) render(); });
+    if (e.target.id === 'btnDoiMk') MC.openDoiMk(false).then((ok) => { if (ok) render(); });
     if (e.target.id === 'btnOut') { Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
     if (e.target.id === 'btnEdit') { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); }
     if (e.target.id === 'btnCancel') { $('#khForm').classList.add('hide'); $('#khView').classList.remove('hide'); }

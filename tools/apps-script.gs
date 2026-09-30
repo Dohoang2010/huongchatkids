@@ -376,6 +376,8 @@ function doGet(e) {
     if (action === 'xacThuc')  return traVe(apiXacThuc(p), cb);
     if (action === 'hoSo')     return traVe(apiHoSo(p), cb);
     if (action === 'capNhat')  return traVe(apiCapNhat(p), cb);
+    if (action === 'dangNhap') return traVe(apiDangNhap(p), cb);
+    if (action === 'doiMatKhau') return traVe(apiDoiMatKhau(p), cb);
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
     Logger.log('doGet lỗi: ' + err);
@@ -383,15 +385,59 @@ function doGet(e) {
   }
 }
 
-/* Cho biết số này đã từng mua chưa + HẠNG (để web áp ưu đãi hạng không cần OTP).
-   KHÔNG trả địa chỉ, email, số tiền đã chi – các thông tin đó chỉ trả sau khi nhập đúng OTP. */
+/* Tra theo số điện thoại (KHÔNG cần OTP – theo yêu cầu shop 30/09/2026): trả tên, địa chỉ đã lưu và HẠNG
+   để web tự điền. KHÔNG trả email, số tiền đã chi, lịch sử đơn – các thứ đó chỉ trả sau khi đăng nhập / OTP. */
 function apiKiemTra(p) {
   var sdt = chuanSdt(p.sdt);
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
   var d = docKH(sdt);   // Sheet + CRM
   var co = !!d.dong || !!d.kh.ten || Number(d.kh.soDon) > 0;
   if (!co) return { ok: true, coTaiKhoan: false };
-  return { ok: true, coTaiKhoan: true, tenAn: anTen(d.kh.ten), hang: d.kh.hang };
+  return { ok: true, coTaiKhoan: true, tenAn: anTen(d.kh.ten), ten: d.kh.ten || '', hang: d.kh.hang,
+           tinh: d.kh.tinh || '', xa: d.kh.xa || '', diaChi: d.kh.diaChi || '' };
+}
+
+/* ===================== TÀI KHOẢN: SĐT + MẬT KHẨU =====================
+   Khách đã mua (có trong Sheet hoặc CRM) đăng nhập bằng số điện thoại, mật khẩu mặc định MK_MAC_DINH.
+   Đổi mật khẩu → lưu dạng mã hoá (SHA-256 + muối) ở sheet "Tài khoản", không lưu mật khẩu thật. */
+var MK_MAC_DINH = '1';
+var SHEET_TK = 'Tài khoản';
+function sheetTK() { return sheetPhu(SHEET_TK, ['Điện thoại', 'Mật khẩu (mã hoá)', 'Muối', 'Cập nhật']); }
+function bamMk(mk, muoi) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, muoi + '|' + String(mk), Utilities.Charset.UTF_8)
+    .map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+}
+function timTK(sdt) {
+  var s = sheetTK(); var n = s.getLastRow(); if (n < 2) return null;
+  var v = s.getRange(2, 1, n - 1, 3).getValues();
+  for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][0]) === sdt) return { dong: i + 2, hash: String(v[i][1] || ''), muoi: String(v[i][2] || '') };
+  return null;
+}
+function apiDangNhap(p) {
+  var sdt = chuanSdt(p.sdt);
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var cache = CacheService.getScriptCache(); var k = 'dn_' + sdt; var dem = Number(cache.get(k) || 0);
+  if (dem >= 10) return { ok: false, msg: 'Mẹ nhập sai nhiều lần, thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
+  var d = docKH(sdt);
+  var co = !!d.dong || !!d.kh.ten || Number(d.kh.soDon) > 0;
+  if (!co) return { ok: false, chuaMua: true, msg: 'Số này chưa mua hàng tại shop. Mẹ cứ đặt hàng không cần đăng nhập nhé, lần sau đăng nhập bằng mật khẩu ' + MK_MAC_DINH };
+  var tk = timTK(sdt); var dung = tk && tk.hash ? bamMk(p.mk, tk.muoi) === tk.hash : String(p.mk) === MK_MAC_DINH;
+  if (!dung) { cache.put(k, String(dem + 1), 3600); return { ok: false, msg: tk && tk.hash ? 'Mật khẩu chưa đúng. Quên mật khẩu thì bấm nhận mã OTP nhé' : 'Mật khẩu chưa đúng (mật khẩu mặc định là ' + MK_MAC_DINH + ')' }; }
+  cache.remove(k);
+  if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});
+  var token = luuPhien(sdt);
+  return { ok: true, token: token, kh: d.kh, donHang: d.don, macDinh: !(tk && tk.hash) };
+}
+function apiDoiMatKhau(p) {
+  var sdt = sdtTheoToken(p.token);
+  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var mk = String(p.mkMoi || '');
+  if (mk.length < 4) return { ok: false, msg: 'Mật khẩu mới cần ít nhất 4 ký tự' };
+  if (mk === MK_MAC_DINH) return { ok: false, msg: 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé' };
+  var muoi = Utilities.getUuid(); var hang = ["'" + sdt, bamMk(mk, muoi), muoi, new Date()];
+  var tk = timTK(sdt); var s = sheetTK();
+  if (tk) s.getRange(tk.dong, 1, 1, 4).setValues([hang]); else s.appendRow(hang);
+  return { ok: true };
 }
 
 function apiGuiOtp(p) {

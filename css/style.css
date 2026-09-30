@@ -1451,3 +1451,4 @@ body { padding-bottom: 0; }
 .qb__lookup-otp { display: block; width: 100%; margin-top: 8px; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--teal); background: #fff; color: var(--teal-600); font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; }
 .qb__lookup-otp small { font-weight: 500; color: var(--muted); }
 .qb__lookup-otp:hover { background: var(--teal); color: #fff; } .qb__lookup-otp:hover small { color: #fff; }
+.loybar--hint { background: var(--amber-50, #FFF9EC); border-color: #FFE3A3; }

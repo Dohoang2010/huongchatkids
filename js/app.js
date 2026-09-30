@@ -641,23 +641,31 @@
       const f = $('#qbForm'); qbShowFields(); f.elements.phone.value = sdt;
       if (!v) { qbRefresh(); qbLookupMsg('Chưa tra cứu được lúc này – mẹ cứ điền thông tin bên dưới và đặt hàng nhé', 'info'); f.elements.name.focus(); return; }
       if (!v.co) { qbRefresh(); qbLookupMsg('Số này chưa có đơn tại shop – mẹ điền tên và địa chỉ bên dưới nhé 💕', 'info'); f.elements.name.focus(); return; }
-      qbGreet(sdt, true);
-      (f.elements.name.value.trim() ? f.elements.address : f.elements.name).focus();
+      qbDienTuTraCuu(v, true);
+      qbGreet(sdt);
+      (!f.elements.name.value.trim() ? f.elements.name : !f.elements.address.value.trim() ? f.elements.address : $('#qbSubmit')).focus();
     });
   }
+  /* Điền tên + địa chỉ đã lưu từ kết quả tra SĐT (không cần OTP). de = true: ghi đè ô đang có chữ */
+  function qbDienTuTraCuu(v, de) {
+    const f = $('#qbForm'); if (!f || !v) return;
+    const dc = addrFull({ tinh: v.tinh, xa: v.xa, chiTiet: v.diaChi });
+    if (v.ten && (de || !f.elements.name.value.trim())) f.elements.name.value = v.ten;
+    if (dc && (de || !f.elements.address.value.trim())) f.elements.address.value = dc;
+  }
   /* Khách cũ: chào + báo ưu đãi hạng đã trừ (không cần OTP); nút riêng để điền địa chỉ đã lưu (cần OTP) */
-  function qbGreet(sdt, coNut) {
+  function qbGreet(sdt) {
     const v = HangSdt.get(sdt); if (!v || !v.co) return;
     const t = hangCho(sdt) || tierOf(0);
-    qbLookupMsg(`👋 Chào <b>${esc(v.tenAn || 'mẹ')}</b>${t.discount ? ` · hạng ${tierBadge(t)} – <b>đã giảm ${t.discount}%</b> đơn này` : ' – cảm ơn mẹ đã quay lại'}${coNut ? `<button type="button" class="qb__lookup-otp" id="qbOtpFill">📍 Điền địa chỉ đã lưu <small>(nhận mã OTP)</small></button>` : ''}`, 'ok');
+    const coDiaChi = !!(v.diaChi || v.tinh);
+    qbLookupMsg(`👋 Chào <b>${esc(v.ten || v.tenAn || 'mẹ')}</b> – ${coDiaChi ? 'đã điền thông tin giao hàng lần trước' : 'mẹ nhập địa chỉ nhận hàng nhé'}${t.discount ? ` · hạng ${tierBadge(t)} <b>giảm ${t.discount}%</b> đơn này` : ''}`, 'ok');
     qbRefresh();
-    $('#qbOtpFill')?.addEventListener('click', () => openOtp({ phone: sdt, autoSend: true, title: 'Xác thực để điền địa chỉ đã lưu' }).then((ss) => { if (ss) qbFillKh(ss.kh); }));
   }
   /* Khách tự gõ SĐT vào ô số điện thoại (không dùng ô tra cứu) → vẫn tự áp hạng */
   function qbPhoneTyped() {
     const sdt = phoneKey(($('#qbForm') || {}).elements?.phone?.value || '');
     if (!phoneOk(sdt)) { qbRefresh(); return; }
-    traHang(sdt).then((v) => { if (phoneKey($('#qbForm')?.elements.phone.value || '') !== sdt) return; if (v && v.co && $('#qbLookupMsg')) qbGreet(sdt, !Session.get()); else qbRefresh(); });
+    traHang(sdt).then((v) => { if (phoneKey($('#qbForm')?.elements.phone.value || '') !== sdt) return; if (v && v.co) { qbDienTuTraCuu(v, false); if ($('#qbLookupMsg')) qbGreet(sdt); else qbRefresh(); } else qbRefresh(); });
   }
   function qbRefresh() {
     const { price, old } = qbPrice(); const k = qbCalc();
@@ -835,7 +843,7 @@
 
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
-    renderShell(); initSearch(); bindGlobal(); updateCartBadges();
+    renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk();
     syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
@@ -907,7 +915,10 @@
   const HangSdt = {
     key: 'mc_hang_sdt',
     get(phone) { const v = store.get(this.key, null); if (!v || !phone || phoneKey(phone) !== v.sdt || Date.now() - v.luc > 864e5) return null; return v; },
-    set(sdt, res) { store.set(this.key, { sdt, co: !!res.coTaiKhoan, tenAn: res.tenAn || '', hang: res.hang || 'moi', luc: Date.now() }); },
+    set(sdt, res) {
+      const dc = tachDiaChi({ tinh: res.tinh || '', xa: res.xa || '', diaChi: res.diaChi || '' });
+      store.set(this.key, { sdt, co: !!res.coTaiKhoan, tenAn: res.tenAn || '', ten: res.ten || '', tinh: dc.tinh || '', xa: dc.xa || '', diaChi: dc.diaChi || '', hang: res.hang || 'moi', luc: Date.now() });
+    },
   };
   function hangCho(phone) {
     const s = Session.get();
@@ -1029,6 +1040,92 @@
   }
 
   /* =====================================================================
+     TÀI KHOẢN: đăng nhập bằng SĐT + mật khẩu (mặc định "1" cho khách đã mua), đổi mật khẩu.
+     Khách vẫn mua được mà không cần đăng nhập. Dùng chung khung #otpModal.
+     ===================================================================== */
+  const MK_MAC_DINH = '1';
+  function openLogin(opts = {}) {
+    return new Promise((resolve) => {
+      const box = $('#otpContent'); if (!box) { resolve(null); return; }
+      let xong = false; const dong = (v) => { if (xong) return; xong = true; resolve(v || null); };
+      const sdt0 = phoneKey(opts.phone || (Customer.get() || {}).phone || '');
+      box.innerHTML = `<div class="modal__head"><h3>👤 ${esc(opts.title || 'Đăng nhập tài khoản')}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
+        <div class="modal__body"><p class="fs-14 text-muted mb-12">Tài khoản là <b>số điện thoại mẹ đã mua hàng</b>. Chưa đổi mật khẩu thì mật khẩu là <b>${MK_MAC_DINH}</b>.</p>
+        <form id="loginForm" class="qb__form" novalidate autocomplete="on">
+          <label class="sr-only" for="loginPhone">Số điện thoại</label><input class="input" id="loginPhone" name="username" type="tel" inputmode="numeric" autocomplete="username" placeholder="Số điện thoại" value="${esc(sdt0)}">
+          <label class="sr-only" for="loginPass">Mật khẩu</label><input class="input" id="loginPass" name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu (mặc định: ${MK_MAC_DINH})">
+          <div class="form-error hide" id="loginErr" role="alert"></div>
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Đăng nhập</button>
+          <p class="fs-13 text-muted" style="text-align:center">Quên mật khẩu? <button type="button" class="text-primary fw-600" id="loginOtp">Nhận mã OTP</button> · Chưa mua lần nào? Mẹ cứ đặt hàng, không cần tài khoản.</p>
+        </form></div>`;
+      $('#loginForm').addEventListener('submit', (e) => {
+        e.preventDefault(); const sdt = phoneKey($('#loginPhone').value); const mk = $('#loginPass').value; const err = $('#loginErr'); err.classList.add('hide');
+        if (!phoneOk(sdt)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); return; }
+        if (!mk) { err.textContent = `Mẹ nhập mật khẩu nhé (mặc định là ${MK_MAC_DINH})`; err.classList.remove('hide'); $('#loginPass').focus(); return; }
+        const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang đăng nhập…';
+        loyaltyApi('dangNhap', { sdt, mk }).then((res) => {
+          btn.disabled = false; btn.textContent = 'Đăng nhập';
+          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa đăng nhập được, mẹ thử lại nhé'; err.classList.remove('hide'); return; }
+          const s = saveSession(res); if (s) Session.patch({ macDinh: !!res.macDinh });
+          store.set('mc_doimk_hoan', 0);
+          toast(`Chào ${(res.kh && res.kh.ten) || 'mẹ'} 👋 đã đăng nhập`, { type: 'ok' });
+          dong(Session.get()); closeModal('#otpModal');
+        }).catch((e2) => { btn.disabled = false; btn.textContent = 'Đăng nhập'; err.textContent = e2.message; err.classList.remove('hide'); });
+      });
+      $('#loginOtp').addEventListener('click', () => { xong = true; openOtp({ phone: $('#loginPhone').value, title: 'Đăng nhập bằng mã OTP' }).then(resolve); });
+      $('#otpModal').addEventListener('mc:closed', () => dong(null), { once: true });
+      openModal('#otpModal');
+      setTimeout(() => (sdt0 ? $('#loginPass') : $('#loginPhone'))?.focus(), 250);
+    });
+  }
+  /* Đổi mật khẩu. goiY = true: lời mời sau lần đăng nhập đầu (có nút "Để sau") */
+  function openDoiMk(goiY) {
+    const s = Session.get(); const box = $('#otpContent'); if (!s || !box) return Promise.resolve(false);
+    return new Promise((resolve) => {
+      let xong = false; const dong = (v) => { if (xong) return; xong = true; resolve(v); };
+      box.innerHTML = `<div class="modal__head"><h3>🔑 ${goiY ? 'Mẹ đổi mật khẩu cho an toàn nhé' : 'Đổi mật khẩu'}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
+        <div class="modal__body">${goiY ? `<p class="fs-14 text-muted mb-12">Tài khoản <b>${esc(maskPhone(s.sdt))}</b> đang dùng mật khẩu mặc định <b>${MK_MAC_DINH}</b>. Đặt mật khẩu riêng để chỉ mẹ xem được địa chỉ và lịch sử đơn.</p>` : ''}
+        <form id="doiMkForm" class="qb__form" novalidate>
+          <input type="text" name="username" autocomplete="username" value="${esc(phoneKey(s.sdt))}" hidden>
+          <input class="input" id="mkMoi" type="password" autocomplete="new-password" placeholder="Mật khẩu mới (ít nhất 4 ký tự)" aria-label="Mật khẩu mới">
+          <input class="input" id="mkMoi2" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" aria-label="Nhập lại mật khẩu mới">
+          <div class="form-error hide" id="doiMkErr" role="alert"></div>
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Lưu mật khẩu</button>
+          ${goiY ? '<button class="btn btn--ghost btn--block" type="button" id="doiMkSau">Để sau</button>' : ''}
+        </form></div>`;
+      $('#doiMkForm').addEventListener('submit', (e) => {
+        e.preventDefault(); const a = $('#mkMoi').value, b = $('#mkMoi2').value; const err = $('#doiMkErr'); err.classList.add('hide');
+        const loi = a.length < 4 ? 'Mật khẩu cần ít nhất 4 ký tự' : a === MK_MAC_DINH ? 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé' : a !== b ? 'Hai lần nhập mật khẩu chưa giống nhau' : '';
+        if (loi) { err.textContent = loi; err.classList.remove('hide'); return; }
+        const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang lưu…';
+        loyaltyApi('doiMatKhau', { token: s.token, mkMoi: a }).then((res) => {
+          btn.disabled = false; btn.textContent = 'Lưu mật khẩu';
+          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, mẹ thử lại nhé'; err.classList.remove('hide'); if (res && res.loi === 'token') Session.clear(); return; }
+          Session.patch({ macDinh: false }); toast('Đã đổi mật khẩu – lần sau mẹ đăng nhập bằng mật khẩu mới nhé', { type: 'ok' });
+          dong(true); closeModal('#otpModal');
+        }).catch((e2) => { btn.disabled = false; btn.textContent = 'Lưu mật khẩu'; err.textContent = e2.message; err.classList.remove('hide'); });
+      });
+      $('#doiMkSau')?.addEventListener('click', () => { store.set('mc_doimk_hoan', Date.now()); dong(false); closeModal('#otpModal'); });
+      $('#otpModal').addEventListener('mc:closed', () => { if (goiY && !xong) store.set('mc_doimk_hoan', Date.now()); dong(false); }, { once: true });
+      openModal('#otpModal');
+      setTimeout(() => $('#mkMoi')?.focus(), 250);
+    });
+  }
+  /* Sau lần đăng nhập đầu bằng mật khẩu mặc định: khách thao tác tiếp trên web (không phải lúc đang thanh toán)
+     → mời đổi mật khẩu; "Để sau" thì 1 ngày sau mới hỏi lại. */
+  function moiDoiMk() {
+    const s = Session.get(); if (!s || !s.macDinh) return;
+    const hoan = Number(store.get('mc_doimk_hoan', 0)) || 0; if (hoan && Date.now() - hoan < 864e5) return;
+    if (/checkout\.html/.test(location.pathname) && !$('.success-page')) return;
+    let da = false;
+    const hoi = (e) => {
+      if (da || $('.modal.is-open') || (e && e.target.closest && e.target.closest('a[href]'))) return;
+      da = true; document.removeEventListener('click', hoi, true); setTimeout(() => { if (!$('.modal.is-open')) openDoiMk(true); }, 350);
+    };
+    document.addEventListener('click', hoi, true);
+  }
+
+  /* =====================================================================
      QUÀ TẶNG KÈM – tính theo giỏ hàng, tự thêm vào đơn khi khách đặt
      Hai chương trình không cộng dồn: lấy chương trình cho nhiều quà hơn.
      ===================================================================== */
@@ -1075,5 +1172,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, laNuocLotte, hangCho, traHang, HangSdt, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    giftFor, giftNote, giftBox, laNuocLotte, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

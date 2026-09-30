@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260930e">
+  <link rel="stylesheet" href="css/style.css?v=20260930f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -16,14 +16,14 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20260930e"></script>
-<script src="js/diachi.js?v=20260930e"></script>
+<script src="js/data.js?v=20260930f"></script>
+<script src="js/diachi.js?v=20260930f"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260930e"></script>
+<script src="js/app.js?v=20260930f"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
-          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, byId, isForMom, rankDefault, shipText, ghnInfo, hangCho, traHang } = MC;
+          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, byId, isForMom, rankDefault, shipText, ghnInfo, hangCho, traHang, openLogin } = MC;
   let lines = Cart.lines();
   if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Mẹ chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
   const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
@@ -181,17 +181,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (traCuu.co && traCuu.sdt === sdt) {
       const th = hangCho(sdt) || tierOf(0);
-      bar.innerHTML = `<div class="loybar ${th.discount ? 'loybar--on' : ''}"><div class="loybar__l">${th.discount ? tierBadge(th) : '<span class="loybar__ico">👋</span>'}<div><b>Chào ${esc(traCuu.ten || 'mẹ')}, cảm ơn mẹ đã quay lại</b><p>${th.discount ? `Hạng ${esc(th.label)} – <b>đơn này đã được giảm ${th.discount}%</b>. ` : ''}Muốn điền nhanh địa chỉ đã lưu thì bấm nhận mã OTP.</p></div></div><div class="loybar__r"><button class="btn btn--primary btn--sm" type="button" id="loyOtp">Nhận mã OTP</button></div></div>`;
+      bar.innerHTML = `<div class="loybar ${th.discount ? 'loybar--on' : ''}"><div class="loybar__l">${th.discount ? tierBadge(th) : '<span class="loybar__ico">👋</span>'}<div><b>Chào ${esc(traCuu.ten || 'mẹ')}, cảm ơn mẹ đã quay lại</b><p>${th.discount ? `Hạng ${esc(th.label)} – <b>đơn này đã được giảm ${th.discount}%</b>. ` : ''}Đã điền thông tin giao hàng lần trước, mẹ kiểm tra lại giúp shop nhé.</p></div></div><div class="loybar__r"><button class="btn btn--primary btn--sm" type="button" id="loyOtp">Đăng nhập</button></div></div>`;
       return;
     }
-    bar.innerHTML = '';
+    /* Chưa đăng nhập: gợi ý đăng nhập cho khách cũ (mật khẩu mặc định) – khách mới vẫn đặt hàng bình thường */
+    bar.innerHTML = s ? '' : `<div class="loybar loybar--hint"><div class="loybar__l"><span class="loybar__ico">💡</span><div><b>Mẹ đã từng mua ở ${esc(SITE.name)}?</b><p>Đăng nhập bằng <b>số điện thoại</b>, mật khẩu mặc định là <b>1</b> – thông tin giao hàng tự điền. Chưa mua lần nào thì mẹ cứ điền bên dưới, không cần tài khoản.</p></div></div><div class="loybar__r"><button class="btn btn--primary btn--sm" type="button" id="loyOtp">Đăng nhập</button></div></div>`;
   };
   const kiemTraSdt = () => {
     if (!loy.enabled) return; const sdt = phoneNow();
     if (!phoneOk(sdt)) { traCuu = { sdt: '', co: false, ten: '' }; renderLoyalty(); return; }
     const s = Session.get(); if (s && phoneKey(s.sdt) === sdt) { renderLoyalty(); return; }
     if (traCuu.sdt === sdt) { renderLoyalty(); return; }
-    traHang(sdt).then((v) => { if (phoneNow() !== sdt) return; traCuu = { sdt, co: !!(v && v.co), ten: (v && v.tenAn) || '' }; renderLoyalty(); renderSummary(); });
+    traHang(sdt).then((v) => {
+      if (phoneNow() !== sdt) return; traCuu = { sdt, co: !!(v && v.co), ten: (v && (v.ten || v.tenAn)) || '' };
+      if (v && v.co) {   /* khách cũ: tự điền các ô còn trống từ thông tin đã lưu (không cần OTP) */
+        if (v.ten && !form.elements.name.value.trim()) form.elements.name.value = v.ten;
+        if (v.tinh && !form.elements.city.value && DIA.some((p) => p.t === v.tinh)) { form.elements.city.value = v.tinh; form.elements.ward.innerHTML = xaOptions(v.tinh, v.xa || ''); syncExpress(); }
+        if (v.diaChi && !form.elements.address.value.trim()) form.elements.address.value = v.diaChi;
+      }
+      renderLoyalty(); renderSummary();
+    });
   };
   const dienHoSo = () => {
     const kh = Session.kh(); if (!kh) return;
@@ -221,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.name === 'giftVi') { quaVi = e.target.value; $$('.giftbox__vi .chip').forEach((ch) => ch.classList.toggle('is-on', ch.querySelector('input').checked)); const n = $('#giftViNote'); if (n) n.textContent = quaVi; }
   });
   document.addEventListener('click', (e) => {
-    if (e.target.id === 'loyOtp') { openOtp({ phone: phoneNow(), autoSend: true, title: 'Xác thực để điền địa chỉ đã lưu' }).then((s) => { if (s) dienHoSo(); }); }
+    if (e.target.id === 'loyOtp') { openLogin({ phone: phoneNow() }).then((s) => { if (s) { if (s.kh && s.kh.sdt) form.elements.phone.value = phoneKey(s.kh.sdt); dienHoSo(); } }); }
     if (e.target.id === 'loyOut') { Session.clear(); renderLoyalty(); renderSummary(); }
   });
   form.addEventListener('click', (e) => {
@@ -254,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     daDat = true; Cart.clear(); store.set('mc_coupon', '');
     if (Session.get()) refreshProfile();
     $('#checkoutPage').innerHTML = `<div class="success-page card">${orderSuccessHTML(order, false)}</div>`;
+    MC.moiDoiMk();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });
