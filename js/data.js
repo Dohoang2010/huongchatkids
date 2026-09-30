@@ -171,7 +171,7 @@ window.NAV = [
     { title: 'Sữa tươi', links: [['Norco nguyên kem nội địa Úc', 'product.html?id=26523206270']] },
     { title: 'Theo độ tuổi', ages: ['0-6m', '6-12m', '1-3y', '3-6y', '6-12y'] } ] },
   { label: 'Hồng sâm & đề kháng', short: 'Hồng sâm', tiny: 'Hồng sâm', link: 'collections.html?cat=hong-sam', columns: [
-    { title: 'Sản phẩm', links: [['Hồng sâm ChuChu tăng cao & phục hồi', 'product.html?id=28254163202'], ['Hồng sâm ChuChu ăn ngon, phục hồi sau ốm', 'product.html?id=22644617070'], ['Hồng sâm Rich Kid – trí não', 'product.html?id=27355720019'], ['Sâm Organic Pinkfong Kid Up', 'product.html?id=47357633686'], ['Gạc hươu non Sumo tăng cân', 'product.html?id=26156646705']] },
+    { title: 'Sản phẩm', links: [['Hồng sâm ChuChu ăn ngon, phục hồi sau ốm', 'product.html?id=22644617070'], ['Hồng sâm Rich Kid – trí não', 'product.html?id=27355720019'], ['Sâm Organic Pinkfong Kid Up', 'product.html?id=47357633686'], ['Gạc hươu non Sumo tăng cân', 'product.html?id=26156646705']] },
     { title: 'Theo nhu cầu', needs: ['de-khang', 'phuc-hoi', 'tang-can', 'tri-nao'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Vitamin & canxi', short: 'Vitamin & canxi', tiny: 'Vitamin', link: 'collections.html?cat=vitamin', columns: [
@@ -227,15 +227,6 @@ window.PRODUCTS = [
     desc: "Rong biển Busan trộn cơm Hàn Quốc, bổ sung chất xơ và vitamin tự nhiên từ rong biển. Vị mặn nhẹ, giòn, trộn cơm là bé ăn hết bát.",
     highlights: ["Rong biển Busan – vùng rong biển nổi tiếng Hàn Quốc", "Bổ sung chất xơ, vitamin tự nhiên", "Trộn cơm, làm cơm nắm, kimbap cho bé"],
     usage: "Trộn 1 gói nhỏ với cơm nóng hoặc rắc lên cháo. Bảo quản nơi khô ráo, dùng hết sau khi mở gói." },
-
-  { id: "28254163202", name: "Hồng Sâm ChuChu Hàn Quốc Giúp bé Tăng Sức Đề Kháng, Tăng Cao Và Phục Hồi Sức Khoẻ", short: "Hồng sâm ChuChu tăng cao & phục hồi", brand: "chuchu", cat: "hong-sam",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["de-khang", "tang-chieu-cao", "phuc-hoi"], price: 290000, oldPrice: 392000, rating: 4.9, reviews: 20, sold: 119, stock: 50,
-    shape: "box", color: "#B5121B", weight: "Gói 20ml", origin: "Hàn Quốc", tags: ["Bán chạy"],
-    image: "img/28254163202.jpg", thumb: "img/thumb/28254163202.jpg", images: ["img/28254163202.jpg", "img/28254163202-2.jpg", "img/28254163202-3.jpg", "img/28254163202-4.jpg"], shopeeId: "28254163202", shopeeUrl: "https://shopee.vn/product/837223358/28254163202", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
-    variants: [{ label: "Mix · 10 gói", price: 290000, oldPrice: 392000 }, { label: "Nho– Việt Quất · 10 gói", price: 290000, oldPrice: 392000 }, { label: "Táo lê · 10 gói", price: 290000, oldPrice: 392000 }, { label: "Mix · 20 gói", price: 580000, oldPrice: 783000 }, { label: "Nho– Việt Quất · 20 gói", price: 580000, oldPrice: 783000 }, { label: "Táo lê · 20 gói", price: 580000, oldPrice: 783000 }, { label: "Mix · thùng 40 gói", price: 1160000, oldPrice: 1566000 }, { label: "Nho– Việt Quất · thùng 40 gói", price: 1160000, oldPrice: 1566000 }, { label: "Táo lê · thùng 40 gói", price: 1160000, oldPrice: 1566000 }],
-    desc: "Hồng sâm ChuChu Hàn Quốc dạng gói uống liền cho bé, vị táo lê, nho – việt quất hoặc mix. Theo nhà sản xuất, hồng sâm giúp bé tăng sức đề kháng, hỗ trợ phát triển chiều cao và phục hồi sức khoẻ.",
-    highlights: ["Hồng sâm Hàn Quốc cho trẻ em, vị trái cây dễ uống", "3 vị: Táo lê, Nho – việt quất, Mix", "Mua thùng 40 gói tiết kiệm hơn"],
-    usage: "Bé uống 1 gói/ngày sau bữa ăn. Lắc đều trước khi dùng. Liều dùng theo hướng dẫn trên bao bì." },
 
 
   { id: "22644617070", name: "Hồng Sâm ChuChu Hàn Quốc Giúp Trẻ Tăng Sức Đề Kháng, ăn ngon Và Phục Hồi Sức Khoẻ Sau Khi Bị Ốm", short: "Hồng sâm ChuChu ăn ngon & phục hồi sau ốm", brand: "chuchu", cat: "hong-sam",
