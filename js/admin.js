@@ -47,9 +47,17 @@
   function moKhoa() { $('#login').classList.add('hide'); $('#app').classList.remove('hide'); khoiDong(); }
   $('#loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    if ($('#lgId').value.trim() === TAI_KHOAN.id && $('#lgPw').value === TAI_KHOAN.mk) {
+    /* Bỏ khoảng trắng và không phân biệt hoa thường: bàn phím điện thoại hay tự viết hoa chữ đầu */
+    const id = $('#lgId').value.replace(/\s/g, '').toLowerCase();
+    const mk = $('#lgPw').value.replace(/\s/g, '');
+    if (id === TAI_KHOAN.id && mk === TAI_KHOAN.mk) {
       sessionStorage.setItem(DA_VAO, '1'); moKhoa();
-    } else { $('#lgErr').textContent = 'Tên đăng nhập hoặc mật khẩu chưa đúng'; $('#lgErr').classList.remove('hide'); }
+    } else {
+      $('#lgErr').innerHTML = !id || !mk ? 'Mẹ nhập đủ tên đăng nhập và mật khẩu nhé'
+        : id !== TAI_KHOAN.id ? 'Tên đăng nhập chưa đúng. Phải là <b>adminhck</b> (viết liền, không dấu).'
+        : 'Mật khẩu chưa đúng.';
+      $('#lgErr').classList.remove('hide');
+    }
   });
   $('#btnOut').addEventListener('click', () => { sessionStorage.removeItem(DA_VAO); location.reload(); });
 
