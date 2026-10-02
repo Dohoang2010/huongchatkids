@@ -846,6 +846,22 @@
       .then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) applyStock(d); }).catch(() => {});
   }
 
+  /* ---------------- Xem thử từ trang quản trị ----------------
+     admin.html mở trang này trong khung xem thử với ?preview=1 và để bản nháp ở
+     sessionStorage. Áp ngay lúc này (trước khi các trang vẽ) nên không bị nháy. */
+  (function apPreview() {
+    try {
+      if (!/[?&]preview=1/.test(location.search)) return;
+      const d = JSON.parse(sessionStorage.getItem('hck_preview') || 'null'); if (!d) return;
+      ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS'].forEach((k) => { if (d[k]) window[k] = d[k]; });
+      if (d.SITE) Object.assign(window.SITE, d.SITE);
+      document.documentElement.classList.add('is-preview');
+    } catch { /* bản nháp hỏng thì cứ hiện bản thật */ }
+  })();
+
+  /* Sản phẩm bị ẩn ở trang quản trị thì không hiện ở bất kỳ đâu trên web */
+  window.PRODUCTS = (window.PRODUCTS || []).filter((p) => !p.an);
+
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
     renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk();

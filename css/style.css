@@ -1455,3 +1455,7 @@ body { padding-bottom: 0; }
 .field__hint{display:block;margin-top:5px;font-size:12.5px;color:var(--text-muted,#6B7280);line-height:1.45}
 .dangky__perk{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;margin-top:6px}
 .dangky__perk i{font-style:normal;flex:none}
+/* Khung xem trước của trang quản trị */
+html.is-preview body::before{content:'BẢN NHÁP – chỉ hiện trong trang quản trị';position:fixed;left:0;right:0;top:0;z-index:9999;
+  background:#14181F;color:#fff;text-align:center;font-size:11.5px;font-weight:700;letter-spacing:.4px;padding:3px}
+html.is-preview body{padding-top:20px}

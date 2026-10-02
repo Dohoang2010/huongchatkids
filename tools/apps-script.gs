@@ -434,6 +434,7 @@ function doGet(e) {
     if (action === 'capNhat')  return traVe(apiCapNhat(p), cb);
     if (action === 'dangNhap') return traVe(apiDangNhap(p), cb);
     if (action === 'dangKy')   return traVe(apiDangKy(p), cb);
+    if (action === 'thongKe')  return traVe(apiThongKe(p), cb);
     if (action === 'doiMatKhau') return traVe(apiDoiMatKhau(p), cb);
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
@@ -458,6 +459,8 @@ function apiKiemTra(p) {
    Khách đã mua (có trong Sheet hoặc CRM) đăng nhập bằng số điện thoại, mật khẩu mặc định MK_MAC_DINH.
    Đổi mật khẩu → lưu dạng mã hoá (SHA-256 + muối) ở sheet "Tài khoản", không lưu mật khẩu thật. */
 var MK_MAC_DINH = '1';
+/* Khoá cho trang quản trị đọc số liệu (admin.html). Đổi chuỗi này rồi dán lại vào trang quản trị. */
+var ADMIN_KEY = 'hck-admin-2026';
 var SHEET_TK = 'Tài khoản';
 function sheetTK() { return sheetPhu(SHEET_TK, ['Điện thoại', 'Mật khẩu (mã hoá)', 'Muối', 'Cập nhật']); }
 function bamMk(mk, muoi) {
@@ -521,6 +524,67 @@ function apiDangKy(p) {
     if (EMAIL) { try { MailApp.sendEmail(EMAIL, '🆕 Khách mới đăng ký: ' + cat(ten, 80), bao); } catch (e2) { Logger.log(e2); } }
     return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH };
   } finally { lock.releaseLock(); }
+}
+
+/* ===================== SỐ LIỆU CHO TRANG QUẢN TRỊ ===================== */
+/* Trả về doanh số, số đơn, khách mới, top sản phẩm, đơn theo ngày và theo giờ
+   trong khoảng thời gian tuỳ chọn. Cần đúng ADMIN_KEY mới đọc được. */
+function apiThongKe(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var tu = p.tu ? new Date(p.tu + 'T00:00:00+07:00') : new Date(Date.now() - 30 * 864e5);
+  var den = p.den ? new Date(p.den + 'T23:59:59+07:00') : new Date();
+  var s = sheetDon(); var n = s.getLastRow();
+  var kq = { ok: true, tu: Utilities.formatDate(tu, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd'),
+             den: Utilities.formatDate(den, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd'),
+             doanhThu: 0, soDon: 0, soKhach: 0, khachMoi: 0, huy: 0, tienHuy: 0,
+             theoNgay: [], theoGio: [], topSP: [], donMoi: [], goiLai: 0, quaDaTang: 0 };
+  for (var g = 0; g < 24; g++) kq.theoGio.push(0);
+  if (n < 2) return kq;
+
+  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues();
+  var ngay = {}, gio = {}, sp = {}, khach = {}, khachTruoc = {};
+  for (var i = 0; i < v.length; i++) {
+    var d = v[i][0]; if (!d) continue;
+    var t = new Date(d).getTime();
+    var sdt = chuanSdt(v[i][4]);
+    var loai = String(v[i][2] || '');
+    if (t < tu.getTime()) { if (sdt) khachTruoc[sdt] = 1; continue; }   // khách đã mua trước kỳ này
+    if (t > den.getTime()) continue;
+    if (loai.indexOf('gọi lại') > -1) { kq.goiLai++; continue; }
+    var tien = Number(v[i][10]) || 0;
+    var tt = String(v[i][18] || '');
+    if (/huỷ|huy|hoàn|hoan/i.test(tt)) { kq.huy++; kq.tienHuy += tien; continue; }
+
+    kq.doanhThu += tien; kq.soDon++;
+    if (sdt) khach[sdt] = (khach[sdt] || 0) + 1;
+    if (String(v[i][17] || '').trim()) kq.quaDaTang++;
+
+    var k = Utilities.formatDate(new Date(d), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
+    if (!ngay[k]) ngay[k] = { ngay: k, tien: 0, don: 0 };
+    ngay[k].tien += tien; ngay[k].don++;
+    var h = Number(Utilities.formatDate(new Date(d), 'Asia/Ho_Chi_Minh', 'H'));
+    kq.theoGio[h] = (kq.theoGio[h] || 0) + 1;
+
+    var dong = String(v[i][6] || '').split('\n');
+    for (var j = 0; j < dong.length; j++) {
+      var m = dong[j].match(/^(.*?)\s*×\s*(\d+)$/);
+      if (!m) continue;
+      var ten = m[1].trim(); if (!ten) continue;
+      if (!sp[ten]) sp[ten] = { ten: ten, sl: 0, don: 0 };
+      sp[ten].sl += Number(m[2]) || 1; sp[ten].don++;
+    }
+    if (kq.donMoi.length < 15) kq.donMoi.push({ ma: String(v[i][1] || ''), ngay: ngayVN(d), khach: String(v[i][3] || ''),
+      sdt: sdt, tong: tien, thanhToan: String(v[i][11] || ''), trangThai: tt, qua: String(v[i][17] || '') });
+  }
+  Object.keys(ngay).forEach(function (k2) { kq.theoNgay.push(ngay[k2]); });
+  kq.theoNgay.sort(function (a, b) { return a.ngay < b.ngay ? -1 : 1; });
+  Object.keys(sp).forEach(function (k3) { kq.topSP.push(sp[k3]); });
+  kq.topSP.sort(function (a, b) { return b.sl - a.sl; }); kq.topSP = kq.topSP.slice(0, 12);
+  var ds = Object.keys(khach); kq.soKhach = ds.length;
+  for (var q = 0; q < ds.length; q++) if (!khachTruoc[ds[q]]) kq.khachMoi++;
+  kq.donMoi.reverse();
+  kq.giaTriTB = kq.soDon ? Math.round(kq.doanhThu / kq.soDon) : 0;
+  return kq;
 }
 
 function apiDoiMatKhau(p) {

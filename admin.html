@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Quản trị – Hương Chất Kids</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css?v=20261002c">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png">
+</head>
+<body>
+
+<!-- ĐĂNG NHẬP -->
+<div class="login" id="login">
+  <form class="login__box" id="loginForm">
+    <img src="img/logo-96.png" alt="" width="56" height="56">
+    <h1>Trang quản trị</h1>
+    <p>Hương Chất Kids</p>
+    <label>Tên đăng nhập<input id="lgId" autocomplete="username" required></label>
+    <label>Mật khẩu<input id="lgPw" type="password" autocomplete="current-password" required></label>
+    <div class="err hide" id="lgErr"></div>
+    <button class="btn btn--primary btn--lg" type="submit">Đăng nhập</button>
+    <small>Trang này chỉ dành cho chủ shop. Mọi thay đổi được ghi thẳng lên website.</small>
+  </form>
+</div>
+
+<!-- GIAO DIỆN QUẢN TRỊ -->
+<div class="app hide" id="app">
+  <header class="topbar">
+    <div class="topbar__brand"><img src="img/logo-96.png" alt="" width="30" height="30"><b>Quản trị</b><span>Hương Chất Kids</span></div>
+    <nav class="tabs" id="tabs">
+      <button class="tab is-on" data-tab="dash">📊 Tổng quan</button>
+      <button class="tab" data-tab="mkt">🎯 Marketing</button>
+      <button class="tab" data-tab="shop">🏪 Cửa hàng</button>
+      <button class="tab" data-tab="cai">⚙️ Cài đặt</button>
+    </nav>
+    <div class="topbar__right">
+      <span class="dot" id="ghDot" title="Kết nối GitHub"></span>
+      <button class="btn btn--ghost btn--sm" id="btnXem">👁 Xem thử</button>
+      <button class="btn btn--primary" id="btnLuu" disabled>💾 Lưu lên web</button>
+      <button class="btn btn--ghost btn--sm" id="btnOut">Thoát</button>
+    </div>
+  </header>
+
+  <div class="bar hide" id="bar"></div>
+
+  <main class="main">
+    <section class="pane" id="pane">
+      <!-- TỔNG QUAN -->
+      <div class="tabpane" data-pane="dash">
+        <div class="head">
+          <h2>📊 Tổng quan kinh doanh</h2>
+          <div class="filters" id="dashFilter">
+            <button class="chip" data-range="today">Hôm nay</button>
+            <button class="chip" data-range="7">7 ngày</button>
+            <button class="chip is-on" data-range="30">30 ngày</button>
+            <button class="chip" data-range="month">Tháng này</button>
+            <button class="chip" data-range="90">90 ngày</button>
+            <span class="custom">Từ <input type="date" id="dTu"> đến <input type="date" id="dDen"> <button class="btn btn--dark btn--sm" id="btnLoc">Xem</button></span>
+          </div>
+        </div>
+        <div id="dashBody"><div class="loading">Đang tải số liệu…</div></div>
+      </div>
+
+      <!-- MARKETING -->
+      <div class="tabpane hide" data-pane="mkt">
+        <div class="head"><h2>🎯 Công cụ marketing</h2><p class="muted">Sửa xong bấm <b>Lưu lên web</b>. Bấm <b>Xem thử</b> để xem trước khi lưu.</p></div>
+        <div id="mktBody"></div>
+      </div>
+
+      <!-- CỬA HÀNG -->
+      <div class="tabpane hide" data-pane="shop">
+        <div class="head"><h2>🏪 Cửa hàng</h2><p class="muted">Thêm, sửa sản phẩm và trang trí trang chủ.</p></div>
+        <div id="shopBody"></div>
+      </div>
+
+      <!-- CÀI ĐẶT -->
+      <div class="tabpane hide" data-pane="cai">
+        <div class="head"><h2>⚙️ Cài đặt</h2></div>
+        <div id="caiBody"></div>
+      </div>
+    </section>
+
+    <aside class="preview" id="preview">
+      <div class="preview__bar">
+        <b>Xem trước</b>
+        <select id="pvPage">
+          <option value="index.html">Trang chủ</option>
+          <option value="collections.html">Tất cả sản phẩm</option>
+          <option value="cart.html">Giỏ hàng</option>
+          <option value="account.html">Thông tin khách hàng</option>
+        </select>
+        <span class="grow"></span>
+        <button class="icobtn" id="pvMobile" title="Xem như điện thoại">📱</button>
+        <button class="icobtn" id="pvReload" title="Tải lại">↻</button>
+        <button class="icobtn" id="pvHide" title="Ẩn khung xem trước">✕</button>
+      </div>
+      <div class="preview__frame" id="pvWrap"><iframe id="pvFrame" title="Xem trước website"></iframe></div>
+      <div class="preview__note">Khung này hiện <b>bản nháp</b> đang sửa. Khách chỉ thấy sau khi bấm Lưu lên web.</div>
+    </aside>
+    <button class="preview__show hide" id="pvShow">👁 Hiện xem trước</button>
+  </main>
+</div>
+
+<div class="toast hide" id="toast"></div>
+
+<script src="js/data.js?v=20261002c"></script>
+<script src="js/diachi.js?v=20261002c"></script>
+<script src="js/admin.js?v=20261002c"></script>
+</body>
+</html>

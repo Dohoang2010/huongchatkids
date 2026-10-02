@@ -193,6 +193,7 @@ window.NAV = [
 /* importer / congBo (tuỳ chọn): nhà nhập khẩu & số công bố ghi trên tem phụ – điền để hiện ở bảng thông tin.
    image: ảnh thật (img/<mã Shopee>.jpg); thumb: ảnh cắt gọn 420px dùng cho thẻ sản phẩm/giỏ/tìm kiếm. variants: phân loại từ Shopee, sắp theo giá tăng dần.
    price/oldPrice = phân loại rẻ nhất (giá "từ"). shape/color: dùng vẽ ảnh minh hoạ khi chưa có ảnh. */
+/* ===ADMIN:PRODUCTS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.PRODUCTS = [
   { id: "41002695070", name: "Rong Biển Vụn Ăn Liền Sung Gyung - Lựa Chọn Hoàn Hảo Cho Bữa Ăn Nhanh Gọn và Bổ Dưỡng", short: "Rong biển vụn Sung Gyung", brand: "sunggyung", cat: "rong-bien",
     ages: ["1-3y", "3-6y", "6-12y"], needs: ["an-dam", "tang-can"], price: 520000, oldPrice: 702000, rating: 4.94, reviews: 53, sold: 423, stock: 50, priority: 3,
@@ -558,6 +559,7 @@ window.PRODUCTS = [
     highlights: ["Sữa tươi hữu cơ nguyên kem, chứng nhận Organic Hàn Quốc", "Mỗi hộp 125ml: 4g đạm, 4,6g chất béo, 125mg canxi", "Hộp nhỏ 125ml tiện mang đi học, vừa một lần uống"],
     usage: "Bé từ 1 tuổi uống 1–2 hộp/ngày, ngon hơn khi để lạnh. Lắc đều trước khi uống, đã mở hộp thì dùng hết trong ngày. Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp." },
 ];
+/* ===/ADMIN:PRODUCTS=== */
 
 /* Feedback thực tế của khách (ảnh chụp tin nhắn/bình luận/ảnh bé dùng sản phẩm) – đặt file vào img/feedback/.
    Chỉ dùng ảnh đã được khách đồng ý; nên làm mờ tên/avatar; không dùng ảnh có tuyên bố chữa bệnh, "cao thêm X cm" (quy định quảng cáo TPCN).
@@ -617,6 +619,7 @@ window.FEEDBACKS = [
 ];
 
 /* Banner đầu trang chủ. Ảnh minh hoạ bên phải: image (1 ảnh) · images + sticker (nhiều ảnh xếp chồng + nhãn dán) · tiers: true (bảng hạng khách hàng lấy từ TIERS) */
+/* ===ADMIN:BANNERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.BANNERS = [
   { title: 'Váng sữa canxi\nCalciumore Hàn Quốc', sub: 'Canxi sữa + vitamin D, gói ăn liền vị váng sữa. Hộp 90 gói chỉ khoảng <b>27.600₫/ngày</b>, tặng kèm <b>5 gói nước ép Lotte</b>.', cta: 'Mua ngay', link: 'product.html?id=26060839019', theme: 'sky', badge: '⭐ 4,9/5 · Đã bán 663', images: ['img/thumb/26060839019.jpg', 'img/26060839019-3.jpg'], imageLabels: ['📦 Hộp 90 gói', '🥛 Gói ăn liền'], sticker: 'TẶNG\n5 gói Lotte', fx: 'canxi' },
   { title: 'Mua hàng tặng\nnước ép Lotte', sub: 'Đơn từ <b>1.000.000₫</b> tặng 5 gói · mua thùng nước ép Lotte tặng đến <b>20 gói</b>. Mẹ chọn vị Hồng hoặc Cam.', cta: 'Săn quà ngay', link: 'collections.html?sort=best', theme: 'gift', badge: '🎁 Chương trình mới', images: ['img/thumb/25632276959.jpg', 'img/thumb/23660586997.jpg'], imageLabels: ['💗 Vị Hồng', '🧡 Vị Cam'], sticker: 'TẶNG\nđến 20 gói', fx: 'gift' },
@@ -625,6 +628,7 @@ window.BANNERS = [
   { title: 'Dinh dưỡng Hàn Quốc\nchính hãng cho bé', sub: 'Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.', cta: 'Xem sản phẩm', link: 'collections.html', theme: 'teal', badge: 'Chính hãng 100%', image: 'img/thumb/22644617070.jpg' },
   { title: 'Nước ép Lotte Organic\nrau củ & hoa quả Hàn Quốc', sub: 'Giúp bé ăn ngon, tăng chiều cao – hộp 10 gói <b>448.000₫</b>, thùng 30 gói <b>1.317.000₫</b>.', cta: 'Mua ngay', link: 'collections.html?cat=nuoc-ep', theme: 'amber', badge: 'Sản phẩm hot', image: 'img/thumb/22686115682.jpg' },
 ];
+/* ===/ADMIN:BANNERS=== */
 
 /* Đánh giá minh hoạ (KHÔNG hiển thị). Trang chủ hiện điểm đánh giá thật từ Shopee. Khi có phản hồi thật của khách, đặt SITE.showReviews = true để hiện mục này. */
 window.REVIEWS = [
@@ -662,6 +666,7 @@ window.POSTS = [
      1) donTu  : đơn hàng (KHÔNG tính nước dinh dưỡng Lotte) từ 1.000.000đ → tặng 5 gói
      2) thung  : mua thùng nước dinh dưỡng Lotte → 1 thùng 5 gói, 2 thùng 10 gói, từ 3 thùng 20 gói
    ===================================================================== */
+/* ===ADMIN:QUA_TANG=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.QUA_TANG = {
   enabled: true,
   ten: 'gói nước ép Lotte',
@@ -672,6 +677,7 @@ window.QUA_TANG = {
   loc: { cat: 'nuoc-ep', brand: 'lotte' },   // sản phẩm được tính là "nước dinh dưỡng Lotte"
   tuKhoaThung: 'thùng',                       // phân loại có chữ này được tính là 1 thùng
 };
+/* ===/ADMIN:QUA_TANG=== */
 
 /* =====================================================================
    SẢN PHẨM NÊN MUA KÈM – hiện ở trang thanh toán để khách thêm vào đơn 1 chạm
@@ -736,6 +742,7 @@ window.MUA_KEM = {
 
 /* Hạng khách hàng – xét theo TỔNG TIỀN ĐÃ CHI TIÊU (cộng các đơn đã đặt, trừ đơn huỷ/hoàn).
    Sửa mốc tiền hoặc % giảm ngay tại đây, web và Apps Script đều dùng chung bảng này. */
+/* ===ADMIN:TIERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.TIERS = [
   { key: 'moi',     label: 'Khách mới',  icon: '🌱', color: '#78909C', min: 0,         discount: 0,  desc: 'Mua đủ 5 triệu để lên hạng Silver' },
   { key: 'silver',   label: 'Silver',   icon: '🥈', color: '#78909C', min: 5000000,   discount: 5,  desc: 'Giảm 5% mọi đơn hàng' },
@@ -743,10 +750,13 @@ window.TIERS = [
   { key: 'diamond',  label: 'Diamond',  icon: '💎', color: '#1E9CB8', min: 40000000,  discount: 10, desc: 'Giảm 10% mọi đơn hàng' },
   { key: 'platinum', label: 'Platinum', icon: '👑', color: '#6A4FB6', min: 100000000, discount: 12, desc: 'Giảm 12% mọi đơn hàng' },
 ];
+/* ===/ADMIN:TIERS=== */
 
+/* ===ADMIN:COUPONS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.COUPONS = {
   HCK10: { type: 'percent', value: 10, max: 100000, min: 300000, desc: 'Giảm 10% (tối đa 100K) cho đơn từ 300K' },
   FREESHIP:  { type: 'ship', value: 0, min: 300000, desc: 'Miễn phí vận chuyển cho đơn từ 300K' },
 };
+/* ===/ADMIN:COUPONS=== */
 
 window.PROVINCES = ['TP. Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái'];

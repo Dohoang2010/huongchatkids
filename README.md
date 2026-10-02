@@ -153,6 +153,29 @@ email rồi xác thực OTP là có hồ sơ ngay. Khách đăng ký mới nhậ
 theo bảng giá hãng vận chuyển nhưng không thấp hơn `SITE.shipping.toiThieu` (30.000đ).
 Đơn từ `SITE.freeshipFrom` vẫn miễn phí; hoả tốc Hà Nội `SITE.expressFee`.
 
+## Trang quản trị (admin.html)
+
+Mở `https://huongchatkids.vn/admin.html` — đăng nhập `adminhck` / `123`.
+
+| Tab | Làm được gì |
+|---|---|
+| 📊 Tổng quan | Doanh thu, số đơn, giá trị TB/đơn, khách mua, khách mới, đơn huỷ, biểu đồ doanh thu theo ngày, **giờ khách đặt hàng nhiều nhất**, top sản phẩm bán chạy, đơn gần nhất. Lọc theo hôm nay / 7 / 30 / 90 ngày / tháng này / khoảng ngày tự chọn |
+| 🎯 Marketing | Chọn sản phẩm vào **flash sale**, thêm/sửa/xoá **mã giảm giá**, chỉnh **quà tặng** (mốc đơn, số quà, các vị, chỉ khách mới), chỉnh **hạng khách hàng** |
+| 🏪 Cửa hàng | Thêm/sửa/xoá **sản phẩm** (tên, giá, tồn, danh mục, phân loại, ảnh, mô tả), **tích nhãn** Sản phẩm hot / Bán chạy / Mới / Cho mẹ, ẩn–hiện sản phẩm, sửa **banner trang chủ** kèm đổi ảnh |
+| ⚙️ Cài đặt | Dán mã GitHub, khoá đọc số liệu |
+
+**Cách hoạt động:** mọi thay đổi là *bản nháp* nằm trên máy. Bấm **👁 Xem thử** để xem ngay trong
+khung bên phải (có dải đen "BẢN NHÁP"), bấm **💾 Lưu lên web** để ghi thật vào `js/data.js`
+(và `data/stock.json` nếu đổi tồn kho) trên GitHub. Website cập nhật sau khoảng 1 phút.
+
+**Cần 2 thứ để dùng được:**
+1. **Mã GitHub** (fine-grained token, quyền Contents: Read and write) dán ở tab ⚙️ Cài đặt – không có mã thì xem được nhưng không lưu được.
+2. **Apps Script** đã deploy bản mới nhất – để tab Tổng quan đọc được số liệu. Khoá đọc số liệu là `var ADMIN_KEY` trong Apps Script.
+
+> ⚠️ **Mật khẩu `123` nằm trong mã nguồn website nên ai xem mã nguồn cũng đọc được.** Nó chỉ là lớp
+> che cho đỡ bấm nhầm. Thứ thật sự bảo vệ shop là **mã GitHub** – mã này chỉ nằm trên máy chủ shop,
+> không nằm trong mã nguồn, không có nó thì không ai sửa được website.
+
 ## Nhận đơn hàng (Google Sheet + email + Telegram)
 
 Khi `SITE.orderEndpoint` trong `js/data.js` còn rỗng, đơn chỉ lưu trong máy khách – shop **không** nhận được gì.
