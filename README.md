@@ -129,13 +129,29 @@ trong `tools/apps-script.gs` cho khớp):
 
 **Quà tặng** (sửa ở `window.QUA_TANG` trong `js/data.js`):
 - Đơn hàng (không tính nước dinh dưỡng Lotte) từ 1.000.000đ → tặng 5 gói nước ép Lotte.
+  **Chỉ dành cho khách chưa lên hạng** (`donTu.chiKhachMoi = true`).
 - Mua nước dinh dưỡng Lotte: 1 thùng → 5 gói, 2 thùng → 10 gói, từ 3 thùng → 20 gói.
+  Áp dụng cho **mọi khách**; muốn khách VIP cũng không được quà thì đổi `thungChiKhachMoi = true`.
+- **Khách VIP** (đã lên hạng, đang có chiết khấu %) nhận chiết khấu thay cho quà tặng.
 - Hai chương trình **không áp dụng song song**: web tự lấy chương trình tặng nhiều quà hơn.
 - Khách chọn vị (Hồng – tăng cân / Cam – đề kháng) ngay ở giỏ hàng, quà tự đi kèm vào đơn và
   hiện ở cột "Quà tặng" trong Google Sheet + tin báo đơn Zalo.
 
 **Địa chỉ**: dùng danh mục hành chính 2 cấp sau sáp nhập 2025 (34 tỉnh/thành · 3.321 xã/phường)
 ở `js/diachi.js`. Đơn hàng lưu dạng `Tỉnh|Xã|Số nhà, đường`.
+
+**Email xác nhận đơn**: khách điền email ở trang thanh toán (hoặc ô email trong Mua nhanh) thì
+Apps Script tự gửi email xác nhận – mã đơn, danh sách sản phẩm, quà tặng, tổng tiền, địa chỉ giao
+và thông tin chuyển khoản (nếu chọn chuyển khoản). Tắt bằng `GUI_EMAIL_CHO_KHACH = false`.
+Gmail cho gửi khoảng 100 email/ngày; vượt hạn mức thì email bị bỏ qua, đơn vẫn vào Sheet như thường.
+
+**Đăng ký khách hàng mới**: nút ở trang Thông tin khách hàng – khách nhập tên, SĐT, tỉnh/xã, địa chỉ,
+email rồi xác thực OTP là có hồ sơ ngay. Khách đăng ký mới nhận OTP qua email vừa nhập; số điện thoại
+đã có hồ sơ thì chỉ gửi về email đã lưu (tránh người lạ chuyển mã sang email của họ).
+
+**Phí vận chuyển**: Hà Nội thu cố định `SITE.shipping.noiThanhGia` (30.000đ). Tỉnh/thành khác tính
+theo bảng giá hãng vận chuyển nhưng không thấp hơn `SITE.shipping.toiThieu` (30.000đ).
+Đơn từ `SITE.freeshipFrom` vẫn miễn phí; hoả tốc Hà Nội `SITE.expressFee`.
 
 ## Nhận đơn hàng (Google Sheet + email + Telegram)
 

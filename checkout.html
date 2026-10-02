@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260930h">
+  <link rel="stylesheet" href="css/style.css?v=20261002a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -16,10 +16,10 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20260930h"></script>
-<script src="js/diachi.js?v=20260930h"></script>
+<script src="js/data.js?v=20261002a"></script>
+<script src="js/diachi.js?v=20261002a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20260930h"></script>
+<script src="js/app.js?v=20261002a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="form-grid form-grid--2"><div class="field"><label>Họ tên <span>*</span></label><input class="input" name="name" placeholder="VD: Nguyễn Thu Hà" value="${esc(c.name || '')}" required autocomplete="name"></div><div class="field"><label>Số điện thoại <span>*</span></label><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="VD: 0912 345 678" value="${esc(c.phone || '')}" required autocomplete="tel"></div></div>
           <div class="form-grid form-grid--2 mt-12"><div class="field"><label>Tỉnh / Thành phố <span>*</span></label><select class="input" name="city" required>${tinhOptions(dc.tinh)}</select></div><div class="field"><label>Xã / Phường <span>*</span></label><select class="input" name="ward" required>${xaOptions(dc.tinh, dc.xa)}</select></div></div>
           <div class="field mt-12"><label>Địa chỉ cụ thể <span>*</span></label><input class="input" name="address" placeholder="Số nhà, tên đường, thôn/xóm…" value="${esc(dc.chiTiet)}" required autocomplete="street-address"></div>
-          <div class="field mt-12"><label>Email (nhận hoá đơn VAT)</label><input class="input" name="email" type="email" placeholder="Không bắt buộc" value="${esc(c.email || '')}" autocomplete="email"></div>
+          <div class="field mt-12"><label>Email nhận xác nhận đơn hàng</label><input class="input" name="email" type="email" placeholder="VD: mehanoi@gmail.com (không bắt buộc)" value="${esc(c.email || '')}" autocomplete="email"><small class="field__hint">📧 Shop gửi email xác nhận đơn kèm mã đơn, danh sách sản phẩm, quà tặng và hoá đơn VAT vào địa chỉ này.</small></div>
           <div class="field mt-12"><label>Ghi chú cho shipper / chuyên gia dinh dưỡng</label><textarea class="input" name="note" placeholder="VD: Giao giờ hành chính, gọi trước khi giao, bé 2 tuổi 12kg cần tư vấn liều…"></textarea></div>
           <p class="qb__privacy" style="text-align:left">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
         </div>
@@ -101,7 +101,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const form = $('#coForm');
 
+  /* Quà phụ thuộc hạng khách: tra được hạng xong là tính lại */
+  const renderQua = () => {
+    const truoc = qua && qua.soQua;
+    qua = giftFor(lines);
+    if (qua && qua.vi && !qua.vi.includes(quaVi)) quaVi = qua.vi[0] || '';
+    const w = $('#giftWrap'); if (w) w.innerHTML = giftBox(qua, true, quaVi);
+    if (!!truoc !== !!(qua && qua.soQua)) { const it = $('#orderItems'); if (it) it.innerHTML = itemsHTML(); }
+  };
   const renderSummary = () => {
+    renderQua();
     const k = calc();
     $('#summary').innerHTML = `<div class="summary-line"><span>Tạm tính</span><span>${fmt(sub)}</span></div>`
       + (multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : '')

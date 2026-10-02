@@ -24,6 +24,9 @@
 var EMAIL = 'huongchatkids@gmail.com';   // nơi nhận email báo đơn & báo mã OTP khi chưa có SMS
 var TEN_SHOP = 'Hương Chất Kids';
 var HOTLINE = '0967.233.003';
+var WEB = 'https://huongchatkids.vn';
+var ZALO_LINK = 'https://zalo.me/0967233003';
+var GUI_EMAIL_CHO_KHACH = true;   // false = tắt email xác nhận đơn gửi cho khách
 
 // Bot Zalo báo đơn (tạo tại https://zalo.me/s/botcreator/). Để trống = tắt báo Zalo.
 var ZALO_BOT_TOKEN = '';       // dạng 211668...:IEUc...
@@ -153,6 +156,10 @@ function doPost(e) {
 
     if (EMAIL) MailApp.sendEmail(EMAIL, '🛒 ' + loai + ' ' + (order.code || '') + ' – ' + tien(order.total), text);
     try { zaloBotGuiTin(text); } catch (err2) { Logger.log('Zalo bot lỗi: ' + err2); }
+    // Email xác nhận đơn gửi cho khách hàng
+    if (GUI_EMAIL_CHO_KHACH && order.type !== 'callback' && emailHopLe(c.email)) {
+      try { guiEmailXacNhan(order, c, items, thanhToan, quaText); } catch (err3) { Logger.log('Email khách lỗi: ' + err3); }
+    }
 
     return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
@@ -179,6 +186,55 @@ function layKhachTuCRM(sdt) {
 }
 /* Chạy thử trong trình soạn thảo: xem Nhật ký */
 function testCRM() { Logger.log(JSON.stringify(layKhachTuCRM('0900000000'))); }
+
+function emailHopLe(v) { return /^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(String(v || '').trim()); }
+
+/* Email xác nhận đơn gửi cho khách hàng */
+function guiEmailXacNhan(order, c, items, thanhToan, quaText) {
+  var dong = function (nhan, gt, dam) {
+    return '<tr><td style="padding:6px 0;color:#6B7280;font-size:14px">' + nhan + '</td>'
+      + '<td style="padding:6px 0;text-align:right;font-size:14px' + (dam ? ';font-weight:700;color:#F0537A' : '') + '">' + gt + '</td></tr>';
+  };
+  var sp = String(items || '').split('\n').filter(String).map(function (x) {
+    return '<li style="margin:4px 0">' + x + '</li>';
+  }).join('');
+  var ck = '';
+  if (order.payment === 'bank') {
+    ck = '<div style="margin:16px 0;padding:14px;border:1px solid #F8B8C8;border-radius:12px;background:#FFF4F7">'
+      + '<b style="font-size:15px">Thông tin chuyển khoản</b>'
+      + '<div style="font-size:14px;margin-top:6px;line-height:1.7">'
+      + 'Ngân hàng: <b>BIDV</b><br>Số tài khoản: <b>8855349222</b><br>Chủ tài khoản: <b>DO VAN HOANG</b><br>'
+      + 'Số tiền: <b>' + tien(order.total) + '</b><br>Nội dung: <b>' + (order.code || '') + '</b></div>'
+      + '<div style="font-size:13px;color:#6B7280;margin-top:8px">Đơn được gửi đi ngay khi shop nhận được chuyển khoản.</div></div>';
+  }
+  var html = '<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;color:#1F2937">'
+    + '<div style="background:#F0537A;color:#fff;padding:20px 24px;border-radius:14px 14px 0 0">'
+    + '<div style="font-size:20px;font-weight:700">' + TEN_SHOP + '</div>'
+    + '<div style="font-size:14px;opacity:.92">Mẹ nào cũng là siêu nhân</div></div>'
+    + '<div style="border:1px solid #ECEFF3;border-top:0;border-radius:0 0 14px 14px;padding:24px">'
+    + '<h2 style="margin:0 0 6px;font-size:19px">Cảm ơn ' + (c.name || 'mẹ') + ' đã đặt hàng! 💗</h2>'
+    + '<p style="margin:0 0 16px;font-size:14px;color:#6B7280">Đơn hàng <b style="color:#1F2937">' + (order.code || '') + '</b> đã được tiếp nhận. '
+    + 'Chuyên gia dinh dưỡng sẽ gọi số <b style="color:#1F2937">' + (c.phone || '') + '</b> để xác nhận trong giờ làm việc.</p>'
+    + '<b style="font-size:15px">Sản phẩm</b><ul style="font-size:14px;padding-left:20px;margin:8px 0 16px">' + sp + '</ul>'
+    + (quaText ? '<div style="margin:0 0 16px;padding:12px 14px;border-radius:12px;background:#FFF9EC;border:1px solid #F6DFA8;font-size:14px">🎁 <b>Quà tặng kèm:</b> ' + quaText + '</div>' : '')
+    + '<table style="width:100%;border-collapse:collapse;border-top:1px solid #ECEFF3;margin-top:8px">'
+    + dong('Tiền hàng', tien(order.subtotal))
+    + (order.discount ? dong('Giảm giá', '− ' + tien(order.discount)) : '')
+    + dong('Phí vận chuyển', order.ship ? tien(order.ship) : 'Miễn phí')
+    + dong('Tổng cộng', tien(order.total), true)
+    + '</table>'
+    + '<div style="margin-top:16px;font-size:14px;line-height:1.7">'
+    + '<b>Giao tới:</b> ' + (c.address || '') + '<br>'
+    + '<b>Thanh toán:</b> ' + (thanhToan === 'Chuyển khoản' ? 'Chuyển khoản ngân hàng' : 'Thanh toán khi nhận hàng (COD)') + '</div>'
+    + ck
+    + '<div style="margin-top:20px;padding-top:16px;border-top:1px solid #ECEFF3;font-size:13px;color:#6B7280;line-height:1.8">'
+    + 'Cần hỗ trợ, mẹ gọi <b style="color:#1F2937">' + HOTLINE + '</b> hoặc nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a>.<br>'
+    + 'Xem lại đơn, hạng và ưu đãi tại <a href="' + WEB + '/account.html" style="color:#F0537A">' + WEB + '/account.html</a><br>'
+    + 'Email này được gửi tự động, mẹ không cần trả lời.</div></div></div>';
+
+  MailApp.sendEmail({ to: String(c.email).trim(), subject: 'Xác nhận đơn hàng ' + (order.code || '') + ' – ' + TEN_SHOP,
+    htmlBody: html, name: TEN_SHOP, replyTo: EMAIL });
+}
 
 /* ===================== HỒ SƠ KHÁCH HÀNG ===================== */
 /* Tổng chi tiêu tính lại từ sheet Đơn hàng (bỏ qua đơn có trạng thái huỷ/hoàn) */
@@ -455,6 +511,9 @@ function apiGuiOtp(p) {
     var ma = taoMaOtp();
     var dong = timDongKH(sdt);
     var emailKhach = dong ? String(sheetKH().getRange(dong, 6).getValue() || '') : '';
+    // Số chưa có hồ sơ (khách đăng ký mới) thì cho nhận mã qua email vừa nhập.
+    // Số ĐÃ có hồ sơ thì chỉ dùng email đã lưu, tránh người lạ chuyển mã sang email của họ.
+    if (!dong && !emailKhach && emailHopLe(p.email)) emailKhach = String(p.email).trim();
     var gui = guiMaOtp(sdt, ma, emailKhach);
     luuOtp(sdt, ma, gui.kenh);
     return { ok: true, kenh: gui.kenh, emailAn: gui.emailAn || '', hetHanGiay: OTP_PHUT * 60 };

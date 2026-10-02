@@ -225,6 +225,9 @@
     const S = SITE.shipping; const vung = vungShip(tinh); const b = S.bangGia[vung];
     const gram = Math.round(canNang(lines)); let fee = b.gia;
     for (let w = S.goiDau || 2000; w < gram; w += 500) fee += w + 500 > 4000 ? b.moi500Tu4kg : b.moi500;
+    /* Hà Nội (nội tỉnh) thu cố định; tỉnh khác theo bảng giá hãng nhưng không thấp hơn mức tối thiểu */
+    if (vung === 'noiTinh' && S.noiThanhGia) fee = S.noiThanhGia;
+    else if (S.toiThieu) fee = Math.max(fee, S.toiThieu);
     return { fee, vung, tenVung: b.ten, gram };
   }
   /* Phí ship của đơn. ctx: { tinh, lines }. Chưa biết tỉnh → null (hiện "theo địa chỉ"). */
@@ -237,7 +240,7 @@
     return ghnQuote(ctx.lines || Cart.lines(), tinh).fee;
   }
   /* Phí thấp nhất (nội tỉnh, gói đầu) – hiện "từ …" khi chưa có địa chỉ */
-  const shipFrom = () => (SITE.shipping ? SITE.shipping.bangGia.noiTinh.gia : SITE.shipFee);
+  const shipFrom = () => (SITE.shipping ? (SITE.shipping.noiThanhGia || Math.max(SITE.shipping.bangGia.noiTinh.gia, SITE.shipping.toiThieu || 0)) : SITE.shipFee);
   /* Ô "Phí vận chuyển" dùng chung */
   /* Ghi chú nhỏ cạnh phí: vùng + cân nặng, VD "GHN · Nội vùng · 1,2kg" */
   const ghnInfo = (tinh, lines) => { if (!SITE.shipping || !tinh) return ''; const q = ghnQuote(lines, tinh); return `${SITE.shipping.hang} · ${q.tenVung} · ${(q.gram / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })}kg`; };
@@ -586,6 +589,7 @@
           ${known ? `<div class="qb__saved" id="qbSaved">👋 Chào ${esc(c.name || 'mẹ')}, thông tin giao hàng đã điền sẵn từ lần trước <button type="button" data-qb-clear>Sửa</button></div>` : ''}
           <div class="grid-2 ${known ? 'hide' : ''}" id="qbFields1"><input class="input" name="name" placeholder="Họ tên mẹ / ba *" aria-label="Họ tên" value="${esc(c.name || '')}" required autocomplete="name"><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại *" aria-label="Số điện thoại" value="${esc(c.phone || '')}" required autocomplete="tel"></div>
           <input class="input ${known ? 'hide' : ''}" id="qbFields2" name="address" placeholder="Địa chỉ nhận hàng (số nhà, đường, phường, quận, tỉnh) *" aria-label="Địa chỉ nhận hàng" value="${esc(addrShow(c.address))}" required autocomplete="street-address">
+          <input class="input ${known ? 'hide' : ''}" id="qbFields3" name="email" type="email" placeholder="Email nhận xác nhận đơn (không bắt buộc)" aria-label="Email nhận xác nhận đơn" value="${esc(c.email || '')}" autocomplete="email">
           ${known ? `<div class="qb__savedinfo" id="qbSavedInfo"><b>${esc(c.name || '')}</b> · ${esc(c.phone)}<br>${esc(addrShow(c.address))}</div>` : ''}
           <div class="pay-options pay-options--2" role="radiogroup" aria-label="Hình thức thanh toán">
             <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') !== 'bank' ? 'checked' : ''}><span class="ico">💵</span><span><b>Thanh toán khi nhận hàng</b><small>Kiểm tra hàng rồi mới trả tiền</small></span></label>
@@ -615,7 +619,7 @@
   /* Tra cứu khách cũ theo SĐT: có hồ sơ (Sheet/CRM) → xác thực OTP → tự điền tên, SĐT, địa chỉ.
      Không điền khi chưa có OTP: tránh người lạ gõ số của khách khác để xem địa chỉ. */
   function qbLookupMsg(html, kind) { const m = $('#qbLookupMsg'); if (!m) return; m.className = `qb__lookup-msg ${kind ? 'is-' + kind : ''}`; m.innerHTML = html; }
-  function qbShowFields() { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); }
+  function qbShowFields() { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); }
   function qbFillKh(kh) {
     const f = $('#qbForm'); if (!f || !kh) return;
     qbShowFields();
@@ -682,16 +686,17 @@
   }
   async function qbSubmit(form) {
     const fd = new FormData(form); const name = fd.get('name').trim(), phone = fd.get('phone').trim(), address = fd.get('address').trim(), payment = fd.get('payment') || 'cod';
+    const email = String(fd.get('email') || '').trim();
     const err = $('#qbError'); err.classList.add('hide');
     $$('.input', form).forEach((i) => i.classList.remove('is-invalid'));
     const bad = [];
     if (!name) bad.push('name'); if (!phoneOk(phone)) bad.push('phone'); if (address.length < 10) bad.push('address');
-    if (bad.length) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = !phoneOk(phone) && name && address.length >= 10 ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : 'Mẹ vui lòng điền đủ họ tên, số điện thoại và địa chỉ nhé'; err.classList.remove('hide'); form.elements[bad[0]].focus(); return; }
-    Customer.set({ ...(Customer.get() || {}), name, phone, address, payment });
+    if (bad.length) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = !phoneOk(phone) && name && address.length >= 10 ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : 'Mẹ vui lòng điền đủ họ tên, số điện thoại và địa chỉ nhé'; err.classList.remove('hide'); form.elements[bad[0]].focus(); return; }
+    Customer.set({ ...(Customer.get() || {}), name, phone, address, payment, email });
     const btn = $('#qbSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang gửi đơn…</span>';
     const p = byId(QB.id); const { price, label } = qbPrice(); const k = qbCalc();
     const g = giftFor(qbLines()); const ss = Session.get();
-    const order = await submitOrder({ type: 'quick', customer: { name, phone: phoneKey(phone), address }, payment,
+    const order = await submitOrder({ type: 'quick', customer: { name, phone: phoneKey(phone), address, email }, payment,
       coupon: k.dungMa && k.cr && k.cr.ok ? k.cr.code : '',
       hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (ss && phoneKey(ss.sdt) === phoneKey(phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
       token: ss ? ss.token : '',
@@ -777,7 +782,7 @@
       else if (t.dataset.qbMinus !== undefined) { QB.qty = Math.max(1, QB.qty - 1); qbRefresh(); }
       else if (t.dataset.qbPlus !== undefined) { QB.qty = Math.min(99, QB.qty + 1); qbRefresh(); }
       else if (t.dataset.qbVariant !== undefined) { QB.variant = Number(t.dataset.qbVariant); qbRefresh(); }
-      else if (t.dataset.qbClear !== undefined) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); $('#qbForm input[name=name]')?.focus(); }
+      else if (t.dataset.qbClear !== undefined) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); $('#qbForm input[name=name]')?.focus(); }
       else if (t.dataset.qbCoupon !== undefined) { QB.coupon = ($('#qbCoupon').value || '').trim().toUpperCase(); qbRefresh(); }
       else if (t.dataset.copy !== undefined) { try { navigator.clipboard?.writeText(t.dataset.copy); toast('Đã sao chép: ' + t.dataset.copy); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.payQr !== undefined) { const o = store.get('mc_orders', []).find((x) => x.code === t.dataset.payQr); if (o) openPayQR(o); }
@@ -992,7 +997,7 @@
           e.preventDefault(); const v = phoneKey(e.target.phone.value); const err = $('#otpErr1');
           if (!phoneOk(v)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); return; }
           sdt = v; const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang gửi mã…';
-          loyaltyApi('guiOtp', { sdt }).then((res) => {
+          loyaltyApi('guiOtp', opts.email ? { sdt, email: opts.email } : { sdt }).then((res) => {
             if (!res || !res.ok) { buocSdt((res && res.msg) || 'Chưa gửi được mã, mẹ thử lại sau ít phút nhé'); return; }
             buocMa(res);
           }).catch((e2) => buocSdt(e2.message));
@@ -1012,7 +1017,7 @@
         demNguoc = 60; clearInterval(timer);
         timer = setInterval(() => { demNguoc--; const b = $('#otpResend'); if (!b) { clearInterval(timer); return; } if (demNguoc <= 0) { clearInterval(timer); b.disabled = false; b.textContent = 'Gửi lại mã'; } else b.textContent = `Gửi lại mã (${demNguoc}s)`; }, 1000);
         $('#otpBack').addEventListener('click', () => buocSdt());
-        $('#otpResend').addEventListener('click', (e) => { e.target.disabled = true; e.target.textContent = 'Đang gửi…'; loyaltyApi('guiOtp', { sdt }).then((r) => buocMa(r && r.ok ? r : info, r && r.ok ? '' : (r && r.msg) || 'Chưa gửi lại được mã')).catch(() => buocMa(info, 'Chưa gửi lại được mã')); });
+        $('#otpResend').addEventListener('click', (e) => { e.target.disabled = true; e.target.textContent = 'Đang gửi…'; loyaltyApi('guiOtp', opts.email ? { sdt, email: opts.email } : { sdt }).then((r) => buocMa(r && r.ok ? r : info, r && r.ok ? '' : (r && r.msg) || 'Chưa gửi lại được mã')).catch(() => buocMa(info, 'Chưa gửi lại được mã')); });
         $('#otpForm2').addEventListener('submit', (e) => {
           e.preventDefault(); const ma = String(e.target.ma.value || '').replace(/\D/g, '');
           if (ma.length !== 6) { const er = $('#otpErr2'); er.textContent = 'Mã OTP gồm 6 chữ số'; er.classList.remove('hide'); return; }
@@ -1033,7 +1038,7 @@
       /* autoSend: đã có số hợp lệ (VD từ ô tra cứu) → gửi mã luôn, bỏ bước nhập số */
       if (opts.autoSend && phoneOk(sdt)) {
         box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 text-muted" style="text-align:center;padding:24px 0">Đang gửi mã OTP tới ${esc(maskPhone(sdt))}…</p></div>`;
-        loyaltyApi('guiOtp', { sdt }).then((res) => (res && res.ok ? buocMa(res) : buocSdt((res && res.msg) || 'Chưa gửi được mã, mẹ thử lại sau ít phút nhé'))).catch((e2) => buocSdt(e2.message));
+        loyaltyApi('guiOtp', opts.email ? { sdt, email: opts.email } : { sdt }).then((res) => (res && res.ok ? buocMa(res) : buocSdt((res && res.msg) || 'Chưa gửi được mã, mẹ thử lại sau ít phút nhé'))).catch((e2) => buocSdt(e2.message));
       } else buocSdt();
       openModal('#otpModal');
     });
@@ -1134,12 +1139,27 @@
   /* Ghi chú quà hiện trên trang sản phẩm */
   function giftNote(p) {
     const cfg = QT(); if (!cfg) return '';
-    if (laNuocLotte(p)) return `Mua ${(cfg.thung || []).map((b) => `${b.tu} thùng tặng <b>${b.soQua} ${cfg.ten}</b>`).join(', ')} – mẹ chọn vị ${(cfg.vi || []).map((v) => v.split('–')[0].trim().toLowerCase()).join(' hoặc ')}.`;
-    return `Đơn hàng từ <b>${fmt((cfg.donTu || {}).muc || 0)}</b> được tặng <b>${(cfg.donTu || {}).soQua} ${cfg.ten}</b> (mẹ chọn vị ${(cfg.vi || []).map((v) => v.split('–')[0].trim().toLowerCase()).join(' hoặc ')}).`;
+    const vi = (cfg.vi || []).map((v) => v.split('–')[0].trim().toLowerCase()).join(' hoặc ');
+    const t = hangCho(sdtDangDung()); const vip = !!(t && t.discount > 0);
+    if (laNuocLotte(p)) {
+      if (vip && cfg.thungChiKhachMoi) return '';
+      return `Mua ${(cfg.thung || []).map((b) => `${b.tu} thùng tặng <b>${b.soQua} ${cfg.ten}</b>`).join(', ')} – mẹ chọn vị ${vi}.`;
+    }
+    if (vip && (cfg.donTu || {}).chiKhachMoi) return `Hạng ${esc(t.label)} của mẹ đã được <b>giảm ${t.discount}%</b> mọi đơn (chương trình tặng ${(cfg.donTu || {}).soQua} ${cfg.ten} dành cho khách chưa lên hạng).`;
+    return `Đơn hàng từ <b>${fmt((cfg.donTu || {}).muc || 0)}</b> được tặng <b>${(cfg.donTu || {}).soQua} ${cfg.ten}</b> (mẹ chọn vị ${vi}).`;
   }
   /* Tính quà cho giỏ hàng hiện tại */
-  function giftFor(lines) {
+  /* Số điện thoại đang dùng ở ô thanh toán / mua nhanh, để biết khách đã lên hạng chưa */
+  function sdtDangDung() {
+    const f = document.getElementById('coForm') || document.getElementById('qbForm');
+    const v = f && f.elements && f.elements.phone ? f.elements.phone.value : '';
+    return phoneKey(v || (Customer.get() || {}).phone || '');
+  }
+  /* VIP = đã lên hạng có chiết khấu (Silver trở lên) */
+  function laVip(phone) { const t = hangCho(phone != null ? phone : sdtDangDung()); return !!(t && t.discount > 0); }
+  function giftFor(lines, opts) {
     const cfg = QT(); if (!cfg) return null;
+    const vip = opts && opts.vip != null ? !!opts.vip : laVip();
     let thung = 0, tienKhac = 0;
     (lines || []).forEach((l) => {
       if (laNuocLotte(l.p)) { if (String(l.variantLabel || '').toLowerCase().includes(String(cfg.tuKhoaThung || 'thùng').toLowerCase())) thung += l.qty; }
@@ -1147,15 +1167,18 @@
     });
     const bac = [...(cfg.thung || [])].sort((a, b) => b.tu - a.tu);
     const bacDat = bac.find((b) => thung >= b.tu);
-    const quaThung = bacDat ? bacDat.soQua : 0;
+    const quaThung = (vip && cfg.thungChiKhachMoi) ? 0 : (bacDat ? bacDat.soQua : 0);
     const mucDon = (cfg.donTu || {}).muc || Infinity;
-    const quaDon = tienKhac >= mucDon ? (cfg.donTu || {}).soQua || 0 : 0;
+    const chanDon = vip && (cfg.donTu || {}).chiKhachMoi;   // khách VIP nhận chiết khấu thay cho quà
+    const quaDon = (!chanDon && tienKhac >= mucDon) ? (cfg.donTu || {}).soQua || 0 : 0;
     const soQua = Math.max(quaThung, quaDon);
     const ct = soQua === 0 ? '' : (quaThung >= quaDon ? 'thung' : 'don');
     /* Gợi ý mốc kế tiếp để khách biết mua thêm bao nhiêu */
     let goiY = '';
     const bacSau = [...(cfg.thung || [])].sort((a, b) => a.tu - b.tu).find((b) => b.tu > thung && b.soQua > soQua);
-    if (thung > 0 && bacSau) goiY = `Mua thêm ${bacSau.tu - thung} thùng nữa được tặng ${bacSau.soQua} ${cfg.ten}.`;
+    const hangVip = chanDon ? hangCho(sdtDangDung()) : null;
+    if (thung > 0 && bacSau && !(vip && cfg.thungChiKhachMoi)) goiY = `Mua thêm ${bacSau.tu - thung} thùng nữa được tặng ${bacSau.soQua} ${cfg.ten}.`;
+    else if (chanDon && !soQua) goiY = `Hạng ${hangVip ? hangVip.label : ''} đã được giảm ${hangVip ? hangVip.discount : 0}% mọi đơn nên không cộng thêm quà tặng.`;
     else if (!soQua && tienKhac > 0 && mucDon !== Infinity && tienKhac < mucDon) goiY = `Mua thêm ${fmt(mucDon - tienKhac)} để được tặng ${(cfg.donTu || {}).soQua} ${cfg.ten}.`;
     return { soQua, chuongTrinh: ct, thung, vi: cfg.vi || [], ten: cfg.ten, goiY,
       moTa: soQua ? `${soQua} ${cfg.ten}` : '',
@@ -1172,5 +1195,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, laNuocLotte, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    giftFor, giftNote, giftBox, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

@@ -36,6 +36,8 @@ window.SITE = {
      Muốn đổi hãng: sửa bảng giá bên dưới. shipFee ở trên chỉ còn dùng khi xoá khối này. */
   shipping: {
     hang: 'GHN',
+    noiThanhGia: 30000,   // Hà Nội: thu cố định mức này
+    toiThieu: 30000,      // tỉnh khác: lấy theo bảng giá hãng vận chuyển nhưng không thấp hơn mức này
     noiTinh: ['Hà Nội'],                                   // tỉnh gửi hàng
     noiVung: ['Hải Phòng', 'Bắc Ninh', 'Cao Bằng', 'Hưng Yên', 'Lai Châu', 'Lào Cai', 'Lạng Sơn', 'Ninh Bình', 'Phú Thọ', 'Quảng Ninh', 'Sơn La', 'Thái Nguyên', 'Tuyên Quang', 'Điện Biên'],   // miền Bắc; tỉnh còn lại = liên vùng
     goiDau: 2000,                                          // gram tính trong giá gói đầu
@@ -656,6 +658,7 @@ window.POSTS = [
 /* =====================================================================
    QUÀ TẶNG KÈM – web tự tính và tự thêm quà vào đơn hàng
    Hai chương trình KHÔNG áp dụng song song: web lấy chương trình tặng nhiều quà hơn.
+   KHÁCH VIP (đã lên hạng, đang được chiết khấu %) nhận chiết khấu thay cho quà tặng.
      1) donTu  : đơn hàng (KHÔNG tính nước dinh dưỡng Lotte) từ 1.000.000đ → tặng 5 gói
      2) thung  : mua thùng nước dinh dưỡng Lotte → 1 thùng 5 gói, 2 thùng 10 gói, từ 3 thùng 20 gói
    ===================================================================== */
@@ -663,7 +666,8 @@ window.QUA_TANG = {
   enabled: true,
   ten: 'gói nước ép Lotte',
   vi: ['Hồng – Tăng cân tự nhiên', 'Cam – Đề kháng'],   // khách chọn 1 vị khi đặt hàng
-  donTu: { muc: 1000000, soQua: 5 },
+  donTu: { muc: 1000000, soQua: 5, chiKhachMoi: true },   // chiKhachMoi: chỉ tặng cho khách CHƯA lên hạng
+  thungChiKhachMoi: false,                                 // true = khách VIP mua thùng cũng không được quà
   thung: [{ tu: 1, soQua: 5 }, { tu: 2, soQua: 10 }, { tu: 3, soQua: 20 }],
   loc: { cat: 'nuoc-ep', brand: 'lotte' },   // sản phẩm được tính là "nước dinh dưỡng Lotte"
   tuKhoaThung: 'thùng',                       // phân loại có chữ này được tính là 1 thùng
