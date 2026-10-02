@@ -433,6 +433,7 @@ function doGet(e) {
     if (action === 'hoSo')     return traVe(apiHoSo(p), cb);
     if (action === 'capNhat')  return traVe(apiCapNhat(p), cb);
     if (action === 'dangNhap') return traVe(apiDangNhap(p), cb);
+    if (action === 'dangKy')   return traVe(apiDangKy(p), cb);
     if (action === 'doiMatKhau') return traVe(apiDoiMatKhau(p), cb);
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
@@ -484,6 +485,44 @@ function apiDangNhap(p) {
   var token = luuPhien(sdt);
   return { ok: true, token: token, kh: d.kh, donHang: d.don, macDinh: !(tk && tk.hash) };
 }
+/* Đăng ký khách mới – KHÔNG cần OTP, chỉ điền thông tin.
+   An toàn: số điện thoại ĐÃ có hồ sơ thì từ chối, bắt đăng nhập hoặc xác thực OTP,
+   để người lạ không ghi đè tên/địa chỉ của khách cũ. Không trả token: muốn xem
+   hồ sơ, lịch sử đơn, tổng chi tiêu thì vẫn phải đăng nhập. */
+function apiDangKy(p) {
+  var sdt = chuanSdt(p.sdt);
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' };
+  var ten = String(p.ten || '').trim();
+  if (ten.length < 2) return { ok: false, msg: 'Mẹ nhập họ tên nhé' };
+
+  var cache = CacheService.getScriptCache(); var k = 'dk_' + sdt;
+  var dem = Number(cache.get(k) || 0);
+  if (dem >= 3) return { ok: false, msg: 'Mẹ thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
+  cache.put(k, String(dem + 1), 3600);
+
+  var lock = LockService.getScriptLock();
+  try { lock.waitLock(8000); } catch (err) { return { ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau vài giây' }; }
+  try {
+    var d = docKH(sdt);
+    if (d.dong || d.kh.ten || Number(d.kh.soDon) > 0) {
+      return { ok: false, daCo: true,
+        msg: 'Số này đã có tài khoản tại shop rồi. Mẹ bấm Đăng nhập (mật khẩu mặc định ' + MK_MAC_DINH + ') hoặc Nhận mã OTP nếu quên mật khẩu nhé.' };
+    }
+    var cat = function (v, n) { return String(v || '').trim().slice(0, n); };
+    capNhatKhachHang(sdt, {
+      name: cat(ten, 80), phone: sdt, tinh: cat(p.tinh, 60), xa: cat(p.xa, 80),
+      diaChi: cat(p.diaChi, 200), email: emailHopLe(p.email) ? cat(p.email, 100) : ''
+    }, {});
+    var kq = docKH(sdt);
+    var bao = '🆕 Khách mới đăng ký trên web\n' + cat(ten, 80) + ' – ' + sdt
+      + (p.diaChi || p.xa || p.tinh ? '\nĐịa chỉ: ' + [cat(p.diaChi, 200), cat(p.xa, 80), cat(p.tinh, 60)].filter(String).join(', ') : '')
+      + (emailHopLe(p.email) ? '\nEmail: ' + cat(p.email, 100) : '');
+    try { zaloBotGuiTin(bao); } catch (e1) { Logger.log(e1); }
+    if (EMAIL) { try { MailApp.sendEmail(EMAIL, '🆕 Khách mới đăng ký: ' + cat(ten, 80), bao); } catch (e2) { Logger.log(e2); } }
+    return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH };
+  } finally { lock.releaseLock(); }
+}
+
 function apiDoiMatKhau(p) {
   var sdt = sdtTheoToken(p.token);
   if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };

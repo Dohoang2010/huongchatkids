@@ -8,15 +8,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261002b">
+  <link rel="stylesheet" href="css/style.css?v=20261002c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261002b"></script>
-<script src="js/diachi.js?v=20261002b"></script>
+<script src="js/data.js?v=20261002c"></script>
+<script src="js/diachi.js?v=20261002c"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261002b"></script>
+<script src="js/app.js?v=20261002c"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="divider"></div>
           <div id="dkWrap">
             <h3>✨ Mẹ chưa có tài khoản</h3>
-            <p class="fs-14 text-muted">Đăng ký 30 giây bằng số điện thoại – không cần nhớ mật khẩu.</p>
+            <p class="fs-14 text-muted">Đăng ký 30 giây – chỉ cần điền thông tin, không cần mã OTP.</p>
             <div class="dangky__perk"><i>🎁</i><span>Khách mới: đơn từ ${fmt(((window.QUA_TANG || {}).donTu || {}).muc || 0)} được tặng ${((window.QUA_TANG || {}).donTu || {}).soQua || 0} ${esc((window.QUA_TANG || {}).ten || '')}</span></div>
             <div class="dangky__perk"><i>🥈</i><span>Mua đủ ${fmt((tiers()[1] || {}).min || 0)} lên hạng ${esc((tiers()[1] || {}).label || '')} – giảm ${(tiers()[1] || {}).discount || 0}% mọi đơn sau đó</span></div>
             <div class="dangky__perk"><i>⚡</i><span>Lần sau đặt hàng chỉ 1 chạm, địa chỉ điền sẵn</span></div>
@@ -108,9 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="field mt-8"><label>Tỉnh / Thành phố</label><select class="input" name="tinh"><option value="">Chọn tỉnh/thành</option>${DIA.map((x) => `<option>${esc(x.t)}</option>`).join('')}</select></div>
             <div class="field mt-8"><label>Xã / Phường</label><select class="input" name="xa" id="dkXa"><option value="">Chọn tỉnh/thành trước</option></select></div>
             <div class="field mt-8"><label>Địa chỉ cụ thể</label><input class="input" name="diaChi" placeholder="Số nhà, tên đường, thôn/xóm…"></div>
-            <div class="field mt-8"><label>Email</label><input class="input" name="email" type="email" placeholder="Nhận xác nhận đơn & mã OTP"><small class="field__hint">Có email thì mã OTP gửi thẳng vào email cho nhanh.</small></div>
+            <div class="field mt-8"><label>Email</label><input class="input" name="email" type="email" placeholder="Không bắt buộc"><small class="field__hint">Có email thì shop gửi xác nhận đơn hàng vào đây.</small></div>
             <div class="form-error hide mt-8" id="dkErr" role="alert"></div>
-            <button class="btn btn--primary btn--lg btn--block mt-12" type="submit">Nhận mã OTP & tạo tài khoản</button>
+            <button class="btn btn--primary btn--lg btn--block mt-12" type="submit">Tạo tài khoản</button>
             <button class="btn btn--ghost btn--block mt-8" type="button" id="dkHuy">Quay lại</button>
             <p class="qb__privacy">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
           </form>
@@ -209,21 +209,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const ten = f.ten.value.trim(); const sdt = phoneKey(f.sdt.value); const email = f.email.value.trim();
       if (!ten) { err.textContent = 'Mẹ nhập họ tên nhé'; err.classList.remove('hide'); f.ten.focus(); return; }
       if (!phoneOk(sdt)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); f.sdt.focus(); return; }
-      const hoSo = { ten: ten, tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email: email };
-      openOtp({ phone: sdt, email: email, title: 'Xác thực số điện thoại để tạo tài khoản',
-        desc: 'Shop gửi mã OTP 6 số để chắc chắn đây là số của mẹ. Nhập đúng mã là tài khoản được tạo ngay.' })
-        .then((ss) => {
-          if (!ss) return;
-          loyaltyApi('capNhat', { token: ss.token, ten: hoSo.ten, tinh: hoSo.tinh, xa: hoSo.xa, diaChi: hoSo.diaChi, email: hoSo.email })
-            .then((res) => {
-              if (res && res.ok) {
-                Session.patch({ kh: res.kh });
-                Customer.set({ ...(Customer.get() || {}), name: res.kh.ten || '', phone: phoneKey(res.kh.sdt), email: res.kh.email || '', address: addrStore({ tinh: res.kh.tinh, xa: res.kh.xa, chiTiet: res.kh.diaChi }) });
-                toast('Đã tạo tài khoản cho mẹ 🎉', { type: 'ok' });
-              }
-              render();
-            }).catch(() => render());
-        });
+      const hoSo = { sdt, ten, tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email };
+      const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Đang tạo tài khoản…';
+      const loi = (msg, daCo) => {
+        err.innerHTML = esc(msg) + (daCo ? ' <button type="button" class="text-primary fw-700" id="dkDangNhap">Đăng nhập</button> · <button type="button" class="text-primary fw-700" id="dkOtp">Nhận mã OTP</button>' : '');
+        err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Tạo tài khoản';
+      };
+      loyaltyApi('dangKy', hoSo).then((res) => {
+        if (!res || !res.ok) { loi((res && res.msg) || 'Chưa tạo được tài khoản, mẹ thử lại sau ít phút nhé', res && res.daCo); return; }
+        if (!res.kh) { loi('Shop đang cập nhật hệ thống, mẹ thử lại sau ít phút hoặc gọi ' + SITE.hotline + ' nhé'); return; }
+        const kh = res.kh || {};
+        Customer.set({ ...(Customer.get() || {}), name: kh.ten || ten, phone: sdt, email: kh.email || email,
+          address: addrStore({ tinh: kh.tinh || hoSo.tinh, xa: kh.xa || hoSo.xa, chiTiet: kh.diaChi || hoSo.diaChi }) });
+        store.set('mc_hang_sdt', null);   // xoá bộ nhớ tạm để lần sau tra lại hạng cho đúng
+        toast('Đã tạo tài khoản cho mẹ 🎉', { type: 'ok' });
+        f.outerHTML = `<div class="card card--pad" style="background:var(--teal-50,#F1FAF8);border:1px solid var(--teal-200,#B9E3DC)">
+          <h3>🎉 Đã tạo tài khoản cho mẹ</h3>
+          <p class="fs-14">Từ giờ mẹ đặt hàng chỉ cần 1 chạm, địa chỉ tự điền sẵn. Ưu đãi theo hạng sẽ tự trừ vào đơn khi mẹ nhập số điện thoại này.</p>
+          <p class="fs-14 mt-8">Muốn xem hồ sơ, lịch sử đơn và tổng chi tiêu thì mẹ đăng nhập bằng số <b>${esc(sdt)}</b>, mật khẩu mặc định là <b>${esc(res.mkMacDinh || '1')}</b>.</p>
+          <div class="flex gap-8 mt-12"><button class="btn btn--primary btn--block" type="button" id="dkVaoLogin">Đăng nhập ngay</button><a class="btn btn--ghost" href="collections.html">Mua sắm</a></div></div>`;
+      }).catch((e2) => loi(e2.message));
     });
   }
   const render = () => { Session.get() ? renderHoSo() : renderKhach(); ganFormDangKy(); };
@@ -239,6 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'btnOtp') openOtp({ title: 'Xem hồ sơ khách hàng' }).then((s) => { if (s) render(); });
     if (e.target.id === 'btnDangKy') { $('#dkWrap').classList.add('hide'); $('#dkForm').classList.remove('hide'); $('#dkForm').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#dkForm').ten.focus(); }
     if (e.target.id === 'dkHuy') { $('#dkForm').classList.add('hide'); $('#dkWrap').classList.remove('hide'); }
+    if (e.target.id === 'dkDangNhap' || e.target.id === 'dkVaoLogin') $('#btnLogin')?.click();
+    if (e.target.id === 'dkOtp') openOtp({ title: 'Xác thực số điện thoại' }).then((ss) => { if (ss) render(); });
     if (e.target.id === 'btnDoiMk') MC.openDoiMk(false).then((ok) => { if (ok) render(); });
     if (e.target.id === 'btnOut') { Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
     if (e.target.id === 'btnEdit') { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); }
