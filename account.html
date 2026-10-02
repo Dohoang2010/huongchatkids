@@ -8,15 +8,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261002a">
+  <link rel="stylesheet" href="css/style.css?v=20261002b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261002a"></script>
-<script src="js/diachi.js?v=20261002a"></script>
+<script src="js/data.js?v=20261002b"></script>
+<script src="js/diachi.js?v=20261002b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261002a"></script>
+<script src="js/app.js?v=20261002b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -97,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3>✨ Mẹ chưa có tài khoản</h3>
             <p class="fs-14 text-muted">Đăng ký 30 giây bằng số điện thoại – không cần nhớ mật khẩu.</p>
             <div class="dangky__perk"><i>🎁</i><span>Khách mới: đơn từ ${fmt(((window.QUA_TANG || {}).donTu || {}).muc || 0)} được tặng ${((window.QUA_TANG || {}).donTu || {}).soQua || 0} ${esc((window.QUA_TANG || {}).ten || '')}</span></div>
-            <div class="dangky__perk"><i>🎟️</i><span>Mã <b>MOI50</b> giảm 50K cho đơn đầu tiên từ 500K</span></div>
             <div class="dangky__perk"><i>🥈</i><span>Mua đủ ${fmt((tiers()[1] || {}).min || 0)} lên hạng ${esc((tiers()[1] || {}).label || '')} – giảm ${(tiers()[1] || {}).discount || 0}% mọi đơn sau đó</span></div>
             <div class="dangky__perk"><i>⚡</i><span>Lần sau đặt hàng chỉ 1 chạm, địa chỉ điền sẵn</span></div>
             <button class="btn btn--teal btn--lg btn--block mt-12" type="button" id="btnDangKy">Đăng ký khách hàng mới</button>

@@ -9,7 +9,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261002a">
+  <link rel="stylesheet" href="css/style.css?v=20261002b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -155,15 +155,15 @@
   <!-- ZALO SUBSCRIBE -->
   <section class="section"><div class="container">
     <div class="subscribe">
-      <div><h2>Nhận ưu đãi & kiến thức chăm con qua Zalo</h2><p>Để lại số điện thoại, nhận ngay mã giảm 50K cho đơn đầu tiên từ 500K và nhắc lịch bổ sung vitamin cho bé.</p></div>
-      <form id="subForm"><label class="sr-only" for="subPhone">Số điện thoại của mẹ</label><input class="input" id="subPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" required><button class="btn" type="submit">Nhận mã 50K</button></form>
+      <div><h2>Nhận ưu đãi & kiến thức chăm con qua Zalo</h2><p>Để lại số điện thoại để nhận ưu đãi dành riêng cho mẹ, kiến thức chăm con và nhắc lịch bổ sung vitamin cho bé.</p></div>
+      <form id="subForm"><label class="sr-only" for="subPhone">Số điện thoại của mẹ</label><input class="input" id="subPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" required><button class="btn" type="submit">Nhận ưu đãi</button></form>
     </div>
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261002a"></script>
+<script src="js/data.js?v=20261002b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261002a"></script>
+<script src="js/app.js?v=20261002b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#brandRow').innerHTML = BRANDS.map((b) => `<a href="collections.html?brand=${b.key}">${b.label}</a>`).join('');
 
   /* Subscribe */
-  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); store.set('mc_coupon', 'MOI50'); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ! Mã giảm 50K cho đơn đầu tiên từ 500K: <b>MOI50</b><br><small>Mã cũng được gửi qua Zalo ${esc(v)}. Nhập mã ở bước thanh toán.</small></div>`; });
+  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ!<br><small>Shop sẽ nhắn ưu đãi và kiến thức chăm con qua Zalo ${esc(v)}.</small></div>`; });
 });
 </script>
 </body>
