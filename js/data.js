@@ -574,9 +574,9 @@ window.PRODUCTS = [
     shape: "box", color: "#2F8FD0", weight: "1 thùng 30 gói nước ép + 1 lọ D3K2 30ml", origin: "Hàn Quốc & New Zealand", tags: ["Combo"],
     image: "img/combo-lottexanh-d3k2.jpg", thumb: "img/thumb/combo-lottexanh-d3k2.jpg",
     images: ["img/combo-lottexanh-d3k2.jpg", "img/22686115682.jpg", "img/42878618667.jpg", "img/22686115682-3.jpg", "img/42878618667-3.jpg"],
-    variants: [{ label: "1 thùng Lotte Tăng cao 30 gói + 1 D3K2 · giảm 5%", price: 1621000, oldPrice: 1707000 }, { label: "2 thùng Lotte Tăng cao 60 gói · TẶNG 1 D3K2", price: 2634000, oldPrice: 3024000 }],
+    variants: [{ label: "1 thùng Lotte Tăng cao 30 gói + 1 D3K2 · giảm 5%", price: 1621000, oldPrice: 1707000 }],
     desc: "Bộ đôi tăng chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) giúp bé uống ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
-    highlights: ["Mua 1 thùng nước ép + 1 D3K2 được giảm 5% so với mua lẻ", "Mua 2 thùng nước ép được TẶNG 1 lọ D3K2 30ml", "Nước ép hữu cơ Hàn Quốc, bé dễ uống", "Thùng 30 gói dùng được khoảng 1 tháng"],
+    highlights: ["Mua 1 thùng nước ép + 1 D3K2 được giảm 5% so với mua lẻ", "Nước ép hữu cơ Hàn Quốc, bé dễ uống", "Thùng 30 gói dùng được khoảng 1 tháng"],
     usage: "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn." },
 ];
 /* ===/ADMIN:PRODUCTS=== */
