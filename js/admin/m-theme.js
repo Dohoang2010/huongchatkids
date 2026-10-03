@@ -83,9 +83,21 @@
       <label class="sw"><input type="checkbox" data-hd="hienTaiKhoan" ${(t.header || {}).hienTaiKhoan !== false ? 'checked' : ''}> Hiện tài khoản</label>
       <div class="box-note">Nội dung menu sửa ở mục <a href="#/menu">Menu</a>. Logo, hotline, Zalo sửa ở <a href="#/cau-hinh/chung">Cấu hình</a>.</div>`;
 
-    if (mucMo === 'footer') b.innerHTML = `
-      <p class="muted">Footer đang lấy dữ liệu từ <code>SITE</code> và danh mục sản phẩm — đổi hotline, địa chỉ, mạng xã hội ở <a href="#/cau-hinh/chung">Cấu hình</a>.</p>
-      <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 8:</b> sắp xếp cột footer, tự chọn nhóm link cho từng cột.</div>`;
+    if (mucMo === 'footer') {
+      const cot = t.footer || [{ title: 'Hỗ trợ khách hàng', links: [
+        ['Hướng dẫn mua hàng', 'policy.html?p=mua-hang'], ['Phương thức thanh toán', 'policy.html?p=thanh-toan'],
+        ['Chính sách giao hàng', 'policy.html?p=giao-hang'], ['Chính sách đổi trả & hoàn tiền', 'policy.html?p=doi-tra'],
+        ['Chính sách bảo mật', 'policy.html?p=bao-mat'], ['Điều khoản sử dụng', 'policy.html?p=dieu-khoan']] }];
+      b.innerHTML = `<p class="muted">Cột link ở chân trang. Mỗi dòng ghi <code>Tên | link</code>. Thông tin shop, hotline, mạng xã hội sửa ở <a href="#/cau-hinh/chung">Cấu hình</a>.</p>
+        <div id="ftList">${cot.map((c, i) => `<div class="mn__c" data-ft="${i}">
+          <div class="mn__ch"><input data-f="title" value="${esc(c.title || '')}" placeholder="Tiêu đề cột">
+            <button class="icobtn" data-ft-len="${i}" ${i === 0 ? 'disabled' : ''} title="Lên trên">↑</button>
+            <button class="icobtn" data-ft-xuong="${i}" ${i === cot.length - 1 ? 'disabled' : ''} title="Xuống dưới">↓</button>
+            <button class="btn btn--red btn--sm" data-ft-xoa="${i}">Xoá cột</button></div>
+          <label>Các dòng<textarea data-f="links" rows="${Math.max(3, (c.links || []).length + 1)}">${esc((c.links || []).map((l) => `${l[0]} | ${l[1]}`).join('\n'))}</textarea></label>
+        </div>`).join('')}</div>
+        <button class="btn btn--ghost btn--sm" id="ftThem">+ Thêm cột</button>`;
+    }
   }
 
   /* ---------- Gửi sang khung xem trước ---------- */
@@ -147,6 +159,26 @@
       A.doiDuLieu(); guiTheme(); return;
     }
   });
+
+  function thuFooter() {
+    const box = $('#ftList'); if (!box) return;
+    const t = T();
+    t.footer = $$('[data-ft]', box).map((el) => ({
+      title: $('[data-f="title"]', el).value.trim(),
+      links: $('[data-f="links"]', el).value.split('\n').map((d) => d.trim()).filter(Boolean)
+        .map((d) => { const [a, ...r] = d.split('|'); return [a.trim(), r.join('|').trim()]; }),
+    })).filter((c) => c.title);
+  }
+  document.addEventListener('click', (e) => {
+    const t = T();
+    if (e.target.id === 'ftThem') { thuFooter(); t.footer = t.footer || []; t.footer.push({ title: 'Cột mới', links: [] }); A.doiDuLieu(); veMuc(); guiTheme(); return; }
+    const fx = e.target.closest('[data-ft-xoa]');
+    if (fx) { thuFooter(); t.footer.splice(Number(fx.dataset.ftXoa), 1); A.doiDuLieu(); veMuc(); guiTheme(); return; }
+    const fl = e.target.closest('[data-ft-len]'), fd = e.target.closest('[data-ft-xuong]');
+    if (fl || fd) { thuFooter(); const i = Number((fl || fd).dataset.ftLen ?? (fl || fd).dataset.ftXuong); const j = fl ? i - 1 : i + 1;
+      [t.footer[i], t.footer[j]] = [t.footer[j], t.footer[i]]; A.doiDuLieu(); veMuc(); guiTheme(); return; }
+  });
+  document.addEventListener('input', (e) => { if (e.target.closest('#ftList')) { thuFooter(); A.doiDuLieu(); guiTheme(); } });
 
   document.addEventListener('change', (e) => {
     const t = T();

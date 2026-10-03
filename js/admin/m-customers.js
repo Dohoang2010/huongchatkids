@@ -68,11 +68,11 @@
           <thead><tr><th>Khách hàng</th><th>Địa chỉ</th><th class="num">Số đơn</th><th class="num">Tổng chi tiêu</th><th>Hạng</th><th>Đơn gần nhất</th><th>Trạng thái</th><th></th></tr></thead>
           <tbody>${slice.map((x) => `<tr>
             <td><a href="#/thanh-vien/${esc(x.sdt)}"><b>${esc(x.ten || '(chưa có tên)')}</b></a><br><small class="muted">${esc(x.sdt)}</small></td>
-            <td>${esc([x.diaChi, x.xa, x.tinh].filter(Boolean).join(', ') || '—')}</td>
-            <td class="num">${x.soDon}</td>
-            <td class="num"><b>${fmt(x.tongChiTieu)}</b></td>
+            <td data-nhan="Địa chỉ">${esc([x.diaChi, x.xa, x.tinh].filter(Boolean).join(', ') || '—')}</td>
+            <td class="num" data-nhan="Số đơn">${x.soDon}</td>
+            <td class="num" data-nhan="Tổng chi tiêu"><b>${fmt(x.tongChiTieu)}</b></td>
             <td>${A.badge(x.hangLabel, x.hang === 'moi' ? '' : 'tag--ok')}</td>
-            <td>${esc(x.donGanNhat || '—')}</td>
+            <td data-nhan="Đơn gần nhất">${esc(x.donGanNhat || '—')}</td>
             <td>${x.khoa ? A.badge('Đã khoá', 'tag--no') : A.badge('Bình thường', 'tag--ok')}</td>
             <td class="num"><a class="btn btn--ghost btn--sm" href="#/thanh-vien/${esc(x.sdt)}">Chi tiết</a></td>
           </tr>`).join('')}</tbody></table></div>

@@ -66,13 +66,13 @@
           </tr></thead>
           <tbody>${slice.map(({ p, i }) => `<tr class="${S.chon.has(i) ? 'is-pick' : ''}">
             <td class="tbl-ck"><input type="checkbox" data-pick="${i}" ${S.chon.has(i) ? 'checked' : ''} aria-label="Chọn ${esc(p.short || p.name)}"></td>
-            <td><a class="sp-cell" href="#/san-pham/${i}">
+            <td data-nhan="Sản phẩm"><a class="sp-cell" href="#/san-pham/${i}">
               <img src="${esc(p.thumb || p.image || '')}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
               <span><b>${esc(p.short || p.name)}</b><small>${esc(p.id)}${(p.variants || []).length ? ' · ' + p.variants.length + ' phân loại' : ''}</small></span></a></td>
-            <td>${esc(tenDM(p.cat))}</td>
-            <td class="num">${fmt(p.price)}</td>
+            <td data-nhan="Danh mục">${esc(tenDM(p.cat))}</td>
+            <td class="num" data-nhan="Giá bán">${fmt(p.price)}</td>
             <td class="num">${A.badge(String(p.stock ?? 0), (p.stock ?? 0) <= 0 ? 'tag--no' : (p.stock ?? 0) <= 5 ? 'tag--wait' : 'tag--ok')}</td>
-            <td class="num">${p.sold || 0}</td>
+            <td class="num" data-nhan="Đã bán">${p.sold || 0}</td>
             <td>${(p.tags || []).slice(0, 2).map((t) => A.badge(t, t === 'Sản phẩm hot' ? 'tag--hot' : '')).join(' ') || '—'}</td>
             <td>${p.an ? A.badge('Đang ẩn', 'tag--off') : A.badge('Đang hiện', 'tag--ok')}</td>
             <td class="num"><a class="btn btn--ghost btn--sm" href="#/san-pham/${i}">Sửa</a></td>
@@ -226,7 +226,15 @@
     if (e.target.id === 'spTT') { S.tt = e.target.value; S.trang = 1; return A.veTrang(); }
     if (e.target.id === 'spSX') { S.sx = e.target.value; return A.veTrang(); }
     if (e.target.id === 'spAll') { const on = e.target.checked; loc().forEach(({ i }) => on ? S.chon.add(i) : S.chon.delete(i)); return A.veTrang(); }
-    if (e.target.dataset.pick !== undefined) { const i = Number(e.target.dataset.pick); e.target.checked ? S.chon.add(i) : S.chon.delete(i); return A.veTrang(); }
+    /* Chỉ cập nhật đúng dòng và thanh thao tác, không vẽ lại cả trang cho nhẹ */
+    if (e.target.dataset.pick !== undefined) {
+      const i = Number(e.target.dataset.pick);
+      e.target.checked ? S.chon.add(i) : S.chon.delete(i);
+      const tr = e.target.closest('tr'); if (tr) tr.classList.toggle('is-pick', e.target.checked);
+      const bulk = $('#spBulk');
+      if (bulk) { bulk.classList.toggle('hide', !S.chon.size); const b = bulk.querySelector('b'); if (b) b.textContent = `Đã chọn ${S.chon.size} sản phẩm`; }
+      return;
+    }
     if (e.target.closest('#spForm')) { thu(); A.doiDuLieu(); }
     if (e.target.id === 'imgFile') taiAnhLen(Array.from(e.target.files || []));
   });

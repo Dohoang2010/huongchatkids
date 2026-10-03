@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Trang quản trị và bản xem thử không đưa lên công cụ tìm kiếm
+Disallow: /admin.html
+Disallow: /quan-ly-ton-kho.html
+Disallow: /data/nhap/
+Disallow: /*?xem=
+
+Sitemap: https://huongchatkids.vn/sitemap.xml

@@ -7,7 +7,7 @@
   <title>Quản trị – Hương Chất Kids</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=20261003h">
+  <link rel="stylesheet" href="css/admin.css?v=20261003i">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png">
 </head>
 <body>
@@ -34,23 +34,23 @@
 <div class="modal hide" id="modal"></div>
 <div class="toast hide" id="toast"></div>
 
-<script src="js/data.js?v=20261003h"></script>
-<script src="js/diachi.js?v=20261003h"></script>
-<script src="js/admin/core.js?v=20261003h"></script>
-<script src="js/admin/preview.js?v=20261003h"></script>
-<script src="js/admin/m-dashboard.js?v=20261003h"></script>
-<script src="js/admin/m-products.js?v=20261003h"></script>
-<script src="js/admin/m-orders.js?v=20261003h"></script>
-<script src="js/admin/m-customers.js?v=20261003h"></script>
-<script src="js/admin/m-marketing.js?v=20261003h"></script>
-<script src="js/admin/m-menu.js?v=20261003h"></script>
-<script src="js/admin/m-content.js?v=20261003h"></script>
-<script src="js/admin/m-seo.js?v=20261003h"></script>
-<script src="js/admin/m-website.js?v=20261003h"></script>
-<script src="js/admin/m-theme.js?v=20261003h"></script>
-<script src="js/admin/m-versions.js?v=20261003h"></script>
-<script src="js/admin/m-users.js?v=20261003h"></script>
-<script src="js/admin/m-system.js?v=20261003h"></script>
+<script src="js/data.js?v=20261003i"></script>
+<script src="js/diachi.js?v=20261003i"></script>
+<script src="js/admin/core.js?v=20261003i"></script>
+<script src="js/admin/preview.js?v=20261003i"></script>
+<script src="js/admin/m-dashboard.js?v=20261003i"></script>
+<script src="js/admin/m-products.js?v=20261003i"></script>
+<script src="js/admin/m-orders.js?v=20261003i"></script>
+<script src="js/admin/m-customers.js?v=20261003i"></script>
+<script src="js/admin/m-marketing.js?v=20261003i"></script>
+<script src="js/admin/m-menu.js?v=20261003i"></script>
+<script src="js/admin/m-content.js?v=20261003i"></script>
+<script src="js/admin/m-seo.js?v=20261003i"></script>
+<script src="js/admin/m-website.js?v=20261003i"></script>
+<script src="js/admin/m-theme.js?v=20261003i"></script>
+<script src="js/admin/m-versions.js?v=20261003i"></script>
+<script src="js/admin/m-users.js?v=20261003i"></script>
+<script src="js/admin/m-system.js?v=20261003i"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const A = window.ADMIN;
@@ -63,21 +63,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const err = document.getElementById('lgErr'); err.classList.add('hide');
     const nut = e.target.querySelector('button[type=submit]');
     if (!id || !mk) { err.textContent = 'Nhập đủ tên đăng nhập và mật khẩu nhé'; err.classList.remove('hide'); return; }
+    /* Nhập sai nhiều lần thì bắt chờ, chống dò mật khẩu */
+    const sai = Number(localStorage.getItem('hck_dn_sai') || 0);
+    const cho = Number(localStorage.getItem('hck_dn_cho') || 0);
+    if (cho > Date.now()) {
+      err.textContent = `Nhập sai nhiều lần, thử lại sau ${Math.ceil((cho - Date.now()) / 1000)} giây`;
+      err.classList.remove('hide'); return;
+    }
     nut.disabled = true; nut.textContent = 'Đang kiểm tra…';
-    /* Ưu tiên tài khoản trên máy chủ (mật khẩu băm trong Google Sheet) */
+    const batSai = () => {
+      const n = sai + 1; localStorage.setItem('hck_dn_sai', String(n));
+      if (n >= 4) localStorage.setItem('hck_dn_cho', String(Date.now() + Math.min(300, 2 ** (n - 3) * 15) * 1000));
+    };
+    /* Tài khoản trên máy chủ (mật khẩu băm trong Google Sheet) */
+    let mayChuTraLoi = false;
     try {
       const r = await A.api('qtDangNhap', { tk: id, mk });
+      if (r && typeof r.ok === 'boolean') mayChuTraLoi = true;
       if (r && r.ok && r.token) {
+        localStorage.removeItem('hck_dn_sai'); localStorage.removeItem('hck_dn_cho');
+        localStorage.setItem('hck_co_tk', '1');
         sessionStorage.setItem('hck_qt_token', r.token);
         sessionStorage.setItem('hck_qt_nd', JSON.stringify({ ten: r.ten, vaiTro: r.vaiTro, tk: r.tk }));
         A.ghiPhien(); location.reload(); return;
       }
-      if (r && r.msg && r.msg !== 'Tài khoản hoặc mật khẩu chưa đúng') {
+      if (r && r.msg && r.ten === undefined && !/chưa đúng/.test(r.msg)) {
         err.textContent = r.msg; err.classList.remove('hide'); nut.disabled = false; nut.textContent = 'Đăng nhập'; return;
       }
-    } catch { /* máy chủ chưa sẵn sàng: dùng tài khoản dự phòng bên dưới */ }
-    if (id === A.TAI_KHOAN.id && mk === A.TAI_KHOAN.mk) { A.ghiPhien(); vao(); return; }
-    err.innerHTML = 'Tên đăng nhập hoặc mật khẩu chưa đúng.';
+    } catch { mayChuTraLoi = false; }
+    /* Tài khoản dự phòng CHỈ dùng khi máy chủ không trả lời (mất mạng / chưa deploy)
+       và máy này chưa từng đăng nhập bằng tài khoản thật. */
+    const daCoTk = localStorage.getItem('hck_co_tk') === '1';
+    if (!mayChuTraLoi && !daCoTk && id === A.TAI_KHOAN.id && mk === A.TAI_KHOAN.mk) {
+      A.ghiPhien(); vao(); return;
+    }
+    batSai();
+    err.innerHTML = mayChuTraLoi ? 'Tên đăng nhập hoặc mật khẩu chưa đúng.'
+      : 'Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.';
     err.classList.remove('hide'); nut.disabled = false; nut.textContent = 'Đăng nhập';
   });
 });

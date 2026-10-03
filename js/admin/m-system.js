@@ -4,25 +4,44 @@
   const A = window.ADMIN, { $, $$, esc, fmt } = A;
 
 
-  /* ---------------- NHẬT KÝ HOẠT ĐỘNG (dùng lịch sử Git) ---------------- */
+  /* ---------------- NHẬT KÝ HOẠT ĐỘNG – gộp Git (nội dung website) + Sheet (đơn, khách, tài khoản) ---------------- */
   async function veNhatKy(el) {
     el.innerHTML = A.dangTai('nhật ký');
+    const ds = [];
+    const loi = [];
+    /* Thao tác nghiệp vụ ghi ở Google Sheet */
+    try {
+      const d = await A.api('nhatKy', {});
+      if (d && d.ok && d.ds) d.ds.forEach((x) => ds.push({ ngay: x.ngay, nguoi: '—', muc: x.muc, viec: x.thayDoi, chiTiet: x.banGhi, loai: 'sheet' }));
+      else if (d && d.msg) loi.push(d.msg);
+    } catch (e) { loi.push(e.message); }
+    /* Thay đổi nội dung website ghi trong lịch sử Git */
     try {
       const r = await fetch(`https://api.github.com/repos/${A.REPO}/commits?per_page=40&t=${Date.now()}`,
         A.ghToken() ? { headers: { Authorization: 'Bearer ' + A.ghToken() } } : {});
-      if (!r.ok) throw new Error('Không đọc được lịch sử (' + r.status + ')');
-      const ds = await r.json();
-      el.innerHTML = `<div class="card">
-        <p class="muted">Mỗi lần xuất bản là một bản ghi trong lịch sử website. Bấm “Xem” để thấy chính xác đã đổi những gì.</p>
-        <div class="tbl-wrap"><table><thead><tr><th>Thời gian</th><th>Người thực hiện</th><th>Nội dung thay đổi</th><th></th></tr></thead><tbody>
-        ${ds.map((c) => { const d = new Date(c.commit.author.date);
-          return `<tr><td>${d.toLocaleString('vi-VN')}</td><td>${esc(c.commit.author.name)}</td>
-          <td>${esc(c.commit.message.split('\n')[0])}</td>
-          <td class="num"><a class="btn btn--ghost btn--sm" href="${esc(c.html_url)}" target="_blank" rel="noopener">Xem ↗</a></td></tr>`; }).join('')}
-        </tbody></table></div>
-        <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 7–8:</b> nút “Khôi phục bản này” ngay trong trang, so sánh hai phiên bản cạnh nhau,
-        và ghi thêm thao tác không đụng tới mã nguồn (đổi trạng thái đơn, khoá khách…) vào một sheet nhật ký riêng.</div></div>`;
-    } catch (e) { el.innerHTML = A.loiTai(e.message); }
+      if (r.ok) (await r.json()).forEach((c) => ds.push({
+        ngay: new Date(c.commit.author.date).toLocaleString('vi-VN'),
+        nguoi: c.commit.author.name, muc: 'Website', viec: c.commit.message.split('\n')[0], link: c.html_url, loai: 'git',
+        luc: new Date(c.commit.author.date).getTime() }));
+      else loi.push('Không đọc được lịch sử Git (' + r.status + ')');
+    } catch (e) { loi.push(e.message); }
+
+    const gio = (x) => { if (x.luc) return x.luc; const m = String(x.ngay).match(/(\d{2})\/(\d{2})\/(\d{4})[^\d]*(\d{2}):(\d{2})/); return m ? new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}`).getTime() : 0; };
+    ds.sort((a, b) => gio(b) - gio(a));
+
+    el.innerHTML = `<div class="card">
+      <p class="muted">Gộp hai nguồn: thao tác trên <b>đơn hàng, khách hàng, tài khoản</b> (lưu ở Google Sheet)
+      và thay đổi <b>nội dung website</b> (lưu trong lịch sử phiên bản).</p>
+      ${loi.length ? `<div class="box-note">${loi.map(esc).join('<br>')}</div>` : ''}
+      ${ds.length ? `<div class="tbl-wrap"><table><thead><tr><th>Thời gian</th><th>Mục</th><th>Nội dung</th><th>Người thực hiện</th><th></th></tr></thead><tbody>
+        ${ds.slice(0, 120).map((x) => `<tr>
+          <td data-nhan="Thời gian">${esc(x.ngay)}</td>
+          <td data-nhan="Mục">${A.badge(x.muc, x.loai === 'git' ? '' : 'tag--ok')}</td>
+          <td data-nhan="Nội dung">${esc(x.viec)}${x.chiTiet ? `<br><small class="muted">${esc(x.chiTiet)}</small>` : ''}</td>
+          <td data-nhan="Người">${esc(x.nguoi)}</td>
+          <td class="num">${x.link ? `<a class="btn btn--ghost btn--sm" href="${esc(x.link)}" target="_blank" rel="noopener">Xem ↗</a>` : ''}</td></tr>`).join('')}
+      </tbody></table></div>` : A.trong('Chưa có hoạt động nào', 'Nhật ký sẽ ghi lại khi có thao tác.', '📜')}
+      <p class="muted mt-8">Xem lịch sử nội dung đầy đủ kèm so sánh và khôi phục ở mục <a href="#/phien-ban">Phiên bản & xem thử</a>.</p></div>`;
   }
 
   /* ---------------- CẤU HÌNH ---------------- */

@@ -397,3 +397,75 @@ input[type=range]{accent-color:var(--pink)}
 .vt__h{display:flex;align-items:center;gap:8px;font-size:14.5px}
 .vt p{margin:3px 0 8px;font-size:13px}
 .vt__q{display:flex;gap:5px;flex-wrap:wrap}
+
+/* ---------- Tiếp cận (accessibility) ---------- */
+.skip{position:absolute;left:-9999px;top:0;z-index:100;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 10px 0;font-weight:600}
+.skip:focus{left:0}
+:focus-visible{outline:3px solid var(--pink);outline-offset:2px;border-radius:6px}
+.btn:focus-visible,.nav__i:focus-visible,.tab2:focus-visible,.th__t:focus-visible{outline-offset:3px}
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important} }
+
+/* ---------- Bảng co thành thẻ trên điện thoại ---------- */
+@media (max-width:720px){
+  .tbl-wrap{border:0;max-height:none;overflow:visible}
+  .tbl-wrap table,.tbl-wrap thead,.tbl-wrap tbody,.tbl-wrap tr,.tbl-wrap td{display:block;width:100%}
+  .tbl-wrap thead{display:none}
+  .tbl-wrap tr{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px;background:#fff}
+  .tbl-wrap td{border:0;padding:5px 0;display:flex;gap:10px;align-items:flex-start}
+  .tbl-wrap td::before{content:attr(data-nhan);flex:none;width:112px;color:var(--muted);font-size:12px;font-weight:600;padding-top:2px}
+  .tbl-wrap td.num{justify-content:flex-start;text-align:left}
+  .tbl-wrap td:empty{display:none}
+  .sp-cell{min-width:0}
+}
+
+/* ---------- Chống tràn ngang trên điện thoại ---------- */
+@media (max-width:720px){
+  html,body{overflow-x:hidden}
+  .wrap,.main,.page,.card{min-width:0;max-width:100%}
+  .main{overflow-x:hidden}
+  .tbl-wrap td::before{width:88px;font-size:11.5px;line-height:1.35}
+  .tbl-wrap td{flex-wrap:nowrap;align-items:flex-start}
+  .tbl-wrap td>*{min-width:0}
+  .sp-cell{min-width:0;flex:1}
+  .sp-cell b,.sp-cell small{overflow-wrap:anywhere}
+  .sp-cell img{width:34px;height:34px}
+  .tool{gap:8px}
+  .tool input,.tool select{width:100%}
+  .page__head>div:last-child{display:flex;gap:8px}
+  .page__head>div:last-child .btn{flex:1}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi b{font-size:17px}
+  .kpi span{font-size:11.5px}
+  table{font-size:13px}
+  .bulk{font-size:12.5px}
+  .bulk .btn{flex:1 1 44%}
+  .goo__t{font-size:17px}
+  .modal__box{width:100%}
+  .th__tab{overflow-x:auto;flex-wrap:nowrap}
+  .tabs2{overflow-x:auto;flex-wrap:nowrap}
+  .tab2,.th__t{white-space:nowrap}
+}
+@media (max-width:420px){
+  .kpis{grid-template-columns:1fr}
+  .tbl-wrap td::before{width:76px}
+}
+
+@media (max-width:860px){
+  /* Sidebar là lớp phủ nên bỏ flex, tránh vùng nội dung rộng hơn màn hình.
+     Dùng 100% chứ KHÔNG dùng 100vw vì 100vw tính cả thanh cuộn -> tràn ngang. */
+  .wrap{display:block;max-width:100%}
+  .main{display:block;width:auto;max-width:100%;padding:12px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+}
+
+/* ---------- Thanh trên: xuống dòng trên điện thoại cho khỏi tràn ---------- */
+@media (max-width:720px){
+  .top{height:auto;flex-wrap:wrap;padding:8px 10px;gap:8px;row-gap:8px}
+  .top__logo b{font-size:14px}
+  .search{order:9;flex:1 0 100%;max-width:none}
+  .who__b span{display:none}
+  .who__b{padding:5px 9px}
+  .wrap{min-height:auto}
+  .side{top:auto}
+  .bar{position:static}
+}

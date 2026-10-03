@@ -58,11 +58,11 @@
           <thead><tr><th>Mã đơn</th><th>Thời gian</th><th>Khách hàng</th><th class="num">SP</th><th class="num">Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th><th></th></tr></thead>
           <tbody>${slice.map((o) => `<tr>
             <td><a href="#/don-hang/${o.dong}"><b>${esc(o.ma)}</b></a>${o.qua ? '<br><small class="muted">🎁 có quà</small>' : ''}</td>
-            <td>${esc(o.ngay)}<br><small class="muted">${esc(o.loai)}</small></td>
-            <td><b>${esc(o.khach || '—')}</b><br><small class="muted">${esc(o.sdt)}</small></td>
-            <td class="num">${o.soMon}</td>
+            <td data-nhan="Thời gian">${esc(o.ngay)}<br><small class="muted">${esc(o.loai)}</small></td>
+            <td data-nhan="Khách hàng"><b>${esc(o.khach || '—')}</b><br><small class="muted">${esc(o.sdt)}</small></td>
+            <td class="num" data-nhan="Số SP">${o.soMon}</td>
             <td class="num"><b>${fmt(o.tong)}</b>${o.giamHang ? `<br><small class="muted">hạng ${esc(o.hang)}</small>` : ''}</td>
-            <td>${esc(o.thanhToan)}</td>
+            <td data-nhan="Thanh toán">${esc(o.thanhToan)}</td>
             <td>${A.badge(o.trangThai, MAU[o.trangThai] || '')}</td>
             <td class="num"><a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a></td>
           </tr>`).join('')}</tbody></table></div>

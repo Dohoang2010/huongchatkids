@@ -303,6 +303,7 @@ window.ADMIN = (() => {
   /* ---------------- Layout ---------------- */
   function veKhung() {
     $('#app').innerHTML = `
+      <a class="skip" href="#main">Bỏ qua, tới nội dung chính</a>
       <header class="top">
         <button class="icobtn top__burger" id="btnBurger" aria-label="Mở menu">☰</button>
         <a class="top__logo" href="#/tong-quan"><img src="img/logo-96.png" alt="" width="28" height="28"><b>Quản trị</b></a>
@@ -328,9 +329,9 @@ window.ADMIN = (() => {
       </header>
       <div class="bar hide" id="bar"></div>
       <div class="wrap">
-        <aside class="side" id="sidebar">${veSidebar()}</aside>
+        <aside class="side" id="sidebar" aria-label="Menu quản trị">${veSidebar()}</aside>
         <div class="side__bd" id="sideBd"></div>
-        <main class="main" id="main"></main>
+        <main class="main" id="main" tabindex="-1"></main>
         <aside class="pv hide" id="pv"></aside>
       </div>`;
     if (localStorage.getItem('hck_admin_thu') === '1') document.body.classList.add('thu');
@@ -411,6 +412,8 @@ window.ADMIN = (() => {
       if (e.key === 'Escape') { $('#gKq') && $('#gKq').classList.add('hide'); $('#modal') && !$('#modal').classList.contains('hide') && $('#modal').querySelector('[data-no]') && $('#modal').querySelector('[data-no]').click(); }
     });
     window.addEventListener('hashchange', veTrang);
+    window.addEventListener('offline', () => { const b = $('#bar'); if (!b) return; b.classList.remove('hide'); b.className = 'bar bar--err'; b.textContent = '📴 Mất kết nối mạng — thay đổi vẫn được giữ, nối mạng lại rồi hãy Xuất bản.'; });
+    window.addEventListener('online', () => { veThanhLuu(); kiemTraGh(); });
     window.addEventListener('beforeunload', (e) => { if (daSua) { e.preventDefault(); e.returnValue = ''; } });
     window.addEventListener('error', (ev) => {
       const b = $('#bar'); if (!b) return;

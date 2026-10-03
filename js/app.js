@@ -460,6 +460,15 @@
         <a class="mmenu__link" href="policy.html">📋 Hỗ trợ & chính sách</a>
       </div>
     </div>`;
+    /* Cột footer lấy từ THEME.footer nếu trang quản trị có cấu hình, không thì dùng mặc định */
+    const COT_MAC_DINH = [{ title: 'Hỗ trợ khách hàng', links: [
+      ['Hướng dẫn mua hàng', 'policy.html?p=mua-hang'], ['Phương thức thanh toán', 'policy.html?p=thanh-toan'],
+      ['Chính sách giao hàng', 'policy.html?p=giao-hang'], ['Chính sách đổi trả & hoàn tiền', 'policy.html?p=doi-tra'],
+      ['Chính sách bảo mật', 'policy.html?p=bao-mat'], ['Điều khoản sử dụng', 'policy.html?p=dieu-khoan']] }];
+    const cotFooter = () => ((window.THEME && window.THEME.footer && window.THEME.footer.length ? window.THEME.footer : COT_MAC_DINH)
+      .filter((c) => c && c.title)
+      .map((c) => `<div class="footer__col"><h4>${esc(c.title)}</h4><ul>${(c.links || [])
+        .map((l) => `<li><a href="${esc(l[1] || '#')}">${esc(l[0])}</a></li>`).join('')}</ul></div>`).join(''));
     const footer = `
     <footer class="footer"><div class="container">
       <div class="footer__top">
@@ -472,7 +481,7 @@
           ${SITE.taxCode ? `<p>${I.file}<span>MST: ${SITE.taxCode}</span></p>` : ''}
           ${SITE.bctUrl ? `<a class="footer__cert" href="${SITE.bctUrl}" target="_blank" rel="noopener">${I.shield} Đã thông báo Bộ Công Thương</a>` : ''}
         </div>
-        <div class="footer__col"><h4><a href="policy.html">Hỗ trợ khách hàng</a></h4><ul><li><a href="policy.html?p=mua-hang">Hướng dẫn mua hàng</a></li><li><a href="policy.html?p=thanh-toan">Phương thức thanh toán</a></li><li><a href="policy.html?p=giao-hang">Chính sách giao hàng</a></li><li><a href="policy.html?p=doi-tra">Chính sách đổi trả & hoàn tiền</a></li><li><a href="policy.html?p=bao-mat">Chính sách bảo mật</a></li><li><a href="policy.html?p=dieu-khoan">Điều khoản sử dụng</a></li></ul></div>
+        ${cotFooter()}
         <div class="footer__col"><h4><a href="gioi-thieu.html">Về ${SITE.name}</a></h4><ul><li><a href="gioi-thieu.html">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang mẹ</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
         <div class="footer__col"><h4>Kết nối với chúng tôi</h4>
           <p class="fs-13 text-muted">Theo dõi để nhận ưu đãi và kiến thức chăm con mỗi ngày.</p>
