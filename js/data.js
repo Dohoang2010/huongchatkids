@@ -163,6 +163,7 @@ window.BRANDS = [
 ];
 
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
+/* ===ADMIN:NAV=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.NAV = [
   { label: 'Nước ép & dinh dưỡng', short: 'Nước ép', tiny: 'Nước ép', link: 'collections.html?cat=nuoc-ep', columns: [
     { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Nước ép mận, nho & táo (Tăng Cân)', 'product.html?id=25632276959'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697']] },
@@ -189,6 +190,7 @@ window.NAV = [
   { label: '🔥 Flash sale', short: '🔥 Flash sale', tiny: '🔥 Sale', link: 'collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot', hot: true },
   { label: 'Cẩm nang mẹ', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' },
 ];
+/* ===/ADMIN:NAV=== */
 
 /* importer / congBo (tuỳ chọn): nhà nhập khẩu & số công bố ghi trên tem phụ – điền để hiện ở bảng thông tin.
    image: ảnh thật (img/<mã Shopee>.jpg); thumb: ảnh cắt gọn 420px dùng cho thẻ sản phẩm/giỏ/tìm kiếm. variants: phân loại từ Shopee, sắp theo giá tăng dần.
@@ -658,6 +660,7 @@ window.REVIEWS = [
   { name: 'Chị Mai Trang', child: 'con trai 6 tuổi', city: 'Thủ Đức, TP.HCM', stars: 4, text: 'Con biếng ăn nên mình mua gạc hươu Sumo. Giao hàng đúng hẹn, đóng gói cẩn thận, thùng không móp. Mong shop có thêm mã giảm.', product: '26156646705' },
 ];
 
+/* ===ADMIN:POSTS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.POSTS = [
   { id: 'chon-dinh-duong-theo-thang-tuoi', title: 'Bé mấy tháng thì dùng được nước ép, hồng sâm, D3K2? Lộ trình bổ sung theo độ tuổi', cat: 'Dinh dưỡng', date: '12/09/2026', read: '5 phút', emoji: '🍼', color: '#FFE9EF', image: 'img/thumb/22686115682.jpg',
     excerpt: 'Không phải sản phẩm nào cũng dùng được cho bé sơ sinh. Chuyên gia dinh dưỡng Hương Chất Kids gợi ý lộ trình bổ sung an toàn theo từng mốc tuổi.',
@@ -678,6 +681,7 @@ window.POSTS = [
     excerpt: 'Kiểm tra tem phụ, mã QR, số lô, hạn dùng… 5 bước đơn giản để mẹ tự kiểm tra sản phẩm trước khi cho con dùng.',
     body: ['1. Tem phụ tiếng Việt: ghi rõ nhà nhập khẩu, số công bố, hạn dùng.', '2. Mã QR/mã vạch: quét được thông tin sản phẩm trùng với hộp.', '3. Bao bì: seal, nắp nguyên vẹn, không móp rách; hạn dùng còn dài.', '4. Chữ Hàn trên bao bì rõ nét, in sắc; hàng giả thường mờ, sai chính tả.', '5. Hoá đơn: yêu cầu hoá đơn VAT khi mua – Hương Chất Kids xuất hoá đơn cho mọi đơn hàng.'] },
 ];
+/* ===/ADMIN:POSTS=== */
 
 /* =====================================================================
    QUÀ TẶNG KÈM – web tự tính và tự thêm quà vào đơn hàng

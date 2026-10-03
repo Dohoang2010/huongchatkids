@@ -37,49 +37,6 @@
     });
   }
 
-  /* ---------------- MENU ---------------- */
-  function veMenu(el) {
-    const nav = window.NAV || [];
-    el.innerHTML = `<div class="card"><h3>Thanh menu chính</h3>
-      <p class="muted">Menu hiện đang khai báo trong <code>js/data.js</code> (mảng <code>NAV</code>) kèm các cột con của menu thả xuống.</p>
-      <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Tên hiển thị</th><th>Tên rút gọn</th><th>Link</th><th class="num">Cột con</th></tr></thead><tbody>
-        ${nav.map((n, i) => `<tr><td>${i + 1}</td><td><b>${esc(n.label)}</b></td><td>${esc(n.short || '—')}</td><td><code>${esc(n.link || '')}</code></td><td class="num">${(n.columns || []).length}</td></tr>`).join('')}
-      </tbody></table></div>
-      <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 5:</b> thêm/sửa/xoá mục menu, kéo thả đổi thứ tự, menu nhiều cấp.
-      Hiện tại muốn đổi menu, nhắn Claude hoặc sửa mảng <code>NAV</code> trong <code>js/data.js</code>.</div></div>`;
-  }
-
-  /* ---------------- NỘI DUNG ---------------- */
-  function veNoiDung(el) {
-    const posts = window.POSTS || [];
-    el.innerHTML = `<div class="card"><h3>Bài viết Cẩm nang mẹ</h3>
-      <div class="tbl-wrap"><table><thead><tr><th>Tiêu đề</th><th>Chuyên mục</th><th>Ngày</th></tr></thead><tbody>
-        ${posts.map((p) => `<tr><td><b>${esc(p.title)}</b></td><td>${esc(p.cat || '—')}</td><td>${esc(p.date || '—')}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">Chưa có bài viết</td></tr>'}
-      </tbody></table></div>
-      <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 5:</b> soạn thảo bài viết, ảnh đại diện, nháp/xuất bản, hẹn giờ đăng, SEO từng bài.</div></div>
-      <div class="card"><h3>Trang chính sách</h3>
-      <p class="muted">Các trang chính sách nằm trong <code>js/policies.js</code>: giao hàng, đổi trả, bảo mật, thanh toán, điều khoản, hỏi đáp.</p>
-      <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 5:</b> sửa nội dung chính sách ngay tại đây.</div></div>`;
-  }
-
-  /* ---------------- SEO ---------------- */
-  function veSeo(el) {
-    const t = document.title;
-    el.innerHTML = `<div class="card"><h3>SEO toàn website</h3>
-      <div class="row row-2">
-        <div>
-          <label>Tiêu đề trang chủ<input id="seoT" value="${esc(SITE.name + ' – Dinh dưỡng Hàn Quốc chính hãng cho bé')}"></label>
-          <label>Mô tả trang chủ<textarea id="seoD" rows="3">Sữa, hồng sâm, vitamin và nước ép Hàn Quốc chính hãng cho bé 0–18 tuổi. Tem phụ tiếng Việt, hoá đơn VAT, chuyên gia dinh dưỡng tư vấn miễn phí.</textarea></label>
-          <label>Từ khoá chính<input id="seoK" value="dinh dưỡng hàn quốc cho bé, sữa hàn quốc, hồng sâm trẻ em"></label>
-        </div>
-        <div><h4>Xem trước trên Google</h4>
-          <div class="goo"><div class="goo__u">huongchatkids.vn</div><div class="goo__t" id="gooT">${esc(SITE.name)} – Dinh dưỡng Hàn Quốc chính hãng cho bé</div>
-          <div class="goo__d" id="gooD">Sữa, hồng sâm, vitamin và nước ép Hàn Quốc chính hãng cho bé 0–18 tuổi…</div></div></div>
-      </div>
-      <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 5:</b> ghi thẳng thẻ meta vào từng file HTML, sitemap.xml, robots.txt, ảnh chia sẻ mạng xã hội (OG image).
-      SEO của từng sản phẩm đã làm được ngay tại <a href="#/san-pham">Sản phẩm → tab SEO</a>.</div></div>`;
-  }
-
   /* ---------------- TRÌNH CHỈNH SỬA GIAO DIỆN ---------------- */
   function veTheme(el) {
     el.innerHTML = `<div class="card"><h3>🎨 Trình chỉnh sửa giao diện</h3>
@@ -122,8 +79,5 @@
   });
 
   A.dangKy({ route: '/banner', ten: 'Banner', icon: '🖼️', nhom: 'website', quyen: 'banner.view', preview: true, mo: 'Khung lớn ở đầu trang chủ', ve: veBanner });
-  A.dangKy({ route: '/menu', ten: 'Menu', icon: '🧭', nhom: 'website', quyen: 'content.view', preview: true, mo: 'Thanh menu chính', giaiDoan: 5, ve: veMenu });
-  A.dangKy({ route: '/noi-dung', ten: 'Nội dung', icon: '📝', nhom: 'website', quyen: 'content.view', preview: false, mo: 'Bài viết và trang chính sách', giaiDoan: 5, ve: veNoiDung });
-  A.dangKy({ route: '/seo', ten: 'SEO', icon: '🔍', nhom: 'website', quyen: 'seo.view', preview: false, mo: 'Tiêu đề, mô tả, từ khoá', giaiDoan: 5, ve: veSeo });
   A.dangKy({ route: '/giao-dien', ten: 'Trình chỉnh sửa giao diện', icon: '🎨', nhom: 'website', quyen: 'theme.view', preview: true, mo: 'Bố cục, màu sắc, phông chữ', giaiDoan: 6, ve: veTheme });
 })();

@@ -735,7 +735,8 @@ function apiKhoaKhach(p) {
 /* ===================== NHẬT KÝ THAO TÁC ===================== */
 function sheetNhatKy() { return sheetPhu('Nhật ký', ['Thời gian', 'Mục', 'Bản ghi', 'Thay đổi']); }
 function ghiNhatKy(muc, banGhi, thayDoi) {
-  try { sheetNhatKy().appendRow([new Date(), muc, banGhi, thayDoi]); } catch (e) { Logger.log('Nhật ký lỗi: ' + e); }
+  // thêm dấu ' để Sheets giữ nguyên số 0 đứng đầu của số điện thoại
+  try { sheetNhatKy().appendRow([new Date(), muc, "'" + banGhi, thayDoi]); } catch (e) { Logger.log('Nhật ký lỗi: ' + e); }
 }
 function apiNhatKy(p) {
   if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };

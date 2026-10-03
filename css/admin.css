@@ -336,3 +336,23 @@ tr.is-pick{background:var(--pink-50)}
 .tien-do i{display:block;height:100%;background:var(--teal);border-radius:999px}
 .text-teal{color:var(--teal)}
 @media print{ .top,.side,.bar,.pv,.page__head>div:last-child,.crumb{display:none !important} .main{padding:0} .card{box-shadow:none;border:1px solid #ddd} }
+
+/* ---------- Menu · Nội dung · SEO ---------- */
+.mn{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff}
+.mn__h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.mn__h b{font-size:14.5px}
+.mn__cot{border-top:1px dashed var(--line);margin-top:6px;padding-top:12px}
+.mn__c{border:1px solid var(--line-2);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.mn__ch{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.mn__ch input{font-weight:600}
+.bt-ico{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;font-size:19px;flex:none}
+.soan{font-family:'Be Vietnam Pro',sans-serif;line-height:1.75}
+.seo-grid{display:grid;grid-template-columns:260px 1fr;gap:18px;align-items:start}
+.seo-ds{display:flex;flex-direction:column;gap:4px}
+.seo-i{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer;position:relative}
+.seo-i:hover{border-color:var(--pink);background:var(--pink-50)}
+.seo-i.is-on{border-color:var(--pink);background:var(--pink-50)}
+.seo-i b{display:block;font-size:13.5px}
+.seo-i small{color:var(--muted);font-size:12px}
+.seo-i em{position:absolute;top:10px;right:10px;color:var(--amber);font-style:normal;font-size:16px}
+@media (max-width:860px){ .seo-grid{grid-template-columns:1fr} }

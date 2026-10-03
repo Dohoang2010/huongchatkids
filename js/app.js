@@ -861,6 +861,8 @@
 
   /* Sản phẩm bị ẩn ở trang quản trị thì không hiện ở bất kỳ đâu trên web */
   window.PRODUCTS = (window.PRODUCTS || []).filter((p) => !p.an);
+  /* Bài viết còn ở bản nháp thì khách chưa đọc được */
+  window.POSTS = (window.POSTS || []).filter((p) => !p.nhap);
 
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
