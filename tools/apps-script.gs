@@ -630,6 +630,20 @@ function taoChuShopNeuChuaCo() {
   var muoi = Utilities.getUuid().slice(0, 12);
   s.appendRow(['adminhck', 'Chủ shop', 'SUPER_ADMIN', bamMkQT('123', muoi), muoi, 'Hoạt động', new Date(), '']);
 }
+/* Chạy tay trong Apps Script nếu muốn đưa mật khẩu tài khoản adminhck về 123 */
+function datLaiMatKhauChuShop() {
+  taoChuShopNeuChuaCo();
+  var dong = timQT('adminhck');
+  if (!dong) { Logger.log('Khong thay tai khoan adminhck'); return; }
+  var muoi = Utilities.getUuid().slice(0, 12);
+  var s = sheetQT();
+  s.getRange(dong, 4).setValue(bamMkQT('123', muoi));
+  s.getRange(dong, 5).setValue(muoi);
+  s.getRange(dong, 3).setValue('SUPER_ADMIN');
+  s.getRange(dong, 6).setValue('Hoạt động');
+  Logger.log('✅ Da dat lai: adminhck / 123');
+}
+
 function apiQtDangNhap(p) {
   taoChuShopNeuChuaCo();
   var tk = String(p.tk || '').trim().toLowerCase();

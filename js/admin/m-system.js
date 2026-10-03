@@ -128,6 +128,8 @@
         <li>Đừng dán mã GitHub trên máy lạ, máy công cộng.</li>
         <li>Nghi mã bị lộ → vào GitHub xoá token cũ, tạo token mới, dán lại ở tab Kết nối GitHub.</li>
         <li>Phiên đăng nhập tự hết sau 8 giờ không dùng.</li>
+        <li>Nhập sai mật khẩu từ 4 lần trở lên sẽ bị bắt chờ tăng dần, chống dò mật khẩu.</li>
+        <li>Muốn tạo tài khoản riêng cho nhân viên: vào <a href="#/nguoi-dung">Người dùng</a>, mỗi người một mật khẩu riêng.</li>
       </ul>
       <div class="box-note">⚙️ <b>Phase 8–9:</b> chuyển mật khẩu admin sang Google Sheet (hash + salt như tài khoản khách),
       thêm giới hạn số lần nhập sai, và ghi lại lịch sử đăng nhập.</div>`;

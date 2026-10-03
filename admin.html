@@ -7,7 +7,7 @@
   <title>Quản trị – Hương Chất Kids</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=20261003i">
+  <link rel="stylesheet" href="css/admin.css?v=20261003j">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png">
 </head>
 <body>
@@ -34,23 +34,23 @@
 <div class="modal hide" id="modal"></div>
 <div class="toast hide" id="toast"></div>
 
-<script src="js/data.js?v=20261003i"></script>
-<script src="js/diachi.js?v=20261003i"></script>
-<script src="js/admin/core.js?v=20261003i"></script>
-<script src="js/admin/preview.js?v=20261003i"></script>
-<script src="js/admin/m-dashboard.js?v=20261003i"></script>
-<script src="js/admin/m-products.js?v=20261003i"></script>
-<script src="js/admin/m-orders.js?v=20261003i"></script>
-<script src="js/admin/m-customers.js?v=20261003i"></script>
-<script src="js/admin/m-marketing.js?v=20261003i"></script>
-<script src="js/admin/m-menu.js?v=20261003i"></script>
-<script src="js/admin/m-content.js?v=20261003i"></script>
-<script src="js/admin/m-seo.js?v=20261003i"></script>
-<script src="js/admin/m-website.js?v=20261003i"></script>
-<script src="js/admin/m-theme.js?v=20261003i"></script>
-<script src="js/admin/m-versions.js?v=20261003i"></script>
-<script src="js/admin/m-users.js?v=20261003i"></script>
-<script src="js/admin/m-system.js?v=20261003i"></script>
+<script src="js/data.js?v=20261003j"></script>
+<script src="js/diachi.js?v=20261003j"></script>
+<script src="js/admin/core.js?v=20261003j"></script>
+<script src="js/admin/preview.js?v=20261003j"></script>
+<script src="js/admin/m-dashboard.js?v=20261003j"></script>
+<script src="js/admin/m-products.js?v=20261003j"></script>
+<script src="js/admin/m-orders.js?v=20261003j"></script>
+<script src="js/admin/m-customers.js?v=20261003j"></script>
+<script src="js/admin/m-marketing.js?v=20261003j"></script>
+<script src="js/admin/m-menu.js?v=20261003j"></script>
+<script src="js/admin/m-content.js?v=20261003j"></script>
+<script src="js/admin/m-seo.js?v=20261003j"></script>
+<script src="js/admin/m-website.js?v=20261003j"></script>
+<script src="js/admin/m-theme.js?v=20261003j"></script>
+<script src="js/admin/m-versions.js?v=20261003j"></script>
+<script src="js/admin/m-users.js?v=20261003j"></script>
+<script src="js/admin/m-system.js?v=20261003j"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const A = window.ADMIN;
@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r && typeof r.ok === 'boolean') mayChuTraLoi = true;
       if (r && r.ok && r.token) {
         localStorage.removeItem('hck_dn_sai'); localStorage.removeItem('hck_dn_cho');
-        localStorage.setItem('hck_co_tk', '1');
         sessionStorage.setItem('hck_qt_token', r.token);
         sessionStorage.setItem('hck_qt_nd', JSON.stringify({ ten: r.ten, vaiTro: r.vaiTro, tk: r.tk }));
         A.ghiPhien(); location.reload(); return;
@@ -91,10 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
         err.textContent = r.msg; err.classList.remove('hide'); nut.disabled = false; nut.textContent = 'Đăng nhập'; return;
       }
     } catch { mayChuTraLoi = false; }
-    /* Tài khoản dự phòng CHỈ dùng khi máy chủ không trả lời (mất mạng / chưa deploy)
-       và máy này chưa từng đăng nhập bằng tài khoản thật. */
-    const daCoTk = localStorage.getItem('hck_co_tk') === '1';
-    if (!mayChuTraLoi && !daCoTk && id === A.TAI_KHOAN.id && mk === A.TAI_KHOAN.mk) {
+    /* Tài khoản chủ shop luôn vào được, kể cả khi máy chủ chưa sẵn sàng hoặc mất mạng */
+    if (id === A.TAI_KHOAN.id && mk === A.TAI_KHOAN.mk) {
+      localStorage.removeItem('hck_dn_sai'); localStorage.removeItem('hck_dn_cho');
       A.ghiPhien(); vao(); return;
     }
     batSai();
