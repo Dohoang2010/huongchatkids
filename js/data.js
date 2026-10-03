@@ -569,14 +569,14 @@ window.PRODUCTS = [
     highlights: ["Mua 1 hộp váng sữa + 1 D3K2 được giảm 5% so với mua lẻ", "Mua 2 hộp váng sữa được TẶNG 1 lọ D3K2 30ml", "Canxi sữa hữu cơ Hàn Quốc + D3K2 New Zealand", "Đủ dùng cho bé khoảng 3 tháng"],
     usage: "Váng sữa: 1 gói/ngày pha cùng sữa hoặc ăn trực tiếp. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn. Dùng canxi và D3K2 cùng buổi để hấp thu tốt nhất." },
   { id: "combo-lottexanh-d3k2", name: "Combo Nước Ép Lotte Tăng Cao (Xanh) + Vitamin D3K2 Pure Vitality – Hỗ Trợ Bé Phát Triển Chiều Cao", short: "Combo nước ép Lotte Tăng cao + D3K2", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "canxi", "d3k2", "organic"], price: 1621000, oldPrice: 1707000, rating: 5.0, reviews: 0, sold: 0, stock: 50,
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "canxi", "d3k2", "organic"], price: 1707000, oldPrice: 1707000, rating: 5.0, reviews: 0, sold: 0, stock: 50,
     isCombo: true, items: ["22686115682", "42878618667"],
     shape: "box", color: "#2F8FD0", weight: "1 thùng 30 gói nước ép + 1 lọ D3K2 30ml", origin: "Hàn Quốc & New Zealand", tags: ["Combo"],
     image: "img/combo-lottexanh-d3k2.jpg", thumb: "img/thumb/combo-lottexanh-d3k2.jpg",
     images: ["img/combo-lottexanh-d3k2.jpg", "img/22686115682.jpg", "img/42878618667.jpg", "img/22686115682-3.jpg", "img/42878618667-3.jpg"],
-    variants: [{ label: "1 thùng Lotte Tăng cao 30 gói + 1 D3K2 · giảm 5%", price: 1621000, oldPrice: 1707000 }],
+    variants: [{ label: "1 thùng Lotte Tăng cao 30 gói + 1 D3K2", price: 1707000, oldPrice: 1707000 }],
     desc: "Bộ đôi tăng chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) giúp bé uống ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
-    highlights: ["Mua 1 thùng nước ép + 1 D3K2 được giảm 5% so với mua lẻ", "Nước ép hữu cơ Hàn Quốc, bé dễ uống", "Thùng 30 gói dùng được khoảng 1 tháng"],
+    highlights: ["Mua trọn bộ 1 chạm, không phải chọn từng món", "Nước ép hữu cơ Hàn Quốc, bé dễ uống", "Thùng 30 gói dùng được khoảng 1 tháng", "D3K2 giúp hấp thu canxi, dùng cùng nước ép tăng cao"],
     usage: "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn." },
 ];
 /* ===/ADMIN:PRODUCTS=== */
