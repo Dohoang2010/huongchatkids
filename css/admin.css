@@ -166,6 +166,14 @@ body.thu .nav__thu{transform:rotate(180deg)}
 .kpi--pink b{color:var(--pink)}.kpi--teal b{color:var(--teal)}.kpi--amber b{color:var(--amber)}.kpi--red b{color:var(--red)}
 .chart{width:100%;height:220px;display:block}
 .chart .bar-r{fill:var(--pink);opacity:.85}.chart .bar-r:hover{opacity:1}
+.chart--line{height:auto;aspect-ratio:900/230;overflow:visible}
+.chart--line .area{fill:url(#gdt)}
+.chart--line .line{fill:none;stroke:var(--pink);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.chart--line .pt circle{fill:#fff;stroke:var(--pink);stroke-width:2;vector-effect:non-scaling-stroke;transition:r .12s}
+.chart--line .pt circle.pt__hit{fill:transparent;stroke:none;cursor:pointer}
+.chart--line .pt:hover circle:first-child{r:6.5}
+.chart--line .pt-cao{fill:var(--pink);stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke}
+.chart--line .nhan-cao{fill:var(--pink);font-size:11px;font-weight:700}
 .chart .grid-l{stroke:var(--line);stroke-width:1}
 .chart text{font-size:10px;fill:var(--muted)}
 .hours{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;align-items:end;height:120px;margin-top:6px}
@@ -469,3 +477,13 @@ input[type=range]{accent-color:var(--pink)}
   .side{top:auto}
   .bar{position:static}
 }
+
+/* ---------- Tích quyền riêng ---------- */
+.qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(218px,1fr));gap:12px;margin:10px 0}
+.qgrid__n{border:1px solid var(--line);border-radius:11px;padding:11px;background:#fff}
+.qgrid__n>b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);margin-bottom:7px}
+.qgrid__i{display:flex;gap:8px;align-items:flex-start;margin:0 0 6px;font-weight:400;cursor:pointer}
+.qgrid__i input{width:16px;height:16px;flex:none;margin-top:2px;accent-color:var(--pink)}
+.qgrid__i span{font-size:13.5px;line-height:1.35}
+.qgrid__i small{display:block;color:var(--muted);font-size:11px;font-family:ui-monospace,monospace}
+.flex-nut{display:flex;gap:8px;flex-wrap:wrap}

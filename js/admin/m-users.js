@@ -33,10 +33,11 @@
     $('#pageAct').innerHTML = `<button class="btn btn--primary" id="qtThem">+ Thêm tài khoản</button>`;
     el.innerHTML = `<div class="card">
       <p class="muted">Mỗi người một tài khoản riêng. Mật khẩu được băm kèm muối trước khi lưu — không ai đọc được mật khẩu gốc, kể cả chủ shop.</p>
-      <div class="tbl-wrap"><table><thead><tr><th>Tài khoản</th><th>Họ tên</th><th>Vai trò</th><th>Trạng thái</th><th>Đăng nhập cuối</th><th></th></tr></thead><tbody>
+      <div class="tbl-wrap"><table><thead><tr><th>Tài khoản</th><th>Họ tên</th><th>Vai trò</th><th>Quyền</th><th>Trạng thái</th><th>Đăng nhập cuối</th><th></th></tr></thead><tbody>
       ${d.ds.map((u) => `<tr>
         <td><code>${esc(u.tk)}</code></td><td><b>${esc(u.ten)}</b></td>
-        <td>${A.badge(TEN_VT[u.vaiTro] || u.vaiTro, u.vaiTro === 'SUPER_ADMIN' ? 'tag--hot' : '')}</td>
+        <td data-nhan="Vai trò">${A.badge(TEN_VT[u.vaiTro] || u.vaiTro, u.vaiTro === 'SUPER_ADMIN' ? 'tag--hot' : '')}</td>
+        <td data-nhan="Quyền">${u.quyenRieng ? A.badge(u.quyenRieng.split(',').length + ' quyền riêng', 'tag--wait') : '<span class="muted">theo vai trò</span>'}</td>
         <td>${u.trangThai === 'Hoạt động' ? A.badge('Hoạt động', 'tag--ok') : A.badge('Đã khoá', 'tag--no')}</td>
         <td>${esc(u.dangNhapCuoi)}</td>
         <td class="num" style="white-space:nowrap">
@@ -64,8 +65,34 @@
         <div class="row__nut"><button class="btn btn--primary" id="qtLuu">${moi ? 'Tạo tài khoản' : 'Lưu'}</button>
           <button class="btn btn--ghost" id="qtHuy">Huỷ</button></div>
       </div>
-      <div class="box-note" id="qtMoVt">${esc(MO_VT[u ? u.vaiTro : 'SUPER_ADMIN'])}</div></div>`;
+      <div class="box-note" id="qtMoVt">${esc(MO_VT[u ? u.vaiTro : 'SUPER_ADMIN'])}</div>
+
+      <h4>Quyền của tài khoản này</h4>
+      <label class="sw"><input type="checkbox" id="qtRieng" ${u && u.quyenRieng ? 'checked' : ''}>
+        Tự chọn quyền thay vì dùng quyền mặc định của vai trò</label>
+      <div id="qtQuyen" class="${u && u.quyenRieng ? '' : 'hide'}"></div>
+      </div>`;
+    veQuyenChon(u);
     $('#qtForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  /* Ô tích quyền riêng cho từng tài khoản */
+  function veQuyenChon(u) {
+    const box = $('#qtQuyen'); if (!box) return;
+    const dm = (data && data.danhMucQuyen) || [];
+    const vt = $('#qtVt') ? $('#qtVt').value : (u ? u.vaiTro : 'SUPER_ADMIN');
+    const mac = ((data && data.quyenTheoVaiTro) || {})[vt] || [];
+    const hop = (q) => mac.some((m) => m === '*' || m === q || (m.endsWith('.*') && q.startsWith(m.slice(0, -1))));
+    const dang = u && u.quyenRieng ? u.quyenRieng.split(',') : null;
+    const bat = (q) => (dang ? dang.includes(q) : hop(q));
+    if (!dm.length) { box.innerHTML = '<p class="muted">Cần Apps Script bản mới để hiện danh mục quyền.</p>'; return; }
+    box.innerHTML = `<p class="muted">Tích vào quyền muốn cho phép. Apps Script cũng kiểm tra đúng danh sách này.</p>
+      <div class="qgrid">${dm.map((g) => `<div class="qgrid__n"><b>${esc(g.nhom)}</b>
+        ${g.ds.map(([q, ten]) => `<label class="qgrid__i"><input type="checkbox" data-q="${esc(q)}" ${bat(q) ? 'checked' : ''}>
+          <span>${esc(ten)}<small>${esc(q)}</small></span></label>`).join('')}</div>`).join('')}</div>
+      <div class="flex-nut"><button class="btn btn--ghost btn--sm" id="qtChonHet">Chọn tất cả</button>
+        <button class="btn btn--ghost btn--sm" id="qtBoHet">Bỏ chọn tất cả</button>
+        <button class="btn btn--ghost btn--sm" id="qtTheoVt">Lấy lại theo vai trò</button></div>`;
   }
 
   /* ---------------- Vai trò & phân quyền ---------------- */
@@ -105,17 +132,29 @@
     if (t.id === 'qtLuu') {
       const tk = $('#qtTk').value.trim().toLowerCase(), ten = $('#qtTen').value.trim();
       const vaiTro = $('#qtVt').value, mk = $('#qtMk').value, trangThai = $('#qtTt').value;
+      const quyenRieng = $('#qtRieng') && $('#qtRieng').checked
+        ? $$('#qtQuyen [data-q]').filter((x) => x.checked).map((x) => x.dataset.q).join(',') : '';
       if (!tk || !ten) { A.toast('Nhập đủ tài khoản và họ tên', 'err'); return; }
       t.disabled = true; t.textContent = 'Đang lưu…';
       try {
-        const r = await A.api('qtLuu', { ...A.xacThuc(), tk, ten, vaiTro, mk, trangThai });
+        const r = await A.api('qtLuu', { ...A.xacThuc(), tk, ten, vaiTro, mk, trangThai, quyenRieng });
         if (!r || !r.ok) { A.toast((r && r.msg) || 'Không lưu được', 'err'); t.disabled = false; t.textContent = 'Lưu'; return; }
         A.toast(r.moi ? 'Đã tạo tài khoản' : 'Đã lưu', 'ok'); data = null; A.veTrang();
       } catch (err) { A.toast(err.message, 'err'); t.disabled = false; t.textContent = 'Lưu'; }
     }
   });
   document.addEventListener('change', (e) => {
-    if (e.target.id === 'qtVt' && $('#qtMoVt')) $('#qtMoVt').textContent = MO_VT[e.target.value] || '';
+    if (e.target.id === 'qtVt') {
+      if ($('#qtMoVt')) $('#qtMoVt').textContent = MO_VT[e.target.value] || '';
+      if ($('#qtRieng') && !$('#qtRieng').checked) veQuyenChon(dangSua);
+      return;
+    }
+    if (e.target.id === 'qtRieng') { $('#qtQuyen').classList.toggle('hide', !e.target.checked); return; }
+  });
+  document.addEventListener('click', (e) => {
+    if (e.target.id === 'qtChonHet') { $$('#qtQuyen [data-q]').forEach((x) => { x.checked = true; }); return; }
+    if (e.target.id === 'qtBoHet') { $$('#qtQuyen [data-q]').forEach((x) => { x.checked = false; }); return; }
+    if (e.target.id === 'qtTheoVt') { veQuyenChon(null); return; }
   });
 
   A.dangKy({ route: '/nguoi-dung', ten: 'Người dùng', icon: '🧑‍💼', nhom: 'he-thong', quyen: 'setting.view',

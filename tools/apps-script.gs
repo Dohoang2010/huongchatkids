@@ -602,7 +602,7 @@ function apiThongKe(p) {
 /* ===================== TÀI KHOẢN QUẢN TRỊ & PHÂN QUYỀN =====================
    Mỗi nhân viên một tài khoản riêng, mật khẩu băm kèm muối, lưu ở sheet "Quản trị".
    Mọi lệnh quản trị kiểm tra quyền ở ĐÂY (máy chủ), không chỉ ẩn nút trên giao diện. */
-var H_QT = ['Tài khoản', 'Họ tên', 'Vai trò', 'Hash', 'Muối', 'Trạng thái', 'Tạo lúc', 'Đăng nhập cuối'];
+var H_QT = ['Tài khoản', 'Họ tên', 'Vai trò', 'Hash', 'Muối', 'Trạng thái', 'Tạo lúc', 'Đăng nhập cuối', 'Quyền riêng'];
 var VAI_TRO_QT = {
   SUPER_ADMIN:   ['*'],
   MANAGER:       ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'],
@@ -610,8 +610,18 @@ var VAI_TRO_QT = {
   PRODUCT_STAFF: ['dashboard.view', 'product.*', 'category.*', 'flashsale.*', 'combo.*'],
   CONTENT_STAFF: ['dashboard.view', 'content.*', 'banner.*', 'seo.*']
 };
+/* Danh mục quyền – trang quản trị dựa vào đây để hiện ô tích chọn */
+var DANH_MUC_QUYEN = [
+  { nhom: 'Tổng quan', ds: [['dashboard.view', 'Xem số liệu kinh doanh']] },
+  { nhom: 'Đơn hàng',  ds: [['order.view', 'Xem đơn hàng'], ['order.update', 'Đổi trạng thái đơn']] },
+  { nhom: 'Sản phẩm',  ds: [['product.view', 'Xem sản phẩm'], ['product.update', 'Thêm / sửa sản phẩm'], ['product.delete', 'Xoá sản phẩm']] },
+  { nhom: 'Khách hàng',ds: [['customer.view', 'Xem khách hàng'], ['customer.update', 'Khoá / mở tài khoản khách']] },
+  { nhom: 'Khuyến mãi',ds: [['flashsale.view', 'Flash sale'], ['combo.view', 'Combo']] },
+  { nhom: 'Website',   ds: [['banner.view', 'Banner'], ['content.view', 'Menu & bài viết'], ['seo.view', 'SEO'], ['theme.view', 'Giao diện']] },
+  { nhom: 'Hệ thống',  ds: [['setting.view', 'Cấu hình, tài khoản, nhật ký']] }
+];
 function sheetQT()     { return sheetPhu('Quản trị', H_QT); }
-function sheetPhienQT() { return sheetPhu('Phiên QT', ['Token', 'Tài khoản', 'Vai trò', 'Hết hạn', 'Tạo lúc']); }
+function sheetPhienQT() { return sheetPhu('Phiên QT', ['Token', 'Tài khoản', 'Vai trò', 'Hết hạn', 'Tạo lúc', 'Quyền riêng']); }
 
 function bamMkQT(mk, muoi) {
   var raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(muoi) + '|' + String(mk), Utilities.Charset.UTF_8);
@@ -628,7 +638,7 @@ function taoChuShopNeuChuaCo() {
   var s = sheetQT();
   if (s.getLastRow() >= 2) return;
   var muoi = Utilities.getUuid().slice(0, 12);
-  s.appendRow(['adminhck', 'Chủ shop', 'SUPER_ADMIN', bamMkQT('123', muoi), muoi, 'Hoạt động', new Date(), '']);
+  s.appendRow(['adminhck', 'Chủ shop', 'SUPER_ADMIN', bamMkQT('123', muoi), muoi, 'Hoạt động', new Date(), '', '']);
 }
 /* Chạy tay trong Apps Script nếu muốn đưa mật khẩu tài khoản adminhck về 123 */
 function datLaiMatKhauChuShop() {
@@ -656,26 +666,29 @@ function apiQtDangNhap(p) {
   if (bamMkQT(p.mk, v[4]) !== String(v[3])) { cache.put(k, String(Number(cache.get(k) || 0) + 1), 3600); return { ok: false, msg: 'Tài khoản hoặc mật khẩu chưa đúng' }; }
   cache.remove(k);
   var token = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
-  sheetPhienQT().appendRow([token, tk, String(v[2]), new Date(Date.now() + 12 * 3600e3), new Date()]);
+  var rieng = String(v[8] || '').trim();
+  sheetPhienQT().appendRow([token, tk, String(v[2]), new Date(Date.now() + 12 * 3600e3), new Date(), rieng]);
   sheetQT().getRange(dong, 8).setValue(new Date());
   ghiNhatKy('Quản trị', tk, 'Đăng nhập');
-  return { ok: true, token: token, tk: tk, ten: String(v[1]), vaiTro: String(v[2]), quyen: VAI_TRO_QT[String(v[2])] || [] };
+  return { ok: true, token: token, tk: tk, ten: String(v[1]), vaiTro: String(v[2]),
+    quyen: rieng ? rieng.split(',') : (VAI_TRO_QT[String(v[2])] || []), quyenRieng: !!rieng };
 }
 function phienQT(token) {
   if (!token) return null;
   var s = sheetPhienQT(); var n = s.getLastRow(); if (n < 2) return null;
-  var v = s.getRange(2, 1, n - 1, 4).getValues();
+  var v = s.getRange(2, 1, n - 1, 6).getValues();
   for (var i = 0; i < v.length; i++) {
     if (String(v[i][0]) !== String(token)) continue;
     if (new Date(v[i][3]).getTime() < Date.now()) return null;
-    return { tk: String(v[i][1]), vaiTro: String(v[i][2]) };
+    return { tk: String(v[i][1]), vaiTro: String(v[i][2]), rieng: String(v[i][5] || '').trim() };
   }
   return null;
 }
 function coQuyen(p, quyen) {
   if (String(p.key || '') === ADMIN_KEY) return true;          // khoá chủ shop, dùng khi chưa tạo tài khoản
   var ph = phienQT(p.token); if (!ph) return false;
-  var ds = VAI_TRO_QT[ph.vaiTro] || [];
+  /* Quyền riêng của tài khoản (nếu có) được ưu tiên hơn quyền mặc định của vai trò */
+  var ds = ph.rieng ? ph.rieng.split(',') : (VAI_TRO_QT[ph.vaiTro] || []);
   for (var i = 0; i < ds.length; i++) {
     var q = ds[i];
     if (q === '*' || q === quyen) return true;
@@ -696,9 +709,10 @@ function apiQtDs(p) {
   if (n >= 2) {
     var v = s.getRange(2, 1, n - 1, H_QT.length).getValues();
     for (var i = 0; i < v.length; i++) ds.push({ dong: i + 2, tk: String(v[i][0]), ten: String(v[i][1]), vaiTro: String(v[i][2]),
-      trangThai: String(v[i][5]), tao: v[i][6] ? ngayVN(v[i][6]) : '', dangNhapCuoi: v[i][7] ? ngayVN(v[i][7]) : 'chưa đăng nhập' });
+      trangThai: String(v[i][5]), tao: v[i][6] ? ngayVN(v[i][6]) : '', dangNhapCuoi: v[i][7] ? ngayVN(v[i][7]) : 'chưa đăng nhập',
+      quyenRieng: String(v[i][8] || '').trim() });
   }
-  return { ok: true, ds: ds, vaiTro: Object.keys(VAI_TRO_QT), quyenTheoVaiTro: VAI_TRO_QT };
+  return { ok: true, ds: ds, vaiTro: Object.keys(VAI_TRO_QT), quyenTheoVaiTro: VAI_TRO_QT, danhMucQuyen: DANH_MUC_QUYEN };
 }
 function apiQtLuu(p) {
   if (!coQuyen(p, 'setting.view')) return { ok: false, msg: 'Không có quyền' };
@@ -710,7 +724,7 @@ function apiQtLuu(p) {
   if (!dong) {
     if (mk.length < 4) return { ok: false, msg: 'Mật khẩu cần ít nhất 4 ký tự' };
     var muoi = Utilities.getUuid().slice(0, 12);
-    s.appendRow([tk, String(p.ten || tk), String(p.vaiTro), bamMkQT(mk, muoi), muoi, String(p.trangThai || 'Hoạt động'), new Date(), '']);
+    s.appendRow([tk, String(p.ten || tk), String(p.vaiTro), bamMkQT(mk, muoi), muoi, String(p.trangThai || 'Hoạt động'), new Date(), '', locQuyen(p.quyenRieng)]);
     ghiNhatKy('Quản trị', tk, 'Tạo tài khoản · vai trò ' + p.vaiTro);
     return { ok: true, moi: true };
   }
@@ -721,8 +735,17 @@ function apiQtLuu(p) {
   s.getRange(dong, 3).setValue(String(p.vaiTro));
   s.getRange(dong, 6).setValue(String(p.trangThai || v[5]));
   if (mk) { var m2 = Utilities.getUuid().slice(0, 12); s.getRange(dong, 4).setValue(bamMkQT(mk, m2)); s.getRange(dong, 5).setValue(m2); }
+  s.getRange(dong, 9).setValue(locQuyen(p.quyenRieng));
   ghiNhatKy('Quản trị', tk, 'Sửa tài khoản' + (mk ? ' · đổi mật khẩu' : ''));
   return { ok: true };
+}
+/* Chỉ nhận các quyền có thật trong danh mục, tránh ghi bừa vào Sheet */
+function locQuyen(chuoi) {
+  var hop = [];
+  for (var i = 0; i < DANH_MUC_QUYEN.length; i++)
+    for (var j = 0; j < DANH_MUC_QUYEN[i].ds.length; j++) hop.push(DANH_MUC_QUYEN[i].ds[j][0]);
+  var vao = String(chuoi || '').split(',').map(function (x) { return x.trim(); }).filter(function (x) { return hop.indexOf(x) > -1; });
+  return vao.join(',');
 }
 function demSuperAdmin() {
   var s = sheetQT(); var n = s.getLastRow(); if (n < 2) return 0;

@@ -92,24 +92,52 @@
         <p class="muted mt-8">Quản lý đơn đầy đủ nằm ở mục <a href="#/don-hang">Đơn hàng</a>.</p></div>`;
   }
 
+  /* Biểu đồ đường doanh thu theo ngày – dễ nhìn xu hướng lên xuống hơn biểu đồ cột */
   function cot(list) {
     if (!list.length) return '<p class="muted">Chưa có đơn nào trong kỳ này.</p>';
-    const W = 900, H = 220, pad = { t: 14, r: 8, b: 26, l: 54 };
+    const W = 900, H = 230, pad = { t: 16, r: 14, b: 28, l: 56 };
     const max = Math.max(...list.map((x) => x.tien), 1);
-    const bw = (W - pad.l - pad.r) / list.length;
+    const n = list.length;
+    const X = (i) => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : i * (W - pad.l - pad.r) / (n - 1));
+    const Y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v / max);
+
     const luoi = [0, .25, .5, .75, 1].map((f) => {
-      const y = pad.t + (H - pad.t - pad.b) * (1 - f);
-      return `<line class="grid-l" x1="${pad.l}" y1="${y}" x2="${W - pad.r}" y2="${y}"/><text x="${pad.l - 6}" y="${y + 3}" text-anchor="end">${gon(max * f)}</text>`;
+      const y = Y(max * f);
+      return `<line class="grid-l" x1="${pad.l}" y1="${y}" x2="${W - pad.r}" y2="${y}"/>` +
+             `<text x="${pad.l - 8}" y="${y + 3}" text-anchor="end">${gon(max * f)}</text>`;
     }).join('');
-    const cols = list.map((x, i) => {
-      const h = (H - pad.t - pad.b) * (x.tien / max);
-      const X = pad.l + i * bw, Y = H - pad.b - h;
-      const nhan = list.length <= 31 && (list.length <= 10 || i % Math.ceil(list.length / 10) === 0)
-        ? `<text x="${X + bw / 2}" y="${H - 9}" text-anchor="middle">${x.ngay.slice(8)}/${x.ngay.slice(5, 7)}</text>` : '';
-      return `<rect class="bar-r" x="${X + bw * .15}" y="${Y}" width="${bw * .7}" height="${Math.max(1, h)}" rx="3"><title>${x.ngay}: ${fmt(x.tien)} · ${x.don} đơn</title></rect>${nhan}`;
-    }).join('');
-    return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${luoi}${cols}</svg>`;
+
+    const diem = list.map((x, i) => [X(i), Y(x.tien)]);
+    const duong = diem.map((p2, i) => (i ? 'L' : 'M') + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1)).join(' ');
+    const nen = `${duong} L ${diem[n - 1][0].toFixed(1)} ${H - pad.b} L ${diem[0][0].toFixed(1)} ${H - pad.b} Z`;
+
+    const buoc = n <= 12 ? 1 : Math.ceil(n / 10);
+    const nhanX = list.map((x, i) => (i % buoc === 0 || i === n - 1)
+      ? `<text x="${X(i)}" y="${H - 9}" text-anchor="middle">${x.ngay.slice(8)}/${x.ngay.slice(5, 7)}</text>` : '').join('');
+
+    const cham = list.map((x, i) => `<g class="pt"><circle cx="${X(i)}" cy="${Y(x.tien)}" r="${n > 45 ? 2.5 : 4}"/>
+      <circle class="pt__hit" cx="${X(i)}" cy="${Y(x.tien)}" r="14"><title>${x.ngay}: ${fmt(x.tien)} · ${x.don} đơn</title></circle></g>`).join('');
+
+    const cao = list.reduce((a, b) => (b.tien > a.tien ? b : a), list[0]);
+    const iCao = list.indexOf(cao);
+
+    const xCao = Math.min(W - pad.r - 22, Math.max(pad.l + 22, X(iCao)));
+    return `<svg class="chart chart--line" viewBox="0 0 ${W} ${H}" role="img"
+        aria-label="Biểu đồ đường doanh thu theo ngày, cao nhất ${fmt(cao.tien)} ngày ${cao.ngay}">
+      <defs><linearGradient id="gdt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--pink)" stop-opacity=".28"/>
+        <stop offset="100%" stop-color="var(--pink)" stop-opacity="0"/></linearGradient></defs>
+      ${luoi}
+      <path class="area" d="${nen}"/>
+      <path class="line" d="${duong}"/>
+      ${cham}
+      ${n > 1 ? `<circle class="pt-cao" cx="${X(iCao)}" cy="${Y(cao.tien)}" r="5"/>
+        <text class="nhan-cao" x="${xCao}" y="${Math.max(14, Y(cao.tien) - 11)}" text-anchor="middle">${gon(cao.tien)}</text>` : ''}
+      ${nhanX}
+    </svg>
+    <p class="muted mt-8">Ngày cao nhất: <b>${cao.ngay.slice(8)}/${cao.ngay.slice(5, 7)}</b> · ${fmt(cao.tien)} · ${cao.don} đơn</p>`;
   }
+
   function gioCao(g) {
     const max = Math.max(...g); if (!max) return 'Chưa có dữ liệu giờ đặt hàng.';
     const top = g.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v).slice(0, 3).filter((x) => x.v > 0);
