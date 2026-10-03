@@ -846,6 +846,33 @@
       .then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) applyStock(d); }).catch(() => {});
   }
 
+  /* ---------------- Link xem thử có mã ----------------
+     Trang quản trị tạo file data/nhap/<mã>.json rồi chia sẻ link index.html?xem=<mã>.
+     Người mở link thấy bản nháp; website thật không đổi. Trang này không cho Google đánh chỉ mục. */
+  (function linkXemThu() {
+    const ma = (location.search.match(/[?&]xem=([A-Za-z0-9_-]{8,64})/) || [])[1];
+    if (!ma) return;
+    const r = new XMLHttpRequest();
+    try {
+      r.open('GET', 'data/nhap/' + ma + '.json?t=' + Date.now(), false);   // đồng bộ: áp xong mới vẽ trang
+      r.send(null);
+      if (r.status !== 200) throw new Error('khong thay');
+      const d = JSON.parse(r.responseText);
+      if (d.hetHan && Date.now() > d.hetHan) {
+        document.addEventListener('DOMContentLoaded', () => { document.body.innerHTML = '<div style="font:16px/1.6 system-ui;padding:40px;text-align:center">Link xem thử này đã hết hạn.<br><a href="index.html">Về trang chủ</a></div>'; });
+        return;
+      }
+      ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS', 'THEME'].forEach((k) => { if (d[k]) window[k] = d[k]; });
+      const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex, nofollow'; document.head.appendChild(m);
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.insertAdjacentHTML('afterbegin',
+          '<div style="position:fixed;left:0;right:0;top:0;z-index:99999;background:#14181F;color:#fff;text-align:center;font:700 11.5px/1.7 system-ui;letter-spacing:.4px">BẢN XEM THỬ – CHƯA XUẤT BẢN' +
+          (d.tao ? ' · tạo ' + new Date(d.tao).toLocaleString('vi-VN') : '') + '</div>');
+        document.body.style.paddingTop = '22px';
+      });
+    } catch { /* mã sai hoặc file đã xoá: hiện bản thật */ }
+  })();
+
   /* ---------------- Xem thử từ trang quản trị ----------------
      admin.html mở trang này trong khung xem thử với ?preview=1 và để bản nháp ở
      sessionStorage. Áp ngay lúc này (trước khi các trang vẽ) nên không bị nháy. */
@@ -923,16 +950,19 @@
     sapKhoi(t.khoi);
   }
   function sapKhoi(ds) {
-    if (!ds || !ds.length) return;
     const main = document.querySelector('main#app') || document.querySelector('main');
     if (!main) return;
-    ds.forEach((k, i) => {
-      const el = main.querySelector(`[data-khoi="${k.key}"]`);
-      if (!el) return;
-      el.style.order = String(i + 1);
-      el.classList.toggle('khoi-tat', k.bat === false);
+    const tat = main.querySelectorAll('[data-khoi]');
+    if (!tat.length) return;
+    const list = ds || [];
+    /* Khối không có trong danh sách (VD khôi phục bản cũ chưa biết khối mới)
+       vẫn giữ đúng chỗ ở cuối, không bị nhảy lên đầu trang. */
+    tat.forEach((el, i) => {
+      const j = list.findIndex((k) => k.key === el.dataset.khoi);
+      el.style.order = String(j >= 0 ? j + 1 : list.length + i + 1);
+      el.classList.toggle('khoi-tat', j >= 0 && list[j].bat === false);
     });
-    if (document.querySelector('[data-khoi]')) main.classList.add('co-khoi');
+    main.classList.add('co-khoi');
   }
   /* Trộn màu với trắng / làm tối – đủ dùng cho các biến dẫn xuất */
   function rgb(h) { const s = String(h).replace('#', ''); const n = s.length === 3 ? s.split('').map((x) => x + x).join('') : s; return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16) || 0); }

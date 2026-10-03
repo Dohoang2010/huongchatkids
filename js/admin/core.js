@@ -163,6 +163,7 @@ window.ADMIN = (() => {
       <span class="muted">Thay đổi đang ở bản nháp, khách chưa nhìn thấy.</span>
       <span class="grow"></span>
       <button class="btn btn--ghost btn--sm" data-act="bo-nhap">Huỷ thay đổi</button>
+      <a class="btn btn--ghost btn--sm" href="#/phien-ban">🔗 Link xem thử</a>
       <button class="btn btn--primary btn--sm" data-act="xuat-ban">Xuất bản</button>`;
   }
 

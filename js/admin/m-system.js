@@ -124,7 +124,7 @@
 
   A.dangKy({ route: '/nguoi-dung', ten: 'Người dùng', icon: '🧑‍💼', nhom: 'he-thong', quyen: 'setting.view', mo: 'Tài khoản quản trị', giaiDoan: 8, ve: veNguoiDung });
   A.dangKy({ route: '/phan-quyen', ten: 'Vai trò & phân quyền', icon: '🛡️', nhom: 'he-thong', quyen: 'setting.view', mo: 'Ai được làm gì', giaiDoan: 8, ve: veQuyen });
-  A.dangKy({ route: '/nhat-ky', ten: 'Nhật ký hoạt động', icon: '📜', nhom: 'he-thong', quyen: 'setting.view', mo: 'Lịch sử thay đổi website', ve: veNhatKy });
+  A.dangKy({ route: '/nhat-ky', ten: 'Nhật ký hoạt động', icon: '📜', nhom: 'he-thong', quyen: 'setting.view', mo: 'Thao tác trên đơn hàng và khách hàng', ve: veNhatKy });
   A.dangKy({ route: '/cau-hinh', ten: 'Cấu hình', icon: '⚙️', nhom: 'cau-hinh', quyen: 'setting.view', mo: 'Kết nối, thông tin shop, bảo mật',
     ve(el, { sub }) { veCauHinh(el, sub); } });
 })();

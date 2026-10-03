@@ -385,3 +385,9 @@ tr.is-pick{background:var(--pink-50)}
 .mau-r small{color:var(--muted);font-size:12px}
 .mau-hex{width:96px;flex:none;font-family:ui-monospace,monospace;font-size:13px;text-transform:uppercase}
 input[type=range]{accent-color:var(--pink)}
+
+/* ---------- Phiên bản & link xem thử ---------- */
+.link-box{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.link-box input{flex:1;min-width:240px;font-family:ui-monospace,monospace;font-size:12.5px;background:var(--bg)}
+.so-cu{color:var(--muted);text-decoration:line-through;text-decoration-color:#D9B0B8}
+.so-moi{color:var(--teal);font-weight:600}
