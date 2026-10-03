@@ -11,14 +11,14 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261003e">
+  <link rel="stylesheet" href="css/style.css?v=20261003f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app">
   <h1 class="sr-only">Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé</h1>
   <!-- HERO -->
-  <section class="hero"><div class="container">
+  <section data-khoi="hero" class="hero"><div class="container">
     <div class="hero__grid">
       <div class="carousel" id="carousel">
         <div class="carousel__track" id="carouselTrack"></div>
@@ -36,7 +36,7 @@
   </div></section>
 
   <!-- FLASH SALE -->
-  <section class="section"><div class="container">
+  <section data-khoi="flash" class="section"><div class="container">
     <div class="flash">
       <div class="flash__head"><div class="flash__title"><span class="bolt">⚡</span><h2>Flash sale hôm nay</h2><span class="flames" aria-hidden="true"><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i></span></div><div class="countdown" id="countdown"></div></div>
       <div class="row-scroll" id="flashRow"></div>
@@ -45,7 +45,7 @@
   </div></section>
 
   <!-- FEATURED -->
-  <section class="section"><div class="container">
+  <section data-khoi="noi-bat" class="section"><div class="container">
     <div class="section-head"><div><h2>Mẹ tin dùng nhất</h2><p>Sản phẩm bán chạy và được mẹ đánh giá cao trên Shopee</p></div></div>
     <div class="tabs mb-16" id="featTabs"></div>
     <div class="grid grid--4" id="featGrid"></div>
@@ -53,19 +53,19 @@
   </div></section>
 
   <!-- AGE PICKER -->
-  <section class="section"><div class="container">
+  <section data-khoi="do-tuoi" class="section"><div class="container">
     <div class="section-head"><div><h2>Bé nhà mình mấy tuổi? 👶</h2><p>Chọn độ tuổi để xem sản phẩm phù hợp nhất với con</p></div></div>
     <div class="age-grid" id="ageGrid"></div>
   </div></section>
 
   <!-- CATEGORIES -->
-  <section class="section section--soft"><div class="container">
+  <section data-khoi="danh-muc" class="section section--soft"><div class="container">
     <div class="section-head"><div><h2>Danh mục sản phẩm</h2><p>Dinh dưỡng Hàn Quốc chính hãng – tem phụ tiếng Việt, hoá đơn VAT</p></div><a class="link" href="collections.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
     <div class="grid grid--4" id="catGrid"></div>
   </div></section>
 
   <!-- VỀ HƯƠNG CHẤT KIDS -->
-  <section class="section about"><div class="container">
+  <section data-khoi="gioi-thieu" class="section about"><div class="container">
     <div class="about__grid">
       <div class="about__text">
         <span class="about__eyebrow">💗 Về chúng tôi</span>
@@ -91,31 +91,31 @@
   </div></section>
 
   <!-- COMBO -->
-  <section class="section section--soft" id="comboSection"><div class="container">
+  <section data-khoi="combo" class="section section--soft" id="comboSection"><div class="container">
     <div class="section-head"><div><h2>Combo tiết kiệm 🎁</h2><p>Mua trọn bộ tiết kiệm hơn – 1 chạm là xong</p></div><a class="link" href="collections.html?tag=Combo">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
     <div class="grid grid--2" id="comboGrid"></div>
   </div></section>
 
   <!-- DÀNH CHO MẸ -->
-  <section class="section" id="momSection"><div class="container">
+  <section data-khoi="cho-me" class="section" id="momSection"><div class="container">
     <div class="section-head"><div><h2>Dành cho mẹ 💖</h2><p>Mẹ khoẻ, mẹ đẹp thì con mới vui – mỹ phẩm &amp; chăm sóc sức khoẻ chính hãng cho mẹ</p></div><a class="link" href="collections.html?cat=cho-me">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
     <div class="grid grid--4" id="momGrid"></div>
   </div></section>
 
   <!-- WHY US -->
-  <section class="section"><div class="container">
+  <section data-khoi="vi-sao" class="section"><div class="container">
     <div class="section-head"><div><h2>Vì sao mẹ chọn Hương Chất Kids?</h2></div></div>
     <div class="why" id="whyGrid"></div>
   </div></section>
 
   <!-- REVIEWS -->
-  <section class="section section--gray"><div class="container">
+  <section data-khoi="danh-gia" class="section section--gray"><div class="container">
     <div class="section-head"><div><h2>Mẹ đánh giá trên Shopee ⭐</h2><p id="reviewSub"></p></div><a class="link" id="reviewLink" href="#" target="_blank" rel="noopener">Xem gian hàng Shopee <span class="icon-16" data-icon="external"></span></a></div>
     <div class="grid grid--4" id="reviewGrid"></div>
   </div></section>
 
   <!-- FEEDBACK THỰC TẾ -->
-  <section class="section" id="feedbackSection"><div class="container">
+  <section data-khoi="cam-nhan" class="section" id="feedbackSection"><div class="container">
     <div class="section-head"><div><h2>Mẹ và bé đã dùng 💬</h2><p id="feedbackSub">Ảnh thật khách hàng gửi về – bấm để xem lớn</p></div></div>
     <div class="row-scroll" id="feedbackRow"></div>
     <div id="kolBlock" class="hide">
@@ -126,13 +126,13 @@
   </div></section>
 
   <!-- BLOG -->
-  <section class="section"><div class="container">
+  <section data-khoi="cam-nang" class="section"><div class="container">
     <div class="section-head"><div><h2>Cẩm nang mẹ 📖</h2><p>Kiến thức chăm con do chuyên gia dinh dưỡng Hương Chất Kids biên soạn</p></div><a class="link" href="blog.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
     <div class="grid grid--3" id="postGrid"></div>
   </div></section>
 
   <!-- HÀNG MỚI VỀ -->
-  <section class="section" id="freshSection"><div class="container">
+  <section data-khoi="hang-moi" class="section" id="freshSection"><div class="container">
     <div class="fresh">
       <span class="sparkles" aria-hidden="true"><i>✨</i><i>🌿</i><i>✨</i><i>💫</i><i>✨</i><i>🌸</i><i>✨</i></span>
       <div class="fresh__head">
@@ -149,13 +149,13 @@
   </div></section>
 
   <!-- BRANDS -->
-  <section class="section section--soft"><div class="container">
+  <section data-khoi="thuong-hieu" class="section section--soft"><div class="container">
     <div class="section-head" style="justify-content:center;text-align:center"><div><h2>Thương hiệu chính hãng</h2><p>Nhập khẩu chính ngạch từ các thương hiệu dinh dưỡng hàng đầu Hàn Quốc</p></div></div>
     <div class="brands" id="brandRow"></div>
   </div></section>
 
   <!-- ZALO SUBSCRIBE -->
-  <section class="section"><div class="container">
+  <section data-khoi="zalo" class="section"><div class="container">
     <div class="subscribe">
       <div><h2>Nhận ưu đãi & kiến thức chăm con qua Zalo</h2><p>Để lại số điện thoại để nhận ưu đãi dành riêng cho mẹ, kiến thức chăm con và nhắc lịch bổ sung vitamin cho bé.</p></div>
       <form id="subForm"><label class="sr-only" for="subPhone">Số điện thoại của mẹ</label><input class="input" id="subPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" required><button class="btn" type="submit">Nhận ưu đãi</button></form>
@@ -163,9 +163,9 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261003e"></script>
+<script src="js/data.js?v=20261003f"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261003e"></script>
+<script src="js/app.js?v=20261003f"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;

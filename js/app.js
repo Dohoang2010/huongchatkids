@@ -864,6 +864,109 @@
   /* Bài viết còn ở bản nháp thì khách chưa đọc được */
   window.POSTS = (window.POSTS || []).filter((p) => !p.nhap);
 
+
+  /* =====================================================================
+     GIAO DIỆN (THEME) – màu, phông chữ, bo góc, thứ tự khối trang chủ.
+     Trang quản trị gửi bản nháp qua postMessage nên đổi là thấy ngay,
+     không phải tải lại trang.
+     ===================================================================== */
+  const FONT_WEB = {
+    'Be Vietnam Pro': 'Be+Vietnam+Pro:wght@400;500;600;700',
+    'Quicksand': 'Quicksand:wght@500;600;700',
+    'Nunito': 'Nunito:wght@400;600;700;800',
+    'Inter': 'Inter:wght@400;500;600;700',
+    'Roboto': 'Roboto:wght@400;500;700',
+    'Montserrat': 'Montserrat:wght@400;500;600;700',
+    'Lora': 'Lora:wght@400;500;600;700',
+  };
+  function napFont(ten) {
+    if (!ten || !FONT_WEB[ten]) return;
+    const id = 'font-' + ten.replace(/\s+/g, '-');
+    if (document.getElementById(id)) return;
+    const l = document.createElement('link');
+    l.id = id; l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=' + FONT_WEB[ten] + '&display=swap';
+    document.head.appendChild(l);
+  }
+
+  function apTheme(t) {
+    if (!t) return;
+    const r = document.documentElement.style;
+    /* Màu – đổi màu chính thì các biến dẫn xuất đổi theo */
+    const m = t.mau || {};
+    Object.keys(m).forEach((k) => { if (m[k]) r.setProperty('--' + k, m[k]); });
+    if (m.primary) {
+      r.setProperty('--primary-100', pha(m.primary, 0.14));
+      r.setProperty('--primary-50', pha(m.primary, 0.055));
+      if (!m['primary-600']) r.setProperty('--primary-600', toi(m.primary, 0.12));
+      r.setProperty('--primary-700', toi(m.primary, 0.24));
+      r.setProperty('--price', toi(m.primary, 0.12));
+    }
+    if (m.teal) r.setProperty('--teal-100', pha(m.teal, 0.14));
+    if (m.amber) r.setProperty('--amber-100', pha(m.amber, 0.18));
+    /* Phông chữ */
+    const c = t.chu || {};
+    if (c.body) { napFont(c.body); r.setProperty('--font-body', `'${c.body}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`); }
+    if (c.heading) { napFont(c.heading); r.setProperty('--font-head', `'${c.heading}', 'Be Vietnam Pro', sans-serif`); }
+    if (c.co) document.documentElement.style.setProperty('--co-chu', c.co + 'px');
+    /* Bo góc */
+    const b = t.bo || {};
+    if (b.radius) { r.setProperty('--radius', b.radius + 'px'); r.setProperty('--radius-sm', Math.max(4, Math.round(b.radius * 0.62)) + 'px'); }
+    if (b['radius-sm']) r.setProperty('--radius-sm', b['radius-sm'] + 'px');
+    /* Header */
+    const h = t.header || {};
+    document.documentElement.classList.toggle('no-sticky', h.sticky === false);
+    document.documentElement.classList.toggle('an-tim', h.hienTimKiem === false);
+    document.documentElement.classList.toggle('an-gio', h.hienGioHang === false);
+    document.documentElement.classList.toggle('an-tk', h.hienTaiKhoan === false);
+    /* Thứ tự & ẩn hiện khối trang chủ */
+    sapKhoi(t.khoi);
+  }
+  function sapKhoi(ds) {
+    if (!ds || !ds.length) return;
+    const main = document.querySelector('main#app') || document.querySelector('main');
+    if (!main) return;
+    ds.forEach((k, i) => {
+      const el = main.querySelector(`[data-khoi="${k.key}"]`);
+      if (!el) return;
+      el.style.order = String(i + 1);
+      el.classList.toggle('khoi-tat', k.bat === false);
+    });
+    if (document.querySelector('[data-khoi]')) main.classList.add('co-khoi');
+  }
+  /* Trộn màu với trắng / làm tối – đủ dùng cho các biến dẫn xuất */
+  function rgb(h) { const s = String(h).replace('#', ''); const n = s.length === 3 ? s.split('').map((x) => x + x).join('') : s; return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16) || 0); }
+  const hex = (a) => '#' + a.map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('');
+  const pha = (h, t) => hex(rgb(h).map((c) => c + (255 - c) * (1 - t)));
+  const toi = (h, t) => hex(rgb(h).map((c) => c * (1 - t)));
+
+  /* Áp theme ngay khi tải, trước khi các trang vẽ */
+  apTheme(window.THEME);
+
+  /* ---------- Kênh nói chuyện với trang quản trị ---------- */
+  (function keNoiChuyen() {
+    if (window.top === window.self) return;      // chỉ chạy khi nằm trong khung xem trước
+    let suaDuoc = false;
+    window.addEventListener('message', (e) => {
+      const d = e.data; if (!d || typeof d !== 'object') return;
+      if (d.type === 'hck-theme') { apTheme(d.theme); window.THEME = d.theme; return; }
+      if (d.type === 'hck-mode') { suaDuoc = !!d.sua; document.documentElement.classList.toggle('che-do-sua', suaDuoc); return; }
+      if (d.type === 'hck-toi') {                 // cuộn tới một khối
+        const el = document.querySelector(`[data-khoi="${d.khoi}"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!suaDuoc) return;
+      const k = e.target.closest('[data-khoi]');
+      if (!k) return;
+      e.preventDefault(); e.stopPropagation();
+      window.parent.postMessage({ type: 'hck-chon', khoi: k.dataset.khoi }, '*');
+    }, true);
+    window.parent.postMessage({ type: 'hck-san-sang' }, '*');
+  })();
+
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
     renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk();

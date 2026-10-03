@@ -356,3 +356,32 @@ tr.is-pick{background:var(--pink-50)}
 .seo-i small{color:var(--muted);font-size:12px}
 .seo-i em{position:absolute;top:10px;right:10px;color:var(--amber);font-style:normal;font-size:16px}
 @media (max-width:860px){ .seo-grid{grid-template-columns:1fr} }
+
+/* ---------- Trình chỉnh sửa giao diện ---------- */
+.th{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.th__tab{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:8px 8px 0;background:var(--bg)}
+.th__t{border:0;background:transparent;padding:8px 13px;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--muted);border-radius:9px 9px 0 0}
+.th__t:hover{color:var(--ink);background:#fff}
+.th__t.is-on{background:#fff;color:var(--pink);box-shadow:0 -1px 0 var(--pink) inset}
+.th #thBody{padding:18px}
+.kb{display:flex;flex-direction:column;gap:7px}
+.kb__i{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:#fff;transition:.15s}
+.kb__i.is-off{opacity:.5;background:var(--bg)}
+.kb__i.is-chon{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-100)}
+.kb__n{width:22px;height:22px;border-radius:6px;background:var(--line-2);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:var(--muted);flex:none}
+.kb__ten{border:0;background:transparent;font:inherit;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink);text-align:left;padding:0}
+.kb__ten:hover{color:var(--pink);text-decoration:underline}
+.bo-mau{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px;margin-bottom:8px}
+.bo-mau__i{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:#fff;cursor:pointer;text-align:left}
+.bo-mau__i:hover{border-color:var(--pink);background:var(--pink-50)}
+.bo-mau__c{display:flex;gap:3px;flex:none}
+.bo-mau__c i{width:15px;height:15px;border-radius:4px;display:block}
+.bo-mau__i b{font-size:13px;font-weight:600}
+.mau-r{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line-2)}
+.mau-r:last-of-type{border-bottom:0}
+.mau-r input[type=color]{width:44px;height:36px;padding:2px;border-radius:9px;cursor:pointer;flex:none}
+.mau-r>div{flex:1}
+.mau-r b{display:block;font-size:13.5px}
+.mau-r small{color:var(--muted);font-size:12px}
+.mau-hex{width:96px;flex:none;font-family:ui-monospace,monospace;font-size:13px;text-transform:uppercase}
+input[type=range]{accent-color:var(--pink)}

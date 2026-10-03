@@ -1459,3 +1459,19 @@ body { padding-bottom: 0; }
 html.is-preview body::before{content:'BẢN NHÁP – chỉ hiện trong trang quản trị';position:fixed;left:0;right:0;top:0;z-index:9999;
   background:#14181F;color:#fff;text-align:center;font-size:11.5px;font-weight:700;letter-spacing:.4px;padding:3px}
 html.is-preview body{padding-top:20px}
+
+/* ===== Giao diện tuỳ chỉnh từ trang quản trị ===== */
+body{font-size:var(--co-chu,15px)}
+main.co-khoi{display:flex;flex-direction:column}
+main.co-khoi>*:not([data-khoi]){order:-1}
+.khoi-tat{display:none !important}
+html.no-sticky .header{position:static}
+html.an-tim .header__search,html.an-tim #searchBox{display:none}
+html.an-gio .header__cart,html.an-gio [data-open-cart]{display:none}
+html.an-tk .header__acc,html.an-tk .topbar__item--acc{display:none}
+/* Chế độ sửa: rê chuột lên khối thì viền sáng, bấm là trang quản trị mở đúng mục */
+html.che-do-sua [data-khoi]{position:relative;cursor:pointer}
+html.che-do-sua [data-khoi]::after{content:'';position:absolute;inset:4px;border:2px dashed transparent;border-radius:12px;pointer-events:none;transition:.12s}
+html.che-do-sua [data-khoi]:hover::after{border-color:var(--primary);background:rgba(240,83,122,.05)}
+html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa khối này';position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;z-index:30;pointer-events:none;white-space:nowrap}

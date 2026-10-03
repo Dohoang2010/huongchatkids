@@ -195,6 +195,52 @@ window.NAV = [
 /* importer / congBo (tuỳ chọn): nhà nhập khẩu & số công bố ghi trên tem phụ – điền để hiện ở bảng thông tin.
    image: ảnh thật (img/<mã Shopee>.jpg); thumb: ảnh cắt gọn 420px dùng cho thẻ sản phẩm/giỏ/tìm kiếm. variants: phân loại từ Shopee, sắp theo giá tăng dần.
    price/oldPrice = phân loại rẻ nhất (giá "từ"). shape/color: dùng vẽ ảnh minh hoạ khi chưa có ảnh. */
+/* ===ADMIN:THEME=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
+window.THEME = {
+  "mau": {
+    "primary": "#F0537A",
+    "primary-600": "#D93E66",
+    "teal": "#17A398",
+    "amber": "#FFB020",
+    "ink": "#22202A",
+    "bg-soft": "#FFF8FA"
+  },
+  "chu": {
+    "body": "Be Vietnam Pro",
+    "heading": "Quicksand",
+    "co": 15
+  },
+  "bo": {
+    "radius": 16,
+    "radius-sm": 10
+  },
+  "header": {
+    "sticky": true,
+    "thongBao": "",
+    "hienTimKiem": true,
+    "hienGioHang": true,
+    "hienTaiKhoan": true
+  },
+  "khoi": [
+    { "key": "hero", "ten": "Banner lớn đầu trang", "bat": true },
+    { "key": "flash", "ten": "Flash sale", "bat": true },
+    { "key": "noi-bat", "ten": "Mẹ tin dùng nhất", "bat": true },
+    { "key": "do-tuoi", "ten": "Bé nhà mình mấy tuổi", "bat": true },
+    { "key": "danh-muc", "ten": "Danh mục sản phẩm", "bat": true },
+    { "key": "gioi-thieu", "ten": "Giới thiệu shop (4 năm đồng hành)", "bat": true },
+    { "key": "combo", "ten": "Combo tiết kiệm", "bat": true },
+    { "key": "cho-me", "ten": "Dành cho mẹ", "bat": true },
+    { "key": "vi-sao", "ten": "Vì sao mẹ chọn shop", "bat": true },
+    { "key": "danh-gia", "ten": "Đánh giá trên Shopee", "bat": true },
+    { "key": "cam-nhan", "ten": "Mẹ và bé đã dùng (ảnh thật)", "bat": true },
+    { "key": "cam-nang", "ten": "Cẩm nang mẹ", "bat": true },
+    { "key": "hang-moi", "ten": "Hàng mới về", "bat": true },
+    { "key": "thuong-hieu", "ten": "Thương hiệu chính hãng", "bat": true },
+    { "key": "zalo", "ten": "Nhận ưu đãi qua Zalo", "bat": true }
+  ]
+};
+/* ===/ADMIN:THEME=== */
+
 /* ===ADMIN:PRODUCTS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.PRODUCTS = [
   { id: "41002695070", name: "Rong Biển Vụn Ăn Liền Sung Gyung - Lựa Chọn Hoàn Hảo Cho Bữa Ăn Nhanh Gọn và Bổ Dưỡng", short: "Rong biển vụn Sung Gyung", brand: "sunggyung", cat: "rong-bien",

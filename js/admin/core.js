@@ -132,10 +132,10 @@ window.ADMIN = (() => {
 
   /* ---------------- Bản nháp dữ liệu website ----------------
      GOC = bản đang chạy thật, D = bản đang sửa. Chỉ ghi lên web khi bấm Xuất bản. */
-  const KHOI = ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS'];
+  const KHOI = ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS', 'THEME'];
   let GOC = {}, D = {}, daSua = false;
   function napNhap() {
-    GOC = {}; KHOI.forEach((k) => { GOC[k] = sao(window[k] || (k === 'QUA_TANG' ? {} : [])); });
+    GOC = {}; KHOI.forEach((k) => { GOC[k] = sao(window[k] || (k === 'QUA_TANG' || k === 'THEME' ? {} : [])); });
     let nhap = null;
     try { nhap = JSON.parse(sessionStorage.getItem('hck_admin_nhap') || 'null'); } catch { nhap = null; }
     D = nhap || sao(GOC);
@@ -171,7 +171,7 @@ window.ADMIN = (() => {
     if (!ghToken()) { toast('Chưa có mã GitHub – vào ⚙️ Cấu hình để dán mã', 'err'); di('#/cau-hinh/github'); return; }
     const doi = daDoiGi();
     if (!doi.length) { toast('Không có gì thay đổi'); return; }
-    const ten = { PRODUCTS: 'sản phẩm', BANNERS: 'banner', QUA_TANG: 'quà tặng', TIERS: 'hạng khách', COUPONS: 'mã giảm giá', NAV: 'menu', POSTS: 'bài viết' };
+    const ten = { PRODUCTS: 'sản phẩm', BANNERS: 'banner', QUA_TANG: 'quà tặng', TIERS: 'hạng khách', COUPONS: 'mã giảm giá', NAV: 'menu', POSTS: 'bài viết', THEME: 'giao diện' };
     const ok = await hoi({ tieuDe: 'Xuất bản thay đổi?',
       noiDung: `Các phần sẽ cập nhật lên website thật: <b>${doi.map((k) => esc(ten[k])).join(', ')}</b>.<br>Khách sẽ nhìn thấy sau khoảng 1 phút.`,
       nutOk: 'Xuất bản' });

@@ -37,16 +37,6 @@
     });
   }
 
-  /* ---------------- TRÌNH CHỈNH SỬA GIAO DIỆN ---------------- */
-  function veTheme(el) {
-    el.innerHTML = `<div class="card"><h3>🎨 Trình chỉnh sửa giao diện</h3>
-      <p class="muted">Kéo thả bố cục trang chủ, đổi màu – phông chữ – bo góc, sửa Header/Footer, và xem đổi ngay trong khung bên phải không cần tải lại.</p>
-      <div class="box-note">⚙️ <b>Đang làm ở Phase 6.</b> Nền móng đã xong: khung xem trước chạy chính website thật (không phải ảnh chụp, không phải web giả),
-      đã có chọn Máy tính / Máy tính bảng / Điện thoại và phóng to thu nhỏ. Phase 6 sẽ thêm:
-      kéo thả khối, bấm thẳng vào phần tử trong khung xem trước để sửa, đổi màu/phông/bo góc toàn site, Header & Footer builder.</div>
-      <p>Trong lúc chờ, các phần sau đã sửa được và xem trước ngay: <a href="#/banner">Banner</a> · <a href="#/san-pham">Sản phẩm</a> · <a href="#/flash-sale">Flash sale</a> · <a href="#/qua-tang">Quà tặng</a>.</p></div>`;
-  }
-
   /* ---------------- Sự kiện ---------------- */
   document.addEventListener('click', async (e) => {
     const t = e.target;
@@ -79,5 +69,4 @@
   });
 
   A.dangKy({ route: '/banner', ten: 'Banner', icon: '🖼️', nhom: 'website', quyen: 'banner.view', preview: true, mo: 'Khung lớn ở đầu trang chủ', ve: veBanner });
-  A.dangKy({ route: '/giao-dien', ten: 'Trình chỉnh sửa giao diện', icon: '🎨', nhom: 'website', quyen: 'theme.view', preview: true, mo: 'Bố cục, màu sắc, phông chữ', giaiDoan: 6, ve: veTheme });
 })();
