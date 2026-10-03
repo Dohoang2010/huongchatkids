@@ -195,6 +195,11 @@ window.NAV = [
 /* importer / congBo (tuỳ chọn): nhà nhập khẩu & số công bố ghi trên tem phụ – điền để hiện ở bảng thông tin.
    image: ảnh thật (img/<mã Shopee>.jpg); thumb: ảnh cắt gọn 420px dùng cho thẻ sản phẩm/giỏ/tìm kiếm. variants: phân loại từ Shopee, sắp theo giá tăng dần.
    price/oldPrice = phân loại rẻ nhất (giá "từ"). shape/color: dùng vẽ ảnh minh hoạ khi chưa có ảnh. */
+/* ===ADMIN:CAUHINH=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong)
+   Những gì ghi ở đây sẽ ĐÈ LÊN window.SITE ở trên. Để trống {} nghĩa là dùng nguyên SITE. */
+window.CAUHINH = {};
+/* ===/ADMIN:CAUHINH=== */
+
 /* ===ADMIN:THEME=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.THEME = {
   "mau": {

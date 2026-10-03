@@ -391,3 +391,9 @@ input[type=range]{accent-color:var(--pink)}
 .link-box input{flex:1;min-width:240px;font-family:ui-monospace,monospace;font-size:12.5px;background:var(--bg)}
 .so-cu{color:var(--muted);text-decoration:line-through;text-decoration-color:#D9B0B8}
 .so-moi{color:var(--teal);font-weight:600}
+
+/* ---------- Vai trò ---------- */
+.vt{border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px;background:#fff}
+.vt__h{display:flex;align-items:center;gap:8px;font-size:14.5px}
+.vt p{margin:3px 0 8px;font-size:13px}
+.vt__q{display:flex;gap:5px;flex-wrap:wrap}

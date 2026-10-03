@@ -56,6 +56,7 @@ window.ADMIN = (() => {
     CONTENT_STAFF: { ten: 'Nhân viên nội dung', quyen: ['dashboard.view', 'content.*', 'banner.*', 'seo.*'] },
   };
   let nguoiDung = { ten: 'Chủ shop', vaiTro: 'SUPER_ADMIN' };
+  try { const p = JSON.parse(sessionStorage.getItem('hck_qt_nd') || 'null'); if (p && p.ten) nguoiDung = p; } catch { /* dùng mặc định */ }
   function co(quyen) {
     if (!quyen) return true;
     const ds = (VAI_TRO[nguoiDung.vaiTro] || {}).quyen || [];
@@ -74,11 +75,13 @@ window.ADMIN = (() => {
     } catch { return false; }
   }
   function ghiPhien() { sessionStorage.setItem(KHOA_PHIEN, JSON.stringify({ luc: Date.now(), ten: nguoiDung.ten })); }
-  function thoat() { sessionStorage.removeItem(KHOA_PHIEN); location.reload(); }
+  function thoat() { sessionStorage.removeItem(KHOA_PHIEN); sessionStorage.removeItem('hck_qt_token'); sessionStorage.removeItem('hck_qt_nd'); location.reload(); }
 
   /* ---------------- Gọi Apps Script (JSONP) ---------------- */
   let seq = 0;
+  const LENH_QT = ['thongKe', 'donHang', 'donChiTiet', 'doiTrangThai', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa'];
   function api(action, params = {}, timeout = 25000) {
+    if (LENH_QT.includes(action)) params = { ...xacThuc(), ...params };
     const url = (SITE.loyalty && SITE.loyalty.endpoint) || SITE.orderEndpoint || '';
     if (!url) return Promise.reject(new Error('Chưa cấu hình link Apps Script trong js/data.js'));
     return new Promise((ok, loi) => {
@@ -93,6 +96,12 @@ window.ADMIN = (() => {
     });
   }
   const adminKey = () => localStorage.getItem('hck_admin_key') || 'hck-admin-2026';
+  /* Tham số xác thực gửi kèm mọi lệnh quản trị: token của tài khoản đang đăng nhập,
+     kèm khoá chủ shop làm phương án dự phòng khi chưa tạo tài khoản nào. */
+  function xacThuc(extra) {
+    const p = sessionStorage.getItem('hck_qt_token');
+    return { key: adminKey(), ...(p ? { token: p } : {}), ...(extra || {}) };
+  }
 
   /* ---------------- GitHub ---------------- */
   const ghToken = () => localStorage.getItem('hck_gh_token') || '';
@@ -132,10 +141,10 @@ window.ADMIN = (() => {
 
   /* ---------------- Bản nháp dữ liệu website ----------------
      GOC = bản đang chạy thật, D = bản đang sửa. Chỉ ghi lên web khi bấm Xuất bản. */
-  const KHOI = ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS', 'THEME'];
+  const KHOI = ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS', 'THEME', 'CAUHINH'];
   let GOC = {}, D = {}, daSua = false;
   function napNhap() {
-    GOC = {}; KHOI.forEach((k) => { GOC[k] = sao(window[k] || (k === 'QUA_TANG' || k === 'THEME' ? {} : [])); });
+    GOC = {}; KHOI.forEach((k) => { GOC[k] = sao(window[k] || (k === 'QUA_TANG' || k === 'THEME' || k === 'CAUHINH' ? {} : [])); });
     let nhap = null;
     try { nhap = JSON.parse(sessionStorage.getItem('hck_admin_nhap') || 'null'); } catch { nhap = null; }
     D = nhap || sao(GOC);
@@ -172,7 +181,7 @@ window.ADMIN = (() => {
     if (!ghToken()) { toast('Chưa có mã GitHub – vào ⚙️ Cấu hình để dán mã', 'err'); di('#/cau-hinh/github'); return; }
     const doi = daDoiGi();
     if (!doi.length) { toast('Không có gì thay đổi'); return; }
-    const ten = { PRODUCTS: 'sản phẩm', BANNERS: 'banner', QUA_TANG: 'quà tặng', TIERS: 'hạng khách', COUPONS: 'mã giảm giá', NAV: 'menu', POSTS: 'bài viết', THEME: 'giao diện' };
+    const ten = { PRODUCTS: 'sản phẩm', BANNERS: 'banner', QUA_TANG: 'quà tặng', TIERS: 'hạng khách', COUPONS: 'mã giảm giá', NAV: 'menu', POSTS: 'bài viết', THEME: 'giao diện', CAUHINH: 'cấu hình website' };
     const ok = await hoi({ tieuDe: 'Xuất bản thay đổi?',
       noiDung: `Các phần sẽ cập nhật lên website thật: <b>${doi.map((k) => esc(ten[k])).join(', ')}</b>.<br>Khách sẽ nhìn thấy sau khoảng 1 phút.`,
       nutOk: 'Xuất bản' });
@@ -424,7 +433,7 @@ window.ADMIN = (() => {
 
   return { $, $$, esc, fmt, gon, ngayISO, sao, hoan, tre, khongDau, REPO,
     toast, hoi, co, VAI_TRO, nguoiDung,
-    api, adminKey, ghToken, ghDoc, ghGhi, b64, unb64, taiAnh, kiemTraGh,
+    api, adminKey, xacThuc, ghToken, ghDoc, ghGhi, b64, unb64, taiAnh, kiemTraGh,
     get D() { return D; }, get GOC() { return GOC; }, get daSua() { return daSua; },
     doiDuLieu, boNhap, daDoiGi, xuatBan, napNhap,
     dangKy, MODULES, NHOM, di, duong, veTrang, veSidebar,

@@ -846,6 +846,15 @@
       .then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) applyStock(d); }).catch(() => {});
   }
 
+  /* Cấu hình sửa từ trang quản trị đè lên SITE (gộp sâu để giữ các khoá không đụng tới) */
+  (function gopCauHinh() {
+    const gop = (a, b) => { Object.keys(b || {}).forEach((k) => {
+      if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k])) { a[k] = gop(a[k] && typeof a[k] === 'object' ? a[k] : {}, b[k]); }
+      else if (b[k] !== undefined && b[k] !== '') a[k] = b[k];
+    }); return a; };
+    if (window.CAUHINH && Object.keys(window.CAUHINH).length) gop(window.SITE, window.CAUHINH);
+  })();
+
   /* ---------------- Link xem thử có mã ----------------
      Trang quản trị tạo file data/nhap/<mã>.json rồi chia sẻ link index.html?xem=<mã>.
      Người mở link thấy bản nháp; website thật không đổi. Trang này không cho Google đánh chỉ mục. */

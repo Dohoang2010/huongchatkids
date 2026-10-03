@@ -442,6 +442,11 @@ function doGet(e) {
     if (action === 'khachChiTiet') return traVe(apiKhachChiTiet(p), cb);
     if (action === 'khoaKhach')    return traVe(apiKhoaKhach(p), cb);
     if (action === 'nhatKy')       return traVe(apiNhatKy(p), cb);
+    if (action === 'qtDangNhap')   return traVe(apiQtDangNhap(p), cb);
+    if (action === 'qtHoSo')       return traVe(apiQtHoSo(p), cb);
+    if (action === 'qtDs')         return traVe(apiQtDs(p), cb);
+    if (action === 'qtLuu')        return traVe(apiQtLuu(p), cb);
+    if (action === 'qtXoa')        return traVe(apiQtXoa(p), cb);
     if (action === 'doiMatKhau') return traVe(apiDoiMatKhau(p), cb);
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
@@ -537,7 +542,7 @@ function apiDangKy(p) {
 /* Trả về doanh số, số đơn, khách mới, top sản phẩm, đơn theo ngày và theo giờ
    trong khoảng thời gian tuỳ chọn. Cần đúng ADMIN_KEY mới đọc được. */
 function apiThongKe(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'dashboard.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var tu = p.tu ? new Date(p.tu + 'T00:00:00+07:00') : new Date(Date.now() - 30 * 864e5);
   var den = p.den ? new Date(p.den + 'T23:59:59+07:00') : new Date();
   var s = sheetDon(); var n = s.getLastRow();
@@ -594,6 +599,134 @@ function apiThongKe(p) {
   return kq;
 }
 
+/* ===================== TÀI KHOẢN QUẢN TRỊ & PHÂN QUYỀN =====================
+   Mỗi nhân viên một tài khoản riêng, mật khẩu băm kèm muối, lưu ở sheet "Quản trị".
+   Mọi lệnh quản trị kiểm tra quyền ở ĐÂY (máy chủ), không chỉ ẩn nút trên giao diện. */
+var H_QT = ['Tài khoản', 'Họ tên', 'Vai trò', 'Hash', 'Muối', 'Trạng thái', 'Tạo lúc', 'Đăng nhập cuối'];
+var VAI_TRO_QT = {
+  SUPER_ADMIN:   ['*'],
+  MANAGER:       ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'],
+  ORDER_STAFF:   ['dashboard.view', 'order.view', 'order.update', 'customer.view'],
+  PRODUCT_STAFF: ['dashboard.view', 'product.*', 'category.*', 'flashsale.*', 'combo.*'],
+  CONTENT_STAFF: ['dashboard.view', 'content.*', 'banner.*', 'seo.*']
+};
+function sheetQT()     { return sheetPhu('Quản trị', H_QT); }
+function sheetPhienQT() { return sheetPhu('Phiên QT', ['Token', 'Tài khoản', 'Vai trò', 'Hết hạn', 'Tạo lúc']); }
+
+function bamMkQT(mk, muoi) {
+  var raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(muoi) + '|' + String(mk), Utilities.Charset.UTF_8);
+  return raw.map(function (b) { return ('0' + (b & 0xFF).toString(16)).slice(-2); }).join('');
+}
+function timQT(tk) {
+  var s = sheetQT(); var n = s.getLastRow(); if (n < 2) return 0;
+  var v = s.getRange(2, 1, n - 1, 1).getValues();
+  for (var i = 0; i < v.length; i++) if (String(v[i][0]).trim().toLowerCase() === String(tk).trim().toLowerCase()) return i + 2;
+  return 0;
+}
+/* Lần đầu chạy: tạo sẵn tài khoản chủ shop để không bị khoá ngoài */
+function taoChuShopNeuChuaCo() {
+  var s = sheetQT();
+  if (s.getLastRow() >= 2) return;
+  var muoi = Utilities.getUuid().slice(0, 12);
+  s.appendRow(['adminhck', 'Chủ shop', 'SUPER_ADMIN', bamMkQT('123', muoi), muoi, 'Hoạt động', new Date(), '']);
+}
+function apiQtDangNhap(p) {
+  taoChuShopNeuChuaCo();
+  var tk = String(p.tk || '').trim().toLowerCase();
+  var cache = CacheService.getScriptCache(); var k = 'qt_' + tk;
+  if (Number(cache.get(k) || 0) >= 8) return { ok: false, msg: 'Nhập sai nhiều lần, thử lại sau 1 giờ' };
+  var dong = timQT(tk);
+  if (!dong) { cache.put(k, String(Number(cache.get(k) || 0) + 1), 3600); return { ok: false, msg: 'Tài khoản hoặc mật khẩu chưa đúng' }; }
+  var v = sheetQT().getRange(dong, 1, 1, H_QT.length).getValues()[0];
+  if (String(v[5]) !== 'Hoạt động') return { ok: false, msg: 'Tài khoản đang bị khoá' };
+  if (bamMkQT(p.mk, v[4]) !== String(v[3])) { cache.put(k, String(Number(cache.get(k) || 0) + 1), 3600); return { ok: false, msg: 'Tài khoản hoặc mật khẩu chưa đúng' }; }
+  cache.remove(k);
+  var token = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+  sheetPhienQT().appendRow([token, tk, String(v[2]), new Date(Date.now() + 12 * 3600e3), new Date()]);
+  sheetQT().getRange(dong, 8).setValue(new Date());
+  ghiNhatKy('Quản trị', tk, 'Đăng nhập');
+  return { ok: true, token: token, tk: tk, ten: String(v[1]), vaiTro: String(v[2]), quyen: VAI_TRO_QT[String(v[2])] || [] };
+}
+function phienQT(token) {
+  if (!token) return null;
+  var s = sheetPhienQT(); var n = s.getLastRow(); if (n < 2) return null;
+  var v = s.getRange(2, 1, n - 1, 4).getValues();
+  for (var i = 0; i < v.length; i++) {
+    if (String(v[i][0]) !== String(token)) continue;
+    if (new Date(v[i][3]).getTime() < Date.now()) return null;
+    return { tk: String(v[i][1]), vaiTro: String(v[i][2]) };
+  }
+  return null;
+}
+function coQuyen(p, quyen) {
+  if (String(p.key || '') === ADMIN_KEY) return true;          // khoá chủ shop, dùng khi chưa tạo tài khoản
+  var ph = phienQT(p.token); if (!ph) return false;
+  var ds = VAI_TRO_QT[ph.vaiTro] || [];
+  for (var i = 0; i < ds.length; i++) {
+    var q = ds[i];
+    if (q === '*' || q === quyen) return true;
+    if (q.slice(-2) === '.*' && quyen.indexOf(q.slice(0, -1)) === 0) return true;
+  }
+  return false;
+}
+function apiQtHoSo(p) {
+  var ph = phienQT(p.token);
+  if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, đăng nhập lại nhé' };
+  var dong = timQT(ph.tk); var v = sheetQT().getRange(dong, 1, 1, H_QT.length).getValues()[0];
+  return { ok: true, tk: ph.tk, ten: String(v[1]), vaiTro: ph.vaiTro, quyen: VAI_TRO_QT[ph.vaiTro] || [] };
+}
+function apiQtDs(p) {
+  if (!coQuyen(p, 'setting.view')) return { ok: false, msg: 'Không có quyền' };
+  taoChuShopNeuChuaCo();
+  var s = sheetQT(); var n = s.getLastRow(); var ds = [];
+  if (n >= 2) {
+    var v = s.getRange(2, 1, n - 1, H_QT.length).getValues();
+    for (var i = 0; i < v.length; i++) ds.push({ dong: i + 2, tk: String(v[i][0]), ten: String(v[i][1]), vaiTro: String(v[i][2]),
+      trangThai: String(v[i][5]), tao: v[i][6] ? ngayVN(v[i][6]) : '', dangNhapCuoi: v[i][7] ? ngayVN(v[i][7]) : 'chưa đăng nhập' });
+  }
+  return { ok: true, ds: ds, vaiTro: Object.keys(VAI_TRO_QT), quyenTheoVaiTro: VAI_TRO_QT };
+}
+function apiQtLuu(p) {
+  if (!coQuyen(p, 'setting.view')) return { ok: false, msg: 'Không có quyền' };
+  var tk = String(p.tk || '').trim().toLowerCase();
+  if (!/^[a-z0-9_.]{4,24}$/.test(tk)) return { ok: false, msg: 'Tài khoản 4–24 ký tự, chỉ chữ thường, số, dấu _ .' };
+  if (!VAI_TRO_QT[String(p.vaiTro)]) return { ok: false, msg: 'Vai trò không hợp lệ' };
+  var s = sheetQT(); var dong = timQT(tk);
+  var mk = String(p.mk || '');
+  if (!dong) {
+    if (mk.length < 4) return { ok: false, msg: 'Mật khẩu cần ít nhất 4 ký tự' };
+    var muoi = Utilities.getUuid().slice(0, 12);
+    s.appendRow([tk, String(p.ten || tk), String(p.vaiTro), bamMkQT(mk, muoi), muoi, String(p.trangThai || 'Hoạt động'), new Date(), '']);
+    ghiNhatKy('Quản trị', tk, 'Tạo tài khoản · vai trò ' + p.vaiTro);
+    return { ok: true, moi: true };
+  }
+  var v = s.getRange(dong, 1, 1, H_QT.length).getValues()[0];
+  if (String(v[2]) === 'SUPER_ADMIN' && String(p.vaiTro) !== 'SUPER_ADMIN' && demSuperAdmin() <= 1)
+    return { ok: false, msg: 'Phải còn ít nhất 1 tài khoản Quản trị cao nhất' };
+  s.getRange(dong, 2).setValue(String(p.ten || v[1]));
+  s.getRange(dong, 3).setValue(String(p.vaiTro));
+  s.getRange(dong, 6).setValue(String(p.trangThai || v[5]));
+  if (mk) { var m2 = Utilities.getUuid().slice(0, 12); s.getRange(dong, 4).setValue(bamMkQT(mk, m2)); s.getRange(dong, 5).setValue(m2); }
+  ghiNhatKy('Quản trị', tk, 'Sửa tài khoản' + (mk ? ' · đổi mật khẩu' : ''));
+  return { ok: true };
+}
+function demSuperAdmin() {
+  var s = sheetQT(); var n = s.getLastRow(); if (n < 2) return 0;
+  var v = s.getRange(2, 3, n - 1, 1).getValues(); var d = 0;
+  for (var i = 0; i < v.length; i++) if (String(v[i][0]) === 'SUPER_ADMIN') d++;
+  return d;
+}
+function apiQtXoa(p) {
+  if (!coQuyen(p, 'setting.view')) return { ok: false, msg: 'Không có quyền' };
+  var tk = String(p.tk || '').trim().toLowerCase(); var dong = timQT(tk);
+  if (!dong) return { ok: false, msg: 'Không tìm thấy tài khoản' };
+  var vt = String(sheetQT().getRange(dong, 3).getValue());
+  if (vt === 'SUPER_ADMIN' && demSuperAdmin() <= 1) return { ok: false, msg: 'Phải còn ít nhất 1 tài khoản Quản trị cao nhất' };
+  sheetQT().deleteRow(dong);
+  ghiNhatKy('Quản trị', tk, 'Xoá tài khoản');
+  return { ok: true };
+}
+
 /* ===================== QUẢN TRỊ: ĐƠN HÀNG ===================== */
 var TRANG_THAI = ['Chờ xác nhận', 'Đã xác nhận', 'Đang chuẩn bị', 'Đang giao', 'Đã giao', 'Đã huỷ', 'Yêu cầu hoàn hàng', 'Đã hoàn hàng'];
 /* Chỉ cho chuyển sang trạng thái hợp lệ, tránh bấm nhầm Đã giao khi chưa giao */
@@ -610,7 +743,7 @@ var LUONG = {
 function chuanTT(v) { var t = String(v || '').trim(); return t || 'Chờ xác nhận'; }
 
 function apiDonHang(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'order.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var s = sheetDon(); var n = s.getLastRow();
   var kq = { ok: true, ds: [], tong: 0, demTT: {} };
   if (n < 2) return kq;
@@ -646,7 +779,7 @@ function apiDonHang(p) {
 }
 
 function apiDonChiTiet(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'order.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var s = sheetDon(); var dong = Number(p.dong || 0);
   if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
   var v = s.getRange(dong, 1, 1, HEADERS.length).getValues()[0];
@@ -665,7 +798,7 @@ function apiDonChiTiet(p) {
 }
 
 function apiDoiTrangThai(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'order.update')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var moi = String(p.trangThai || '').trim();
   if (TRANG_THAI.indexOf(moi) < 0) return { ok: false, msg: 'Trạng thái không hợp lệ' };
   var s = sheetDon(); var dong = Number(p.dong || 0);
@@ -687,7 +820,7 @@ function apiDoiTrangThai(p) {
 
 /* ===================== QUẢN TRỊ: KHÁCH HÀNG ===================== */
 function apiKhachHang(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var s = sheetKH(); var n = s.getLastRow();
   var kq = { ok: true, ds: [], tong: 0 };
   if (n < 2) return kq;
@@ -712,7 +845,7 @@ function apiKhachHang(p) {
 }
 
 function apiKhachChiTiet(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var sdt = chuanSdt(p.sdt);
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
   var d = docKH(sdt);
@@ -722,7 +855,7 @@ function apiKhachChiTiet(p) {
 }
 
 function apiKhoaKhach(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'customer.update')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var sdt = chuanSdt(p.sdt); var dong = timDongKH(sdt);
   if (!dong) return { ok: false, msg: 'Không tìm thấy khách' };
   var khoa = String(p.khoa) === '1';
@@ -739,7 +872,7 @@ function ghiNhatKy(muc, banGhi, thayDoi) {
   try { sheetNhatKy().appendRow([new Date(), muc, "'" + banGhi, thayDoi]); } catch (e) { Logger.log('Nhật ký lỗi: ' + e); }
 }
 function apiNhatKy(p) {
-  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  if (!coQuyen(p, 'setting.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var s = sheetNhatKy(); var n = s.getLastRow();
   var ds = [];
   if (n >= 2) {

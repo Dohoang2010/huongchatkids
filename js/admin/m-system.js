@@ -4,27 +4,6 @@
   const A = window.ADMIN, { $, $$, esc, fmt } = A;
 
 
-  /* ---------------- NGƯỜI DÙNG & PHÂN QUYỀN ---------------- */
-  function veNguoiDung(el) {
-    el.innerHTML = `<div class="card"><h3>Người dùng quản trị</h3>
-      <div class="tbl-wrap"><table><thead><tr><th>Tên</th><th>Tài khoản</th><th>Vai trò</th><th>Trạng thái</th></tr></thead><tbody>
-        <tr><td><b>Chủ shop</b></td><td><code>adminhck</code></td><td>${A.badge('Quản trị cao nhất', 'tag--ok')}</td><td>${A.badge('Đang hoạt động', 'tag--ok')}</td></tr>
-      </tbody></table></div>
-      <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 8:</b> thêm tài khoản cho nhân viên, mỗi người một mật khẩu riêng (hash lưu trong Google Sheet),
-      khoá/mở tài khoản, bắt buộc đổi mật khẩu lần đầu.</div></div>`;
-  }
-  function veQuyen(el) {
-    const V = A.VAI_TRO;
-    el.innerHTML = `<div class="card"><h3>Vai trò & phân quyền</h3>
-      <p class="muted">Vai trò quyết định menu nào hiện ra và nút nào bấm được.</p>
-      <div class="tbl-wrap"><table><thead><tr><th>Vai trò</th><th>Quyền</th></tr></thead><tbody>
-        ${Object.keys(V).map((k) => `<tr><td><b>${esc(V[k].ten)}</b><br><small class="muted">${esc(k)}</small></td>
-        <td>${V[k].quyen.map((q) => A.badge(q)).join(' ')}</td></tr>`).join('')}
-      </tbody></table></div>
-      <div class="box-note">⚙️ <b>Sẽ bổ sung ở Phase 8:</b> gán vai trò cho từng tài khoản và cho Apps Script kiểm tra quyền phía máy chủ
-      (hiện phần quyền mới chỉ ẩn/hiện giao diện).</div></div>`;
-  }
-
   /* ---------------- NHẬT KÝ HOẠT ĐỘNG (dùng lịch sử Git) ---------------- */
   async function veNhatKy(el) {
     el.innerHTML = A.dangTai('nhật ký');
@@ -69,37 +48,56 @@
       <div class="row row-2"><label>Khoá quản trị<input id="inKey2" value="${esc(A.adminKey())}"></label>
       <div class="row__nut"><button class="btn btn--primary" id="btnKey2">Lưu khoá</button></div></div>`;
 
+    const C = () => (A.D.CAUHINH = A.D.CAUHINH || {});
+    const gt = (k, md) => { const o = C(); return o[k] !== undefined ? o[k] : (md !== undefined ? md : SITE[k]); };
+
     if (tab === 'chung') b.innerHTML = `
-      <h3>Thông tin shop</h3>
+      <h3>Thông tin shop</h3><p class="muted">Sửa xong bấm <b>Xuất bản</b> ở thanh trên để khách nhìn thấy.</p>
       <div class="row row-2">
-        <label>Tên website<input value="${esc(SITE.name)}" disabled></label>
-        <label>Khẩu hiệu<input value="${esc(SITE.slogan || '')}" disabled></label>
-        <label>Hotline<input value="${esc(SITE.hotline)}" disabled></label>
-        <label>Email<input value="${esc(SITE.email)}" disabled></label>
-        <label>Địa chỉ<input value="${esc(SITE.address)}" disabled></label>
-        <label>Zalo<input value="${esc(SITE.zalo)}" disabled></label>
+        <label>Tên website<input data-ch="name" value="${esc(gt('name'))}"></label>
+        <label>Khẩu hiệu<input data-ch="slogan" value="${esc(gt('slogan'))}"></label>
+        <label>Hotline hiển thị<input data-ch="hotline" value="${esc(gt('hotline'))}"></label>
+        <label>Hotline dạng gọi<input data-ch="hotlineTel" value="${esc(gt('hotlineTel'))}"><small class="hint">VD: +84967233003</small></label>
+        <label>Email<input data-ch="email" value="${esc(gt('email'))}"></label>
+        <label>Link Zalo<input data-ch="zalo" value="${esc(gt('zalo'))}"></label>
+        <label>Địa chỉ<input data-ch="address" value="${esc(gt('address'))}"></label>
+        <label>Giờ làm việc<input data-ch="workingHours" value="${esc(gt('workingHours'))}"></label>
+        <label>Tên pháp nhân<input data-ch="company" value="${esc(gt('company'))}"></label>
+        <label>Mã số thuế<input data-ch="taxCode" value="${esc(gt('taxCode', ''))}"></label>
       </div>
-      <div class="box-note">⚙️ <b>Sẽ mở khoá sửa ở Phase 8</b> (cần đánh dấu khối <code>SITE</code> trong <code>js/data.js</code> để ghi đè an toàn).
-      Hiện muốn đổi thì nhắn Claude.</div>`;
+      <h4>Mạng xã hội <span class="muted">— để trống thì ẩn biểu tượng</span></h4>
+      <div class="row row-4">
+        ${['facebook', 'instagram', 'youtube', 'tiktok'].map((k) => `<label>${k[0].toUpperCase() + k.slice(1)}<input data-ch="${k}" value="${esc(gt(k, ''))}"></label>`).join('')}
+      </div>`;
 
     if (tab === 'van-chuyen') b.innerHTML = `
       <h3>Phí vận chuyển</h3>
-      <div class="tbl-wrap"><table><thead><tr><th>Nơi nhận</th><th class="num">Phí</th></tr></thead><tbody>
-        <tr><td>Nội thành Hà Nội</td><td class="num">${fmt((SITE.shipping || {}).noiThanhGia || SITE.shipFee)}</td></tr>
-        <tr><td>Tỉnh/thành khác</td><td class="num">theo bảng giá ${esc((SITE.shipping || {}).hang || 'GHN')}, tối thiểu ${fmt((SITE.shipping || {}).toiThieu || 0)}</td></tr>
-        <tr><td>Hoả tốc nội thành Hà Nội</td><td class="num">${fmt(SITE.expressFee)}</td></tr>
-        <tr><td>Đơn từ ${fmt(SITE.freeshipFrom)}</td><td class="num">Miễn phí</td></tr>
-      </tbody></table></div>
-      <div class="box-note">⚙️ <b>Sẽ mở khoá sửa ở Phase 8.</b></div>`;
+      <div class="row row-3">
+        <label>Nội thành Hà Nội (đ)<input type="number" data-ch2="shipping.noiThanhGia" value="${(SITE.shipping || {}).noiThanhGia || 0}"></label>
+        <label>Mức tối thiểu tỉnh khác (đ)<input type="number" data-ch2="shipping.toiThieu" value="${(SITE.shipping || {}).toiThieu || 0}"></label>
+        <label>Hoả tốc Hà Nội (đ)<input type="number" data-ch="expressFee" value="${gt('expressFee')}"></label>
+      </div>
+      <div class="row row-2">
+        <label>Miễn phí ship cho đơn từ (đ)<input type="number" data-ch="freeshipFrom" value="${gt('freeshipFrom')}"></label>
+        <label>Đơn vị vận chuyển<input value="${esc((SITE.shipping || {}).hang || '')}" disabled></label>
+      </div>
+      <div class="box-note">Tỉnh khác tính theo bảng giá ${esc((SITE.shipping || {}).hang || 'GHN')} theo cân nặng và vùng,
+      nhưng không thấp hơn mức tối thiểu ở trên. Bảng giá chi tiết sửa trong <code>js/data.js</code>.</div>`;
 
     if (tab === 'thanh-toan') b.innerHTML = `
       <h3>Thanh toán</h3>
-      <div class="tbl-wrap"><table><thead><tr><th>Hình thức</th><th>Trạng thái</th><th>Thông tin</th></tr></thead><tbody>
-        <tr><td>Thanh toán khi nhận hàng (COD)</td><td>${A.badge('Đang bật', 'tag--ok')}</td><td>—</td></tr>
-        <tr><td>Chuyển khoản / VietQR</td><td>${A.badge('Đang bật', 'tag--ok')}</td><td>${esc((SITE.bank || {}).name)} · ${esc((SITE.bank || {}).account)} · ${esc((SITE.bank || {}).holder)}</td></tr>
-        <tr><td>VNPay / MoMo / ZaloPay</td><td>${A.badge('Chưa bật', 'tag--off')}</td><td>Cần đăng ký với nhà cung cấp và có máy chủ nhận callback</td></tr>
+      <div class="row row-2">
+        <label>Ngân hàng<input data-ch2="bank.name" value="${esc((SITE.bank || {}).name || '')}"></label>
+        <label>Mã ngân hàng (BIN)<input data-ch2="bank.bin" value="${esc((SITE.bank || {}).bin || '')}"><small class="hint">Dùng tạo mã VietQR. BIDV = 970418.</small></label>
+        <label>Số tài khoản<input data-ch2="bank.account" value="${esc((SITE.bank || {}).account || '')}"></label>
+        <label>Chủ tài khoản<input data-ch2="bank.holder" value="${esc((SITE.bank || {}).holder || '')}"><small class="hint">In hoa không dấu, VD: DO VAN HOANG</small></label>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>Hình thức</th><th>Trạng thái</th></tr></thead><tbody>
+        <tr><td>Thanh toán khi nhận hàng (COD)</td><td>${A.badge('Đang bật', 'tag--ok')}</td></tr>
+        <tr><td>Chuyển khoản / VietQR</td><td>${A.badge('Đang bật', 'tag--ok')}</td></tr>
+        <tr><td>VNPay / MoMo / ZaloPay</td><td>${A.badge('Chưa bật', 'tag--off')}</td></tr>
       </tbody></table></div>
-      <div class="box-note">⚙️ <b>Sẽ mở khoá sửa ở Phase 8.</b> Riêng ví điện tử cần máy chủ riêng để nhận kết quả thanh toán — em sẽ tư vấn khi anh/chị cần.</div>`;
+      <div class="box-note">Ví điện tử cần máy chủ riêng để nhận kết quả thanh toán — nhắn Claude khi anh/chị muốn bật.</div>`;
 
     if (tab === 'bao-mat') b.innerHTML = `
       <h3>Bảo mật</h3>
@@ -116,14 +114,21 @@
       thêm giới hạn số lần nhập sai, và ghi lại lịch sử đăng nhập.</div>`;
   }
 
+  /* Ghi vào khối CAUHINH (đè lên SITE) – giữ nguyên ghi chú trong js/data.js */
+  function thuCauHinh(el) {
+    const C = (A.D.CAUHINH = A.D.CAUHINH || {});
+    const k = el.dataset.ch, k2 = el.dataset.ch2;
+    if (k) { const v = el.type === 'number' ? Number(el.value) || 0 : el.value; C[k] = v; A.doiDuLieu(); return; }
+    if (k2) { const [a, b2] = k2.split('.'); C[a] = C[a] || {}; C[a][b2] = el.type === 'number' ? Number(el.value) || 0 : el.value; A.doiDuLieu(); }
+  }
+  document.addEventListener('input', (e) => { if (e.target.dataset.ch || e.target.dataset.ch2) thuCauHinh(e.target); });
+
   document.addEventListener('click', (e) => {
     if (e.target.id === 'btnLuuGh') { const v = $('#inGh').value.trim(); if (!v) return; localStorage.setItem('hck_gh_token', v); $('#inGh').value = ''; A.toast('Đã lưu mã GitHub trên máy này', 'ok'); A.kiemTraGh(); A.thongBao(); return; }
     if (e.target.id === 'btnXoaGh') { localStorage.removeItem('hck_gh_token'); A.toast('Đã xoá mã khỏi máy này'); A.kiemTraGh(); A.thongBao(); return; }
     if (e.target.id === 'btnKey2') { localStorage.setItem('hck_admin_key', $('#inKey2').value.trim()); A.toast('Đã lưu khoá', 'ok'); return; }
   });
 
-  A.dangKy({ route: '/nguoi-dung', ten: 'Người dùng', icon: '🧑‍💼', nhom: 'he-thong', quyen: 'setting.view', mo: 'Tài khoản quản trị', giaiDoan: 8, ve: veNguoiDung });
-  A.dangKy({ route: '/phan-quyen', ten: 'Vai trò & phân quyền', icon: '🛡️', nhom: 'he-thong', quyen: 'setting.view', mo: 'Ai được làm gì', giaiDoan: 8, ve: veQuyen });
   A.dangKy({ route: '/nhat-ky', ten: 'Nhật ký hoạt động', icon: '📜', nhom: 'he-thong', quyen: 'setting.view', mo: 'Thao tác trên đơn hàng và khách hàng', ve: veNhatKy });
   A.dangKy({ route: '/cau-hinh', ten: 'Cấu hình', icon: '⚙️', nhom: 'cau-hinh', quyen: 'setting.view', mo: 'Kết nối, thông tin shop, bảo mật',
     ve(el, { sub }) { veCauHinh(el, sub); } });
