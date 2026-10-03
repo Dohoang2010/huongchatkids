@@ -551,10 +551,10 @@ window.PRODUCTS = [
     usage: "Bắt đầu 2 lần/tuần vào buổi tối rồi tăng dần; luôn dùng kem chống nắng vào ban ngày." },
 
   { id: "suaxanh-lotte", name: "Sữa Xanh Lotte Organic – Sữa Tươi Hữu Cơ Pasteur Hàn Quốc Hộp 125ml, Thùng 24 Hộp", short: "Sữa xanh Lotte Organic 125ml (thùng 24 hộp)", brand: "lotte", cat: "sua",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "organic", "canxi", "tang-chieu-cao"], price: 960000, oldPrice: 1296000, rating: 0, reviews: 0, sold: 0, stock: 50, priority: 2,
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "organic", "canxi", "tang-chieu-cao"], price: 875000, oldPrice: 1181000, rating: 0, reviews: 0, sold: 0, stock: 50, priority: 2,
     shape: "carton", color: "#2E7D32", weight: "Thùng 24 hộp × 125ml", origin: "Hàn Quốc", tags: ["Mới"],
     image: "img/suaxanh-lotte.jpg", thumb: "img/thumb/suaxanh-lotte.jpg", images: ["img/suaxanh-lotte.jpg", "img/suaxanh-lotte-2.jpg", "img/suaxanh-lotte-3.jpg", "img/suaxanh-lotte-4.jpg", "img/suaxanh-lotte-5.jpg", "img/suaxanh-lotte-6.jpg"],
-    variants: [{ label: "1 thùng 24 hộp", price: 960000, oldPrice: 1296000 }, { label: "2 thùng 48 hộp", price: 1920000, oldPrice: 2592000 }],
+    variants: [{ label: "1 thùng 24 hộp", price: 875000, oldPrice: 1181000 }, { label: "2 thùng 48 hộp", price: 1750000, oldPrice: 2363000 }],
     desc: "Sữa xanh Lotte Organic (Pasteur 유기농 우유) – sữa tươi hữu cơ nguyên kem của Lotte Wellfood Hàn Quốc, hộp 125ml vừa một lần uống cho bé. Sữa đạt chứng nhận hữu cơ của Bộ Nông nghiệp Hàn Quốc, cơ sở sản xuất đạt HACCP. Mỗi hộp 125ml (80 kcal) có 4g đạm, 4,6g chất béo và 125mg canxi, vị thơm béo tự nhiên, dùng được cho cả bé và người lớn.",
     highlights: ["Sữa tươi hữu cơ nguyên kem, chứng nhận Organic Hàn Quốc", "Mỗi hộp 125ml: 4g đạm, 4,6g chất béo, 125mg canxi", "Hộp nhỏ 125ml tiện mang đi học, vừa một lần uống"],
     usage: "Bé từ 1 tuổi uống 1–2 hộp/ngày, ngon hơn khi để lạnh. Lắc đều trước khi uống, đã mở hộp thì dùng hết trong ngày. Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp." },

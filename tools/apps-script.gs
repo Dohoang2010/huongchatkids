@@ -435,6 +435,13 @@ function doGet(e) {
     if (action === 'dangNhap') return traVe(apiDangNhap(p), cb);
     if (action === 'dangKy')   return traVe(apiDangKy(p), cb);
     if (action === 'thongKe')  return traVe(apiThongKe(p), cb);
+    if (action === 'donHang')      return traVe(apiDonHang(p), cb);
+    if (action === 'donChiTiet')   return traVe(apiDonChiTiet(p), cb);
+    if (action === 'doiTrangThai') return traVe(apiDoiTrangThai(p), cb);
+    if (action === 'khachHang')    return traVe(apiKhachHang(p), cb);
+    if (action === 'khachChiTiet') return traVe(apiKhachChiTiet(p), cb);
+    if (action === 'khoaKhach')    return traVe(apiKhoaKhach(p), cb);
+    if (action === 'nhatKy')       return traVe(apiNhatKy(p), cb);
     if (action === 'doiMatKhau') return traVe(apiDoiMatKhau(p), cb);
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
@@ -585,6 +592,160 @@ function apiThongKe(p) {
   kq.donMoi.reverse();
   kq.giaTriTB = kq.soDon ? Math.round(kq.doanhThu / kq.soDon) : 0;
   return kq;
+}
+
+/* ===================== QUẢN TRỊ: ĐƠN HÀNG ===================== */
+var TRANG_THAI = ['Chờ xác nhận', 'Đã xác nhận', 'Đang chuẩn bị', 'Đang giao', 'Đã giao', 'Đã huỷ', 'Yêu cầu hoàn hàng', 'Đã hoàn hàng'];
+/* Chỉ cho chuyển sang trạng thái hợp lệ, tránh bấm nhầm Đã giao khi chưa giao */
+var LUONG = {
+  'Chờ xác nhận':      ['Đã xác nhận', 'Đã huỷ'],
+  'Đã xác nhận':       ['Đang chuẩn bị', 'Đã huỷ'],
+  'Đang chuẩn bị':     ['Đang giao', 'Đã huỷ'],
+  'Đang giao':         ['Đã giao', 'Yêu cầu hoàn hàng'],
+  'Đã giao':           ['Yêu cầu hoàn hàng'],
+  'Yêu cầu hoàn hàng': ['Đã hoàn hàng', 'Đã giao'],
+  'Đã huỷ':            [],
+  'Đã hoàn hàng':      []
+};
+function chuanTT(v) { var t = String(v || '').trim(); return t || 'Chờ xác nhận'; }
+
+function apiDonHang(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var s = sheetDon(); var n = s.getLastRow();
+  var kq = { ok: true, ds: [], tong: 0, demTT: {} };
+  if (n < 2) return kq;
+  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues();
+  var tu = p.tu ? new Date(p.tu + 'T00:00:00+07:00').getTime() : 0;
+  var den = p.den ? new Date(p.den + 'T23:59:59+07:00').getTime() : Date.now() + 864e5;
+  var tt = String(p.tt || ''), tim = chuanSdt(p.q || '') || String(p.q || '').toLowerCase().trim();
+  for (var i = v.length - 1; i >= 0; i--) {
+    var d = v[i][0]; if (!d) continue;
+    var t = new Date(d).getTime(); if (t < tu || t > den) continue;
+    var loai = String(v[i][2] || '');
+    var trang = chuanTT(v[i][18]);
+    kq.demTT[trang] = (kq.demTT[trang] || 0) + 1;
+    if (tt && trang !== tt) continue;
+    if (tim) {
+      var chuoi = (String(v[i][1]) + ' ' + String(v[i][3]) + ' ' + chuanSdt(v[i][4])).toLowerCase();
+      if (chuoi.indexOf(tim) < 0) continue;
+    }
+    kq.tong++;
+    if (kq.ds.length >= 300) continue;
+    kq.ds.push({
+      dong: i + 2, ma: String(v[i][1] || ''), ngay: ngayVN(d), loai: loai,
+      khach: String(v[i][3] || ''), sdt: chuanSdt(v[i][4]), diaChi: String(v[i][5] || ''),
+      sanPham: String(v[i][6] || ''), soMon: String(v[i][6] || '').split('\n').filter(String).length,
+      tamTinh: Number(v[i][7]) || 0, giam: Number(v[i][8]) || 0, ship: Number(v[i][9]) || 0, tong: Number(v[i][10]) || 0,
+      thanhToan: String(v[i][11] || ''), ma_gg: String(v[i][12] || ''), ghiChu: String(v[i][13] || ''),
+      email: String(v[i][14] || ''), hang: String(v[i][15] || ''), giamHang: Number(v[i][16]) || 0,
+      qua: String(v[i][17] || ''), trangThai: trang,
+      tiep: LUONG[trang] || []
+    });
+  }
+  return kq;
+}
+
+function apiDonChiTiet(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var s = sheetDon(); var dong = Number(p.dong || 0);
+  if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
+  var v = s.getRange(dong, 1, 1, HEADERS.length).getValues()[0];
+  var trang = chuanTT(v[18]);
+  var sdt = chuanSdt(v[4]);
+  var ct = tinhChiTieu(sdt);
+  return { ok: true, don: {
+    dong: dong, ma: String(v[1] || ''), ngay: ngayVN(v[0]), loai: String(v[2] || ''),
+    khach: String(v[3] || ''), sdt: sdt, diaChi: String(v[5] || ''), email: String(v[14] || ''),
+    sanPham: String(v[6] || '').split('\n').filter(String),
+    tamTinh: Number(v[7]) || 0, giam: Number(v[8]) || 0, ship: Number(v[9]) || 0, tong: Number(v[10]) || 0,
+    thanhToan: String(v[11] || ''), ma_gg: String(v[12] || ''), ghiChu: String(v[13] || ''),
+    hang: String(v[15] || ''), giamHang: Number(v[16]) || 0, qua: String(v[17] || ''),
+    trangThai: trang, tiep: LUONG[trang] || [], luong: TRANG_THAI
+  }, khach: { soDon: ct.soDon, tongChiTieu: ct.tong, hang: hangTheoTien(ct.tong).label } };
+}
+
+function apiDoiTrangThai(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var moi = String(p.trangThai || '').trim();
+  if (TRANG_THAI.indexOf(moi) < 0) return { ok: false, msg: 'Trạng thái không hợp lệ' };
+  var s = sheetDon(); var dong = Number(p.dong || 0);
+  if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
+  var cu = chuanTT(s.getRange(dong, 19).getValue());
+  if (cu === moi) return { ok: true, trangThai: moi, tiep: LUONG[moi] || [] };
+  if ((LUONG[cu] || []).indexOf(moi) < 0) return { ok: false, msg: 'Không chuyển từ "' + cu + '" sang "' + moi + '" được' };
+  s.getRange(dong, 19).setValue(moi);
+  var ma = String(s.getRange(dong, 2).getValue() || '');
+  var sdt = chuanSdt(s.getRange(dong, 5).getValue());
+  ghiNhatKy('Đơn hàng', ma, 'Trạng thái: ' + cu + ' → ' + moi);
+  // Huỷ / hoàn hàng thì tổng chi tiêu và hạng của khách phải tính lại
+  if (/huỷ|hoàn/i.test(moi) || /huỷ|hoàn/i.test(cu)) {
+    try { capNhatKhachHang(sdt, { name: '', phone: sdt }, {}); } catch (e) { Logger.log(e); }
+  }
+  try { zaloBotGuiTin('🔄 Đơn ' + ma + ': ' + cu + ' → ' + moi); } catch (e) { Logger.log(e); }
+  return { ok: true, trangThai: moi, tiep: LUONG[moi] || [] };
+}
+
+/* ===================== QUẢN TRỊ: KHÁCH HÀNG ===================== */
+function apiKhachHang(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var s = sheetKH(); var n = s.getLastRow();
+  var kq = { ok: true, ds: [], tong: 0 };
+  if (n < 2) return kq;
+  var v = s.getRange(2, 1, n - 1, H_KH.length).getValues();
+  var tim = String(p.q || '').toLowerCase().trim();
+  var hang = String(p.hang || '');
+  for (var i = 0; i < v.length; i++) {
+    var sdt = chuanSdt(v[i][0]); if (!sdt) continue;
+    var tien = Number(v[i][6]) || 0;
+    var h = hangTheoTien(tien);
+    if (hang && h.key !== hang) continue;
+    if (tim && (String(v[i][1]).toLowerCase() + ' ' + sdt).indexOf(tim) < 0) continue;
+    kq.tong++;
+    if (kq.ds.length >= 400) continue;
+    kq.ds.push({ dong: i + 2, sdt: sdt, ten: String(v[i][1] || ''), tinh: String(v[i][2] || ''), xa: String(v[i][3] || ''),
+      diaChi: String(v[i][4] || ''), email: String(v[i][5] || ''), tongChiTieu: tien, soDon: Number(v[i][7]) || 0,
+      hang: h.key, hangLabel: h.label, donGanNhat: String(v[i][9] || ''), tao: v[i][10] ? ngayVN(v[i][10]) : '',
+      khoa: String(v[i][11] || '').indexOf('KHOA') > -1 });
+  }
+  kq.ds.sort(function (a, b) { return b.tongChiTieu - a.tongChiTieu; });
+  return kq;
+}
+
+function apiKhachChiTiet(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var sdt = chuanSdt(p.sdt);
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var d = docKH(sdt);
+  var dong = timDongKH(sdt);
+  var khoa = dong ? String(sheetKH().getRange(dong, 12).getValue() || '').indexOf('KHOA') > -1 : false;
+  return { ok: true, kh: d.kh, donHang: d.don, khoa: khoa, dong: dong };
+}
+
+function apiKhoaKhach(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var sdt = chuanSdt(p.sdt); var dong = timDongKH(sdt);
+  if (!dong) return { ok: false, msg: 'Không tìm thấy khách' };
+  var khoa = String(p.khoa) === '1';
+  var cu = String(sheetKH().getRange(dong, 12).getValue() || '').replace(/KHOA\s*/g, '').trim();
+  sheetKH().getRange(dong, 12).setValue(khoa ? ('KHOA ' + cu).trim() : cu);
+  ghiNhatKy('Khách hàng', sdt, khoa ? 'Khoá tài khoản' : 'Mở khoá tài khoản');
+  return { ok: true, khoa: khoa };
+}
+
+/* ===================== NHẬT KÝ THAO TÁC ===================== */
+function sheetNhatKy() { return sheetPhu('Nhật ký', ['Thời gian', 'Mục', 'Bản ghi', 'Thay đổi']); }
+function ghiNhatKy(muc, banGhi, thayDoi) {
+  try { sheetNhatKy().appendRow([new Date(), muc, banGhi, thayDoi]); } catch (e) { Logger.log('Nhật ký lỗi: ' + e); }
+}
+function apiNhatKy(p) {
+  if (String(p.key || '') !== ADMIN_KEY) return { ok: false, msg: 'Sai khoá quản trị' };
+  var s = sheetNhatKy(); var n = s.getLastRow();
+  var ds = [];
+  if (n >= 2) {
+    var v = s.getRange(Math.max(2, n - 199), 1, Math.min(200, n - 1), 4).getValues();
+    for (var i = v.length - 1; i >= 0; i--) ds.push({ ngay: ngayVN(v[i][0]), muc: String(v[i][1] || ''), banGhi: String(v[i][2] || ''), thayDoi: String(v[i][3] || '') });
+  }
+  return { ok: true, ds: ds };
 }
 
 function apiDoiMatKhau(p) {

@@ -307,3 +307,32 @@ tr.is-pick{background:var(--pink-50)}
   .page__head>div:last-child{width:100%;margin-left:0}
   .pop{width:min(300px,92vw)}
 }
+
+/* ---------- Đơn hàng & khách hàng ---------- */
+.dh__top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.dh__top h3{font-size:17px}
+.dh__top p{margin:2px 0 0;font-size:13px}
+.tline{display:flex;gap:0;list-style:none;padding:0;margin:14px 0 0;flex-wrap:wrap}
+.tline li{flex:1;min-width:110px;text-align:center;position:relative;font-size:12.5px;color:var(--muted)}
+.tline li::before{content:'';position:absolute;top:13px;left:0;right:50%;height:2px;background:var(--line)}
+.tline li::after{content:'';position:absolute;top:13px;left:50%;right:0;height:2px;background:var(--line)}
+.tline li:first-child::before,.tline li:last-child::after{display:none}
+.tline li.is-done::before,.tline li.is-done::after{background:var(--teal)}
+.tline li.is-now::after{background:var(--line)}
+.tline i{position:relative;z-index:1;display:grid;place-items:center;width:28px;height:28px;margin:0 auto 5px;border-radius:50%;
+  background:#fff;border:2px solid var(--line);font-style:normal;font-size:12px;font-weight:700}
+.tline li.is-done i{background:var(--teal);border-color:var(--teal);color:#fff}
+.tline li.is-now i{box-shadow:0 0 0 4px var(--teal-50)}
+.tline li.is-done span{color:var(--ink);font-weight:600}
+.dh__act{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
+.dh__sp{margin:0;padding-left:20px;font-size:14px;line-height:1.9}
+.kh-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line-2);font-size:14px}
+.kh-row:last-of-type{border-bottom:0}
+.kh-row span{color:var(--muted);flex:none}
+.kh-row b{text-align:right}
+.hang-box{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 10px;font-size:13.5px}
+.hang-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:999px;background:var(--c,#78909C);color:#fff;font-weight:700;font-size:13px}
+.tien-do{height:9px;border-radius:999px;background:var(--line-2);overflow:hidden;margin:10px 0 6px}
+.tien-do i{display:block;height:100%;background:var(--teal);border-radius:999px}
+.text-teal{color:var(--teal)}
+@media print{ .top,.side,.bar,.pv,.page__head>div:last-child,.crumb{display:none !important} .main{padding:0} .card{box-shadow:none;border:1px solid #ddd} }

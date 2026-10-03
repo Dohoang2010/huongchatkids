@@ -3,40 +3,6 @@
   'use strict';
   const A = window.ADMIN, { $, $$, esc, fmt } = A;
 
-  /* ---------------- ĐƠN HÀNG (Phase 3) ---------------- */
-  async function veDonHang(el) {
-    el.innerHTML = A.dangTai('đơn hàng');
-    try {
-      const h = new Date();
-      const d = await A.api('thongKe', { key: A.adminKey(), tu: A.ngayISO(new Date(h.getTime() - 89 * 864e5)), den: A.ngayISO(h) });
-      if (!d || !d.ok || !d.theoNgay) { el.innerHTML = chuaCo('đơn hàng'); return; }
-      el.innerHTML = `<div class="card">
-        <p class="muted">Đang hiển thị <b>${d.donMoi.length}</b> đơn gần nhất trong 90 ngày. Đổi trạng thái tạm thời làm trực tiếp trong Google Sheet (cột <b>Trạng thái</b>).</p>
-        <div class="tbl-wrap"><table><thead><tr><th>Mã đơn</th><th>Thời gian</th><th>Khách</th><th>Điện thoại</th><th class="num">Tổng tiền</th><th>Thanh toán</th><th>Quà</th><th>Trạng thái</th></tr></thead><tbody>
-        ${d.donMoi.map((o) => `<tr><td><b>${esc(o.ma)}</b></td><td>${esc(o.ngay)}</td><td>${esc(o.khach)}</td><td>${esc(o.sdt)}</td>
-          <td class="num">${fmt(o.tong)}</td><td>${esc(o.thanhToan)}</td><td>${esc(o.qua || '—')}</td>
-          <td>${A.badge(o.trangThai || 'Chờ xác nhận', /huỷ|hoàn/i.test(o.trangThai) ? 'tag--no' : o.trangThai ? 'tag--ok' : 'tag--wait')}</td></tr>`).join('')
-          || '<tr><td colspan="8" class="muted">Chưa có đơn nào</td></tr>'}
-        </tbody></table></div></div>
-        <div class="card"><div class="box-note">⚙️ <b>Đang làm ở Phase 3:</b> lọc theo trạng thái/ngày/thanh toán, trang chi tiết đơn có dòng thời gian,
-        đổi trạng thái ngay trên web (Chờ xác nhận → Đã xác nhận → Đang chuẩn bị → Đang giao → Đã giao), in đơn, xuất Excel.</div></div>`;
-    } catch (e) { el.innerHTML = A.loiTai(e.message); }
-  }
-
-  /* ---------------- THÀNH VIÊN (Phase 3) ---------------- */
-  function veKhach(el) {
-    el.innerHTML = `<div class="card"><h3>Thành viên</h3>
-      <p class="muted">Danh sách khách nằm ở sheet <b>Khách hàng</b> trong Google Sheet, gồm: số điện thoại, họ tên, địa chỉ, email, tổng chi tiêu, số đơn, hạng.</p>
-      <div class="kpis">${(window.TIERS || []).map((t) => A.the(t.icon + ' ' + t.label, t.discount ? `−${t.discount}%` : '—', `từ ${fmt(t.min)}`)).join('')}</div>
-      <div class="box-note">⚙️ <b>Đang làm ở Phase 3:</b> đọc danh sách khách từ Sheet vào đây — tìm kiếm, lọc theo hạng,
-      xem chi tiết (địa chỉ, lịch sử đơn, tổng chi, sản phẩm đã mua), khoá/mở tài khoản, nhóm khách
-      (khách mới · khách thường · khách VIP · khách lâu không mua).<br>
-      Cần thêm lệnh <code>khachHang</code> vào Apps Script — em sẽ làm cùng Phase 3.</div></div>`;
-  }
-
-  const chuaCo = (ten) => `<div class="card err-box"><h3>⏳ Apps Script chưa cập nhật</h3>
-    <p>Chưa đọc được ${esc(ten)} vì máy chủ chưa có lệnh mới. Dán lại <code>tools/apps-script-CUA-SHOP.gs</code> vào Apps Script
-    rồi <b>Deploy → Manage deployments → ✏️ → New version</b>.</p><button class="btn btn--primary" data-act="tai-lai">Thử lại</button></div>`;
 
   /* ---------------- NGƯỜI DÙNG & PHÂN QUYỀN ---------------- */
   function veNguoiDung(el) {
@@ -156,8 +122,6 @@
     if (e.target.id === 'btnKey2') { localStorage.setItem('hck_admin_key', $('#inKey2').value.trim()); A.toast('Đã lưu khoá', 'ok'); return; }
   });
 
-  A.dangKy({ route: '/don-hang', ten: 'Đơn hàng', icon: '🧾', nhom: 'ban-hang', quyen: 'order.view', mo: 'Đơn khách đặt trên website', giaiDoan: 3, ve: veDonHang });
-  A.dangKy({ route: '/thanh-vien', ten: 'Thành viên', icon: '👤', nhom: 'khach-hang', quyen: 'customer.view', mo: 'Khách hàng và hạng thành viên', giaiDoan: 3, ve: veKhach });
   A.dangKy({ route: '/nguoi-dung', ten: 'Người dùng', icon: '🧑‍💼', nhom: 'he-thong', quyen: 'setting.view', mo: 'Tài khoản quản trị', giaiDoan: 8, ve: veNguoiDung });
   A.dangKy({ route: '/phan-quyen', ten: 'Vai trò & phân quyền', icon: '🛡️', nhom: 'he-thong', quyen: 'setting.view', mo: 'Ai được làm gì', giaiDoan: 8, ve: veQuyen });
   A.dangKy({ route: '/nhat-ky', ten: 'Nhật ký hoạt động', icon: '📜', nhom: 'he-thong', quyen: 'setting.view', mo: 'Lịch sử thay đổi website', ve: veNhatKy });
