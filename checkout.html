@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261002c">
+  <link rel="stylesheet" href="css/style.css?v=20261003a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -16,10 +16,10 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261002c"></script>
-<script src="js/diachi.js?v=20261002c"></script>
+<script src="js/data.js?v=20261003a"></script>
+<script src="js/diachi.js?v=20261003a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261002c"></script>
+<script src="js/app.js?v=20261003a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Đơn hàng (<span id="orderCount">${Cart.count()}</span> sản phẩm) <a class="fs-13 text-primary" style="margin-left:auto;font-weight:500" href="cart.html">Sửa</a></h3>
         <div class="order-items" id="orderItems">${itemsHTML()}</div>
         <div class="divider"></div>
-        <div class="coupon"><input class="input" id="couponInput" placeholder="Mã giảm giá (VD: HCK10)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
+        <div class="coupon"><input class="input" id="couponInput" placeholder="Nhập mã giảm giá (nếu có)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
         <div class="coupon-hint" id="couponHint"></div>
         <div class="divider"></div>
         <div id="summary"></div>
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#couponHint').innerHTML = bandMa ? `<span class="text-muted">Mã ${esc(k.r.code)} giảm ${fmt(k.couponAmt)} – ít hơn ưu đãi hạng ${esc(k.hang.label)} nên web đang áp dụng mức có lợi hơn cho mẹ.</span>`
       : k.r && k.r.ok ? `<span class="text-teal fw-600">✓ ${k.r.desc}</span>`
       : k.r ? `<span class="text-red">${k.r.msg}</span>`
-      : `Gợi ý: <button type="button" data-coupon="HCK10">HCK10</button><span class="text-muted">giảm 10% (tối đa 100K) cho đơn từ 300K</span>`;
+      : `<span class="text-muted">Có mã giảm giá của shop thì mẹ nhập vào đây nhé.</span>`;
   };
 
   /* ---- Sản phẩm nên mua kèm (window.MUA_KEM): gợi ý theo danh mục hàng trong giỏ, bỏ hàng đã có / hết hàng ---- */

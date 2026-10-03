@@ -558,6 +558,26 @@ window.PRODUCTS = [
     desc: "Sữa xanh Lotte Organic (Pasteur 유기농 우유) – sữa tươi hữu cơ nguyên kem của Lotte Wellfood Hàn Quốc, hộp 125ml vừa một lần uống cho bé. Sữa đạt chứng nhận hữu cơ của Bộ Nông nghiệp Hàn Quốc, cơ sở sản xuất đạt HACCP. Mỗi hộp 125ml (80 kcal) có 4g đạm, 4,6g chất béo và 125mg canxi, vị thơm béo tự nhiên, dùng được cho cả bé và người lớn.",
     highlights: ["Sữa tươi hữu cơ nguyên kem, chứng nhận Organic Hàn Quốc", "Mỗi hộp 125ml: 4g đạm, 4,6g chất béo, 125mg canxi", "Hộp nhỏ 125ml tiện mang đi học, vừa một lần uống"],
     usage: "Bé từ 1 tuổi uống 1–2 hộp/ngày, ngon hơn khi để lạnh. Lắc đều trước khi uống, đã mở hộp thì dùng hết trong ngày. Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp." },
+  { id: "combo-vangsua-d3k2", name: "Combo Váng Sữa Canxi Calciumore + Vitamin D3K2 Pure Vitality – Bổ Sung Canxi Và Vitamin D3, K2 Cho Bé", short: "Combo váng sữa canxi Calciumore + D3K2", brand: "calciumore", cat: "vitamin",
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["canxi", "tang-chieu-cao", "d3k2", "organic"], price: 2726000, oldPrice: 2870000, rating: 5.0, reviews: 0, sold: 0, stock: 50,
+    isCombo: true, items: ["26060839019", "42878618667"],
+    shape: "box", color: "#4FA3D1", weight: "1 hộp 90 gói váng sữa + 1 lọ D3K2 30ml", origin: "Hàn Quốc & New Zealand", tags: ["Combo"],
+    image: "img/combo-vangsua-d3k2.jpg", thumb: "img/thumb/combo-vangsua-d3k2.jpg",
+    images: ["img/combo-vangsua-d3k2.jpg", "img/26060839019.jpg", "img/42878618667.jpg", "img/26060839019-3.jpg", "img/42878618667-3.jpg"],
+    variants: [{ label: "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%", price: 2726000, oldPrice: 2870000 }, { label: "2 hộp váng sữa 180 gói · TẶNG 1 D3K2", price: 4960000, oldPrice: 5350000 }],
+    desc: "Bộ đôi canxi cho bé: váng sữa canxi hữu cơ Calciumore (hộp 90 gói) bổ sung canxi sữa dễ hấp thu, kết hợp vitamin D3K2 Pure Vitality (New Zealand) giúp đưa canxi vào xương. Theo nhà sản xuất, dùng cùng nhau hỗ trợ bé phát triển chiều cao và răng chắc khoẻ tốt hơn so với dùng riêng canxi.",
+    highlights: ["Mua 1 hộp váng sữa + 1 D3K2 được giảm 5% so với mua lẻ", "Mua 2 hộp váng sữa được TẶNG 1 lọ D3K2 30ml", "Canxi sữa hữu cơ Hàn Quốc + D3K2 New Zealand", "Đủ dùng cho bé khoảng 3 tháng"],
+    usage: "Váng sữa: 1 gói/ngày pha cùng sữa hoặc ăn trực tiếp. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn. Dùng canxi và D3K2 cùng buổi để hấp thu tốt nhất." },
+  { id: "combo-lottexanh-d3k2", name: "Combo Nước Ép Lotte Tăng Cao (Xanh) + Vitamin D3K2 Pure Vitality – Hỗ Trợ Bé Phát Triển Chiều Cao", short: "Combo nước ép Lotte Tăng cao + D3K2", brand: "lotte", cat: "nuoc-ep",
+    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "canxi", "d3k2", "organic"], price: 1621000, oldPrice: 1707000, rating: 5.0, reviews: 0, sold: 0, stock: 50,
+    isCombo: true, items: ["22686115682", "42878618667"],
+    shape: "box", color: "#2F8FD0", weight: "1 thùng 30 gói nước ép + 1 lọ D3K2 30ml", origin: "Hàn Quốc & New Zealand", tags: ["Combo"],
+    image: "img/combo-lottexanh-d3k2.jpg", thumb: "img/thumb/combo-lottexanh-d3k2.jpg",
+    images: ["img/combo-lottexanh-d3k2.jpg", "img/22686115682.jpg", "img/42878618667.jpg", "img/22686115682-3.jpg", "img/42878618667-3.jpg"],
+    variants: [{ label: "1 thùng Lotte Tăng cao 30 gói + 1 D3K2 · giảm 5%", price: 1621000, oldPrice: 1707000 }, { label: "2 thùng Lotte Tăng cao 60 gói · TẶNG 1 D3K2", price: 2634000, oldPrice: 3024000 }],
+    desc: "Bộ đôi tăng chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) giúp bé uống ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
+    highlights: ["Mua 1 thùng nước ép + 1 D3K2 được giảm 5% so với mua lẻ", "Mua 2 thùng nước ép được TẶNG 1 lọ D3K2 30ml", "Nước ép hữu cơ Hàn Quốc, bé dễ uống", "Thùng 30 gói dùng được khoảng 1 tháng"],
+    usage: "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn." },
 ];
 /* ===/ADMIN:PRODUCTS=== */
 
@@ -754,7 +774,6 @@ window.TIERS = [
 
 /* ===ADMIN:COUPONS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.COUPONS = {
-  HCK10: { type: 'percent', value: 10, max: 100000, min: 300000, desc: 'Giảm 10% (tối đa 100K) cho đơn từ 300K' },
   FREESHIP:  { type: 'ship', value: 0, min: 300000, desc: 'Miễn phí vận chuyển cho đơn từ 300K' },
 };
 /* ===/ADMIN:COUPONS=== */

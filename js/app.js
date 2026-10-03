@@ -595,7 +595,7 @@
             <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') !== 'bank' ? 'checked' : ''}><span class="ico">💵</span><span><b>Thanh toán khi nhận hàng</b><small>Kiểm tra hàng rồi mới trả tiền</small></span></label>
             <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><span><b>Chuyển khoản / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} ${SITE.bank.account} · quét QR sau khi đặt` : 'Quét mã QR sau khi đặt'}</small></span></label>
           </div>
-          <details class="qb__coupon"><summary>${I.tag}Có mã giảm giá? <span class="text-muted">(VD: HCK10)</span></summary><div class="coupon mt-8"><input class="input" id="qbCoupon" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div></details>
+          <details class="qb__coupon"><summary>${I.tag}Có mã giảm giá?</summary><div class="coupon mt-8"><input class="input" id="qbCoupon" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div></details>
           <div id="qbGift"></div>
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
           <div class="form-error hide" id="qbError" role="alert"></div>
@@ -1151,7 +1151,9 @@
      Hai chương trình không cộng dồn: lấy chương trình cho nhiều quà hơn.
      ===================================================================== */
   const QT = () => (window.QUA_TANG && window.QUA_TANG.enabled ? window.QUA_TANG : null);
-  function laNuocLotte(p) { const cfg = QT(); if (!cfg || !p) return false; const l = cfg.loc || {}; return (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand); }
+  /* Combo đã có ưu đãi riêng nên KHÔNG tính vào chương trình "mua thùng tặng gói";
+     giá trị combo vẫn tính vào mốc "đơn từ 1 triệu" như sản phẩm thường. */
+  function laNuocLotte(p) { const cfg = QT(); if (!cfg || !p || p.isCombo) return false; const l = cfg.loc || {}; return (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand); }
   /* Ghi chú quà hiện trên trang sản phẩm */
   function giftNote(p) {
     const cfg = QT(); if (!cfg) return '';

@@ -145,7 +145,7 @@ window.POLICIES = [
     ['Liều dùng bao nhiêu là đủ, có dùng chung nhiều sản phẩm được không?', 'Theo hướng dẫn trên bao bì từng sản phẩm. Không dùng cùng lúc nhiều sản phẩm có cùng công dụng (ví dụ hai loại canxi). Sau khi đặt hàng, chuyên viên tư vấn sẽ gọi hướng dẫn liều dùng cụ thể.'],
     ['Mẹ đang cho con bú có dùng nghệ nano Curcumin được không?', 'Sản phẩm dành cho người lớn; mẹ đang mang thai hoặc cho con bú nên hỏi ý kiến bác sĩ trước khi dùng.'],
     ['Có được kiểm tra hàng trước khi thanh toán không?', 'Có. Với đơn COD, mẹ kiểm tra ngoại quan, tem phụ, hạn dùng, số lượng trước khi trả tiền; hàng lỗi, móp rách được từ chối nhận không mất phí.'],
-    ['Giá trên web và trên Shopee có giống nhau không?', 'Giá cơ bản giống nhau. Trên web mẹ được thêm ưu đãi mua từ 2 giảm 3%, mã HCK10 và miễn phí vận chuyển cho đơn từ {freeship}.'],
+    ['Giá trên web và trên Shopee có giống nhau không?', 'Giá cơ bản giống nhau. Trên web mẹ được thêm ưu đãi mua từ 2 giảm 3%, ưu đãi theo hạng khách hàng và miễn phí vận chuyển cho đơn từ {freeship}.'],
     ['Hạn sử dụng còn bao lâu?', 'Tối thiểu 6 tháng với nước ép, hồng sâm và 12 tháng với vitamin, canxi tại thời điểm giao. Hàng cận date (nếu có) luôn ghi rõ ở tên phân loại và giảm giá riêng.'],
     ['Đặt xong bao lâu thì nhận được hàng?', 'Nội thành Hà Nội: trong ngày (xác nhận trước 16h), hoả tốc 2–4 giờ. Tỉnh khác: 1–3 ngày làm việc. Xem Chính sách giao hàng.'],
     ['Tôi muốn xuất hoá đơn VAT?', 'Ghi thông tin công ty vào ô ghi chú khi đặt hàng hoặc báo khi xác nhận đơn. Hoá đơn điện tử gửi qua email trong 3 ngày làm việc.'],
