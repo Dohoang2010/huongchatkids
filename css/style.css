@@ -1533,3 +1533,9 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
   .blog-item { grid-template-columns: 120px minmax(0, 1fr); }
   .feat__slide { grid-template-columns: minmax(0, 1fr); }
 }
+.pdp__offers .li-combo { display: block; }
+.pdp__offers .uudai { list-style: none; margin: 6px 0 0; padding: 0; }
+.pdp__offers .uudai li { padding: 3px 0; font-size: 13.5px; }
+.pdp__offers .uudai li::before { display: none; }
+.pdp__offers .li-combo .btn { display: inline-flex; }
+.pdp__offers .uudai li { padding-left: 0; }

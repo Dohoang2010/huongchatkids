@@ -1326,7 +1326,7 @@
   function laNuocLotte(p) { const cfg = QT(); if (!cfg || !p || p.isCombo) return false; const l = cfg.loc || {}; return (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand); }
   /* Ghi chú quà hiện trên trang sản phẩm */
   function giftNote(p) {
-    const moi = ctChoSP(p).map((x) => `Mua sản phẩm chương trình từ <b>${fmt(x.c.muc)}</b> được tặng <b>${x.c.soQua} ${esc(x.ten)}</b>${x.vi.length > 1 ? ' (mẹ chọn ' + esc(x.vi.join(' / ')) + ')' : ''}.`).join('<br>');
+    const moi = ctChoSP(p).map((x) => `<b>${esc(ctMoTa(x))}</b>${x.vi.length > 1 ? " (mẹ chọn " + esc(x.vi.join(" / ")) + ")" : ""}.`).join("<br>");
     return [moi, giftNoteCu(p)].filter(Boolean).join('<br>');
   }
   function giftNoteCu(p) {
@@ -1359,10 +1359,29 @@
         if (p.variants && p.variants.length) p.variants.forEach((v) => { if (!v.oos && (g.bienThe || {})[v.label] !== false) vi.push(qua.length > 1 ? `${shortName(p)} – ${v.label}` : v.label); });
         else if (g.bat !== false) vi.push(shortName(p));
       });
-      const chinh = new Set((c.sanPhamChinh || []).filter((x) => x.bat !== false).map((x) => x.id));
-      return { c, vi, chinh, ten: qua.length === 1 ? shortName(qua[0].p) : 'quà tặng' };
-    }).filter((x) => x.vi.length && x.chinh.size && x.c.muc > 0);
+      if (vi.length === 1 && qua.length === 1) vi[0] = shortName(qua[0].p);   // chỉ 1 lựa chọn → hiện tên sản phẩm quà
+      const dsChinh = (c.sanPhamChinh || []).filter((x) => x.bat !== false);
+      const chinh = new Set(dsChinh.map((x) => x.id));
+      const heSo = {}; dsChinh.forEach((x) => { heSo[x.id] = x.heSo || {}; });
+      /* Nhiều bậc: bac = [{ muc, soQua }]; chương trình cũ chỉ có muc/soQua = 1 bậc */
+      const bac = (c.bac && c.bac.length ? c.bac : [{ muc: Number(c.muc) || 0, soQua: Number(c.soQua) || 1 }]).filter((b) => b.muc > 0).sort((a, b) => a.muc - b.muc);
+      const ten = c.tenQua || (qua.length === 1 ? shortName(qua[0].p) : 'quà tặng');
+      return { c, vi, chinh, heSo, bac, ten, soLuong: c.kieu === 'soLuong', donVi: c.donVi || 'hộp' };
+    }).filter((x) => x.vi.length && x.chinh.size && x.bac.length);
   }
+  /* Phân loại "2 hộp 180 gói" tính là 2 hộp nếu trang quản trị chưa đặt hệ số */
+  const heSoMacDinh = (label, donVi) => { const m = String(label || '').match(/^(\d+)\s*([^\s\d·(]+)/); return m && donVi && m[2].toLowerCase() === String(donVi).toLowerCase() ? Number(m[1]) : 1; };
+  /* Mức khách đã đạt của 1 chương trình: tổng tiền hoặc tổng số lượng các sản phẩm chính trong giỏ */
+  function ctDat(x, lines) {
+    return (lines || []).reduce((s, l) => {
+      if (!l.p || !x.chinh.has(l.p.id)) return s;
+      if (!x.soLuong) return s + l.total;
+      const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || '';
+      return s + l.qty * (hs[k] != null ? Number(hs[k]) || 0 : heSoMacDinh(k, x.donVi));
+    }, 0);
+  }
+  const ctMoc = (x, v) => (x.soLuong ? `${v} ${x.donVi}` : fmt(v));
+  const ctMoTa = (x) => x.c.moTa || x.bac.map((b, i) => (x.soLuong ? `${i ? '' : 'Mua '}${b.muc} ${x.donVi} tặng ${b.soQua} ${x.ten}` : `${i ? 'Từ' : 'Mua từ'} ${fmt(b.muc)} tặng ${b.soQua} ${x.ten}`)).join(' · ');
   function ctChoSP(p) { return p ? ctDangChay().filter((x) => x.chinh.has(p.id)) : []; }
   /* Quy tắc dùng chung ưu đãi (trang quản trị → Quà tặng / Mã giảm giá):
      hangMa = ưu đãi hạng + mã giảm giá, quaMa = quà tặng + mã, quaHang = quà tặng + ưu đãi hạng */
@@ -1382,14 +1401,27 @@
   /* Gộp chương trình cũ và các chương trình mới – không cộng dồn, lấy chương trình tặng nhiều quà nhất */
   function giftForGop(lines, opts) {
     const cu = giftForCu(lines, opts);
-    let tot = cu && cu.soQua ? cu : null, goiY = '', thieu = Infinity;
+    /* Chương trình cài ở trang quản trị (riêng cho sản phẩm) được ưu tiên hơn chương trình cũ; nhiều chương trình
+       cùng đạt thì lấy quà giá trị cao nhất (số quà × giá phân loại quà rẻ nhất) */
+    let tot = null, giaTriTot = 0, goiY = '', gan = 0;
     ctDangChay().forEach((x) => {
-      const tien = (lines || []).reduce((s, l) => s + (l.p && x.chinh.has(l.p.id) ? l.total : 0), 0);
-      if (tien >= x.c.muc) {
-        if (!tot || x.c.soQua > tot.soQua) tot = { soQua: x.c.soQua, chuongTrinh: x.c.id, thung: 0, vi: x.vi, ten: x.ten, goiY: '', moTa: `${x.c.soQua} ${x.ten}`, lyDo: `Mua sản phẩm chương trình từ ${fmt(x.c.muc)}` };
-      } else if (tien > 0 && x.c.muc - tien < thieu) { thieu = x.c.muc - tien; goiY = `Mua thêm ${fmt(thieu)} sản phẩm chương trình để được tặng ${x.c.soQua} ${x.ten}.`; }
+      const dat = ctDat(x, lines); if (!dat) return;
+      const bacDat = [...x.bac].reverse().find((b) => dat >= b.muc), bacSau = x.bac.find((b) => dat < b.muc);
+      const giaQua = Math.min(...(x.c.quaTang || []).map((g) => { const p = byId(g.id); return p ? Math.min(...(p.variants && p.variants.length ? p.variants.filter((v) => (g.bienThe || {})[v.label] !== false).map((v) => v.price) : [p.price]), Infinity) : Infinity; }), Infinity);
+      const giaTri = bacDat ? bacDat.soQua * (isFinite(giaQua) ? giaQua : 1) : 0;
+      if (bacDat && giaTri > giaTriTot) {
+        giaTriTot = giaTri;
+        tot = { soQua: bacDat.soQua, chuongTrinh: x.c.id, thung: 0, vi: x.vi, ten: x.ten, goiY: '', moTa: `${bacDat.soQua} ${x.ten}`,
+          lyDo: x.soLuong ? `Mua ${dat} ${x.donVi} sản phẩm chương trình` : `Mua sản phẩm chương trình từ ${fmt(bacDat.muc)}` };
+      }
+      /* Gợi ý bậc kế tiếp (chọn chương trình khách gần đạt nhất) */
+      if (bacSau && dat / bacSau.muc > gan) {
+        gan = dat / bacSau.muc;
+        goiY = `Mua thêm ${ctMoc(x, bacSau.muc - dat)} ${x.soLuong ? 'nữa' : 'sản phẩm chương trình'} để được tặng ${bacSau.soQua} ${x.ten}.`;
+      }
     });
-    if (tot) return tot;
+    if (tot) return { ...tot, goiY };
+    if (cu && cu.soQua) return goiY ? { ...cu, goiY } : cu;
     if (cu && cu.goiY) return cu;
     return goiY ? { soQua: 0, chuongTrinh: '', thung: 0, vi: [], ten: '', goiY, moTa: '', lyDo: '' } : cu;
   }

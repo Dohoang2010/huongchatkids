@@ -47,7 +47,7 @@
         </div>
         <div class="tbl-wrap"><table class="ct-tbl"><thead><tr><th>Chương trình</th><th>Loại khuyến mãi</th><th>Sản phẩm</th><th>Thời gian</th><th>Thao tác</th></tr></thead><tbody>
           ${list.map((c) => { const [tt, cls, k] = trangThai(c); return `<tr>
-            <td data-nhan="Chương trình">${A.badge(tt, cls)}<br><a class="ct-ten" href="#/qua-tang/${esc(c.id)}">${esc(c.ten)}</a><small class="muted">Mua ${fmt(c.muc)} nhận ${c.soQua} quà tặng</small></td>
+            <td data-nhan="Chương trình">${A.badge(tt, cls)}<br><a class="ct-ten" href="#/qua-tang/${esc(c.id)}">${esc(c.ten)}</a><small class="muted">${esc(c.moTa || moTaTuDong(c))}</small></td>
             <td data-nhan="Loại">Mua để nhận quà</td>
             <td data-nhan="Sản phẩm"><div class="ct-thumbs">${thumbs(c) || '<span class="muted">—</span>'}</div></td>
             <td data-nhan="Thời gian">${hienNgay(c.batDau)}<br>– ${hienNgay(c.ketThuc)}</td>
@@ -68,6 +68,15 @@
 
   /* ================= TẠO / SỬA CHƯƠNG TRÌNH ================= */
   let nhap = null, goc = null, chiXem = false, chonCT = new Set();
+  /* Nhiều bậc: bac = [{ muc, soQua }] – muc là số tiền (kieu 'tien') hoặc số lượng (kieu 'soLuong').
+     Chương trình cũ chỉ có muc/soQua thì coi như 1 bậc. heSo: mỗi phân loại sản phẩm chính tính là bao nhiêu đơn vị. */
+  const bacCua = (c) => (c.bac && c.bac.length ? c.bac : [{ muc: Number(c.muc) || 0, soQua: Number(c.soQua) || 1 }]);
+  const tenQuaCua = (c) => c.tenQua || (() => { const g = (c.quaTang || [])[0]; const p = g && sp(g.id); return (c.quaTang || []).length === 1 && p ? (p.short || p.name) : 'quà tặng'; })();
+  const heSoMacDinh = (label, donVi) => { const m = String(label || '').match(/^(\d+)\s*([^\s\d·(]+)/); return m && donVi && m[2].toLowerCase() === String(donVi).toLowerCase() ? Number(m[1]) : 1; };
+  function moTaTuDong(c) {
+    const b = [...bacCua(c)].sort((x, y) => x.muc - y.muc), q = tenQuaCua(c), dv = c.donVi || 'hộp';
+    return b.map((x, i) => (c.kieu === 'soLuong' ? `${i ? '' : 'Mua '}${x.muc} ${dv} tặng ${x.soQua} ${q}` : `${i ? 'Từ' : 'Mua từ'} ${fmt(x.muc)} tặng ${x.soQua} ${q}`)).join(' · ');
+  }
   function moiCT() {
     const now = Date.now() + 15 * 6e4;
     return { id: 'ct' + Date.now().toString(36), ten: '', batDau: isoGio(now), ketThuc: isoGio(now + 7 * 864e5), muc: 1000000, soQua: 1, sanPhamChinh: [], quaTang: [] };
@@ -85,6 +94,7 @@
     $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/qua-tang" data-ct-huy>← Danh sách</a>`;
     const chinh = nhap.sanPhamChinh || [];
     const bat = chinh.filter((x) => x.bat !== false).length;
+    const kieu = nhap.kieu === 'soLuong' ? 'soLuong' : 'tien';
     el.innerHTML = `
       <div class="ct-buoc"><span class="ct-so">1</span><div class="card">
         <h3>Thông tin cơ bản ${A.badge(tt, cls)}</h3>
@@ -97,12 +107,23 @@
           <label>Thời gian kết thúc<input type="datetime-local" id="ctKT" value="${esc(nhap.ketThuc)}" ${dis}></label>
         </div>
         <p class="hint">Thời gian kết thúc phải sau thời gian bắt đầu tối thiểu 1 tiếng. Chương trình đang diễn ra chỉ được rút ngắn thời gian.</p>
-        <div class="ct-dk">Điều kiện nhận quà: Mua <span class="ct-dong">₫<input type="number" id="ctMuc" min="1000" step="1000" value="${Number(nhap.muc) || 0}" ${dis}></span>
-          để nhận <input type="number" id="ctSo" min="1" value="${Number(nhap.soQua) || 1}" style="width:80px" ${dis}> quà tặng</div>
+        <h4>Điều kiện nhận quà</h4>
+        <div class="row row-3">
+          <label>Tính theo<select id="ctKieu" ${dis}><option value="tien" ${kieu === 'tien' ? 'selected' : ''}>Tổng tiền sản phẩm chính (₫)</option><option value="soLuong" ${kieu === 'soLuong' ? 'selected' : ''}>Số lượng sản phẩm chính</option></select></label>
+          ${kieu === 'soLuong' ? `<label>Đơn vị tính<input id="ctDonVi" value="${esc(nhap.donVi || 'hộp')}" maxlength="12" placeholder="hộp, lọ, thùng…" ${dis}></label>` : '<div></div>'}
+          <label>Tên quà hiện cho khách<input id="ctTenQua" value="${esc(nhap.tenQua || '')}" maxlength="40" placeholder="VD: lọ D3K2 (để trống = tên sản phẩm quà)" ${dis}></label>
+        </div>
+        <div class="ct-bac">${bacCua(nhap).map((b, i) => `<div class="ct-dk">Bậc ${i + 1}: Mua ${kieu === 'tien' ? `<span class="ct-dong">₫<input type="number" data-bac-muc="${i}" min="1000" step="1000" value="${b.muc}" ${dis}></span>` : `<input type="number" data-bac-muc="${i}" min="1" value="${b.muc}" style="width:90px" ${dis}> ${esc(nhap.donVi || 'hộp')}`}
+          → tặng <input type="number" data-bac-so="${i}" min="1" value="${b.soQua}" style="width:80px" ${dis}> ${esc(tenQuaCua(nhap))}
+          ${chiXem || bacCua(nhap).length < 2 ? '' : `<button class="icobtn" data-xoa-bac2="${i}" title="Xoá bậc">🗑</button>`}</div>`).join('')}</div>
+        ${chiXem ? '' : '<button class="btn btn--ghost btn--sm" id="ctThemBac">+ Thêm bậc</button>'}
+        <p class="hint">Đơn đạt bậc cao nhất nào thì nhận số quà của bậc đó (không cộng dồn các bậc).</p>
+        <label>Mô tả hiện cho khách <span class="muted">— để trống thì web tự viết từ các bậc</span><textarea id="ctMoTa" rows="2" placeholder="${esc(moTaTuDong(nhap))}" ${dis}>${esc(nhap.moTa || '')}</textarea></label>
+        <div class="box-note">Khách sẽ thấy trên trang sản phẩm: <b>${esc(nhap.moTa || moTaTuDong(nhap))}</b></div>
       </div></div>
 
       <div class="ct-buoc"><span class="ct-so">2</span><div class="card">
-        <div class="ct-h"><div><h3>Sản Phẩm Chính</h3><p class="muted">Khách mua các sản phẩm này đủ mức tiền ở bước 1 thì được nhận quà.</p></div>
+        <div class="ct-h"><div><h3>Sản Phẩm Chính</h3><p class="muted">Khách mua các sản phẩm này đủ ${kieu === 'soLuong' ? 'số lượng' : 'mức tiền'} ở bước 1 thì được nhận quà.</p></div>
           ${chiXem ? '' : '<button class="btn btn--outline" data-chon="chinh">+ Thêm Sản Phẩm</button>'}</div>
         ${chinh.length ? `<p class="muted"><b>${bat}</b> sản phẩm được bật, trên tổng <b>${chinh.length}</b> sản phẩm</p>
           ${chiXem ? '' : `<div class="ct-loat"><div><b>Thiết Lập Hàng Loạt</b><small class="muted">đã chọn ${chonCT.size} sản phẩm</small></div>
@@ -113,7 +134,10 @@
             <td data-nhan="Sản phẩm"><div class="ct-sp"><img src="${anh(p)}" alt="" onerror="this.style.visibility='hidden'"><span>${esc(p.short || p.name)}<small class="muted">Mã: ${esc(p.id)}</small></span></div></td>
             <td class="num" data-nhan="Giá">${giaKhoang(p)}</td><td class="num" data-nhan="Kho">${p.stock > 0 ? p.stock : '<span class="red">Hết hàng</span>'}</td>
             <td data-nhan="Trạng thái"><label class="sw"><input type="checkbox" data-bat-chinh="${esc(x.id)}" ${x.bat !== false ? 'checked' : ''} ${dis}></label></td>
-            ${chiXem ? '' : `<td><button class="icobtn" data-xoa-chinh="${esc(x.id)}" title="Xoá">🗑</button></td>`}</tr>`; }).join('')}
+            ${chiXem ? '' : `<td><button class="icobtn" data-xoa-chinh="${esc(x.id)}" title="Xoá">🗑</button></td>`}</tr>
+            ${kieu === 'soLuong' ? `<tr class="ct-heso"><td colspan="${chiXem ? 4 : 6}"><span class="muted">Mỗi phân loại tính là:</span>
+              ${(p.variants && p.variants.length ? p.variants : [{ label: '' }]).map((v) => { const hs = (x.heSo || {})[v.label]; return `<label class="ct-heso__o">${esc(v.label || 'Mặc định')}<span><input type="number" min="0" step="1" data-heso="${esc(x.id)}" data-pl="${esc(v.label)}" value="${hs != null ? hs : heSoMacDinh(v.label, nhap.donVi || 'hộp')}" ${dis}> ${esc(nhap.donVi || 'hộp')}</span></label>`; }).join('')}
+              <small class="hint">Đặt 0 nếu phân loại đó không được tính (VD gói lẻ). Khách mua 3 cái phân loại "1 hộp" = 3 hộp.</small></td></tr>` : ''}`; }).join('')}
           </tbody></table></div>` : '<p class="muted">Chưa có sản phẩm chính.</p>'}
       </div></div>
 
@@ -137,7 +161,15 @@
   function thuThongTin() {
     if (!nhap || chiXem || !$('#ctTen')) return;
     nhap.ten = $('#ctTen').value.trim(); nhap.batDau = $('#ctBD').value; nhap.ketThuc = $('#ctKT').value;
-    nhap.muc = Math.max(0, Number($('#ctMuc').value) || 0); nhap.soQua = Math.max(1, Math.round(Number($('#ctSo').value) || 1));
+    nhap.kieu = $('#ctKieu').value === 'soLuong' ? 'soLuong' : 'tien';
+    if ($('#ctDonVi')) nhap.donVi = $('#ctDonVi').value.trim() || 'hộp';
+    nhap.tenQua = $('#ctTenQua').value.trim(); if (!nhap.tenQua) delete nhap.tenQua;
+    nhap.moTa = $('#ctMoTa').value.trim(); if (!nhap.moTa) delete nhap.moTa;
+    const bac = $$('[data-bac-muc]').map((el) => ({ muc: Math.max(0, Number(el.value) || 0), soQua: Math.max(1, Math.round(Number(($(`[data-bac-so="${el.dataset.bacMuc}"]`) || {}).value) || 1)) }));
+    if (bac.length) nhap.bac = bac;
+    $$('[data-heso]').forEach((el) => { const x = nhap.sanPhamChinh.find((y) => y.id === el.dataset.heso); if (!x) return; x.heSo = x.heSo || {}; x.heSo[el.dataset.pl] = Math.max(0, Number(el.value) || 0); });
+    /* giữ muc/soQua = bậc thấp nhất để bản web cũ vẫn hiểu */
+    const thap = [...bacCua(nhap)].sort((a, b) => a.muc - b.muc)[0]; nhap.muc = thap.muc; nhap.soQua = thap.soQua;
   }
   function kiemTra() {
     const c = nhap, loi = [];
@@ -149,7 +181,9 @@
       if (goc && trangThai(goc)[2] === 'dang' && e > Date.parse(goc.ketThuc)) loi.push('Chương trình đang diễn ra chỉ được rút ngắn thời gian');
       if (!goc && e <= Date.now()) loi.push('Thời gian kết thúc phải ở tương lai');
     }
-    if (!(c.muc > 0)) loi.push('Nhập số tiền tối thiểu để nhận quà');
+    const bac = bacCua(c);
+    if (bac.some((b) => !(b.muc > 0))) loi.push(c.kieu === 'soLuong' ? 'Nhập số lượng mua cho mọi bậc' : 'Nhập số tiền tối thiểu cho mọi bậc');
+    if (new Set(bac.map((b) => b.muc)).size !== bac.length) loi.push('Hai bậc không được trùng mức mua');
     if (!(c.sanPhamChinh || []).some((x) => x.bat !== false && sp(x.id))) loi.push('Thêm và bật ít nhất 1 sản phẩm chính');
     const coQua = (c.quaTang || []).some((g) => { const p = sp(g.id); if (!p) return false; return p.variants && p.variants.length ? p.variants.some((v) => (g.bienThe || {})[v.label] !== false) : g.bat !== false; });
     if (!coQua) loi.push('Thêm và bật ít nhất 1 quà tặng');
@@ -255,6 +289,8 @@
       else nhap.sanPhamChinh.forEach((x) => { if (chonCT.has(x.id)) x.bat = lo.dataset.loat === 'bat'; });
       chonCT = new Set(); A.veTrang(); return;
     }
+    if (t.id === 'ctThemBac') { thuThongTin(); const b = bacCua(nhap), cuoi = b[b.length - 1]; nhap.bac = [...b, { muc: nhap.kieu === 'soLuong' ? cuoi.muc + 1 : cuoi.muc + 500000, soQua: cuoi.soQua + 1 }]; A.veTrang(); return; }
+    const xb2 = t.closest('[data-xoa-bac2]'); if (xb2) { thuThongTin(); nhap.bac = bacCua(nhap).filter((_, i) => i !== Number(xb2.dataset.xoaBac2)); A.veTrang(); return; }
     if (t.id === 'ctXacNhan') {
       thuThongTin();
       const loi = kiemTra(); if (loi.length) { A.toast(loi[0], 'err'); return; }
@@ -273,7 +309,9 @@
     const bq = t.closest('[data-bat-qua]'); if (bq) { const g = nhap.quaTang.find((y) => y.id === bq.dataset.batQua); if (g) { if (g.bienThe) g.bienThe[bq.dataset.pl] = bq.checked; else g.bat = bq.checked; } return; }
     const c1 = t.closest('[data-chon-mot]'); if (c1) { if (c1.checked) chonCT.add(c1.dataset.chonMot); else chonCT.delete(c1.dataset.chonMot); thuThongTin(); A.veTrang(); return; }
     if (t.closest('[data-chon-tat]')) { chonCT = t.checked ? new Set(nhap.sanPhamChinh.map((x) => x.id)) : new Set(); thuThongTin(); A.veTrang(); return; }
-    if (['ctTen', 'ctBD', 'ctKT', 'ctMuc', 'ctSo'].includes(t.id)) thuThongTin();
+    if (t.id === 'ctKieu') { thuThongTin(); nhap.bac = nhap.kieu === 'soLuong' ? [{ muc: 2, soQua: 1 }] : [{ muc: 1000000, soQua: 1 }]; A.veTrang(); return; }
+    if (['ctDonVi', 'ctTenQua', 'ctMoTa'].includes(t.id) || t.closest('[data-bac-muc]') || t.closest('[data-bac-so]') || t.closest('[data-heso]')) { thuThongTin(); A.veTrang(); return; }
+    if (['ctTen', 'ctBD', 'ctKT'].includes(t.id)) thuThongTin();
   });
 
   /* veHang: hàm vẽ bảng hạng khách hàng (giữ ở m-marketing.js) */

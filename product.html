@@ -10,16 +10,16 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005e">
+  <link rel="stylesheet" href="css/style.css?v=20261005f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="pdp"></div></main>
 <div class="sticky-buy" id="stickyBuy"></div>
 
-<script src="js/data.js?v=20261005e"></script>
+<script src="js/data.js?v=20261005f"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005e"></script>
+<script src="js/app.js?v=20261005f"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, I, starRow, productImage, productCard, Cart, toast, deliveryEstimate, openQuickBuy, giftNote } = MC;
@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const isTPCN = !!catObj.tpcn && !p.cosmetic;
   document.title = (p.short || p.name) + ' – ' + SITE.name;
   const { productThumb, shortName } = MC; const manyVariants = p.variants && p.variants.length > 12;  // >12 mới dùng ô chọn; còn lại hiện nút bấm cho dễ chọn
+  /* Chương trình mua theo combo (trường uuDai của combo): hiện ở trang combo và trang các sản phẩm lẻ trong combo */
+  const comboUuDai = PRODUCTS.filter((c) => c.isCombo && c.uuDai && c.uuDai.length && (c.id === p.id || (c.items || []).includes(p.id)))
+    .map((c) => `<li class="li-gift li-combo">🎁 <b>${c.id === p.id ? 'Chương trình của combo' : `Mua theo ${esc(shortName(c))}`}</b><ul class="uudai">${c.uuDai.map((u) => `<li>✅ ${esc(u)}</li>`).join('')}</ul>${c.id === p.id ? '' : `<a class="btn btn--primary btn--sm mt-8" href="product.html?id=${encodeURIComponent(c.id)}">Xem combo & chọn số hộp ${I.arrowR}</a>`}</li>`).join('');
   const price = () => variant != null ? p.variants[variant].price : p.price;
   const oldPrice = () => listPrice(variant != null ? p.variants[variant].oldPrice : p.oldPrice, price());
 
@@ -66,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="row"><button class="btn btn--ghost btn--wrap" type="button" data-callback="${p.id}">${I.headset}Chuyên gia dinh dưỡng gọi tư vấn</button>${p.shopeeUrl ? MC.shopeeBtn(p.shopeeUrl) : `<a class="btn btn--ghost" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi đặt hàng</a>`}</div>
         </div>
         <div class="pdp__note">${p.cosmetic ? '💄 Sản phẩm chăm sóc dùng ngoài, không phải là thuốc và không thay thế thuốc chữa bệnh. Nên thử ở vùng da nhỏ trước, tránh vùng mắt và vết thương hở; ngưng dùng nếu da kích ứng.' : p.formula ? '💛 Sữa mẹ là thức ăn tốt nhất cho sức khoẻ và sự phát triển toàn diện của trẻ nhỏ. Sản phẩm dinh dưỡng công thức chỉ dùng khi có chỉ định của bác sĩ hoặc mẹ không đủ sữa; pha đúng hướng dẫn trên hộp.' : isTPCN ? '⚠️ Thực phẩm bảo vệ sức khoẻ, không phải là thuốc và không thay thế thuốc chữa bệnh. Đọc kỹ hướng dẫn và độ tuổi trên bao bì; chuyên gia dinh dưỡng sẽ gọi tư vấn liều dùng phù hợp với bé.' : p.family && !p.ages.length ? '💛 Thực phẩm dùng cho cả gia đình. Bé nhỏ dùng lượng ít, quan sát phản ứng; người có bệnh lý nền hỏi ý kiến bác sĩ.' : '💛 Thực phẩm bổ sung, không thay thế bữa ăn chính. Bé dưới 1 tuổi hoặc có tiền sử dị ứng nên hỏi ý kiến bác sĩ trước khi dùng.'}</div>
-        <div class="pdp__offers"><h4>${I.gift}Ưu đãi khi mua hôm nay</h4><ul>${giftNote(p) ? `<li class="li-gift">🎁 ${giftNote(p)}</li>` : ''}<li>Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng</li><li>Freeship đơn từ ${fmt(SITE.freeshipFrom)} · Nội thành Hà Nội giao trong ngày</li>${p.cosmetic ? '<li>Tư vấn cách dùng miễn phí qua Zalo sau khi đặt</li>' : isTPCN ? '<li>Chuyên gia dinh dưỡng gọi hướng dẫn liều dùng miễn phí sau khi đặt</li>' : '<li>Đổi mới miễn phí nếu hàng móp, rách, cận date khi nhận</li>'}</ul></div>
+        <div class="pdp__offers"><h4>${I.gift}Ưu đãi khi mua hôm nay</h4><ul>${comboUuDai}${giftNote(p) ? `<li class="li-gift">🎁 ${giftNote(p)}</li>` : ''}<li>Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng</li><li>Freeship đơn từ ${fmt(SITE.freeshipFrom)} · Nội thành Hà Nội giao trong ngày</li>${p.cosmetic ? '<li>Tư vấn cách dùng miễn phí qua Zalo sau khi đặt</li>' : isTPCN ? '<li>Chuyên gia dinh dưỡng gọi hướng dẫn liều dùng miễn phí sau khi đặt</li>' : '<li>Đổi mới miễn phí nếu hàng móp, rách, cận date khi nhận</li>'}</ul></div>
         <div class="pdp__trust"><span>${I.shield}Chính hãng, tem phụ tiếng Việt</span><span>${I.refresh}Đổi trả miễn phí 7 ngày</span><span>${I.file}Hoá đơn VAT theo yêu cầu</span><span>${I.package}Đóng gói chống sốc</span></div>
         <div class="pdp__delivery"><span>${I.truck}Giao dự kiến: <b>${deliveryEstimate()}</b> (Hà Nội trong ngày · tỉnh khác 1–3 ngày)</span><span>${I.mapPin}Giao tới: <span id="addrHint">${esc((MC.Customer.get() || {}).address ? MC.addrShow(MC.Customer.get().address) : 'Hà Nội, TP.HCM & 61 tỉnh thành')}</span></span><span>${I.phoneCall}Hotline / Zalo: <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a></span></div>
       </div>

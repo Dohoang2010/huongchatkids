@@ -53,6 +53,7 @@ window.SITE = {
       '26523206270': 12500,  // sữa tươi Norco – 1 thùng 12 hộp 1L
       '26060839019': 700,    // váng sữa Calciumore 30 gói
       '42878618667': 150,    // D3K2 30ml
+      'combo-vangsua-d3k2': 2250, // combo 1 hộp váng sữa 90 gói + 1 lọ D3K2
       '41002695070': 600,    // rong biển Sung Gyung 500g
       '28467224687': 1100,   // táo đỏ 1kg
       '43532388498': 300,    // granola 200g
@@ -618,9 +619,10 @@ window.PRODUCTS = [
     shape: "box", color: "#4FA3D1", weight: "1 hộp 90 gói váng sữa + 1 lọ D3K2 30ml", origin: "Hàn Quốc & New Zealand", tags: ["Combo"],
     image: "img/combo-vangsua-d3k2.jpg", thumb: "img/thumb/combo-vangsua-d3k2.jpg",
     images: ["img/combo-vangsua-d3k2.jpg", "img/26060839019.jpg", "img/42878618667.jpg", "img/26060839019-3.jpg", "img/42878618667-3.jpg"],
-    variants: [{ label: "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%", price: 2726000, oldPrice: 2870000 }, { label: "2 hộp váng sữa 180 gói · TẶNG 1 D3K2", price: 4960000, oldPrice: 5350000 }],
+    variants: [{ label: "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%", price: 2726000, oldPrice: 2870000 }, { label: "2 hộp váng sữa 180 gói · TẶNG 1 D3K2", price: 4960000, oldPrice: 5350000 }, { label: "3 hộp váng sữa 270 gói · TẶNG 2 D3K2", price: 7440000, oldPrice: 8220000 }, { label: "4 hộp váng sữa 360 gói · TẶNG 3 D3K2", price: 9920000, oldPrice: 11090000 }],
+    uuDai: ["Mua 1 hộp canxi + 1 lọ D3K2 = 2.870.000₫, giảm 5% còn 2.726.000₫", "Mua 2 hộp canxi 4.960.000₫ → tặng ngay 1 lọ D3K2 (tiết kiệm 390.000₫)", "Mua 3 hộp canxi 7.440.000₫ → tặng ngay 2 lọ D3K2 (tiết kiệm 780.000₫)", "Mua 4 hộp canxi 9.920.000₫ → tặng ngay 3 lọ D3K2 (tiết kiệm 1.170.000₫)"],
     desc: "Bộ đôi canxi cho bé: váng sữa canxi hữu cơ Calciumore (hộp 90 gói) bổ sung canxi sữa dễ hấp thu, kết hợp vitamin D3K2 Pure Vitality (New Zealand) giúp đưa canxi vào xương. Theo nhà sản xuất, dùng cùng nhau hỗ trợ bé phát triển chiều cao và răng chắc khoẻ tốt hơn so với dùng riêng canxi.",
-    highlights: ["Mua 1 hộp váng sữa + 1 D3K2 được giảm 5% so với mua lẻ", "Mua 2 hộp váng sữa được TẶNG 1 lọ D3K2 30ml", "Canxi sữa hữu cơ Hàn Quốc + D3K2 New Zealand", "Đủ dùng cho bé khoảng 3 tháng"],
+    highlights: ["Mua 1 hộp váng sữa + 1 D3K2 được giảm 5% so với mua lẻ", "Mua 2 hộp tặng 1 lọ D3K2 · 3 hộp tặng 2 lọ · 4 hộp tặng 3 lọ", "Canxi sữa hữu cơ Hàn Quốc + D3K2 New Zealand", "Mỗi hộp 90 gói đủ dùng cho bé khoảng 3 tháng"],
     usage: "Váng sữa: 1 gói/ngày pha cùng sữa hoặc ăn trực tiếp. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn. Dùng canxi và D3K2 cùng buổi để hấp thu tốt nhất." },
   { id: "combo-lottexanh-d3k2", name: "Combo Nước Ép Lotte Tăng Cao (Xanh) + Vitamin D3K2 Pure Vitality – Hỗ Trợ Bé Phát Triển Chiều Cao", short: "Combo nước ép Lotte Tăng cao + D3K2", brand: "lotte", cat: "nuoc-ep",
     ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "canxi", "d3k2", "organic"], price: 1707000, oldPrice: 1707000, rating: 5.0, reviews: 0, sold: 0, stock: 50,
@@ -704,7 +706,7 @@ window.FEEDBACKS = [
 /* Banner đầu trang chủ. Ảnh minh hoạ bên phải: image (1 ảnh) · images + sticker (nhiều ảnh xếp chồng + nhãn dán) · tiers: true (bảng hạng khách hàng lấy từ TIERS) */
 /* ===ADMIN:BANNERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.BANNERS = [
-  { title: 'Váng sữa canxi\nCalciumore Hàn Quốc', sub: 'Canxi sữa + vitamin D, gói ăn liền vị váng sữa. Hộp 90 gói chỉ khoảng <b>27.600₫/ngày</b>, tặng kèm <b>5 gói nước ép Lotte</b>.', cta: 'Mua ngay', link: 'product.html?id=26060839019', theme: 'sky', badge: '⭐ 4,9/5 · Đã bán 663', images: ['img/thumb/26060839019.jpg', 'img/26060839019-3.jpg'], imageLabels: ['📦 Hộp 90 gói', '🥛 Gói ăn liền'], sticker: 'TẶNG\n5 gói Lotte', fx: 'canxi' },
+  { title: 'Váng sữa canxi\nCalciumore Hàn Quốc', sub: 'Canxi sữa hữu cơ, gói ăn liền vị váng sữa. <b>Mua 2 hộp tặng 1 lọ D3K2</b>, 3 hộp tặng 2 lọ, 4 hộp tặng 3 lọ · 1 hộp + 1 D3K2 giảm 5%.', cta: 'Mua ngay', link: 'product.html?id=26060839019', theme: 'sky', badge: '⭐ 4,9/5 · Đã bán 663', images: ['img/thumb/26060839019.jpg', 'img/26060839019-3.jpg'], imageLabels: ['📦 Hộp 90 gói', '🥛 Gói ăn liền'], sticker: 'MUA 2\nTẶNG D3K2', fx: 'canxi' },
   { title: 'Mua hàng tặng\nnước ép Lotte', sub: 'Đơn từ <b>1.000.000₫</b> tặng 5 gói · mua thùng nước ép Lotte tặng đến <b>20 gói</b>. Mẹ chọn vị Hồng hoặc Cam.', cta: 'Săn quà ngay', link: 'collections.html?sort=best', theme: 'gift', badge: '🎁 Chương trình mới', images: ['img/thumb/25632276959.jpg', 'img/thumb/23660586997.jpg'], imageLabels: ['💗 Vị Hồng', '🧡 Vị Cam'], sticker: 'TẶNG\nđến 20 gói', fx: 'gift' },
   { title: 'Khách thân thiết\ngiảm đến 12%', sub: 'Tích luỹ chi tiêu tự động theo số điện thoại, không cần đăng ký. Xác thực OTP khi đặt hàng để nhận ưu đãi mọi đơn.', cta: 'Xem hạng của tôi', link: 'account.html', theme: 'grape', badge: '👑 Mới ra mắt', tiers: true },
   { title: 'Freeship toàn quốc\ncho đơn từ 3 triệu', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Chính hãng 100%, kiểm tra hàng trước khi thanh toán.', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
@@ -965,7 +967,30 @@ window.QUA_TANG = {
     "brand": "lotte"
   },
   "tuKhoaThung": "thùng",
-  "chuongTrinh": []
+  "chuongTrinh": [
+    {
+      "id": "ct-calciumore-d3k2",
+      "ten": "Canxi Calciumore mua 2–4 hộp tặng D3K2",
+      "batDau": "2026-10-05T00:00",
+      "ketThuc": "2026-12-31T23:59",
+      "kieu": "soLuong",
+      "donVi": "hộp",
+      "tenQua": "lọ D3K2",
+      "bac": [
+        { "muc": 2, "soQua": 1 },
+        { "muc": 3, "soQua": 2 },
+        { "muc": 4, "soQua": 3 }
+      ],
+      "muc": 2,
+      "soQua": 1,
+      "sanPhamChinh": [
+        { "id": "26060839019", "bat": true, "heSo": { "30 gói (không hộp)": 0, "1 hộp 90 gói": 1, "2 hộp 180 gói": 2 } }
+      ],
+      "quaTang": [
+        { "id": "42878618667", "bienThe": { "1 lọ": true, "2 lọ": false } }
+      ]
+    }
+  ]
 };
 /* ===/ADMIN:QUA_TANG=== */
 
