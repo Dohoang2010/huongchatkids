@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005a">
+  <link rel="stylesheet" href="css/style.css?v=20261005b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -19,20 +19,20 @@
   <h1 class="page-title">Giỏ hàng của mẹ</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20261005a"></script>
+<script src="js/data.js?v=20261005b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005a"></script>
+<script src="js/app.js?v=20261005b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productThumb, shortName, productCard, Cart, esc, shipFee, shipText, applyCoupon, store, toast, giftFor, giftBox } = MC;
   const render = () => {
-    const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', ''); const c = coupon ? applyCoupon(coupon, sub - multi) : null;
+    const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', ''); const c = coupon ? applyCoupon(coupon, sub - multi, lines) : null;
     const discount = c && c.ok ? c.discount : 0; const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + (ship || 0);
     if (!lines.length) { $('#cartPage').innerHTML = `<div class="empty card" style="grid-column:1/-1"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p>Mẹ chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div><section class="section" style="grid-column:1/-1"><div class="section-head"><div><h2>Mẹ tin dùng nhất</h2></div></div><div class="grid grid--4">${[...PRODUCTS].sort((a, b) => b.sold - a.sold).slice(0, 4).map((p) => productCard(p)).join('')}</div></section>`; return; }
     $('#cartPage').innerHTML = `
       <div class="card card--pad cart-table">
         <div class="freeship-bar mb-12">${sub >= SITE.freeshipFrom ? '🎉 Đơn hàng được <b>miễn phí vận chuyển</b>' : `Mua thêm <b>${fmt(SITE.freeshipFrom - sub)}</b> để được <b>freeship</b>`}<div class="bar"><i style="width:${Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>
-        ${giftBox(giftFor(lines))}
+        ${giftBox(giftFor(lines, { coMa: !!(c && c.ok) }))}
         ${lines.map((l) => `<div class="cart-item"><a href="product.html?id=${l.id}"><img src="${productThumb(l.p)}" alt=""></a><div><a class="name" href="product.html?id=${l.id}">${esc(shortName(l.p))}</a>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${listPrice(l.oldPrice, l.price) ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div></div>
           <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div></div>
           <div class="total">${fmt(l.total)}</div><button class="remove" type="button" data-remove="${l.id}" data-variant="${l.variant}" aria-label="Xoá ${esc(shortName(l.p))} khỏi giỏ" title="Xoá">${I.trash}</button></div>`).join('')}
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><span>${fmt(sub)}</span></div>
         ${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : ''}
         ${discount ? `<div class="summary-line"><span>Giảm giá (${c.code})</span><span class="text-teal">−${fmt(discount)}</span></div>` : ''}
-        ${(() => { const g = giftFor(lines); return g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">🎁 ${esc(g.moTa)}</span></div>` : ''; })()}
+        ${(() => { const g = giftFor(lines, { coMa: !!(c && c.ok) }); return g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">🎁 ${esc(g.moTa)}</span></div>` : ''; })()}
         <div class="summary-line"><span>Phí vận chuyển</span><span class="${ship === 0 ? 'free' : ''}">${shipText(ship)}</span></div>
         <div class="summary-line total"><span>${ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(total)}</b></div>
         <a class="btn btn--primary btn--lg btn--block mt-16" href="checkout.html">${I.zap}Đặt hàng · ${fmt(total)}</a>
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   document.addEventListener('cart:change', render);
   $('#cartPage').addEventListener('click', (e) => {
-    if (e.target.id === 'applyCoupon') { const code = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(code, Cart.subtotal() - Cart.multiDiscount()); store.set('mc_coupon', r.ok ? code : ''); toast(r.ok ? 'Đã áp dụng ' + code : r.msg, { type: r.ok ? 'ok' : 'error' }); render(); }
+    if (e.target.id === 'applyCoupon') { const code = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(code, Cart.subtotal() - Cart.multiDiscount(), Cart.lines()); store.set('mc_coupon', r.ok ? code : ''); toast(r.ok ? 'Đã áp dụng ' + code : r.msg, { type: r.ok ? 'ok' : 'error' }); render(); }
     const cb = e.target.closest('[data-coupon]'); if (cb) { store.set('mc_coupon', cb.dataset.coupon); render(); }
     if (e.target.id === 'clearCart' && confirm('Xoá toàn bộ sản phẩm trong giỏ?')) { Cart.clear(); }
   });

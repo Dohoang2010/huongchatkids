@@ -63,7 +63,11 @@
   }
 
   /* ---------------- QUÀ TẶNG & HẠNG KHÁCH ---------------- */
-  function veQua(el) {
+  /* Không có sub → danh sách chương trình (m-qua-tang.js); "mac-dinh" → chương trình cũ bên dưới; còn lại → tạo/sửa chương trình */
+  function veQua(el, { sub } = {}) {
+    if (!sub) return A.quaTang.veDanhSach(el, veHang);
+    if (sub !== 'mac-dinh') return A.quaTang.veSua(el, sub);
+    $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/qua-tang">← Danh sách</a>`;
     const q = A.D.QUA_TANG || {};
     el.innerHTML = `
       <div class="card"><h3>🎁 Quà tặng kèm</h3><p class="muted">Web tự tính quà theo giỏ hàng và tự thêm vào đơn.</p>
@@ -83,8 +87,11 @@
         <button class="btn btn--ghost btn--sm" id="btnThemBac">+ Thêm bậc</button>
         <label class="sw mt-12"><input type="checkbox" id="qtThungMoi" ${q.thungChiKhachMoi ? 'checked' : ''}> Khách đã lên hạng cũng KHÔNG được quà khi mua thùng</label>
         <div class="box-note">Hai chương trình không cộng dồn – web lấy chương trình tặng nhiều quà hơn. Combo có ưu đãi riêng nên không tính vào chương trình mua thùng.</div>
-      </div>
-      <div class="card"><h3>🏅 Hạng khách hàng</h3><p class="muted">Xét theo tổng tiền khách đã mua. Ưu đãi hạng tự trừ vào đơn.</p>
+      </div>`;
+    veBac();
+  }
+  function veHang() {
+    return `<div class="card"><h3>🏅 Hạng khách hàng</h3><p class="muted">Xét theo tổng tiền khách đã mua. Ưu đãi hạng tự trừ vào đơn.</p>
         <div class="tbl-wrap"><table><thead><tr><th>Biểu tượng</th><th>Tên hạng</th><th class="num">Tổng chi tiêu từ</th><th class="num">Giảm (%)</th><th>Mô tả</th></tr></thead><tbody id="hangBody">
         ${(A.D.TIERS || []).map((t, i) => `<tr data-hang="${i}">
           <td><input value="${esc(t.icon || '')}" data-f="icon" style="width:54px;text-align:center"></td>
@@ -94,7 +101,6 @@
           <td><input value="${esc(t.desc || '')}" data-f="desc"></td></tr>`).join('')}
         </tbody></table></div>
         <div class="box-note">⚠️ Sửa ở đây xong nhớ sửa biến <code>HANG</code> trong Apps Script cho khớp rồi Deploy lại, vì máy chủ cũng tính hạng khi nhận đơn.</div></div>`;
-    veBac();
   }
   function veBac() {
     const bac = (A.D.QUA_TANG && A.D.QUA_TANG.thung) || [];
@@ -105,9 +111,8 @@
       <button class="btn btn--red btn--sm" data-xoa-bac="${i}">✕</button></div>`).join('') || '<p class="muted">Chưa có bậc nào.</p>';
   }
   function thuQua() {
-    if (!$('#qtTen')) return;
     A.D.QUA_TANG = A.D.QUA_TANG || {};
-    Object.assign(A.D.QUA_TANG, {
+    if ($('#qtTen')) Object.assign(A.D.QUA_TANG, {
       enabled: $('#qtBat').checked, ten: $('#qtTen').value.trim(),
       vi: $('#qtVi').value.split(',').map((x) => x.trim()).filter(Boolean),
       donTu: { muc: Number($('#qtMuc').value) || 0, soQua: Number($('#qtSo').value) || 0, chiKhachMoi: $('#qtMoi').checked },
@@ -174,6 +179,5 @@
 
   A.dangKy({ route: '/flash-sale', ten: 'Flash Sale', icon: '⚡', nhom: 'ban-hang', quyen: 'flashsale.view', preview: true, mo: 'Chọn sản phẩm chạy flash sale trang chủ', ve: veFlash });
   A.dangKy({ route: '/combo', ten: 'Combo', icon: '🎁', nhom: 'ban-hang', quyen: 'combo.view', preview: true, mo: 'Gói nhiều sản phẩm bán kèm', ve: veCombo });
-  A.dangKy({ route: '/ma-giam-gia', ten: 'Mã giảm giá', icon: '🎟️', nhom: 'ban-hang', quyen: 'product.view', preview: false, mo: 'Mã khách nhập ở bước thanh toán', ve: veMa });
-  A.dangKy({ route: '/qua-tang', ten: 'Quà tặng & hạng', icon: '🏅', nhom: 'ban-hang', quyen: 'product.view', preview: true, mo: 'Chương trình tặng quà và hạng khách hàng', ve: veQua });
+  A.dangKy({ route: '/qua-tang', ten: 'Quà tặng & hạng', icon: '🏅', nhom: 'ban-hang', quyen: 'product.view', preview: (sub) => !sub, mo: 'Chương trình Mua để nhận quà và hạng khách hàng', ve: veQua });
 })();

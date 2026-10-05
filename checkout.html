@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005a">
+  <link rel="stylesheet" href="css/style.css?v=20261005b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -18,14 +18,14 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261005a"></script>
-<script src="js/diachi.js?v=20261005a"></script>
+<script src="js/data.js?v=20261005b"></script>
+<script src="js/diachi.js?v=20261005b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005a"></script>
+<script src="js/app.js?v=20261005b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
-          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, byId, isForMom, rankDefault, shipText, ghnInfo, hangCho, traHang, openLogin } = MC;
+          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, ketHop, byId, isForMom, rankDefault, shipText, ghnInfo, hangCho, traHang, openLogin } = MC;
   let lines = Cart.lines();
   if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Mẹ chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
   const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
@@ -41,12 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const calc = () => {
     const base = sub - multi;
-    const r = coupon ? applyCoupon(coupon, base) : null;
+    const r = coupon ? applyCoupon(coupon, base, lines) : null;
     const couponAmt = r && r.ok ? r.discount : 0;
     const pct = tierPct(); const hang = hangCho(phoneNow()) || tierOf(0);
     const hangAmt = pct ? Math.round(base * pct / 100) : 0;
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
-    if (!loy.combineWithCoupon && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
+    if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0);
     /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
     const city = form.elements.city.value;
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Quà phụ thuộc hạng khách: tra được hạng xong là tính lại */
   const renderQua = () => {
     const truoc = qua && qua.soQua;
-    qua = giftFor(lines);
+    qua = giftFor(lines, { coMa: calc().dungMa });
     if (qua && qua.vi && !qua.vi.includes(quaVi)) quaVi = qua.vi[0] || '';
     const w = $('#giftWrap'); if (w) w.innerHTML = giftBox(qua, true, quaVi);
     if (!!truoc !== !!(qua && qua.soQua)) { const it = $('#orderItems'); if (it) it.innerHTML = itemsHTML(); }
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lines = Cart.lines();
     if (!lines.length) { location.reload(); return; }
     sub = Cart.subtotal(); multi = Cart.multiDiscount();
-    qua = giftFor(lines); if (qua && qua.vi && !qua.vi.includes(quaVi)) quaVi = qua.vi[0] || '';
+    qua = giftFor(lines, { coMa: calc().dungMa }); if (qua && qua.vi && !qua.vi.includes(quaVi)) quaVi = qua.vi[0] || '';
     $('#orderCount').textContent = Cart.count();
     $('#orderItems').innerHTML = itemsHTML();
     $('#giftWrap').innerHTML = giftBox(qua, true, quaVi);
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'loyOut') { Session.clear(); renderLoyalty(); renderSummary(); }
   });
   form.addEventListener('click', (e) => {
-    if (e.target.id === 'applyCoupon') { coupon = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(coupon, sub - multi); store.set('mc_coupon', r.ok ? coupon : ''); if (!r.ok) coupon = ''; toast(r.ok ? 'Đã áp dụng mã ' + r.code : r.msg, { type: r.ok ? 'ok' : 'error' }); renderSummary(); }
+    if (e.target.id === 'applyCoupon') { coupon = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(coupon, sub - multi, lines); store.set('mc_coupon', r.ok ? coupon : ''); if (!r.ok) coupon = ''; toast(r.ok ? 'Đã áp dụng mã ' + r.code : r.msg, { type: r.ok ? 'ok' : 'error' }); renderSummary(); }
     const cb = e.target.closest('[data-coupon]'); if (cb) { coupon = cb.dataset.coupon; $('#couponInput').value = coupon; store.set('mc_coupon', coupon); renderSummary(); }
     if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); }
     const up = e.target.closest('[data-upsell]');

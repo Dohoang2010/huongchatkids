@@ -249,12 +249,23 @@
   const addrShow = (a) => addrFull(addrParse(a));
   const shortName = (p) => p.short || p.name;
   const hoursNote = () => `trong giờ làm việc ${SITE.workingHours}; ngoài giờ sẽ gọi vào sáng hôm sau`;
-  function applyCoupon(code, subtotal) {
+  /* lines (tuỳ chọn) để tính Voucher sản phẩm: chỉ giảm trên tiền các sản phẩm áp dụng */
+  function maHetHan(c, now = Date.now()) { return !!(c && ((c.batDau && now < Date.parse(c.batDau)) || (c.hetHan && now >= Date.parse(c.hetHan)))); }
+  function applyCoupon(code, subtotal, lines) {
     const c = COUPONS[(code || '').trim().toUpperCase()]; if (!c) return { ok: false, msg: 'Mã giảm giá không hợp lệ' };
-    if (subtotal < (c.min || 0)) return { ok: false, msg: `Mã áp dụng cho đơn từ ${fmt(c.min)}` };
+    if (c.batDau && Date.now() < Date.parse(c.batDau)) return { ok: false, msg: 'Mã chưa đến thời gian sử dụng' };
+    if (c.hetHan && Date.now() >= Date.parse(c.hetHan)) return { ok: false, msg: 'Mã đã hết hạn' };
+    let base = subtotal;
+    if (c.loai === 'sanpham') {
+      const ls = lines || [], ids = new Set(c.sanPham || []);
+      const tong = ls.reduce((s, l) => s + l.total, 0), tienSP = ls.reduce((s, l) => s + (l.p && ids.has(l.p.id) ? l.total : 0), 0);
+      if (!tienSP) return { ok: false, msg: 'Mã chỉ áp dụng cho một số sản phẩm – giỏ hàng chưa có sản phẩm nào trong số đó' };
+      base = tong ? Math.round(subtotal * tienSP / tong) : 0;
+    }
+    if (base < (c.min || 0)) return { ok: false, msg: `Mã áp dụng cho ${c.loai === 'sanpham' ? 'sản phẩm áp dụng' : 'đơn'} từ ${fmt(c.min)}` };
     let discount = 0, freeship = false;
-    if (c.type === 'percent') discount = Math.min(subtotal * c.value / 100, c.max || Infinity);
-    else if (c.type === 'fixed') discount = c.value; else if (c.type === 'ship') freeship = true;
+    if (c.type === 'percent') discount = Math.min(base * c.value / 100, c.max || Infinity);
+    else if (c.type === 'fixed') discount = Math.min(c.value, base); else if (c.type === 'ship') freeship = true;
     return { ok: true, discount: Math.round(discount), freeship, desc: c.desc, code: (code || '').toUpperCase() };
   }
   function deliveryEstimate() { const d = new Date(); d.setDate(d.getDate() + 1); const days = ['CN', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7']; return `${days[d.getDay()]}, ${d.getDate()}/${d.getMonth() + 1}`; }
@@ -571,12 +582,12 @@
   function qbCalc() {
     const { price } = qbPrice(); const sub = price * QB.qty; const multi = QB.qty >= 2 ? Math.round(sub * MULTI_RATE) : 0;
     const base = sub - multi;
-    const cr = QB.coupon ? applyCoupon(QB.coupon, base) : null; const couponAmt = cr && cr.ok ? cr.discount : 0;
+    const cr = QB.coupon ? applyCoupon(QB.coupon, base, qbLines()) : null; const couponAmt = cr && cr.ok ? cr.discount : 0;
     const loy = SITE.loyalty || {};
     const pct = loy.enabled ? Session.discountFor(qbPhone()) : 0;
     const hang = hangCho(qbPhone()) || tierOf(0); const hangAmt = pct ? Math.round(base * pct / 100) : 0;
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
-    if (!loy.combineWithCoupon && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
+    if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0);
     const ship = cr && cr.ok && cr.freeship ? 0 : shipFee(base - discount, 'standard', { tinh: qbTinh(), lines: qbLines() });
     return { sub, multi, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, ship, total: Math.max(0, base - discount) + (ship || 0) };
@@ -686,7 +697,7 @@
     $('#qbTotal').textContent = fmt(k.total);
     $('#qbQty').value = QB.qty;
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
-    const g = giftFor(qbLines()); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
+    const g = giftFor(qbLines(), { coMa: qbCalc().dungMa }); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
     const gw = $('#qbGift'); if (gw) gw.innerHTML = giftBox(g, true, QB.quaVi);
     $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
     const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`) : '';
@@ -704,7 +715,7 @@
     Customer.set({ ...(Customer.get() || {}), name, phone, address, payment, email });
     const btn = $('#qbSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang gửi đơn…</span>';
     const p = byId(QB.id); const { price, label } = qbPrice(); const k = qbCalc();
-    const g = giftFor(qbLines()); const ss = Session.get();
+    const g = giftFor(qbLines(), { coMa: qbCalc().dungMa }); const ss = Session.get();
     const order = await submitOrder({ type: 'quick', customer: { name, phone: phoneKey(phone), address, email }, payment,
       coupon: k.dungMa && k.cr && k.cr.ok ? k.cr.code : '',
       hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (ss && phoneKey(ss.sdt) === phoneKey(phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
@@ -1143,6 +1154,7 @@
     const hang = kh ? tierOf(Number(kh.tongChiTieu) || 0).key : 'moi';
     const thuTu = tiers().map((t) => t.key);
     return Object.keys(window.COUPONS || {}).map((ma) => ({ ma, ...window.COUPONS[ma] }))
+      .filter((c) => c.loai !== 'riengtu' && !(c.hetHan && Date.now() >= Date.parse(c.hetHan)) && !(c.batDau && Date.now() < Date.parse(c.batDau) && !c.luuTruoc))
       .filter((c) => !(c.donDau && soDon > 0))
       .filter((c) => !c.hang || thuTu.indexOf(hang) >= thuTu.indexOf(c.hang));
   }
@@ -1309,6 +1321,10 @@
   function laNuocLotte(p) { const cfg = QT(); if (!cfg || !p || p.isCombo) return false; const l = cfg.loc || {}; return (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand); }
   /* Ghi chú quà hiện trên trang sản phẩm */
   function giftNote(p) {
+    const moi = ctChoSP(p).map((x) => `Mua sản phẩm chương trình từ <b>${fmt(x.c.muc)}</b> được tặng <b>${x.c.soQua} ${esc(x.ten)}</b>${x.vi.length > 1 ? ' (mẹ chọn ' + esc(x.vi.join(' / ')) + ')' : ''}.`).join('<br>');
+    return [moi, giftNoteCu(p)].filter(Boolean).join('<br>');
+  }
+  function giftNoteCu(p) {
     const cfg = QT(); if (!cfg) return '';
     const vi = (cfg.vi || []).map((v) => v.split('–')[0].trim().toLowerCase()).join(' hoặc ');
     const t = hangCho(sdtDangDung()); const vip = !!(t && t.discount > 0);
@@ -1328,7 +1344,51 @@
   }
   /* VIP = đã lên hạng có chiết khấu (Silver trở lên) */
   function laVip(phone) { const t = hangCho(phone != null ? phone : sdtDangDung()); return !!(t && t.discount > 0); }
+  /* ---- Chương trình "Mua để nhận quà" tạo ở trang quản trị (QUA_TANG.chuongTrinh) ---- */
+  function ctDangChay() {
+    const now = Date.now();
+    return ((window.QUA_TANG || {}).chuongTrinh || []).filter((c) => !c.tat && Date.parse(c.batDau) <= now && now < Date.parse(c.ketThuc)).map((c) => {
+      const qua = (c.quaTang || []).map((g) => ({ g, p: byId(g.id) })).filter((x) => x.p && x.p.stock > 0 && !x.p.an);
+      const vi = [];
+      qua.forEach(({ g, p }) => {
+        if (p.variants && p.variants.length) p.variants.forEach((v) => { if (!v.oos && (g.bienThe || {})[v.label] !== false) vi.push(qua.length > 1 ? `${shortName(p)} – ${v.label}` : v.label); });
+        else if (g.bat !== false) vi.push(shortName(p));
+      });
+      const chinh = new Set((c.sanPhamChinh || []).filter((x) => x.bat !== false).map((x) => x.id));
+      return { c, vi, chinh, ten: qua.length === 1 ? shortName(qua[0].p) : 'quà tặng' };
+    }).filter((x) => x.vi.length && x.chinh.size && x.c.muc > 0);
+  }
+  function ctChoSP(p) { return p ? ctDangChay().filter((x) => x.chinh.has(p.id)) : []; }
+  /* Quy tắc dùng chung ưu đãi (trang quản trị → Quà tặng / Mã giảm giá):
+     hangMa = ưu đãi hạng + mã giảm giá, quaMa = quà tặng + mã, quaHang = quà tặng + ưu đãi hạng */
+  function ketHop() {
+    const k = (window.QUA_TANG || {}).ketHop || {};
+    return { hangMa: k.hangMa != null ? !!k.hangMa : !!(SITE.loyalty || {}).combineWithCoupon, quaMa: k.quaMa !== false, quaHang: k.quaHang !== false };
+  }
+  /* opts.coMa = đơn đang dùng mã giảm giá (đã áp được) */
   function giftFor(lines, opts) {
+    const g = giftForGop(lines, opts); if (!g || !g.soQua) return g;
+    const k = ketHop(), vip = opts && opts.vip != null ? !!opts.vip : laVip();
+    const bo = (goiY) => ({ ...g, soQua: 0, chuongTrinh: '', moTa: '', lyDo: '', goiY });
+    if (!k.quaHang && vip) { const t = hangCho(sdtDangDung()); return bo(`Hạng ${t ? t.label : ''} đã được giảm ${t ? t.discount : 0}% nên đơn không kèm quà tặng.`); }
+    if (!k.quaMa && opts && opts.coMa) return bo('Mã giảm giá không dùng chung với quà tặng – bỏ mã để nhận quà.');
+    return g;
+  }
+  /* Gộp chương trình cũ và các chương trình mới – không cộng dồn, lấy chương trình tặng nhiều quà nhất */
+  function giftForGop(lines, opts) {
+    const cu = giftForCu(lines, opts);
+    let tot = cu && cu.soQua ? cu : null, goiY = '', thieu = Infinity;
+    ctDangChay().forEach((x) => {
+      const tien = (lines || []).reduce((s, l) => s + (l.p && x.chinh.has(l.p.id) ? l.total : 0), 0);
+      if (tien >= x.c.muc) {
+        if (!tot || x.c.soQua > tot.soQua) tot = { soQua: x.c.soQua, chuongTrinh: x.c.id, thung: 0, vi: x.vi, ten: x.ten, goiY: '', moTa: `${x.c.soQua} ${x.ten}`, lyDo: `Mua sản phẩm chương trình từ ${fmt(x.c.muc)}` };
+      } else if (tien > 0 && x.c.muc - tien < thieu) { thieu = x.c.muc - tien; goiY = `Mua thêm ${fmt(thieu)} sản phẩm chương trình để được tặng ${x.c.soQua} ${x.ten}.`; }
+    });
+    if (tot) return tot;
+    if (cu && cu.goiY) return cu;
+    return goiY ? { soQua: 0, chuongTrinh: '', thung: 0, vi: [], ten: '', goiY, moTa: '', lyDo: '' } : cu;
+  }
+  function giftForCu(lines, opts) {
     const cfg = QT(); if (!cfg) return null;
     const vip = opts && opts.vip != null ? !!opts.vip : laVip();
     let thung = 0, tienKhac = 0;
@@ -1365,6 +1425,6 @@
   }
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
-    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
     giftFor, giftNote, giftBox, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();
