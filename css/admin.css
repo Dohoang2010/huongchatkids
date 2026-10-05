@@ -570,3 +570,25 @@ tr.is-dim{opacity:.55}
 .tc__more h4 { margin: 12px 0 6px; font-size: 13px; }
 .tc__more .tbl-wrap { max-height: 240px; }
 .chart--line.tc__chart { aspect-ratio: 520/150; }
+
+/* ---------- Tổng quan: bố cục mới (05/10) ---------- */
+.dash-row { display: grid; gap: 16px; margin-bottom: 16px; align-items: stretch; }
+.dash-row > .card { margin-bottom: 0; }
+@media (min-width: 1100px) { .dash-row--21 { grid-template-columns: 2fr 1fr; } .dash-row--11 { grid-template-columns: 1fr 1fr; } }
+.dash-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.dash-h h3 { margin: 0; }
+#dtChart svg, #tcChart svg { aspect-ratio: auto; height: auto; display: block; }
+#dtChart { min-height: 120px; }
+#tcCard { margin-bottom: 16px; }
+.tc__body { display: grid; gap: 18px; margin-top: 12px; }
+@media (min-width: 1000px) { .tc__body { grid-template-columns: minmax(300px, 0.9fr) 1.6fr; } }
+.tc__trai .tc__kpis { margin-top: 0; }
+.tc__phai { min-width: 0; }
+.tc__ky { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 6px; }
+.tc__ky span, .tc__hv span { background: var(--line-2); border-radius: 999px; padding: 4px 10px; font-size: 12px; color: var(--muted); }
+.tc__ky b { color: var(--ink); margin-right: 4px; font-size: 13px; }
+.tc__hv { display: flex; flex-wrap: wrap; gap: 6px; }
+.tc__hv span { background: #fff; border: 1px solid var(--line); }
+.tc__hv b { color: var(--ink); }
+.tc__on { border-top: 0; padding-top: 0; background: var(--line-2); border-radius: 10px; padding: 10px 12px; }
+.tc__row i { background: #fff; }

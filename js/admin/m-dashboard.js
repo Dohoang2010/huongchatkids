@@ -86,42 +86,45 @@
         ${A.the('Sản phẩm sắp hết', sapHet.length, sapHet.length ? 'cần nhập thêm' : 'kho đang ổn', sapHet.length ? 'kpi--red' : '')}
       </div>
 
-      <div class="card"><h3>Doanh thu theo ${bd.kieu === 'thang' ? 'tháng' : bd.kieu === 'tuan' ? 'tuần' : 'ngày'}</h3><p class="muted">${esc(d.tu)} → ${esc(d.den)}</p>${cot(bd.ds, bd.kieu)}</div>
-
-      <div class="grid-2 grid-dash3">
+      <div class="dash-row dash-row--21">
+        <div class="card"><div class="dash-h"><h3>Doanh thu theo ${bd.kieu === 'thang' ? 'tháng' : bd.kieu === 'tuan' ? 'tuần' : 'ngày'}</h3><span class="muted">${esc(d.tu)} → ${esc(d.den)}</span></div>
+          <div id="dtChart"></div></div>
         <div class="card"><h3>Giờ khách đặt hàng</h3><p class="muted">Chọn giờ chạy quảng cáo và trực Zalo cho đúng.</p>
           <div class="hours">${d.theoGio.map((v) => `<i style="height:${Math.max(2, v / Math.max(1, Math.max(...d.theoGio)) * 100)}%" title="${v} đơn"></i>`).join('')}</div>
           <div class="hours-x">${d.theoGio.map((_, i) => `<div>${i % 2 === 0 ? i : ''}</div>`).join('')}</div>
           <p class="muted mt-8">${gioCao(d.theoGio)}</p></div>
+      </div>
 
-        <div class="card tc" id="tcCard"><h3>Khách truy cập website</h3>${A.dangTai('số liệu truy cập')}</div>
+      <div class="card tc" id="tcCard"><h3>Khách truy cập website</h3>${A.dangTai('số liệu truy cập')}</div>
 
+      <div class="dash-row ${sapHet.length ? 'dash-row--11' : ''}">
         <div class="card"><h3>Sản phẩm bán chạy</h3><p class="muted">Theo số lượng bán trong kỳ</p>
           <div class="tbl-wrap" style="max-height:300px"><table><thead><tr><th>#</th><th>Sản phẩm</th><th class="num">SL</th></tr></thead>
           <tbody>${d.topSP.length ? d.topSP.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.ten)}</td><td class="num"><b>${x.sl}</b></td></tr>`).join('')
             : '<tr><td colspan="3" class="muted">Chưa có dữ liệu</td></tr>'}</tbody></table></div></div>
-      </div>
-
-      ${sapHet.length ? `<div class="card"><h3>⚠️ Sản phẩm sắp hết / đã hết</h3>
-        <div class="tbl-wrap" style="max-height:260px"><table><thead><tr><th>Sản phẩm</th><th class="num">Tồn</th><th></th></tr></thead><tbody>
-        ${sapHet.map((p) => `<tr><td>${esc(p.short || p.name)}</td><td class="num">${A.badge(String(p.stock ?? 0), (p.stock ?? 0) <= 0 ? 'tag--no' : 'tag--wait')}</td>
-          <td class="num"><a class="btn btn--ghost btn--sm" href="#/san-pham/${(A.D.PRODUCTS || []).indexOf(p)}">Sửa</a></td></tr>`).join('')}
-        </tbody></table></div></div>` : ''}
-
-      <div class="card"><h3>Đơn hàng gần nhất</h3>
-        <div class="tbl-wrap"><table><thead><tr><th>Mã đơn</th><th>Thời gian</th><th>Khách</th><th>Điện thoại</th><th class="num">Tổng</th><th>Thanh toán</th><th>Trạng thái</th></tr></thead>
-        <tbody>${d.donMoi.length ? d.donMoi.map((o) => `<tr><td><b>${esc(o.ma)}</b></td><td>${esc(o.ngay)}</td><td>${esc(o.khach)}</td><td>${esc(o.sdt)}</td>
-          <td class="num">${fmt(o.tong)}</td><td>${esc(o.thanhToan)}</td>
-          <td>${A.badge(o.trangThai || 'Đã tiếp nhận', /huỷ|hoàn/i.test(o.trangThai) ? 'tag--no' : o.trangThai ? 'tag--ok' : 'tag--wait')}</td></tr>`).join('')
-          : '<tr><td colspan="7" class="muted">Chưa có đơn nào trong kỳ này</td></tr>'}</tbody></table></div>
-        <p class="muted mt-8">Quản lý đơn đầy đủ nằm ở mục <a href="#/don-hang">Đơn hàng</a>.</p></div>`;
+        ${sapHet.length ? `<div class="card"><h3>⚠️ Sản phẩm sắp hết / đã hết</h3><p class="muted">Tồn kho từ 5 trở xuống</p>
+          <div class="tbl-wrap" style="max-height:300px"><table><thead><tr><th>Sản phẩm</th><th class="num">Tồn</th><th></th></tr></thead><tbody>
+          ${sapHet.map((p) => `<tr><td>${esc(p.short || p.name)}</td><td class="num">${A.badge(String(p.stock ?? 0), (p.stock ?? 0) <= 0 ? 'tag--no' : 'tag--wait')}</td>
+            <td class="num"><a class="btn btn--ghost btn--sm" href="#/san-pham/${(A.D.PRODUCTS || []).indexOf(p)}">Sửa</a></td></tr>`).join('')}
+          </tbody></table></div></div>` : ''}
+      </div>`;
+    veBieuDoDT();
   }
+  /* Vẽ biểu đồ theo đúng bề rộng khung (1 đơn vị = 1px) để chữ không bị phóng to trên màn hình rộng */
+  let dtBd = null;
+  function veBieuDoDT() {
+    const w = $('#dtChart'); if (!w || !duLieu) return;
+    dtBd = dtBd && dtBd.d === duLieu ? dtBd : { d: duLieu, ...dayDu(duLieu.theoNgay, duLieu.tu || tu, duLieu.den || den) };
+    w.innerHTML = cot(dtBd.ds, dtBd.kieu, w.clientWidth);
+  }
+  let hoanVe = 0;
+  window.addEventListener('resize', () => { clearTimeout(hoanVe); hoanVe = setTimeout(() => { veBieuDoDT(); veTruyCap(); }, 200); });
 
   /* Biểu đồ đường doanh thu theo ngày – dễ nhìn xu hướng lên xuống hơn biểu đồ cột */
-  function cot(list, kieu = 'ngay') {
+  function cot(list, kieu = 'ngay', rong) {
     if (!list.some((x) => x.tien > 0)) return '<p class="muted">Chưa có đơn nào trong kỳ này.</p>';
     if (!list.length) return '<p class="muted">Chưa có đơn nào trong kỳ này.</p>';
-    const W = 900, H = 230, pad = { t: 16, r: 14, b: 28, l: 56 };
+    const W = Math.max(320, Math.round(rong || 900)), H = 240, pad = { t: 22, r: 18, b: 28, l: 56 };
     const max = Math.max(...list.map((x) => x.tien), 1);
     const n = list.length;
     const X = (i) => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : i * (W - pad.l - pad.r) / (n - 1));
@@ -137,8 +140,8 @@
     const duong = diem.map((p2, i) => (i ? 'L' : 'M') + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1)).join(' ');
     const nen = `${duong} L ${diem[n - 1][0].toFixed(1)} ${H - pad.b} L ${diem[0][0].toFixed(1)} ${H - pad.b} Z`;
 
-    const buoc = n <= 12 ? 1 : Math.ceil(n / 10);
-    const nhanX = list.map((x, i) => (i % buoc === 0 || i === n - 1)
+    const buoc = Math.max(1, Math.ceil(n / Math.max(2, Math.floor((W - 80) / 56))));
+    const nhanX = list.map((x, i) => ((i % buoc === 0 && n - 1 - i >= buoc * 0.6) || i === n - 1)
       ? `<text x="${X(i)}" y="${H - 9}" text-anchor="middle">${nhanMoc(x, kieu)}</text>` : '').join('');
 
     const cham = list.map((x, i) => `<g class="pt"><circle cx="${X(i)}" cy="${Y(x.tien)}" r="${n > 45 ? 2.5 : 4}"/>
@@ -193,18 +196,24 @@
     const maxTrang = Math.max(1, ...TC_TRANG.map(([k]) => on.theoTrang[k] || 0));
     el.innerHTML = `
       <div class="tc__h"><h3>Khách truy cập website</h3><span class="tc__live"><i></i>cập nhật 15 giây/lần</span></div>
-      <div class="tc__kpis">
-        <div class="tc__k tc__k--on"><span>🟢 Khách đang online</span><b>${soVN(on.online)}</b><small><i class="tc__dot"></i>Đang hoạt động${on.khongHoatDong ? ` · ${on.khongHoatDong} không hoạt động` : ''}</small></div>
-        <div class="tc__k"><span>👁 Lượt truy cập hôm nay</span><b>${soVN(hn.luot)}</b><small>${soVN(hn.phien)} phiên · ${soVN(hn.khach)} khách</small></div>
-        <div class="tc__k"><span>⏱ Thời gian TB / phiên</span><b>${tcGio(hn.giayTB)}</b><small>chỉ tính lúc khách thật sự xem</small></div>
-        <div class="tc__k"><span>📄 Số trang TB / phiên</span><b>${String(hn.trangTB || 0).replace('.', ',')} trang</b><small>hôm nay</small></div>
-      </div>
-      <div class="tc__chart-h"><b>Lượt truy cập</b><div class="tc__tabs">${[['hom-nay', 'Hôm nay'], ['7', '7 ngày'], ['30', '30 ngày']].map(([k, t]) => `<button class="chip ${tcKieu === k ? 'is-on' : ''}" data-tc-kieu="${k}">${t}</button>`).join('')}</div></div>
-      ${bieuDoTC(tk.bieuDo || [])}
-      <p class="muted tc__ky">${tcKieu === 'hom-nay' ? 'Hôm nay' : tcKieu + ' ngày'}: <b>${soVN(ky.luot)}</b> lượt xem · <b>${soVN(ky.phien)}</b> phiên · <b>${soVN(ky.khach)}</b> khách · TB ${tcGio(ky.giayTB)} · thoát ${ky.thoat || 0}%
-        <br>Hành vi: 🔍 ${soVN(hv.tim)} tìm kiếm · 🛒 ${soVN(hv.gio)} thêm giỏ · 💳 ${soVN(hv.thanhtoan)} checkout · ✅ ${soVN(hv.mua)} mua</p>
-      <div class="tc__on"><b>🟢 ${soVN(on.online)} khách đang online</b>
-        ${TC_TRANG.filter(([k]) => k !== 'danh-muc' && k !== 'khac' || on.theoTrang[k]).map(([k, t]) => `<div class="tc__row"><span>${t}</span><i style="--w:${Math.round((on.theoTrang[k] || 0) / maxTrang * 100)}%"></i><b>${on.theoTrang[k] || 0} khách</b></div>`).join('')}
+      <div class="tc__body">
+        <div class="tc__trai">
+          <div class="tc__kpis">
+            <div class="tc__k tc__k--on"><span>🟢 Khách đang online</span><b>${soVN(on.online)}</b><small><i class="tc__dot"></i>Đang hoạt động${on.khongHoatDong ? ` · ${on.khongHoatDong} không hoạt động` : ''}</small></div>
+            <div class="tc__k"><span>👁 Lượt truy cập hôm nay</span><b>${soVN(hn.luot)}</b><small>${soVN(hn.phien)} phiên · ${soVN(hn.khach)} khách</small></div>
+            <div class="tc__k"><span>⏱ Thời gian TB / phiên</span><b>${tcGio(hn.giayTB)}</b><small>chỉ tính lúc khách thật sự xem</small></div>
+            <div class="tc__k"><span>📄 Số trang TB / phiên</span><b>${String(hn.trangTB || 0).replace('.', ',')} trang</b><small>hôm nay</small></div>
+          </div>
+          <div class="tc__on"><b>🟢 ${soVN(on.online)} khách đang online</b>
+            ${TC_TRANG.filter(([k]) => k !== 'danh-muc' && k !== 'khac' || on.theoTrang[k]).map(([k, t]) => `<div class="tc__row"><span>${t}</span><i style="--w:${Math.round((on.theoTrang[k] || 0) / maxTrang * 100)}%"></i><b>${on.theoTrang[k] || 0} khách</b></div>`).join('')}
+          </div>
+        </div>
+        <div class="tc__phai">
+          <div class="tc__chart-h"><b>Lượt truy cập</b><div class="tc__tabs">${[['hom-nay', 'Hôm nay'], ['7', '7 ngày'], ['30', '30 ngày']].map(([k, t]) => `<button class="chip ${tcKieu === k ? 'is-on' : ''}" data-tc-kieu="${k}">${t}</button>`).join('')}</div></div>
+          <div id="tcChart"></div>
+          <div class="tc__ky">${[[soVN(ky.luot), 'lượt xem'], [soVN(ky.phien), 'phiên'], [soVN(ky.khach), 'khách'], [tcGio(ky.giayTB), 'TB / phiên'], [(ky.thoat || 0) + '%', 'thoát']].map(([v, t]) => `<span><b>${v}</b>${t}</span>`).join('')}</div>
+          <div class="tc__hv">${[['🔍', hv.tim, 'tìm kiếm'], ['🛒', hv.gio, 'thêm giỏ'], ['💳', hv.thanhtoan, 'checkout'], ['✅', hv.mua, 'mua hàng']].map(([i, v, t]) => `<span>${i} <b>${soVN(v)}</b> ${t}</span>`).join('')}</div>
+        </div>
       </div>
       <details class="tc__more"><summary>Xem chi tiết khách đang online & phiên gần đây</summary>
         ${on.ds.length ? `<div class="tbl-wrap"><table><thead><tr><th>Khách</th><th>Đang xem</th><th>Vào lúc</th><th class="num">Đã xem</th><th class="num">Số trang</th><th>Trạng thái</th></tr></thead><tbody>
@@ -215,24 +224,25 @@
           ${tk.phienGanDay.map((x) => `<tr><td>#${esc(x.khach)}${x.mua ? ' ✅' : ''}</td><td>${esc(x.vao)}</td><td>${esc(x.roi)}</td><td class="num">${tcGio(x.giay)}</td><td class="num">${x.soTrang}</td><td><small>${esc(x.trangVao)} → ${esc(x.trangCuoi)}</small></td></tr>`).join('')}
         </tbody></table></div>` : '<p class="muted">Chưa có phiên nào trong kỳ.</p>'}
       </details>`;
+    const cw = $('#tcChart'); if (cw) cw.innerHTML = bieuDoTC(tk.bieuDo || [], cw.clientWidth);
     if (moChiTiet) { const dt = el.querySelector('details'); if (dt) dt.open = true; }
   }
-  function bieuDoTC(moc) {
+  function bieuDoTC(moc, rong) {
     if (!moc.length || !moc.some((x) => x.luot)) return '<p class="muted tc__trong">Chưa có lượt truy cập trong kỳ này.</p>';
-    const W = 520, H = 150, pad = { t: 12, r: 10, b: 24, l: 34 }, n = moc.length;
+    const W = Math.max(300, Math.round(rong || 520)), H = 190, pad = { t: 14, r: 12, b: 24, l: 34 }, n = moc.length;
     const max = Math.max(...moc.map((x) => x.luot), 1);
     const X = (i) => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : i * (W - pad.l - pad.r) / (n - 1));
     const Y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v / max);
     const diem = moc.map((x, i) => [X(i), Y(x.luot)]);
     const duong = diem.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
     const nen = `${duong} L ${diem[n - 1][0].toFixed(1)} ${H - pad.b} L ${diem[0][0].toFixed(1)} ${H - pad.b} Z`;
-    const buoc = n <= 8 ? 1 : n <= 24 ? 3 : 5;
+    const buoc = Math.max(1, Math.ceil(n / Math.max(2, Math.floor((W - 50) / 46))));
     return `<svg class="chart chart--line tc__chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ lượt truy cập">
       <defs><linearGradient id="gtc" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--teal)" stop-opacity=".25"/><stop offset="100%" stop-color="var(--teal)" stop-opacity="0"/></linearGradient></defs>
       ${[0, .5, 1].map((f) => `<line class="grid-l" x1="${pad.l}" y1="${Y(max * f)}" x2="${W - pad.r}" y2="${Y(max * f)}"/><text x="${pad.l - 6}" y="${Y(max * f) + 3}" text-anchor="end">${Math.round(max * f)}</text>`).join('')}
       <path class="area" d="${nen}" style="fill:url(#gtc)"/><path class="line" d="${duong}" style="stroke:var(--teal)"/>
       ${moc.map((x, i) => `<g class="pt"><circle cx="${X(i)}" cy="${Y(x.luot)}" r="${n > 24 ? 2 : 3}" style="stroke:var(--teal)"/><circle class="pt__hit" cx="${X(i)}" cy="${Y(x.luot)}" r="10"><title>${x.nhan}: ${x.luot} lượt xem · ${x.phien} phiên</title></circle></g>`).join('')}
-      ${moc.map((x, i) => (i % buoc === 0 || i === n - 1) ? `<text x="${X(i)}" y="${H - 7}" text-anchor="middle">${x.nhan}</text>` : '').join('')}
+      ${moc.map((x, i) => ((i % buoc === 0 && n - 1 - i >= buoc * 0.6) || i === n - 1) ? `<text x="${X(i)}" y="${H - 7}" text-anchor="middle">${x.nhan}</text>` : '').join('')}
     </svg>`;
   }
   document.addEventListener('click', (e) => {
