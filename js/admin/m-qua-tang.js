@@ -240,7 +240,7 @@
   /* ================= QUY TẮC DÙNG CHUNG ƯU ĐÃI (hiện ở trang Quà tặng và Mã giảm giá) ================= */
   function ketHop() {
     const k = QT().ketHop || {};
-    return { hangMa: k.hangMa != null ? !!k.hangMa : !!((A.D.SITE || {}).loyalty || {}).combineWithCoupon, quaMa: k.quaMa !== false, quaHang: k.quaHang !== false };
+    return { hangMa: k.hangMa != null ? !!k.hangMa : !!((A.D.SITE || {}).loyalty || {}).combineWithCoupon, quaMa: k.quaMa !== false, quaHang: k.quaHang !== false, quaShip: k.quaShip !== false };
   }
   function veKetHop() {
     const k = ketHop();
@@ -248,10 +248,11 @@
     return `<div class="card"><h3>🔗 Quy tắc dùng chung ưu đãi</h3><p class="muted">Bật = khách được hưởng cùng lúc. Tắt = chỉ được một, web tự chọn theo ghi chú bên dưới.</p>
       ${dong('khHangMa', k.hangMa, 'Ưu đãi hạng khách hàng + Mã giảm giá', 'Tắt: web lấy mức giảm lớn hơn cho khách.')}
       ${dong('khQuaMa', k.quaMa, 'Quà tặng + Mã giảm giá', 'Tắt: đơn dùng mã giảm giá sẽ không kèm quà (khách bỏ mã để nhận quà).')}
+      ${dong('khQuaShip', k.quaShip, '↳ Ngoại lệ: mã Freeship vẫn được quà', 'Bật: khi tắt "Quà tặng + Mã giảm giá", khách dùng mã miễn phí vận chuyển vẫn nhận quà. Tắt: mọi mã (kể cả freeship) đều không kèm quà.')}
       ${dong('khQuaHang', k.quaHang, 'Quà tặng + Ưu đãi hạng khách hàng', 'Tắt: khách đã lên hạng (Silver trở lên) nhận giảm % theo hạng, không kèm quà.')}</div>`;
   }
   document.addEventListener('change', (e) => {
-    const m = { khHangMa: 'hangMa', khQuaMa: 'quaMa', khQuaHang: 'quaHang' }[e.target.id]; if (!m) return;
+    const m = { khHangMa: 'hangMa', khQuaMa: 'quaMa', khQuaHang: 'quaHang', khQuaShip: 'quaShip' }[e.target.id]; if (!m) return;
     QT().ketHop = { ...ketHop(), [m]: e.target.checked }; A.doiDuLieu();
     A.toast('Đã đổi quy tắc – bấm Xuất bản để áp dụng', 'ok');
   });

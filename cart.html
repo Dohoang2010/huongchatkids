@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005m">
+  <link rel="stylesheet" href="css/style.css?v=20261005n">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -19,9 +19,9 @@
   <h1 class="page-title">Giỏ hàng của mẹ</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20261005m"></script>
+<script src="js/data.js?v=20261005n"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005m"></script>
+<script src="js/app.js?v=20261005n"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productThumb, shortName, productCard, Cart, esc, shipFee, shipText, applyCoupon, store, toast, giftFor, giftBox } = MC;
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#cartPage').innerHTML = `
       <div class="card card--pad cart-table">
         <div class="freeship-bar mb-12">${sub >= SITE.freeshipFrom ? '🎉 Đơn hàng được <b>miễn phí vận chuyển</b>' : `Mua thêm <b>${fmt(SITE.freeshipFrom - sub)}</b> để được <b>freeship</b>`}<div class="bar"><i style="width:${Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>
-        ${giftBox(giftFor(lines, { coMa: !!(c && c.ok) }))}
+        ${giftBox(giftFor(lines, MC.maChoQua(c)))}
         ${lines.map((l) => `<div class="cart-item"><a href="product.html?id=${l.id}"><img src="${productThumb(l.p)}" alt=""></a><div><a class="name" href="product.html?id=${l.id}">${esc(shortName(l.p))}</a>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${listPrice(l.oldPrice, l.price) ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div></div>
           <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div></div>
           <div class="total">${fmt(l.total)}</div><button class="remove" type="button" data-remove="${l.id}" data-variant="${l.variant}" aria-label="Xoá ${esc(shortName(l.p))} khỏi giỏ" title="Xoá">${I.trash}</button></div>`).join('')}
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><span>${fmt(sub)}</span></div>
         ${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : ''}
         ${discount ? `<div class="summary-line"><span>Giảm giá (${c.code})</span><span class="text-teal">−${fmt(discount)}</span></div>` : ''}
-        ${(() => { const g = giftFor(lines, { coMa: !!(c && c.ok) }); return g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">🎁 ${esc(g.moTa)}</span></div>` : ''; })()}
+        ${(() => { const g = giftFor(lines, MC.maChoQua(c)); return g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">🎁 ${esc(g.moTa)}</span></div>` : ''; })()}
         <div class="summary-line"><span>Phí vận chuyển</span><span class="${ship === 0 ? 'free' : ''}">${shipText(ship)}</span></div>
         <div class="summary-line total"><span>${ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(total)}</b></div>
         <a class="btn btn--primary btn--lg btn--block mt-16" href="checkout.html">${I.zap}Đặt hàng · ${fmt(total)}</a>

@@ -938,6 +938,10 @@ window.POSTS = [
 /* ===ADMIN:QUA_TANG=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.QUA_TANG = {
   "enabled": true,
+  "ketHop": {
+    "quaMa": false,
+    "quaShip": true
+  },
   "ten": "gói nước ép Lotte",
   "vi": [
     "Hồng – Tăng cân tự nhiên",
