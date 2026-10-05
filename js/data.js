@@ -1071,10 +1071,12 @@ window.TIERS = [
 /* ===ADMIN:COUPONS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.COUPONS = {
   "FREESHIP": {
+    "ten": "FREESHIP",
+    "loai": "shop",
     "type": "ship",
     "value": 0,
-    "min": 300000,
-    "desc": "Miễn phí vận chuyển cho đơn từ 300K"
+    "min": 3000000,
+    "desc": "Miễn phí vận chuyển cho đơn từ 3000K"
   },
   "HCK5": {
     "ten": "khách mua lần đầu",
