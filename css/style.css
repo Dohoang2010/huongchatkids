@@ -1584,3 +1584,24 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 .slide__voucher .slide__sticker { left: auto; } .slide--fx .slide__voucher { z-index: 2; }
 .slide__voucher .slide__sticker { left: -30px; right: auto; top: -38px; bottom: auto; } .vc--ship .vc__l b { font-size: 12px; letter-spacing: 0; }
 .slide__voucher .slide__sticker { left: auto; right: -18px; top: auto; bottom: -46px; }
+/* Khối mã giảm giá trang chủ – bản gọn 1 hàng */
+.vstrip { display: flex; align-items: center; gap: 14px; padding: 8px 12px; margin: 10px 0; }
+.vstrip__h { margin: 0; flex: none; gap: 8px; }
+.vstrip__ic { font-size: 20px; }
+.vstrip__h > div > b { font-size: 13.5px; }
+.vstrip__h small { font-size: 11.5px; display: block; max-width: 190px; line-height: 1.35; }
+.vstrip__row { flex: 1; min-width: 0; gap: 10px; padding: 2px 0; }
+.vstrip .vc { width: 250px; border-radius: 10px; box-shadow: 0 1px 6px rgba(240,83,122,.12); }
+.vstrip .vc__l { width: 58px; padding: 6px 4px; gap: 0; }
+.vstrip .vc__l svg { width: 20px; height: 20px; }
+.vstrip .vc__l b { font-size: 12px; }
+.vstrip .vc--ship .vc__l b { font-size: 9.5px; }
+.vstrip .vc::before, .vstrip .vc::after { left: 51px; width: 12px; height: 12px; }
+.vstrip .vc::before { top: -6px; } .vstrip .vc::after { bottom: -6px; }
+.vstrip .vc__r { padding: 6px 6px 6px 12px; gap: 0; }
+.vstrip .vc__r b { font-size: 13px; }
+.vstrip .vc__r small { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vstrip .vc__ma { font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vstrip .vc__btn { font-size: 12px; padding: 5px 11px; margin-right: 8px; }
+@media (max-width: 640px) { .vstrip { flex-direction: column; align-items: stretch; gap: 8px; } .vstrip__h small { max-width: none; } }
+.vstrip .vc { width: 260px; } .vstrip .vc__r b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

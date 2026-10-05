@@ -1189,7 +1189,7 @@
     ship: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h15v12H3zM18 13h6l4 4.5V21h-10z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><circle cx="9" cy="23" r="2.6" fill="#fff"/><circle cx="23" cy="23" r="2.6" fill="#fff"/></svg>',
   };
   const vcIcon = (c) => VC_IC[c.type === 'ship' ? 'ship' : c.type === 'percent' ? 'percent' : 'fixed'];
-  const vcTieuDe = (c) => (c.type === 'ship' ? 'Miễn phí vận chuyển' : c.type === 'percent' ? `Giảm ${c.value}%` : `Giảm ${fmt(c.value)}`);
+  const vcTieuDe = (c) => (c.type === 'ship' ? 'Miễn phí ship' : c.type === 'percent' ? `Giảm ${c.value}%` : `Giảm ${fmt(c.value)}`);
   const vcNhan = (c) => (c.type === 'ship' ? 'FREESHIP' : c.type === 'percent' ? `${c.value}%` : (c.value >= 1000 ? `${Math.round(c.value / 1000)}K` : fmt(c.value)));
   /* Vé mã giảm giá (dùng ở trang chủ, banner, tài khoản) */
   function voucherTicket(c) {
