@@ -80,15 +80,22 @@ window.ADMIN = (() => {
   /* ---------------- Gọi Apps Script (JSONP) ---------------- */
   let seq = 0;
   const LENH_QT = ['thongKe', 'donHang', 'donChiTiet', 'doiTrangThai', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa'];
-  function api(action, params = {}, timeout = 25000) {
+  /* Lệnh chỉ đọc: hết giờ thì tự gửi lại 1 lần (Apps Script lần đầu sau khi nghỉ có thể mất 20–40 giây để "thức dậy") */
+  const LENH_DOC = ['thongKe', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo'];
+  function api(action, params = {}, timeout = 45000) {
+    const lan1 = goiApi(action, params, timeout);
+    return LENH_DOC.includes(action) ? lan1.catch((e) => (/không phản hồi/i.test(e.message) ? goiApi(action, params, timeout) : Promise.reject(e))) : lan1;
+  }
+  function goiApi(action, params, timeout) {
     if (LENH_QT.includes(action)) params = { ...xacThuc(), ...params };
     const url = (SITE.loyalty && SITE.loyalty.endpoint) || SITE.orderEndpoint || '';
     if (!url) return Promise.reject(new Error('Chưa cấu hình link Apps Script trong js/data.js'));
     return new Promise((ok, loi) => {
       const cb = 'adCb' + (++seq) + Math.random().toString(36).slice(2, 7);
       const sc = document.createElement('script'); let tid = 0;
-      const xong = (fn, v) => { clearTimeout(tid); try { delete window[cb]; } catch { window[cb] = undefined; } sc.remove(); fn(v); };
-      tid = setTimeout(() => xong(loi, new Error('Máy chủ không phản hồi. Kiểm tra Apps Script đã Deploy bản mới chưa.')), timeout);
+      /* Không xoá hàm nhận kết quả: phản hồi về muộn sẽ gọi vào hàm rỗng thay vì báo lỗi "Script error" */
+      const xong = (fn, v) => { clearTimeout(tid); window[cb] = () => {}; sc.remove(); fn(v); };
+      tid = setTimeout(() => xong(loi, new Error('Máy chủ không phản hồi (Google Apps Script đang chậm). Bấm "Thử lại" sau vài giây.')), timeout);
       window[cb] = (d) => xong(ok, d || {});
       sc.onerror = () => xong(loi, new Error('Không kết nối được Apps Script'));
       sc.src = url + (url.includes('?') ? '&' : '?') + new URLSearchParams({ ...params, action, callback: cb });
@@ -416,6 +423,8 @@ window.ADMIN = (() => {
     window.addEventListener('online', () => { veThanhLuu(); kiemTraGh(); });
     window.addEventListener('beforeunload', (e) => { if (daSua) { e.preventDefault(); e.returnValue = ''; } });
     window.addEventListener('error', (ev) => {
+      /* "Script error." = lỗi trong script khác tên miền (VD phản hồi Apps Script về muộn) – không có thông tin gì, bỏ qua */
+      if (!ev.lineno && /^Script error\.?$/i.test(ev.message || '')) return;
       const b = $('#bar'); if (!b) return;
       b.classList.remove('hide'); b.className = 'bar bar--err';
       b.textContent = '❌ Lỗi: ' + (ev.message || '') + (ev.lineno ? ' (dòng ' + ev.lineno + ')' : '');

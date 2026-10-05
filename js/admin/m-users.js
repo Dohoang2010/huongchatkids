@@ -140,7 +140,11 @@
         const r = await A.api('qtLuu', { ...A.xacThuc(), tk, ten, vaiTro, mk, trangThai, quyenRieng });
         if (!r || !r.ok) { A.toast((r && r.msg) || 'Không lưu được', 'err'); t.disabled = false; t.textContent = 'Lưu'; return; }
         A.toast(r.moi ? 'Đã tạo tài khoản' : 'Đã lưu', 'ok'); data = null; A.veTrang();
-      } catch (err) { A.toast(err.message, 'err'); t.disabled = false; t.textContent = 'Lưu'; }
+      } catch (err) {
+        /* Hết giờ chờ nhưng máy chủ có thể vẫn đã lưu → tải lại danh sách để kiểm tra, tránh tạo trùng */
+        if (/không phản hồi/i.test(err.message)) { A.toast('Máy chủ phản hồi chậm – có thể tài khoản đã được lưu. Đang tải lại danh sách để kiểm tra…', 'err'); data = null; A.veTrang(); return; }
+        A.toast(err.message, 'err'); t.disabled = false; t.textContent = 'Lưu';
+      }
     }
   });
   document.addEventListener('change', (e) => {
