@@ -1605,3 +1605,45 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 .vstrip .vc__btn { font-size: 12px; padding: 5px 11px; margin-right: 8px; }
 @media (max-width: 640px) { .vstrip { flex-direction: column; align-items: stretch; gap: 8px; } .vstrip__h small { max-width: none; } }
 .vstrip .vc { width: 260px; } .vstrip .vc__r b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ===== Banner nước ép Lotte (b.art = 'juice') – theo DESIGN.md: nền kem vàng, ảnh thật, chip vị, sticker giá/gói ===== */
+.slide--juice { background: radial-gradient(120% 140% at 85% 40%, #FFE3A6 0%, #FFF3D6 45%, #FFF8EA 100%); color: var(--ink); }
+.slide--juice::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(242, 140, 0, .14) 1.5px, transparent 1.6px); background-size: 22px 22px; -webkit-mask-image: linear-gradient(90deg, #000 0%, transparent 55%); mask-image: linear-gradient(90deg, #000 0%, transparent 55%); pointer-events: none; }
+.slide--juice > * { position: relative; z-index: 1; }
+.slide--juice .slide__badge { background: #fff; color: #A04C00; box-shadow: 0 4px 14px rgba(194, 94, 0, .12); backdrop-filter: none; }
+.slide--juice h2 { text-shadow: none; line-height: 1.15; letter-spacing: -.01em; }
+.slide--juice h2::first-line { color: var(--ink); }
+.slide--juice p { color: var(--ink-2); opacity: 1; }
+.slide--juice .btn--light { background: var(--primary); color: #fff; box-shadow: 0 8px 20px rgba(240, 83, 122, .3); align-self: flex-start; }
+.slide--juice .btn--light:hover { background: var(--primary-600); }
+.slide__prices { display: flex; gap: 10px; margin: 16px 0 18px; flex-wrap: wrap; }
+.slide__prices span { background: #fff; border-radius: 16px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 6px 18px rgba(194, 94, 0, .1); }
+.slide__prices small { font-size: 11.5px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.slide__prices b { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--price); line-height: 1.1; }
+.slide--juice .slide__prices + .btn { margin-top: 0; }
+/* Khối ảnh bên phải */
+.slide__juice { position: absolute !important; right: 10px; bottom: 12px; width: 132px; aspect-ratio: 1; display: block; }
+.sj-sun, .sj-ring { display: none; }
+.sj-photo { position: absolute; inset: 0; border-radius: 22px; overflow: hidden; border: 4px solid #fff; box-shadow: 0 16px 34px rgba(194, 94, 0, .22); background: #FBD6DA; transform: rotate(-4deg); transition: transform .4s cubic-bezier(.16, 1, .3, 1); }
+.sj-photo img { position: absolute; width: 140%; max-width: none; left: -8.6%; top: -44%; }
+.sj-chip { display: none; }
+.sj-sticker { position: absolute; left: -16px; top: -14px; width: 62px; height: 62px; border-radius: 50%; background: var(--primary); color: #fff; font-style: normal; font-size: 8.5px; font-weight: 700; line-height: 1.15; display: grid; place-items: center; text-align: center; white-space: pre-line; transform: rotate(-12deg); box-shadow: 0 8px 18px rgba(240, 83, 122, .35); border: 2px dashed rgba(255, 255, 255, .7); }
+@media (max-width: 767px) { .slide--juice h2, .slide--juice p { max-width: 58%; } .slide__prices span { padding: 6px 10px; } .slide__prices b { font-size: 15px; } }
+@media (min-width: 768px) {
+  .slide--juice { padding-right: 44%; }
+  .slide--juice h2 { font-size: 36px; }
+  .slide--juice h2, .slide--juice p { max-width: 460px; }
+  .slide__juice { right: 4%; top: 50%; bottom: auto; width: 38%; max-width: 380px; aspect-ratio: 1.08; transform: translateY(-50%); }
+  .sj-sun { display: block; position: absolute; width: 96%; aspect-ratio: 1; left: 2%; top: -2%; border-radius: 50%; background: radial-gradient(circle, #FFC94D 0%, #FFB020 60%, rgba(255, 176, 32, 0) 72%); opacity: .55; }
+  .sj-ring { display: block; position: absolute; width: 116%; aspect-ratio: 1; left: -8%; top: -12%; border-radius: 50%; border: 2px dashed rgba(242, 140, 0, .28); animation: sjSpin 40s linear infinite; }
+  .sj-photo { inset: 9% 7% 7% 7%; border-radius: 28px; border-width: 6px; }
+  .slide__juice:hover .sj-photo { transform: rotate(-1.5deg) scale(1.02); }
+  .sj-chip { display: block; position: absolute; background: #fff; color: var(--ink-2); font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; box-shadow: 0 8px 20px rgba(194, 94, 0, .16); white-space: nowrap; animation: sjFloat 5s ease-in-out infinite; }
+  .sj-chip1 { left: -14%; top: 22%; }
+  .sj-chip2 { right: -8%; top: 4%; animation-delay: -1.6s; }
+  .sj-chip3 { right: -6%; bottom: 0; animation-delay: -3.2s; }
+  .sj-sticker { left: -10%; top: auto; bottom: 4%; width: 92px; height: 92px; font-size: 12px; border-width: 2px; }
+}
+@keyframes sjFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes sjSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .sj-chip, .sj-ring { animation: none; } }

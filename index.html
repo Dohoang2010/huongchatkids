@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005l">
+  <link rel="stylesheet" href="css/style.css?v=20261005m">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -164,9 +164,9 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261005l"></script>
+<script src="js/data.js?v=20261005m"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005l"></script>
+<script src="js/app.js?v=20261005m"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
@@ -180,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (b.voucher) { const c = (window.COUPONS || {})[b.voucher] || {}; return `<a class="slide__voucher" href="${b.link}" tabindex="-1" aria-hidden="true"><span class="bv"><span class="bv__l">${MC.vcIcon(c)}<b>${c.type === 'percent' ? c.value + '%' : c.type === 'ship' ? 'FREE' : ''}</b><small>GIẢM</small></span><span class="bv__r"><small>MÃ GIẢM GIÁ</small><b>${esc(b.voucher)}</b><em>${c.donDau ? 'Đơn đầu tiên' : c.min ? 'Đơn từ ' + fmt(c.min) : 'Mọi đơn hàng'}</em></span></span><i class="slide__sticker">LƯU MÃ
 TỰ ÁP</i></a>`; }
     if (b.tiers) return `<a class="slide__tiers" href="${b.link}" tabindex="-1" aria-hidden="true">${(window.TIERS || []).filter((t) => t.discount).map((t) => `<span style="--c:${t.color}"><em>${t.icon}</em><b>${esc(t.label)}</b><small><i>Giảm </i><s>−</s>${t.discount}%<i> mọi đơn</i></small></span>`).join('')}</a>`;
+    if (b.art === 'juice') return `<a class="slide__juice" href="${b.link}" tabindex="-1" aria-hidden="true"><i class="sj-sun"></i><i class="sj-ring"></i><span class="sj-photo"><img src="${b.image}" alt="" loading="${load}"></span>${(b.flavors || []).map((f, k) => `<b class="sj-chip sj-chip${k + 1}">${esc(f)}</b>`).join('')}${b.sticker ? `<i class="sj-sticker">${esc(b.sticker)}</i>` : ''}</a>`;
     if (b.image) return `<a class="slide__img" href="${b.link}" tabindex="-1" aria-hidden="true"><img src="${b.image}" alt="" loading="${load}"></a>`;
     return '';
   };
@@ -200,7 +201,7 @@ TỰ ÁP</i></a>`; }
     const emoji = (b.fx === 'voucher' ? ['🎟️', '💸', '🛍️', '💝', '🎉', '⭐'] : ['🎁', '🎀', '🧃', '💝', '🎉', '⭐']).map((e, k) => `<i class="fx-e fx-e${k + 1}">${e}</i>`).join('');
     return `<div class="slide__fx" aria-hidden="true"><i class="fx-burst"></i>${confetti}${sao}${emoji}</div>`;
   };
-  $('#carouselTrack').innerHTML = BANNERS.map((b, i) => `<div class="slide slide--${b.theme} ${b.image || b.images || b.tiers || b.voucher ? 'slide--img' : ''} ${b.fx ? 'slide--fx' : ''}">${slideFx(b)}<span class="slide__badge">${b.badge}</span><h2>${b.title}</h2><p>${b.sub}</p>${b.luuMa ? `<button type="button" class="btn btn--light btn--lg" data-luu-ma="${esc(b.luuMa)}" data-da-luu="Đã lưu mã ${esc(b.luuMa)} ✓">${MC.ViMa.co(b.luuMa) ? `Đã lưu mã ${esc(b.luuMa)} ✓` : b.cta}</button>` : `<a class="btn btn--light btn--lg" href="${b.link}">${b.cta} ${I.arrowR}</a>`}${slideArt(b, i)}</div>`).join('');
+  $('#carouselTrack').innerHTML = BANNERS.map((b, i) => `<div class="slide slide--${b.theme} ${b.image || b.images || b.tiers || b.voucher ? 'slide--img' : ''} ${b.fx ? 'slide--fx' : ''}">${slideFx(b)}<span class="slide__badge">${b.badge}</span><h2>${b.title}</h2><p>${b.sub}</p>${b.prices ? `<div class="slide__prices">${b.prices.map(([l, v]) => `<span><small>${esc(l)}</small><b>${esc(v)}</b></span>`).join('')}</div>` : ''}${b.luuMa ? `<button type="button" class="btn btn--light btn--lg" data-luu-ma="${esc(b.luuMa)}" data-da-luu="Đã lưu mã ${esc(b.luuMa)} ✓">${MC.ViMa.co(b.luuMa) ? `Đã lưu mã ${esc(b.luuMa)} ✓` : b.cta}</button>` : `<a class="btn btn--light btn--lg" href="${b.link}">${b.cta} ${I.arrowR}</a>`}${slideArt(b, i)}</div>`).join('');
   $('#promoContact').innerHTML = `Zalo / Hotline <b>${SITE.hotline}</b><br><span class="text-muted">${SITE.workingHours}</span>`;
   $('#promoBtns').innerHTML = `<a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--dark btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button>`;
   $('.carousel__arrow--prev').innerHTML = I.chevronL; $('.carousel__arrow--next').innerHTML = I.chevronR;
