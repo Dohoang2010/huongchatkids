@@ -934,14 +934,38 @@ window.POSTS = [
    ===================================================================== */
 /* ===ADMIN:QUA_TANG=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.QUA_TANG = {
-  enabled: true,
-  ten: 'gói nước ép Lotte',
-  vi: ['Hồng – Tăng cân tự nhiên', 'Cam – Đề kháng'],   // khách chọn 1 vị khi đặt hàng
-  donTu: { muc: 1000000, soQua: 5, chiKhachMoi: true },   // chiKhachMoi: chỉ tặng cho khách CHƯA lên hạng
-  thungChiKhachMoi: false,                                 // true = khách VIP mua thùng cũng không được quà
-  thung: [{ tu: 1, soQua: 5 }, { tu: 2, soQua: 10 }, { tu: 3, soQua: 20 }],
-  loc: { cat: 'nuoc-ep', brand: 'lotte' },   // sản phẩm được tính là "nước dinh dưỡng Lotte"
-  tuKhoaThung: 'thùng',                       // phân loại có chữ này được tính là 1 thùng
+  "enabled": true,
+  "ten": "gói nước ép Lotte",
+  "vi": [
+    "Hồng – Tăng cân tự nhiên",
+    "Cam – Đề kháng"
+  ],
+  "donTu": {
+    "muc": 1000000,
+    "soQua": 5,
+    "chiKhachMoi": true
+  },
+  "thungChiKhachMoi": false,
+  "thung": [
+    {
+      "tu": 1,
+      "soQua": 5
+    },
+    {
+      "tu": 2,
+      "soQua": 10
+    },
+    {
+      "tu": 3,
+      "soQua": 20
+    }
+  ],
+  "loc": {
+    "cat": "nuoc-ep",
+    "brand": "lotte"
+  },
+  "tuKhoaThung": "thùng",
+  "chuongTrinh": []
 };
 /* ===/ADMIN:QUA_TANG=== */
 
@@ -1020,7 +1044,22 @@ window.TIERS = [
 
 /* ===ADMIN:COUPONS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.COUPONS = {
-  FREESHIP:  { type: 'ship', value: 0, min: 300000, desc: 'Miễn phí vận chuyển cho đơn từ 300K' },
+  "FREESHIP": {
+    "type": "ship",
+    "value": 0,
+    "min": 300000,
+    "desc": "Miễn phí vận chuyển cho đơn từ 300K"
+  },
+  "HCK5": {
+    "ten": "khách mua lần đầu",
+    "loai": "shop",
+    "type": "percent",
+    "value": 5,
+    "min": 0,
+    "desc": "Giảm 5%",
+    "batDau": "2026-10-05T11:22",
+    "hetHan": "2026-10-31T23:59"
+  }
 };
 /* ===/ADMIN:COUPONS=== */
 
