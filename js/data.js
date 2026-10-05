@@ -65,6 +65,7 @@ window.SITE = {
       '24465090622': 450,    // sữa tắm 300ml
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
+      'men-sysy': 350,       // men vi sinh Sysy – hộp 6 gói lớn × 10 gói 2g
     },
   },
   expert: { title: 'Chuyên gia dinh dưỡng', phone: '+84392312796', display: '(+84) 392 312 796', zalo: 'https://zalo.me/0392312796' },  // gặp trực tiếp chuyên gia
@@ -631,6 +632,15 @@ window.PRODUCTS = [
     desc: "Bộ đôi tăng chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) giúp bé uống ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
     highlights: ["Mua trọn bộ 1 chạm, không phải chọn từng món", "Nước ép hữu cơ Hàn Quốc, bé dễ uống", "Thùng 30 gói dùng được khoảng 1 tháng", "D3K2 giúp hấp thu canxi, dùng cùng nước ép tăng cao"],
     usage: "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn." },
+
+  { id: "men-sysy", name: "Men Vi Sinh Sysy Pasteur (Lotte) Hàn Quốc – Men Baby Từ 0 Tháng, Men Kids Từ 24 Tháng, Hộp 60 Gói", short: "Men vi sinh Sysy Pasteur – Baby 0+ / Kids 24m+", brand: "lotte", cat: "tang-can",
+    ages: ["0-6m", "6-12m", "1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tieu-hoa", "tang-can", "de-khang"], price: 986000, oldPrice: 1282000, rating: 0, reviews: 0, sold: 0, stock: 50, priority: 2,
+    shape: "jar", color: "#8D5A2B", weight: "Hộp 6 gói lớn × 10 gói nhỏ (2g)", origin: "Hàn Quốc", tags: ["Mới"],
+    image: "img/men-sysy.jpg", thumb: "img/thumb/men-sysy.jpg", images: ["img/men-sysy.jpg", "img/men-sysy-2.jpg", "img/men-sysy-3.jpg", "img/men-sysy-4.jpg", "img/men-sysy-5.jpg"],
+    variants: [{ label: "Men Baby (nâu) · từ 0 tháng", price: 986000, oldPrice: 1282000 }, { label: "Men Kids (xanh) · từ 24 tháng", price: 986000, oldPrice: 1282000 }],
+    desc: "Men vi sinh Sysy (Pasteur 아이생각 생유산균) – hàng nội địa Hàn Quốc của Pasteur thuộc tập đoàn Lotte. Men Baby (hộp nâu, cho bé từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng. Men Kids (hộp xanh, cho bé từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng, bổ sung kẽm 2,55mg và vitamin D 400 IU. Đạt GMP, công nghệ Probiocap bao bọc lợi khuẩn và Synbiotic (lợi khuẩn kết hợp chất xơ nuôi lợi khuẩn); nhà sản xuất cam kết ít nhất 2 tỉ lợi khuẩn sống. Theo nhà sản xuất: hỗ trợ tiêu hoá, giúp bé ăn ngon, hấp thu tốt; hỗ trợ giảm táo bón, tiêu chảy và tác dụng phụ khi dùng kháng sinh; hỗ trợ cải thiện biếng ăn, chậm tăng cân, giảm trớ sữa ở trẻ nhỏ.",
+    highlights: ["Men Baby (từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng", "Men Kids (từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng + kẽm 2,55mg, vitamin D 400 IU", "GMP · Probiocap · Synbiotic – nội địa Hàn, Pasteur thuộc Lotte"],
+    usage: "Mỗi ngày 1 gói. Pha cùng bột, cháo, sữa hoặc nước dưới 50°C; bé lớn có thể uống trực tiếp. Dùng theo hướng dẫn của bác sĩ hoặc chuyên gia dinh dưỡng. Hộp tròn gồm 6 gói lớn, mỗi gói lớn 10 gói nhỏ; hạn dùng 18 tháng kể từ ngày sản xuất." },
 ];
 /* ===/ADMIN:PRODUCTS=== */
 
