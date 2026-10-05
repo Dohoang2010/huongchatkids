@@ -438,6 +438,7 @@ function doGet(e) {
     if (action === 'donHang')      return traVe(apiDonHang(p), cb);
     if (action === 'donChiTiet')   return traVe(apiDonChiTiet(p), cb);
     if (action === 'doiTrangThai') return traVe(apiDoiTrangThai(p), cb);
+    if (action === 'dongBoCRM')    return traVe(apiDongBoCRM(p), cb);
     if (action === 'khachHang')    return traVe(apiKhachHang(p), cb);
     if (action === 'khachChiTiet') return traVe(apiKhachChiTiet(p), cb);
     if (action === 'khoaKhach')    return traVe(apiKhoaKhach(p), cb);
@@ -779,6 +780,87 @@ var LUONG = {
 };
 function chuanTT(v) { var t = String(v || '').trim(); return t || 'Chờ xác nhận'; }
 
+/* ===================== ĐỒNG BỘ TRẠNG THÁI ĐƠN TỪ CRM =====================
+   CRM (web-khach) trả lịch sử đơn của khách kèm trạng thái. Đơn web được tìm theo mã đơn,
+   trạng thái CRM được quy về trạng thái của trang quản trị rồi tự cập nhật vào sheet Đơn hàng:
+   - Mở chi tiết đơn ở trang quản trị → đồng bộ ngay đơn đó.
+   - Nút "Đồng bộ CRM" ở danh sách đơn, hoặc lịch chạy nền 30 phút/lần (chạy taoLichDongBoCRM 1 lần).
+   Chỉ cập nhật TIẾN LÊN (VD Đang chuẩn bị → Đang giao) hoặc sang Huỷ / Hoàn; không lùi trạng thái đã đặt tay. */
+function ttTuCRM(raw) {
+  var t = String(raw || '').toLowerCase().trim();
+  if (!t) return '';
+  if (/huỷ|hủy|cancel/.test(t)) return 'Đã huỷ';
+  if (/đã hoàn hàng|hoàn hàng thành công|đã trả hàng|returned/.test(t)) return 'Đã hoàn hàng';
+  if (/hoàn tất|thành công|đã giao|giao xong|đã nhận|success|delivered|completed/.test(t)) return 'Đã giao';
+  if (/hoàn|trả hàng|return/.test(t)) return 'Yêu cầu hoàn hàng';
+  if (/đang giao|vận chuyển|đang chuyển|đã gửi|bàn giao|shipping|in transit|giao hàng/.test(t)) return 'Đang giao';
+  if (/đóng gói|chuẩn bị|đang xử lý|đã xử lý|chờ lấy|chờ giao|packing|processing/.test(t)) return 'Đang chuẩn bị';
+  if (/chờ xác nhận|^chờ|mới|tiếp nhận|new|pending/.test(t)) return 'Chờ xác nhận';
+  if (/xác nhận|confirmed/.test(t)) return 'Đã xác nhận';
+  return '';
+}
+function crmKhachCache(sdt) {
+  var c = CacheService.getScriptCache(), k = 'crmkh_' + sdt, v = c.get(k);
+  if (v) { try { return JSON.parse(v); } catch (e) {} }
+  var d = layKhachTuCRM(sdt);
+  try { c.put(k, JSON.stringify(d || { ok: false }), 300); } catch (e) {}
+  return d;
+}
+/* Tìm đơn CRM khớp đơn web: đúng mã (hoặc mã CRM chứa mã web); không có mã thì cùng ngày + cùng số tiền và chỉ có 1 đơn như vậy */
+function timDonCRM(crm, ma, tong, ngay) {
+  var ds = (crm && crm.donHang) || []; var m = String(ma || '').toUpperCase();
+  for (var i = 0; i < ds.length; i++) { var x = String(ds[i].ma || '').toUpperCase(); if (m && x && (x === m || x.indexOf(m) > -1 || m.indexOf(x) > -1)) return ds[i]; }
+  var ng = ngay ? Utilities.formatDate(new Date(ngay), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy') : '';
+  var hop = ds.filter(function (d) { var tien = Number(d.tien != null ? d.tien : d.tong) || 0; return ng && String(d.ngay || '').indexOf(ng) === 0 && Math.abs(tien - Number(tong || 0)) < 1000; });
+  return hop.length === 1 ? hop[0] : null;
+}
+var TT_CUOI = ['Đã huỷ', 'Đã hoàn hàng'];
+/* Đồng bộ 1 dòng đơn; trả { crm: {...} | null, trangThai, doi } */
+function dongBoDongCRM(s, dong, v) {
+  var cu = chuanTT(v[18]), sdt = chuanSdt(v[4]), ma = String(v[1] || '');
+  var crm = crmKhachCache(sdt); if (!crm || !crm.ok) return { crm: null, trangThai: cu, doi: false };
+  var d = timDonCRM(crm, ma, v[10], v[0]); if (!d) return { crm: { coDon: false }, trangThai: cu, doi: false };
+  var raw = String(d.trangThai || ''), moi = ttTuCRM(raw);
+  var info = { coDon: true, ma: String(d.ma || ''), trangThai: raw, quyDoi: moi };
+  if (!moi || moi === cu || TT_CUOI.indexOf(cu) > -1) return { crm: info, trangThai: cu, doi: false };
+  var thuTu = ['Chờ xác nhận', 'Đã xác nhận', 'Đang chuẩn bị', 'Đang giao', 'Đã giao'];
+  var tien = /huỷ|hoàn/i.test(moi) || (thuTu.indexOf(moi) > thuTu.indexOf(cu) && thuTu.indexOf(cu) > -1);
+  if (!tien) return { crm: info, trangThai: cu, doi: false };
+  s.getRange(dong, 19).setValue(moi);
+  ghiNhatKy('Đơn hàng', ma, 'Tự cập nhật từ CRM: ' + cu + ' → ' + moi + ' (CRM: ' + raw + ')');
+  if (/huỷ|hoàn/i.test(moi)) { try { capNhatKhachHang(sdt, { name: '', phone: sdt }, {}); } catch (e) { Logger.log(e); } }
+  try { zaloBotGuiTin('🔄 Đơn ' + ma + ' (CRM): ' + cu + ' → ' + moi); } catch (e) { Logger.log(e); }
+  return { crm: info, trangThai: moi, doi: true };
+}
+/* Đồng bộ các đơn chưa xong trong 60 ngày gần nhất (tối đa 40 khách mỗi lần để không quá giờ) */
+function dongBoCRMNhieu() {
+  var s = sheetDon(); var n = s.getLastRow(); var kq = { ok: true, kiemTra: 0, doi: 0, ds: [] };
+  if (n < 2 || !PropertiesService.getScriptProperties().getProperty('CRM_KEY')) { kq.msg = 'Chưa có CRM_KEY trong Thuộc tính tập lệnh'; return kq; }
+  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues(); var tu = Date.now() - 60 * 864e5; var khach = {};
+  for (var i = v.length - 1; i >= 0; i--) {
+    if (!v[i][0] || new Date(v[i][0]).getTime() < tu) continue;
+    var cu = chuanTT(v[i][18]); if (cu === 'Đã giao' || TT_CUOI.indexOf(cu) > -1) continue;
+    var sdt = chuanSdt(v[i][4]); if (!sdt) continue;
+    if (!khach[sdt] && Object.keys(khach).length >= 40) continue;
+    khach[sdt] = 1; kq.kiemTra++;
+    var r = dongBoDongCRM(s, i + 2, v[i]);
+    if (r.doi) { kq.doi++; kq.ds.push(String(v[i][1]) + ': ' + cu + ' → ' + r.trangThai); }
+  }
+  return kq;
+}
+function apiDongBoCRM(p) {
+  if (!coQuyen(p, 'order.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  return dongBoCRMNhieu();
+}
+/* Chạy nền (trigger) */
+function dongBoCRMTuDong() { try { Logger.log(JSON.stringify(dongBoCRMNhieu())); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); } }
+/* CHẠY TAY 1 LẦN trong trình soạn thảo Apps Script: tạo lịch tự đồng bộ trạng thái đơn từ CRM mỗi 30 phút */
+function taoLichDongBoCRM() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'dongBoCRMTuDong') ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('dongBoCRMTuDong').timeBased().everyMinutes(30).create();
+  Logger.log('✅ Đã tạo lịch đồng bộ trạng thái đơn từ CRM 30 phút/lần');
+}
+
 function apiDonHang(p) {
   if (!coQuyen(p, 'order.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var s = sheetDon(); var n = s.getLastRow();
@@ -820,6 +902,7 @@ function apiDonChiTiet(p) {
   var s = sheetDon(); var dong = Number(p.dong || 0);
   if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
   var v = s.getRange(dong, 1, 1, HEADERS.length).getValues()[0];
+  var dbCRM = { crm: null }; try { dbCRM = dongBoDongCRM(s, dong, v); if (dbCRM.doi) v[18] = dbCRM.trangThai; } catch (e) { Logger.log('CRM: ' + e); }
   var trang = chuanTT(v[18]);
   var sdt = chuanSdt(v[4]);
   var ct = tinhChiTieu(sdt);
@@ -830,7 +913,8 @@ function apiDonChiTiet(p) {
     tamTinh: Number(v[7]) || 0, giam: Number(v[8]) || 0, ship: Number(v[9]) || 0, tong: Number(v[10]) || 0,
     thanhToan: String(v[11] || ''), ma_gg: String(v[12] || ''), ghiChu: String(v[13] || ''),
     hang: String(v[15] || ''), giamHang: Number(v[16]) || 0, qua: String(v[17] || ''),
-    trangThai: trang, tiep: LUONG[trang] || [], luong: TRANG_THAI
+    trangThai: trang, tiep: LUONG[trang] || [], luong: TRANG_THAI,
+    crm: dbCRM.crm, crmVuaCapNhat: !!dbCRM.doi
   }, khach: { soDon: ct.soDon, tongChiTieu: ct.tong, hang: hangTheoTien(ct.tong).label } };
 }
 

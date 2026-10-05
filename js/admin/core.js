@@ -79,7 +79,7 @@ window.ADMIN = (() => {
 
   /* ---------------- Gọi Apps Script (JSONP) ---------------- */
   let seq = 0;
-  const LENH_QT = ['thongKe', 'donHang', 'donChiTiet', 'doiTrangThai', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa'];
+  const LENH_QT = ['thongKe', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa'];
   /* Lệnh chỉ đọc: hết giờ thì tự gửi lại 1 lần (Apps Script lần đầu sau khi nghỉ có thể mất 20–40 giây để "thức dậy") */
   const LENH_DOC = ['thongKe', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo'];
   function api(action, params = {}, timeout = 45000) {

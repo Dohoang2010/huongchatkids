@@ -34,7 +34,7 @@
     S.trang = Math.min(S.trang, Math.max(1, Math.ceil(tong / S.moiTrang)));
     const slice = d.ds.slice((S.trang - 1) * S.moiTrang, S.trang * S.moiTrang);
     const tien = d.ds.reduce((s, o) => s + (/huỷ|hoàn/i.test(o.trangThai) ? 0 : o.tong), 0);
-    $('#pageAct').innerHTML = `<button class="btn btn--ghost" id="dhXuat">⭳ Xuất Excel</button>`;
+    $('#pageAct').innerHTML = `<button class="btn btn--ghost" id="dhCRM" title="Lấy trạng thái mới nhất của các đơn chưa xong từ CRM">🔄 Đồng bộ CRM</button><button class="btn btn--ghost" id="dhXuat">⭳ Xuất Excel</button>`;
 
     el.innerHTML = `
       <div class="kpis">
@@ -72,6 +72,12 @@
   }
 
   /* ---------------- Chi tiết đơn ---------------- */
+  /* Dòng trạng thái lấy từ CRM (Apps Script tự đồng bộ khi mở chi tiết đơn) */
+  const crmDong = (o) => {
+    const c = o.crm; if (!c) return '<p class="muted mt-8">🔗 CRM: chưa kết nối (thiếu CRM_KEY) hoặc CRM chưa phản hồi.</p>';
+    if (!c.coDon) return '<p class="muted mt-8">🔗 CRM: chưa thấy đơn này trong CRM (đơn mới có thể mất vài phút để CRM ghi nhận).</p>';
+    return `<div class="box-note mt-8">🔗 Trạng thái trên CRM: <b>${esc(c.trangThai || '—')}</b>${c.ma ? ` · mã CRM ${esc(c.ma)}` : ''}${c.quyDoi ? ` → ${esc(c.quyDoi)}` : ' (chưa quy đổi được – cập nhật tay nếu cần)'}${o.crmVuaCapNhat ? ' · <b>vừa tự cập nhật trạng thái đơn</b>' : ''}</div>`;
+  };
   async function veChiTiet(el, dong) {
     el.innerHTML = A.dangTai('chi tiết đơn');
     try {
@@ -90,6 +96,7 @@
           ${huy ? `<div class="box-note box-note--red">Đơn đã ${esc(o.trangThai.toLowerCase())} – không tính vào doanh thu và hạng khách.</div>`
             : `<ol class="tline">${LUONG.map((t, i) => `<li class="${i <= buoc ? 'is-done' : ''} ${i === buoc ? 'is-now' : ''}"><i>${i <= buoc ? '✓' : i + 1}</i><span>${esc(t)}</span></li>`).join('')}</ol>`}
 
+          ${crmDong(o)}
           ${o.tiep.length ? `<div class="dh__act"><span class="muted">Chuyển trạng thái:</span>
             ${o.tiep.map((t) => `<button class="btn ${/huỷ|hoàn/i.test(t) ? 'btn--red' : 'btn--primary'} btn--sm" data-tt="${esc(t)}" data-dong="${o.dong}">${esc(t)}</button>`).join('')}</div>`
             : '<p class="muted mt-8">Đơn đã ở trạng thái cuối, không chuyển tiếp được.</p>'}
@@ -132,6 +139,16 @@
     const pg = e.target.closest('[data-dh-pg]'); if (pg) { S.trang = Number(pg.dataset.dhPg); return A.veTrang(); }
     if (e.target.id === 'dhIn') { window.print(); return; }
     if (e.target.id === 'dhXuat') return xuat();
+    if (e.target.id === 'dhCRM') {
+      const b = e.target; b.disabled = true; b.textContent = 'Đang đồng bộ…';
+      try {
+        const r = await A.api('dongBoCRM', {}, 120000);
+        if (!r || !r.ok) A.toast((r && r.msg) || 'Không đồng bộ được', 'err');
+        else if (r.msg) A.toast(r.msg, 'err');
+        else { A.toast(r.doi ? `Đã cập nhật ${r.doi} đơn từ CRM` : `Đã kiểm tra ${r.kiemTra} đơn – không có thay đổi`, 'ok'); if (r.doi) { A.veTrang(); return; } }
+      } catch (err) { A.toast(err.message, 'err'); }
+      b.disabled = false; b.textContent = '🔄 Đồng bộ CRM'; return;
+    }
     const tt = e.target.closest('[data-tt]');
     if (tt) {
       const moi = tt.dataset.tt, dong = tt.dataset.dong;
