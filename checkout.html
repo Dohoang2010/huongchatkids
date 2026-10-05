@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005f">
+  <link rel="stylesheet" href="css/style.css?v=20261005g">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -18,10 +18,10 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261005f"></script>
-<script src="js/diachi.js?v=20261005f"></script>
+<script src="js/data.js?v=20261005g"></script>
+<script src="js/diachi.js?v=20261005g"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005f"></script>
+<script src="js/app.js?v=20261005g"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Mẹ chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
   const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
   let sub = Cart.subtotal(); let multi = Cart.multiDiscount();
+  const { maTotNhat, chipMaDaLuu } = MC; if (!coupon) coupon = maTotNhat(sub - multi, lines);   // tự áp mã khách đã lưu ở trang chủ
   const DIA = window.DIA_CHI || [];
   let qua = giftFor(lines); let quaVi = (qua && qua.vi && qua.vi[0]) || '';
   const itemsHTML = () => `${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}${qua && qua.soQua ? `<div class="it it--gift"><span class="it__gift">🎁</span><div><div class="n">${esc(qua.moTa)}</div><div class="q" id="giftViNote">${esc(quaVi)}</div></div><b class="text-teal">Tặng</b></div>` : ''}`;
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3>Đơn hàng (<span id="orderCount">${Cart.count()}</span> sản phẩm) <a class="fs-13 text-primary" style="margin-left:auto;font-weight:500" href="cart.html">Sửa</a></h3>
         <div class="order-items" id="orderItems">${itemsHTML()}</div>
         <div class="divider"></div>
-        <div class="coupon"><input class="input" id="couponInput" placeholder="Nhập mã giảm giá (nếu có)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
+        <div class="coupon"><input class="input" id="couponInput" placeholder="Nhập mã giảm giá (nếu có)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div><div id="maLuu"></div>
         <div class="coupon-hint" id="couponHint"></div>
         <div class="divider"></div>
         <div id="summary"></div>
@@ -112,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!!truoc !== !!(qua && qua.soQua)) { const it = $('#orderItems'); if (it) it.innerHTML = itemsHTML(); }
   };
   const renderSummary = () => {
+    const ml = $("#maLuu"); if (ml) ml.innerHTML = chipMaDaLuu(sub - multi, lines, coupon);
     renderQua();
     const k = calc();
     $('#summary').innerHTML = `<div class="summary-line"><span>Tạm tính</span><span>${fmt(sub)}</span></div>`

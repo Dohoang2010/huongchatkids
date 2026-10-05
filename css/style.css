@@ -1539,3 +1539,48 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 .pdp__offers .uudai li::before { display: none; }
 .pdp__offers .li-combo .btn { display: inline-flex; }
 .pdp__offers .uudai li { padding-left: 0; }
+
+/* ---------- Ví mã: vé mã giảm giá, khối mã ở trang chủ, banner mã ---------- */
+.vstrip { background: linear-gradient(100deg, #FFF1F5, #FFF8E8); border: 1px solid #FFD9E3; border-radius: var(--radius); padding: 12px 14px; margin: 12px 0; }
+.vstrip__h { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.vstrip__ic { font-size: 26px; }
+.vstrip__h > div > b { display: block; font-size: 15px; }
+.vstrip__h small { color: var(--ink-2); font-size: 12.5px; }
+.vstrip__row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x mandatory; }
+.vc { flex: 0 0 auto; width: min(330px, 86vw); display: flex; align-items: stretch; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(240,83,122,.12); position: relative; scroll-snap-align: start; overflow: hidden; }
+.vc__l { width: 86px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #fff; padding: 10px 6px; position: relative; background: linear-gradient(150deg, #FF7A59, #F0537A); }
+.vc--fixed .vc__l { background: linear-gradient(150deg, #3BB8D9, #2F7FD8); }
+.vc--ship .vc__l { background: linear-gradient(150deg, #22C3A6, #0E9C84); }
+.vc__l svg { width: 30px; height: 30px; }
+.vc__l b { font-size: 15px; font-weight: 800; letter-spacing: .3px; }
+.vc__l::after { content: ''; position: absolute; right: -1px; top: 6px; bottom: 6px; border-right: 2px dashed rgba(255,255,255,.9); }
+.vc::before, .vc::after { content: ''; position: absolute; left: 79px; width: 14px; height: 14px; border-radius: 50%; background: #FFF4F0; z-index: 1; }
+.vc::before { top: -7px; } .vc::after { bottom: -7px; }
+.vc__r { flex: 1; min-width: 0; padding: 10px 8px 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+.vc__r b { font-size: 14.5px; }
+.vc__r small { font-size: 12px; color: var(--ink-2); }
+.vc__ma { font-size: 11.5px; color: var(--muted); }
+.vc__ma code { font-family: inherit; font-weight: 700; color: var(--primary); }
+.vc__btn { align-self: center; margin-right: 10px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font-weight: 700; font-size: 13px; padding: 7px 14px; cursor: pointer; white-space: nowrap; }
+.vc__btn.is-on { background: var(--primary-50); color: var(--primary); }
+.vc-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.vc-chips .chip { font-size: 12.5px; padding: 4px 10px; }
+.vc-chips .chip.is-off { opacity: .5; }
+.slide__voucher { position: absolute; right: 6%; top: 50%; transform: translateY(-50%) rotate(-4deg); display: block; animation: bvFloat 4s ease-in-out infinite; }
+.bv { display: flex; background: #fff; border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.22); overflow: hidden; min-width: 300px; }
+.bv__l { width: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; padding: 18px 8px; background: linear-gradient(150deg, #FF7A59, #F0537A); position: relative; }
+.bv__l svg { width: 40px; height: 40px; }
+.bv__l b { font-size: 34px; line-height: 1; font-weight: 800; }
+.bv__l small { font-size: 12px; font-weight: 700; letter-spacing: 2px; }
+.bv__l::after { content: ''; position: absolute; right: -1px; top: 10px; bottom: 10px; border-right: 3px dashed #fff; }
+.bv__r { padding: 18px 22px; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.bv__r small { font-size: 11px; letter-spacing: 2px; color: var(--muted); font-weight: 700; }
+.bv__r b { font-size: 36px; font-weight: 800; color: var(--primary); letter-spacing: 2px; line-height: 1.1; }
+.bv__r em { font-style: normal; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.slide__voucher .slide__sticker { position: absolute; right: -14px; bottom: -26px; }
+@keyframes bvFloat { 0%, 100% { transform: translateY(-50%) rotate(-4deg); } 50% { transform: translateY(-56%) rotate(-2deg); } }
+@media (prefers-reduced-motion: reduce) { .slide__voucher { animation: none; } }
+@media (max-width: 767px) { .slide__voucher { display: none; } }
+.slide__voucher .slide__sticker { left: auto; } .slide--fx .slide__voucher { z-index: 2; }
+.slide__voucher .slide__sticker { left: -30px; right: auto; top: -38px; bottom: auto; } .vc--ship .vc__l b { font-size: 12px; letter-spacing: 0; }
+.slide__voucher .slide__sticker { left: auto; right: -18px; top: auto; bottom: -46px; }

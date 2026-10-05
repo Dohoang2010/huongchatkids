@@ -255,6 +255,7 @@
     const c = COUPONS[(code || '').trim().toUpperCase()]; if (!c) return { ok: false, msg: 'Mã giảm giá không hợp lệ' };
     if (c.batDau && Date.now() < Date.parse(c.batDau)) return { ok: false, msg: 'Mã chưa đến thời gian sử dụng' };
     if (c.hetHan && Date.now() >= Date.parse(c.hetHan)) return { ok: false, msg: 'Mã đã hết hạn' };
+    if (c.donDau && daMuaTruoc(sdtDangDung())) return { ok: false, msg: 'Mã chỉ dành cho khách mua lần đầu' };
     let base = subtotal;
     if (c.loai === 'sanpham') {
       const ls = lines || [], ids = new Set(c.sanPham || []);
@@ -595,7 +596,7 @@
   const qbTotal = () => qbCalc().total;
   function openQuickBuy(id, opts = {}) {
     const p = byId(id); if (!p) return;
-    QB.id = id; QB.variant = opts.variant ?? (p.variants ? Math.max(0, p.variants.findIndex((v) => !v.oos)) : null); QB.qty = opts.qty || 1; QB.coupon = '';
+    QB.id = id; QB.variant = opts.variant ?? (p.variants ? Math.max(0, p.variants.findIndex((v) => !v.oos)) : null); QB.qty = opts.qty || 1; QB.coupon = ''; { const l = qbLines(), s = l.reduce((a, x) => a + x.total, 0); QB.coupon = maTotNhat(s - (QB.qty >= 2 ? Math.round(s * MULTI_RATE) : 0), l); }
     const c = Customer.get() || {}; const known = !!c.phone;
     const manyVariants = p.variants && p.variants.length > 4;
     $('#quickBuyContent').innerHTML = `
@@ -615,7 +616,7 @@
             <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') !== 'bank' ? 'checked' : ''}><span class="ico">💵</span><span><b>Thanh toán khi nhận hàng</b><small>Kiểm tra hàng rồi mới trả tiền</small></span></label>
             <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><span><b>Chuyển khoản / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} ${SITE.bank.account} · quét QR sau khi đặt` : 'Quét mã QR sau khi đặt'}</small></span></label>
           </div>
-          <details class="qb__coupon"><summary>${I.tag}Có mã giảm giá?</summary><div class="coupon mt-8"><input class="input" id="qbCoupon" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div></details>
+          <details class="qb__coupon" ${QB.coupon ? "open" : ""}><summary>${I.tag}Có mã giảm giá?</summary><div class="coupon mt-8"><input class="input" id="qbCoupon" value="${esc(QB.coupon)}" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div><div id="qbMaLuu"></div></details>
           <div id="qbGift"></div>
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
           <div class="form-error hide" id="qbError" role="alert"></div>
@@ -701,6 +702,7 @@
     const gw = $('#qbGift'); if (gw) gw.innerHTML = giftBox(g, true, QB.quaVi);
     $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
     const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`) : '';
+    const ml = $("#qbMaLuu"); if (ml) ml.innerHTML = chipMaDaLuu(k.sub - k.multi, qbLines(), QB.coupon).replace(/data-coupon=/g, "data-qb-ma=");
     $$('#qbVariants [data-qb-variant]').forEach((b) => { const on = Number(b.dataset.qbVariant) === QB.variant; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
     const z = $('#quickBuy [data-zalo-copy]'); const p = byId(QB.id); if (z && p) z.dataset.zaloCopy = `${shortName(p)}${p.variants && QB.variant != null ? ' – ' + p.variants[QB.variant].label : ''} × ${QB.qty}`;
   }
@@ -785,7 +787,7 @@
   /* ---------------- Global events ---------------- */
   function bindGlobal() {
     document.addEventListener('click', (e) => {
-      const t = e.target.closest('[data-buy],[data-add],[data-open-cart],[data-close-cart],[data-close-modal],[data-callback],[data-close-menu],#btnMenu,#btnTop,[data-qty-minus],[data-qty-plus],[data-remove],[data-qb-minus],[data-qb-plus],[data-qb-variant],[data-qb-clear],[data-qb-coupon],[data-wish],[data-reorder],[data-zalo-copy],[data-copy],[data-pay-qr]');
+      const t = e.target.closest('[data-buy],[data-add],[data-open-cart],[data-close-cart],[data-close-modal],[data-callback],[data-close-menu],#btnMenu,#btnTop,[data-qty-minus],[data-qty-plus],[data-remove],[data-qb-minus],[data-qb-plus],[data-qb-variant],[data-qb-clear],[data-qb-coupon],[data-qb-ma],[data-wish],[data-reorder],[data-zalo-copy],[data-copy],[data-pay-qr]');
       if (!t) return;
       if (t.dataset.buy !== undefined) { e.preventDefault(); openQuickBuy(t.dataset.buy, { qty: Number(t.dataset.qty) || 1, variant: t.dataset.variant != null ? Number(t.dataset.variant) : undefined }); }
       else if (t.dataset.add !== undefined) { e.preventDefault(); Cart.add(t.dataset.add, Number(t.dataset.qty) || 1, t.dataset.variant != null ? Number(t.dataset.variant) : null); toast('Đã thêm vào giỏ hàng', { action: { label: 'Thanh toán ngay', onClick: () => location.href = 'checkout.html' } }); if (window.innerWidth >= 992) openCart(); }
@@ -804,6 +806,7 @@
       else if (t.dataset.qbVariant !== undefined) { QB.variant = Number(t.dataset.qbVariant); qbRefresh(); }
       else if (t.dataset.qbClear !== undefined) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); $('#qbForm input[name=name]')?.focus(); }
       else if (t.dataset.qbCoupon !== undefined) { QB.coupon = ($('#qbCoupon').value || '').trim().toUpperCase(); qbRefresh(); }
+      else if (t.dataset.qbMa !== undefined) { QB.coupon = t.dataset.qbMa; const inp = $('#qbCoupon'); if (inp) inp.value = QB.coupon; qbRefresh(); }
       else if (t.dataset.copy !== undefined) { try { navigator.clipboard?.writeText(t.dataset.copy); toast('Đã sao chép: ' + t.dataset.copy); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.payQr !== undefined) { const o = store.get('mc_orders', []).find((x) => x.code === t.dataset.payQr); if (o) openPayQR(o); }
       else if (t.dataset.zaloCopy !== undefined) { try { navigator.clipboard?.writeText(`Mình muốn đặt: ${t.dataset.zaloCopy}`); toast('Đã sao chép tên sản phẩm – mẹ dán vào Zalo là xong'); } catch (err) { /* bỏ qua */ } }
@@ -1164,6 +1167,58 @@
       .filter((c) => !c.hang || thuTu.indexOf(hang) >= thuTu.indexOf(c.hang));
   }
 
+  /* ---------------- Ví mã: khách bấm "Lưu" mã ở trang chủ, web tự áp mã lợi nhất khi thanh toán ---------------- */
+  const ViMa = {
+    key: 'mc_vi_ma',
+    get() { return (store.get(this.key, []) || []).filter((m) => (window.COUPONS || {})[m]); },
+    co(m) { return this.get().includes(m); },
+    luu(m) { const a = this.get(); if (!a.includes(m)) { a.unshift(m); store.set(this.key, a.slice(0, 30)); } },
+  };
+  /* Khách đã từng mua (đơn lưu trên máy, tài khoản có đơn, hoặc số điện thoại đã có trong CRM) → không dùng mã "đơn đầu" */
+  function daMuaTruoc(phone) {
+    if ((store.get('mc_orders', []) || []).length) return true;
+    const s = Session.get(); if (s && (Number((s.kh || s).soDon) || 0) > 0) return true;
+    const v = phone ? HangSdt.get(phone) : null; return !!(v && v.co);
+  }
+  /* Mã công khai đang dùng được hoặc cho lưu trước */
+  const maCongKhai = () => Object.keys(window.COUPONS || {}).map((ma) => ({ ma, ...window.COUPONS[ma] }))
+    .filter((c) => c.loai !== 'riengtu' && !maHetHan({ hetHan: c.hetHan }) && !(c.batDau && Date.now() < Date.parse(c.batDau) && !c.luuTruoc));
+  const VC_IC = {
+    percent: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="10.5" cy="10.5" r="3.6" fill="none" stroke="#fff" stroke-width="2.6"/><circle cx="21.5" cy="21.5" r="3.6" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M23.5 8.5 8.5 23.5" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/></svg>',
+    fixed: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="none" stroke="#fff" stroke-width="2.6"/><circle cx="16" cy="16" r="8.2" fill="none" stroke="#fff" stroke-width="1.2" stroke-dasharray="2 2"/><text x="16" y="21" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" font-family="Arial,sans-serif">₫</text></svg>',
+    ship: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h15v12H3zM18 13h6l4 4.5V21h-10z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><circle cx="9" cy="23" r="2.6" fill="#fff"/><circle cx="23" cy="23" r="2.6" fill="#fff"/></svg>',
+  };
+  const vcIcon = (c) => VC_IC[c.type === 'ship' ? 'ship' : c.type === 'percent' ? 'percent' : 'fixed'];
+  const vcTieuDe = (c) => (c.type === 'ship' ? 'Miễn phí vận chuyển' : c.type === 'percent' ? `Giảm ${c.value}%` : `Giảm ${fmt(c.value)}`);
+  const vcNhan = (c) => (c.type === 'ship' ? 'FREESHIP' : c.type === 'percent' ? `${c.value}%` : (c.value >= 1000 ? `${Math.round(c.value / 1000)}K` : fmt(c.value)));
+  /* Vé mã giảm giá (dùng ở trang chủ, banner, tài khoản) */
+  function voucherTicket(c) {
+    const daLuu = ViMa.co(c.ma), kieu = c.type === 'ship' ? 'ship' : c.type === 'percent' ? 'percent' : 'fixed';
+    const dk = [c.min ? `Đơn từ ${fmt(c.min)}` : 'Mọi đơn hàng', c.max && c.type === 'percent' ? `tối đa ${fmt(c.max)}` : '', c.donDau ? 'khách mua lần đầu' : '', c.loai === 'sanpham' ? 'sản phẩm áp dụng' : ''].filter(Boolean).join(' · ');
+    const hsd = c.hetHan ? `HSD: ${new Date(c.hetHan).toLocaleDateString('vi-VN')}` : (c.batDau && Date.now() < Date.parse(c.batDau) ? `Dùng từ ${new Date(c.batDau).toLocaleDateString('vi-VN')}` : 'Không thời hạn');
+    return `<div class="vc vc--${kieu}"><div class="vc__l">${VC_IC[kieu]}<b>${esc(vcNhan(c))}</b></div><div class="vc__r"><b>${esc(vcTieuDe(c))}</b><small>${esc(dk)}</small><span class="vc__ma">Mã <code>${esc(c.ma)}</code> · ${esc(hsd)}</span></div>
+      <button type="button" class="vc__btn ${daLuu ? 'is-on' : ''}" data-luu-ma="${esc(c.ma)}" ${daLuu ? 'aria-pressed="true"' : ''}>${daLuu ? 'Đã lưu' : 'Lưu'}</button></div>`;
+  }
+  /* Mã đã lưu có lợi nhất cho giỏ hiện tại (freeship tính bằng phí ship ước tính) */
+  function maTotNhat(subtotal, lines, phiShip) {
+    let tot = '', diem = 0;
+    ViMa.get().forEach((m) => { const r = applyCoupon(m, subtotal, lines); if (!r.ok) return; const d = r.freeship ? (phiShip != null ? phiShip : shipFrom()) : r.discount; if (d > diem) { diem = d; tot = m; } });
+    return tot;
+  }
+  /* Chip mã đã lưu dưới ô nhập mã ở giỏ hàng / thanh toán */
+  function chipMaDaLuu(subtotal, lines, dangDung) {
+    const ds = ViMa.get(); if (!ds.length) return '';
+    return `<div class="vc-chips"><span>Mã đã lưu:</span>${ds.map((m) => { const r = applyCoupon(m, subtotal, lines); return `<button type="button" class="chip chip--pick ${m === dangDung ? 'is-on' : ''} ${r.ok ? '' : 'is-off'}" data-coupon="${esc(m)}" title="${esc(r.ok ? (window.COUPONS[m].desc || '') : r.msg)}">🎟️ ${esc(m)}</button>`; }).join('')}</div>`;
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-luu-ma]'); if (!b) return;
+    e.preventDefault(); const m = b.dataset.luuMa;
+    if (!(window.COUPONS || {})[m]) return;
+    if (ViMa.co(m)) { toast(`Mã ${m} đã có trong ví – web tự áp khi mẹ thanh toán`, { type: 'ok' }); return; }
+    ViMa.luu(m); $$(`[data-luu-ma="${m}"]`).forEach((x) => { x.classList.add('is-on'); x.textContent = x.dataset.daLuu || 'Đã lưu'; });
+    toast(`Đã lưu mã ${m} – web tự áp khi mẹ thanh toán 🎉`, { type: 'ok' });
+  });
+
   /* ---------------- Modal xác thực OTP ---------------- */
   function openOtp(opts = {}) {
     return new Promise((resolve) => {
@@ -1462,6 +1517,6 @@
   }
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
-    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, ViMa, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
     giftFor, giftNote, giftBox, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

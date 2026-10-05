@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005f">
+  <link rel="stylesheet" href="css/style.css?v=20261005g">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -32,6 +32,7 @@
       </div>
     </div>
     <div id="reorderStrip"></div>
+    <div id="voucherStrip"></div>
     <div class="trust" id="trust"></div>
   </div></section>
 
@@ -163,9 +164,9 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261005f"></script>
+<script src="js/data.js?v=20261005g"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005f"></script>
+<script src="js/app.js?v=20261005g"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
@@ -176,6 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const slideArt = (b, i) => {
     const load = i ? 'lazy' : 'eager';
     if (b.images) return `<a class="slide__stack" href="${b.link}" tabindex="-1" aria-hidden="true">${b.images.map((im, k) => `<span><img src="${im}" alt="" loading="${load}">${b.imageLabels && b.imageLabels[k] ? `<b class="slide__cap">${esc(b.imageLabels[k])}</b>` : ''}</span>`).join('')}${b.sticker ? `<i class="slide__sticker">${esc(b.sticker)}</i>` : ''}</a>`;
+    if (b.voucher) { const c = (window.COUPONS || {})[b.voucher] || {}; return `<a class="slide__voucher" href="${b.link}" tabindex="-1" aria-hidden="true"><span class="bv"><span class="bv__l">${MC.vcIcon(c)}<b>${c.type === 'percent' ? c.value + '%' : c.type === 'ship' ? 'FREE' : ''}</b><small>GIẢM</small></span><span class="bv__r"><small>MÃ GIẢM GIÁ</small><b>${esc(b.voucher)}</b><em>${c.donDau ? 'Đơn đầu tiên' : c.min ? 'Đơn từ ' + fmt(c.min) : 'Mọi đơn hàng'}</em></span></span><i class="slide__sticker">LƯU MÃ
+TỰ ÁP</i></a>`; }
     if (b.tiers) return `<a class="slide__tiers" href="${b.link}" tabindex="-1" aria-hidden="true">${(window.TIERS || []).filter((t) => t.discount).map((t) => `<span style="--c:${t.color}"><em>${t.icon}</em><b>${esc(t.label)}</b><small><i>Giảm </i><s>−</s>${t.discount}%<i> mọi đơn</i></small></span>`).join('')}</a>`;
     if (b.image) return `<a class="slide__img" href="${b.link}" tabindex="-1" aria-hidden="true"><img src="${b.image}" alt="" loading="${load}"></a>`;
     return '';
@@ -190,14 +193,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const emoji = ['🥛', '🦴', '📏', '💙', '⭐', '✨'].map((e, k) => `<i class="fx-e fx-e${k + 1}">${e}</i>`).join('');
       return `<div class="slide__fx" aria-hidden="true"><i class="fx-burst"></i>${bot}${hat}${sao}${emoji}</div>`;
     }
-    if (b.fx !== 'gift') return '';
+    if (b.fx !== 'gift' && b.fx !== 'voucher') return '';
     const mau = ['#FFD54F', '#FFFFFF', '#7EE0C8', '#FFB3C7', '#FFE082'];
     const confetti = Array.from({ length: 18 }, (_, k) => `<i class="fx-cf" style="--x:${(k * 41) % 100};--d:${((k * 0.63) % 4).toFixed(2)}s;--t:${(3.6 + (k % 4) * 0.7).toFixed(1)}s;--c:${mau[k % mau.length]};--r:${(k % 2 ? 1 : -1) * (200 + k * 23)}deg"></i>`).join('');
     const sao = Array.from({ length: 6 }, (_, k) => `<i class="fx-s fx-s${k + 1}">✦</i>`).join('');
-    const emoji = ['🎁', '🎀', '🧃', '💝', '🎉', '⭐'].map((e, k) => `<i class="fx-e fx-e${k + 1}">${e}</i>`).join('');
+    const emoji = (b.fx === 'voucher' ? ['🎟️', '💸', '🛍️', '💝', '🎉', '⭐'] : ['🎁', '🎀', '🧃', '💝', '🎉', '⭐']).map((e, k) => `<i class="fx-e fx-e${k + 1}">${e}</i>`).join('');
     return `<div class="slide__fx" aria-hidden="true"><i class="fx-burst"></i>${confetti}${sao}${emoji}</div>`;
   };
-  $('#carouselTrack').innerHTML = BANNERS.map((b, i) => `<div class="slide slide--${b.theme} ${b.image || b.images || b.tiers ? 'slide--img' : ''} ${b.fx ? 'slide--fx' : ''}">${slideFx(b)}<span class="slide__badge">${b.badge}</span><h2>${b.title}</h2><p>${b.sub}</p><a class="btn btn--light btn--lg" href="${b.link}">${b.cta} ${I.arrowR}</a>${slideArt(b, i)}</div>`).join('');
+  $('#carouselTrack').innerHTML = BANNERS.map((b, i) => `<div class="slide slide--${b.theme} ${b.image || b.images || b.tiers || b.voucher ? 'slide--img' : ''} ${b.fx ? 'slide--fx' : ''}">${slideFx(b)}<span class="slide__badge">${b.badge}</span><h2>${b.title}</h2><p>${b.sub}</p>${b.luuMa ? `<button type="button" class="btn btn--light btn--lg" data-luu-ma="${esc(b.luuMa)}" data-da-luu="Đã lưu mã ${esc(b.luuMa)} ✓">${MC.ViMa.co(b.luuMa) ? `Đã lưu mã ${esc(b.luuMa)} ✓` : b.cta}</button>` : `<a class="btn btn--light btn--lg" href="${b.link}">${b.cta} ${I.arrowR}</a>`}${slideArt(b, i)}</div>`).join('');
   $('#promoContact').innerHTML = `Zalo / Hotline <b>${SITE.hotline}</b><br><span class="text-muted">${SITE.workingHours}</span>`;
   $('#promoBtns').innerHTML = `<a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--dark btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button>`;
   $('.carousel__arrow--prev').innerHTML = I.chevronL; $('.carousel__arrow--next').innerHTML = I.chevronR;
@@ -214,6 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (last && last.items && last.items.length && last.type !== 'callback') {
     $('#reorderStrip').innerHTML = `<div class="reorder"><span class="emoji">🔁</span><div><b>Chào ${esc(cust?.name || 'mẹ')}, bé sắp hết ${esc(last.items[0].name.split(' ').slice(0, 4).join(' '))}…?</b><small>Mua lại đơn ${last.code} chỉ với 1 chạm – thông tin giao hàng đã lưu sẵn.</small></div><button class="btn btn--primary btn--sm" type="button" data-reorder>${I.refresh}Mua lại ngay</button></div>`;
   }
+
+  /* Mã giảm giá cho mẹ: vé mã công khai, bấm "Lưu" → web tự áp mã lợi nhất khi thanh toán */
+  const dsMa = MC.maCongKhai().filter((c) => !(c.donDau && MC.daMuaTruoc((Customer.get() || {}).phone)));
+  if (dsMa.length) $('#voucherStrip').innerHTML = `<section class="vstrip" aria-label="Mã giảm giá"><div class="vstrip__h"><span class="vstrip__ic">🎟️</span><div><b>Mã giảm giá cho mẹ</b><small>Bấm <b>Lưu</b> – web tự áp mã lợi nhất khi mẹ thanh toán</small></div></div><div class="vstrip__row">${dsMa.map(MC.voucherTicket).join('')}</div></section>`;
 
   /* Trust strip */
   const expertCard = SITE.expert ? `<a class="trust__item trust__item--cta" href="tel:${SITE.expert.phone}"><span class="trust__icon">${I.phoneCall}</span><div><b>Gặp trực tiếp ${SITE.expert.title.toLowerCase()}</b><small>Gọi / Zalo ${SITE.expert.display}</small><span class="trust__call">Bấm để gọi ngay ${I.arrowR}</span></div></a>` : '';

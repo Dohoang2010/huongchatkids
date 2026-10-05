@@ -706,7 +706,8 @@ window.FEEDBACKS = [
 /* Banner đầu trang chủ. Ảnh minh hoạ bên phải: image (1 ảnh) · images + sticker (nhiều ảnh xếp chồng + nhãn dán) · tiers: true (bảng hạng khách hàng lấy từ TIERS) */
 /* ===ADMIN:BANNERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.BANNERS = [
-  { title: 'Váng sữa canxi\nCalciumore Hàn Quốc', sub: 'Canxi sữa hữu cơ, gói ăn liền vị váng sữa. <b>Mua 2 hộp tặng 1 lọ D3K2</b>, 3 hộp tặng 2 lọ, 4 hộp tặng 3 lọ · 1 hộp + 1 D3K2 giảm 5%.', cta: 'Mua ngay', link: 'product.html?id=26060839019', theme: 'sky', badge: '⭐ 4,9/5 · Đã bán 663', images: ['img/thumb/26060839019.jpg', 'img/26060839019-3.jpg'], imageLabels: ['📦 Hộp 90 gói', '🥛 Gói ăn liền'], sticker: 'MUA 2\nTẶNG D3K2', fx: 'canxi' },
+  { title: 'Canxi Calciumore\nmua 2 tặng D3K2', sub: '✅ 1 hộp canxi + 1 lọ D3K2 giảm 5% còn <b>2.726.000₫</b><br>✅ Mua 2 hộp tặng <b>1 lọ D3K2</b> · 3 hộp tặng <b>2 lọ</b> · 4 hộp tặng <b>3 lọ</b>', cta: 'Mua ngay', link: 'product.html?id=26060839019', theme: 'sky', badge: '🎁 Tiết kiệm đến 1.170.000₫', images: ['img/thumb/26060839019.jpg', 'img/thumb/42878618667.jpg'], imageLabels: ['📦 Canxi hộp 90 gói', '💧 D3K2 30ml'], sticker: 'MUA 2\nTẶNG D3K2', fx: 'canxi' },
+  { title: 'Khách mới\ngiảm ngay 5%', sub: 'Nhập mã <b>HCK5</b> khi thanh toán – giảm 5% cho đơn hàng đầu tiên, áp dụng mọi sản phẩm. Bấm <b>Lưu mã</b>, web tự áp khi mẹ đặt hàng.', cta: 'Lưu mã HCK5', luuMa: 'HCK5', link: 'collections.html', theme: 'pink', badge: '🎟️ Mã giảm giá khách mới', voucher: 'HCK5', fx: 'voucher' },
   { title: 'Mua hàng tặng\nnước ép Lotte', sub: 'Đơn từ <b>1.000.000₫</b> tặng 5 gói · mua thùng nước ép Lotte tặng đến <b>20 gói</b>. Mẹ chọn vị Hồng hoặc Cam.', cta: 'Săn quà ngay', link: 'collections.html?sort=best', theme: 'gift', badge: '🎁 Chương trình mới', images: ['img/thumb/25632276959.jpg', 'img/thumb/23660586997.jpg'], imageLabels: ['💗 Vị Hồng', '🧡 Vị Cam'], sticker: 'TẶNG\nđến 20 gói', fx: 'gift' },
   { title: 'Khách thân thiết\ngiảm đến 12%', sub: 'Tích luỹ chi tiêu tự động theo số điện thoại, không cần đăng ký. Xác thực OTP khi đặt hàng để nhận ưu đãi mọi đơn.', cta: 'Xem hạng của tôi', link: 'account.html', theme: 'grape', badge: '👑 Mới ra mắt', tiers: true },
   { title: 'Freeship toàn quốc\ncho đơn từ 3 triệu', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Chính hãng 100%, kiểm tra hàng trước khi thanh toán.', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
@@ -1081,7 +1082,8 @@ window.COUPONS = {
     "type": "percent",
     "value": 5,
     "min": 0,
-    "desc": "Giảm 5%",
+    "donDau": true,
+    "desc": "Giảm 5% cho đơn hàng đầu tiên",
     "batDau": "2026-10-05T11:22",
     "hetHan": "2026-10-31T23:59"
   }

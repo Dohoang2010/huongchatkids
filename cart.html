@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005f">
+  <link rel="stylesheet" href="css/style.css?v=20261005g">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -19,14 +19,14 @@
   <h1 class="page-title">Giỏ hàng của mẹ</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20261005f"></script>
+<script src="js/data.js?v=20261005g"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005f"></script>
+<script src="js/app.js?v=20261005g"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productThumb, shortName, productCard, Cart, esc, shipFee, shipText, applyCoupon, store, toast, giftFor, giftBox } = MC;
   const render = () => {
-    const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', ''); const c = coupon ? applyCoupon(coupon, sub - multi, lines) : null;
+    const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', '') || MC.maTotNhat(sub - multi, lines); const c = coupon ? applyCoupon(coupon, sub - multi, lines) : null;
     const discount = c && c.ok ? c.discount : 0; const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + (ship || 0);
     if (!lines.length) { $('#cartPage').innerHTML = `<div class="empty card" style="grid-column:1/-1"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p>Mẹ chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div><section class="section" style="grid-column:1/-1"><div class="section-head"><div><h2>Mẹ tin dùng nhất</h2></div></div><div class="grid grid--4">${[...PRODUCTS].sort((a, b) => b.sold - a.sold).slice(0, 4).map((p) => productCard(p)).join('')}</div></section>`; return; }
     $('#cartPage').innerHTML = `
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="checkout__side"><div class="card card--pad">
         <h3>Tóm tắt đơn hàng</h3>
-        <div class="coupon"><input class="input" id="couponInput" placeholder="Nhập mã giảm giá (nếu có)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>
+        <div class="coupon"><input class="input" id="couponInput" placeholder="Nhập mã giảm giá (nếu có)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>${MC.chipMaDaLuu(sub - multi, lines, coupon)}
         <div class="coupon-hint">${c && c.ok ? `<span class="text-teal fw-600">✓ ${c.desc}</span>` : c ? `<span class="text-red">${c.msg}</span>` : `<span class="text-muted">Có mã giảm giá của shop thì mẹ nhập vào đây nhé.</span>`}</div>
         <div class="divider"></div>
         <div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><span>${fmt(sub)}</span></div>
