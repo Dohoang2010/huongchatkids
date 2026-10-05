@@ -48,8 +48,31 @@
     <div class="row row-2" style="margin-top:10px"><label>Khoá quản trị<input id="inKey" value="${esc(A.adminKey())}"></label>
     <div style="align-self:end"><button class="btn btn--primary" id="btnKey">Lưu khoá & thử lại</button></div></div></div>`;
 
+  /* Điền đủ mọi ngày trong khoảng (ngày không có đơn = 0) để đường biểu đồ lên xuống đúng thực tế.
+     Khoảng dài thì gộp: tới 62 ngày theo ngày, tới 200 ngày theo tuần, dài hơn theo tháng. */
+  const soNgayKhoang = (a, b) => Math.max(1, Math.round((Date.parse(b + 'T12:00') - Date.parse(a + 'T12:00')) / 864e5) + 1);
+  function dayDu(list, a, b) {
+    const map = {}; (list || []).forEach((x) => { map[x.ngay] = x; });
+    const n = soNgayKhoang(a, b), ngay = [];
+    for (let i = 0; i < n; i++) { const d = ngayISO(new Date(Date.parse(a + 'T12:00') + i * 864e5)); const x = map[d]; ngay.push({ ngay: d, tien: x ? x.tien : 0, don: x ? x.don : 0 }); }
+    const kieu = n <= 62 ? 'ngay' : n <= 200 ? 'tuan' : 'thang';
+    if (kieu === 'ngay') return { kieu, ds: ngay };
+    const nhom = [];
+    ngay.forEach((x, i) => {
+      const k = kieu === 'tuan' ? Math.floor(i / 7) : x.ngay.slice(0, 7);
+      let g = nhom[nhom.length - 1];
+      if (!g || g.k !== k) { g = { k, ngay: x.ngay, den: x.ngay, tien: 0, don: 0 }; nhom.push(g); }
+      g.den = x.ngay; g.tien += x.tien; g.don += x.don;
+    });
+    return { kieu, ds: nhom };
+  }
+  const nhanMoc = (x, kieu) => (kieu === 'thang' ? `${x.ngay.slice(5, 7)}/${x.ngay.slice(0, 4)}` : `${x.ngay.slice(8)}/${x.ngay.slice(5, 7)}`);
+  const tenMoc = (x, kieu) => (kieu === 'thang' ? `Tháng ${x.ngay.slice(5, 7)}/${x.ngay.slice(0, 4)}`
+    : kieu === 'tuan' ? `Tuần ${x.ngay.slice(8)}/${x.ngay.slice(5, 7)} – ${x.den.slice(8)}/${x.den.slice(5, 7)}` : `${x.ngay.slice(8)}/${x.ngay.slice(5, 7)}/${x.ngay.slice(0, 4)}`);
+
   function veSo(box, d) {
-    const soNgay = d.theoNgay.length || 1;
+    const soNgay = soNgayKhoang(d.tu || tu, d.den || den);
+    const bd = dayDu(d.theoNgay, d.tu || tu, d.den || den);
     const sapHet = (A.D.PRODUCTS || []).filter((p) => !p.an && (p.stock ?? 0) <= 5);
     box.innerHTML = `
       <div class="kpis">
@@ -63,7 +86,7 @@
         ${A.the('Sản phẩm sắp hết', sapHet.length, sapHet.length ? 'cần nhập thêm' : 'kho đang ổn', sapHet.length ? 'kpi--red' : '')}
       </div>
 
-      <div class="card"><h3>Doanh thu theo ngày</h3><p class="muted">${esc(d.tu)} → ${esc(d.den)}</p>${cot(d.theoNgay)}</div>
+      <div class="card"><h3>Doanh thu theo ${bd.kieu === 'thang' ? 'tháng' : bd.kieu === 'tuan' ? 'tuần' : 'ngày'}</h3><p class="muted">${esc(d.tu)} → ${esc(d.den)}</p>${cot(bd.ds, bd.kieu)}</div>
 
       <div class="grid-2">
         <div class="card"><h3>Giờ khách đặt hàng</h3><p class="muted">Chọn giờ chạy quảng cáo và trực Zalo cho đúng.</p>
@@ -93,7 +116,8 @@
   }
 
   /* Biểu đồ đường doanh thu theo ngày – dễ nhìn xu hướng lên xuống hơn biểu đồ cột */
-  function cot(list) {
+  function cot(list, kieu = 'ngay') {
+    if (!list.some((x) => x.tien > 0)) return '<p class="muted">Chưa có đơn nào trong kỳ này.</p>';
     if (!list.length) return '<p class="muted">Chưa có đơn nào trong kỳ này.</p>';
     const W = 900, H = 230, pad = { t: 16, r: 14, b: 28, l: 56 };
     const max = Math.max(...list.map((x) => x.tien), 1);
@@ -113,17 +137,17 @@
 
     const buoc = n <= 12 ? 1 : Math.ceil(n / 10);
     const nhanX = list.map((x, i) => (i % buoc === 0 || i === n - 1)
-      ? `<text x="${X(i)}" y="${H - 9}" text-anchor="middle">${x.ngay.slice(8)}/${x.ngay.slice(5, 7)}</text>` : '').join('');
+      ? `<text x="${X(i)}" y="${H - 9}" text-anchor="middle">${nhanMoc(x, kieu)}</text>` : '').join('');
 
     const cham = list.map((x, i) => `<g class="pt"><circle cx="${X(i)}" cy="${Y(x.tien)}" r="${n > 45 ? 2.5 : 4}"/>
-      <circle class="pt__hit" cx="${X(i)}" cy="${Y(x.tien)}" r="14"><title>${x.ngay}: ${fmt(x.tien)} · ${x.don} đơn</title></circle></g>`).join('');
+      <circle class="pt__hit" cx="${X(i)}" cy="${Y(x.tien)}" r="14"><title>${tenMoc(x, kieu)}: ${fmt(x.tien)} · ${x.don} đơn</title></circle></g>`).join('');
 
     const cao = list.reduce((a, b) => (b.tien > a.tien ? b : a), list[0]);
     const iCao = list.indexOf(cao);
 
     const xCao = Math.min(W - pad.r - 22, Math.max(pad.l + 22, X(iCao)));
     return `<svg class="chart chart--line" viewBox="0 0 ${W} ${H}" role="img"
-        aria-label="Biểu đồ đường doanh thu theo ngày, cao nhất ${fmt(cao.tien)} ngày ${cao.ngay}">
+        aria-label="Biểu đồ đường doanh thu, cao nhất ${fmt(cao.tien)} – ${tenMoc(cao, kieu)}">
       <defs><linearGradient id="gdt" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="var(--pink)" stop-opacity=".28"/>
         <stop offset="100%" stop-color="var(--pink)" stop-opacity="0"/></linearGradient></defs>
@@ -135,7 +159,7 @@
         <text class="nhan-cao" x="${xCao}" y="${Math.max(14, Y(cao.tien) - 11)}" text-anchor="middle">${gon(cao.tien)}</text>` : ''}
       ${nhanX}
     </svg>
-    <p class="muted mt-8">Ngày cao nhất: <b>${cao.ngay.slice(8)}/${cao.ngay.slice(5, 7)}</b> · ${fmt(cao.tien)} · ${cao.don} đơn</p>`;
+    <p class="muted mt-8">${kieu === 'thang' ? 'Tháng' : kieu === 'tuan' ? 'Tuần' : 'Ngày'} cao nhất: <b>${tenMoc(cao, kieu)}</b> · ${fmt(cao.tien)} · ${cao.don} đơn</p>`;
   }
 
   function gioCao(g) {
