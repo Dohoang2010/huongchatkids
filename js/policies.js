@@ -153,7 +153,7 @@ window.POLICIES = [
     ['Thông tin của tôi có bị chia sẻ cho ai không?', 'Không. Chỉ đơn vị vận chuyển nhận tên, SĐT, địa chỉ để giao hàng. Xem Chính sách bảo mật.'],
   ] },
 
-  { key: 'cam-nang', group: 'about', icon: '📖', title: 'Cẩm nang mẹ', summary: 'Kiến thức chăm con theo tháng tuổi', link: 'blog.html' },
+  { key: 'cam-nang', group: 'about', icon: '📖', title: 'Cẩm nang chăm con', summary: 'Kiến thức chăm con theo tháng tuổi', link: 'blog.html' },
   { key: 'tra-cuu', group: 'about', icon: '🔎', title: 'Tra cứu đơn hàng', summary: 'Xem đơn gần đây, mua lại 1 chạm', html: `
 <p>Cách 1 – Trên thiết bị đã đặt hàng: vào <a class="btn btn--primary btn--sm" href="account.html">Tài khoản → Đơn hàng gần đây</a> để xem mã đơn, sản phẩm, tổng tiền và bấm <b>Mua lại</b> chỉ với 1 chạm.</p>
 <p>Cách 2 – Trên thiết bị khác hoặc muốn biết trạng thái giao hàng: nhắn <b>mã đơn</b> (dạng HCK…) hoặc số điện thoại đặt hàng cho Zalo <b>{zalo}</b>, chúng tôi trả lời trong giờ làm việc ({hours}).</p>

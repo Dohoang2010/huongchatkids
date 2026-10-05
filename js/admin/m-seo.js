@@ -7,7 +7,7 @@
     { f: 'index.html', t: 'Trang chủ', u: '' },
     { f: 'collections.html', t: 'Tất cả sản phẩm', u: 'collections.html' },
     { f: 'product.html', t: 'Trang sản phẩm', u: 'product.html' },
-    { f: 'blog.html', t: 'Cẩm nang mẹ', u: 'blog.html' },
+    { f: 'blog.html', t: 'Cẩm nang chăm con', u: 'blog.html' },
     { f: 'gioi-thieu.html', t: 'Giới thiệu', u: 'gioi-thieu.html' },
     { f: 'policy.html', t: 'Chính sách', u: 'policy.html' },
     { f: 'cart.html', t: 'Giỏ hàng', u: 'cart.html' },

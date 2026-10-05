@@ -15,7 +15,7 @@
     { v: 'cart.html', t: 'Giỏ hàng' },
     { v: 'checkout.html', t: 'Thanh toán' },
     { v: 'account.html', t: 'Thông tin khách hàng' },
-    { v: 'blog.html', t: 'Cẩm nang mẹ' },
+    { v: 'blog.html', t: 'Cẩm nang chăm con' },
   ];
   const MAY = { desktop: { w: 1440, t: 'Máy tính', i: '🖥️' }, tablet: { w: 768, t: 'Máy tính bảng', i: '📱' }, mobile: { w: 390, t: 'Điện thoại', i: '📲' } };
 

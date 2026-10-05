@@ -493,7 +493,7 @@
           ${SITE.bctUrl ? `<a class="footer__cert" href="${SITE.bctUrl}" target="_blank" rel="noopener">${I.shield} Đã thông báo Bộ Công Thương</a>` : ''}
         </div>
         ${cotFooter()}
-        <div class="footer__col"><h4><a href="gioi-thieu.html">Về ${SITE.name}</a></h4><ul><li><a href="gioi-thieu.html">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang mẹ</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
+        <div class="footer__col"><h4><a href="gioi-thieu.html">Về ${SITE.name}</a></h4><ul><li><a href="gioi-thieu.html">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang chăm con</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
         <div class="footer__col"><h4>Kết nối với chúng tôi</h4>
           <p class="fs-13 text-muted">Theo dõi để nhận ưu đãi và kiến thức chăm con mỗi ngày.</p>
           ${SITE.zaloQr ? `<div class="footer__qr"><img src="${SITE.zaloQr}" width="112" height="112" alt="Mã QR Zalo ${SITE.name}" loading="lazy"><div><b>Zalo ${SITE.hotline}</b><small>Quét mã để chat với chuyên gia dinh dưỡng, đặt hàng nhanh</small><a href="${SITE.zalo}" target="_blank" rel="noopener">Mở Zalo →</a></div></div>` : ''}
@@ -918,7 +918,12 @@
   /* Sản phẩm bị ẩn ở trang quản trị thì không hiện ở bất kỳ đâu trên web */
   window.PRODUCTS = (window.PRODUCTS || []).filter((p) => !p.an);
   /* Bài viết còn ở bản nháp thì khách chưa đọc được */
-  window.POSTS = (window.POSTS || []).filter((p) => !p.nhap);
+  /* Bài hẹn giờ (ngày đăng ở tương lai) tự hiện khi tới ngày; bài mới nhất luôn đứng đầu.
+     Xem trước từ trang quản trị (?preview=1) thì thấy cả bài hẹn giờ. */
+  const ngayBai = (p) => { const m = String(p.date || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? new Date(+m[3], m[2] - 1, +m[1]).getTime() : 0; };
+  const xemTruocBai = /[?&]preview=1/.test(location.search);
+  window.POSTS = (window.POSTS || []).filter((p) => !p.nhap && (xemTruocBai || ngayBai(p) <= Date.now()))
+    .sort((a, b) => ngayBai(b) - ngayBai(a));
 
 
   /* =====================================================================

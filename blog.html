@@ -4,40 +4,92 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- ADMIN:SEO (trang quản trị ghi đè khối này) -->
-  <title>Cẩm nang mẹ – Hương Chất Kids</title>
+  <title>Cẩm nang chăm con – Hương Chất Kids</title>
   <meta name="description" content="Cẩm nang chăm con: chọn dinh dưỡng bổ sung theo tháng tuổi, vitamin D3K2, bé biếng ăn, tăng chiều cao, tiêu hoá – do chuyên gia dinh dưỡng Hương Chất Kids biên soạn.">
   <!-- /ADMIN:SEO -->
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005b">
+  <link rel="stylesheet" href="css/style.css?v=20261005c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="blogPage"></div></main>
-<script src="js/data.js?v=20261005b"></script>
+<script src="js/data.js?v=20261005c"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005b"></script>
+<script src="js/app.js?v=20261005c"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const { $, param, esc, I, productCard } = MC;
+  const { $, $$, param, esc, I, productCard, productThumb, shortName, fmt, byId } = MC;
+  const TEN = 'Cẩm nang chăm con';
   const id = param('id'); const post = POSTS.find((p) => p.id === id);
-  const card = (p) => `<a class="post-card" href="blog.html?id=${p.id}"><div class="post-card__thumb" style="background:${p.color}">${p.image ? `<img src="${p.image}" alt="" loading="lazy">` : p.emoji}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${p.cat}</span><span>${p.date} · ${p.read} đọc</span></div><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`;
+  const thumb = (p) => `<div class="post-card__thumb" style="background:${esc(p.color || '#FFE9EF')}">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy">` : (p.emoji || '📖')}</div>`;
+  const meta = (p) => `<div class="post-card__meta"><span class="badge badge--soft">${esc(p.cat)}</span><span>${esc(p.date)} · ${esc(p.read)} đọc</span></div>`;
+  const card = (p) => `<a class="post-card" href="blog.html?id=${encodeURIComponent(p.id)}">${thumb(p)}<div class="post-card__body">${meta(p)}<h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`;
+  const dong = (p, i) => `<a class="blog-item" href="blog.html?id=${encodeURIComponent(p.id)}">${thumb(p)}<div class="blog-item__body">${meta(p)}<h3>${i === 0 && !cat ? '<span class="blog-item__moi">Mới nhất</span>' : ''}${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><span class="blog-item__doc">Đọc tiếp ${I.arrowR}</span></div></a>`;
+  const spCua = (p) => (p.sanPham || []).map(byId).filter(Boolean);
+  /* Bài nổi bật = bài được đánh dấu nổi bật hoặc viết về sản phẩm hot */
+  const noiBat = POSTS.filter((p) => p.noiBat || spCua(p).some((x) => (x.tags || []).includes('Sản phẩm hot'))).slice(0, 8);
+
+  /* Nội dung bài: "## Tiêu đề", "- gạch đầu dòng", "![chú thích](ảnh)", "[[sp:mã sản phẩm]]" */
+  const veBody = (body) => {
+    let h = '', ul = [];
+    const xa = () => { if (ul.length) { h += `<ul>${ul.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`; ul = []; } };
+    (body || []).forEach((t) => {
+      let m;
+      if (/^- /.test(t)) { ul.push(t.slice(2)); return; }
+      xa();
+      if (/^## /.test(t)) h += `<h2>${esc(t.slice(3))}</h2>`;
+      else if ((m = t.match(/^!\[(.*?)\]\((.+?)\)$/))) h += `<figure><img src="${esc(m[2])}" alt="${esc(m[1])}" loading="lazy">${m[1] ? `<figcaption>${esc(m[1])}</figcaption>` : ''}</figure>`;
+      else if ((m = t.match(/^\[\[sp:(.+?)\]\]$/))) { const sp = byId(m[1]); if (sp) h += `<a class="post-sp" href="product.html?id=${encodeURIComponent(sp.id)}"><img src="${productThumb(sp)}" alt=""><span><b>${esc(shortName(sp))}</b><small>${fmt(sp.price)}</small></span><span class="btn btn--primary btn--sm">Xem sản phẩm</span></a>`; }
+      else h += `<p>${esc(t)}</p>`;
+    });
+    xa(); return h;
+  };
+
   if (post) {
-    document.title = post.title + ' – Cẩm nang Hương Chất Kids';
+    document.title = post.title + ' – ' + TEN + ' Hương Chất Kids';
     const rel = { 'Dinh dưỡng': 'cat=nuoc-ep', 'Vitamin': 'need=d3k2', 'Chăm con': 'need=tang-can', 'Tuổi teen': 'age=12-18y', 'Tiêu hoá': 'need=tieu-hoa', 'Mua sắm': 'cat=hong-sam' }[post.cat] || '';
-    const sug = PRODUCTS.filter((p) => { const u = new URLSearchParams(rel); return (!u.get('cat') || p.cat === u.get('cat')) && (!u.get('need') || p.needs.includes(u.get('need'))) && (!u.get('age') || p.ages.includes(u.get('age'))); }).sort((a, b) => b.sold - a.sold).slice(0, 4);
-    $('#blogPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="blog.html">Cẩm nang mẹ</a><span>›</span><span>${esc(post.cat)}</span></nav>
-      <article class="post"><div class="post__hero" style="background:${post.color}">${post.image ? `<img src="${post.image}" alt="">` : post.emoji}</div><div class="post-card__meta mb-12"><span class="badge badge--soft">${post.cat}</span><span>${post.date} · ${post.read} đọc · Chuyên gia dinh dưỡng Hương Chất Kids</span></div><h1>${esc(post.title)}</h1><p class="text-muted mb-16" style="font-size:16px">${esc(post.excerpt)}</p><div class="post__body">${post.body.map((t) => `<p>${esc(t)}</p>`).join('')}</div>
+    let sug = spCua(post);
+    if (sug.length < 4) { const u = new URLSearchParams(rel); sug = [...sug, ...PRODUCTS.filter((p) => !sug.includes(p) && (!u.get('cat') || p.cat === u.get('cat')) && (!u.get('need') || (p.needs || []).includes(u.get('need'))) && (!u.get('age') || (p.ages || []).includes(u.get('age')))).sort((a, b) => b.sold - a.sold)].slice(0, 4); }
+    $('#blogPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="blog.html">${TEN}</a><span>›</span><span>${esc(post.cat)}</span></nav>
+      <article class="post"><div class="post__hero" style="background:${esc(post.color || '#FFE9EF')}">${post.image ? `<img src="${esc(post.image)}" alt="">` : post.emoji}</div><div class="post-card__meta mb-12"><span class="badge badge--soft">${esc(post.cat)}</span><span>${esc(post.date)} · ${esc(post.read)} đọc · Chuyên gia dinh dưỡng Hương Chất Kids</span></div><h1>${esc(post.title)}</h1><p class="text-muted mb-16" style="font-size:16px">${esc(post.excerpt)}</p><div class="post__body">${veBody(post.body)}</div>
+      <p class="post__luu">Thông tin trong bài chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ. Thực phẩm bổ sung không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.</p>
       <div class="post__cta"><span class="emoji">👩‍⚕️</span><div><b>Mẹ còn băn khoăn về bé?</b><small>Để lại số điện thoại, chuyên gia dinh dưỡng gọi tư vấn miễn phí trong 5 phút.</small></div><button class="btn btn--teal" type="button" data-callback>${I.headset}Gọi lại cho tôi</button></div></article>
-      <section class="section"><div class="section-head"><div><h2>Sản phẩm liên quan</h2></div><a class="link" href="collections.html?${rel}">Xem thêm ${I.arrowR}</a></div><div class="grid grid--4">${sug.map((p) => productCard(p)).join('')}</div></section>
-      <section class="section"><div class="section-head"><div><h2>Bài viết khác</h2></div></div><div class="grid grid--3">${POSTS.filter((p) => p.id !== id).slice(0, 3).map(card).join('')}</div></section>`;
-  } else {
-    const cats = [...new Set(POSTS.map((p) => p.cat))];
-    $('#blogPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Cẩm nang mẹ</span></nav><h1 class="page-title">Cẩm nang mẹ 📖</h1><p class="text-muted fs-14 mb-16">Kiến thức dinh dưỡng & chăm con được chuyên gia dinh dưỡng Hương Chất Kids biên soạn, chỉ mang tính tham khảo</p>
-      <div class="chips chips--scroll mb-16" id="blogChips"><button class="chip is-active" data-cat="">Tất cả</button>${cats.map((c) => `<button class="chip" data-cat="${c}">${c}</button>`).join('')}</div><div class="grid grid--3" id="blogGrid">${POSTS.map(card).join('')}</div>`;
-    $('#blogChips').addEventListener('click', (e) => { const b = e.target.closest('[data-cat]'); if (!b) return; MC.$$('#blogChips .chip').forEach((x) => x.classList.toggle('is-active', x === b)); $('#blogGrid').innerHTML = POSTS.filter((p) => !b.dataset.cat || p.cat === b.dataset.cat).map(card).join(''); });
+      ${sug.length ? `<section class="section"><div class="section-head"><div><h2>Sản phẩm trong bài</h2></div><a class="link" href="collections.html?${rel}">Xem thêm ${I.arrowR}</a></div><div class="grid grid--4">${sug.map((p) => productCard(p)).join('')}</div></section>` : ''}
+      <section class="section"><div class="section-head"><div><h2>Bài viết mới</h2></div><a class="link" href="blog.html">Tất cả bài ${I.arrowR}</a></div><div class="grid grid--3">${POSTS.filter((p) => p.id !== id).slice(0, 3).map(card).join('')}</div></section>`;
+    return;
   }
+
+  const cats = [...new Set(POSTS.map((p) => p.cat))];
+  let cat = '', soHien = 8;
+  $('#blogPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>${TEN}</span></nav><h1 class="page-title">${TEN} 📖</h1><p class="text-muted fs-14 mb-16">Kiến thức dinh dưỡng & chăm con được chuyên gia dinh dưỡng Hương Chất Kids biên soạn, chỉ mang tính tham khảo. Cứ 3 ngày có một bài mới.</p>
+    <div class="chips chips--scroll mb-16" id="blogChips"><button class="chip is-active" data-cat="">Tất cả</button>${cats.map((c) => `<button class="chip" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <div class="blog-list" id="blogList"></div><div class="blog-more" id="blogMore"></div>
+    ${noiBat.length ? `<section class="section feat" id="feat"><div class="section-head"><div><h2>Bài viết nổi bật 🔥</h2><p>Về các sản phẩm được mẹ tin dùng nhiều nhất</p></div>
+      <div class="feat__nav"><button type="button" class="feat__btn" data-feat="-1" aria-label="Bài trước">‹</button><button type="button" class="feat__btn" data-feat="1" aria-label="Bài sau">›</button></div></div>
+      <div class="feat__vp"><div class="feat__track">${noiBat.map((p) => `<a class="feat__slide" href="blog.html?id=${encodeURIComponent(p.id)}" style="background:${esc(p.color || '#FFE9EF')}"><div class="feat__img">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy">` : p.emoji}</div><div class="feat__txt">${meta(p)}<h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><span class="btn btn--primary btn--sm">Đọc bài ${I.arrowR}</span></div></a>`).join('')}</div></div>
+      <div class="feat__dots">${noiBat.map((_, i) => `<button type="button" data-feat-i="${i}" aria-label="Bài nổi bật ${i + 1}"></button>`).join('')}</div></section>` : ''}`;
+  const veList = () => {
+    const ds = POSTS.filter((p) => !cat || p.cat === cat);
+    $('#blogList').innerHTML = ds.slice(0, soHien).map(dong).join('') || '<p class="text-muted">Chưa có bài trong chuyên mục này.</p>';
+    $('#blogMore').innerHTML = ds.length > soHien ? `<button class="btn btn--outline" type="button" id="btnMore">Xem thêm ${ds.length - soHien} bài</button>` : '';
+  };
+  veList();
+  $('#blogChips').addEventListener('click', (e) => { const b = e.target.closest('[data-cat]'); if (!b) return; $$('#blogChips .chip').forEach((x) => x.classList.toggle('is-active', x === b)); cat = b.dataset.cat; soHien = 8; veList(); });
+  $('#blogMore').addEventListener('click', (e) => { if (e.target.closest('#btnMore')) { soHien += 8; veList(); } });
+
+  /* Băng bài nổi bật: tự chuyển mỗi 5 giây, dừng khi rê chuột, có nút ‹ ›, chấm và vuốt trên điện thoại */
+  const f = $('#feat'); if (!f) return;
+  const n = noiBat.length; let i = 0, t = 0;
+  const toi = (k) => { i = (k + n) % n; $('.feat__track', f).style.transform = `translateX(-${i * 100}%)`; $$('.feat__dots button', f).forEach((d, j) => d.classList.toggle('is-on', j === i)); };
+  const chay = () => { clearInterval(t); if (n > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) t = setInterval(() => toi(i + 1), 5000); };
+  f.addEventListener('click', (e) => { const b = e.target.closest('[data-feat]'); const d = e.target.closest('[data-feat-i]'); if (b) toi(i + Number(b.dataset.feat)); else if (d) toi(Number(d.dataset.featI)); else return; chay(); });
+  f.addEventListener('mouseenter', () => clearInterval(t)); f.addEventListener('mouseleave', chay);
+  let x0 = null;
+  f.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  f.addEventListener('touchend', (e) => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) { toi(i + (dx < 0 ? 1 : -1)); chay(); } x0 = null; });
+  toi(0); chay();
 });
 </script>
 </body>

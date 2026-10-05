@@ -1,4 +1,4 @@
-/* ===== NỘI DUNG – bài viết Cẩm nang mẹ (soạn thảo, nháp/đăng, SEO từng bài) ===== */
+/* ===== NỘI DUNG – bài viết Cẩm nang chăm con (soạn thảo, nháp/đăng, SEO từng bài) ===== */
 (() => {
   'use strict';
   const A = window.ADMIN, { $, $$, esc, khongDau } = A;
@@ -7,6 +7,7 @@
 
   const slug = (s) => khongDau(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70);
   const nay = () => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`; };
+  const ngayBai = (p) => { const m = String(p.date || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? new Date(+m[3], m[2] - 1, +m[1]).getTime() : 0; };
   const cats = () => [...new Set(ds().map((p) => p.cat).filter(Boolean))];
 
   function veDS(el) {
@@ -23,7 +24,7 @@
             <span class="bt-ico" style="background:${esc(p.color || '#F2F4F7')}">${p.emoji || '📄'}</span>
             <span><b>${esc(p.title)}</b><small>${esc(p.id)}</small></span></a></td>
           <td>${esc(p.cat || '—')}</td><td>${esc(p.date || '—')}</td><td>${esc(p.read || '—')}</td>
-          <td>${p.nhap ? A.badge('Bản nháp', 'tag--wait') : A.badge('Đã đăng', 'tag--ok')}</td>
+          <td>${p.nhap ? A.badge('Bản nháp', 'tag--wait') : ngayBai(p) > Date.now() ? A.badge('Hẹn đăng ' + (p.date || ''), 'tag--hot') : A.badge('Đã đăng', 'tag--ok')}${p.noiBat ? ' ' + A.badge('Nổi bật', 'tag--hot') : ''}</td>
           <td class="num"><a class="btn btn--ghost btn--sm" href="#/noi-dung/${i}">Sửa</a></td></tr>`).join('')}
       </tbody></table></div>` : A.trong('Chưa có bài viết nào', 'Bấm “Viết bài mới” để tạo bài đầu tiên.', '📝')}</div>`;
   }
@@ -32,7 +33,7 @@
     const p = ds()[idx];
     if (!p) { el.innerHTML = A.trong('Không tìm thấy bài viết', '', '🔍'); return; }
     $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/noi-dung">← Danh sách</a>
-      <a class="btn btn--ghost" href="blog.html?p=${encodeURIComponent(p.id)}&preview=1" target="_blank" rel="noopener">Xem trên web ↗</a>
+      <a class="btn btn--ghost" href="blog.html?id=${encodeURIComponent(p.id)}&preview=1" target="_blank" rel="noopener">Xem trên web ↗</a>
       <button class="btn btn--red" data-bt-xoa="${idx}">Xoá</button>`;
     el.innerHTML = `<div class="card" id="btForm" data-idx="${idx}">
       <div class="row row-2">
@@ -46,9 +47,12 @@
         <label>Biểu tượng<input data-b="emoji" value="${esc(p.emoji || '')}" placeholder="📄"></label>
       </div>
       <label class="sw"><input type="checkbox" data-b="nhap" ${p.nhap ? 'checked' : ''}> Để ở bản nháp (chưa cho khách đọc)</label>
+      <p class="hint">Ngày đăng ở tương lai = <b>hẹn giờ</b>: bài tự hiện cho khách khi tới ngày đó.</p>
+      <label class="sw"><input type="checkbox" data-b="noiBat" ${p.noiBat ? 'checked' : ''}> Bài nổi bật (chạy ở băng xoay vòng cuối trang Cẩm nang; bài về sản phẩm hot cũng tự vào băng này)</label>
+      <label>Sản phẩm trong bài <span class="muted">— mã sản phẩm, cách nhau dấu phẩy</span><input data-b="sanPham" value="${esc((p.sanPham || []).join(', '))}" placeholder="VD: 41353214697, men-sysy"></label>
       <label>Tóm tắt <span class="muted">— hiện ở danh sách bài và kết quả tìm kiếm</span>
         <textarea data-b="excerpt" rows="3">${esc(p.excerpt || '')}</textarea></label>
-      <label>Nội dung <span class="muted">— mỗi đoạn một dòng, để trống một dòng giữa các đoạn nếu muốn</span>
+      <label>Nội dung <span class="muted">— mỗi đoạn một dòng. "## " đầu dòng = tiêu đề nhỏ, "- " = gạch đầu dòng, "![chú thích](img/ảnh.jpg)" = ảnh, "[[sp:mã sản phẩm]]" = thẻ sản phẩm</span>
         <textarea data-b="body" rows="16" class="soan">${esc((p.body || []).join('\n'))}</textarea></label>
       <div class="row row-2">
         <label>Ảnh đại diện<input data-b="image" value="${esc(p.image || '')}" placeholder="img/thumb/....jpg"></label>
@@ -70,7 +74,8 @@
     const p = ds()[Number(f.dataset.idx)]; if (!p) return;
     $$('[data-b]', f).forEach((el) => {
       const k = el.dataset.b;
-      if (k === 'nhap') { if (el.checked) p.nhap = true; else delete p.nhap; return; }
+      if (k === 'nhap' || k === 'noiBat') { if (el.checked) p[k] = true; else delete p[k]; return; }
+      if (k === 'sanPham') { const a = el.value.split(',').map((x) => x.trim()).filter(Boolean); if (a.length) p.sanPham = a; else delete p.sanPham; return; }
       if (k === 'body') { p.body = el.value.split('\n').map((x) => x.trim()).filter(Boolean); return; }
       const v = el.value.trim();
       if (!v && ['seoTitle', 'seoDesc', 'image', 'color', 'emoji'].includes(k)) delete p[k]; else p[k] = v;
@@ -102,6 +107,6 @@
   });
 
   A.dangKy({ route: '/noi-dung', ten: 'Nội dung', icon: '📝', nhom: 'website', quyen: 'content.view',
-    mo: 'Bài viết Cẩm nang mẹ',
+    mo: 'Bài viết Cẩm nang chăm con',
     ve(el, { sub }) { if (sub !== '') veForm(el, Number(sub)); else veDS(el); } });
 })();

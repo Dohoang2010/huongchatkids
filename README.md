@@ -19,7 +19,7 @@ Hoặc mở trực tiếp `index.html`. Deploy: upload nguyên thư mục lên b
 | `product.html?id=` | Chi tiết: gallery, phân loại, ưu đãi, mua ngay, mua kèm tiết kiệm, tab mô tả/cách dùng/đánh giá/chính sách, sản phẩm tương tự, thanh mua sticky mobile |
 | `cart.html` | Giỏ hàng + mã giảm giá |
 | `checkout.html` | Thanh toán 1 trang (không cần tài khoản) → màn hình đặt hàng thành công |
-| `blog.html` | Cẩm nang mẹ (danh sách + bài viết `?id=`) |
+| `blog.html` | Cẩm nang chăm con (danh sách + bài viết `?id=`) |
 | `policy.html` | Trung tâm hỗ trợ: 12 mục (hướng dẫn mua hàng, thanh toán, giao hàng, đổi trả, bảo mật, điều khoản, giới thiệu, chính hãng, FAQ, tra cứu đơn, hợp tác) – nội dung trong `js/policies.js` |
 | `account.html` | Đơn hàng gần đây (mua lại 1 chạm), yêu thích, thông tin đã lưu |
 | `css/style.css` | Design system (màu, nút, thẻ sản phẩm, modal, drawer, responsive) |
