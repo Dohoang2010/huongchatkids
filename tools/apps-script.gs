@@ -118,6 +118,9 @@ function doPost(e) {
   try {
     var order = JSON.parse(e.postData.contents);
 
+    // Lượt truy cập web gửi lên (không phải đơn hàng)
+    if (order && order.type === 'track') { ghiTruyCap(order); return ContentService.createTextOutput('ok'); }
+
     // Tin nhắn Zalo OA gửi tới (nếu có) – chỉ lưu lại user id
     if (order && order.event_name && order.sender && order.sender.id) {
       PropertiesService.getScriptProperties().setProperty('ZALO_USER_ID', String(order.sender.id));
@@ -439,6 +442,7 @@ function doGet(e) {
     if (action === 'donChiTiet')   return traVe(apiDonChiTiet(p), cb);
     if (action === 'doiTrangThai') return traVe(apiDoiTrangThai(p), cb);
     if (action === 'dongBoCRM')    return traVe(apiDongBoCRM(p), cb);
+    if (action === 'truyCap')      return traVe(apiTruyCap(p), cb);
     if (action === 'khachHang')    return traVe(apiKhachHang(p), cb);
     if (action === 'khachChiTiet') return traVe(apiKhachChiTiet(p), cb);
     if (action === 'khoaKhach')    return traVe(apiKhoaKhach(p), cb);
@@ -542,6 +546,118 @@ function apiDangKy(p) {
 /* ===================== SỐ LIỆU CHO TRANG QUẢN TRỊ ===================== */
 /* Trả về doanh số, số đơn, khách mới, top sản phẩm, đơn theo ngày và theo giờ
    trong khoảng thời gian tuỳ chọn. Cần đúng ADMIN_KEY mới đọc được. */
+/* ===================== KHÁCH TRUY CẬP WEBSITE =====================
+   Web (js/app.js → TrackVisit) gửi ngầm bằng sendBeacon, không có thông tin cá nhân:
+   - su = 'xem' khi mở trang · 'roi' khi rời / ẩn tab (kèm số giây THỰC SỰ hoạt động trên trang)
+   - su = 'tim' | 'gio' | 'thanhtoan' | 'mua' cho hành vi · su = 'hb' nhịp tim 15 giây (chỉ lưu bộ nhớ đệm, không ghi sheet)
+   Mã khách (vid) cố định trong trình duyệt, mã phiên (sid) đổi sau 30 phút không hoạt động.
+   Sheet "Truy cập": mỗi dòng 1 sự kiện. Khách online lưu trong CacheService (tự hết hạn). */
+var SHEET_TC = 'Truy cập';
+var H_TC = ['Thời gian', 'Mã khách', 'Phiên', 'Trang', 'Mã SP', 'Nguồn', 'Thiết bị', 'Giây', 'Sự kiện', 'Chi tiết'];
+function sheetTC() { return sheetPhu(SHEET_TC, H_TC); }
+var LOAI_TRANG = { 'trang-chu': 'Trang chủ', 'san-pham': 'Sản phẩm', 'gio-hang': 'Giỏ hàng', 'thanh-toan': 'Checkout', 'danh-muc': 'Danh mục', 'cam-nang': 'Cẩm nang', 'tai-khoan': 'Tài khoản', 'khac': 'Trang khác' };
+function ghiTruyCap(d) {
+  var cat = function (x, n) { return String(x || '').slice(0, n); };
+  var su = cat(d.su || 'roi', 12);
+  if (su === 'hb') return capNhatOnline(d);
+  var luc = d.luc ? new Date(d.luc) : new Date();
+  if (isNaN(luc.getTime()) || Math.abs(luc.getTime() - Date.now()) > 864e5) luc = new Date();
+  var giay = Math.max(0, Math.min(1800, Math.round(Number(d.giay) || 0)));
+  sheetTC().appendRow([luc, cat(d.vid, 40), cat(d.sid, 24), cat(d.trang, 60), cat(d.q, 40), cat(d.nguon, 60), cat(d.tb, 20), giay, su, cat(d.ct, 80)]);
+  if (su === 'xem' || su === 'roi') capNhatOnline(d);
+}
+/* Khách online: 1 khoá đệm chứa cả danh sách, khoá script để nhiều khách gửi cùng lúc không ghi đè nhau */
+function capNhatOnline(d) {
+  var lock = LockService.getScriptLock(); if (!lock.tryLock(3000)) return;
+  try {
+    var c = CacheService.getScriptCache(), now = Date.now(), ds = {};
+    try { ds = JSON.parse(c.get('tc_online') || '{}'); } catch (e) { ds = {}; }
+    Object.keys(ds).forEach(function (k) { if (now - ds[k].t > 5 * 60e3) delete ds[k]; });
+    var sid = String(d.sid || '').slice(0, 24); if (!sid) return;
+    var cu = ds[sid] || { v: String(d.vid || '').slice(0, 40), b: now, n: 0 };
+    cu.t = now; cu.p = String(d.loai || 'khac').slice(0, 12); cu.u = String(d.trang || '').slice(0, 60);
+    cu.i = d.su === 'roi' && d.an ? 2 : (d.idle ? 1 : 0);           // 0 hoạt động · 1 không hoạt động · 2 đã ẩn/rời trang
+    if (d.batDau) cu.b = Math.min(cu.b, Number(d.batDau) || cu.b);
+    if (d.soTrang) cu.n = Math.max(cu.n, Number(d.soTrang) || 0);
+    if (d.giayPhien) cu.g = Math.max(cu.g || 0, Number(d.giayPhien) || 0);
+    ds[sid] = cu;
+    c.put('tc_online', JSON.stringify(ds), 21600);
+  } finally { lock.releaseLock(); }
+}
+/* Trạng thái: Online (nhịp tim < 45 giây, đang thao tác) · Không hoạt động (còn mở nhưng không thao tác / chưa quá 5 phút) · Offline (bị xoá) */
+function docOnline() {
+  var ds = {}; try { ds = JSON.parse(CacheService.getScriptCache().get('tc_online') || '{}'); } catch (e) { ds = {}; }
+  var now = Date.now(), kq = { online: 0, khongHoatDong: 0, theoTrang: {}, ds: [] };
+  Object.keys(LOAI_TRANG).forEach(function (k) { kq.theoTrang[k] = 0; });
+  Object.keys(ds).forEach(function (sid) {
+    var x = ds[sid], tre = now - x.t; if (tre > 5 * 60e3) return;
+    var tt = tre < 45e3 && x.i === 0 ? 'online' : (tre < 45e3 && x.i === 2 ? 'roi' : 'khong');
+    if (tt === 'roi' && tre > 60e3) return;
+    if (tt === 'online') { kq.online++; kq.theoTrang[x.p] = (kq.theoTrang[x.p] || 0) + 1; } else kq.khongHoatDong++;
+    kq.ds.push({ khach: String(x.v || '').slice(-6), trang: x.u, loai: LOAI_TRANG[x.p] || x.p, trangThai: tt === 'online' ? 'Online' : 'Không hoạt động',
+      vao: Utilities.formatDate(new Date(x.b), 'Asia/Ho_Chi_Minh', 'HH:mm:ss'), giay: x.g || Math.round((x.t - x.b) / 1000), soTrang: x.n || 1 });
+  });
+  kq.ds.sort(function (a, b) { return a.trangThai === b.trangThai ? b.giay - a.giay : (a.trangThai === 'Online' ? -1 : 1); });
+  kq.ds = kq.ds.slice(0, 30);
+  return kq;
+}
+/* Thống kê cho dashboard: kieu = 'hom-nay' (theo giờ) | '7' | '30' (theo ngày) */
+function thongKeTruyCapMoi(kieu) {
+  var tz = 'Asia/Ho_Chi_Minh', now = new Date();
+  var homNay = Utilities.formatDate(now, tz, 'yyyy-MM-dd');
+  var soNgay = kieu === '30' ? 30 : kieu === '7' ? 7 : 1;
+  var tuMs = new Date(homNay + 'T00:00:00+07:00').getTime() - (soNgay - 1) * 864e5;
+  var s = sheetTC(); var n = s.getLastRow();
+  var r = { kieu: kieu, homNay: { luot: 0, phien: 0, khach: 0, giayTB: 0, trangTB: 0 }, ky: { luot: 0, phien: 0, khach: 0, giayTB: 0, trangTB: 0, thoat: 0 },
+    bieuDo: [], hanhVi: { tim: 0, gio: 0, thanhtoan: 0, mua: 0 }, phienGanDay: [] };
+  var moc = [];
+  if (soNgay === 1) for (var h = 0; h < 24; h++) moc.push({ nhan: (h < 10 ? '0' : '') + h + 'h', luot: 0, phien: 0 });
+  else for (var k = soNgay - 1; k >= 0; k--) { var dd = Utilities.formatDate(new Date(now.getTime() - k * 864e5), tz, 'yyyy-MM-dd'); moc.push({ ngay: dd, nhan: dd.slice(8) + '/' + dd.slice(5, 7), luot: 0, phien: 0 }); }
+  if (n >= 2) {
+    var bd = Math.max(2, n - 30000);                          // đọc tối đa 30.000 dòng gần nhất
+    var v = s.getRange(bd, 1, n - bd + 1, H_TC.length).getValues();
+    var phien = {}, khachKy = {}, khachHN = {};
+    for (var i = v.length - 1; i >= 0; i--) {
+      if (!v[i][0]) continue; var t = new Date(v[i][0]).getTime(); if (t < tuMs) break;
+      var su = String(v[i][8] || 'roi'), sid = String(v[i][2] || ('x' + i)), vid = String(v[i][1] || ''), giay = Number(v[i][7]) || 0;
+      var ngay = Utilities.formatDate(new Date(t), tz, 'yyyy-MM-dd'), laHN = ngay === homNay;
+      var p = phien[sid] || (phien[sid] = { vid: vid, b: t, e: t, giay: 0, trang: 0, dau: '', cuoi: '', ngay: ngay, hn: laHN, mua: false });
+      if (t < p.b) { p.b = t; p.ngay = ngay; } if (t + giay * 1000 > p.e) p.e = t + giay * 1000;
+      if (su === 'xem') {
+        p.trang++; r.ky.luot++; if (laHN) r.homNay.luot++;
+        if (!p.cuoi) p.cuoi = String(v[i][3] || ''); p.dau = String(v[i][3] || '');   // duyệt ngược: dòng cuối cùng gặp = trang vào
+        var m = soNgay === 1 ? moc[Number(Utilities.formatDate(new Date(t), tz, 'H'))] : moc.filter(function (x) { return x.ngay === ngay; })[0];
+        if (m) m.luot++;
+      } else if (su === 'roi') p.giay += giay;
+      else if (r.hanhVi[su] != null) { r.hanhVi[su]++; if (su === 'mua') p.mua = true; }
+      khachKy[vid] = 1; if (laHN) khachHN[vid] = 1;
+    }
+    var tongG = 0, tongT = 0, tongGH = 0, tongTH = 0, thoat = 0;
+    Object.keys(phien).forEach(function (sid) {
+      var p = phien[sid]; if (!p.trang) return;
+      r.ky.phien++; tongG += p.giay; tongT += p.trang; if (p.trang <= 1) thoat++;
+      if (p.hn) { r.homNay.phien++; tongGH += p.giay; tongTH += p.trang; }
+      var m = soNgay === 1 ? moc[Number(Utilities.formatDate(new Date(p.b), tz, 'H'))] : moc.filter(function (x) { return x.ngay === p.ngay; })[0];
+      if (m && (soNgay > 1 || p.hn)) m.phien++;
+      r.phienGanDay.push({ khach: p.vid.slice(-6), vao: Utilities.formatDate(new Date(p.b), tz, 'dd/MM HH:mm:ss'), roi: Utilities.formatDate(new Date(p.e), tz, 'HH:mm:ss'),
+        giay: p.giay, soTrang: p.trang, trangVao: p.dau, trangCuoi: p.cuoi, mua: p.mua, _b: p.b });
+    });
+    r.ky.khach = Object.keys(khachKy).length; r.homNay.khach = Object.keys(khachHN).length;
+    r.ky.giayTB = r.ky.phien ? Math.round(tongG / r.ky.phien) : 0; r.ky.trangTB = r.ky.phien ? Math.round(tongT / r.ky.phien * 10) / 10 : 0;
+    r.ky.thoat = r.ky.phien ? Math.round(thoat / r.ky.phien * 100) : 0;
+    r.homNay.giayTB = r.homNay.phien ? Math.round(tongGH / r.homNay.phien) : 0; r.homNay.trangTB = r.homNay.phien ? Math.round(tongTH / r.homNay.phien * 10) / 10 : 0;
+    r.phienGanDay.sort(function (a, b) { return b._b - a._b; }); r.phienGanDay = r.phienGanDay.slice(0, 20).map(function (x) { delete x._b; return x; });
+  }
+  r.bieuDo = moc;
+  return r;
+}
+function apiTruyCap(p) {
+  if (!coQuyen(p, 'dashboard.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var kq = { ok: true, online: docOnline() };
+  if (p.chiOnline !== '1') { var k = String(p.kieu || 'hom-nay'); kq.thongKe = thongKeTruyCapMoi(k === '7' || k === '30' ? k : 'hom-nay'); }
+  return kq;
+}
+
 function apiThongKe(p) {
   if (!coQuyen(p, 'dashboard.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var tu = p.tu ? new Date(p.tu + 'T00:00:00+07:00') : new Date(Date.now() - 30 * 864e5);

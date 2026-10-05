@@ -536,3 +536,37 @@ tr.is-dim{opacity:.55}
 .ct-sp>span{min-width:160px}.ct-tbl .ct-sp>span{min-width:0}
 .ct-bac .ct-dk{margin:6px 0}.ct-heso td{background:var(--line-2);padding:8px 12px}.ct-heso__o{display:inline-flex;flex-direction:column;gap:2px;margin:4px 14px 4px 0;font-size:12.5px;color:var(--muted);font-weight:600}.ct-heso__o span{display:flex;align-items:center;gap:4px;color:var(--ink)}.ct-heso__o input{width:70px;padding:4px 8px}
 .ct-bac .ct-dk{margin:6px 0}.ct-heso td{background:var(--line-2);padding:8px 12px}.ct-heso__o{display:inline-flex;flex-direction:column;gap:2px;margin:4px 14px 4px 0;font-size:12.5px;color:var(--muted);font-weight:600}.ct-heso__o span{display:flex;align-items:center;gap:4px;color:var(--ink)}.ct-heso__o input{width:70px;padding:4px 8px}
+
+/* ---------- Tổng quan: Khách truy cập website (giữa Giờ khách đặt hàng và Sản phẩm bán chạy) ---------- */
+@media (min-width: 1200px) { .grid-dash3 { grid-template-columns: 1fr 1.45fr 1fr; align-items: start; } }
+@media (max-width: 1199px) { .grid-dash3 { grid-template-columns: 1fr; } }
+.tc__h { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tc__h h3 { margin: 0; }
+.tc__live { font-size: 11.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; }
+.tc__live i, .tc__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); display: inline-block; animation: tcNhay 1.6s ease-in-out infinite; }
+@keyframes tcNhay { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .tc__live i, .tc__dot { animation: none; } }
+.tc__kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 10px 0 12px; }
+
+.tc__k { border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; background: #fff; min-width: 0; }
+.tc__k span { display: block; font-size: 11.5px; color: var(--muted); font-weight: 600; }
+.tc__k b { display: block; font-family: Quicksand, sans-serif; font-size: 19px; line-height: 1.25; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tc__k small { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.tc__k--on b { color: var(--teal); }
+.tc__chart-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.tc__tabs { display: flex; gap: 4px; }
+.tc__tabs .chip { padding: 3px 10px; font-size: 12px; }
+.tc__chart { width: 100%; height: auto; }
+.tc__ky { font-size: 12px; margin: 4px 0 10px; line-height: 1.6; }
+.tc__trong { padding: 24px 0; text-align: center; }
+.tc__on { border-top: 1px solid var(--line); padding-top: 10px; }
+.tc__on > b { display: block; font-size: 13.5px; margin-bottom: 6px; }
+.tc__row { display: grid; grid-template-columns: 90px 1fr 64px; align-items: center; gap: 8px; font-size: 12.5px; padding: 3px 0; }
+.tc__row i { height: 7px; border-radius: 99px; background: var(--line-2); position: relative; overflow: hidden; }
+.tc__row i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--teal); border-radius: 99px; }
+.tc__row b { text-align: right; font-size: 12.5px; }
+.tc__more { margin-top: 10px; font-size: 13px; }
+.tc__more summary { cursor: pointer; color: var(--pink); font-weight: 600; font-size: 12.5px; }
+.tc__more h4 { margin: 12px 0 6px; font-size: 13px; }
+.tc__more .tbl-wrap { max-height: 240px; }
+.chart--line.tc__chart { aspect-ratio: 520/150; }

@@ -136,7 +136,7 @@
       const vKey = variant != null ? String(variant) : '';
       const line = items.find((i) => i.id === id && (i.variant ?? '') === vKey);
       if (line) line.qty = Math.min(99, line.qty + qty); else items.push({ id, qty, variant: vKey });
-      this.save(items);
+      this.save(items); trackSu('gio', id);
     },
     setQty(id, variant, qty) {
       let items = this.items();
@@ -185,7 +185,7 @@
         const code = 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 900) + 100);
         const saved = { ...order, code, createdAt: new Date().toISOString(), site: location.host };
         const orders = store.get('mc_orders', []); orders.unshift(saved); store.set('mc_orders', orders.slice(0, 20));
-        store.set('mc_last_order', saved);
+        store.set('mc_last_order', saved); if (saved.type !== 'callback') trackSu('mua', code);
         postOrder(saved).then((ok) => { if (!ok) queueOrder(saved); });
         resolve(saved);
       }, 700);
@@ -1515,6 +1515,67 @@
     return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)}</b><p>${esc(g.lyDo)}${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>
       ${chonVi && vi.length ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : (vi.length ? `<p class="fs-13 text-muted">Mẹ chọn vị khi thanh toán.</p>` : '')}</div></div>`;
   }
+
+  /* =====================================================================
+     THEO DÕI KHÁCH TRUY CẬP – ẩn danh, gửi ngầm bằng sendBeacon (không chặn tải trang / mua hàng)
+     visitor id cố định trong trình duyệt · session id đổi sau 30 phút không hoạt động.
+     Thời gian chỉ cộng khi tab đang mở VÀ khách có thao tác trong 60 giây gần nhất (không lấy giờ rời − giờ vào).
+     Nhịp tim 15 giây cho biết khách đang online / không hoạt động. Dữ liệu: sheet "Truy cập" (Apps Script).
+     ===================================================================== */
+  const TC = { key: 'mc_tc', st: null, giayTrang: 0, lastAct: Date.now(), bat: false };
+  function tcLoaiTrang() {
+    const f = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    return { 'index.html': 'trang-chu', '': 'trang-chu', 'product.html': 'san-pham', 'cart.html': 'gio-hang', 'checkout.html': 'thanh-toan', 'collections.html': 'danh-muc', 'blog.html': 'cam-nang', 'account.html': 'tai-khoan' }[f] || 'khac';
+  }
+  function tcGui(su, them) {
+    if (!TC.bat) return;
+    const st = TC.st, url = (SITE.loyalty || {}).endpoint;   // Apps Script – KHÔNG gửi vào link nhận đơn của CRM
+    const id = new URLSearchParams(location.search).get('id') || '';
+    const goi = { type: 'track', su, vid: st.vid, sid: st.sid, luc: new Date().toISOString(), loai: tcLoaiTrang(), trang: (location.pathname.split('/').pop() || 'index.html') + (id ? '?id=' + id : ''),
+      q: id, nguon: st.nguon, tb: innerWidth < 768 ? 'Điện thoại' : innerWidth < 1100 ? 'Máy tính bảng' : 'Máy tính', batDau: st.batDau, soTrang: st.soTrang, giayPhien: st.giayPhien, ...(them || {}) };
+    try {
+      const body = JSON.stringify(goi);
+      if (!(navigator.sendBeacon && navigator.sendBeacon(url, body))) fetch(url, { method: 'POST', body, mode: 'no-cors', keepalive: true }).catch(() => {});
+    } catch { /* không bao giờ làm hỏng trang */ }
+  }
+  function tcLuu() { store.set(TC.key, TC.st); }
+  function tcPhienMoi(st) {
+    const ref = document.referrer && !document.referrer.includes(location.host) ? new URL(document.referrer).hostname.replace(/^www\./, '') : '';
+    const utm = new URLSearchParams(location.search).get('utm_source');
+    return { vid: st.vid, sid: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), batDau: Date.now(), last: Date.now(), soTrang: 0, giayPhien: 0, nguon: utm || ref || 'Trực tiếp' };
+  }
+  /* Hành vi: 'tim' (tìm kiếm) · 'gio' (thêm giỏ) · 'thanhtoan' · 'mua' */
+  function trackSu(su, ct) { try { if (TC.bat) tcGui(su, { ct: String(ct || '').slice(0, 80) }); } catch { /* bỏ qua */ } }
+  function tcXa(an) { if (!TC.bat || TC.giayTrang <= 0) return; tcGui('roi', { giay: TC.giayTrang, an: an ? 1 : 0 }); TC.giayTrang = 0; tcLuu(); }
+  function tcBatDau() {
+    let tat = false;
+    try { tat = !(SITE.loyalty || {}).endpoint || (location.protocol === 'file:' && !window.__tcThu) || window.top !== window || /[?&]preview=1/.test(location.search) || !!sessionStorage.getItem('hck_preview'); } catch { tat = true; }
+    if (tat) return;
+    const cu = store.get(TC.key, null) || {};
+    const vid = cu.vid || 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    TC.st = cu.sid && Date.now() - (cu.last || 0) < 30 * 60e3 ? { ...cu, vid } : tcPhienMoi({ vid });
+    TC.st.soTrang = (TC.st.soTrang || 0) + 1; TC.st.last = Date.now(); TC.bat = true; tcLuu();
+    tcGui('xem');
+    const p = new URLSearchParams(location.search);
+    if (tcLoaiTrang() === 'danh-muc' && p.get('q')) trackSu('tim', p.get('q'));
+    if (tcLoaiTrang() === 'thanh-toan') trackSu('thanhtoan', '');
+    const hoatDong = () => {
+      const now = Date.now();
+      if (now - TC.st.last > 30 * 60e3) { tcXa(false); TC.st = tcPhienMoi(TC.st); TC.st.soTrang = 1; tcLuu(); tcGui('xem'); }   // quay lại sau 30 phút = phiên mới
+      TC.lastAct = now;
+    };
+    ['pointerdown', 'keydown', 'scroll', 'touchstart', 'mousemove'].forEach((ev) => addEventListener(ev, hoatDong, { passive: true }));
+    let dem = 0;
+    setInterval(() => {
+      const now = Date.now();
+      if (document.visibilityState === 'visible' && now - TC.lastAct < 60e3) { TC.giayTrang++; TC.st.giayPhien++; TC.st.last = now; }
+      if (++dem % 5 === 0) tcLuu();
+      if (dem % 15 === 0 && document.visibilityState === 'visible') tcGui('hb', { idle: now - TC.lastAct >= 60e3 ? 1 : 0 });
+    }, 1000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') tcXa(true); else { TC.lastAct = Date.now(); tcGui('hb', { idle: 0 }); } });
+    addEventListener('pagehide', () => tcXa(true));
+  }
+  (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(() => { try { tcBatDau(); } catch { /* không ảnh hưởng web */ } });
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, ViMa, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,

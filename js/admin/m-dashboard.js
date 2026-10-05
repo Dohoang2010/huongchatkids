@@ -34,7 +34,7 @@
       const d = await A.api('thongKe', { key: A.adminKey(), tu, den });
       if (!d || !d.ok) { box.innerHTML = loiKhoa(d && d.msg); return; }
       if (!d.theoNgay) { box.innerHTML = chuaDeploy(); return; }
-      duLieu = d; veSo(box, d);
+      duLieu = d; veSo(box, d); taiTruyCap();
     } catch (e) { box.innerHTML = A.loiTai(e.message); }
   }
 
@@ -88,11 +88,13 @@
 
       <div class="card"><h3>Doanh thu theo ${bd.kieu === 'thang' ? 'tháng' : bd.kieu === 'tuan' ? 'tuần' : 'ngày'}</h3><p class="muted">${esc(d.tu)} → ${esc(d.den)}</p>${cot(bd.ds, bd.kieu)}</div>
 
-      <div class="grid-2">
+      <div class="grid-2 grid-dash3">
         <div class="card"><h3>Giờ khách đặt hàng</h3><p class="muted">Chọn giờ chạy quảng cáo và trực Zalo cho đúng.</p>
           <div class="hours">${d.theoGio.map((v) => `<i style="height:${Math.max(2, v / Math.max(1, Math.max(...d.theoGio)) * 100)}%" title="${v} đơn"></i>`).join('')}</div>
           <div class="hours-x">${d.theoGio.map((_, i) => `<div>${i % 2 === 0 ? i : ''}</div>`).join('')}</div>
           <p class="muted mt-8">${gioCao(d.theoGio)}</p></div>
+
+        <div class="card tc" id="tcCard"><h3>Khách truy cập website</h3>${A.dangTai('số liệu truy cập')}</div>
 
         <div class="card"><h3>Sản phẩm bán chạy</h3><p class="muted">Theo số lượng bán trong kỳ</p>
           <div class="tbl-wrap" style="max-height:300px"><table><thead><tr><th>#</th><th>Sản phẩm</th><th class="num">SL</th></tr></thead>
@@ -161,6 +163,82 @@
     </svg>
     <p class="muted mt-8">${kieu === 'thang' ? 'Tháng' : kieu === 'tuan' ? 'Tuần' : 'Ngày'} cao nhất: <b>${tenMoc(cao, kieu)}</b> · ${fmt(cao.tien)} · ${cao.don} đơn</p>`;
   }
+
+  /* ================= KHÁCH TRUY CẬP WEBSITE (giữa "Giờ khách đặt hàng" và "Sản phẩm bán chạy") =================
+     Dữ liệu: Apps Script action "truyCap" (sheet "Truy cập" + danh sách online trong bộ nhớ đệm).
+     Số khách online tự làm mới 15 giây/lần khi đang ở trang Tổng quan. */
+  let tcKieu = 'hom-nay', tcDL = null, tcHen = 0;
+  const TC_TRANG = [['trang-chu', 'Trang chủ'], ['san-pham', 'Sản phẩm'], ['gio-hang', 'Giỏ hàng'], ['thanh-toan', 'Checkout'], ['danh-muc', 'Danh mục'], ['khac', 'Trang khác']];
+  const tcGio = (s) => { s = Math.round(Number(s) || 0); const m = Math.floor(s / 60), g = s % 60; return m ? `${String(m).padStart(2, '0')} phút ${String(g).padStart(2, '0')} giây` : `${g} giây`; };
+  const soVN = (n) => Number(n || 0).toLocaleString('vi-VN');
+  async function taiTruyCap(chiOnline) {
+    clearTimeout(tcHen);
+    if (!$('#tcCard')) return;
+    try {
+      const d = await A.api('truyCap', { kieu: tcKieu, chiOnline: chiOnline ? '1' : '' });
+      if (!$('#tcCard')) return;
+      if (!d || !d.ok) { if (!chiOnline) $('#tcCard').innerHTML = `<h3>Khách truy cập website</h3><p class="muted">${esc((d && d.msg) || 'Chưa đọc được số liệu')}</p>`; return; }
+      if (chiOnline && tcDL) tcDL.online = d.online; else tcDL = d;
+      veTruyCap();
+    } catch (e) {
+      if (!chiOnline && $('#tcCard')) $('#tcCard').innerHTML = `<h3>Khách truy cập website</h3><p class="muted">Apps Script chưa có phần thống kê truy cập – dán bản mới nhất rồi Deploy lại. <button class="btn btn--ghost btn--sm" data-tc-tai>Thử lại</button></p>`;
+    }
+    if (/^#\/tong-quan|^$|^#\/?$/.test(location.hash) && $('#tcCard')) tcHen = setTimeout(() => taiTruyCap(true), 15000);
+  }
+  function veTruyCap() {
+    const el = $('#tcCard'); if (!el || !tcDL) return;
+    const moChiTiet = !!el.querySelector('details[open]');
+    const on = tcDL.online || { online: 0, khongHoatDong: 0, theoTrang: {}, ds: [] }, tk = tcDL.thongKe || { homNay: {}, ky: {}, bieuDo: [], hanhVi: {}, phienGanDay: [] };
+    const hn = tk.homNay || {}, ky = tk.ky || {}, hv = tk.hanhVi || {};
+    const maxTrang = Math.max(1, ...TC_TRANG.map(([k]) => on.theoTrang[k] || 0));
+    el.innerHTML = `
+      <div class="tc__h"><h3>Khách truy cập website</h3><span class="tc__live"><i></i>cập nhật 15 giây/lần</span></div>
+      <div class="tc__kpis">
+        <div class="tc__k tc__k--on"><span>🟢 Khách đang online</span><b>${soVN(on.online)}</b><small><i class="tc__dot"></i>Đang hoạt động${on.khongHoatDong ? ` · ${on.khongHoatDong} không hoạt động` : ''}</small></div>
+        <div class="tc__k"><span>👁 Lượt truy cập hôm nay</span><b>${soVN(hn.luot)}</b><small>${soVN(hn.phien)} phiên · ${soVN(hn.khach)} khách</small></div>
+        <div class="tc__k"><span>⏱ Thời gian TB / phiên</span><b>${tcGio(hn.giayTB)}</b><small>chỉ tính lúc khách thật sự xem</small></div>
+        <div class="tc__k"><span>📄 Số trang TB / phiên</span><b>${String(hn.trangTB || 0).replace('.', ',')} trang</b><small>hôm nay</small></div>
+      </div>
+      <div class="tc__chart-h"><b>Lượt truy cập</b><div class="tc__tabs">${[['hom-nay', 'Hôm nay'], ['7', '7 ngày'], ['30', '30 ngày']].map(([k, t]) => `<button class="chip ${tcKieu === k ? 'is-on' : ''}" data-tc-kieu="${k}">${t}</button>`).join('')}</div></div>
+      ${bieuDoTC(tk.bieuDo || [])}
+      <p class="muted tc__ky">${tcKieu === 'hom-nay' ? 'Hôm nay' : tcKieu + ' ngày'}: <b>${soVN(ky.luot)}</b> lượt xem · <b>${soVN(ky.phien)}</b> phiên · <b>${soVN(ky.khach)}</b> khách · TB ${tcGio(ky.giayTB)} · thoát ${ky.thoat || 0}%
+        <br>Hành vi: 🔍 ${soVN(hv.tim)} tìm kiếm · 🛒 ${soVN(hv.gio)} thêm giỏ · 💳 ${soVN(hv.thanhtoan)} checkout · ✅ ${soVN(hv.mua)} mua</p>
+      <div class="tc__on"><b>🟢 ${soVN(on.online)} khách đang online</b>
+        ${TC_TRANG.filter(([k]) => k !== 'danh-muc' && k !== 'khac' || on.theoTrang[k]).map(([k, t]) => `<div class="tc__row"><span>${t}</span><i style="--w:${Math.round((on.theoTrang[k] || 0) / maxTrang * 100)}%"></i><b>${on.theoTrang[k] || 0} khách</b></div>`).join('')}
+      </div>
+      <details class="tc__more"><summary>Xem chi tiết khách đang online & phiên gần đây</summary>
+        ${on.ds.length ? `<div class="tbl-wrap"><table><thead><tr><th>Khách</th><th>Đang xem</th><th>Vào lúc</th><th class="num">Đã xem</th><th class="num">Số trang</th><th>Trạng thái</th></tr></thead><tbody>
+          ${on.ds.map((x) => `<tr><td>#${esc(x.khach)}</td><td>${esc(x.loai)}<small class="muted"> ${esc(x.trang)}</small></td><td>${esc(x.vao)}</td><td class="num">${tcGio(x.giay)}</td><td class="num">${x.soTrang}</td><td>${A.badge(x.trangThai, x.trangThai === 'Online' ? 'tag--ok' : 'tag--wait')}</td></tr>`).join('')}
+        </tbody></table></div>` : '<p class="muted">Hiện không có khách online.</p>'}
+        <h4>Phiên gần đây</h4>
+        ${(tk.phienGanDay || []).length ? `<div class="tbl-wrap"><table><thead><tr><th>Khách</th><th>Vào</th><th>Rời</th><th class="num">Thời gian xem</th><th class="num">Số trang</th><th>Trang vào → trang cuối</th></tr></thead><tbody>
+          ${tk.phienGanDay.map((x) => `<tr><td>#${esc(x.khach)}${x.mua ? ' ✅' : ''}</td><td>${esc(x.vao)}</td><td>${esc(x.roi)}</td><td class="num">${tcGio(x.giay)}</td><td class="num">${x.soTrang}</td><td><small>${esc(x.trangVao)} → ${esc(x.trangCuoi)}</small></td></tr>`).join('')}
+        </tbody></table></div>` : '<p class="muted">Chưa có phiên nào trong kỳ.</p>'}
+      </details>`;
+    if (moChiTiet) { const dt = el.querySelector('details'); if (dt) dt.open = true; }
+  }
+  function bieuDoTC(moc) {
+    if (!moc.length || !moc.some((x) => x.luot)) return '<p class="muted tc__trong">Chưa có lượt truy cập trong kỳ này.</p>';
+    const W = 520, H = 150, pad = { t: 12, r: 10, b: 24, l: 34 }, n = moc.length;
+    const max = Math.max(...moc.map((x) => x.luot), 1);
+    const X = (i) => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : i * (W - pad.l - pad.r) / (n - 1));
+    const Y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v / max);
+    const diem = moc.map((x, i) => [X(i), Y(x.luot)]);
+    const duong = diem.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+    const nen = `${duong} L ${diem[n - 1][0].toFixed(1)} ${H - pad.b} L ${diem[0][0].toFixed(1)} ${H - pad.b} Z`;
+    const buoc = n <= 8 ? 1 : n <= 24 ? 3 : 5;
+    return `<svg class="chart chart--line tc__chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ lượt truy cập">
+      <defs><linearGradient id="gtc" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--teal)" stop-opacity=".25"/><stop offset="100%" stop-color="var(--teal)" stop-opacity="0"/></linearGradient></defs>
+      ${[0, .5, 1].map((f) => `<line class="grid-l" x1="${pad.l}" y1="${Y(max * f)}" x2="${W - pad.r}" y2="${Y(max * f)}"/><text x="${pad.l - 6}" y="${Y(max * f) + 3}" text-anchor="end">${Math.round(max * f)}</text>`).join('')}
+      <path class="area" d="${nen}" style="fill:url(#gtc)"/><path class="line" d="${duong}" style="stroke:var(--teal)"/>
+      ${moc.map((x, i) => `<g class="pt"><circle cx="${X(i)}" cy="${Y(x.luot)}" r="${n > 24 ? 2 : 3}" style="stroke:var(--teal)"/><circle class="pt__hit" cx="${X(i)}" cy="${Y(x.luot)}" r="10"><title>${x.nhan}: ${x.luot} lượt xem · ${x.phien} phiên</title></circle></g>`).join('')}
+      ${moc.map((x, i) => (i % buoc === 0 || i === n - 1) ? `<text x="${X(i)}" y="${H - 7}" text-anchor="middle">${x.nhan}</text>` : '').join('')}
+    </svg>`;
+  }
+  document.addEventListener('click', (e) => {
+    const k = e.target.closest('[data-tc-kieu]'); if (k) { tcKieu = k.dataset.tcKieu; taiTruyCap(); return; }
+    if (e.target.closest('[data-tc-tai]')) taiTruyCap();
+  });
 
   function gioCao(g) {
     const max = Math.max(...g); if (!max) return 'Chưa có dữ liệu giờ đặt hàng.';
