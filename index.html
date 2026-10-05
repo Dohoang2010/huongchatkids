@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005c">
+  <link rel="stylesheet" href="css/style.css?v=20261005d">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -163,9 +163,9 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261005c"></script>
+<script src="js/data.js?v=20261005d"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005c"></script>
+<script src="js/app.js?v=20261005d"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
@@ -238,10 +238,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ưu đãi trong hôm nay: đếm ngược tới 24:00, qua ngày mới tự đếm lại
     const endOfToday = () => { const e = new Date(); e.setHours(24, 0, 0, 0); return e.getTime(); };
     countdown($('#countdown'), endOfToday, 'Chỉ trong hôm nay · còn');
-  } else {
-    const end = SITE.flashSaleEnd ? new Date(SITE.flashSaleEnd).getTime() : 0;
-    if (end > Date.now()) { const days = Math.floor((end - Date.now()) / 864e5); if (days >= 1) $('#countdown').innerHTML = `Ưu đãi đến hết <b style="min-width:auto;padding:0 10px">${new Date(end).getDate()}/${new Date(end).getMonth() + 1}</b>`; else countdown($('#countdown'), end); } else $('#countdown').innerHTML = '';
-  }
+  } else if (SITE.flashSaleEnd) {
+    /* Theo khung giờ (trang quản trị → Flash Sale): trước giờ mở đếm ngược tới lúc bắt đầu,
+       trong khung giờ đếm ngược tới lúc kết thúc, hết giờ thì ẩn hẳn khối Flash sale */
+    const start = SITE.flashSaleStart ? new Date(SITE.flashSaleStart).getTime() : 0;
+    const end = new Date(SITE.flashSaleEnd).getTime();
+    const khoi = $('[data-khoi="flash"]'), tieuDe = $('.flash__title h2');
+    const hien = (t) => { const d = new Date(t); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} ${d.getDate()}/${d.getMonth() + 1}`; };
+    let t = 0;
+    const capNhat = () => {
+      const now = Date.now();
+      if (!end || now >= end) { clearInterval(t); if (khoi) khoi.style.display = 'none'; return; }
+      const sap = now < start, moc = sap ? start : end, d = moc - now;
+      const ngay = Math.floor(d / 864e5), h = Math.floor(d % 864e5 / 36e5), m = Math.floor(d % 36e5 / 6e4), s = Math.floor(d % 6e4 / 1e3);
+      if (tieuDe) tieuDe.textContent = sap ? 'Flash sale sắp diễn ra' : 'Flash sale';
+      $('#countdown').innerHTML = `${sap ? `Bắt đầu ${hien(start)} · còn` : `Kết thúc ${hien(end)} · còn`} ${ngay ? `<b>${ngay}</b><i style="margin-right:4px">ngày</i>` : ''}<b>${String(h).padStart(2, '0')}</b><i>:</i><b>${String(m).padStart(2, '0')}</b><i>:</i><b>${String(s).padStart(2, '0')}</b>`;
+    };
+    capNhat(); t = setInterval(capNhat, 1000);
+  } else $('#countdown').innerHTML = '';
 
   /* Featured tabs */
   const sets = {

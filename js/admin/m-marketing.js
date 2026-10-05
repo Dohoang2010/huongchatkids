@@ -6,18 +6,55 @@
 
   /* ---------------- FLASH SALE ---------------- */
   let fsQ = '';
+  /* Lưu ở khối CAUHINH (đè lên SITE): flashSaleEnd = 'daily' | '' | 'YYYY-MM-DDTHH:mm' (giờ kết thúc), flashSaleStart = giờ bắt đầu */
+  const isoGio = (t) => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+  function fsDoc() {
+    const C = A.D.CAUHINH || {};
+    const end = 'flashSaleEnd' in C ? C.flashSaleEnd : SITE.flashSaleEnd;
+    const start = 'flashSaleStart' in C ? C.flashSaleStart : SITE.flashSaleStart;
+    if (end === 'daily') return { mode: 'daily', bd: '', kt: '' };
+    if (!end) return { mode: C.fsKhoang ? 'khoang' : '', bd: start || '', kt: '' };
+    return { mode: 'khoang', bd: start ? isoGio(Date.parse(start)) : '', kt: isoGio(Date.parse(end)) };
+  }
+  function fsTrangThai(fs) {
+    const s = fs.bd ? Date.parse(fs.bd) : 0, e = fs.kt ? Date.parse(fs.kt) : 0, now = Date.now();
+    if (!e) return A.badge('Chưa chọn giờ kết thúc', 'tag--wait');
+    if (s && e <= s) return A.badge('Giờ kết thúc phải sau giờ bắt đầu', 'tag--no');
+    if (now < s) return A.badge('Sắp diễn ra', 'tag--wait');
+    if (now < e) return A.badge('Đang diễn ra', 'tag--ok');
+    return A.badge('Đã kết thúc – khối Flash sale đang ẩn trên trang chủ', 'tag--off');
+  }
+  function fsLuu(mode) {
+    const C = (A.D.CAUHINH = A.D.CAUHINH || {});
+    delete C.fsKhoang;
+    if (mode === 'daily' || mode === '') { C.flashSaleEnd = mode; C.flashSaleStart = ''; }
+    else {
+      const bd = ($('#fsBD') || {}).value, kt = ($('#fsKT') || {}).value;
+      if (bd === undefined) { const now = Date.now(); C.flashSaleStart = isoGio(now); C.flashSaleEnd = isoGio(now + 864e5); }
+      else { C.flashSaleStart = bd || ''; C.flashSaleEnd = kt || ''; if (!kt) C.fsKhoang = true; }
+    }
+    A.doiDuLieu();
+  }
   function veFlash(el) {
+    const fs = fsDoc();
     const chon = ds().filter((p) => (p.tags || []).includes('Sản phẩm hot'));
     $('#pageAct').innerHTML = `<span class="muted">${chon.length} sản phẩm đang chạy</span>`;
     el.innerHTML = `
       <div class="card"><h3>⚡ Cấu hình hàng Flash sale</h3>
         <p class="muted">Hàng sản phẩm chạy ngang dưới banner trang chủ. Tích sản phẩm là vào flash sale ngay.</p>
         <div class="row row-2">
-          <label>Đếm ngược kết thúc<select id="fsEnd">
-            <option value="daily" ${SITE.flashSaleEnd === 'daily' ? 'selected' : ''}>Mỗi ngày – đếm ngược tới 24:00, hôm sau tự đếm lại</option>
-            <option value="" ${SITE.flashSaleEnd !== 'daily' ? 'selected' : ''}>Tắt đếm ngược</option></select></label>
+          <label>Thời gian chạy<select id="fsMode">
+            <option value="daily" ${fs.mode === 'daily' ? 'selected' : ''}>Mỗi ngày – đếm ngược tới 24:00, hôm sau tự đếm lại</option>
+            <option value="khoang" ${fs.mode === 'khoang' ? 'selected' : ''}>Theo khung giờ – chọn ngày giờ bắt đầu và kết thúc</option>
+            <option value="" ${fs.mode === '' ? 'selected' : ''}>Không giới hạn – tắt đếm ngược</option></select></label>
           <label>Tìm sản phẩm<input id="fsQ" value="${esc(fsQ)}" placeholder="Gõ tên sản phẩm…"></label>
         </div>
+        ${fs.mode === 'khoang' ? `<div class="row row-2">
+          <label>Bắt đầu<input type="datetime-local" id="fsBD" value="${esc(fs.bd)}"></label>
+          <label>Kết thúc<input type="datetime-local" id="fsKT" value="${esc(fs.kt)}"></label>
+        </div>
+        <p>${fsTrangThai(fs)}</p>
+        <p class="hint">Trước giờ bắt đầu: trang chủ hiện "Flash sale sắp diễn ra" và đếm ngược tới giờ mở. Trong khung giờ: đếm ngược tới lúc kết thúc. Hết giờ: khối Flash sale tự ẩn khỏi trang chủ.</p>` : ''}
       </div>
       <div class="card"><h3>Đang chạy flash sale (${chon.length})</h3>
         ${chon.length ? `<div class="plist">${chon.map((p) => the(p, true)).join('')}</div>` : '<p class="muted">Chưa chọn sản phẩm nào.</p>'}</div>
@@ -172,7 +209,8 @@
     if (e.target.closest('#qtThung') || e.target.closest('#hangBody') || (e.target.id || '').startsWith('qt')) { thuQua(); A.doiDuLieu(); }
   });
   document.addEventListener('change', (e) => {
-    if (e.target.id === 'fsEnd') { A.D.SITE = { ...(A.D.SITE || {}), flashSaleEnd: e.target.value }; A.doiDuLieu(); return; }
+    if (e.target.id === 'fsMode') { fsLuu(e.target.value); A.veTrang(); return; }
+    if (e.target.id === 'fsBD' || e.target.id === 'fsKT') { fsLuu('khoang'); A.veTrang(); return; }
     if (e.target.closest('#maBody')) { thuMa(); A.doiDuLieu(); }
     if (e.target.closest('#qtThung') || e.target.closest('#hangBody') || (e.target.id || '').startsWith('qt')) { thuQua(); A.doiDuLieu(); }
   });
