@@ -847,7 +847,7 @@ window.PRODUCTS = [
       },
       {
         "label": "30 gói (không hộp)",
-        "price": 827000,
+        "price": 830000,
         "oldPrice": 1075000
       }
     ],
