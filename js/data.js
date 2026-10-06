@@ -250,399 +250,2804 @@ window.THEME = {
 
 /* ===ADMIN:PRODUCTS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.PRODUCTS = [
-  { id: "41002695070", name: "Rong Biển Vụn Ăn Liền Sung Gyung - Lựa Chọn Hoàn Hảo Cho Bữa Ăn Nhanh Gọn và Bổ Dưỡng", short: "Rong biển vụn Sung Gyung", brand: "sunggyung", cat: "rong-bien",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["an-dam", "tang-can"], price: 520000, oldPrice: 702000, rating: 4.94, reviews: 53, sold: 423, stock: 50, priority: 3,
-    shape: "box", color: "#1B5E20", weight: "Gói 500g", origin: "Hàn Quốc", tags: ["Sản phẩm hot", "Giảm sâu"],
-    image: "img/41002695070.jpg", thumb: "img/thumb/41002695070.jpg", images: ["img/41002695070.jpg", "img/41002695070-2.jpg", "img/41002695070-3.jpg", "img/41002695070-4.jpg", "img/41002695070-5.jpg"], shopeeId: "41002695070", shopeeUrl: "https://shopee.vn/product/837223358/41002695070", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Các loại rong biển ăn liền",
-    variants: [{ label: "1 gói (500g)", price: 520000, oldPrice: 702000 }, { label: "2 gói", price: 1040000, oldPrice: 1404000 }, { label: "3 gói", price: 1560000, oldPrice: 2106000 }],
-    desc: "Rong biển vụn ăn liền Sung Gyung – rắc cơm, cháo hoặc trộn cơm nắm cho bé. Rong biển Hàn Quốc sấy giòn, vị nhạt, giúp bữa ăn của con nhanh gọn mà vẫn bổ dưỡng.",
-    highlights: ["Rong biển Hàn Quốc sấy giòn, thơm, vị nhạt phù hợp trẻ nhỏ", "Rắc cơm, cháo, cơm nắm, kimbap – bé ăn ngon hơn", "Tiện lợi cho bữa sáng và hộp cơm đi học"],
-    usage: "Rắc trực tiếp lên cơm, cháo hoặc trộn cơm nắm cho bé. Đậy kín sau khi mở, bảo quản nơi khô ráo, tránh ẩm." },
-
-  { id: "22686115682", name: "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe", short: "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "tang-can", "de-khang", "organic"], price: 448000, oldPrice: 627000, rating: 4.93, reviews: 525, sold: 3000, stock: 50, priority: 3,
-    shape: "box", color: "#E60012", weight: "Gói 100ml", origin: "Hàn Quốc", tags: ["Sản phẩm hot", "Giảm sâu"],
-    image: "img/22686115682.jpg", thumb: "img/thumb/22686115682.jpg", images: ["img/22686115682.jpg", "img/22686115682-3.jpg", "img/22686115682-4.jpg", "img/22686115682-5.jpg"], shopeeId: "22686115682", shopeeUrl: "https://shopee.vn/product/837223358/22686115682", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
-    variants: [{ label: "Tăng cao (Xanh) · 10 gói", price: 448000, oldPrice: 627000 }, { label: "Tăng cân (Hồng) · 10 gói", price: 448000, oldPrice: 627000 }, { label: "Đề kháng (Cam) · 10 gói", price: 448000, oldPrice: 627000 }, { label: "Tăng cao (Xanh) · Thùng 30 gói", price: 1317000, oldPrice: 1844000 }, { label: "Tăng cân (Hồng) · Thùng 30 gói", price: 1317000, oldPrice: 1844000 }, { label: "Đề kháng (Cam) · Thùng 30 gói", price: 1317000, oldPrice: 1844000 }, { label: "Mix vị · Thùng 30 gói", price: 1317000, oldPrice: 1844000 }],
-    desc: "Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic giúp bé ăn ngon miệng, hỗ trợ phát triển chiều cao và tăng cường sức khoẻ.",
-    highlights: ["Nguyên liệu hoa quả & rau củ hữu cơ (Organic)", "Gói nhỏ có ống hút – tiện mang đi học, đi chơi", "Chọn vị cam “Khoẻ Mạnh” hoặc thùng mix vị"],
-    usage: "Bé uống 1–2 gói/ngày, ngon hơn khi để mát. Dùng theo hướng dẫn trên bao bì." },
-
-  { id: "42878618667", name: "Vitamin D3K2– Hỗ Trợ Phát Triển Xương Răng, Tăng Đề Kháng, Tim Mạch – Lọ 30ml", short: "Vitamin D3K2 Pure Vitality 30ml", brand: "purevitality", cat: "vitamin",
-    ages: ["0-6m", "6-12m", "1-3y", "3-6y", "6-12y"], needs: ["d3k2", "tang-chieu-cao", "canxi", "de-khang"], price: 390000, oldPrice: 507000, rating: 5.0, reviews: 69, sold: 356, stock: 50, priority: 3,
-    shape: "bottle", color: "#E0A526", weight: "Lọ 30ml", origin: "New Zealand", tags: ["Sản phẩm hot", "Bán chạy"],
-    image: "img/42878618667.jpg", thumb: "img/thumb/42878618667.jpg", images: ["img/42878618667.jpg", "img/42878618667-2.jpg", "img/42878618667-3.jpg", "img/42878618667-4.jpg", "img/42878618667-5.jpg"], shopeeId: "42878618667", shopeeUrl: "https://shopee.vn/product/837223358/42878618667", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
-    variants: [{ label: "1 lọ", price: 390000, oldPrice: 507000 }, { label: "2 lọ", price: 780000, oldPrice: 1014000 }],
-    desc: "Vitamin D3 + K2 Pure Vitality (New Zealand) dạng nhỏ giọt 30ml, hương táo NZ. Theo nhà sản xuất, D3 hỗ trợ hấp thu canxi, K2 giúp đưa canxi vào xương, hỗ trợ phát triển xương răng và đề kháng cho bé. Có chứng nhận HACCP, GMP. Mua 2 lọ tiết kiệm hơn.",
-    highlights: ["Sản xuất tại New Zealand, chứng nhận HACCP & GMP", "D3 hỗ trợ hấp thu canxi, K2 dẫn canxi vào xương", "Dạng giọt vị táo, dễ dùng cho bé từ sơ sinh"],
-    usage: "Nhỏ trực tiếp vào miệng bé hoặc pha vào sữa, dùng vào buổi sáng sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc chuyên gia dinh dưỡng tư vấn." },
-
-  { id: "45462512687", name: "Rong biển Tăng cao Busan trộn cơm Hàn Quốc, giúp bé cao lớn, bổ sung chất xơ vitamin", short: "Rong biển tăng cao Busan trộn cơm", brand: "busan", cat: "rong-bien",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["an-dam", "tang-chieu-cao", "tieu-hoa"], price: 589000, oldPrice: 795000, rating: 0.0, reviews: 0, sold: 12, stock: 50, priority: 3,
-    shape: "box", color: "#00695C", weight: "Gói 40g", origin: "Hàn Quốc", tags: ["Sản phẩm hot"],
-    image: "img/45462512687.jpg", thumb: "img/thumb/45462512687.jpg", images: ["img/45462512687.jpg", "img/45462512687-2.jpg", "img/45462512687-3.jpg", "img/45462512687-4.jpg", "img/45462512687-5.jpg"], shopeeId: "45462512687", shopeeUrl: "https://shopee.vn/product/837223358/45462512687", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Các loại rong biển ăn liền",
-    variants: [{ label: "1 gói", price: 589000, oldPrice: 795000 }, { label: "2 gói", price: 1178000, oldPrice: 1590000 }, { label: "3 gói", price: 1767000, oldPrice: 2385000 }, { label: "4 gói", price: 2356000, oldPrice: 3181000 }, { label: "5 gói", price: 2945000, oldPrice: 3976000 }],
-    desc: "Rong biển Busan trộn cơm Hàn Quốc, bổ sung chất xơ và vitamin tự nhiên từ rong biển. Vị mặn nhẹ, giòn, trộn cơm là bé ăn hết bát.",
-    highlights: ["Rong biển Busan – vùng rong biển nổi tiếng Hàn Quốc", "Bổ sung chất xơ, vitamin tự nhiên", "Trộn cơm, làm cơm nắm, kimbap cho bé"],
-    usage: "Trộn 1 gói nhỏ với cơm nóng hoặc rắc lên cháo. Bảo quản nơi khô ráo, dùng hết sau khi mở gói." },
-
-
-  { id: "22644617070", name: "Hồng Sâm ChuChu Hàn Quốc Giúp Trẻ Tăng Sức Đề Kháng, ăn ngon Và Phục Hồi Sức Khoẻ Sau Khi Bị Ốm", short: "Hồng sâm ChuChu ăn ngon & phục hồi sau ốm", brand: "chuchu", cat: "hong-sam",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["de-khang", "tang-can", "phuc-hoi"], price: 290000, oldPrice: 392000, rating: 4.92, reviews: 165, sold: 699, stock: 50,
-    shape: "box", color: "#C62828", weight: "Gói 20ml", origin: "Hàn Quốc", tags: ["Bán chạy"],
-    image: "img/22644617070.jpg", thumb: "img/thumb/22644617070.jpg", images: ["img/22644617070.jpg", "img/22644617070-4.jpg", "img/22644617070-5.jpg"], shopeeId: "22644617070", shopeeUrl: "https://shopee.vn/product/837223358/22644617070", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
-    variants: [{ label: "Việt quất – nho · 10 gói", price: 290000, oldPrice: 392000 }, { label: "Táo lê · 10 gói", price: 290000, oldPrice: 392000 }, { label: "Mix vị · 10 gói", price: 290000, oldPrice: 392000 }, { label: "Mix vị · 20 gói (nửa thùng)", price: 580000, oldPrice: 783000 }, { label: "Táo lê · 20 gói (nửa thùng)", price: 580000, oldPrice: 783000 }, { label: "Việt quất – nho · 20 gói (nửa thùng)", price: 580000, oldPrice: 783000 }, { label: "Mix vị · 40 gói (1 thùng)", price: 1160000, oldPrice: 1566000 }, { label: "Việt quất – nho · 40 gói (1 thùng)", price: 1160000, oldPrice: 1566000 }, { label: "Táo lê · 40 gói (1 thùng)", price: 1160000, oldPrice: 1566000 }],
-    desc: "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm giúp trẻ tăng sức đề kháng, ăn ngon và phục hồi sức khoẻ sau khi bị ốm. Có gói 10, nửa thùng và nguyên thùng.",
-    highlights: ["Cho bé hay ốm vặt, mới ốm dậy, biếng ăn", "Vị táo lê, việt quất – nho hoặc mix", "Nửa thùng / 1 thùng giá tốt hơn"],
-    usage: "Bé uống 1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì." },
-
-  { id: "26156646705", name: "Gạc Hươu Non Sumo Chiết Xuất Nhung Hươu Hỗ Trợ Tăng Cân, Giúp Con Ăn Ngon", short: "Gạc hươu non Sumo", brand: "sumo", cat: "tang-can",
-    ages: ["1-3y", "3-6y", "6-12y"], needs: ["tang-can", "canxi", "de-khang"], price: 390000, oldPrice: 527000, rating: 5.0, reviews: 32, sold: 161, stock: 50,
-    shape: "box", color: "#8D6E63", weight: "Gói", origin: "Hàn Quốc", tags: ["Giảm sâu"],
-    image: "img/26156646705.jpg", thumb: "img/thumb/26156646705.jpg", images: ["img/26156646705.jpg", "img/26156646705-2.jpg", "img/26156646705-3.jpg", "img/26156646705-4.jpg", "img/26156646705-5.jpg"], shopeeId: "26156646705", shopeeUrl: "https://shopee.vn/product/837223358/26156646705", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
-    variants: [{ label: "10 gói", price: 390000, oldPrice: 527000 }, { label: "20 gói", price: 780000, oldPrice: 1053000 }, { label: "30 gói", price: 1150000, oldPrice: 1553000 }, { label: "Thùng 40 gói", price: 1490000, oldPrice: 2012000 }],
-    desc: "Gạc hươu non Sumo chiết xuất nhung hươu Hàn Quốc dạng gói uống. Theo nhà sản xuất, sản phẩm hỗ trợ bé tăng cân, ăn ngon miệng và bổ sung canxi cho bé chậm lớn.",
-    highlights: ["Chiết xuất nhung hươu non Hàn Quốc", "Hỗ trợ tăng cân, ăn ngon cho bé chậm lớn", "Có bản gạc canxi (thùng)"],
-    usage: "Bé uống 1 gói/ngày sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc chuyên gia dinh dưỡng tư vấn." },
-
-  { id: "23660586997", name: "Nước ép Lotte Đề Kháng – nước ép lê & rễ cát cánh Hàn Quốc cho bé", short: "Nước ép Lotte Đề Kháng", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["de-khang", "tang-can", "tieu-hoa", "organic"], price: 448000, oldPrice: 627000, rating: 5, reviews: 0, sold: 0, stock: 50, priority: 3,
-    shape: "box", color: "#FB8C00", weight: "Gói 80ml", origin: "Hàn Quốc", tags: ["Sản phẩm hot", "Giảm sâu"],
-    image: "img/23660586997.jpg", thumb: "img/thumb/23660586997.jpg", images: ["img/23660586997.jpg", "img/23660586997-7.jpg", "img/23660586997-8.jpg", "img/23660586997-2.jpg", "img/23660586997-3.jpg", "img/23660586997-4.jpg", "img/23660586997-5.jpg", "img/23660586997-6.jpg"], shopeeId: "23660586997", shopeeUrl: "https://shopee.vn/product/837223358/23660586997", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
-    variants: [{ label: "Hộp 10 gói", price: 448000, oldPrice: 627000 }, { label: "Thùng 30 gói (3 hộp)", price: 1317000, oldPrice: 1844000 }],
-    desc: "Nước ép lê và rễ cát cánh (doraji) hữu cơ dòng Khoẻ Mạnh (무적튼튼) của Lotte, do Viện Pasteur Hàn Quốc nghiên cứu và sản xuất, gói 80ml có ống hút, dùng cho bé từ 12 tháng tuổi. Theo nhà sản xuất: lê & rễ cát cánh hữu cơ, hồng sâm organic cô đặc và lợi khuẩn EPS Lactobacillus (được cấp bằng sáng chế); không chất bảo quản, phụ gia; chứng nhận Organic và HACCP Hàn Quốc. Bổ sung vitamin C, kali, magie, axit amin, saponin, kẽm, canxi hỗ trợ đề kháng và hấp thu dưỡng chất.",
-    highlights: ["Dùng cho bé từ 12 tháng tuổi", "Lê & rễ cát cánh hữu cơ + hồng sâm cô đặc + lợi khuẩn EPS", "Chứng nhận Organic, HACCP – không chất bảo quản, phụ gia", "Hộp 10 gói · thùng 30 gói (3 hộp), gói nhỏ có ống hút tiện mang đi"],
-    usage: "Bé từ 12 tháng: 1 gói (80ml)/ngày sau bữa ăn, lắc nhẹ trước khi uống, ngon hơn khi để mát. Đã mở gói nên dùng ngay. Theo hướng dẫn trên bao bì." },
-
-  { id: "26060839019", name: "Váng Sữa Canxi Hữu Cơ CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Bé Lớn Khỏe Dành Cho Trẻ & Người Lớn", short: "Váng sữa canxi hữu cơ Calciumore", brand: "calciumore", cat: "vitamin",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["canxi", "tang-chieu-cao", "organic", "cho-me"], price: 827000, oldPrice: 1075000, rating: 4.92, reviews: 156, sold: 663, stock: 50, priority: 3,
-    shape: "box", color: "#F9A825", weight: "30 gói", origin: "Hàn Quốc", tags: ["Sản phẩm hot"],
-    image: "img/26060839019.jpg", thumb: "img/thumb/26060839019.jpg", images: ["img/26060839019.jpg", "img/26060839019-3.jpg", "img/26060839019-4.jpg", "img/26060839019-5.jpg"], shopeeId: "26060839019", shopeeUrl: "https://shopee.vn/product/837223358/26060839019", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Đồ ăn nhẹ cho bé",
-    variants: [{ label: "30 gói (không hộp)", price: 827000, oldPrice: 1075000 }, { label: "1 hộp 90 gói", price: 2480000, oldPrice: 3224000 }, { label: "2 hộp 180 gói", price: 4960000, oldPrice: 6448000 }],
-    desc: "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
-    highlights: ["Canxi hữu cơ dễ hấp thu", "Dạng váng sữa thơm ngon, bé không sợ uống", "Hộp 90 gói dùng trong 3 tháng; dùng được cho cả mẹ và người lớn"],
-    usage: "Bé dùng 1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì." },
-
-
-  { id: "49061985399", name: "Tinh Chất Nghệ Nano Curcumin 365 Plus Hàn Quốc 32 Tép/Hộp - Hỗ Trợ Dạ Dày, Đẹp Da, Mờ Thâm Sẹo", short: "Nghệ nano Curcumin 365 Plus", brand: "365plus", cat: "cho-me",
-    ages: [], needs: ["cho-me"], price: 1290000, oldPrice: 1742000, rating: 0.0, reviews: 0, sold: 5, stock: 50,
-    shape: "box", color: "#EF6C00", weight: "32 tép/hộp", origin: "Hàn Quốc", tags: ["Cho mẹ"],
-    image: "img/49061985399.jpg", thumb: "img/thumb/49061985399.jpg", images: ["img/49061985399.jpg", "img/49061985399-2.jpg", "img/49061985399-3.jpg", "img/49061985399-4.jpg", "img/49061985399-5.jpg"], shopeeId: "49061985399", shopeeUrl: "https://shopee.vn/product/837223358/49061985399", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Tinh chất dưỡng",
-    variants: [{ label: "1 hộp", price: 1290000, oldPrice: 1742000 }, { label: "2 hộp", price: 2580000, oldPrice: 3484000 }],
-    desc: "Tinh chất nghệ nano Curcumin 365 Plus Hàn Quốc, hộp 32 tép. Theo nhà sản xuất, sản phẩm hỗ trợ dạ dày, giúp đẹp da, mờ thâm sẹo – phù hợp cho mẹ sau sinh.",
-    highlights: ["Nano curcumin hấp thu tốt hơn nghệ thường", "Hỗ trợ dạ dày, đẹp da, mờ thâm", "Tép nhỏ tiện dùng hằng ngày"],
-    usage: "Người lớn dùng 1 tép/ngày sau ăn. Dùng theo hướng dẫn trên bao bì. Mẹ đang mang thai hoặc cho con bú cần hỏi ý kiến bác sĩ trước khi dùng." },
-
-  { id: "41353214697", name: "Nước ép Lotte Tăng Cao – nước ép táo & củ dền hữu cơ Hàn Quốc cho bé", short: "Nước ép Lotte Tăng Cao", brand: "lotte", cat: "nuoc-ep",
-    ages: ["6-12m", "1-3y", "3-6y", "6-12y", "12-18y"], needs: ["canxi", "organic", "an-dam"], price: 448000, oldPrice: 627000, rating: 5.0, reviews: 23, sold: 190, stock: 50, priority: 3,
-    shape: "box", color: "#2E7D32", weight: "10 gói", origin: "Hàn Quốc", tags: ["Sản phẩm hot"],
-    image: "img/41353214697.jpg", thumb: "img/thumb/41353214697.jpg", images: ["img/41353214697.jpg", "img/41353214697-3.jpg", "img/41353214697-4.jpg", "img/41353214697-5.jpg"], shopeeId: "41353214697", shopeeUrl: "https://shopee.vn/product/837223358/41353214697", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
-    variants: [{ label: "Hộp 10 gói", price: 448000, oldPrice: 627000 }, { label: "Thùng 30 gói (3 hộp)", price: 1317000, oldPrice: 1844000 }],
-    desc: "Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
-    highlights: ["Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm", "Táo & củ dền hữu cơ, chứng nhận Organic, HACCP", "Bổ sung canxi, sắt, axit folic"],
-    usage: "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì." },
-
-  { id: "28467224687", name: "TẢO ĐÔ HOÀNG GIA Hotan Tân Cương bigsize hàng loại 1 cao cấp giúp bồi bổ sức khoẻ, hỗ trợ giấc ngủ", short: "Táo đỏ Hoàng Gia Hotan Tân Cương gói 1kg", brand: "primefood", cat: "thuc-pham",
-    ages: [], needs: ["an-vat", "cho-me"], price: 299000, oldPrice: 404000, rating: 4.9, reviews: 0, sold: 60, stock: 50,
-    shape: "box", color: "#C62828", weight: "Gói 1kg", origin: "Trung Quốc", tags: [], family: true,
-    image: "img/28467224687.jpg", thumb: "img/thumb/28467224687.jpg", images: ["img/28467224687.jpg", "img/28467224687-2.jpg", "img/28467224687-3.jpg", "img/28467224687-4.jpg", "img/28467224687-5.jpg"], shopeeId: "28467224687", shopeeUrl: "https://shopee.vn/product/837223358/28467224687", shopeeCategory: "Thực phẩm và đồ uống › Đồ ăn vặt › Thức ăn khô › Hoa quả sấy khô",
-    variants: [{ label: "1 gói", price: 299000, oldPrice: 404000 }, { label: "2 gói", price: 598000, oldPrice: 807000 }],
-    desc: "Táo đỏ Hotan (Hoà Điền, Tân Cương) loại 1 size lớn, quả to dày thịt, ngọt tự nhiên, sấy khô không đường, không chất bảo quản. Dùng ăn liền, pha trà, nấu chè, hầm canh, chưng yến cho cả nhà.",
-    highlights: ["100% táo đỏ Hotan Tân Cương loại 1, size big", "Không đường, không chất bảo quản", "Gói 1kg – mua 2 gói tiết kiệm hơn"],
-    usage: "Ăn trực tiếp 3–5 quả/ngày, hoặc pha trà, nấu chè, hầm canh. Bảo quản nơi khô ráo, đậy kín sau khi mở." },
-
-  { id: "26523206270", name: "Sữa Tươi Tiệt Trùng Norco Nội Địa Úc Bổ Sung Sức Khỏe Cho Cơ Thể - Hương Vị Nguyên Chất, Dinh Dưỡng", short: "Sữa tươi tiệt trùng Norco nguyên kem nội địa Úc 1L", brand: "norco", cat: "sua",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "canxi", "tang-chieu-cao"], price: 720000, oldPrice: 972000, rating: 5.0, reviews: 0, sold: 76, stock: 50,
-    shape: "carton", color: "#1565C0", weight: "Thùng", origin: "Úc", tags: [],
-    image: "img/26523206270.jpg", thumb: "img/thumb/26523206270.jpg", images: ["img/26523206270.jpg", "img/26523206270-2.jpg", "img/26523206270-3.jpg", "img/26523206270-4.jpg", "img/26523206270-5.jpg"], shopeeId: "26523206270", shopeeUrl: "https://shopee.vn/product/837223358/26523206270", shopeeCategory: "Thực phẩm và đồ uống › Sữa - trứng › Sữa › Sữa tiệt trùng",
-    variants: [{ label: "1 thùng", price: 720000, oldPrice: 972000 }, { label: "2 thùng", price: 1440000, oldPrice: 1944000 }],
-    desc: "Sữa tươi tiệt trùng Norco – thương hiệu sữa hơn 128 năm của Úc, sản xuất từ đàn bò ăn cỏ nội địa Úc; sữa nguyên kem giàu canxi và đạm tự nhiên, vị béo thanh, không đường. Phù hợp bé từ 1 tuổi và cả gia đình.",
-    highlights: ["Thương hiệu Norco 128 năm, hàng nội địa Úc", "Sữa bò ăn cỏ, không đường, không chất bảo quản", "Giàu canxi & đạm cho bé tăng chiều cao"],
-    usage: "Bé trên 1 tuổi uống 1–2 ly (200–400ml)/ngày. Sau khi mở nắp bảo quản lạnh và dùng trong 3 ngày." },
-
-  { id: "13899935993", name: "Sữa Dê Lotte Kid A+ Bổ Sung Canxi Hỗ Trợ Phát Triển Chiều Cao, Tăng Đề Kháng Cho Trẻ 760g", short: "Sữa dê Lotte Kid A+ 760g", brand: "lotte", cat: "sua",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-cong-thuc", "canxi", "tang-chieu-cao", "de-khang"], price: 850000, oldPrice: 1148000, rating: 5.0, reviews: 0, sold: 33, stock: 50, priority: 2,
-    shape: "can", color: "#E60012", weight: "Lon 760g", origin: "Hàn Quốc", tags: [], formula: true,
-    image: "img/13899935993.jpg", thumb: "img/thumb/13899935993.jpg", images: ["img/13899935993.jpg", "img/13899935993-2.jpg", "img/13899935993-3.jpg", "img/13899935993-4.jpg"], shopeeId: "13899935993", shopeeUrl: "https://shopee.vn/product/837223358/13899935993", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa công thức",
-    variants: [{ label: "1 hộp", price: 850000, oldPrice: 1148000 }, { label: "2 hộp", price: 1700000, oldPrice: 2296000 }],
-    desc: "Sữa dê Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: bổ sung canxi, vitamin D, Alpha-lactalbumin (1.050mg/100g) hỗ trợ miễn dịch và hệ lợi khuẩn thực vật (100 triệu CFU/lon) giúp tiêu hoá tốt; đạm sữa dê dễ hấp thu, phù hợp bé chậm tăng cân.",
-    highlights: ["Sữa dê dễ hấp thu, hỗ trợ tăng cân & chiều cao", "Alpha-lactalbumin + lợi khuẩn hỗ trợ miễn dịch, tiêu hoá", "Đạt tiêu chuẩn xuất khẩu nhiều thị trường"],
-    usage: "Pha 7–8 muỗng gạt (muỗng trong hộp) với 180ml nước ấm 40–50°C được 1 ly 240ml. 2 ly/ngày. Dùng trong 3 tuần sau khi mở." },
-
-  { id: "19491505209", name: "Sữa Bò Biostime SN-2 Bio Plus HPO- ON FORMULA LON- Tăng Cường Đề Kháng, Dưỡng Chất- Giúp Bé Ngủ Ngon, Ít Quấy Khóc", short: "Sữa bò Biostime SN-2 Bio Plus HPO 800g", brand: "biostime", cat: "sua",
-    ages: ["0-6m", "6-12m", "1-3y"], needs: ["sua-cong-thuc", "de-khang", "tieu-hoa"], price: 1290000, oldPrice: 1742000, rating: 0.0, reviews: 0, sold: 0, stock: 50,
-    shape: "can", color: "#1E88E5", weight: "Lon 800g", origin: "Úc", tags: [], formula: true,
-    image: "img/19491505209.jpg", thumb: "img/thumb/19491505209.jpg", images: ["img/19491505209.jpg", "img/19491505209-2.jpg", "img/19491505209-3.jpg", "img/19491505209-4.jpg", "img/19491505209-5.jpg"], shopeeId: "19491505209", shopeeUrl: "https://shopee.vn/product/837223358/19491505209", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa pha sẵn",
-    variants: [{ label: "Số 1 (0–6 tháng)", price: 1290000, oldPrice: 1742000 }, { label: "Số 2 (6–12 tháng)", price: 1290000, oldPrice: 1742000 }, { label: "Số 3 (1–3 tuổi)", price: 1290000, oldPrice: 1742000 }],
-    desc: "Sữa công thức Biostime SN-2 Bio Plus HPO (Úc) lon 800g, chất béo cấu trúc SN-2 gần giống sữa mẹ, bổ sung lợi khuẩn và HMO. Theo nhà sản xuất: hỗ trợ tăng đề kháng, tiêu hoá dễ, giảm táo bón.",
-    highlights: ["Sản xuất tại Úc, kiểm soát chất lượng nghiêm ngặt", "Chất béo SN-2 + HPO + lợi khuẩn", "Có số 1, 2, 3 theo độ tuổi"],
-    usage: "1 muỗng gạt (4,5g) pha với 30ml nước ấm. Pha theo bảng trên hộp; sữa đã pha dùng trong 1 giờ (2 giờ nếu bảo quản lạnh)." },
-
-  { id: "19682441455", name: "SỮA DÊ BIOSTIME- 800g - Hỗ Trợ Bé Phát Triển Toàn Diện Về Chiều Cao- Cân Nặng", short: "Sữa dê Biostime 800g", brand: "biostime", cat: "sua",
-    ages: ["0-6m", "6-12m", "1-3y"], needs: ["sua-cong-thuc", "tang-can", "tang-chieu-cao"], price: 1170000, oldPrice: 1580000, rating: 5.0, reviews: 0, sold: 32, stock: 50,
-    shape: "can", color: "#6D4C41", weight: "Lon 800g", origin: "Úc", tags: [], formula: true,
-    image: "img/19682441455.jpg", thumb: "img/thumb/19682441455.jpg", images: ["img/19682441455.jpg", "img/19682441455-2.jpg", "img/19682441455-3.jpg", "img/19682441455-4.jpg"], shopeeId: "19682441455", shopeeUrl: "https://shopee.vn/product/837223358/19682441455", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Khác",
-    variants: [{ label: "Số 1 (0–6 tháng)", price: 1170000, oldPrice: 1580000 }, { label: "Số 2 (6–12 tháng)", price: 1170000, oldPrice: 1580000 }, { label: "Số 3 (từ 12 tháng)", price: 1170000, oldPrice: 1580000 }],
-    desc: "Sữa dê công thức Biostime (Úc) lon 800g – dòng sữa dê cao cấp hỗ trợ bé phát triển toàn diện chiều cao và cân nặng; đạm sữa dê nhỏ, dễ tiêu, ít gây dị ứng. Số 1: 0–6 tháng, số 2: 6–12 tháng, số 3: từ 12 tháng.",
-    highlights: ["Sữa dê dễ tiêu, phù hợp bé nhạy cảm với sữa bò", "Sản xuất tại Úc", "Đủ số 1, 2, 3"],
-    usage: "1 muỗng gạt pha với 30ml nước ấm theo bảng trên hộp. Sữa pha xong dùng trong 1 giờ." },
-
-  { id: "20992159167", name: "SỮA BÒ ORGANIC BIOSTIME- GIÚP BÉ TĂNG ĐỀ KH.ÁNG, PHÁT TRIỂN CHIỀU CAO, PHÁT TRIỂN NÃO BỘ", short: "Sữa bò Organic Biostime 800g (Pháp)", brand: "biostime", cat: "sua",
-    ages: ["0-6m", "6-12m", "1-3y"], needs: ["sua-cong-thuc", "organic", "de-khang", "tang-chieu-cao"], price: 1290000, oldPrice: 1742000, rating: 0.0, reviews: 0, sold: 1, stock: 50,
-    shape: "can", color: "#2E7D32", weight: "Lon 800g", origin: "Pháp", tags: [], formula: true,
-    image: "img/20992159167.jpg", thumb: "img/thumb/20992159167.jpg", images: ["img/20992159167.jpg", "img/20992159167-2.jpg", "img/20992159167-3.jpg", "img/20992159167-4.jpg", "img/20992159167-5.jpg"], shopeeId: "20992159167", shopeeUrl: "https://shopee.vn/product/837223358/20992159167", shopeeCategory: "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa công thức",
-    variants: [{ label: "Số 1 (0–6 tháng)", price: 1290000, oldPrice: 1742000 }, { label: "Số 2 (6–12 tháng)", price: 1290000, oldPrice: 1742000 }, { label: "Số 3 (từ 12 tháng)", price: 1290000, oldPrice: 1742000 }],
-    desc: "Sữa bò hữu cơ Biostime Organic nội địa Pháp, lon 800g. Theo nhà sản xuất: nguyên liệu organic, chất béo SN-2 giúp hấp thu tốt, hỗ trợ tăng đề kháng và phát triển chiều cao.",
-    highlights: ["Sữa hữu cơ nội địa Pháp", "Chất béo liên kết SN-2", "Đủ số 1, 2, 3"],
-    usage: "Pha theo bảng hướng dẫn trên hộp với nước ấm 40–50°C." },
-
-  { id: "47357633686", name: "Sâm Organic Pinkfong Kid Up 40ml – Tăng Chiều Cao, Tăng Đề Kháng, Giúp Bé Ăn Ngon Ngủ Ngon", short: "Sâm Organic Pinkfong Kid Up 40ml", brand: "pinkfong", cat: "hong-sam",
-    ages: ["3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "de-khang", "tang-can"], price: 1190000, oldPrice: 1607000, rating: 0.0, reviews: 0, sold: 1, stock: 50,
-    shape: "box", color: "#EC407A", weight: "Hộp (gói 40ml)", origin: "Hàn Quốc", tags: ["Mới"],
-    image: "img/47357633686.jpg", thumb: "img/thumb/47357633686.jpg", images: ["img/47357633686.jpg", "img/47357633686-2.jpg", "img/47357633686-3.jpg", "img/47357633686-4.jpg", "img/47357633686-5.jpg"], shopeeId: "47357633686", shopeeUrl: "https://shopee.vn/product/837223358/47357633686", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
-    variants: [{ label: "1 hộp", price: 1190000, oldPrice: 1607000 }, { label: "2 hộp", price: 2380000, oldPrice: 3213000 }],
-    desc: "Sâm hữu cơ Pinkfong Kid Up gói 40ml (Hàn Quốc), hạn dùng 24 tháng. Theo nhà sản xuất: hỗ trợ bé phát triển chiều cao và thể chất, tăng đề kháng, giảm biếng ăn.",
-    highlights: ["Nhân sâm organic Hàn Quốc", "Nhân vật Pinkfong bé thích", "Hộp gói 40ml tiện mang theo – mua 2 hộp tiết kiệm hơn"],
-    usage: "Bé 3–6 tuổi: 2/3 gói/ngày; trên 7 tuổi: 1–2 gói/ngày, uống buổi sáng." },
-
-  { id: "48112514210", name: "SUPER COLLAGEN ALPHA 90 Gói Collagen Peptide VERISOL Đức, Hỗ Trợ Đẹp Da, Tăng Độ Đàn Hồi, Dưỡng Ẩm", short: "Super Collagen Alpha 90 gói (Đức)", brand: "alpha", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 3600000, oldPrice: 4860000, rating: 0.0, reviews: 0, sold: 4, stock: 50,
-    shape: "box", color: "#8E24AA", weight: "Hộp 90 gói (270g)", origin: "Đức", tags: [],
-    image: "img/48112514210.jpg", thumb: "img/thumb/48112514210.jpg", images: ["img/48112514210.jpg", "img/48112514210-2.jpg", "img/48112514210-3.jpg", "img/48112514210-4.jpg", "img/48112514210-5.jpg"], shopeeId: "48112514210", shopeeUrl: "https://shopee.vn/product/837223358/48112514210", shopeeCategory: "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ làm đẹp",
-    variants: [{ label: "1 hộp", price: 3600000, oldPrice: 4860000 }, { label: "2 hộp", price: 7200000, oldPrice: 9720000 }],
-    desc: "Super Collagen Alpha hộp 90 gói, Collagen Peptide VERISOL® (Đức) kết hợp vitamin C, Hyaluronic Acid, Biotin, N-Acetylglucosamine và chiết xuất ốc sên. Theo nhà sản xuất: hỗ trợ da căng mịn, giảm nếp nhăn, chống lão hoá cho mẹ.",
-    highlights: ["Collagen VERISOL® Đức", "Kèm vitamin C, HA, Biotin", "Hộp 90 gói dùng 3 tháng"],
-    usage: "Mỗi ngày 1 gói pha với nước, uống sau ăn. Phụ nữ có thai/cho con bú hỏi ý kiến bác sĩ." },
-
-  { id: "25632276959", name: "Nước ép Lotte Tăng Cân Tự Nhiên – nước ép mận, nho & táo hữu cơ Hàn Quốc cho bé", short: "Nước ép Lotte Tăng Cân Tự Nhiên", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-can", "tieu-hoa", "organic", "de-khang"], price: 448000, oldPrice: 627000, rating: 4.9, reviews: 0, sold: 431, stock: 50, priority: 3,
-    shape: "box", color: "#7B1FA2", weight: "Gói 80ml", origin: "Hàn Quốc", tags: ["Sản phẩm hot", "Bán chạy"],
-    image: "img/25632276959.jpg", thumb: "img/thumb/25632276959.jpg", images: ["img/25632276959.jpg", "img/25632276959-2.jpg", "img/25632276959-3.jpg", "img/25632276959-4.jpg", "img/25632276959-5.jpg", "img/25632276959-cb.jpg"], shopeeId: "25632276959", shopeeUrl: "https://shopee.vn/product/837223358/25632276959", shopeeCategory: "Thực phẩm và đồ uống › Đồ uống › Khác",
-    variants: [{ label: "Hộp 10 gói", price: 448000, oldPrice: 627000 }, { label: "Thùng 30 gói (3 hộp)", price: 1317000, oldPrice: 1844000 }],
-    desc: "Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
-    highlights: ["99,94% nguyên liệu hữu cơ, chứng nhận HACCP & Organic", "Mận giúp nhuận tràng, giảm táo bón", "Đã công bố ATTP tại Việt Nam (xem ảnh cuối)"],
-    usage: "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay." },
-
-  { id: "43532388498", name: "Ngũ Cốc Tuổi Thọ Healthy Fuwa-Saku Granola Nhật Bản 200g", short: "Granola Fuwa-Saku Nhật Bản 200g", brand: "sakuma", cat: "thuc-pham",
-    ages: ["3-6y", "6-12y", "12-18y"], needs: ["an-vat"], price: 289000, oldPrice: 390000, rating: 0.0, reviews: 0, sold: 0, stock: 50,
-    shape: "box", color: "#8D6E63", weight: "Gói 200g", origin: "Nhật Bản", tags: [], family: true,
-    image: "img/43532388498.jpg", thumb: "img/thumb/43532388498.jpg", images: ["img/43532388498.jpg", "img/43532388498-2.jpg", "img/43532388498-3.jpg", "img/43532388498-4.jpg", "img/43532388498-5.jpg"], shopeeId: "43532388498", shopeeUrl: "https://shopee.vn/product/837223358/43532388498", shopeeCategory: "Thực phẩm và đồ uống › Ngũ cốc & mứt › Ngũ cốc",
-    variants: [{ label: "1 gói 200g", price: 289000, oldPrice: 390000 }, { label: "2 gói", price: 578000, oldPrice: 780000 }],
-    desc: "Ngũ cốc granola Healthy Fuwa-Saku (Sakuma Seika, Nhật Bản) kết hợp 15 loại ngũ cốc, hạt và trái cây tự nhiên; giàu chất xơ, vitamin, khoáng chất. 50g cung cấp 207 kcal, 3,3g protein – bữa sáng nhanh gọn cho cả nhà.",
-    highlights: ["15 loại ngũ cốc, hạt & trái cây", "Giòn xốp, ít muối", "Bữa sáng 5 phút cho cả gia đình"],
-    usage: "50g granola + 200ml sữa tươi hoặc sữa chua. Đậy kín sau khi mở." },
-
-  { id: "57413220644", name: "Mặt Nạ Chữa Lành Lô Hội CURE Hàn Quốc - Cấp Ẩm, Làm Dịu Da, Phục Hồi Da, Dưỡng Sáng Da,", short: "Mặt nạ thạch lô hội Cure Hàn Quốc", brand: "kimjeongmoon", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 790000, oldPrice: 1067000, rating: 0.0, reviews: 0, sold: 0, stock: 50, cosmetic: true,
-    shape: "box", color: "#43A047", weight: "Hộp", origin: "Hàn Quốc", tags: [],
-    image: "img/57413220644.jpg", thumb: "img/thumb/57413220644.jpg", images: ["img/57413220644.jpg", "img/57413220644-2.jpg", "img/57413220644-3.jpg", "img/57413220644-4.jpg", "img/57413220644-5.jpg"], shopeeId: "57413220644", shopeeUrl: "https://shopee.vn/product/837223358/57413220644", shopeeCategory: "Sắc Đẹp › Tắm & chăm sóc cơ thể › Mặt nạ ủ cơ thể",
-    variants: [{ label: "1 hộp", price: 790000, oldPrice: 1067000 }, { label: "2 hộp", price: 1580000, oldPrice: 2134000 }],
-    desc: "Mặt nạ thạch lô hội Cure (Kim Jeong Moon Aloe, Hàn Quốc) ứng dụng công nghệ Exosome, kết hợp lô hội, Niacinamide, Collagen thuỷ phân và vitamin. Theo nhà sản xuất: cấp ẩm sâu, làm dịu da, phục hồi da căng mướt.",
-    highlights: ["Thạch lô hội mát dịu", "Niacinamide + Collagen thuỷ phân", "Phù hợp mẹ sau sinh da khô, sạm"],
-    usage: "Đắp 15–20 phút, 2–3 lần/tuần sau khi rửa mặt sạch." },
-
-  { id: "57903449970", name: "Kem thắp sáng hồng da Cell Happy Co 5in1 nâng tone, bảo vệ da khỏi ánh nắng giúp da căng bóng", short: "Kem hồng da Cell Happy Co 5in1", brand: "cellhappy", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 693000, oldPrice: 936000, rating: 5.0, reviews: 0, sold: 11, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#F06292", weight: "Tuýp", origin: "Hàn Quốc", tags: [],
-    image: "img/57903449970.jpg", thumb: "img/thumb/57903449970.jpg", images: ["img/57903449970.jpg", "img/57903449970-2.jpg", "img/57903449970-3.jpg", "img/57903449970-4.jpg", "img/57903449970-5.jpg"], shopeeId: "57903449970", shopeeUrl: "https://shopee.vn/product/837223358/57903449970", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Kem dưỡng ẩm",
-    desc: "Kem dưỡng hồng da Cell Happy Co 5in1 (Hàn Quốc): nâng tone, chống nắng vô cơ không gây kích ứng, dưỡng ẩm, làm sáng và bảo vệ da khỏi tia UV. Theo nhà sản xuất: cho da căng bóng, trắng hồng tự nhiên.",
-    highlights: ["5 công dụng: nâng tone, chống nắng, dưỡng ẩm, sáng da, bảo vệ", "Chống nắng vô cơ, không kích ứng", "Thương hiệu Hàn Quốc"],
-    usage: "Thoa lớp mỏng buổi sáng sau bước dưỡng, trước khi trang điểm." },
-
-  { id: "27355720019", name: "Hồng Sâm Siêu Trí Tuệ Rich Kid- Tăng Cường Trí Tuệ , Cải Thiện Chức Năng Não Bộ", short: "Hồng sâm Siêu Trí Tuệ Rich Kid (Kinigini) hộp 10 gói", brand: "kinigini", cat: "hong-sam",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tri-nao", "de-khang"], price: 480000, oldPrice: 648000, rating: 5.0, reviews: 0, sold: 213, stock: 50,
-    shape: "box", color: "#5E35B1", weight: "Hộp 10 gói × 40ml", origin: "Hàn Quốc", tags: ["Bán chạy"],
-    image: "img/27355720019.jpg", thumb: "img/thumb/27355720019.jpg", images: ["img/27355720019.jpg", "img/27355720019-2.jpg", "img/27355720019-3.jpg", "img/27355720019-4.jpg", "img/27355720019-5.jpg"], shopeeId: "27355720019", shopeeUrl: "https://shopee.vn/product/837223358/27355720019", shopeeCategory: "Mẹ & Bé › Chăm sóc sức khỏe bé › Khác",
-    variants: [{ label: "1 hộp", price: 480000, oldPrice: 648000 }, { label: "2 hộp", price: 960000, oldPrice: 1296000 }],
-    desc: "Hồng sâm hữu cơ Kinigini Kids Red Ginseng “Rich Kid” (Hàn Quốc), gói 40ml, hộp 10 gói, cho bé 2–15 tuổi. Theo nhà sản xuất: hỗ trợ phát triển trí não, tăng tập trung, tăng đề kháng.",
-    highlights: ["Hồng sâm hữu cơ cho bé 2–15 tuổi", "Hỗ trợ trí não, tập trung khi đi học", "Gói 40ml uống liền, ngon hơn khi lạnh"],
-    usage: "Bé uống 1 gói/ngày hoặc 2–3 ngày 1 gói, uống trực tiếp, ngon hơn khi để lạnh." },
-
-
-
-  { id: "51013054442", name: "Xịt Phun Sương Grace By Chera Snow White Tone-Up Booster 150ml Hàn Quốc  Dưỡng Trắng Làm Đều Màu Da", short: "Xịt phun sương nâng tone Grace By Chera 150ml", brand: "chera", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 835000, oldPrice: 1127000, rating: 5.0, reviews: 3, sold: 12, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#F48FB1", weight: "Chai 150ml", origin: "Hàn Quốc", tags: [],
-    image: "img/51013054442.jpg", thumb: "img/thumb/51013054442.jpg", images: ["img/51013054442.jpg", "img/51013054442-2.jpg", "img/51013054442-3.jpg", "img/51013054442-4.jpg", "img/51013054442-5.jpg"], shopeeId: "51013054442", shopeeUrl: "https://shopee.vn/product/1192937802/51013054442", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Xịt khoáng",
-    variants: [{ label: "1 chai", price: 835000, oldPrice: 1127000 }, { label: "2 chai", price: 1598000, oldPrice: 2157000 }, { label: "3 chai", price: 2293000, oldPrice: 3096000 }],
-    desc: "Xịt phun sương Grace By Chera Snow White Tone-Up Booster 150ml, sản xuất bởi SKIN N SKIN Co., Ltd (Hàn Quốc). Theo nhà sản xuất: nâng tone da tức thì, cấp ẩm, giúp da mềm mịn và đều màu hơn; dùng được cho cả mặt và toàn thân.",
-    highlights: ["Nâng tone tức thì, hiệu ứng trắng hồng tự nhiên", "Cấp ẩm, da mềm mịn", "Dùng cho cả mặt và body"],
-    usage: "Làm sạch và lau khô da, xịt lượng vừa đủ rồi thoa đều, massage nhẹ tới khi thấm. Dùng buổi sáng hoặc trước khi ra ngoài." },
-  { id: "24767149051", name: "Viên Uống PURE NMN 12000MG+ Chống Lão Hóa Cơ Thể Giúp Trẻ Hóa, Kéo Dài Tuổi Thọ Cải Thiện Sức Khỏe Và Sắc Đẹp Toàn Diện", short: "Viên uống Pure NMN 12000mg+ hộp 60 viên", brand: "clastive", cat: "cho-me",
-    ages: [], needs: ["cho-me"], price: 6000000, oldPrice: 8100000, rating: 0.0, reviews: 0, sold: 0, stock: 50,
-    shape: "bottle", color: "#455A64", weight: "Hộp 60 viên", origin: "Nhật Bản", tags: [],
-    image: "img/24767149051.jpg", thumb: "img/thumb/24767149051.jpg", images: ["img/24767149051.jpg", "img/24767149051-2.jpg", "img/24767149051-3.jpg", "img/24767149051-4.jpg", "img/24767149051-5.jpg"], shopeeId: "24767149051", shopeeUrl: "https://shopee.vn/product/1192937802/24767149051", shopeeCategory: "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ làm đẹp",
-    variants: [{ label: "1 hộp", price: 6000000, oldPrice: 8100000 }, { label: "2 hộp", price: 12000000, oldPrice: 16200000 }],
-    desc: "Viên uống Pure NMN 12.000mg+ (Clastive, Nhật Bản), hộp 60 viên. Thành phần gồm NMN 99,99%, collagen peptide, nhau thai ngựa, glutathione và hyaluronic acid. Theo nhà sản xuất: hỗ trợ chống lão hoá, tăng cường năng lượng và cân bằng nội tiết.",
-    highlights: ["NMN 12.000mg+ độ tinh khiết 99,99%", "Kèm collagen peptide, glutathione, HA", "Hộp 60 viên dùng 1 tháng"],
-    usage: "Uống 2 viên/ngày sau ăn sáng, uống với nhiều nước. Đọc kỹ hướng dẫn trên bao bì." },
-  { id: "50002678694", name: "Thảm ngải cứu trị liệu Đông y giúp Giảm cảm lạnh chân tay tiêu viêm ngủ ngon giấc Lưu thông khí huyết Điều khiển t", short: "Thảm ngải cứu trị liệu 150×60cm", brand: "khac", cat: "cho-me",
-    ages: [], needs: ["cho-me"], price: 900000, oldPrice: 1215000, rating: 0.0, reviews: 0, sold: 9, stock: 50, cosmetic: true,
-    shape: "box", color: "#7CB342", weight: "Thảm 150×60cm", origin: "Việt Nam", tags: [],
-    image: "img/50002678694.jpg", thumb: "img/thumb/50002678694.jpg", images: ["img/50002678694.jpg", "img/50002678694-2.jpg", "img/50002678694-3.jpg", "img/50002678694-4.jpg", "img/50002678694-5.jpg"], shopeeId: "50002678694", shopeeUrl: "https://shopee.vn/product/1192937802/50002678694", shopeeCategory: "Sức Khỏe › Chăm sóc cá nhân › Dụng cụ massage và trị liệu",
-    variants: [{ label: "Thảm ngải cứu", price: 1990000, oldPrice: 2687000 }, { label: "Lõi thảm", price: 900000, oldPrice: 1215000 }],
-    desc: "Thảm ngải cứu trị liệu kích thước 150×60cm, đệm sưởi điện tích hợp 220V–50Hz, có bộ điều khiển. Theo nhà sản xuất: hơi ấm từ ngải cứu giúp thư giãn vùng lưng, vai gáy và tay chân, hỗ trợ giấc ngủ và lưu thông khí huyết.",
-    highlights: ["Thảm ngải cứu 150×60cm, điều khiển thông minh", "Toả nhiệt ấm đều vùng lưng – vai gáy", "Thư giãn, hỗ trợ ngủ ngon"],
-    usage: "Trải thảm, cắm điện và chọn mức nhiệt vừa với cơ thể, nằm 20–30 phút mỗi lần. Không dùng khi da có vết thương hở; rút điện sau khi dùng." },
-  { id: "24465090622", name: "Sữa Tắm Dưỡng Trắng Body Glutanex 300ml Dưỡng Trắng Da Tức Thì Đem Lại Một Làn Da Trắng Sáng Và Ẩm Mượt Mềm Mại", short: "Sữa tắm dưỡng trắng Glutanex 300ml", brand: "glutanex", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 1290000, oldPrice: 1742000, rating: 5.0, reviews: 1, sold: 10, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#1E88E5", weight: "Chai 300ml", origin: "Hàn Quốc", tags: [],
-    image: "img/24465090622.jpg", thumb: "img/thumb/24465090622.jpg", images: ["img/24465090622.jpg", "img/24465090622-2.jpg", "img/24465090622-3.jpg", "img/24465090622-4.jpg", "img/24465090622-5.jpg"], shopeeId: "24465090622", shopeeUrl: "https://shopee.vn/product/1192937802/24465090622", shopeeCategory: "Sắc Đẹp › Tắm & chăm sóc cơ thể › Xà phòng & sữa tắm",
-    variants: [{ label: "1 chai", price: 1290000, oldPrice: 1742000 }, { label: "2 chai", price: 2580000, oldPrice: 3483000 }],
-    desc: "Sữa tắm dưỡng trắng body Glutanex 300ml (Hàn Quốc) với glutathione, niacinamide, hyaluronic acid cùng chiết xuất rau má, hà thủ ô, hắc mai biển. Theo nhà sản xuất: làm sạch dịu nhẹ, dưỡng ẩm và giúp da sáng mịn hơn.",
-    highlights: ["Glutathione + Niacinamide + HA", "Làm sạch dịu nhẹ, dưỡng ẩm", "Chai 300ml dùng cho cả nhà"],
-    usage: "Lấy lượng vừa đủ, tạo bọt và massage khắp cơ thể 1–2 phút rồi rửa sạch với nước." },
-  { id: "57556697426", name: "Son Filler Môi pH Hồng Tự Nhiên – Plump & Glow Lip Plumper", short: "Son filler căng mọng môi RVB LAB Lip Explosion", brand: "rvblab", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 890000, oldPrice: 1202000, rating: 5.0, reviews: 3, sold: 17, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#C2185B", weight: "Tuýp", origin: "Ý", tags: [],
-    image: "img/57556697426.jpg", thumb: "img/thumb/57556697426.jpg", images: ["img/57556697426.jpg", "img/57556697426-2.jpg", "img/57556697426-3.jpg", "img/57556697426-4.jpg", "img/57556697426-5.jpg"], shopeeId: "57556697426", shopeeUrl: "https://shopee.vn/product/1192937802/57556697426", shopeeCategory: "Sắc Đẹp › Trang điểm › Trang điểm môi › Son làm căng môi",
-    variants: [{ label: "1 cây", price: 890000, oldPrice: 1202000 }, { label: "2 cây", price: 1780000, oldPrice: 2403000 }],
-    desc: "Son filler môi RVB LAB Plump & Glow, công thức có chiết xuất ớt Capsicum, dầu jojoba, lựu, vitamin E và ceramide. Sắc tố phản ứng với độ pH môi tạo màu hồng tự nhiên riêng cho từng người. Theo nhà sản xuất: tạo hiệu ứng làm đầy môi tức thì.",
-    highlights: ["Hiệu ứng filler, môi căng mọng tự nhiên", "Màu hồng đổi theo độ pH của môi", "Dưỡng ẩm với jojoba, vitamin E, ceramide"],
-    usage: "Thoa một lớp mỏng lên môi đã làm sạch, có thể dùng riêng hoặc dặm lên son khác. Cảm giác châm nhẹ lúc đầu là bình thường." },
-  { id: "24015142248", name: "Serum RVB LAB HYALU C+ Tinh Chất Đậm Đặc Làm Sáng Da Chống Lão Hóa Chai Có Nắp Nhỏ Giọt 30ml", short: "Serum RVB LAB Hyalu C+ 30ml", brand: "rvblab", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 1710000, oldPrice: 2309000, rating: 5.0, reviews: 1, sold: 7, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#C2185B", weight: "Chai 30ml", origin: "Ý", tags: [],
-    image: "img/24015142248.jpg", thumb: "img/thumb/24015142248.jpg", images: ["img/24015142248.jpg", "img/24015142248-2.jpg", "img/24015142248-3.jpg", "img/24015142248-4.jpg", "img/24015142248-5.jpg"], shopeeId: "24015142248", shopeeUrl: "https://shopee.vn/product/1192937802/24015142248", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Tinh chất dưỡng",
-    variants: [{ label: "1 chai", price: 1710000, oldPrice: 2309000 }, { label: "2 chai", price: 3420000, oldPrice: 4617000 }],
-    desc: "Tinh chất đậm đặc RVB LAB Hyalu C+ 30ml (Ý) với vitamin C ổn định và niacinamide, chai có nắp nhỏ giọt. Theo nhà sản xuất: làm sáng da, chống oxy hoá và cải thiện làn da không đều màu.",
-    highlights: ["Vitamin C ổn định + 5% Niacinamide", "Làm sáng, chống oxy hoá", "Chai nhỏ giọt 30ml định lượng dễ dùng"],
-    usage: "Buổi tối sau khi làm sạch, nhỏ 3–4 giọt lên mặt và cổ, vỗ nhẹ cho thấm rồi dùng kem dưỡng. Ban ngày nhớ dùng kem chống nắng." },
-  { id: "24764883120", name: "Peel Anubis Tặng Kèm Xịt Trung Hòa Anubismed Giúp Làn Da Cải Thiện Lỗ Chân Lông, Đào Thải Độc Tố, Chống Lão Hóa, Mờ Thâm", short: "Bộ peel da Anubis Azelaic 14% + xịt trung hoà", brand: "anubis", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 2450000, oldPrice: 3308000, rating: 5.0, reviews: 107, sold: 1000, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#6D4C41", weight: "Chai 50ml + xịt", origin: "Tây Ban Nha", tags: [],
-    image: "img/24764883120.jpg", thumb: "img/thumb/24764883120.jpg", images: ["img/24764883120.jpg", "img/24764883120-2.jpg", "img/24764883120-3.jpg", "img/24764883120-4.jpg", "img/24764883120-5.jpg"], shopeeId: "24764883120", shopeeUrl: "https://shopee.vn/product/1192937802/24764883120", shopeeCategory: "Sắc Đẹp › Bộ sản phẩm làm đẹp",
-    variants: [{ label: "1 bộ", price: 2450000, oldPrice: 3308000 }, { label: "2 bộ", price: 4900000, oldPrice: 6615000 }],
-    desc: "Bộ peel da Anubis với 14% axit azelaic tinh khiết, tặng kèm xịt trung hoà Anubismed. Theo nhà sản xuất: hỗ trợ làm sạch sâu lỗ chân lông, giảm mụn và làm mờ vết thâm.",
-    highlights: ["14% axit azelaic tinh khiết", "Tặng kèm xịt trung hoà Anubismed", "Đã bán 1.000+ trên Shopee"],
-    usage: "Sản phẩm dành cho người đã quen với peel da: thoa lớp mỏng lên vùng cần xử lý, để đúng thời gian hướng dẫn rồi xịt trung hoà và rửa sạch. Nên hỏi ý kiến chuyên viên da liễu trước khi dùng." },
-  { id: "24015583018", name: "Mặt Nạ Trẻ Hóa NMN Giúp Dưỡng Da Trắng Sáng, Trẻ Hóa Tế Bào Da, Bổ Sung Nước Cấp Ẩm Cho Da, Ngăn Ngừa Nếp Nhăn", short: "Mặt nạ trẻ hoá NMN Kousa hộp 8 miếng", brand: "kousa", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 595000, oldPrice: 803000, rating: 4.9, reviews: 81, sold: 703, stock: 50, cosmetic: true,
-    shape: "box", color: "#4FC3F7", weight: "Hộp 8 miếng", origin: "Hàn Quốc", tags: [],
-    image: "img/24015583018.jpg", thumb: "img/thumb/24015583018.jpg", images: ["img/24015583018.jpg", "img/24015583018-2.jpg", "img/24015583018-3.jpg", "img/24015583018-4.jpg", "img/24015583018-5.jpg"], shopeeId: "24015583018", shopeeUrl: "https://shopee.vn/product/1192937802/24015583018", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Mặt nạ",
-    variants: [{ label: "1 hộp", price: 595000, oldPrice: 803000 }, { label: "2 hộp", price: 1190000, oldPrice: 1607000 }],
-    desc: "Mặt nạ NMN Kousa (Hàn Quốc), hộp 8 miếng, chứa 1.000ppm NMN cùng collagen và adenosine. Theo nhà sản xuất: cấp ẩm, dưỡng sáng và giúp da mịn màng hơn.",
-    highlights: ["1.000ppm NMN + collagen", "Cấp ẩm, dưỡng sáng", "Hộp 8 miếng, đã bán 700+"],
-    usage: "Đắp 15–20 phút sau bước làm sạch, 2–3 lần/tuần; vỗ nhẹ phần tinh chất còn lại cho thấm, không cần rửa." },
-  { id: "28902157429", name: "Men Vi Phụ Khoa ARRAVITE Bổ Sung Lợi Khuẩn Cân Bằng Và Bảo Vệ V.ùng K.ín, Ngăn Ngừa Viêm Nhiễm Hỗ Trợ Tiêu Hóa, Giảm Cân", short: "Men vi sinh phụ khoa Arravite hộp 30 viên", brand: "arravite", cat: "cho-me",
-    ages: [], needs: ["cho-me", "tieu-hoa"], price: 990000, oldPrice: 1337000, rating: 5.0, reviews: 3, sold: 49, stock: 50,
-    shape: "bottle", color: "#7E57C2", weight: "Hộp 30 viên", origin: "Úc", tags: [],
-    image: "img/28902157429.jpg", thumb: "img/thumb/28902157429.jpg", images: ["img/28902157429.jpg", "img/28902157429-2.jpg", "img/28902157429-3.jpg", "img/28902157429-4.jpg", "img/28902157429-5.jpg"], shopeeId: "28902157429", shopeeUrl: "https://shopee.vn/product/1192937802/28902157429", shopeeCategory: "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ sức khỏe",
-    variants: [{ label: "1 hộp", price: 990000, oldPrice: 1337000 }, { label: "2 hộp", price: 1980000, oldPrice: 2673000 }],
-    desc: "Men vi sinh Arravite (Úc), hộp 30 viên, có các dòng 5 tỷ – 10 tỷ – 20 tỷ lợi khuẩn dành cho nam nữ từ 15 tuổi. Theo nhà sản xuất: bổ sung lợi khuẩn, hỗ trợ cân bằng hệ vi sinh và tiêu hoá.",
-    highlights: ["Lợi khuẩn chuyên biệt cho phụ nữ", "3 mức 5 – 10 – 20 tỷ lợi khuẩn", "Hộp 30 viên dùng 1 tháng"],
-    usage: "Uống 1 viên/ngày sau ăn. Phụ nữ có thai hoặc đang dùng thuốc nên hỏi ý kiến bác sĩ trước khi dùng." },
-  { id: "26800350417", name: "Kem Dưỡng Trắng Da Căng Bóng HYALU C+ Thế Hệ Mới Làm Giảm Và Ngăn Các Dấu Hiệu Lão Hóa, Giúp Hồi Sinh Và Bảo Vệ Làn Da", short: "Kem dưỡng RVB LAB Hyalu C+ 30ml", brand: "rvblab", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 2050000, oldPrice: 2768000, rating: 5.0, reviews: 1, sold: 5, stock: 50, cosmetic: true,
-    shape: "box", color: "#C2185B", weight: "Hũ 30ml", origin: "Ý", tags: [],
-    image: "img/26800350417.jpg", thumb: "img/thumb/26800350417.jpg", images: ["img/26800350417.jpg", "img/26800350417-2.jpg", "img/26800350417-3.jpg", "img/26800350417-4.jpg", "img/26800350417-5.jpg"], shopeeId: "26800350417", shopeeUrl: "https://shopee.vn/product/1192937802/26800350417", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Kem dưỡng ẩm",
-    variants: [{ label: "1 hũ", price: 2050000, oldPrice: 2768000 }, { label: "2 hũ", price: 4100000, oldPrice: 5535000 }],
-    desc: "Kem dưỡng trắng da căng bóng RVB LAB Hyalu C+ thế hệ mới, 30ml (Ý). Theo nhà sản xuất: công thức đa tác dụng giúp da mịn màng, tươi sáng và hạn chế các dấu hiệu lão hoá theo thời gian.",
-    highlights: ["Công thức Hyalu C+ thế hệ mới", "Dưỡng ẩm, làm sáng, nâng đỡ da", "Hũ 30ml dùng sáng và tối"],
-    usage: "Thoa lượng vừa đủ lên mặt và cổ đã làm sạch, sáng và tối, sau bước serum." },
-  { id: "27734205778", name: "Kem Chống Nắng HISKIN 5in1 Giúp Bảo Vệ Da Dưỡng Trắng Phục Hồi Chống Lão Hoá Nâng Tone An Toàn Với Làn Da Nhạy Cảm", short: "Kem chống nắng Hiskin 5in1 SPF50+ 60ml", brand: "hiskin", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 695000, oldPrice: 938000, rating: 5.0, reviews: 8, sold: 56, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#0288D1", weight: "Tuýp 60ml", origin: "Hàn Quốc", tags: [],
-    image: "img/27734205778.jpg", thumb: "img/thumb/27734205778.jpg", images: ["img/27734205778.jpg", "img/27734205778-2.jpg", "img/27734205778-3.jpg", "img/27734205778-4.jpg", "img/27734205778-5.jpg"], shopeeId: "27734205778", shopeeUrl: "https://shopee.vn/product/1192937802/27734205778", shopeeCategory: "Sắc Đẹp › Chăm sóc da mặt › Kem chống nắng cho mặt",
-    variants: [{ label: "1 tuýp", price: 695000, oldPrice: 938000 }, { label: "2 tuýp", price: 1390000, oldPrice: 1877000 }],
-    desc: "Kem chống nắng Hiskin 5in1 60ml (Hàn Quốc), SPF50+ PA++++, chứa niacinamide, glutathione và collagen. Theo nhà sản xuất: bảo vệ da khỏi tia UV, kiềm dầu, nâng tone nhẹ và phù hợp cả với da nhạy cảm.",
-    highlights: ["SPF50+ / PA++++", "Niacinamide, glutathione, collagen", "Nâng tone nhẹ, thay được kem lót"],
-    usage: "Thoa lớp vừa đủ trước khi ra ngoài 15–20 phút, dặm lại sau mỗi 2–3 giờ nếu hoạt động ngoài trời." },
-  { id: "25678530796", name: "Cặp Tái Tạo Phục Hồi Da Hỗ Trợ Kích Hoạt Tái Cấu Trúc Đa Tầng Giúp Làn Da Được Thắp Sáng Tăng Cường Sức Sống Luôn Ẩm Mịn", short: "Cặp tái tạo phục hồi da Dermo Ioniq", brand: "dermoioniq", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 5275000, oldPrice: 7121000, rating: 4.5, reviews: 2, sold: 4, stock: 50, cosmetic: true,
-    shape: "box", color: "#00897B", weight: "Bộ 2 sản phẩm", origin: "Pháp", tags: [],
-    image: "img/25678530796.jpg", thumb: "img/thumb/25678530796.jpg", images: ["img/25678530796.jpg", "img/25678530796-2.jpg", "img/25678530796-3.jpg", "img/25678530796-4.jpg", "img/25678530796-5.jpg"], shopeeId: "25678530796", shopeeUrl: "https://shopee.vn/product/1192937802/25678530796", shopeeCategory: "Sắc Đẹp › Bộ sản phẩm làm đẹp",
-    variants: [{ label: "1 cặp", price: 5275000, oldPrice: 7121000 }, { label: "2 cặp", price: 10550000, oldPrice: 14243000 }],
-    desc: "Bộ đôi tái tạo phục hồi da Dermo Ioniq (Pháp) gồm kem kích hoạt tái cấu trúc đa tầng 100ml và huyết thanh thắp sáng 30ml (có các lựa chọn kem làm dịu 40ml và huyết thanh trẻ hoá 30ml). Theo nhà sản xuất: hỗ trợ phục hồi, cấp ẩm và giúp da tăng sức sống.",
-    highlights: ["Kem tái cấu trúc đa tầng 100ml", "Huyết thanh thắp sáng 30ml", "Dành cho da cần phục hồi chuyên sâu"],
-    usage: "Dùng huyết thanh trước, kem sau, sáng và tối trên da đã làm sạch." },
-  { id: "29006040615", name: "Cặp MESO Bạc Giúp Cấy Meso Vào Da Bằng Đường Bôi, Đưa Sâu Dưỡng Chất Vào Da, Giảm Nếp Nhăn Dưỡng Da Trắng Sáng, Đều Màu", short: "Meso bạc RVB LAB – serum & kem dưỡng", brand: "rvblab", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 3388000, oldPrice: 4574000, rating: 4.9, reviews: 50, sold: 525, stock: 50, cosmetic: true,
-    shape: "box", color: "#90A4AE", weight: "Serum 30ml + kem 50ml", origin: "Ý", tags: [],
-    image: "img/29006040615.jpg", thumb: "img/thumb/29006040615.jpg", images: ["img/29006040615.jpg", "img/29006040615-2.jpg", "img/29006040615-3.jpg", "img/29006040615-4.jpg", "img/29006040615-5.jpg"], shopeeId: "29006040615", shopeeUrl: "https://shopee.vn/product/1192937802/29006040615", shopeeCategory: "Sắc Đẹp › Dụng cụ làm đẹp › Khác",
-    variants: [{ label: "Cặp tất bạc (serum + kem)", price: 6500000, oldPrice: 8775000, oos: true }, { label: "Serum Meso bạc", price: 3388000, oldPrice: 4574000 }, { label: "Kem dưỡng Meso bạc", price: 3465000, oldPrice: 4678000 }],
-    desc: "Cặp Meso bạc RVB LAB (Ý) gồm serum Meso bạc 30ml và kem dưỡng Meso bạc 50ml với phức hợp Hyalu Smart PGA. Theo nhà sản xuất: đưa dưỡng chất sâu vào da, hỗ trợ giảm nếp nhăn và dưỡng da sáng đều màu.",
-    highlights: ["Serum 30ml + kem dưỡng 50ml", "Phức hợp Hyalu Smart PGA", "Đã bán 500+ trên Shopee"],
-    usage: "Thoa serum lên da đã làm sạch, đợi thấm rồi dùng kem dưỡng; dùng sáng và tối." },
-  { id: "27809051612", name: "Cặp Dầu Gội - Xả Arganicare Collagen Làm Sạch Tóc, Dưỡng Tóc Mềm Mượt, Phục Hồi Tóc Hư Tổn Chuyên Sâu Cho Tóc Hư Tổn", short: "Cặp dầu gội & xả Arganicare Biotin Collagen 400ml", brand: "arganicare", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 1290000, oldPrice: 1742000, rating: 4.7, reviews: 3, sold: 5, stock: 50, cosmetic: true,
-    shape: "bottle", color: "#8D6E63", weight: "Gội 400ml + xả 400ml", origin: "Ma-rốc", tags: [],
-    image: "img/27809051612.jpg", thumb: "img/thumb/27809051612.jpg", images: ["img/27809051612.jpg", "img/27809051612-2.jpg", "img/27809051612-3.jpg", "img/27809051612-4.jpg", "img/27809051612-5.jpg"], shopeeId: "27809051612", shopeeUrl: "https://shopee.vn/product/1192937802/27809051612", shopeeCategory: "Sắc Đẹp › Chăm sóc tóc › Dầu gội",
-    variants: [{ label: "1 cặp", price: 1290000, oldPrice: 1742000 }, { label: "2 cặp", price: 2580000, oldPrice: 3483000 }],
-    desc: "Cặp dầu gội và dầu xả Arganicare Biotin & Collagen, mỗi chai 400ml (Ma-rốc), thành phần có biotin, dầu argan, keratin và vitamin. Theo nhà sản xuất: làm sạch dịu nhẹ, giúp tóc mềm mượt và hỗ trợ phục hồi tóc hư tổn.",
-    highlights: ["Biotin + dầu argan + keratin", "Cặp gội – xả 400ml", "Cho tóc khô, hư tổn sau uốn nhuộm"],
-    usage: "Gội sạch tóc, thoa dầu xả lên thân và ngọn tóc, để 2–3 phút rồi xả kỹ với nước." },
-  { id: "24329101823", name: "Combo Meso Vàng Siêu Vi Tăng Sinh Tế Bào, Chống Lão Hóa Và Cấp Ẩm Chuyên Sâu Mang Lại Vẻ Căng Bóng, Tươi Sáng Cho Làn Da", short: "Combo Meso vàng siêu vi", brand: "meso", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 1450000, oldPrice: 1958000, rating: 5.0, reviews: 4, sold: 24, stock: 50, cosmetic: true,
-    shape: "box", color: "#C9A227", weight: "Bộ sản phẩm", origin: "Đan Mạch", tags: [],
-    image: "img/24329101823.jpg", thumb: "img/thumb/24329101823.jpg", images: ["img/24329101823.jpg", "img/24329101823-2.jpg", "img/24329101823-3.jpg", "img/24329101823-4.jpg", "img/24329101823-5.jpg"], shopeeId: "24329101823", shopeeUrl: "https://shopee.vn/product/1192937802/24329101823", shopeeCategory: "Sắc Đẹp › Bộ sản phẩm làm đẹp",
-    variants: [{ label: "Kem chống nắng Meso", price: 3500000, oldPrice: 4725000, oos: true }, { label: "Kem Meso Retinol", price: 3250000, oldPrice: 4388000 }, { label: "Sữa rửa mặt Meso", price: 1450000, oldPrice: 1958000 }, { label: "Kem mắt Meso", price: 2590000, oldPrice: 3497000 }, { label: "Combo siêu vi Meso", price: 7200000, oldPrice: 9720000 }, { label: "Serum vàng Meso", price: 4015000, oldPrice: 5420000 }, { label: "Kem vàng siêu vi", price: 3910000, oldPrice: 5279000 }],
-    desc: "Combo Meso vàng siêu vi gồm serum vàng siêu vi và kem vàng siêu vi; ngoài ra có thêm các lựa chọn kem ngày, kem đêm, sữa rửa mặt 3in1 và kem mắt Meso. Theo nhà sản xuất: cấp ẩm chuyên sâu, hỗ trợ chống lão hoá, cho da căng bóng tươi sáng.",
-    highlights: ["Serum + kem vàng siêu vi", "Nhiều lựa chọn combo theo nhu cầu", "Cấp ẩm, hỗ trợ chống lão hoá"],
-    usage: "Dùng serum trước, kem sau, sáng và tối trên da đã làm sạch." },
-  { id: "26900366084", name: "Combo Dưỡng Da Hyalu C+ Giúp Da Trắng Sáng, Căng Bóng, Mịn Màng Dưỡng Ẩm, Chống Lão Hóa Cải Thiện Làn Da Lên Tới 95%", short: "Combo dưỡng da Hyalu C+ (kem + serum + toner)", brand: "rvblab", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 1270000, oldPrice: 1715000, rating: 5.0, reviews: 2, sold: 13, stock: 50, cosmetic: true,
-    shape: "box", color: "#C2185B", weight: "Bộ 3 sản phẩm", origin: "Ý", tags: [],
-    image: "img/26900366084.jpg", thumb: "img/thumb/26900366084.jpg", images: ["img/26900366084.jpg", "img/26900366084-2.jpg", "img/26900366084-3.jpg", "img/26900366084-4.jpg", "img/26900366084-5.jpg"], shopeeId: "26900366084", shopeeUrl: "https://shopee.vn/product/1192937802/26900366084", shopeeCategory: "Sắc Đẹp › Bộ sản phẩm làm đẹp",
-    variants: [{ label: "Kem dưỡng Hyalu C+", price: 2050000, oldPrice: 2768000 }, { label: "Serum Hyalu C+", price: 2350000, oldPrice: 3173000 }, { label: "Toner Hyalu C+", price: 1270000, oldPrice: 1715000 }, { label: "Bộ dưỡng da Hyalu C+", price: 5030000, oldPrice: 6791000 }],
-    desc: "Combo dưỡng da Hyalu C+ (Ý) gồm kem dưỡng trắng 50ml, serum 30ml và toner 200ml. Theo nhà sản xuất: bộ ba dưỡng ẩm – làm sáng – chống oxy hoá dùng cho cả chu trình sáng và tối.",
-    highlights: ["Kem 50ml + serum 30ml + toner 200ml", "Trọn chu trình dưỡng sáng", "Nhiều lựa chọn combo"],
-    usage: "Toner → serum → kem dưỡng, dùng sáng và tối sau khi rửa mặt." },
-  { id: "56857599724", name: "Bột Trắng Răng AKIKO Nhật Bản Trắng Răng Bật Tone, Loại Bỏ Mảng Bám Không Ê Buốt, Khử Hôi Miệng", short: "Bột trắng răng Akiko Nhật Bản 26g", brand: "akiko", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 550000, oldPrice: 743000, rating: 5.0, reviews: 1, sold: 14, stock: 50, cosmetic: true,
-    shape: "box", color: "#26A69A", weight: "Hũ 26g", origin: "Nhật Bản", tags: [],
-    image: "img/56857599724.jpg", thumb: "img/thumb/56857599724.jpg", images: ["img/56857599724.jpg", "img/56857599724-2.jpg", "img/56857599724-3.jpg", "img/56857599724-4.jpg", "img/56857599724-5.jpg"], shopeeId: "56857599724", shopeeUrl: "https://shopee.vn/product/1192937802/56857599724", shopeeCategory: "Sức Khỏe › Chăm sóc cá nhân › Vệ sinh răng miệng › Hỗ trợ trắng răng",
-    variants: [{ label: "1 hộp", price: 550000, oldPrice: 743000 }, { label: "2 hộp", price: 1100000, oldPrice: 1485000 }],
-    desc: "Bột khử vàng răng Akiko 26g (Nhật Bản). Theo nhà sản xuất: làm sạch mảng bám và vết ố, giúp răng sáng hơn mà không gây ê buốt, đồng thời khử mùi hôi miệng.",
-    highlights: ["Hũ 26g dùng được lâu", "Làm sạch mảng bám, vết ố", "Không gây ê buốt"],
-    usage: "Nhúng bàn chải ẩm vào bột, chải đều 2–3 phút rồi súc miệng sạch, dùng 2–3 lần/tuần." },
-  { id: "28806784125", name: "Bộ Đôi Meso Retinol Siêu Vi Tăng Sinh Tế Bào, Chống Lão Hóa Căng Bóng Làn Da Xóa Nhăn Trẻ Hóa Sáng Da", short: "Bộ đôi Meso Retinol siêu vi", brand: "meso", cat: "cho-me",
-    ages: [], needs: ["cho-me", "lam-dep"], price: 2590000, oldPrice: 3497000, rating: 5.0, reviews: 2, sold: 12, stock: 50, cosmetic: true,
-    shape: "box", color: "#C9A227", weight: "Bộ 2 sản phẩm", origin: "Ý", tags: [],
-    image: "img/28806784125.jpg", thumb: "img/thumb/28806784125.jpg", images: ["img/28806784125.jpg", "img/28806784125-2.jpg", "img/28806784125-3.jpg", "img/28806784125-4.jpg", "img/28806784125-5.jpg"], shopeeId: "28806784125", shopeeUrl: "https://shopee.vn/product/1192937802/28806784125", shopeeCategory: "Sắc Đẹp › Bộ sản phẩm làm đẹp",
-    variants: [{ label: "Kem Meso Retinol", price: 3250000, oldPrice: 4388000 }, { label: "Kem mắt Meso", price: 2590000, oldPrice: 3497000 }, { label: "Bộ đôi Meso", price: 5840000, oldPrice: 7884000 }],
-    desc: "Bộ đôi Meso Retinol siêu vi với retinol, axit alpha lipoic và phức hợp vitamin chống oxy hoá. Theo nhà sản xuất: hỗ trợ giảm nếp nhăn, giúp da căng bóng và sáng đều màu hơn.",
-    highlights: ["Retinol + axit alpha lipoic", "Hỗ trợ giảm nếp nhăn", "Dùng buổi tối, kết hợp chống nắng ban ngày"],
-    usage: "Bắt đầu 2 lần/tuần vào buổi tối rồi tăng dần; luôn dùng kem chống nắng vào ban ngày." },
-
-  { id: "suaxanh-lotte", name: "Sữa Xanh Lotte Organic – Sữa Tươi Hữu Cơ Pasteur Hàn Quốc Hộp 125ml, Thùng 24 Hộp", short: "Sữa xanh Lotte Organic 125ml (thùng 24 hộp)", brand: "lotte", cat: "sua",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["sua-tuoi", "organic", "canxi", "tang-chieu-cao"], price: 875000, oldPrice: 1181000, rating: 0, reviews: 0, sold: 0, stock: 50, priority: 2,
-    shape: "carton", color: "#2E7D32", weight: "Thùng 24 hộp × 125ml", origin: "Hàn Quốc", tags: ["Mới"],
-    image: "img/suaxanh-lotte.jpg", thumb: "img/thumb/suaxanh-lotte.jpg", images: ["img/suaxanh-lotte.jpg", "img/suaxanh-lotte-2.jpg", "img/suaxanh-lotte-3.jpg", "img/suaxanh-lotte-4.jpg", "img/suaxanh-lotte-5.jpg", "img/suaxanh-lotte-6.jpg"],
-    variants: [{ label: "1 thùng 24 hộp", price: 875000, oldPrice: 1181000 }, { label: "2 thùng 48 hộp", price: 1750000, oldPrice: 2363000 }],
-    desc: "Sữa xanh Lotte Organic (Pasteur 유기농 우유) – sữa tươi hữu cơ nguyên kem của Lotte Wellfood Hàn Quốc, hộp 125ml vừa một lần uống cho bé. Sữa đạt chứng nhận hữu cơ của Bộ Nông nghiệp Hàn Quốc, cơ sở sản xuất đạt HACCP. Mỗi hộp 125ml (80 kcal) có 4g đạm, 4,6g chất béo và 125mg canxi, vị thơm béo tự nhiên, dùng được cho cả bé và người lớn.",
-    highlights: ["Sữa tươi hữu cơ nguyên kem, chứng nhận Organic Hàn Quốc", "Mỗi hộp 125ml: 4g đạm, 4,6g chất béo, 125mg canxi", "Hộp nhỏ 125ml tiện mang đi học, vừa một lần uống"],
-    usage: "Bé từ 1 tuổi uống 1–2 hộp/ngày, ngon hơn khi để lạnh. Lắc đều trước khi uống, đã mở hộp thì dùng hết trong ngày. Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp." },
-  { id: "combo-vangsua-d3k2", name: "Combo Váng Sữa Canxi Calciumore + Vitamin D3K2 Pure Vitality – Bổ Sung Canxi Và Vitamin D3, K2 Cho Bé", short: "Combo váng sữa canxi Calciumore + D3K2", brand: "calciumore", cat: "vitamin",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["canxi", "tang-chieu-cao", "d3k2", "organic"], price: 2726000, oldPrice: 2870000, rating: 5.0, reviews: 0, sold: 0, stock: 50,
-    isCombo: true, items: ["26060839019", "42878618667"],
-    shape: "box", color: "#4FA3D1", weight: "1 hộp 90 gói váng sữa + 1 lọ D3K2 30ml", origin: "Hàn Quốc & New Zealand", tags: ["Combo"],
-    image: "img/combo-vangsua-d3k2.jpg", thumb: "img/thumb/combo-vangsua-d3k2.jpg",
-    images: ["img/combo-vangsua-d3k2.jpg", "img/26060839019.jpg", "img/42878618667.jpg", "img/26060839019-3.jpg", "img/42878618667-3.jpg"],
-    variants: [{ label: "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%", price: 2726000, oldPrice: 2870000 }, { label: "2 hộp váng sữa 180 gói · TẶNG 1 D3K2", price: 4960000, oldPrice: 5350000 }, { label: "3 hộp váng sữa 270 gói · TẶNG 2 D3K2", price: 7440000, oldPrice: 8220000 }, { label: "4 hộp váng sữa 360 gói · TẶNG 3 D3K2", price: 9920000, oldPrice: 11090000 }],
-    uuDai: ["Mua 1 hộp canxi + 1 lọ D3K2 = 2.870.000₫, giảm 5% còn 2.726.000₫", "Mua 2 hộp canxi 4.960.000₫ → tặng ngay 1 lọ D3K2 (tiết kiệm 390.000₫)", "Mua 3 hộp canxi 7.440.000₫ → tặng ngay 2 lọ D3K2 (tiết kiệm 780.000₫)", "Mua 4 hộp canxi 9.920.000₫ → tặng ngay 3 lọ D3K2 (tiết kiệm 1.170.000₫)"],
-    desc: "Bộ đôi canxi cho bé: váng sữa canxi hữu cơ Calciumore (hộp 90 gói) bổ sung canxi sữa dễ hấp thu, kết hợp vitamin D3K2 Pure Vitality (New Zealand) giúp đưa canxi vào xương. Theo nhà sản xuất, dùng cùng nhau hỗ trợ bé phát triển chiều cao và răng chắc khoẻ tốt hơn so với dùng riêng canxi.",
-    highlights: ["Mua 1 hộp váng sữa + 1 D3K2 được giảm 5% so với mua lẻ", "Mua 2 hộp tặng 1 lọ D3K2 · 3 hộp tặng 2 lọ · 4 hộp tặng 3 lọ", "Canxi sữa hữu cơ Hàn Quốc + D3K2 New Zealand", "Mỗi hộp 90 gói đủ dùng cho bé khoảng 3 tháng"],
-    usage: "Váng sữa: 1 gói/ngày pha cùng sữa hoặc ăn trực tiếp. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn. Dùng canxi và D3K2 cùng buổi để hấp thu tốt nhất." },
-  { id: "combo-lottexanh-d3k2", name: "Combo Nước Ép Lotte Tăng Cao (Xanh) + Vitamin D3K2 Pure Vitality – Hỗ Trợ Bé Phát Triển Chiều Cao", short: "Combo nước ép Lotte Tăng cao + D3K2", brand: "lotte", cat: "nuoc-ep",
-    ages: ["1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tang-chieu-cao", "canxi", "d3k2", "organic"], price: 1707000, oldPrice: 1707000, rating: 5.0, reviews: 0, sold: 0, stock: 50,
-    isCombo: true, items: ["22686115682", "42878618667"],
-    shape: "box", color: "#2F8FD0", weight: "1 thùng 30 gói nước ép + 1 lọ D3K2 30ml", origin: "Hàn Quốc & New Zealand", tags: ["Combo"],
-    image: "img/combo-lottexanh-d3k2.jpg", thumb: "img/thumb/combo-lottexanh-d3k2.jpg",
-    images: ["img/combo-lottexanh-d3k2.jpg", "img/22686115682.jpg", "img/42878618667.jpg", "img/22686115682-3.jpg", "img/42878618667-3.jpg"],
-    variants: [{ label: "1 thùng Lotte Tăng cao 30 gói + 1 D3K2", price: 1707000, oldPrice: 1707000 }],
-    desc: "Bộ đôi tăng chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) giúp bé uống ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
-    highlights: ["Mua trọn bộ 1 chạm, không phải chọn từng món", "Nước ép hữu cơ Hàn Quốc, bé dễ uống", "Thùng 30 gói dùng được khoảng 1 tháng", "D3K2 giúp hấp thu canxi, dùng cùng nước ép tăng cao"],
-    usage: "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn." },
-
-  { id: "men-sysy", name: "Men Vi Sinh Sysy Pasteur (Lotte) Hàn Quốc – Men Baby Từ 0 Tháng, Men Kids Từ 24 Tháng, Hộp 60 Gói", short: "Men vi sinh Sysy Pasteur – Baby 0+ / Kids 24m+", brand: "lotte", cat: "tang-can",
-    ages: ["0-6m", "6-12m", "1-3y", "3-6y", "6-12y", "12-18y"], needs: ["tieu-hoa", "tang-can", "de-khang"], price: 986000, oldPrice: 1282000, rating: 0, reviews: 0, sold: 0, stock: 50, priority: 2,
-    shape: "jar", color: "#8D5A2B", weight: "Hộp 6 gói lớn × 10 gói nhỏ (2g)", origin: "Hàn Quốc", tags: ["Mới"],
-    image: "img/men-sysy.jpg", thumb: "img/thumb/men-sysy.jpg", images: ["img/men-sysy.jpg", "img/men-sysy-2.jpg", "img/men-sysy-3.jpg", "img/men-sysy-4.jpg", "img/men-sysy-5.jpg"],
-    variants: [{ label: "Men Baby (nâu) · từ 0 tháng", price: 986000, oldPrice: 1282000 }, { label: "Men Kids (xanh) · từ 24 tháng", price: 986000, oldPrice: 1282000 }],
-    desc: "Men vi sinh Sysy (Pasteur 아이생각 생유산균) – hàng nội địa Hàn Quốc của Pasteur thuộc tập đoàn Lotte. Men Baby (hộp nâu, cho bé từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng. Men Kids (hộp xanh, cho bé từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng, bổ sung kẽm 2,55mg và vitamin D 400 IU. Đạt GMP, công nghệ Probiocap bao bọc lợi khuẩn và Synbiotic (lợi khuẩn kết hợp chất xơ nuôi lợi khuẩn); nhà sản xuất cam kết ít nhất 2 tỉ lợi khuẩn sống. Theo nhà sản xuất: hỗ trợ tiêu hoá, giúp bé ăn ngon, hấp thu tốt; hỗ trợ giảm táo bón, tiêu chảy và tác dụng phụ khi dùng kháng sinh; hỗ trợ cải thiện biếng ăn, chậm tăng cân, giảm trớ sữa ở trẻ nhỏ.",
-    highlights: ["Men Baby (từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng", "Men Kids (từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng + kẽm 2,55mg, vitamin D 400 IU", "GMP · Probiocap · Synbiotic – nội địa Hàn, Pasteur thuộc Lotte"],
-    usage: "Mỗi ngày 1 gói. Pha cùng bột, cháo, sữa hoặc nước dưới 50°C; bé lớn có thể uống trực tiếp. Dùng theo hướng dẫn của bác sĩ hoặc chuyên gia dinh dưỡng. Hộp tròn gồm 6 gói lớn, mỗi gói lớn 10 gói nhỏ; hạn dùng 18 tháng kể từ ngày sản xuất." },
+  {
+    "id": "41002695070",
+    "name": "Rong Biển Vụn Ăn Liền Sung Gyung - Lựa Chọn Hoàn Hảo Cho Bữa Ăn Nhanh Gọn và Bổ Dưỡng",
+    "short": "Rong biển vụn Sung Gyung",
+    "brand": "sunggyung",
+    "cat": "rong-bien",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y"
+    ],
+    "needs": [
+      "an-dam",
+      "tang-can"
+    ],
+    "price": 520000,
+    "oldPrice": 702000,
+    "rating": 4.94,
+    "reviews": 53,
+    "sold": 423,
+    "stock": 50,
+    "priority": 3,
+    "shape": "box",
+    "color": "#1B5E20",
+    "weight": "Gói 500g",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot",
+      "Giảm sâu"
+    ],
+    "image": "img/41002695070.jpg",
+    "thumb": "img/thumb/41002695070.jpg",
+    "images": [
+      "img/41002695070.jpg",
+      "img/41002695070-2.jpg",
+      "img/41002695070-3.jpg",
+      "img/41002695070-4.jpg",
+      "img/41002695070-5.jpg"
+    ],
+    "shopeeId": "41002695070",
+    "shopeeUrl": "https://shopee.vn/product/837223358/41002695070",
+    "shopeeCategory": "Thực phẩm và đồ uống › Đồ ăn vặt › Các loại rong biển ăn liền",
+    "variants": [
+      {
+        "label": "1 gói (500g)",
+        "price": 520000,
+        "oldPrice": 702000
+      },
+      {
+        "label": "2 gói",
+        "price": 1040000,
+        "oldPrice": 1404000
+      },
+      {
+        "label": "3 gói",
+        "price": 1560000,
+        "oldPrice": 2106000
+      }
+    ],
+    "desc": "Rong biển vụn ăn liền Sung Gyung – rắc cơm, cháo hoặc trộn cơm nắm cho bé. Rong biển Hàn Quốc sấy giòn, vị nhạt, giúp bữa ăn của con nhanh gọn mà vẫn bổ dưỡng.",
+    "highlights": [
+      "Rong biển Hàn Quốc sấy giòn, thơm, vị nhạt phù hợp trẻ nhỏ",
+      "Rắc cơm, cháo, cơm nắm, kimbap – bé ăn ngon hơn",
+      "Tiện lợi cho bữa sáng và hộp cơm đi học"
+    ],
+    "usage": "Rắc trực tiếp lên cơm, cháo hoặc trộn cơm nắm cho bé. Đậy kín sau khi mở, bảo quản nơi khô ráo, tránh ẩm."
+  },
+  {
+    "id": "22686115682",
+    "name": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
+    "short": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
+    "brand": "lotte",
+    "cat": "nuoc-ep",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tang-chieu-cao",
+      "tang-can",
+      "de-khang",
+      "organic"
+    ],
+    "price": 448000,
+    "oldPrice": 627000,
+    "rating": 4.93,
+    "reviews": 525,
+    "sold": 3000,
+    "stock": 50,
+    "priority": 3,
+    "shape": "box",
+    "color": "#E60012",
+    "weight": "Gói 100ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot",
+      "Giảm sâu"
+    ],
+    "image": "img/22686115682.jpg",
+    "thumb": "img/thumb/22686115682.jpg",
+    "images": [
+      "img/22686115682.jpg",
+      "img/22686115682-3.jpg",
+      "img/22686115682-4.jpg",
+      "img/22686115682-5.jpg"
+    ],
+    "shopeeId": "22686115682",
+    "shopeeUrl": "https://shopee.vn/product/837223358/22686115682",
+    "shopeeCategory": "Thực phẩm và đồ uống › Đồ uống › Khác",
+    "variants": [
+      {
+        "label": "Tăng cao (Xanh) · 10 gói",
+        "price": 448000,
+        "oldPrice": 627000
+      },
+      {
+        "label": "Tăng cân (Hồng) · 10 gói",
+        "price": 448000,
+        "oldPrice": 627000
+      },
+      {
+        "label": "Đề kháng (Cam) · 10 gói",
+        "price": 448000,
+        "oldPrice": 627000
+      },
+      {
+        "label": "Tăng cao (Xanh) · Thùng 30 gói",
+        "price": 1317000,
+        "oldPrice": 1844000
+      },
+      {
+        "label": "Tăng cân (Hồng) · Thùng 30 gói",
+        "price": 1317000,
+        "oldPrice": 1844000
+      },
+      {
+        "label": "Đề kháng (Cam) · Thùng 30 gói",
+        "price": 1317000,
+        "oldPrice": 1844000
+      },
+      {
+        "label": "Mix vị · Thùng 30 gói",
+        "price": 1317000,
+        "oldPrice": 1844000
+      }
+    ],
+    "desc": "Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic giúp bé ăn ngon miệng, hỗ trợ phát triển chiều cao và tăng cường sức khoẻ.",
+    "highlights": [
+      "Nguyên liệu hoa quả & rau củ hữu cơ (Organic)",
+      "Gói nhỏ có ống hút – tiện mang đi học, đi chơi",
+      "Chọn vị cam “Khoẻ Mạnh” hoặc thùng mix vị"
+    ],
+    "usage": "Bé uống 1–2 gói/ngày, ngon hơn khi để mát. Dùng theo hướng dẫn trên bao bì."
+  },
+  {
+    "id": "42878618667",
+    "name": "Vitamin D3K2– Hỗ Trợ Phát Triển Xương Răng, Tăng Đề Kháng, Tim Mạch – Lọ 30ml",
+    "short": "Vitamin D3K2 Pure Vitality 30ml",
+    "brand": "purevitality",
+    "cat": "vitamin",
+    "ages": [
+      "0-6m",
+      "6-12m",
+      "1-3y",
+      "3-6y",
+      "6-12y"
+    ],
+    "needs": [
+      "d3k2",
+      "tang-chieu-cao",
+      "canxi",
+      "de-khang"
+    ],
+    "price": 390000,
+    "oldPrice": 507000,
+    "rating": 5,
+    "reviews": 69,
+    "sold": 356,
+    "stock": 50,
+    "priority": 3,
+    "shape": "bottle",
+    "color": "#E0A526",
+    "weight": "Lọ 30ml",
+    "origin": "New Zealand",
+    "tags": [
+      "Sản phẩm hot",
+      "Bán chạy"
+    ],
+    "image": "img/42878618667.jpg",
+    "thumb": "img/thumb/42878618667.jpg",
+    "images": [
+      "img/42878618667.jpg",
+      "img/42878618667-2.jpg",
+      "img/42878618667-3.jpg",
+      "img/42878618667-4.jpg",
+      "img/42878618667-5.jpg"
+    ],
+    "shopeeId": "42878618667",
+    "shopeeUrl": "https://shopee.vn/product/837223358/42878618667",
+    "shopeeCategory": "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
+    "variants": [
+      {
+        "label": "1 lọ",
+        "price": 390000,
+        "oldPrice": 507000
+      },
+      {
+        "label": "2 lọ",
+        "price": 780000,
+        "oldPrice": 1014000
+      }
+    ],
+    "desc": "Vitamin D3 + K2 Pure Vitality (New Zealand) dạng nhỏ giọt 30ml, hương táo NZ. Theo nhà sản xuất, D3 hỗ trợ hấp thu canxi, K2 giúp đưa canxi vào xương, hỗ trợ phát triển xương răng và đề kháng cho bé. Có chứng nhận HACCP, GMP. Mua 2 lọ tiết kiệm hơn.",
+    "highlights": [
+      "Sản xuất tại New Zealand, chứng nhận HACCP & GMP",
+      "D3 hỗ trợ hấp thu canxi, K2 dẫn canxi vào xương",
+      "Dạng giọt vị táo, dễ dùng cho bé từ sơ sinh"
+    ],
+    "usage": "Nhỏ trực tiếp vào miệng bé hoặc pha vào sữa, dùng vào buổi sáng sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc chuyên gia dinh dưỡng tư vấn."
+  },
+  {
+    "id": "45462512687",
+    "name": "Rong biển Tăng cao Busan trộn cơm Hàn Quốc, giúp bé cao lớn, bổ sung chất xơ vitamin",
+    "short": "Rong biển tăng cao Busan trộn cơm",
+    "brand": "busan",
+    "cat": "rong-bien",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y"
+    ],
+    "needs": [
+      "an-dam",
+      "tang-chieu-cao",
+      "tieu-hoa"
+    ],
+    "price": 589000,
+    "oldPrice": 795000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 12,
+    "stock": 50,
+    "priority": 3,
+    "shape": "box",
+    "color": "#00695C",
+    "weight": "Gói 40g",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot"
+    ],
+    "image": "img/45462512687.jpg",
+    "thumb": "img/thumb/45462512687.jpg",
+    "images": [
+      "img/45462512687.jpg",
+      "img/45462512687-2.jpg",
+      "img/45462512687-3.jpg",
+      "img/45462512687-4.jpg",
+      "img/45462512687-5.jpg"
+    ],
+    "shopeeId": "45462512687",
+    "shopeeUrl": "https://shopee.vn/product/837223358/45462512687",
+    "shopeeCategory": "Thực phẩm và đồ uống › Đồ ăn vặt › Các loại rong biển ăn liền",
+    "variants": [
+      {
+        "label": "1 gói",
+        "price": 589000,
+        "oldPrice": 795000
+      },
+      {
+        "label": "2 gói",
+        "price": 1178000,
+        "oldPrice": 1590000
+      },
+      {
+        "label": "3 gói",
+        "price": 1767000,
+        "oldPrice": 2385000
+      },
+      {
+        "label": "4 gói",
+        "price": 2356000,
+        "oldPrice": 3181000
+      },
+      {
+        "label": "5 gói",
+        "price": 2945000,
+        "oldPrice": 3976000
+      }
+    ],
+    "desc": "Rong biển Busan trộn cơm Hàn Quốc, bổ sung chất xơ và vitamin tự nhiên từ rong biển. Vị mặn nhẹ, giòn, trộn cơm là bé ăn hết bát.",
+    "highlights": [
+      "Rong biển Busan – vùng rong biển nổi tiếng Hàn Quốc",
+      "Bổ sung chất xơ, vitamin tự nhiên",
+      "Trộn cơm, làm cơm nắm, kimbap cho bé"
+    ],
+    "usage": "Trộn 1 gói nhỏ với cơm nóng hoặc rắc lên cháo. Bảo quản nơi khô ráo, dùng hết sau khi mở gói."
+  },
+  {
+    "id": "22644617070",
+    "name": "Hồng Sâm ChuChu Hàn Quốc Giúp Trẻ Tăng Sức Đề Kháng, ăn ngon Và Phục Hồi Sức Khoẻ Sau Khi Bị Ốm",
+    "short": "Hồng sâm ChuChu ăn ngon & phục hồi sau ốm",
+    "brand": "chuchu",
+    "cat": "hong-sam",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y"
+    ],
+    "needs": [
+      "de-khang",
+      "tang-can",
+      "phuc-hoi"
+    ],
+    "price": 290000,
+    "oldPrice": 392000,
+    "rating": 4.92,
+    "reviews": 165,
+    "sold": 699,
+    "stock": 50,
+    "shape": "box",
+    "color": "#C62828",
+    "weight": "Gói 20ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Bán chạy"
+    ],
+    "image": "img/22644617070.jpg",
+    "thumb": "img/thumb/22644617070.jpg",
+    "images": [
+      "img/22644617070.jpg",
+      "img/22644617070-4.jpg",
+      "img/22644617070-5.jpg"
+    ],
+    "shopeeId": "22644617070",
+    "shopeeUrl": "https://shopee.vn/product/837223358/22644617070",
+    "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
+    "variants": [
+      {
+        "label": "Việt quất – nho · 10 gói",
+        "price": 290000,
+        "oldPrice": 392000
+      },
+      {
+        "label": "Táo lê · 10 gói",
+        "price": 290000,
+        "oldPrice": 392000
+      },
+      {
+        "label": "Mix vị · 10 gói",
+        "price": 290000,
+        "oldPrice": 392000
+      },
+      {
+        "label": "Mix vị · 20 gói (nửa thùng)",
+        "price": 580000,
+        "oldPrice": 783000
+      },
+      {
+        "label": "Táo lê · 20 gói (nửa thùng)",
+        "price": 580000,
+        "oldPrice": 783000
+      },
+      {
+        "label": "Việt quất – nho · 20 gói (nửa thùng)",
+        "price": 580000,
+        "oldPrice": 783000
+      },
+      {
+        "label": "Mix vị · 40 gói (1 thùng)",
+        "price": 1160000,
+        "oldPrice": 1566000
+      },
+      {
+        "label": "Việt quất – nho · 40 gói (1 thùng)",
+        "price": 1160000,
+        "oldPrice": 1566000
+      },
+      {
+        "label": "Táo lê · 40 gói (1 thùng)",
+        "price": 1160000,
+        "oldPrice": 1566000
+      }
+    ],
+    "desc": "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm giúp trẻ tăng sức đề kháng, ăn ngon và phục hồi sức khoẻ sau khi bị ốm. Có gói 10, nửa thùng và nguyên thùng.",
+    "highlights": [
+      "Cho bé hay ốm vặt, mới ốm dậy, biếng ăn",
+      "Vị táo lê, việt quất – nho hoặc mix",
+      "Nửa thùng / 1 thùng giá tốt hơn"
+    ],
+    "usage": "Bé uống 1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì."
+  },
+  {
+    "id": "26156646705",
+    "name": "Gạc Hươu Non Sumo Chiết Xuất Nhung Hươu Hỗ Trợ Tăng Cân, Giúp Con Ăn Ngon",
+    "short": "Gạc hươu non Sumo",
+    "brand": "sumo",
+    "cat": "tang-can",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y"
+    ],
+    "needs": [
+      "tang-can",
+      "canxi",
+      "de-khang"
+    ],
+    "price": 390000,
+    "oldPrice": 527000,
+    "rating": 5,
+    "reviews": 32,
+    "sold": 161,
+    "stock": 50,
+    "shape": "box",
+    "color": "#8D6E63",
+    "weight": "Gói",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Giảm sâu"
+    ],
+    "image": "img/26156646705.jpg",
+    "thumb": "img/thumb/26156646705.jpg",
+    "images": [
+      "img/26156646705.jpg",
+      "img/26156646705-2.jpg",
+      "img/26156646705-3.jpg",
+      "img/26156646705-4.jpg",
+      "img/26156646705-5.jpg"
+    ],
+    "shopeeId": "26156646705",
+    "shopeeUrl": "https://shopee.vn/product/837223358/26156646705",
+    "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
+    "variants": [
+      {
+        "label": "10 gói",
+        "price": 390000,
+        "oldPrice": 527000
+      },
+      {
+        "label": "20 gói",
+        "price": 780000,
+        "oldPrice": 1053000
+      },
+      {
+        "label": "30 gói",
+        "price": 1150000,
+        "oldPrice": 1553000
+      },
+      {
+        "label": "Thùng 40 gói",
+        "price": 1490000,
+        "oldPrice": 2012000
+      }
+    ],
+    "desc": "Gạc hươu non Sumo chiết xuất nhung hươu Hàn Quốc dạng gói uống. Theo nhà sản xuất, sản phẩm hỗ trợ bé tăng cân, ăn ngon miệng và bổ sung canxi cho bé chậm lớn.",
+    "highlights": [
+      "Chiết xuất nhung hươu non Hàn Quốc",
+      "Hỗ trợ tăng cân, ăn ngon cho bé chậm lớn",
+      "Có bản gạc canxi (thùng)"
+    ],
+    "usage": "Bé uống 1 gói/ngày sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc chuyên gia dinh dưỡng tư vấn."
+  },
+  {
+    "id": "23660586997",
+    "name": "Nước ép Lotte Đề Kháng – nước ép lê & rễ cát cánh Hàn Quốc cho bé",
+    "short": "Nước ép Lotte Đề Kháng",
+    "brand": "lotte",
+    "cat": "nuoc-ep",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "de-khang",
+      "tang-can",
+      "tieu-hoa",
+      "organic"
+    ],
+    "price": 448000,
+    "oldPrice": 627000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 3,
+    "shape": "box",
+    "color": "#FB8C00",
+    "weight": "Gói 80ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot",
+      "Giảm sâu"
+    ],
+    "image": "img/23660586997.jpg",
+    "thumb": "img/thumb/23660586997.jpg",
+    "images": [
+      "img/23660586997.jpg",
+      "img/23660586997-7.jpg",
+      "img/23660586997-8.jpg",
+      "img/23660586997-2.jpg",
+      "img/23660586997-3.jpg",
+      "img/23660586997-4.jpg",
+      "img/23660586997-5.jpg",
+      "img/23660586997-6.jpg"
+    ],
+    "shopeeId": "23660586997",
+    "shopeeUrl": "https://shopee.vn/product/837223358/23660586997",
+    "shopeeCategory": "Thực phẩm và đồ uống › Đồ uống › Khác",
+    "variants": [
+      {
+        "label": "Hộp 10 gói",
+        "price": 448000,
+        "oldPrice": 627000
+      },
+      {
+        "label": "Thùng 30 gói (3 hộp)",
+        "price": 1317000,
+        "oldPrice": 1844000
+      }
+    ],
+    "desc": "Nước ép lê và rễ cát cánh (doraji) hữu cơ dòng Khoẻ Mạnh (무적튼튼) của Lotte, do Viện Pasteur Hàn Quốc nghiên cứu và sản xuất, gói 80ml có ống hút, dùng cho bé từ 12 tháng tuổi. Theo nhà sản xuất: lê & rễ cát cánh hữu cơ, hồng sâm organic cô đặc và lợi khuẩn EPS Lactobacillus (được cấp bằng sáng chế); không chất bảo quản, phụ gia; chứng nhận Organic và HACCP Hàn Quốc. Bổ sung vitamin C, kali, magie, axit amin, saponin, kẽm, canxi hỗ trợ đề kháng và hấp thu dưỡng chất.",
+    "highlights": [
+      "Dùng cho bé từ 12 tháng tuổi",
+      "Lê & rễ cát cánh hữu cơ + hồng sâm cô đặc + lợi khuẩn EPS",
+      "Chứng nhận Organic, HACCP – không chất bảo quản, phụ gia",
+      "Hộp 10 gói · thùng 30 gói (3 hộp), gói nhỏ có ống hút tiện mang đi"
+    ],
+    "usage": "Bé từ 12 tháng: 1 gói (80ml)/ngày sau bữa ăn, lắc nhẹ trước khi uống, ngon hơn khi để mát. Đã mở gói nên dùng ngay. Theo hướng dẫn trên bao bì."
+  },
+  {
+    "id": "26060839019",
+    "name": "Váng Sữa Canxi Hữu Cơ CALCIUMORE CALCIUM SUPPLEMENT Hàn Quốc Bé Lớn Khỏe Dành Cho Trẻ & Người Lớn",
+    "short": "Váng sữa canxi hữu cơ Calciumore",
+    "brand": "calciumore",
+    "cat": "vitamin",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tang-chieu-cao",
+      "canxi",
+      "organic",
+      "cho-me"
+    ],
+    "price": 827000,
+    "oldPrice": 1075000,
+    "rating": 4.92,
+    "reviews": 156,
+    "sold": 663,
+    "stock": 50,
+    "priority": 3,
+    "shape": "box",
+    "color": "#F9A825",
+    "weight": "30 gói",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot"
+    ],
+    "image": "img/26060839019.jpg",
+    "thumb": "img/thumb/26060839019.jpg",
+    "images": [
+      "img/26060839019.jpg",
+      "img/26060839019-3.jpg",
+      "img/26060839019-4.jpg",
+      "img/26060839019-5.jpg"
+    ],
+    "shopeeId": "26060839019",
+    "shopeeUrl": "https://shopee.vn/product/837223358/26060839019",
+    "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Đồ ăn nhẹ cho bé",
+    "variants": [
+      {
+        "label": "30 gói (không hộp)",
+        "price": 827000,
+        "oldPrice": 1075000
+      },
+      {
+        "label": "1 hộp 90 gói",
+        "price": 2480000,
+        "oldPrice": 3224000
+      },
+      {
+        "label": "2 hộp 180 gói",
+        "price": 4960000,
+        "oldPrice": 6448000
+      },
+      {
+        "label": "1 hộp váng sữa canxi+1 d3k2 giảm 5%",
+        "price": 2726000
+      }
+    ],
+    "desc": "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
+    "highlights": [
+      "Canxi hữu cơ dễ hấp thu",
+      "Dạng váng sữa thơm ngon, bé không sợ uống",
+      "Hộp 90 gói dùng trong 3 tháng; dùng được cho cả mẹ và người lớn"
+    ],
+    "usage": "Bé dùng 1 gói/ngày sau bữa ăn. Liều dùng theo hướng dẫn trên bao bì."
+  },
+  {
+    "id": "49061985399",
+    "name": "Tinh Chất Nghệ Nano Curcumin 365 Plus Hàn Quốc 32 Tép/Hộp - Hỗ Trợ Dạ Dày, Đẹp Da, Mờ Thâm Sẹo",
+    "short": "Nghệ nano Curcumin 365 Plus",
+    "brand": "365plus",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 1290000,
+    "oldPrice": 1742000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 5,
+    "stock": 50,
+    "shape": "box",
+    "color": "#EF6C00",
+    "weight": "32 tép/hộp",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Cho mẹ"
+    ],
+    "image": "img/49061985399.jpg",
+    "thumb": "img/thumb/49061985399.jpg",
+    "images": [
+      "img/49061985399.jpg",
+      "img/49061985399-2.jpg",
+      "img/49061985399-3.jpg",
+      "img/49061985399-4.jpg",
+      "img/49061985399-5.jpg"
+    ],
+    "shopeeId": "49061985399",
+    "shopeeUrl": "https://shopee.vn/product/837223358/49061985399",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc da mặt › Tinh chất dưỡng",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 1290000,
+        "oldPrice": 1742000
+      },
+      {
+        "label": "2 hộp",
+        "price": 2580000,
+        "oldPrice": 3484000
+      }
+    ],
+    "desc": "Tinh chất nghệ nano Curcumin 365 Plus Hàn Quốc, hộp 32 tép. Theo nhà sản xuất, sản phẩm hỗ trợ dạ dày, giúp đẹp da, mờ thâm sẹo – phù hợp cho mẹ sau sinh.",
+    "highlights": [
+      "Nano curcumin hấp thu tốt hơn nghệ thường",
+      "Hỗ trợ dạ dày, đẹp da, mờ thâm",
+      "Tép nhỏ tiện dùng hằng ngày"
+    ],
+    "usage": "Người lớn dùng 1 tép/ngày sau ăn. Dùng theo hướng dẫn trên bao bì. Mẹ đang mang thai hoặc cho con bú cần hỏi ý kiến bác sĩ trước khi dùng."
+  },
+  {
+    "id": "41353214697",
+    "name": "Nước ép Lotte Tăng Cao – nước ép táo & củ dền hữu cơ Hàn Quốc cho bé",
+    "short": "Nước ép Lotte Tăng Cao",
+    "brand": "lotte",
+    "cat": "nuoc-ep",
+    "ages": [
+      "6-12m",
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "canxi",
+      "organic",
+      "an-dam"
+    ],
+    "price": 448000,
+    "oldPrice": 627000,
+    "rating": 5,
+    "reviews": 23,
+    "sold": 190,
+    "stock": 50,
+    "priority": 3,
+    "shape": "box",
+    "color": "#2E7D32",
+    "weight": "10 gói",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot"
+    ],
+    "image": "img/41353214697.jpg",
+    "thumb": "img/thumb/41353214697.jpg",
+    "images": [
+      "img/41353214697.jpg",
+      "img/41353214697-3.jpg",
+      "img/41353214697-4.jpg",
+      "img/41353214697-5.jpg"
+    ],
+    "shopeeId": "41353214697",
+    "shopeeUrl": "https://shopee.vn/product/837223358/41353214697",
+    "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Khác",
+    "variants": [
+      {
+        "label": "Hộp 10 gói",
+        "price": 448000,
+        "oldPrice": 627000
+      },
+      {
+        "label": "Thùng 30 gói (3 hộp)",
+        "price": 1317000,
+        "oldPrice": 1844000
+      }
+    ],
+    "desc": "Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
+    "highlights": [
+      "Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm",
+      "Táo & củ dền hữu cơ, chứng nhận Organic, HACCP",
+      "Bổ sung canxi, sắt, axit folic"
+    ],
+    "usage": "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì."
+  },
+  {
+    "id": "28467224687",
+    "name": "TẢO ĐÔ HOÀNG GIA Hotan Tân Cương bigsize hàng loại 1 cao cấp giúp bồi bổ sức khoẻ, hỗ trợ giấc ngủ",
+    "short": "Táo đỏ Hoàng Gia Hotan Tân Cương gói 1kg",
+    "brand": "primefood",
+    "cat": "thuc-pham",
+    "ages": [],
+    "needs": [
+      "an-vat",
+      "cho-me"
+    ],
+    "price": 299000,
+    "oldPrice": 404000,
+    "rating": 4.9,
+    "reviews": 0,
+    "sold": 60,
+    "stock": 50,
+    "shape": "box",
+    "color": "#C62828",
+    "weight": "Gói 1kg",
+    "origin": "Trung Quốc",
+    "tags": [],
+    "family": true,
+    "image": "img/28467224687.jpg",
+    "thumb": "img/thumb/28467224687.jpg",
+    "images": [
+      "img/28467224687.jpg",
+      "img/28467224687-2.jpg",
+      "img/28467224687-3.jpg",
+      "img/28467224687-4.jpg",
+      "img/28467224687-5.jpg"
+    ],
+    "shopeeId": "28467224687",
+    "shopeeUrl": "https://shopee.vn/product/837223358/28467224687",
+    "shopeeCategory": "Thực phẩm và đồ uống › Đồ ăn vặt › Thức ăn khô › Hoa quả sấy khô",
+    "variants": [
+      {
+        "label": "1 gói",
+        "price": 299000,
+        "oldPrice": 404000
+      },
+      {
+        "label": "2 gói",
+        "price": 598000,
+        "oldPrice": 807000
+      }
+    ],
+    "desc": "Táo đỏ Hotan (Hoà Điền, Tân Cương) loại 1 size lớn, quả to dày thịt, ngọt tự nhiên, sấy khô không đường, không chất bảo quản. Dùng ăn liền, pha trà, nấu chè, hầm canh, chưng yến cho cả nhà.",
+    "highlights": [
+      "100% táo đỏ Hotan Tân Cương loại 1, size big",
+      "Không đường, không chất bảo quản",
+      "Gói 1kg – mua 2 gói tiết kiệm hơn"
+    ],
+    "usage": "Ăn trực tiếp 3–5 quả/ngày, hoặc pha trà, nấu chè, hầm canh. Bảo quản nơi khô ráo, đậy kín sau khi mở."
+  },
+  {
+    "id": "26523206270",
+    "name": "Sữa Tươi Tiệt Trùng Norco Nội Địa Úc Bổ Sung Sức Khỏe Cho Cơ Thể - Hương Vị Nguyên Chất, Dinh Dưỡng",
+    "short": "Sữa tươi tiệt trùng Norco nguyên kem nội địa Úc 1L",
+    "brand": "norco",
+    "cat": "sua",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "sua-tuoi",
+      "canxi",
+      "tang-chieu-cao"
+    ],
+    "price": 720000,
+    "oldPrice": 972000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 76,
+    "stock": 50,
+    "shape": "carton",
+    "color": "#1565C0",
+    "weight": "Thùng",
+    "origin": "Úc",
+    "tags": [],
+    "image": "img/26523206270.jpg",
+    "thumb": "img/thumb/26523206270.jpg",
+    "images": [
+      "img/26523206270.jpg",
+      "img/26523206270-2.jpg",
+      "img/26523206270-3.jpg",
+      "img/26523206270-4.jpg",
+      "img/26523206270-5.jpg"
+    ],
+    "shopeeId": "26523206270",
+    "shopeeUrl": "https://shopee.vn/product/837223358/26523206270",
+    "shopeeCategory": "Thực phẩm và đồ uống › Sữa - trứng › Sữa › Sữa tiệt trùng",
+    "variants": [
+      {
+        "label": "1 thùng",
+        "price": 720000,
+        "oldPrice": 972000
+      },
+      {
+        "label": "2 thùng",
+        "price": 1440000,
+        "oldPrice": 1944000
+      }
+    ],
+    "desc": "Sữa tươi tiệt trùng Norco – thương hiệu sữa hơn 128 năm của Úc, sản xuất từ đàn bò ăn cỏ nội địa Úc; sữa nguyên kem giàu canxi và đạm tự nhiên, vị béo thanh, không đường. Phù hợp bé từ 1 tuổi và cả gia đình.",
+    "highlights": [
+      "Thương hiệu Norco 128 năm, hàng nội địa Úc",
+      "Sữa bò ăn cỏ, không đường, không chất bảo quản",
+      "Giàu canxi & đạm cho bé tăng chiều cao"
+    ],
+    "usage": "Bé trên 1 tuổi uống 1–2 ly (200–400ml)/ngày. Sau khi mở nắp bảo quản lạnh và dùng trong 3 ngày."
+  },
+  {
+    "id": "13899935993",
+    "name": "Sữa Dê Lotte Kid A+ Bổ Sung Canxi Hỗ Trợ Phát Triển Chiều Cao, Tăng Đề Kháng Cho Trẻ 760g",
+    "short": "Sữa dê Lotte Kid A+ 760g",
+    "brand": "lotte",
+    "cat": "sua",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "sua-cong-thuc",
+      "canxi",
+      "tang-chieu-cao",
+      "de-khang"
+    ],
+    "price": 850000,
+    "oldPrice": 1148000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 33,
+    "stock": 50,
+    "priority": 2,
+    "shape": "can",
+    "color": "#E60012",
+    "weight": "Lon 760g",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "formula": true,
+    "image": "img/13899935993.jpg",
+    "thumb": "img/thumb/13899935993.jpg",
+    "images": [
+      "img/13899935993.jpg",
+      "img/13899935993-2.jpg",
+      "img/13899935993-3.jpg",
+      "img/13899935993-4.jpg"
+    ],
+    "shopeeId": "13899935993",
+    "shopeeUrl": "https://shopee.vn/product/837223358/13899935993",
+    "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa công thức",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 850000,
+        "oldPrice": 1148000
+      },
+      {
+        "label": "2 hộp",
+        "price": 1700000,
+        "oldPrice": 2296000
+      }
+    ],
+    "desc": "Sữa dê Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: bổ sung canxi, vitamin D, Alpha-lactalbumin (1.050mg/100g) hỗ trợ miễn dịch và hệ lợi khuẩn thực vật (100 triệu CFU/lon) giúp tiêu hoá tốt; đạm sữa dê dễ hấp thu, phù hợp bé chậm tăng cân.",
+    "highlights": [
+      "Sữa dê dễ hấp thu, hỗ trợ tăng cân & chiều cao",
+      "Alpha-lactalbumin + lợi khuẩn hỗ trợ miễn dịch, tiêu hoá",
+      "Đạt tiêu chuẩn xuất khẩu nhiều thị trường"
+    ],
+    "usage": "Pha 7–8 muỗng gạt (muỗng trong hộp) với 180ml nước ấm 40–50°C được 1 ly 240ml. 2 ly/ngày. Dùng trong 3 tuần sau khi mở."
+  },
+  {
+    "id": "19491505209",
+    "name": "Sữa Bò Biostime SN-2 Bio Plus HPO- ON FORMULA LON- Tăng Cường Đề Kháng, Dưỡng Chất- Giúp Bé Ngủ Ngon, Ít Quấy Khóc",
+    "short": "Sữa bò Biostime SN-2 Bio Plus HPO 800g",
+    "brand": "biostime",
+    "cat": "sua",
+    "ages": [
+      "0-6m",
+      "6-12m",
+      "1-3y"
+    ],
+    "needs": [
+      "sua-cong-thuc",
+      "de-khang",
+      "tieu-hoa"
+    ],
+    "price": 1290000,
+    "oldPrice": 1742000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "shape": "can",
+    "color": "#1E88E5",
+    "weight": "Lon 800g",
+    "origin": "Úc",
+    "tags": [],
+    "formula": true,
+    "image": "img/19491505209.jpg",
+    "thumb": "img/thumb/19491505209.jpg",
+    "images": [
+      "img/19491505209.jpg",
+      "img/19491505209-2.jpg",
+      "img/19491505209-3.jpg",
+      "img/19491505209-4.jpg",
+      "img/19491505209-5.jpg"
+    ],
+    "shopeeId": "19491505209",
+    "shopeeUrl": "https://shopee.vn/product/837223358/19491505209",
+    "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa pha sẵn",
+    "variants": [
+      {
+        "label": "Số 1 (0–6 tháng)",
+        "price": 1290000,
+        "oldPrice": 1742000
+      },
+      {
+        "label": "Số 2 (6–12 tháng)",
+        "price": 1290000,
+        "oldPrice": 1742000
+      },
+      {
+        "label": "Số 3 (1–3 tuổi)",
+        "price": 1290000,
+        "oldPrice": 1742000
+      }
+    ],
+    "desc": "Sữa công thức Biostime SN-2 Bio Plus HPO (Úc) lon 800g, chất béo cấu trúc SN-2 gần giống sữa mẹ, bổ sung lợi khuẩn và HMO. Theo nhà sản xuất: hỗ trợ tăng đề kháng, tiêu hoá dễ, giảm táo bón.",
+    "highlights": [
+      "Sản xuất tại Úc, kiểm soát chất lượng nghiêm ngặt",
+      "Chất béo SN-2 + HPO + lợi khuẩn",
+      "Có số 1, 2, 3 theo độ tuổi"
+    ],
+    "usage": "1 muỗng gạt (4,5g) pha với 30ml nước ấm. Pha theo bảng trên hộp; sữa đã pha dùng trong 1 giờ (2 giờ nếu bảo quản lạnh)."
+  },
+  {
+    "id": "19682441455",
+    "name": "SỮA DÊ BIOSTIME- 800g - Hỗ Trợ Bé Phát Triển Toàn Diện Về Chiều Cao- Cân Nặng",
+    "short": "Sữa dê Biostime 800g",
+    "brand": "biostime",
+    "cat": "sua",
+    "ages": [
+      "0-6m",
+      "6-12m",
+      "1-3y"
+    ],
+    "needs": [
+      "sua-cong-thuc",
+      "tang-can",
+      "tang-chieu-cao"
+    ],
+    "price": 1170000,
+    "oldPrice": 1580000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 32,
+    "stock": 50,
+    "shape": "can",
+    "color": "#6D4C41",
+    "weight": "Lon 800g",
+    "origin": "Úc",
+    "tags": [],
+    "formula": true,
+    "image": "img/19682441455.jpg",
+    "thumb": "img/thumb/19682441455.jpg",
+    "images": [
+      "img/19682441455.jpg",
+      "img/19682441455-2.jpg",
+      "img/19682441455-3.jpg",
+      "img/19682441455-4.jpg"
+    ],
+    "shopeeId": "19682441455",
+    "shopeeUrl": "https://shopee.vn/product/837223358/19682441455",
+    "shopeeCategory": "Mẹ & Bé › Chăm sóc sức khỏe bé › Khác",
+    "variants": [
+      {
+        "label": "Số 1 (0–6 tháng)",
+        "price": 1170000,
+        "oldPrice": 1580000
+      },
+      {
+        "label": "Số 2 (6–12 tháng)",
+        "price": 1170000,
+        "oldPrice": 1580000
+      },
+      {
+        "label": "Số 3 (từ 12 tháng)",
+        "price": 1170000,
+        "oldPrice": 1580000
+      }
+    ],
+    "desc": "Sữa dê công thức Biostime (Úc) lon 800g – dòng sữa dê cao cấp hỗ trợ bé phát triển toàn diện chiều cao và cân nặng; đạm sữa dê nhỏ, dễ tiêu, ít gây dị ứng. Số 1: 0–6 tháng, số 2: 6–12 tháng, số 3: từ 12 tháng.",
+    "highlights": [
+      "Sữa dê dễ tiêu, phù hợp bé nhạy cảm với sữa bò",
+      "Sản xuất tại Úc",
+      "Đủ số 1, 2, 3"
+    ],
+    "usage": "1 muỗng gạt pha với 30ml nước ấm theo bảng trên hộp. Sữa pha xong dùng trong 1 giờ."
+  },
+  {
+    "id": "20992159167",
+    "name": "SỮA BÒ ORGANIC BIOSTIME- GIÚP BÉ TĂNG ĐỀ KH.ÁNG, PHÁT TRIỂN CHIỀU CAO, PHÁT TRIỂN NÃO BỘ",
+    "short": "Sữa bò Organic Biostime 800g (Pháp)",
+    "brand": "biostime",
+    "cat": "sua",
+    "ages": [
+      "0-6m",
+      "6-12m",
+      "1-3y"
+    ],
+    "needs": [
+      "sua-cong-thuc",
+      "organic",
+      "de-khang",
+      "tang-chieu-cao"
+    ],
+    "price": 1290000,
+    "oldPrice": 1742000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 1,
+    "stock": 50,
+    "shape": "can",
+    "color": "#2E7D32",
+    "weight": "Lon 800g",
+    "origin": "Pháp",
+    "tags": [],
+    "formula": true,
+    "image": "img/20992159167.jpg",
+    "thumb": "img/thumb/20992159167.jpg",
+    "images": [
+      "img/20992159167.jpg",
+      "img/20992159167-2.jpg",
+      "img/20992159167-3.jpg",
+      "img/20992159167-4.jpg",
+      "img/20992159167-5.jpg"
+    ],
+    "shopeeId": "20992159167",
+    "shopeeUrl": "https://shopee.vn/product/837223358/20992159167",
+    "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Sữa công thức",
+    "variants": [
+      {
+        "label": "Số 1 (0–6 tháng)",
+        "price": 1290000,
+        "oldPrice": 1742000
+      },
+      {
+        "label": "Số 2 (6–12 tháng)",
+        "price": 1290000,
+        "oldPrice": 1742000
+      },
+      {
+        "label": "Số 3 (từ 12 tháng)",
+        "price": 1290000,
+        "oldPrice": 1742000
+      }
+    ],
+    "desc": "Sữa bò hữu cơ Biostime Organic nội địa Pháp, lon 800g. Theo nhà sản xuất: nguyên liệu organic, chất béo SN-2 giúp hấp thu tốt, hỗ trợ tăng đề kháng và phát triển chiều cao.",
+    "highlights": [
+      "Sữa hữu cơ nội địa Pháp",
+      "Chất béo liên kết SN-2",
+      "Đủ số 1, 2, 3"
+    ],
+    "usage": "Pha theo bảng hướng dẫn trên hộp với nước ấm 40–50°C."
+  },
+  {
+    "id": "47357633686",
+    "name": "Sâm Organic Pinkfong Kid Up 40ml – Tăng Chiều Cao, Tăng Đề Kháng, Giúp Bé Ăn Ngon Ngủ Ngon",
+    "short": "Sâm Organic Pinkfong Kid Up 40ml",
+    "brand": "pinkfong",
+    "cat": "hong-sam",
+    "ages": [
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tang-chieu-cao",
+      "de-khang",
+      "tang-can"
+    ],
+    "price": 1190000,
+    "oldPrice": 1607000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 1,
+    "stock": 50,
+    "shape": "box",
+    "color": "#EC407A",
+    "weight": "Hộp (gói 40ml)",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/47357633686.jpg",
+    "thumb": "img/thumb/47357633686.jpg",
+    "images": [
+      "img/47357633686.jpg",
+      "img/47357633686-2.jpg",
+      "img/47357633686-3.jpg",
+      "img/47357633686-4.jpg",
+      "img/47357633686-5.jpg"
+    ],
+    "shopeeId": "47357633686",
+    "shopeeUrl": "https://shopee.vn/product/837223358/47357633686",
+    "shopeeCategory": "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 1190000,
+        "oldPrice": 1607000
+      },
+      {
+        "label": "2 hộp",
+        "price": 2380000,
+        "oldPrice": 3213000
+      }
+    ],
+    "desc": "Sâm hữu cơ Pinkfong Kid Up gói 40ml (Hàn Quốc), hạn dùng 24 tháng. Theo nhà sản xuất: hỗ trợ bé phát triển chiều cao và thể chất, tăng đề kháng, giảm biếng ăn.",
+    "highlights": [
+      "Nhân sâm organic Hàn Quốc",
+      "Nhân vật Pinkfong bé thích",
+      "Hộp gói 40ml tiện mang theo – mua 2 hộp tiết kiệm hơn"
+    ],
+    "usage": "Bé 3–6 tuổi: 2/3 gói/ngày; trên 7 tuổi: 1–2 gói/ngày, uống buổi sáng."
+  },
+  {
+    "id": "48112514210",
+    "name": "SUPER COLLAGEN ALPHA 90 Gói Collagen Peptide VERISOL Đức, Hỗ Trợ Đẹp Da, Tăng Độ Đàn Hồi, Dưỡng Ẩm",
+    "short": "Super Collagen Alpha 90 gói (Đức)",
+    "brand": "alpha",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 3600000,
+    "oldPrice": 4860000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 4,
+    "stock": 50,
+    "shape": "box",
+    "color": "#8E24AA",
+    "weight": "Hộp 90 gói (270g)",
+    "origin": "Đức",
+    "tags": [],
+    "image": "img/48112514210.jpg",
+    "thumb": "img/thumb/48112514210.jpg",
+    "images": [
+      "img/48112514210.jpg",
+      "img/48112514210-2.jpg",
+      "img/48112514210-3.jpg",
+      "img/48112514210-4.jpg",
+      "img/48112514210-5.jpg"
+    ],
+    "shopeeId": "48112514210",
+    "shopeeUrl": "https://shopee.vn/product/837223358/48112514210",
+    "shopeeCategory": "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ làm đẹp",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 3600000,
+        "oldPrice": 4860000
+      },
+      {
+        "label": "2 hộp",
+        "price": 7200000,
+        "oldPrice": 9720000
+      }
+    ],
+    "desc": "Super Collagen Alpha hộp 90 gói, Collagen Peptide VERISOL® (Đức) kết hợp vitamin C, Hyaluronic Acid, Biotin, N-Acetylglucosamine và chiết xuất ốc sên. Theo nhà sản xuất: hỗ trợ da căng mịn, giảm nếp nhăn, chống lão hoá cho mẹ.",
+    "highlights": [
+      "Collagen VERISOL® Đức",
+      "Kèm vitamin C, HA, Biotin",
+      "Hộp 90 gói dùng 3 tháng"
+    ],
+    "usage": "Mỗi ngày 1 gói pha với nước, uống sau ăn. Phụ nữ có thai/cho con bú hỏi ý kiến bác sĩ."
+  },
+  {
+    "id": "25632276959",
+    "name": "Nước ép Lotte Tăng Cân Tự Nhiên – nước ép mận, nho & táo hữu cơ Hàn Quốc cho bé",
+    "short": "Nước ép Lotte Tăng Cân Tự Nhiên",
+    "brand": "lotte",
+    "cat": "nuoc-ep",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tang-can",
+      "tieu-hoa",
+      "organic",
+      "de-khang"
+    ],
+    "price": 448000,
+    "oldPrice": 627000,
+    "rating": 4.9,
+    "reviews": 0,
+    "sold": 431,
+    "stock": 50,
+    "priority": 3,
+    "shape": "box",
+    "color": "#7B1FA2",
+    "weight": "Gói 80ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot",
+      "Bán chạy"
+    ],
+    "image": "img/25632276959.jpg",
+    "thumb": "img/thumb/25632276959.jpg",
+    "images": [
+      "img/25632276959.jpg",
+      "img/25632276959-2.jpg",
+      "img/25632276959-3.jpg",
+      "img/25632276959-4.jpg",
+      "img/25632276959-5.jpg",
+      "img/25632276959-cb.jpg"
+    ],
+    "shopeeId": "25632276959",
+    "shopeeUrl": "https://shopee.vn/product/837223358/25632276959",
+    "shopeeCategory": "Thực phẩm và đồ uống › Đồ uống › Khác",
+    "variants": [
+      {
+        "label": "Hộp 10 gói",
+        "price": 448000,
+        "oldPrice": 627000
+      },
+      {
+        "label": "Thùng 30 gói (3 hộp)",
+        "price": 1317000,
+        "oldPrice": 1844000
+      }
+    ],
+    "desc": "Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
+    "highlights": [
+      "99,94% nguyên liệu hữu cơ, chứng nhận HACCP & Organic",
+      "Mận giúp nhuận tràng, giảm táo bón",
+      "Đã công bố ATTP tại Việt Nam (xem ảnh cuối)"
+    ],
+    "usage": "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay."
+  },
+  {
+    "id": "43532388498",
+    "name": "Ngũ Cốc Tuổi Thọ Healthy Fuwa-Saku Granola Nhật Bản 200g",
+    "short": "Granola Fuwa-Saku Nhật Bản 200g",
+    "brand": "sakuma",
+    "cat": "thuc-pham",
+    "ages": [
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "an-vat"
+    ],
+    "price": 289000,
+    "oldPrice": 390000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "shape": "box",
+    "color": "#8D6E63",
+    "weight": "Gói 200g",
+    "origin": "Nhật Bản",
+    "tags": [],
+    "family": true,
+    "image": "img/43532388498.jpg",
+    "thumb": "img/thumb/43532388498.jpg",
+    "images": [
+      "img/43532388498.jpg",
+      "img/43532388498-2.jpg",
+      "img/43532388498-3.jpg",
+      "img/43532388498-4.jpg",
+      "img/43532388498-5.jpg"
+    ],
+    "shopeeId": "43532388498",
+    "shopeeUrl": "https://shopee.vn/product/837223358/43532388498",
+    "shopeeCategory": "Thực phẩm và đồ uống › Ngũ cốc & mứt › Ngũ cốc",
+    "variants": [
+      {
+        "label": "1 gói 200g",
+        "price": 289000,
+        "oldPrice": 390000
+      },
+      {
+        "label": "2 gói",
+        "price": 578000,
+        "oldPrice": 780000
+      }
+    ],
+    "desc": "Ngũ cốc granola Healthy Fuwa-Saku (Sakuma Seika, Nhật Bản) kết hợp 15 loại ngũ cốc, hạt và trái cây tự nhiên; giàu chất xơ, vitamin, khoáng chất. 50g cung cấp 207 kcal, 3,3g protein – bữa sáng nhanh gọn cho cả nhà.",
+    "highlights": [
+      "15 loại ngũ cốc, hạt & trái cây",
+      "Giòn xốp, ít muối",
+      "Bữa sáng 5 phút cho cả gia đình"
+    ],
+    "usage": "50g granola + 200ml sữa tươi hoặc sữa chua. Đậy kín sau khi mở."
+  },
+  {
+    "id": "57413220644",
+    "name": "Mặt Nạ Chữa Lành Lô Hội CURE Hàn Quốc - Cấp Ẩm, Làm Dịu Da, Phục Hồi Da, Dưỡng Sáng Da,",
+    "short": "Mặt nạ thạch lô hội Cure Hàn Quốc",
+    "brand": "kimjeongmoon",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 790000,
+    "oldPrice": 1067000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#43A047",
+    "weight": "Hộp",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "img/57413220644.jpg",
+    "thumb": "img/thumb/57413220644.jpg",
+    "images": [
+      "img/57413220644.jpg",
+      "img/57413220644-2.jpg",
+      "img/57413220644-3.jpg",
+      "img/57413220644-4.jpg",
+      "img/57413220644-5.jpg"
+    ],
+    "shopeeId": "57413220644",
+    "shopeeUrl": "https://shopee.vn/product/837223358/57413220644",
+    "shopeeCategory": "Sắc Đẹp › Tắm & chăm sóc cơ thể › Mặt nạ ủ cơ thể",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 790000,
+        "oldPrice": 1067000
+      },
+      {
+        "label": "2 hộp",
+        "price": 1580000,
+        "oldPrice": 2134000
+      }
+    ],
+    "desc": "Mặt nạ thạch lô hội Cure (Kim Jeong Moon Aloe, Hàn Quốc) ứng dụng công nghệ Exosome, kết hợp lô hội, Niacinamide, Collagen thuỷ phân và vitamin. Theo nhà sản xuất: cấp ẩm sâu, làm dịu da, phục hồi da căng mướt.",
+    "highlights": [
+      "Thạch lô hội mát dịu",
+      "Niacinamide + Collagen thuỷ phân",
+      "Phù hợp mẹ sau sinh da khô, sạm"
+    ],
+    "usage": "Đắp 15–20 phút, 2–3 lần/tuần sau khi rửa mặt sạch."
+  },
+  {
+    "id": "57903449970",
+    "name": "Kem thắp sáng hồng da Cell Happy Co 5in1 nâng tone, bảo vệ da khỏi ánh nắng giúp da căng bóng",
+    "short": "Kem hồng da Cell Happy Co 5in1",
+    "brand": "cellhappy",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 693000,
+    "oldPrice": 936000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 11,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#F06292",
+    "weight": "Tuýp",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "img/57903449970.jpg",
+    "thumb": "img/thumb/57903449970.jpg",
+    "images": [
+      "img/57903449970.jpg",
+      "img/57903449970-2.jpg",
+      "img/57903449970-3.jpg",
+      "img/57903449970-4.jpg",
+      "img/57903449970-5.jpg"
+    ],
+    "shopeeId": "57903449970",
+    "shopeeUrl": "https://shopee.vn/product/837223358/57903449970",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc da mặt › Kem dưỡng ẩm",
+    "desc": "Kem dưỡng hồng da Cell Happy Co 5in1 (Hàn Quốc): nâng tone, chống nắng vô cơ không gây kích ứng, dưỡng ẩm, làm sáng và bảo vệ da khỏi tia UV. Theo nhà sản xuất: cho da căng bóng, trắng hồng tự nhiên.",
+    "highlights": [
+      "5 công dụng: nâng tone, chống nắng, dưỡng ẩm, sáng da, bảo vệ",
+      "Chống nắng vô cơ, không kích ứng",
+      "Thương hiệu Hàn Quốc"
+    ],
+    "usage": "Thoa lớp mỏng buổi sáng sau bước dưỡng, trước khi trang điểm."
+  },
+  {
+    "id": "27355720019",
+    "name": "Hồng Sâm Siêu Trí Tuệ Rich Kid- Tăng Cường Trí Tuệ , Cải Thiện Chức Năng Não Bộ",
+    "short": "Hồng sâm Siêu Trí Tuệ Rich Kid (Kinigini) hộp 10 gói",
+    "brand": "kinigini",
+    "cat": "hong-sam",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tri-nao",
+      "de-khang"
+    ],
+    "price": 480000,
+    "oldPrice": 648000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 213,
+    "stock": 50,
+    "shape": "box",
+    "color": "#5E35B1",
+    "weight": "Hộp 10 gói × 40ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Bán chạy"
+    ],
+    "image": "img/27355720019.jpg",
+    "thumb": "img/thumb/27355720019.jpg",
+    "images": [
+      "img/27355720019.jpg",
+      "img/27355720019-2.jpg",
+      "img/27355720019-3.jpg",
+      "img/27355720019-4.jpg",
+      "img/27355720019-5.jpg"
+    ],
+    "shopeeId": "27355720019",
+    "shopeeUrl": "https://shopee.vn/product/837223358/27355720019",
+    "shopeeCategory": "Mẹ & Bé › Chăm sóc sức khỏe bé › Khác",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 480000,
+        "oldPrice": 648000
+      },
+      {
+        "label": "2 hộp",
+        "price": 960000,
+        "oldPrice": 1296000
+      }
+    ],
+    "desc": "Hồng sâm hữu cơ Kinigini Kids Red Ginseng “Rich Kid” (Hàn Quốc), gói 40ml, hộp 10 gói, cho bé 2–15 tuổi. Theo nhà sản xuất: hỗ trợ phát triển trí não, tăng tập trung, tăng đề kháng.",
+    "highlights": [
+      "Hồng sâm hữu cơ cho bé 2–15 tuổi",
+      "Hỗ trợ trí não, tập trung khi đi học",
+      "Gói 40ml uống liền, ngon hơn khi lạnh"
+    ],
+    "usage": "Bé uống 1 gói/ngày hoặc 2–3 ngày 1 gói, uống trực tiếp, ngon hơn khi để lạnh."
+  },
+  {
+    "id": "51013054442",
+    "name": "Xịt Phun Sương Grace By Chera Snow White Tone-Up Booster 150ml Hàn Quốc  Dưỡng Trắng Làm Đều Màu Da",
+    "short": "Xịt phun sương nâng tone Grace By Chera 150ml",
+    "brand": "chera",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 835000,
+    "oldPrice": 1127000,
+    "rating": 5,
+    "reviews": 3,
+    "sold": 12,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#F48FB1",
+    "weight": "Chai 150ml",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "img/51013054442.jpg",
+    "thumb": "img/thumb/51013054442.jpg",
+    "images": [
+      "img/51013054442.jpg",
+      "img/51013054442-2.jpg",
+      "img/51013054442-3.jpg",
+      "img/51013054442-4.jpg",
+      "img/51013054442-5.jpg"
+    ],
+    "shopeeId": "51013054442",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/51013054442",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc da mặt › Xịt khoáng",
+    "variants": [
+      {
+        "label": "1 chai",
+        "price": 835000,
+        "oldPrice": 1127000
+      },
+      {
+        "label": "2 chai",
+        "price": 1598000,
+        "oldPrice": 2157000
+      },
+      {
+        "label": "3 chai",
+        "price": 2293000,
+        "oldPrice": 3096000
+      }
+    ],
+    "desc": "Xịt phun sương Grace By Chera Snow White Tone-Up Booster 150ml, sản xuất bởi SKIN N SKIN Co., Ltd (Hàn Quốc). Theo nhà sản xuất: nâng tone da tức thì, cấp ẩm, giúp da mềm mịn và đều màu hơn; dùng được cho cả mặt và toàn thân.",
+    "highlights": [
+      "Nâng tone tức thì, hiệu ứng trắng hồng tự nhiên",
+      "Cấp ẩm, da mềm mịn",
+      "Dùng cho cả mặt và body"
+    ],
+    "usage": "Làm sạch và lau khô da, xịt lượng vừa đủ rồi thoa đều, massage nhẹ tới khi thấm. Dùng buổi sáng hoặc trước khi ra ngoài."
+  },
+  {
+    "id": "24767149051",
+    "name": "Viên Uống PURE NMN 12000MG+ Chống Lão Hóa Cơ Thể Giúp Trẻ Hóa, Kéo Dài Tuổi Thọ Cải Thiện Sức Khỏe Và Sắc Đẹp Toàn Diện",
+    "short": "Viên uống Pure NMN 12000mg+ hộp 60 viên",
+    "brand": "clastive",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 6000000,
+    "oldPrice": 8100000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "shape": "bottle",
+    "color": "#455A64",
+    "weight": "Hộp 60 viên",
+    "origin": "Nhật Bản",
+    "tags": [],
+    "image": "img/24767149051.jpg",
+    "thumb": "img/thumb/24767149051.jpg",
+    "images": [
+      "img/24767149051.jpg",
+      "img/24767149051-2.jpg",
+      "img/24767149051-3.jpg",
+      "img/24767149051-4.jpg",
+      "img/24767149051-5.jpg"
+    ],
+    "shopeeId": "24767149051",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/24767149051",
+    "shopeeCategory": "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ làm đẹp",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 6000000,
+        "oldPrice": 8100000
+      },
+      {
+        "label": "2 hộp",
+        "price": 12000000,
+        "oldPrice": 16200000
+      }
+    ],
+    "desc": "Viên uống Pure NMN 12.000mg+ (Clastive, Nhật Bản), hộp 60 viên. Thành phần gồm NMN 99,99%, collagen peptide, nhau thai ngựa, glutathione và hyaluronic acid. Theo nhà sản xuất: hỗ trợ chống lão hoá, tăng cường năng lượng và cân bằng nội tiết.",
+    "highlights": [
+      "NMN 12.000mg+ độ tinh khiết 99,99%",
+      "Kèm collagen peptide, glutathione, HA",
+      "Hộp 60 viên dùng 1 tháng"
+    ],
+    "usage": "Uống 2 viên/ngày sau ăn sáng, uống với nhiều nước. Đọc kỹ hướng dẫn trên bao bì."
+  },
+  {
+    "id": "50002678694",
+    "name": "Thảm ngải cứu trị liệu Đông y giúp Giảm cảm lạnh chân tay tiêu viêm ngủ ngon giấc Lưu thông khí huyết Điều khiển t",
+    "short": "Thảm ngải cứu trị liệu 150×60cm",
+    "brand": "khac",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 900000,
+    "oldPrice": 1215000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 9,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#7CB342",
+    "weight": "Thảm 150×60cm",
+    "origin": "Việt Nam",
+    "tags": [],
+    "image": "img/50002678694.jpg",
+    "thumb": "img/thumb/50002678694.jpg",
+    "images": [
+      "img/50002678694.jpg",
+      "img/50002678694-2.jpg",
+      "img/50002678694-3.jpg",
+      "img/50002678694-4.jpg",
+      "img/50002678694-5.jpg"
+    ],
+    "shopeeId": "50002678694",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/50002678694",
+    "shopeeCategory": "Sức Khỏe › Chăm sóc cá nhân › Dụng cụ massage và trị liệu",
+    "variants": [
+      {
+        "label": "Thảm ngải cứu",
+        "price": 1990000,
+        "oldPrice": 2687000
+      },
+      {
+        "label": "Lõi thảm",
+        "price": 900000,
+        "oldPrice": 1215000
+      }
+    ],
+    "desc": "Thảm ngải cứu trị liệu kích thước 150×60cm, đệm sưởi điện tích hợp 220V–50Hz, có bộ điều khiển. Theo nhà sản xuất: hơi ấm từ ngải cứu giúp thư giãn vùng lưng, vai gáy và tay chân, hỗ trợ giấc ngủ và lưu thông khí huyết.",
+    "highlights": [
+      "Thảm ngải cứu 150×60cm, điều khiển thông minh",
+      "Toả nhiệt ấm đều vùng lưng – vai gáy",
+      "Thư giãn, hỗ trợ ngủ ngon"
+    ],
+    "usage": "Trải thảm, cắm điện và chọn mức nhiệt vừa với cơ thể, nằm 20–30 phút mỗi lần. Không dùng khi da có vết thương hở; rút điện sau khi dùng."
+  },
+  {
+    "id": "24465090622",
+    "name": "Sữa Tắm Dưỡng Trắng Body Glutanex 300ml Dưỡng Trắng Da Tức Thì Đem Lại Một Làn Da Trắng Sáng Và Ẩm Mượt Mềm Mại",
+    "short": "Sữa tắm dưỡng trắng Glutanex 300ml",
+    "brand": "glutanex",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1290000,
+    "oldPrice": 1742000,
+    "rating": 5,
+    "reviews": 1,
+    "sold": 10,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#1E88E5",
+    "weight": "Chai 300ml",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "img/24465090622.jpg",
+    "thumb": "img/thumb/24465090622.jpg",
+    "images": [
+      "img/24465090622.jpg",
+      "img/24465090622-2.jpg",
+      "img/24465090622-3.jpg",
+      "img/24465090622-4.jpg",
+      "img/24465090622-5.jpg"
+    ],
+    "shopeeId": "24465090622",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/24465090622",
+    "shopeeCategory": "Sắc Đẹp › Tắm & chăm sóc cơ thể › Xà phòng & sữa tắm",
+    "variants": [
+      {
+        "label": "1 chai",
+        "price": 1290000,
+        "oldPrice": 1742000
+      },
+      {
+        "label": "2 chai",
+        "price": 2580000,
+        "oldPrice": 3483000
+      }
+    ],
+    "desc": "Sữa tắm dưỡng trắng body Glutanex 300ml (Hàn Quốc) với glutathione, niacinamide, hyaluronic acid cùng chiết xuất rau má, hà thủ ô, hắc mai biển. Theo nhà sản xuất: làm sạch dịu nhẹ, dưỡng ẩm và giúp da sáng mịn hơn.",
+    "highlights": [
+      "Glutathione + Niacinamide + HA",
+      "Làm sạch dịu nhẹ, dưỡng ẩm",
+      "Chai 300ml dùng cho cả nhà"
+    ],
+    "usage": "Lấy lượng vừa đủ, tạo bọt và massage khắp cơ thể 1–2 phút rồi rửa sạch với nước."
+  },
+  {
+    "id": "57556697426",
+    "name": "Son Filler Môi pH Hồng Tự Nhiên – Plump & Glow Lip Plumper",
+    "short": "Son filler căng mọng môi RVB LAB Lip Explosion",
+    "brand": "rvblab",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 890000,
+    "oldPrice": 1202000,
+    "rating": 5,
+    "reviews": 3,
+    "sold": 17,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#C2185B",
+    "weight": "Tuýp",
+    "origin": "Ý",
+    "tags": [],
+    "image": "img/57556697426.jpg",
+    "thumb": "img/thumb/57556697426.jpg",
+    "images": [
+      "img/57556697426.jpg",
+      "img/57556697426-2.jpg",
+      "img/57556697426-3.jpg",
+      "img/57556697426-4.jpg",
+      "img/57556697426-5.jpg"
+    ],
+    "shopeeId": "57556697426",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/57556697426",
+    "shopeeCategory": "Sắc Đẹp › Trang điểm › Trang điểm môi › Son làm căng môi",
+    "variants": [
+      {
+        "label": "1 cây",
+        "price": 890000,
+        "oldPrice": 1202000
+      },
+      {
+        "label": "2 cây",
+        "price": 1780000,
+        "oldPrice": 2403000
+      }
+    ],
+    "desc": "Son filler môi RVB LAB Plump & Glow, công thức có chiết xuất ớt Capsicum, dầu jojoba, lựu, vitamin E và ceramide. Sắc tố phản ứng với độ pH môi tạo màu hồng tự nhiên riêng cho từng người. Theo nhà sản xuất: tạo hiệu ứng làm đầy môi tức thì.",
+    "highlights": [
+      "Hiệu ứng filler, môi căng mọng tự nhiên",
+      "Màu hồng đổi theo độ pH của môi",
+      "Dưỡng ẩm với jojoba, vitamin E, ceramide"
+    ],
+    "usage": "Thoa một lớp mỏng lên môi đã làm sạch, có thể dùng riêng hoặc dặm lên son khác. Cảm giác châm nhẹ lúc đầu là bình thường."
+  },
+  {
+    "id": "24015142248",
+    "name": "Serum RVB LAB HYALU C+ Tinh Chất Đậm Đặc Làm Sáng Da Chống Lão Hóa Chai Có Nắp Nhỏ Giọt 30ml",
+    "short": "Serum RVB LAB Hyalu C+ 30ml",
+    "brand": "rvblab",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1710000,
+    "oldPrice": 2309000,
+    "rating": 5,
+    "reviews": 1,
+    "sold": 7,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#C2185B",
+    "weight": "Chai 30ml",
+    "origin": "Ý",
+    "tags": [],
+    "image": "img/24015142248.jpg",
+    "thumb": "img/thumb/24015142248.jpg",
+    "images": [
+      "img/24015142248.jpg",
+      "img/24015142248-2.jpg",
+      "img/24015142248-3.jpg",
+      "img/24015142248-4.jpg",
+      "img/24015142248-5.jpg"
+    ],
+    "shopeeId": "24015142248",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/24015142248",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc da mặt › Tinh chất dưỡng",
+    "variants": [
+      {
+        "label": "1 chai",
+        "price": 1710000,
+        "oldPrice": 2309000
+      },
+      {
+        "label": "2 chai",
+        "price": 3420000,
+        "oldPrice": 4617000
+      }
+    ],
+    "desc": "Tinh chất đậm đặc RVB LAB Hyalu C+ 30ml (Ý) với vitamin C ổn định và niacinamide, chai có nắp nhỏ giọt. Theo nhà sản xuất: làm sáng da, chống oxy hoá và cải thiện làn da không đều màu.",
+    "highlights": [
+      "Vitamin C ổn định + 5% Niacinamide",
+      "Làm sáng, chống oxy hoá",
+      "Chai nhỏ giọt 30ml định lượng dễ dùng"
+    ],
+    "usage": "Buổi tối sau khi làm sạch, nhỏ 3–4 giọt lên mặt và cổ, vỗ nhẹ cho thấm rồi dùng kem dưỡng. Ban ngày nhớ dùng kem chống nắng."
+  },
+  {
+    "id": "24764883120",
+    "name": "Peel Anubis Tặng Kèm Xịt Trung Hòa Anubismed Giúp Làn Da Cải Thiện Lỗ Chân Lông, Đào Thải Độc Tố, Chống Lão Hóa, Mờ Thâm",
+    "short": "Bộ peel da Anubis Azelaic 14% + xịt trung hoà",
+    "brand": "anubis",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 2450000,
+    "oldPrice": 3308000,
+    "rating": 5,
+    "reviews": 107,
+    "sold": 1000,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#6D4C41",
+    "weight": "Chai 50ml + xịt",
+    "origin": "Tây Ban Nha",
+    "tags": [],
+    "image": "img/24764883120.jpg",
+    "thumb": "img/thumb/24764883120.jpg",
+    "images": [
+      "img/24764883120.jpg",
+      "img/24764883120-2.jpg",
+      "img/24764883120-3.jpg",
+      "img/24764883120-4.jpg",
+      "img/24764883120-5.jpg"
+    ],
+    "shopeeId": "24764883120",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/24764883120",
+    "shopeeCategory": "Sắc Đẹp › Bộ sản phẩm làm đẹp",
+    "variants": [
+      {
+        "label": "1 bộ",
+        "price": 2450000,
+        "oldPrice": 3308000
+      },
+      {
+        "label": "2 bộ",
+        "price": 4900000,
+        "oldPrice": 6615000
+      }
+    ],
+    "desc": "Bộ peel da Anubis với 14% axit azelaic tinh khiết, tặng kèm xịt trung hoà Anubismed. Theo nhà sản xuất: hỗ trợ làm sạch sâu lỗ chân lông, giảm mụn và làm mờ vết thâm.",
+    "highlights": [
+      "14% axit azelaic tinh khiết",
+      "Tặng kèm xịt trung hoà Anubismed",
+      "Đã bán 1.000+ trên Shopee"
+    ],
+    "usage": "Sản phẩm dành cho người đã quen với peel da: thoa lớp mỏng lên vùng cần xử lý, để đúng thời gian hướng dẫn rồi xịt trung hoà và rửa sạch. Nên hỏi ý kiến chuyên viên da liễu trước khi dùng."
+  },
+  {
+    "id": "24015583018",
+    "name": "Mặt Nạ Trẻ Hóa NMN Giúp Dưỡng Da Trắng Sáng, Trẻ Hóa Tế Bào Da, Bổ Sung Nước Cấp Ẩm Cho Da, Ngăn Ngừa Nếp Nhăn",
+    "short": "Mặt nạ trẻ hoá NMN Kousa hộp 8 miếng",
+    "brand": "kousa",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 595000,
+    "oldPrice": 803000,
+    "rating": 4.9,
+    "reviews": 81,
+    "sold": 703,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#4FC3F7",
+    "weight": "Hộp 8 miếng",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "img/24015583018.jpg",
+    "thumb": "img/thumb/24015583018.jpg",
+    "images": [
+      "img/24015583018.jpg",
+      "img/24015583018-2.jpg",
+      "img/24015583018-3.jpg",
+      "img/24015583018-4.jpg",
+      "img/24015583018-5.jpg"
+    ],
+    "shopeeId": "24015583018",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/24015583018",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc da mặt › Mặt nạ",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 595000,
+        "oldPrice": 803000
+      },
+      {
+        "label": "2 hộp",
+        "price": 1190000,
+        "oldPrice": 1607000
+      }
+    ],
+    "desc": "Mặt nạ NMN Kousa (Hàn Quốc), hộp 8 miếng, chứa 1.000ppm NMN cùng collagen và adenosine. Theo nhà sản xuất: cấp ẩm, dưỡng sáng và giúp da mịn màng hơn.",
+    "highlights": [
+      "1.000ppm NMN + collagen",
+      "Cấp ẩm, dưỡng sáng",
+      "Hộp 8 miếng, đã bán 700+"
+    ],
+    "usage": "Đắp 15–20 phút sau bước làm sạch, 2–3 lần/tuần; vỗ nhẹ phần tinh chất còn lại cho thấm, không cần rửa."
+  },
+  {
+    "id": "28902157429",
+    "name": "Men Vi Phụ Khoa ARRAVITE Bổ Sung Lợi Khuẩn Cân Bằng Và Bảo Vệ V.ùng K.ín, Ngăn Ngừa Viêm Nhiễm Hỗ Trợ Tiêu Hóa, Giảm Cân",
+    "short": "Men vi sinh phụ khoa Arravite hộp 30 viên",
+    "brand": "arravite",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "tieu-hoa"
+    ],
+    "price": 990000,
+    "oldPrice": 1337000,
+    "rating": 5,
+    "reviews": 3,
+    "sold": 49,
+    "stock": 50,
+    "shape": "bottle",
+    "color": "#7E57C2",
+    "weight": "Hộp 30 viên",
+    "origin": "Úc",
+    "tags": [],
+    "image": "img/28902157429.jpg",
+    "thumb": "img/thumb/28902157429.jpg",
+    "images": [
+      "img/28902157429.jpg",
+      "img/28902157429-2.jpg",
+      "img/28902157429-3.jpg",
+      "img/28902157429-4.jpg",
+      "img/28902157429-5.jpg"
+    ],
+    "shopeeId": "28902157429",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/28902157429",
+    "shopeeCategory": "Sức Khỏe › Thực phẩm chức năng › Hỗ trợ sức khỏe",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 990000,
+        "oldPrice": 1337000
+      },
+      {
+        "label": "2 hộp",
+        "price": 1980000,
+        "oldPrice": 2673000
+      }
+    ],
+    "desc": "Men vi sinh Arravite (Úc), hộp 30 viên, có các dòng 5 tỷ – 10 tỷ – 20 tỷ lợi khuẩn dành cho nam nữ từ 15 tuổi. Theo nhà sản xuất: bổ sung lợi khuẩn, hỗ trợ cân bằng hệ vi sinh và tiêu hoá.",
+    "highlights": [
+      "Lợi khuẩn chuyên biệt cho phụ nữ",
+      "3 mức 5 – 10 – 20 tỷ lợi khuẩn",
+      "Hộp 30 viên dùng 1 tháng"
+    ],
+    "usage": "Uống 1 viên/ngày sau ăn. Phụ nữ có thai hoặc đang dùng thuốc nên hỏi ý kiến bác sĩ trước khi dùng."
+  },
+  {
+    "id": "26800350417",
+    "name": "Kem Dưỡng Trắng Da Căng Bóng HYALU C+ Thế Hệ Mới Làm Giảm Và Ngăn Các Dấu Hiệu Lão Hóa, Giúp Hồi Sinh Và Bảo Vệ Làn Da",
+    "short": "Kem dưỡng RVB LAB Hyalu C+ 30ml",
+    "brand": "rvblab",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 2050000,
+    "oldPrice": 2768000,
+    "rating": 5,
+    "reviews": 1,
+    "sold": 5,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#C2185B",
+    "weight": "Hũ 30ml",
+    "origin": "Ý",
+    "tags": [],
+    "image": "img/26800350417.jpg",
+    "thumb": "img/thumb/26800350417.jpg",
+    "images": [
+      "img/26800350417.jpg",
+      "img/26800350417-2.jpg",
+      "img/26800350417-3.jpg",
+      "img/26800350417-4.jpg",
+      "img/26800350417-5.jpg"
+    ],
+    "shopeeId": "26800350417",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/26800350417",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc da mặt › Kem dưỡng ẩm",
+    "variants": [
+      {
+        "label": "1 hũ",
+        "price": 2050000,
+        "oldPrice": 2768000
+      },
+      {
+        "label": "2 hũ",
+        "price": 4100000,
+        "oldPrice": 5535000
+      }
+    ],
+    "desc": "Kem dưỡng trắng da căng bóng RVB LAB Hyalu C+ thế hệ mới, 30ml (Ý). Theo nhà sản xuất: công thức đa tác dụng giúp da mịn màng, tươi sáng và hạn chế các dấu hiệu lão hoá theo thời gian.",
+    "highlights": [
+      "Công thức Hyalu C+ thế hệ mới",
+      "Dưỡng ẩm, làm sáng, nâng đỡ da",
+      "Hũ 30ml dùng sáng và tối"
+    ],
+    "usage": "Thoa lượng vừa đủ lên mặt và cổ đã làm sạch, sáng và tối, sau bước serum."
+  },
+  {
+    "id": "27734205778",
+    "name": "Kem Chống Nắng HISKIN 5in1 Giúp Bảo Vệ Da Dưỡng Trắng Phục Hồi Chống Lão Hoá Nâng Tone An Toàn Với Làn Da Nhạy Cảm",
+    "short": "Kem chống nắng Hiskin 5in1 SPF50+ 60ml",
+    "brand": "hiskin",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 695000,
+    "oldPrice": 938000,
+    "rating": 5,
+    "reviews": 8,
+    "sold": 56,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#0288D1",
+    "weight": "Tuýp 60ml",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "img/27734205778.jpg",
+    "thumb": "img/thumb/27734205778.jpg",
+    "images": [
+      "img/27734205778.jpg",
+      "img/27734205778-2.jpg",
+      "img/27734205778-3.jpg",
+      "img/27734205778-4.jpg",
+      "img/27734205778-5.jpg"
+    ],
+    "shopeeId": "27734205778",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/27734205778",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc da mặt › Kem chống nắng cho mặt",
+    "variants": [
+      {
+        "label": "1 tuýp",
+        "price": 695000,
+        "oldPrice": 938000
+      },
+      {
+        "label": "2 tuýp",
+        "price": 1390000,
+        "oldPrice": 1877000
+      }
+    ],
+    "desc": "Kem chống nắng Hiskin 5in1 60ml (Hàn Quốc), SPF50+ PA++++, chứa niacinamide, glutathione và collagen. Theo nhà sản xuất: bảo vệ da khỏi tia UV, kiềm dầu, nâng tone nhẹ và phù hợp cả với da nhạy cảm.",
+    "highlights": [
+      "SPF50+ / PA++++",
+      "Niacinamide, glutathione, collagen",
+      "Nâng tone nhẹ, thay được kem lót"
+    ],
+    "usage": "Thoa lớp vừa đủ trước khi ra ngoài 15–20 phút, dặm lại sau mỗi 2–3 giờ nếu hoạt động ngoài trời."
+  },
+  {
+    "id": "25678530796",
+    "name": "Cặp Tái Tạo Phục Hồi Da Hỗ Trợ Kích Hoạt Tái Cấu Trúc Đa Tầng Giúp Làn Da Được Thắp Sáng Tăng Cường Sức Sống Luôn Ẩm Mịn",
+    "short": "Cặp tái tạo phục hồi da Dermo Ioniq",
+    "brand": "dermoioniq",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 5275000,
+    "oldPrice": 7121000,
+    "rating": 4.5,
+    "reviews": 2,
+    "sold": 4,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#00897B",
+    "weight": "Bộ 2 sản phẩm",
+    "origin": "Pháp",
+    "tags": [],
+    "image": "img/25678530796.jpg",
+    "thumb": "img/thumb/25678530796.jpg",
+    "images": [
+      "img/25678530796.jpg",
+      "img/25678530796-2.jpg",
+      "img/25678530796-3.jpg",
+      "img/25678530796-4.jpg",
+      "img/25678530796-5.jpg"
+    ],
+    "shopeeId": "25678530796",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/25678530796",
+    "shopeeCategory": "Sắc Đẹp › Bộ sản phẩm làm đẹp",
+    "variants": [
+      {
+        "label": "1 cặp",
+        "price": 5275000,
+        "oldPrice": 7121000
+      },
+      {
+        "label": "2 cặp",
+        "price": 10550000,
+        "oldPrice": 14243000
+      }
+    ],
+    "desc": "Bộ đôi tái tạo phục hồi da Dermo Ioniq (Pháp) gồm kem kích hoạt tái cấu trúc đa tầng 100ml và huyết thanh thắp sáng 30ml (có các lựa chọn kem làm dịu 40ml và huyết thanh trẻ hoá 30ml). Theo nhà sản xuất: hỗ trợ phục hồi, cấp ẩm và giúp da tăng sức sống.",
+    "highlights": [
+      "Kem tái cấu trúc đa tầng 100ml",
+      "Huyết thanh thắp sáng 30ml",
+      "Dành cho da cần phục hồi chuyên sâu"
+    ],
+    "usage": "Dùng huyết thanh trước, kem sau, sáng và tối trên da đã làm sạch."
+  },
+  {
+    "id": "29006040615",
+    "name": "Cặp MESO Bạc Giúp Cấy Meso Vào Da Bằng Đường Bôi, Đưa Sâu Dưỡng Chất Vào Da, Giảm Nếp Nhăn Dưỡng Da Trắng Sáng, Đều Màu",
+    "short": "Meso bạc RVB LAB – serum & kem dưỡng",
+    "brand": "rvblab",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 3388000,
+    "oldPrice": 4574000,
+    "rating": 4.9,
+    "reviews": 50,
+    "sold": 525,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#90A4AE",
+    "weight": "Serum 30ml + kem 50ml",
+    "origin": "Ý",
+    "tags": [],
+    "image": "img/29006040615.jpg",
+    "thumb": "img/thumb/29006040615.jpg",
+    "images": [
+      "img/29006040615.jpg",
+      "img/29006040615-2.jpg",
+      "img/29006040615-3.jpg",
+      "img/29006040615-4.jpg",
+      "img/29006040615-5.jpg"
+    ],
+    "shopeeId": "29006040615",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/29006040615",
+    "shopeeCategory": "Sắc Đẹp › Dụng cụ làm đẹp › Khác",
+    "variants": [
+      {
+        "label": "Cặp tất bạc (serum + kem)",
+        "price": 6500000,
+        "oldPrice": 8775000,
+        "oos": true
+      },
+      {
+        "label": "Serum Meso bạc",
+        "price": 3388000,
+        "oldPrice": 4574000
+      },
+      {
+        "label": "Kem dưỡng Meso bạc",
+        "price": 3465000,
+        "oldPrice": 4678000
+      }
+    ],
+    "desc": "Cặp Meso bạc RVB LAB (Ý) gồm serum Meso bạc 30ml và kem dưỡng Meso bạc 50ml với phức hợp Hyalu Smart PGA. Theo nhà sản xuất: đưa dưỡng chất sâu vào da, hỗ trợ giảm nếp nhăn và dưỡng da sáng đều màu.",
+    "highlights": [
+      "Serum 30ml + kem dưỡng 50ml",
+      "Phức hợp Hyalu Smart PGA",
+      "Đã bán 500+ trên Shopee"
+    ],
+    "usage": "Thoa serum lên da đã làm sạch, đợi thấm rồi dùng kem dưỡng; dùng sáng và tối."
+  },
+  {
+    "id": "27809051612",
+    "name": "Cặp Dầu Gội - Xả Arganicare Collagen Làm Sạch Tóc, Dưỡng Tóc Mềm Mượt, Phục Hồi Tóc Hư Tổn Chuyên Sâu Cho Tóc Hư Tổn",
+    "short": "Cặp dầu gội & xả Arganicare Biotin Collagen 400ml",
+    "brand": "arganicare",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1290000,
+    "oldPrice": 1742000,
+    "rating": 4.7,
+    "reviews": 3,
+    "sold": 5,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#8D6E63",
+    "weight": "Gội 400ml + xả 400ml",
+    "origin": "Ma-rốc",
+    "tags": [],
+    "image": "img/27809051612.jpg",
+    "thumb": "img/thumb/27809051612.jpg",
+    "images": [
+      "img/27809051612.jpg",
+      "img/27809051612-2.jpg",
+      "img/27809051612-3.jpg",
+      "img/27809051612-4.jpg",
+      "img/27809051612-5.jpg"
+    ],
+    "shopeeId": "27809051612",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/27809051612",
+    "shopeeCategory": "Sắc Đẹp › Chăm sóc tóc › Dầu gội",
+    "variants": [
+      {
+        "label": "1 cặp",
+        "price": 1290000,
+        "oldPrice": 1742000
+      },
+      {
+        "label": "2 cặp",
+        "price": 2580000,
+        "oldPrice": 3483000
+      }
+    ],
+    "desc": "Cặp dầu gội và dầu xả Arganicare Biotin & Collagen, mỗi chai 400ml (Ma-rốc), thành phần có biotin, dầu argan, keratin và vitamin. Theo nhà sản xuất: làm sạch dịu nhẹ, giúp tóc mềm mượt và hỗ trợ phục hồi tóc hư tổn.",
+    "highlights": [
+      "Biotin + dầu argan + keratin",
+      "Cặp gội – xả 400ml",
+      "Cho tóc khô, hư tổn sau uốn nhuộm"
+    ],
+    "usage": "Gội sạch tóc, thoa dầu xả lên thân và ngọn tóc, để 2–3 phút rồi xả kỹ với nước."
+  },
+  {
+    "id": "24329101823",
+    "name": "Combo Meso Vàng Siêu Vi Tăng Sinh Tế Bào, Chống Lão Hóa Và Cấp Ẩm Chuyên Sâu Mang Lại Vẻ Căng Bóng, Tươi Sáng Cho Làn Da",
+    "short": "Combo Meso vàng siêu vi",
+    "brand": "meso",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1450000,
+    "oldPrice": 1958000,
+    "rating": 5,
+    "reviews": 4,
+    "sold": 24,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#C9A227",
+    "weight": "Bộ sản phẩm",
+    "origin": "Đan Mạch",
+    "tags": [],
+    "image": "img/24329101823.jpg",
+    "thumb": "img/thumb/24329101823.jpg",
+    "images": [
+      "img/24329101823.jpg",
+      "img/24329101823-2.jpg",
+      "img/24329101823-3.jpg",
+      "img/24329101823-4.jpg",
+      "img/24329101823-5.jpg"
+    ],
+    "shopeeId": "24329101823",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/24329101823",
+    "shopeeCategory": "Sắc Đẹp › Bộ sản phẩm làm đẹp",
+    "variants": [
+      {
+        "label": "Kem chống nắng Meso",
+        "price": 3500000,
+        "oldPrice": 4725000,
+        "oos": true
+      },
+      {
+        "label": "Kem Meso Retinol",
+        "price": 3250000,
+        "oldPrice": 4388000
+      },
+      {
+        "label": "Sữa rửa mặt Meso",
+        "price": 1450000,
+        "oldPrice": 1958000
+      },
+      {
+        "label": "Kem mắt Meso",
+        "price": 2590000,
+        "oldPrice": 3497000
+      },
+      {
+        "label": "Combo siêu vi Meso",
+        "price": 7200000,
+        "oldPrice": 9720000
+      },
+      {
+        "label": "Serum vàng Meso",
+        "price": 4015000,
+        "oldPrice": 5420000
+      },
+      {
+        "label": "Kem vàng siêu vi",
+        "price": 3910000,
+        "oldPrice": 5279000
+      }
+    ],
+    "desc": "Combo Meso vàng siêu vi gồm serum vàng siêu vi và kem vàng siêu vi; ngoài ra có thêm các lựa chọn kem ngày, kem đêm, sữa rửa mặt 3in1 và kem mắt Meso. Theo nhà sản xuất: cấp ẩm chuyên sâu, hỗ trợ chống lão hoá, cho da căng bóng tươi sáng.",
+    "highlights": [
+      "Serum + kem vàng siêu vi",
+      "Nhiều lựa chọn combo theo nhu cầu",
+      "Cấp ẩm, hỗ trợ chống lão hoá"
+    ],
+    "usage": "Dùng serum trước, kem sau, sáng và tối trên da đã làm sạch."
+  },
+  {
+    "id": "26900366084",
+    "name": "Combo Dưỡng Da Hyalu C+ Giúp Da Trắng Sáng, Căng Bóng, Mịn Màng Dưỡng Ẩm, Chống Lão Hóa Cải Thiện Làn Da Lên Tới 95%",
+    "short": "Combo dưỡng da Hyalu C+ (kem + serum + toner)",
+    "brand": "rvblab",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1270000,
+    "oldPrice": 1715000,
+    "rating": 5,
+    "reviews": 2,
+    "sold": 13,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#C2185B",
+    "weight": "Bộ 3 sản phẩm",
+    "origin": "Ý",
+    "tags": [],
+    "image": "img/26900366084.jpg",
+    "thumb": "img/thumb/26900366084.jpg",
+    "images": [
+      "img/26900366084.jpg",
+      "img/26900366084-2.jpg",
+      "img/26900366084-3.jpg",
+      "img/26900366084-4.jpg",
+      "img/26900366084-5.jpg"
+    ],
+    "shopeeId": "26900366084",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/26900366084",
+    "shopeeCategory": "Sắc Đẹp › Bộ sản phẩm làm đẹp",
+    "variants": [
+      {
+        "label": "Kem dưỡng Hyalu C+",
+        "price": 2050000,
+        "oldPrice": 2768000
+      },
+      {
+        "label": "Serum Hyalu C+",
+        "price": 2350000,
+        "oldPrice": 3173000
+      },
+      {
+        "label": "Toner Hyalu C+",
+        "price": 1270000,
+        "oldPrice": 1715000
+      },
+      {
+        "label": "Bộ dưỡng da Hyalu C+",
+        "price": 5030000,
+        "oldPrice": 6791000
+      }
+    ],
+    "desc": "Combo dưỡng da Hyalu C+ (Ý) gồm kem dưỡng trắng 50ml, serum 30ml và toner 200ml. Theo nhà sản xuất: bộ ba dưỡng ẩm – làm sáng – chống oxy hoá dùng cho cả chu trình sáng và tối.",
+    "highlights": [
+      "Kem 50ml + serum 30ml + toner 200ml",
+      "Trọn chu trình dưỡng sáng",
+      "Nhiều lựa chọn combo"
+    ],
+    "usage": "Toner → serum → kem dưỡng, dùng sáng và tối sau khi rửa mặt."
+  },
+  {
+    "id": "56857599724",
+    "name": "Bột Trắng Răng AKIKO Nhật Bản Trắng Răng Bật Tone, Loại Bỏ Mảng Bám Không Ê Buốt, Khử Hôi Miệng",
+    "short": "Bột trắng răng Akiko Nhật Bản 26g",
+    "brand": "akiko",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 550000,
+    "oldPrice": 743000,
+    "rating": 5,
+    "reviews": 1,
+    "sold": 14,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#26A69A",
+    "weight": "Hũ 26g",
+    "origin": "Nhật Bản",
+    "tags": [],
+    "image": "img/56857599724.jpg",
+    "thumb": "img/thumb/56857599724.jpg",
+    "images": [
+      "img/56857599724.jpg",
+      "img/56857599724-2.jpg",
+      "img/56857599724-3.jpg",
+      "img/56857599724-4.jpg",
+      "img/56857599724-5.jpg"
+    ],
+    "shopeeId": "56857599724",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/56857599724",
+    "shopeeCategory": "Sức Khỏe › Chăm sóc cá nhân › Vệ sinh răng miệng › Hỗ trợ trắng răng",
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 550000,
+        "oldPrice": 743000
+      },
+      {
+        "label": "2 hộp",
+        "price": 1100000,
+        "oldPrice": 1485000
+      }
+    ],
+    "desc": "Bột khử vàng răng Akiko 26g (Nhật Bản). Theo nhà sản xuất: làm sạch mảng bám và vết ố, giúp răng sáng hơn mà không gây ê buốt, đồng thời khử mùi hôi miệng.",
+    "highlights": [
+      "Hũ 26g dùng được lâu",
+      "Làm sạch mảng bám, vết ố",
+      "Không gây ê buốt"
+    ],
+    "usage": "Nhúng bàn chải ẩm vào bột, chải đều 2–3 phút rồi súc miệng sạch, dùng 2–3 lần/tuần."
+  },
+  {
+    "id": "28806784125",
+    "name": "Bộ Đôi Meso Retinol Siêu Vi Tăng Sinh Tế Bào, Chống Lão Hóa Căng Bóng Làn Da Xóa Nhăn Trẻ Hóa Sáng Da",
+    "short": "Bộ đôi Meso Retinol siêu vi",
+    "brand": "meso",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 2590000,
+    "oldPrice": 3497000,
+    "rating": 5,
+    "reviews": 2,
+    "sold": 12,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#C9A227",
+    "weight": "Bộ 2 sản phẩm",
+    "origin": "Ý",
+    "tags": [],
+    "image": "img/28806784125.jpg",
+    "thumb": "img/thumb/28806784125.jpg",
+    "images": [
+      "img/28806784125.jpg",
+      "img/28806784125-2.jpg",
+      "img/28806784125-3.jpg",
+      "img/28806784125-4.jpg",
+      "img/28806784125-5.jpg"
+    ],
+    "shopeeId": "28806784125",
+    "shopeeUrl": "https://shopee.vn/product/1192937802/28806784125",
+    "shopeeCategory": "Sắc Đẹp › Bộ sản phẩm làm đẹp",
+    "variants": [
+      {
+        "label": "Kem Meso Retinol",
+        "price": 3250000,
+        "oldPrice": 4388000
+      },
+      {
+        "label": "Kem mắt Meso",
+        "price": 2590000,
+        "oldPrice": 3497000
+      },
+      {
+        "label": "Bộ đôi Meso",
+        "price": 5840000,
+        "oldPrice": 7884000
+      }
+    ],
+    "desc": "Bộ đôi Meso Retinol siêu vi với retinol, axit alpha lipoic và phức hợp vitamin chống oxy hoá. Theo nhà sản xuất: hỗ trợ giảm nếp nhăn, giúp da căng bóng và sáng đều màu hơn.",
+    "highlights": [
+      "Retinol + axit alpha lipoic",
+      "Hỗ trợ giảm nếp nhăn",
+      "Dùng buổi tối, kết hợp chống nắng ban ngày"
+    ],
+    "usage": "Bắt đầu 2 lần/tuần vào buổi tối rồi tăng dần; luôn dùng kem chống nắng vào ban ngày."
+  },
+  {
+    "id": "suaxanh-lotte",
+    "name": "Sữa Xanh Lotte Organic – Sữa Tươi Hữu Cơ Pasteur Hàn Quốc Hộp 125ml, Thùng 24 Hộp",
+    "short": "Sữa xanh Lotte Organic 125ml (thùng 24 hộp)",
+    "brand": "lotte",
+    "cat": "sua",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "sua-tuoi",
+      "organic",
+      "canxi",
+      "tang-chieu-cao"
+    ],
+    "price": 875000,
+    "oldPrice": 1181000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "shape": "carton",
+    "color": "#2E7D32",
+    "weight": "Thùng 24 hộp × 125ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/suaxanh-lotte.jpg",
+    "thumb": "img/thumb/suaxanh-lotte.jpg",
+    "images": [
+      "img/suaxanh-lotte.jpg",
+      "img/suaxanh-lotte-2.jpg",
+      "img/suaxanh-lotte-3.jpg",
+      "img/suaxanh-lotte-4.jpg",
+      "img/suaxanh-lotte-5.jpg",
+      "img/suaxanh-lotte-6.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 thùng 24 hộp",
+        "price": 875000,
+        "oldPrice": 1181000
+      },
+      {
+        "label": "2 thùng 48 hộp",
+        "price": 1750000,
+        "oldPrice": 2363000
+      }
+    ],
+    "desc": "Sữa xanh Lotte Organic (Pasteur 유기농 우유) – sữa tươi hữu cơ nguyên kem của Lotte Wellfood Hàn Quốc, hộp 125ml vừa một lần uống cho bé. Sữa đạt chứng nhận hữu cơ của Bộ Nông nghiệp Hàn Quốc, cơ sở sản xuất đạt HACCP. Mỗi hộp 125ml (80 kcal) có 4g đạm, 4,6g chất béo và 125mg canxi, vị thơm béo tự nhiên, dùng được cho cả bé và người lớn.",
+    "highlights": [
+      "Sữa tươi hữu cơ nguyên kem, chứng nhận Organic Hàn Quốc",
+      "Mỗi hộp 125ml: 4g đạm, 4,6g chất béo, 125mg canxi",
+      "Hộp nhỏ 125ml tiện mang đi học, vừa một lần uống"
+    ],
+    "usage": "Bé từ 1 tuổi uống 1–2 hộp/ngày, ngon hơn khi để lạnh. Lắc đều trước khi uống, đã mở hộp thì dùng hết trong ngày. Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp."
+  },
+  {
+    "id": "combo-vangsua-d3k2",
+    "name": "Combo Váng Sữa Canxi Calciumore + Vitamin D3K2 Pure Vitality – Bổ Sung Canxi Và Vitamin D3, K2 Cho Bé",
+    "short": "Combo váng sữa canxi Calciumore + D3K2",
+    "brand": "calciumore",
+    "cat": "vitamin",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "canxi",
+      "tang-chieu-cao",
+      "d3k2",
+      "organic"
+    ],
+    "price": 2726000,
+    "oldPrice": 2870000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "isCombo": true,
+    "items": [
+      "26060839019",
+      "42878618667"
+    ],
+    "shape": "box",
+    "color": "#4FA3D1",
+    "weight": "1 hộp 90 gói váng sữa + 1 lọ D3K2 30ml",
+    "origin": "Hàn Quốc & New Zealand",
+    "tags": [
+      "Combo"
+    ],
+    "image": "img/combo-vangsua-d3k2.jpg",
+    "thumb": "img/thumb/combo-vangsua-d3k2.jpg",
+    "images": [
+      "img/combo-vangsua-d3k2.jpg",
+      "img/26060839019.jpg",
+      "img/42878618667.jpg",
+      "img/26060839019-3.jpg",
+      "img/42878618667-3.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%",
+        "price": 2726000,
+        "oldPrice": 2870000
+      },
+      {
+        "label": "2 hộp váng sữa 180 gói · TẶNG 1 D3K2",
+        "price": 4960000,
+        "oldPrice": 5350000
+      },
+      {
+        "label": "3 hộp váng sữa 270 gói · TẶNG 2 D3K2",
+        "price": 7440000,
+        "oldPrice": 8220000
+      },
+      {
+        "label": "4 hộp váng sữa 360 gói · TẶNG 3 D3K2",
+        "price": 9920000,
+        "oldPrice": 11090000
+      }
+    ],
+    "uuDai": [
+      "Mua 1 hộp canxi + 1 lọ D3K2 = 2.870.000₫, giảm 5% còn 2.726.000₫",
+      "Mua 2 hộp canxi 4.960.000₫ → tặng ngay 1 lọ D3K2 (tiết kiệm 390.000₫)",
+      "Mua 3 hộp canxi 7.440.000₫ → tặng ngay 2 lọ D3K2 (tiết kiệm 780.000₫)",
+      "Mua 4 hộp canxi 9.920.000₫ → tặng ngay 3 lọ D3K2 (tiết kiệm 1.170.000₫)"
+    ],
+    "desc": "Bộ đôi canxi cho bé: váng sữa canxi hữu cơ Calciumore (hộp 90 gói) bổ sung canxi sữa dễ hấp thu, kết hợp vitamin D3K2 Pure Vitality (New Zealand) giúp đưa canxi vào xương. Theo nhà sản xuất, dùng cùng nhau hỗ trợ bé phát triển chiều cao và răng chắc khoẻ tốt hơn so với dùng riêng canxi.",
+    "highlights": [
+      "Mua 1 hộp váng sữa + 1 D3K2 được giảm 5% so với mua lẻ",
+      "Mua 2 hộp tặng 1 lọ D3K2 · 3 hộp tặng 2 lọ · 4 hộp tặng 3 lọ",
+      "Canxi sữa hữu cơ Hàn Quốc + D3K2 New Zealand",
+      "Mỗi hộp 90 gói đủ dùng cho bé khoảng 3 tháng"
+    ],
+    "usage": "Váng sữa: 1 gói/ngày pha cùng sữa hoặc ăn trực tiếp. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn. Dùng canxi và D3K2 cùng buổi để hấp thu tốt nhất."
+  },
+  {
+    "id": "combo-lottexanh-d3k2",
+    "name": "Combo Nước Ép Lotte Tăng Cao (Xanh) + Vitamin D3K2 Pure Vitality – Hỗ Trợ Bé Phát Triển Chiều Cao",
+    "short": "Combo nước ép Lotte Tăng cao + D3K2",
+    "brand": "lotte",
+    "cat": "nuoc-ep",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tang-chieu-cao",
+      "canxi",
+      "d3k2",
+      "organic"
+    ],
+    "price": 1707000,
+    "oldPrice": 1707000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "isCombo": true,
+    "items": [
+      "22686115682",
+      "42878618667"
+    ],
+    "shape": "box",
+    "color": "#2F8FD0",
+    "weight": "1 thùng 30 gói nước ép + 1 lọ D3K2 30ml",
+    "origin": "Hàn Quốc & New Zealand",
+    "tags": [
+      "Combo"
+    ],
+    "image": "img/combo-lottexanh-d3k2.jpg",
+    "thumb": "img/thumb/combo-lottexanh-d3k2.jpg",
+    "images": [
+      "img/combo-lottexanh-d3k2.jpg",
+      "img/22686115682.jpg",
+      "img/42878618667.jpg",
+      "img/22686115682-3.jpg",
+      "img/42878618667-3.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 thùng Lotte Tăng cao 30 gói + 1 D3K2",
+        "price": 1707000,
+        "oldPrice": 1707000
+      }
+    ],
+    "desc": "Bộ đôi tăng chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) giúp bé uống ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
+    "highlights": [
+      "Mua trọn bộ 1 chạm, không phải chọn từng món",
+      "Nước ép hữu cơ Hàn Quốc, bé dễ uống",
+      "Thùng 30 gói dùng được khoảng 1 tháng",
+      "D3K2 giúp hấp thu canxi, dùng cùng nước ép tăng cao"
+    ],
+    "usage": "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn."
+  },
+  {
+    "id": "men-sysy",
+    "name": "Men Vi Sinh Sysy Pasteur (Lotte) Hàn Quốc – Men Baby Từ 0 Tháng, Men Kids Từ 24 Tháng, Hộp 60 Gói",
+    "short": "Men vi sinh Sysy Pasteur – Baby 0+ / Kids 24m+",
+    "brand": "lotte",
+    "cat": "tang-can",
+    "ages": [
+      "0-6m",
+      "6-12m",
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tieu-hoa",
+      "tang-can",
+      "de-khang"
+    ],
+    "price": 986000,
+    "oldPrice": 1282000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "shape": "jar",
+    "color": "#8D5A2B",
+    "weight": "Hộp 6 gói lớn × 10 gói nhỏ (2g)",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/men-sysy.jpg",
+    "thumb": "img/thumb/men-sysy.jpg",
+    "images": [
+      "img/men-sysy.jpg",
+      "img/men-sysy-2.jpg",
+      "img/men-sysy-3.jpg",
+      "img/men-sysy-4.jpg",
+      "img/men-sysy-5.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Men Baby (nâu) · từ 0 tháng",
+        "price": 986000,
+        "oldPrice": 1282000
+      },
+      {
+        "label": "Men Kids (xanh) · từ 24 tháng",
+        "price": 986000,
+        "oldPrice": 1282000
+      }
+    ],
+    "desc": "Men vi sinh Sysy (Pasteur 아이생각 생유산균) – hàng nội địa Hàn Quốc của Pasteur thuộc tập đoàn Lotte. Men Baby (hộp nâu, cho bé từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng. Men Kids (hộp xanh, cho bé từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng, bổ sung kẽm 2,55mg và vitamin D 400 IU. Đạt GMP, công nghệ Probiocap bao bọc lợi khuẩn và Synbiotic (lợi khuẩn kết hợp chất xơ nuôi lợi khuẩn); nhà sản xuất cam kết ít nhất 2 tỉ lợi khuẩn sống. Theo nhà sản xuất: hỗ trợ tiêu hoá, giúp bé ăn ngon, hấp thu tốt; hỗ trợ giảm táo bón, tiêu chảy và tác dụng phụ khi dùng kháng sinh; hỗ trợ cải thiện biếng ăn, chậm tăng cân, giảm trớ sữa ở trẻ nhỏ.",
+    "highlights": [
+      "Men Baby (từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng",
+      "Men Kids (từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng + kẽm 2,55mg, vitamin D 400 IU",
+      "GMP · Probiocap · Synbiotic – nội địa Hàn, Pasteur thuộc Lotte"
+    ],
+    "usage": "Mỗi ngày 1 gói. Pha cùng bột, cháo, sữa hoặc nước dưới 50°C; bé lớn có thể uống trực tiếp. Dùng theo hướng dẫn của bác sĩ hoặc chuyên gia dinh dưỡng. Hộp tròn gồm 6 gói lớn, mỗi gói lớn 10 gói nhỏ; hạn dùng 18 tháng kể từ ngày sản xuất."
+  }
 ];
 /* ===/ADMIN:PRODUCTS=== */
 
