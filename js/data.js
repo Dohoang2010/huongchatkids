@@ -805,8 +805,8 @@ window.PRODUCTS = [
       "organic",
       "cho-me"
     ],
-    "price": 827000,
-    "oldPrice": 1075000,
+    "price": 2480000,
+    "oldPrice": 3225000,
     "rating": 4.92,
     "reviews": 156,
     "sold": 663,
