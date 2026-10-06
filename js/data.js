@@ -832,11 +832,6 @@ window.PRODUCTS = [
     "shopeeCategory": "Mẹ & Bé › Sữa công thức & Thực phẩm cho bé › Đồ ăn nhẹ cho bé",
     "variants": [
       {
-        "label": "30 gói (không hộp)",
-        "price": 827000,
-        "oldPrice": 1075000
-      },
-      {
         "label": "1 hộp 90 gói",
         "price": 2480000,
         "oldPrice": 3224000
@@ -849,6 +844,11 @@ window.PRODUCTS = [
       {
         "label": "1 hộp váng sữa canxi+1 d3k2 giảm 5%",
         "price": 2726000
+      },
+      {
+        "label": "30 gói (không hộp)",
+        "price": 827000,
+        "oldPrice": 1075000
       }
     ],
     "desc": "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
