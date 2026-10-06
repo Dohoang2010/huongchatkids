@@ -462,6 +462,10 @@ window.PRODUCTS = [
         "label": "2 lọ",
         "price": 780000,
         "oldPrice": 1014000
+      },
+      {
+        "label": "1 lọ d3k2 + 1 hộp váng sữa canxi giảm 5%",
+        "price": 2726000
       }
     ],
     "desc": "Vitamin D3 + K2 Pure Vitality (New Zealand) dạng nhỏ giọt 30ml, hương táo NZ. Theo nhà sản xuất, D3 hỗ trợ hấp thu canxi, K2 giúp đưa canxi vào xương, hỗ trợ phát triển xương răng và đề kháng cho bé. Có chứng nhận HACCP, GMP. Mua 2 lọ tiết kiệm hơn.",
