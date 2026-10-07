@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Đối tác bán hàng – Hương Chất Kids</title>
+  <meta name="description" content="Trở thành đối tác Hương Chất Kids: chia sẻ link sản phẩm, nhận hoa hồng cho mỗi đơn giao thành công, thanh toán ngày 10 hằng tháng.">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261007i">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
+</head>
+<body>
+<main id="app"><div class="container" id="dt"></div></main>
+<script src="js/data.js?v=20261007i"></script>
+<script src="js/qrcode.min.js"></script>
+<script src="js/app.js?v=20261007i"></script>
+<script>
+/* TRANG ĐỐI TÁC – đăng ký (shop duyệt), đăng nhập, lấy link sản phẩm, xem lượt bấm / đơn / hoa hồng / kỳ thanh toán.
+   Máy chủ: Apps Script affDangKy / affDangNhap / affHoSo / affCongKhai (tools/apps-script.gs, phần ĐỐI TÁC). */
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, $$, esc, fmt, store, toast, loyaltyApi, phoneOk, productThumb, shortName } = MC;
+  const KHOA = 'mc_dt_token'; let cfg = { hh: {}, ngay: 7, ngayTra: 10, choDoiTraNgay: 7, thueTyLe: 10, thueNguong: 2000000 }; let hs = null; let tab = 'dang-nhap';
+  const n0 = (x) => Number(x || 0).toLocaleString('vi-VN');
+  const BASE = location.origin + location.pathname.replace(/[^/]*$/, '');
+  const TT = { 'Chờ giao': 'badge--hot', 'Đã giao': 'badge--teal', 'Đã huỷ': 'badge--soft', 'Hoàn hàng': 'badge--soft', 'Không tính': 'badge--soft', 'Chờ trả': 'badge--hot', 'Đã trả': 'badge--teal' };
+  const LOAI = { 'ca-nhan': 'Cá nhân – khấu trừ thuế TNCN', 'cam-ket-08': 'Cá nhân đã có cam kết 08/CK-TNCN', 'doanh-nghiep': 'Doanh nghiệp / hộ kinh doanh (xuất hoá đơn)' };
+
+  const coCheHTML = () => `<div class="card card--pad dt-coche"><h3>💡 Cơ chế hoa hồng</h3>
+    <div class="dt-hh">${[['link', '🔗 Khách bấm link rồi mua'], ['khacMay', '📱 Bấm link, mua ở máy khác'], ['zalo', '💬 Đặt qua Zalo có mã của bạn'], ['ganTay', '✋ Shop ghi nhận giúp']].map(([k, t]) => `<div><span>${t}</span><b>${cfg.hh[k] ?? '—'}%</b></div>`).join('')}</div>
+    <ul class="dt-luat">
+      <li>Tính trên <b>tiền hàng khách thực trả</b> (sau giảm giá, không gồm phí ship). Khách vẫn dùng mã giảm giá của shop như bình thường.</li>
+      <li>Khách mua trong <b>${cfg.ngay} ngày</b> kể từ lần bấm link gần nhất. Khách bấm link của nhiều đối tác → tính cho <b>người được bấm sau cùng</b>.</li>
+      <li>Hoa hồng ghi nhận khi đơn <b>giao thành công</b>; huỷ không tính, hoàn hàng trừ lại. Tự mua qua link của mình không tính.</li>
+      <li>Thanh toán <b>ngày ${cfg.ngayTra} hằng tháng</b> cho đơn đã giao quá ${cfg.choDoiTraNgay} ngày (hết hạn đổi trả).</li>
+      <li>Thuế TNCN: shop khấu trừ <b>${cfg.thueTyLe}%</b> với khoản trả từ <b>${fmt(cfg.thueNguong)}</b>/lần cho cá nhân (trừ khi có cam kết 08/CK-TNCN hoặc là doanh nghiệp / HKD xuất hoá đơn) và cấp chứng từ khấu trừ theo quy định.</li>
+    </ul></div>`;
+
+  function veKhach() {
+    $('#dt').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Đối tác bán hàng</span></nav>
+      <div class="dt-hero"><div><h1 class="page-title">🤝 Trở thành đối tác Hương Chất Kids</h1><p class="text-muted">${esc(cfg.gioiThieu || 'Chia sẻ link sản phẩm, nhận hoa hồng cho mỗi đơn giao thành công.')}</p></div></div>
+      <div class="checkout">
+        <div class="flex flex-col gap-16">${coCheHTML()}
+          <div class="card card--pad"><h3>🚀 Bắt đầu thế nào?</h3><ol class="dt-buoc"><li>Đăng ký bên cạnh → shop duyệt và gửi email cho bạn.</li><li>Đăng nhập, chọn sản phẩm → <b>Tạo link</b> và đăng lên Facebook, TikTok, Zalo, nhóm của bạn.</li><li>Theo dõi lượt bấm, đơn hàng và hoa hồng ngay tại trang này.</li></ol></div></div>
+        <div class="checkout__side"><div class="card card--pad">
+          <div class="dt-tabs"><button type="button" data-tab="dang-nhap" class="${tab === 'dang-nhap' ? 'is-on' : ''}">Đăng nhập</button><button type="button" data-tab="dang-ky" class="${tab === 'dang-ky' ? 'is-on' : ''}">Đăng ký đối tác</button></div>
+          ${tab === 'dang-nhap' ? `<form id="fDn" class="qmk__form mt-12" novalidate>
+              <label class="field"><span>Số điện thoại hoặc mã đối tác</span><input class="input" name="tk" autocomplete="username" required></label>
+              <label class="field"><span>Mật khẩu</span><input class="input" name="mk" type="password" autocomplete="current-password" required></label>
+              <div class="form-error hide" id="dnLoi" role="alert"></div>
+              <button class="btn btn--primary btn--lg btn--block" type="submit">Đăng nhập</button>
+              <p class="qmk__note">Quên mật khẩu? Liên hệ shop qua Zalo / hotline <b>${esc(SITE.hotline)}</b> để được đặt lại.</p></form>`
+          : `<form id="fDk" class="qmk__form mt-12" novalidate>
+              <label class="field"><span>Họ tên *</span><input class="input" name="ten" autocomplete="name" required></label>
+              <div class="form-grid form-grid--2"><label class="field"><span>Số điện thoại *</span><input class="input" name="sdt" type="tel" inputmode="numeric" required></label>
+                <label class="field"><span>Email *</span><input class="input" name="email" type="email" required></label></div>
+              <label class="field"><span>Mã đối tác mong muốn</span><input class="input" name="ma" maxlength="12" placeholder="VD: MEBI (3–12 chữ / số, không dấu – để trống shop tự tạo)"></label>
+              <label class="field"><span>Kênh bán của bạn</span><input class="input" name="kenh" placeholder="Link Facebook / TikTok / nhóm Zalo…"></label>
+              <div class="form-grid form-grid--2"><label class="field"><span>Ngân hàng *</span><input class="input" name="nganHang" placeholder="VD: Vietcombank" required></label>
+                <label class="field"><span>Số tài khoản *</span><input class="input" name="stk" inputmode="numeric" required></label></div>
+              <label class="field"><span>Chủ tài khoản</span><input class="input" name="chuTk" placeholder="Viết hoa không dấu (để trống = họ tên)"></label>
+              <label class="field"><span>Số CCCD hoặc mã số thuế *</span><input class="input" name="cccd" inputmode="numeric" required><small class="field__hint">Dùng để khấu trừ và cấp chứng từ khấu trừ thuế TNCN theo quy định. Chỉ shop xem được.</small></label>
+              <div class="field"><span>Hình thức nhận thu nhập</span>${Object.entries(LOAI).map(([k, t], i) => `<label class="qmk__tk"><input type="radio" name="loaiThue" value="${k}" ${i ? '' : 'checked'}> ${esc(t)}</label>`).join('')}
+                <small class="field__hint">Chọn "cam kết 08" nếu tổng thu nhập cả năm của bạn chưa tới mức phải nộp thuế và bạn sẽ gửi shop mẫu 08/CK-TNCN.</small></div>
+              <div class="form-grid form-grid--2"><label class="field"><span>Mật khẩu * (≥ 8 ký tự)</span><input class="input" name="mk" type="password" autocomplete="new-password" required></label>
+                <label class="field"><span>Nhập lại mật khẩu *</span><input class="input" name="mk2" type="password" autocomplete="new-password" required></label></div>
+              <label class="qmk__tk"><input type="checkbox" name="dongY"> Tôi đã đọc và đồng ý cơ chế hoa hồng bên cạnh</label>
+              <div class="form-error hide" id="dkLoi" role="alert"></div>
+              <button class="btn btn--primary btn--lg btn--block" type="submit">Gửi đăng ký</button></form>`}
+        </div></div>
+      </div>`;
+  }
+
+  function veHoSo() {
+    const d = hs.doiTac, t = hs.tk; const max = Math.max(1, ...hs.bieuDo.map((x) => x.luot));
+    $('#dt').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Đối tác</span></nav>
+      <div class="flex justify-between items-center wrap gap-8 mb-16"><h1 class="page-title" style="margin:0">Chào ${esc(d.ten)} 👋 <span class="badge badge--teal">Mã ${esc(d.ma)}</span></h1><button class="btn btn--ghost btn--sm" type="button" id="dtThoat">Đăng xuất</button></div>
+      <div class="dt-kpi">
+        <div><small>Lượt bấm link</small><b>${n0(hs.luotBam)}</b></div><div><small>Đơn ghi nhận</small><b>${n0(t.soDon)}</b></div>
+        <div><small>Chờ giao hàng</small><b>${fmt(t.cho)}</b></div><div><small>Chờ hết ${cfg.choDoiTraNgay} ngày đổi trả</small><b>${fmt(t.choDoiTra)}</b></div>
+        <div class="is-hong"><small>Sẽ trả ngày ${cfg.ngayTra}</small><b>${fmt(t.duocTra)}</b></div><div class="is-xanh"><small>Đã nhận</small><b>${fmt(t.daTra)}</b></div>
+      </div>
+      <div class="checkout">
+        <div class="flex flex-col gap-16">
+          <div class="card card--pad"><h3>🔗 Tạo link chia sẻ</h3>
+            <div class="dt-tim"><input class="input" id="dtTim" placeholder="Tìm sản phẩm theo tên…" autocomplete="off"></div>
+            <div class="dt-sp" id="dtSp"></div>
+            <div class="dt-link"><span>Link trang chủ</span><code id="lkHome">${esc(BASE)}?aff=${esc(d.ma)}</code><button class="btn btn--dark btn--sm" type="button" data-copy="${esc(BASE)}?aff=${esc(d.ma)}">Copy</button></div>
+            <p class="qmk__note mt-8">Mọi link của web thêm <code>?aff=${esc(d.ma)}</code> (hoặc <code>&aff=${esc(d.ma)}</code>) đều được ghi nhận.</p></div>
+          <div class="card card--pad"><h3>📈 Lượt bấm 14 ngày</h3><div class="dt-chart">${hs.bieuDo.map((x) => `<div title="${x.ngay}: ${x.luot} lượt"><i style="height:${Math.round(x.luot / max * 100)}%"></i><small>${x.ngay.slice(0, 2)}</small></div>`).join('')}</div></div>
+          <div class="card card--pad"><h3>🧾 Đơn hàng (${hs.don.length})</h3>${hs.don.length ? `<div class="diem-ls">${hs.don.map((o) => `<div class="diem-ls__it"><div><b>${esc(o.ma)} · khách ${esc(o.khach)}</b><small>${esc(o.ngay)} · ${esc(o.nguon)}${o.sp ? ' · ' + esc(o.sp) : ''}</small></div><div class="diem-ls__so"><span class="badge ${TT[o.tt] || 'badge--soft'}">${esc(o.tt)}</span><small>${fmt(o.tien)} × ${o.pt}% = <b>${fmt(o.hh)}</b>${o.ky ? ' · ' + esc(o.ky) : ''}</small></div></div>`).join('')}</div>` : '<p class="text-muted fs-14">Chưa có đơn nào. Đăng link sản phẩm để bắt đầu nhé!</p>'}</div>
+        </div>
+        <div class="checkout__side"><div class="card card--pad"><h3>💳 Kỳ thanh toán</h3>
+            ${hs.ky.length ? hs.ky.map((k) => `<div class="bm-row"><span>${esc(k.ngay)}<br><small>${esc(k.ma)} · ${k.soDon} đơn</small></span><b style="flex-direction:column;align-items:flex-end">${fmt(k.nhan)}<small class="text-muted" style="font-weight:500">HH ${fmt(k.tong)}${k.dc ? ' · trừ ' + fmt(-k.dc) : ''} · thuế ${fmt(k.thue)}</small><span class="badge ${TT[k.tt] || ''}">${esc(k.tt)}${k.traLuc ? ' ' + esc(k.traLuc) : ''}</span></b></div>`).join('') : '<p class="text-muted fs-14">Chưa có kỳ nào. Kỳ đầu tiên được chốt vào ngày ' + cfg.ngayTra + ' khi có đơn đủ điều kiện.</p>'}
+            <div class="divider"></div><h3>👤 Thông tin nhận tiền</h3>
+            <div class="bm-row"><span>Ngân hàng</span><b>${esc(d.nganHang)} ${esc(d.stk)}</b></div>
+            <div class="bm-row"><span>Hình thức</span><b>${esc(LOAI[d.loaiThue] || d.loaiThue)}</b></div>
+            <div class="bm-row"><span>Liên hệ</span><b>${esc(d.sdt)} · ${esc(d.email)}</b></div>
+            <p class="qmk__note mt-8">Cần đổi tài khoản ngân hàng / hình thức thuế? Nhắn shop qua Zalo ${esc(SITE.hotline)}.</p>
+          </div>${coCheHTML()}</div>
+      </div>`;
+    veSp('');
+  }
+  function veSp(q) {
+    const box = $('#dtSp'); if (!box || !hs) return;
+    const k = String(q || '').toLowerCase(); const ds = (window.PRODUCTS || []).filter((p) => !p.hidden && (!k || (p.name + ' ' + (p.short || '')).toLowerCase().includes(k))).slice(0, 8);
+    box.innerHTML = ds.map((p) => { const url = `${BASE}product.html?id=${p.id}&aff=${hs.doiTac.ma}`; return `<div class="dt-sp__it"><img src="${productThumb(p)}" alt=""><div><b>${esc(shortName(p))}</b><small>${fmt(p.price)}</small></div><button class="btn btn--primary btn--sm" type="button" data-copy="${esc(url)}">Copy link</button></div>`; }).join('') || '<p class="text-muted fs-14">Không thấy sản phẩm.</p>';
+  }
+  const tai = () => { const tk = store.get(KHOA, ''); if (!tk) { veKhach(); return; }
+    $('#dt').innerHTML = '<p class="text-muted" style="padding:40px 0">Đang tải…</p>';
+    loyaltyApi('affHoSo', { token: tk }).then((r) => { if (r && r.ok) { hs = r; cfg = { ...cfg, ...r.cauHinh }; veHoSo(); } else { if (r && r.loi === 'token') store.set(KHOA, ''); toast((r && r.msg) || 'Chưa tải được', { type: 'error' }); veKhach(); } })
+      .catch((e) => { toast(e.message, { type: 'error' }); veKhach(); }); };
+
+  document.addEventListener('click', (e) => {
+    const tb = e.target.closest('[data-tab]'); if (tb) { tab = tb.dataset.tab; veKhach(); return; }
+    const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard?.writeText(cp.dataset.copy).then(() => toast('Đã copy link – dán vào bài đăng là xong', { type: 'ok' }), () => toast(cp.dataset.copy)); }
+    if (e.target.id === 'dtThoat') { store.set(KHOA, ''); hs = null; veKhach(); }
+  });
+  document.addEventListener('input', (e) => { if (e.target.id === 'dtTim') veSp(e.target.value); });
+  document.addEventListener('submit', (e) => {
+    e.preventDefault(); const f = e.target; const v = Object.fromEntries(new FormData(f).entries()); const btn = $('button[type=submit]', f);
+    const loi = (id, m) => { const x = $(id); x.textContent = m; x.classList.toggle('hide', !m); };
+    if (f.id === 'fDn') {
+      btn.disabled = true; loyaltyApi('affDangNhap', { tk: v.tk.trim(), mk: v.mk }).then((r) => { btn.disabled = false; if (!r || !r.ok) { loi('#dnLoi', (r && r.msg) || 'Chưa đăng nhập được'); return; } store.set(KHOA, r.token); tai(); })
+        .catch((e2) => { btn.disabled = false; loi('#dnLoi', e2.message); });
+    }
+    if (f.id === 'fDk') {
+      if (!v.dongY) { loi('#dkLoi', 'Bạn đánh dấu đồng ý cơ chế hoa hồng nhé'); return; }
+      if (!phoneOk(v.sdt)) { loi('#dkLoi', 'Số điện thoại chưa đúng'); return; }
+      if ((v.mk || '').length < 8) { loi('#dkLoi', 'Mật khẩu cần ít nhất 8 ký tự'); return; }
+      if (v.mk !== v.mk2) { loi('#dkLoi', 'Hai mật khẩu không khớp'); return; }
+      btn.disabled = true; btn.textContent = 'Đang gửi…'; delete v.dongY;
+      loyaltyApi('affDangKy', v).then((r) => {
+        btn.disabled = false; btn.textContent = 'Gửi đăng ký';
+        if (!r || !r.ok) { loi('#dkLoi', (r && r.msg) || 'Chưa gửi được'); return; }
+        f.outerHTML = `<div class="qmk__xong mt-12"><div class="qmk__tick">✓</div><h3>Đã gửi đăng ký!</h3><p>Mã đối tác dự kiến: <b>${esc(r.ma)}</b></p><p class="qmk__note">${esc(r.msg)}</p></div>`;
+      }).catch((e2) => { btn.disabled = false; btn.textContent = 'Gửi đăng ký'; loi('#dkLoi', e2.message); });
+    }
+  });
+  loyaltyApi('affCongKhai').then((r) => { if (r && r.ok) cfg = { ...cfg, ...r }; }).catch(() => {}).finally(tai);
+});
+</script>
+</body>
+</html>

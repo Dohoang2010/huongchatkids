@@ -496,7 +496,7 @@
           ${SITE.bctUrl ? `<a class="footer__cert" href="${SITE.bctUrl}" target="_blank" rel="noopener">${I.shield} Đã thông báo Bộ Công Thương</a>` : ''}
         </div>
         ${cotFooter()}
-        <div class="footer__col"><h4><a href="gioi-thieu.html">Về ${SITE.name}</a></h4><ul><li><a href="gioi-thieu.html">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang chăm con</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li></ul></div>
+        <div class="footer__col"><h4><a href="gioi-thieu.html">Về ${SITE.name}</a></h4><ul><li><a href="gioi-thieu.html">Giới thiệu</a></li><li><a href="policy.html?p=chinh-hang">Cam kết chính hãng</a></li><li><a href="policy.html?p=faq">Câu hỏi thường gặp</a></li><li><a href="blog.html">Cẩm nang chăm con</a></li><li><a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a></li><li><a href="policy.html?p=hop-tac">Liên hệ hợp tác</a></li><li><a href="doi-tac.html">Đối tác bán hàng – nhận hoa hồng</a></li></ul></div>
         <div class="footer__col"><h4>Kết nối với chúng tôi</h4>
           <p class="fs-13 text-muted">Theo dõi để nhận ưu đãi và kiến thức chăm con mỗi ngày.</p>
           ${SITE.zaloQr ? `<div class="footer__qr"><img src="${SITE.zaloQr}" width="112" height="112" alt="Mã QR Zalo ${SITE.name}" loading="lazy"><div><b>Zalo ${SITE.hotline}</b><small>Quét mã để chat với chuyên gia dinh dưỡng, đặt hàng nhanh</small><a href="${SITE.zalo}" target="_blank" rel="noopener">Mở Zalo →</a></div></div>` : ''}
