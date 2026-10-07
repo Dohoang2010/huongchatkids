@@ -160,7 +160,7 @@
     multiDiscount() { return this.lines().reduce((s, l) => s + (l.qty >= 2 ? Math.round(l.total * MULTI_RATE) : 0), 0); },
   };
   const MULTI_RATE = 0.03;
-  const Customer = { key: 'mc_customer', get() { return store.get(this.key, null); }, set(v) { store.set(this.key, v); }, clear() { store.set(this.key, null); } };
+  const Customer = { key: 'mc_customer', get() { return store.get(this.key, null); }, set(v) { store.set(this.key, v); if (v && v.phone) AFF.noiSdt(v.phone); }, clear() { store.set(this.key, null); } };
   const Wish = { key: 'mc_wish', get() { return store.get(this.key, []); }, has(id) { return this.get().includes(id); }, toggle(id) { const w = this.get(); const i = w.indexOf(id); if (i > -1) w.splice(i, 1); else w.push(id); store.set(this.key, w); return i === -1; } };
 
   /* Gửi đơn về chỗ nhận đơn của shop (SITE.orderEndpoint – Google Apps Script). Mất mạng thì xếp hàng gửi lại. */
@@ -184,9 +184,11 @@
       setTimeout(() => {
         const code = order.code || taoMaDon();
         const saved = { ...order, code, createdAt: new Date().toISOString(), site: location.host };
+        const aff = AFF.get(); if (aff && saved.type !== 'callback') { saved.doiTac = aff.ma; saved.note = `[Đối tác ${aff.ma}]` + (saved.note ? '\n' + saved.note : ''); }
         const orders = store.get('mc_orders', []); orders.unshift(saved); store.set('mc_orders', orders.slice(0, 20));
         store.set('mc_last_order', saved); if (saved.type !== 'callback') trackSu('mua', code);
         postOrder(saved).then((ok) => { if (!ok) queueOrder(saved); });
+        AFF.ganDon(saved);
         resolve(saved);
       }, 700);
     });
@@ -901,7 +903,7 @@
       else if (t.dataset.qbMa !== undefined) { QB.gt = { ma: '', ok: false, msg: '' }; QB.coupon = t.dataset.qbMa; const inp = $('#qbCoupon'); if (inp) inp.value = QB.coupon; qbRefresh(); }
       else if (t.dataset.copy !== undefined) { try { navigator.clipboard?.writeText(t.dataset.copy); toast('Đã sao chép: ' + t.dataset.copy); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.payQr !== undefined) { const o = store.get('mc_orders', []).find((x) => x.code === t.dataset.payQr); if (o) openPayQR(o); }
-      else if (t.dataset.zaloCopy !== undefined) { try { navigator.clipboard?.writeText(`Mình muốn đặt: ${t.dataset.zaloCopy}`); toast('Đã sao chép tên sản phẩm – mẹ dán vào Zalo là xong'); } catch (err) { /* bỏ qua */ } }
+      else if (t.dataset.zaloCopy !== undefined) { try { navigator.clipboard?.writeText(`Mình muốn đặt: ${t.dataset.zaloCopy}${AFF.get() ? ' · Mã ĐT: ' + AFF.get().ma : ''}`); toast('Đã sao chép tên sản phẩm – mẹ dán vào Zalo là xong'); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.wish !== undefined) { e.preventDefault(); const on = Wish.toggle(t.dataset.wish); t.classList.toggle('is-on', on); toast(on ? 'Đã thêm vào yêu thích 💗' : 'Đã bỏ yêu thích'); }
       else if (t.dataset.reorder !== undefined) { const o = store.get('mc_last_order'); if (o && o.items) { o.items.forEach((it) => { const p = byId(it.id); if (p) Cart.add(it.id, it.qty || 1, it.variant && p.variants ? p.variants.findIndex((v) => v.label === it.variant) : null); }); location.href = 'checkout.html'; } }
     });
@@ -1128,7 +1130,7 @@
 
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
-    renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk(); GT.batRef();
+    renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk(); GT.batRef(); AFF.batLink();
     syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
@@ -1213,6 +1215,7 @@
   const _dangTra = {};
   function traHang(phone) {
     const sdt = phoneKey(phone);
+    if (phoneOk(sdt)) AFF.noiSdt(sdt);   // đối tác: nối SĐT với lượt bấm link trên máy này
     if (!LOY().enabled || !phoneOk(sdt)) return Promise.resolve(null);
     const v = HangSdt.get(sdt); if (v) return Promise.resolve(v);
     if (!_dangTra[sdt]) _dangTra[sdt] = loyaltyApi('kiemTra', { sdt }).then((res) => { if (res && res.ok) HangSdt.set(sdt, res); return HangSdt.get(sdt); }).catch(() => null).finally(() => { delete _dangTra[sdt]; });
@@ -1710,7 +1713,34 @@
   });
   document.addEventListener('change', (e) => { if (e.target.id === 'qbDiemDung') { QB.diemMuon = e.target.checked ? qbCalc().diemToiDa : 0; qbRefresh(); } });
 
+  /* ---------------- Đối tác (affiliate) – máy chủ: Apps Script, phần ĐỐI TÁC ----------------
+     Link ?aff=MÃ → xin máy chủ 1 "mã lượt bấm" (ghi sổ, không bịa được) → lưu trên máy 7 ngày, bấm link đối tác khác thì ghi đè (tính người sau cùng).
+     Khách gõ SĐT (tra cứu, thanh toán, đăng nhập, đăng ký) → nối SĐT với lượt bấm để đặt ở máy khác vẫn tính.
+     Mọi đơn web đều báo máy chủ (affGanDon); máy chủ tự quyết có tính cho đối tác nào hay không. */
+  const AFF = {
+    key: 'mc_aff',
+    vid() { const t = store.get('mc_tc', null); if (t && t.vid) return t.vid; let m = store.get('mc_may', ''); if (!m) { m = Math.random().toString(36).slice(2) + Date.now().toString(36); store.set('mc_may', m); } return m; },
+    get() { const v = store.get(this.key, null); return v && v.lb && Date.now() - v.luc < (v.ngay || 7) * 864e5 ? v : null; },
+    batLink() {
+      const ma = String(param('aff') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, ''); if (!ma) return;
+      const cu = store.get(this.key, null); if (cu && cu.ma === ma && Date.now() - cu.luc < 60e3) return;   // tải lại trang ngay → không đếm trùng
+      loyaltyApi('affBam', { ma, vid: this.vid(), trang: (location.pathname.split('/').pop() || 'index.html') + location.search.replace(/[?&]aff=[^&]*/, '').slice(0, 80), tb: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop' })
+        .then((r) => { if (r && r.ok) { store.set(this.key, { ma: r.ma, lb: r.lb, luc: Date.now(), ngay: r.ngay || 7 }); store.set('mc_aff_noi', []); } }).catch(() => {});
+    },
+    noiSdt(sdt) {
+      const v = this.get(); sdt = phoneKey(sdt || ''); if (!v || !phoneOk(sdt)) return;
+      const da = store.get('mc_aff_noi', []) || []; const k = v.lb + ':' + sdt; if (da.includes(k)) return;
+      store.set('mc_aff_noi', [...da, k].slice(-10)); loyaltyApi('affSdt', { lb: v.lb, sdt }).catch(() => {});
+    },
+    ganDon(o) {
+      if (!o || o.type === 'callback' || !o.customer || !phoneOk(o.customer.phone)) return;
+      const v = this.get();
+      loyaltyApi('affGanDon', { maDon: o.code, sdt: phoneKey(o.customer.phone), lb: v ? v.lb : '', tien: Math.max(0, (Number(o.total) || 0) - (Number(o.ship) || 0)), tong: Number(o.total) || 0,
+        sp: (o.items || []).map((it) => `${it.short || it.name}${it.variant ? ' – ' + it.variant : ''} ×${it.qty || 1}`).join('; ').slice(0, 280) }, 30000).catch(() => {});
+    },
+  };
+
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
-    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, anEmail, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
     giftFor, giftNote, giftBox, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();
