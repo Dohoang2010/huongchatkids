@@ -79,7 +79,7 @@ window.ADMIN = (() => {
 
   /* ---------------- Gọi Apps Script (JSONP) ---------------- */
   let seq = 0;
-  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtDiemDieuChinh', 'qtGtCauHinh', 'qtGtXuLy', 'qtGtLich', 'qtBaoMatKhach', 'qtQmkCauHinh', 'qtAffDs', 'qtAffDuyet', 'qtAffDon', 'qtAffGanTay', 'qtAffKy', 'qtAffChotKy', 'qtAffTra', 'qtAffCauHinh', 'qtAffXuLy', 'qtAffSp', 'qtAffSpLuu', 'qtAffCd', 'qtAffCdLuu', 'qtAffCdDung', 'qtAffCdXoa'];
+  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtDiemDieuChinh', 'qtGtCauHinh', 'qtGtXuLy', 'qtGtLich', 'qtBaoMatKhach', 'qtQmkCauHinh', 'qtAffDs', 'qtAffDuyet', 'qtAffDon', 'qtAffGanTay', 'qtAffKy', 'qtAffChotKy', 'qtAffTra', 'qtAffCauHinh', 'qtAffXuLy', 'qtAffSp', 'qtAffSpLuu', 'qtAffCd', 'qtAffCdLuu', 'qtAffCdDung', 'qtAffCdXoa', 'qtBiMat'];
   /* Lệnh chỉ đọc: hết giờ thì tự gửi lại 1 lần (Apps Script lần đầu sau khi nghỉ có thể mất 20–40 giây để "thức dậy") */
   const LENH_DOC = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtBaoMatKhach', 'qtQmkCauHinh', 'qtAffDs', 'qtAffDuyet', 'qtAffDon', 'qtAffGanTay', 'qtAffKy', 'qtAffChotKy', 'qtAffTra', 'qtAffCauHinh', 'qtAffXuLy', 'qtAffSp', 'qtAffSpLuu', 'qtAffCd', 'qtAffCdLuu', 'qtAffCdDung'];
   function api(action, params = {}, timeout = 45000) {
@@ -102,12 +102,15 @@ window.ADMIN = (() => {
       document.head.appendChild(sc);
     });
   }
-  const adminKey = () => localStorage.getItem('hck_admin_key') || 'hck-admin-2026';
+  /* Khoá dự phòng: không còn khoá mặc định (khoá cũ đã lộ). Chỉ dùng khi chủ shop tự đặt ADMIN_KEY trên máy chủ và dán vào đây. */
+  if (/^hck-admin-d+$/.test(localStorage.getItem('hck_admin_key') || '')) localStorage.removeItem('hck_admin_key');
+  const adminKey = () => localStorage.getItem('hck_admin_key') || '';
   /* Tham số xác thực gửi kèm mọi lệnh quản trị: token của tài khoản đang đăng nhập,
      kèm khoá chủ shop làm phương án dự phòng khi chưa tạo tài khoản nào. */
   function xacThuc(extra) {
     const p = sessionStorage.getItem('hck_qt_token');
-    return { key: adminKey(), ...(p ? { token: p } : {}), ...(extra || {}) };
+    const k = adminKey();
+    return { ...(k ? { key: k } : {}), ...(p ? { token: p } : {}), ...(extra || {}) };
   }
 
   /* ---------------- GitHub ---------------- */

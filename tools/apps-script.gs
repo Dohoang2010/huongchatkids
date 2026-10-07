@@ -119,7 +119,7 @@ function doPost(e) {
     var order = JSON.parse(e.postData.contents);
 
     // Lượt truy cập web gửi lên (không phải đơn hàng)
-    if (order && order.type === 'track') { ghiTruyCap(order); return ContentService.createTextOutput('ok'); }
+    if (order && order.type === 'track') { if (demGioiHan('gh_track', 3000, 600)) ghiTruyCap(order); return ContentService.createTextOutput('ok'); }
 
     // Tin nhắn Zalo OA gửi tới (nếu có) – chỉ lưu lại user id
     if (order && order.event_name && order.sender && order.sender.id) {
@@ -129,6 +129,11 @@ function doPost(e) {
 
     var c = order.customer || {};
     var sdt = chuanSdt(c.phone);
+    /* C2 – chống spam đơn ảo: tối đa 8 đơn / số / 10 phút và 150 đơn / 10 phút toàn shop */
+    if (!demGioiHan('gh_don', 150, 600) || (sdt && !demGioiHan('gh_don_' + sdt, 8, 600))) {
+      canhBao_('tan-suat-don', '⚠️ Có quá nhiều đơn gửi lên trong 10 phút (có thể bot spam đơn ảo). Đơn vượt giới hạn đã bị chặn – kiểm tra bảng Đơn hàng.');
+      return ContentService.createTextOutput(JSON.stringify({ ok: false, code: 'RATE_LIMITED', msg: 'Hệ thống đang bận, mẹ gọi hotline ' + HOTLINE + ' để đặt hàng nhé' })).setMimeType(ContentService.MimeType.JSON);
+    }
     var items = (order.items || []).map(function (it) {
       return (it.short || it.name) + (it.variant ? ' – ' + it.variant : '') + ' × ' + (it.qty || 1);
     }).join('\n');
@@ -1431,13 +1436,19 @@ function chotKy(ngayChot, ai) {
 }
 
 /* ---------- 7. API quản trị ---------- */
+/* C5 – CCCD / MST và số tài khoản chỉ hiện đầy đủ cho người có quyền thanh toán đối tác (affiliate.pay); mỗi lần xem được ghi nhật ký */
+function anCccd_(x) { x = String(x || ''); return x.length > 3 ? '•••••' + x.slice(-3) : x; }
+function cheNhayCam_(p, ds, viec) {
+  if (coQuyen(p, 'affiliate.pay')) { var ai = tenQT(p), k = 'xemnc_' + ai + '_' + viec; if (demGioiHan(k, 1, 3600)) ghiNhatKy('Bảo mật', ai, 'Xem CCCD / số tài khoản đối tác (' + viec + ', ' + ds.length + ' dòng)'); return ds; }
+  ds.forEach(function (x) { x.cccd = anCccd_(x.cccd); x.stk = anTK(x.stk); x.che = true; }); return ds;
+}
 function apiQtAffDs(p) {
   if (!coQuyen(p, 'affiliate.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var lb = docBang(sheetLB(), 3), dd = docBang(sheetDD(), H_DD.length), tkMa = {};
   lb.forEach(function (r) { var m = String(r[2]); (tkMa[m] = tkMa[m] || { bam: 0, don: 0, doanhThu: 0, hh: 0 }).bam++; });
   dd.forEach(function (r) { var m = String(r[3]), t = tkMa[m] = tkMa[m] || { bam: 0, don: 0, doanhThu: 0, hh: 0 }; if (String(r[11]) === DDT.GIAO || String(r[11]) === DDT.CHO) { t.don++; t.doanhThu += soNguyen(r[7]); t.hh += soNguyen(r[10]); } });
   var ds = docBang(sheetDT(), H_DT.length).map(function (r) { var m = String(r[0]); return { ma: m, ten: String(r[1]), sdt: chuanSdt(r[2]), email: String(r[3]), kenh: String(r[4]), nganHang: String(r[5]), stk: String(r[6]), chuTk: String(r[7]), cccd: String(r[8]), loaiThue: String(r[9]), tt: String(r[10]), dangKy: ngayVN(r[11]), duyet: r[12] ? ngayVN(r[12]) : '', ghiChu: String(r[16] || ''), tk: tkMa[m] || { bam: 0, don: 0, doanhThu: 0, hh: 0 } }; }).reverse();
-  return { ok: true, ds: ds, cauHinh: affCauHinh() };
+  return { ok: true, ds: cheNhayCam_(p, ds, 'danh sách'), cauHinh: affCauHinh() };
 }
 function apiQtAffDuyet(p) {
   if (!coQuyen(p, 'affiliate.update')) return { ok: false, msg: 'Không có quyền' };
@@ -1485,7 +1496,7 @@ function apiQtAffKy(p) {
   var dts = {}; docBang(sheetDT(), H_DT.length).forEach(function (r) { dts[String(r[0])] = r; });
   var ds = docBang(sheetKY(), H_KY.length).map(function (r) { var d = dts[String(r[1])] || []; return { ma: String(r[0]), dt: String(r[1]), ten: String(d[1] || ''), cccd: String(d[8] || ''), loaiThue: String(d[9] || ''), nganHang: String(d[5] || ''), stk: String(d[6] || ''), chuTk: String(d[7] || ''),
     ngay: Utilities.formatDate(new Date(r[2]), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy'), soDon: r[3], tong: soNguyen(r[4]), dc: soNguyen(r[5]), tinhThue: soNguyen(r[6]), thue: soNguyen(r[7]), nhan: soNguyen(r[8]), tt: String(r[9]), traLuc: r[10] ? ngayVN(r[10]) : '', gd: String(r[11] || ''), nguoiTra: String(r[12] || ''), don: String(r[13] || ''), ghiChu: String(r[14] || '') }; }).reverse();
-  return { ok: true, ds: ds };
+  return { ok: true, ds: cheNhayCam_(p, ds, 'kỳ thanh toán') };
 }
 function apiQtAffChotKy(p) { if (!coQuyen(p, 'affiliate.pay')) return { ok: false, msg: 'Không có quyền' }; return chotKy(new Date(), tenQT(p)); }
 function apiQtAffTra(p) {
@@ -1526,6 +1537,7 @@ function apiQtAffXuLy(p) { if (!coQuyen(p, 'affiliate.update')) return { ok: fal
 
 /* ===================== API CHO WEBSITE (JSONP) ===================== */
 function traVe(data, callback) {
+  try { baoLenh_(data); } catch (e) { Logger.log('Cảnh báo lỗi: ' + e); }
   var json = JSON.stringify(data);
   if (callback && /^[A-Za-z_$][\w$]*$/.test(callback)) {
     return ContentService.createTextOutput(callback + '(' + json + ');').setMimeType(ContentService.MimeType.JAVASCRIPT);
@@ -1537,6 +1549,8 @@ function doGet(e) {
   var p = (e && e.parameter) || {};
   var cb = p.callback || '';
   var action = p.action || '';
+  HD_ = { a: action, p: p };
+  var chan = chanTanSuat_(action); if (chan) return traVe(chan, cb);
   try {
     if (action === 'kiemTra')  return traVe(apiKiemTra(p), cb);
     if (action === 'guiOtp')   return traVe(apiGuiOtp(p), cb);
@@ -1556,6 +1570,8 @@ function doGet(e) {
     if (action === 'khoaKhach')    return traVe(apiKhoaKhach(p), cb);
     if (action === 'nhatKy')       return traVe(apiNhatKy(p), cb);
     if (action === 'qtDangNhap')   return traVe(apiQtDangNhap(p), cb);
+    if (action === 'qtDangNhap2')  return traVe(apiQtDangNhap2(p), cb);
+    if (action === 'qtBiMat')      return traVe(apiQtBiMat(p), cb);
     if (action === 'qtHoSo')       return traVe(apiQtHoSo(p), cb);
     if (action === 'qtDs')         return traVe(apiQtDs(p), cb);
     if (action === 'qtLuu')        return traVe(apiQtLuu(p), cb);
@@ -1626,7 +1642,9 @@ function apiKiemTra(p) {
    Đổi mật khẩu → lưu dạng mã hoá (SHA-256 + muối) ở sheet "Tài khoản", không lưu mật khẩu thật. */
 var MK_MAC_DINH = '1';
 /* Khoá cho trang quản trị đọc số liệu (admin.html). Đổi chuỗi này rồi dán lại vào trang quản trị. */
-var ADMIN_KEY = 'hck-admin-2026';
+/* Khoá chủ shop dự phòng: KHÔNG ghi trong mã (repo công khai). Chỉ có hiệu lực khi đặt Script Property
+   ADMIN_KEY dài ít nhất 24 ký tự (Apps Script → Cài đặt dự án → Thuộc tính tập lệnh). Bình thường để trống. */
+function khoaChuShop_() { var k = String(PropertiesService.getScriptProperties().getProperty('ADMIN_KEY') || ''); return k.length >= 24 ? k : ''; }
 var SHEET_TK = 'Tài khoản';
 function sheetTK() { return sheetPhu(SHEET_TK, ['Điện thoại', 'Mật khẩu (mã hoá)', 'Muối', 'Cập nhật']); }
 function bamMk(mk, muoi) {
@@ -1704,7 +1722,7 @@ function apiDangKyGoc(p) {
 
 /* ===================== SỐ LIỆU CHO TRANG QUẢN TRỊ ===================== */
 /* Trả về doanh số, số đơn, khách mới, top sản phẩm, đơn theo ngày và theo giờ
-   trong khoảng thời gian tuỳ chọn. Cần đúng ADMIN_KEY mới đọc được. */
+   trong khoảng thời gian tuỳ chọn. Cần phiên quản trị hợp lệ mới đọc được. */
 /* ===================== KHÁCH TRUY CẬP WEBSITE =====================
    Web (js/app.js → TrackVisit) gửi ngầm bằng sendBeacon, không có thông tin cá nhân:
    - su = 'xem' khi mở trang · 'roi' khi rời / ẩn tab (kèm số giây THỰC SỰ hoạt động trên trang)
@@ -1941,15 +1959,125 @@ function apiQtDangNhap(p) {
   if (!dong) { cache.put(k, String(Number(cache.get(k) || 0) + 1), 3600); return { ok: false, msg: 'Tài khoản hoặc mật khẩu chưa đúng' }; }
   var v = sheetQT().getRange(dong, 1, 1, H_QT.length).getValues()[0];
   if (String(v[5]) !== 'Hoạt động') return { ok: false, msg: 'Tài khoản đang bị khoá' };
-  if (bamMkQT(p.mk, v[4]) !== String(v[3])) { cache.put(k, String(Number(cache.get(k) || 0) + 1), 3600); return { ok: false, msg: 'Tài khoản hoặc mật khẩu chưa đúng' }; }
+  if (bamMkQT(p.mk, v[4]) !== String(v[3])) {
+    var sai = Number(cache.get(k) || 0) + 1; cache.put(k, String(sai), 3600);
+    if (sai === 3 || sai === 8) canhBao_('qt-sai-' + tk + '-' + sai, '⚠️ Tài khoản quản trị "' + tk + '" nhập sai mật khẩu ' + sai + ' lần' + (sai >= 8 ? ' – đã tạm khoá 1 giờ' : '') + '. Nếu không phải bạn, có người đang dò mật khẩu.');
+    return { ok: false, msg: 'Tài khoản hoặc mật khẩu chưa đúng' };
+  }
   cache.remove(k);
+  if (canOtpQT_(v)) return guiOtpQT_(tk);
+  return capPhienQT_(tk, v, dong);
+}
+/* C1 – Đăng nhập 2 lớp: chủ shop / quản lý nhập đúng mật khẩu còn phải nhập mã 6 số gửi về email shop.
+   Tắt khẩn cấp: Script Property QT_OTP = tat (hoặc nút ở Quản trị → Hệ thống). */
+var VAI_TRO_OTP = ['SUPER_ADMIN', 'MANAGER'];
+function canOtpQT_(v) { return VAI_TRO_OTP.indexOf(String(v[2])) >= 0 && emailHopLe(EMAIL) && PropertiesService.getScriptProperties().getProperty('QT_OTP') !== 'tat'; }
+function guiOtpQT_(tk) {
+  var id = Utilities.getUuid().replace(/-/g, ''), ma = String(parseInt(Utilities.getUuid().replace(/-/g, '').slice(0, 8), 16) % 1000000);
+  while (ma.length < 6) ma = '0' + ma;
+  CacheService.getScriptCache().put('qt2_' + id, JSON.stringify({ tk: tk, ma: ma, sai: 0 }), 600);
+  MailApp.sendEmail(EMAIL, 'Mã đăng nhập quản trị ' + TEN_SHOP + ': ' + ma,
+    'Mã đăng nhập trang quản trị cho tài khoản "' + tk + '": ' + ma + '\nMã có hiệu lực 10 phút.\nLúc: ' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm:ss') +
+    '\n\nNếu không phải bạn đang đăng nhập: có người đã biết mật khẩu tài khoản này – hãy đổi mật khẩu ngay.', { name: TEN_SHOP });
+  return { ok: true, can2: true, phien2: id, msg: 'Đã gửi mã 6 số tới email ' + anEmail(EMAIL) + '. Mã có hiệu lực 10 phút.' };
+}
+function apiQtDangNhap2(p) {
+  var c = CacheService.getScriptCache(), k = 'qt2_' + String(p.phien2 || '').replace(/[^\w]/g, '').slice(0, 40), raw = c.get(k);
+  if (!raw) return { ok: false, hetHan: true, msg: 'Mã đã hết hạn, đăng nhập lại nhé' };
+  var o = JSON.parse(raw);
+  if (String(p.otp || '').replace(/\D/g, '') !== o.ma) {
+    o.sai++;
+    if (o.sai >= 5) { c.remove(k); canhBao_('qt-otp-' + o.tk, '⚠️ Tài khoản quản trị "' + o.tk + '" đã đúng mật khẩu nhưng nhập sai mã email 5 lần. Nếu không phải bạn, hãy đổi mật khẩu ngay.'); return { ok: false, hetHan: true, msg: 'Sai mã quá 5 lần, đăng nhập lại nhé' }; }
+    c.put(k, JSON.stringify(o), 600); return { ok: false, msg: 'Mã chưa đúng (còn ' + (5 - o.sai) + ' lần thử)' };
+  }
+  c.remove(k);
+  var dong = timQT(o.tk); if (!dong) return { ok: false, hetHan: true, msg: 'Không thấy tài khoản' };
+  var v = sheetQT().getRange(dong, 1, 1, H_QT.length).getValues()[0];
+  if (String(v[5]) !== 'Hoạt động') return { ok: false, hetHan: true, msg: 'Tài khoản đang bị khoá' };
+  return capPhienQT_(o.tk, v, dong);
+}
+function capPhienQT_(tk, v, dong) {
   var token = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
   var rieng = String(v[8] || '').trim();
   sheetPhienQT().appendRow([token, tk, String(v[2]), new Date(Date.now() + 12 * 3600e3), new Date(), rieng]);
   sheetQT().getRange(dong, 8).setValue(new Date());
   ghiNhatKy('Quản trị', tk, 'Đăng nhập');
+  canhBao_('qt-dn-' + token.slice(0, 12), '🔐 Đăng nhập trang quản trị: tài khoản "' + tk + '" (' + String(v[2]) + ') lúc ' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'HH:mm dd/MM/yyyy') + '. Nếu không phải bạn/nhân viên của bạn, đổi mật khẩu và báo kỹ thuật ngay.');
   return { ok: true, token: token, tk: tk, ten: String(v[1]), vaiTro: String(v[2]),
     quyen: rieng ? rieng.split(',') : (VAI_TRO_QT[String(v[2])] || []), quyenRieng: !!rieng };
+}
+
+/* ===================== BẢO MẬT: cảnh báo (D2), giới hạn tần suất (C2), khoá bí mật & sao lưu (A3, D1) ===================== */
+/* D2 – Gửi cảnh báo qua bot Zalo + email shop. Cùng 1 loại chỉ gửi 1 lần / 10 phút để không spam. */
+function canhBao_(khoa, noiDung) {
+  var c = CacheService.getScriptCache(), k = 'cb_' + String(khoa).replace(/[^\w-]/g, '').slice(0, 200);
+  if (c.get(k)) return; c.put(k, '1', 600);
+  var tin = '[' + TEN_SHOP + ' – Bảo mật] ' + noiDung;
+  try { zaloBotGuiTin(tin); } catch (e) { Logger.log(e); }
+  try { if (emailHopLe(EMAIL)) MailApp.sendEmail(EMAIL, '🔔 Cảnh báo bảo mật – ' + String(noiDung).replace(/\s+/g, ' ').slice(0, 80), tin + '\n\nLúc: ' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm:ss'), { name: TEN_SHOP }); } catch (e2) { Logger.log(e2); }
+  try { ghiNhatKy('Bảo mật', 'Cảnh báo', String(noiDung).slice(0, 300)); } catch (e3) { Logger.log(e3); }
+}
+/* Thao tác quản trị đụng tới tiền / quyền → báo cho chủ shop (gộp theo người làm, 10 phút / lần) */
+var LENH_BAO = { qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
+  qtAffCauHinh: 'đổi cấu hình chương trình đối tác', qtAffChotKy: 'chốt kỳ thanh toán đối tác', qtAffTra: 'đánh dấu đã trả tiền đối tác', qtAffGanTay: 'gán tay đơn cho đối tác',
+  qtDiemDieuChinh: 'điều chỉnh điểm của khách', qtLuu: 'tạo / sửa tài khoản quản trị', qtXoa: 'xoá tài khoản quản trị', qtBiMat: 'đổi cài đặt bảo mật' };
+var HD_ = null;   // lệnh đang xử lý (gán ở doGet) để traVe biết mà cảnh báo
+function baoLenh_(data) {
+  if (!HD_ || !data || data.ok !== true || !LENH_BAO[HD_.a]) return;
+  var a = HD_.a, p = HD_.p;
+  if (a === 'qtAffCauHinh' && String(p.luu) !== '1') return;
+  if (a === 'qtBiMat' && !p.viec) return;
+  var ai = tenQT(p), x = [];
+  if (p.ma) x.push('mã ' + String(p.ma).slice(0, 30)); if (p.tk) x.push('tài khoản ' + String(p.tk).slice(0, 30)); if (p.viec) x.push(String(p.viec).slice(0, 20));
+  if (p.pt !== undefined && p.pt !== '') x.push(String(p.pt).slice(0, 8) + '%'); if (p.ids) x.push(String(p.ids).split(',').length + ' SP');
+  if (p.sdt) x.push('SĐT …' + String(p.sdt).slice(-3)); if (p.maDon) x.push('đơn ' + String(p.maDon).slice(0, 20));
+  canhBao_('lenh-' + a + '-' + ai, '✏️ "' + ai + '" vừa ' + LENH_BAO[a] + (x.length ? ' (' + x.join(', ') + ')' : '') + '.');
+}
+/* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
+   Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
+var GIOI_HAN_10P = { guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
+  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200 };
+function chanTanSuat_(action) {
+  var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
+  canhBao_('tan-suat-' + action, '⚠️ Có hơn ' + t + ' yêu cầu "' + action + '" trong 10 phút – có thể bot đang tấn công. Hệ thống đã tạm chặn lệnh này, tự mở lại sau khi lắng xuống.');
+  return { ok: false, code: 'RATE_LIMITED', msg: 'Hệ thống đang bận, vui lòng thử lại sau ít phút.' };
+}
+function laChuShop_(p) { var ph = phienQT(p.token); if (ph && ph.vaiTro === 'SUPER_ADMIN') return true; var kc = khoaChuShop_(); return !!(kc && String(p.key || '') === kc); }
+/* Quản trị → Hệ thống → Khoá bí mật & sao lưu (chỉ SUPER_ADMIN) */
+function apiQtBiMat(p) {
+  if (!laChuShop_(p)) return { ok: false, msg: 'Chỉ tài khoản chủ shop (SUPER_ADMIN) dùng được mục này' };
+  var pr = PropertiesService.getScriptProperties();
+  if (p.viec === 'zalo') {
+    var t = String(p.giaTri || '').trim();
+    if (!/^\d{6,}:[\w-]{20,}$/.test(t)) return { ok: false, msg: 'Token Zalo chưa đúng dạng (dãy số:chuỗi ký tự)' };
+    pr.setProperty('ZALO_BOT_TOKEN', t);
+    var kt = ''; try { kt = String(zaloBotGoi('getMe', {})).slice(0, 300); } catch (e) { kt = String(e).slice(0, 300); }
+    return { ok: true, msg: 'Đã lưu token mới trên máy chủ', kiemTra: kt };
+  }
+  if (p.viec === 'otp') { pr.setProperty('QT_OTP', p.giaTri === 'tat' ? 'tat' : 'bat'); return { ok: true, msg: p.giaTri === 'tat' ? 'Đã TẮT đăng nhập 2 lớp' : 'Đã bật đăng nhập 2 lớp' }; }
+  if (p.viec === 'saoLuu') return saoLuuHangNgay_(true);
+  var lc = pr.getProperty('SAO_LUU_LUC'), ds = [];
+  for (var d = 1; d <= 31; d++) { var id = pr.getProperty('SAO_LUU_' + (d < 10 ? '0' : '') + d); if (id) ds.push({ ngay: d, url: 'https://docs.google.com/spreadsheets/d/' + id }); }
+  return { ok: true, zalo: pr.getProperty('ZALO_BOT_TOKEN') ? 'moi' : (ZALO_BOT_TOKEN ? 'cu' : 'chua'), khoaDuPhong: !!khoaChuShop_(), otp: pr.getProperty('QT_OTP') !== 'tat', email: anEmail(EMAIL),
+    saoLuu: lc ? Utilities.formatDate(new Date(Number(lc)), 'Asia/Ho_Chi_Minh', 'HH:mm dd/MM/yyyy') : '', saoLuuDs: ds };
+}
+/* D1 – Sao lưu toàn bộ Google Sheet mỗi đêm (1h–5h) sang 31 file xoay vòng theo ngày trong tháng.
+   Chỉ dùng quyền Google Sheets sẵn có (không cần cấp thêm quyền Drive). File sao lưu nằm trong Drive của chủ shop. */
+function saoLuuHangNgay_(ep) {
+  var pr = PropertiesService.getScriptProperties(), now = new Date();
+  var hom = Utilities.formatDate(now, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd'), gio = Number(Utilities.formatDate(now, 'Asia/Ho_Chi_Minh', 'H'));
+  if (!ep && (pr.getProperty('SAO_LUU_NGAY') === hom || gio < 1 || gio > 5)) return { ok: true, boQua: true };
+  var ngay = hom.slice(8), khoa = 'SAO_LUU_' + ngay, id = pr.getProperty(khoa), dich = null;
+  if (id) { try { dich = SpreadsheetApp.openById(id); } catch (e) { dich = null; } }
+  if (!dich) { dich = SpreadsheetApp.create(TEN_SHOP + ' – Sao lưu ngày ' + ngay); pr.setProperty(khoa, dich.getId()); }
+  var tam = dich.insertSheet('tam' + now.getTime());
+  dich.getSheets().forEach(function (x) { if (x.getSheetId() !== tam.getSheetId()) dich.deleteSheet(x); });
+  var nguon = ss().getSheets();
+  nguon.forEach(function (x) { var c = x.copyTo(dich); try { c.setName(x.getName()); } catch (e) { Logger.log(e); } });
+  dich.deleteSheet(tam);
+  dich.rename(TEN_SHOP + ' – Sao lưu ngày ' + ngay + ' (bản ' + hom + ')');
+  pr.setProperty('SAO_LUU_NGAY', hom); pr.setProperty('SAO_LUU_LUC', String(now.getTime()));
+  return { ok: true, msg: 'Đã sao lưu ' + nguon.length + ' trang tính', url: dich.getUrl() };
 }
 function phienQT(token) {
   if (!token) return null;
@@ -1963,7 +2091,7 @@ function phienQT(token) {
   return null;
 }
 function coQuyen(p, quyen) {
-  if (String(p.key || '') === ADMIN_KEY) return true;          // khoá chủ shop, dùng khi chưa tạo tài khoản
+  var kc = khoaChuShop_(); if (kc && String(p.key || '') === kc) return true;   // khoá dự phòng (chỉ khi đặt trong Script Properties)
   var ph = phienQT(p.token); if (!ph) return false;
   /* Quyền riêng của tài khoản (nếu có) được ưu tiên hơn quyền mặc định của vai trò */
   var ds = ph.rieng ? ph.rieng.split(',') : (VAI_TRO_QT[ph.vaiTro] || []);
@@ -2135,6 +2263,7 @@ function dongBoCRMTuDong() {
   try { Logger.log(JSON.stringify(dongBoCRMNhieu())); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
   try { Logger.log(JSON.stringify(xuLyAff())); } catch (e3) { Logger.log('Xử lý đối tác lỗi: ' + e3); }   // đối tác: hoa hồng + chốt kỳ ngày 10
+  try { Logger.log(JSON.stringify(saoLuuHangNgay_(false))); } catch (e4) { Logger.log('Sao lưu lỗi: ' + e4); canhBao_('sao-luu-loi', '⚠️ Sao lưu dữ liệu đêm nay bị lỗi: ' + String(e4).slice(0, 200)); }   // sao lưu mỗi đêm
 }
 /* CHẠY TAY 1 LẦN trong trình soạn thảo Apps Script: tạo lịch tự đồng bộ trạng thái đơn từ CRM mỗi 30 phút */
 function taoLichDongBoCRM() {
@@ -2359,9 +2488,11 @@ function apiCapNhat(p) {
 
 /* ===================== BOT ZALO ===================== */
 var ZALO_BOT_API = 'https://bot-api.zapps.me/bot';
+/* Token bot lưu trong Script Properties (nhập ở Quản trị → Hệ thống → Khoá bí mật), không nằm trong mã */
+function zaloToken_() { return PropertiesService.getScriptProperties().getProperty('ZALO_BOT_TOKEN') || ZALO_BOT_TOKEN; }
 function zaloBotGoi(method, payload) {
-  if (!ZALO_BOT_TOKEN) return '';
-  var res = UrlFetchApp.fetch(ZALO_BOT_API + ZALO_BOT_TOKEN + '/' + method, {
+  var tk = zaloToken_(); if (!tk) return '';
+  var res = UrlFetchApp.fetch(ZALO_BOT_API + tk + '/' + method, {
     method: 'post', muteHttpExceptions: true, contentType: 'application/json',
     payload: JSON.stringify(payload || {})
   });
@@ -2372,7 +2503,7 @@ function zaloBotChatId() {
 }
 function zaloBotGuiTin(text) {
   var chat = zaloBotChatId();
-  if (!ZALO_BOT_TOKEN || !chat) return;
+  if (!zaloToken_() || !chat) return;
   Logger.log('Zalo bot: ' + zaloBotGoi('sendMessage', { chat_id: chat, text: text }));
 }
 /* Nhắn cho bot 1 tin bất kỳ rồi chạy hàm này để lấy & lưu chat id */

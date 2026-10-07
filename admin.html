@@ -7,7 +7,7 @@
   <title>Quản trị – Hương Chất Kids</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=20261007t">
+  <link rel="stylesheet" href="css/admin.css?v=20261007u">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png">
 </head>
 <body>
@@ -18,10 +18,18 @@
     <img src="img/logo-96.png" alt="" width="56" height="56">
     <h1>Trang quản trị</h1>
     <p>Hương Chất Kids</p>
+    <div id="lgBuoc1">
     <label>Tên đăng nhập
-      <input id="lgId" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="adminhck" required></label>
+      <input id="lgId" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="adminhck"></label>
     <label>Mật khẩu
-      <input id="lgPw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required></label>
+      <input id="lgPw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+    </div>
+    <div id="lgOtpBox" class="hide">
+      <p class="lg-otp__msg" id="lgOtpMsg"></p>
+      <label>Mã xác nhận 6 số
+        <input id="lgOtp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••"></label>
+      <button class="btn btn--ghost btn--sm" type="button" id="lgLai">← Đăng nhập lại</button>
+    </div>
     <div class="err hide" id="lgErr"></div>
     <button class="btn btn--primary btn--lg" type="submit">Đăng nhập</button>
     <small>Trang dành cho chủ shop. Phiên đăng nhập tự hết sau 8 giờ không dùng.</small>
@@ -34,34 +42,46 @@
 <div class="modal hide" id="modal"></div>
 <div class="toast hide" id="toast"></div>
 
-<script src="js/data.js?v=20261007t"></script>
-<script src="js/diachi.js?v=20261007t"></script>
-<script src="js/admin/core.js?v=20261007t"></script>
-<script src="js/admin/preview.js?v=20261007t"></script>
-<script src="js/admin/m-dashboard.js?v=20261007t"></script>
-<script src="js/admin/m-products.js?v=20261007t"></script>
-<script src="js/admin/m-orders.js?v=20261007t"></script>
-<script src="js/admin/m-customers.js?v=20261007t"></script>
-<script src="js/admin/m-gioi-thieu.js?v=20261007t"></script>
-<script src="js/admin/m-bao-mat.js?v=20261007t"></script>
-<script src="js/admin/m-doi-tac-hh.js?v=20261007t"></script>
-<script src="js/admin/m-doi-tac.js?v=20261007t"></script>
-<script src="js/admin/m-marketing.js?v=20261007t"></script>
-<script src="js/admin/m-qua-tang.js?v=20261007t"></script>
-<script src="js/admin/m-voucher.js?v=20261007t"></script>
-<script src="js/admin/m-menu.js?v=20261007t"></script>
-<script src="js/admin/m-content.js?v=20261007t"></script>
-<script src="js/admin/m-seo.js?v=20261007t"></script>
-<script src="js/admin/m-website.js?v=20261007t"></script>
-<script src="js/admin/m-theme.js?v=20261007t"></script>
-<script src="js/admin/m-versions.js?v=20261007t"></script>
-<script src="js/admin/m-users.js?v=20261007t"></script>
-<script src="js/admin/m-system.js?v=20261007t"></script>
+<script src="js/data.js?v=20261007u"></script>
+<script src="js/diachi.js?v=20261007u"></script>
+<script src="js/admin/core.js?v=20261007u"></script>
+<script src="js/admin/preview.js?v=20261007u"></script>
+<script src="js/admin/m-dashboard.js?v=20261007u"></script>
+<script src="js/admin/m-products.js?v=20261007u"></script>
+<script src="js/admin/m-orders.js?v=20261007u"></script>
+<script src="js/admin/m-customers.js?v=20261007u"></script>
+<script src="js/admin/m-gioi-thieu.js?v=20261007u"></script>
+<script src="js/admin/m-bao-mat.js?v=20261007u"></script>
+<script src="js/admin/m-bao-mat-ht.js?v=20261007u"></script>
+<script src="js/admin/m-doi-tac-hh.js?v=20261007u"></script>
+<script src="js/admin/m-doi-tac.js?v=20261007u"></script>
+<script src="js/admin/m-marketing.js?v=20261007u"></script>
+<script src="js/admin/m-qua-tang.js?v=20261007u"></script>
+<script src="js/admin/m-voucher.js?v=20261007u"></script>
+<script src="js/admin/m-menu.js?v=20261007u"></script>
+<script src="js/admin/m-content.js?v=20261007u"></script>
+<script src="js/admin/m-seo.js?v=20261007u"></script>
+<script src="js/admin/m-website.js?v=20261007u"></script>
+<script src="js/admin/m-theme.js?v=20261007u"></script>
+<script src="js/admin/m-versions.js?v=20261007u"></script>
+<script src="js/admin/m-users.js?v=20261007u"></script>
+<script src="js/admin/m-system.js?v=20261007u"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const A = window.ADMIN;
   const vao = () => { document.getElementById('login').classList.add('hide'); document.getElementById('app').classList.remove('hide'); A.batDau(); };
   if (A.dangNhapHopLe()) vao();
+  /* Đăng nhập 2 lớp: sau mật khẩu đúng, máy chủ gửi mã về email shop */
+  let phien2 = '';
+  const hien = (id, co) => document.getElementById(id).classList.toggle('hide', !co);
+  const buoc2 = (r) => {
+    phien2 = r.phien2; hien('lgBuoc1', false); hien('lgOtpBox', true);
+    document.getElementById('lgOtpMsg').textContent = r.msg || 'Đã gửi mã 6 số tới email shop.';
+    const nut = document.querySelector('#loginForm button[type=submit]'); nut.disabled = false; nut.textContent = 'Xác nhận mã';
+    const o = document.getElementById('lgOtp'); o.value = ''; o.focus();
+  };
+  const buoc1 = () => { phien2 = ''; hien('lgBuoc1', true); hien('lgOtpBox', false); document.getElementById('lgPw').value = ''; };
+  document.getElementById('lgLai').addEventListener('click', () => { buoc1(); const n = document.querySelector('#loginForm button[type=submit]'); n.disabled = false; n.textContent = 'Đăng nhập'; document.getElementById('lgErr').classList.add('hide'); });
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = document.getElementById('lgId').value.replace(/\s/g, '').toLowerCase();
@@ -81,23 +101,36 @@ document.addEventListener('DOMContentLoaded', () => {
       const n = sai + 1; localStorage.setItem('hck_dn_sai', String(n));
       if (n >= 4) localStorage.setItem('hck_dn_cho', String(Date.now() + Math.min(300, 2 ** (n - 3) * 15) * 1000));
     };
+    const vaoBang = (r) => {
+      localStorage.removeItem('hck_dn_sai'); localStorage.removeItem('hck_dn_cho');
+      sessionStorage.setItem('hck_qt_token', r.token);
+      sessionStorage.setItem('hck_qt_nd', JSON.stringify({ ten: r.ten, vaiTro: r.vaiTro, tk: r.tk }));
+      A.ghiPhien(); location.reload();
+    };
+    const baoLoi = (msg) => { err.textContent = msg; err.classList.remove('hide'); nut.disabled = false; nut.textContent = phien2 ? 'Xác nhận mã' : 'Đăng nhập'; };
+    /* Bước 2: mã 6 số gửi về email shop (chủ shop / quản lý) */
+    if (phien2) {
+      const otp = document.getElementById('lgOtp').value.replace(/\D/g, '');
+      if (otp.length !== 6) { baoLoi('Nhập đủ mã 6 số trong email nhé'); return; }
+      try {
+        const r = await A.api('qtDangNhap2', { phien2, otp });
+        if (r && r.ok && r.token) { vaoBang(r); return; }
+        if (r && r.hetHan) buoc1();
+        baoLoi((r && r.msg) || 'Mã chưa đúng');
+      } catch { baoLoi('Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); }
+      return;
+    }
     /* Tài khoản trên máy chủ (mật khẩu băm trong Google Sheet) */
     let mayChuTraLoi = false;
     try {
       const r = await A.api('qtDangNhap', { tk: id, mk });
       if (r && typeof r.ok === 'boolean') mayChuTraLoi = true;
-      if (r && r.ok && r.token) {
-        localStorage.removeItem('hck_dn_sai'); localStorage.removeItem('hck_dn_cho');
-        sessionStorage.setItem('hck_qt_token', r.token);
-        sessionStorage.setItem('hck_qt_nd', JSON.stringify({ ten: r.ten, vaiTro: r.vaiTro, tk: r.tk }));
-        A.ghiPhien(); location.reload(); return;
-      }
-      if (r && r.msg && r.ten === undefined && !/chưa đúng/.test(r.msg)) {
-        err.textContent = r.msg; err.classList.remove('hide'); nut.disabled = false; nut.textContent = 'Đăng nhập'; return;
-      }
+      if (r && r.ok && r.token) { vaoBang(r); return; }
+      if (r && r.ok && r.can2) { buoc2(r); return; }
+      if (r && r.msg && r.ten === undefined && !/chưa đúng/.test(r.msg)) { baoLoi(r.msg); return; }
     } catch { mayChuTraLoi = false; }
-    /* Tài khoản chủ shop luôn vào được, kể cả khi máy chủ chưa sẵn sàng hoặc mất mạng */
-    if (id === A.TAI_KHOAN.id && mk === A.TAI_KHOAN.mk) {
+    /* Chỉ khi máy chủ không phản hồi: tài khoản chủ shop mở được giao diện (không đọc được dữ liệu máy chủ) */
+    if (!mayChuTraLoi && id === A.TAI_KHOAN.id && mk === A.TAI_KHOAN.mk) {
       localStorage.removeItem('hck_dn_sai'); localStorage.removeItem('hck_dn_cho');
       A.ghiPhien(); vao(); return;
     }
