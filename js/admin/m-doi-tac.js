@@ -126,6 +126,8 @@
         <div class="grid-2"><label>Tỉ lệ khấu trừ (%)<input id="ac_thueTyLe" type="number" min="0" max="50" step="0.5" value="${esc(c.thueTyLe)}" ${dis}></label>
           <label>Áp dụng khi khoản trả từ (đồng)<input id="ac_thueNguong" type="number" min="0" step="100000" value="${esc(c.thueNguong)}" ${dis}></label></div>
         <label>Lời giới thiệu trên trang đối tác<textarea id="ac_gioiThieu" rows="2" maxlength="500" ${dis}>${esc(c.gioiThieu)}</textarea></label>
+        <label>Nội dung "Cơ chế hoa hồng" hiển thị cho đối tác<textarea id="ac_coChe" rows="6" maxlength="3000" ${dis}>${esc(c.coChe || '')}</textarea><small class="hint">Mỗi dòng là 1 ý. Viết <code>**chữ**</code> để in đậm. Mức hoa hồng, thời gian, lịch trả… bạn tự soạn theo thoả thuận – trang đối tác hiển thị đúng nội dung này.</small></label>
+        <label class="sw"><input type="checkbox" id="acHienTyLe" ${c.hienTyLe ? 'checked' : ''} ${dis}> <span>Hiện bảng % hoa hồng theo nguồn trên trang đối tác<small class="hint">Tắt: đối tác chỉ thấy nội dung bạn soạn ở trên (mặc định).</small></span></label>
         ${dis ? '<p class="muted">Bạn chỉ có quyền xem.</p>' : '<button class="btn btn--primary" id="acLuu">Lưu cấu hình</button>'}
         <p class="muted" style="margin-top:8px">Đơn đã ghi nhận giữ % lúc đặt; thay đổi chỉ áp dụng cho đơn mới. Mọi thay đổi ghi vào Nhật ký.</p></div>`;
     } catch (e) { b.innerHTML = A.loiTai(e.message); }
@@ -167,7 +169,7 @@
       if (await goi('qtAffGanTay', p, 'Đã gán đơn cho ' + p.maDT)) A.veTrang(); return;
     }
     if (e.target.id === 'acLuu') {
-      const v = (id) => ($('#' + id) || {}).value; const p = { luu: '1', bat: $('#acBat').checked ? '1' : '0', ngay: v('ac_ngay'), choDoiTraNgay: v('ac_choDoiTraNgay'), ngayTra: v('ac_ngayTra'), thueTyLe: v('ac_thueTyLe'), thueNguong: v('ac_thueNguong'), gioiThieu: v('ac_gioiThieu') };
+      const v = (id) => ($('#' + id) || {}).value; const p = { luu: '1', bat: $('#acBat').checked ? '1' : '0', ngay: v('ac_ngay'), choDoiTraNgay: v('ac_choDoiTraNgay'), ngayTra: v('ac_ngayTra'), thueTyLe: v('ac_thueTyLe'), thueNguong: v('ac_thueNguong'), gioiThieu: v('ac_gioiThieu'), coChe: v('ac_coChe'), hienTyLe: $('#acHienTyLe').checked ? '1' : '0' };
       ['link', 'khacMay', 'zalo', 'ganTay'].forEach((k) => { p['hh_' + k] = v('ac_hh_' + k); });
       if (!(await A.hoi({ tieuDe: 'Lưu cấu hình đối tác?', noiDung: `Hoa hồng: link ${esc(p.hh_link)}% · khác máy ${esc(p.hh_khacMay)}% · Zalo ${esc(p.hh_zalo)}% · gán tay ${esc(p.hh_ganTay)}%<br>Hạn ${esc(p.ngay)} ngày · trả ngày ${esc(p.ngayTra)} · thuế ${esc(p.thueTyLe)}% từ ${fmt(Number(p.thueNguong))}`, nutOk: 'Lưu' }))) return;
       if (await goi('qtAffCauHinh', p, 'Đã lưu cấu hình')) A.veTrang(); return;

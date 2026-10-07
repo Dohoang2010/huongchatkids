@@ -8,14 +8,14 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261007k">
+  <link rel="stylesheet" href="css/style.css?v=20261007m">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="dt"></div></main>
-<script src="js/data.js?v=20261007k"></script>
+<script src="js/data.js?v=20261007m"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261007k"></script>
+<script src="js/app.js?v=20261007m"></script>
 <script>
 /* TRANG ĐỐI TÁC – đăng ký (shop duyệt), đăng nhập, lấy link sản phẩm, xem lượt bấm / đơn / hoa hồng / kỳ thanh toán.
    Máy chủ: Apps Script affDangKy / affDangNhap / affHoSo / affCongKhai (tools/apps-script.gs, phần ĐỐI TÁC). */
@@ -28,15 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const TT = { 'Chờ giao': 'badge--hot', 'Đã giao': 'badge--teal', 'Đã huỷ': 'badge--soft', 'Hoàn hàng': 'badge--soft', 'Không tính': 'badge--soft', 'Chờ trả': 'badge--hot', 'Đã trả': 'badge--teal' };
   const LOAI = { 'ca-nhan': 'Cá nhân – khấu trừ thuế TNCN', 'cam-ket-08': 'Cá nhân đã có cam kết 08/CK-TNCN', 'doanh-nghiep': 'Doanh nghiệp / hộ kinh doanh (xuất hoá đơn)' };
 
-  const coCheHTML = () => `<div class="card card--pad dt-coche"><h3>💡 Cơ chế hoa hồng</h3>
-    <div class="dt-hh">${[['link', '🔗 Khách bấm link rồi mua'], ['khacMay', '📱 Bấm link, mua ở máy khác'], ['zalo', '💬 Đặt qua Zalo có mã của bạn'], ['ganTay', '✋ Shop ghi nhận giúp']].map(([k, t]) => `<div><span>${t}</span><b>${cfg.hh[k] ?? '—'}%</b></div>`).join('')}</div>
-    <ul class="dt-luat">
-      <li>Tính trên <b>tiền hàng khách thực trả</b> (sau giảm giá, không gồm phí ship). Khách vẫn dùng mã giảm giá của shop như bình thường.</li>
-      <li>Khách mua trong <b>${cfg.ngay} ngày</b> kể từ lần bấm link gần nhất. Khách bấm link của nhiều đối tác → tính cho <b>người được bấm sau cùng</b>.</li>
-      <li>Hoa hồng ghi nhận khi đơn <b>giao thành công</b>; huỷ không tính, hoàn hàng trừ lại. Tự mua qua link của mình không tính.</li>
-      <li>Thanh toán <b>ngày ${cfg.ngayTra} hằng tháng</b> cho đơn đã giao quá ${cfg.choDoiTraNgay} ngày (hết hạn đổi trả).</li>
-      <li>Thuế TNCN: shop khấu trừ <b>${cfg.thueTyLe}%</b> với khoản trả từ <b>${fmt(cfg.thueNguong)}</b>/lần cho cá nhân (trừ khi có cam kết 08/CK-TNCN hoặc là doanh nghiệp / HKD xuất hoá đơn) và cấp chứng từ khấu trừ theo quy định.</li>
-    </ul></div>`;
+  /* Nội dung cơ chế do shop tự soạn (Quản trị → Đối tác → Cấu hình). Mỗi dòng = 1 ý; **chữ đậm** được.
+     Bảng % theo nguồn chỉ hiện khi shop bật "Hiện mức hoa hồng". */
+  const dongCoChe = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  const coCheHTML = () => { const ds = String(cfg.coChe || '').split('\n').map((x) => x.trim()).filter(Boolean);
+    return `<div class="card card--pad dt-coche"><h3>💡 Cơ chế hoa hồng</h3>
+    ${cfg.hienTyLe ? `<div class="dt-hh">${[['link', '🔗 Khách bấm link rồi mua'], ['khacMay', '📱 Bấm link, mua ở máy khác'], ['zalo', '💬 Đặt qua Zalo có mã của bạn'], ['ganTay', '✋ Shop ghi nhận giúp']].map(([k, t]) => `<div><span>${t}</span><b>${cfg.hh[k] ?? '—'}%</b></div>`).join('')}</div>` : ''}
+    ${ds.length ? `<ul class="dt-luat">${ds.map((x) => `<li>${dongCoChe(x)}</li>`).join('')}</ul>` : '<p class="text-muted fs-14">Shop sẽ thông báo cơ chế hoa hồng khi duyệt tài khoản.</p>'}</div>`; };
 
   function veKhach() {
     $('#dt').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Đối tác bán hàng</span></nav>
@@ -51,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <label class="field"><span>Mật khẩu</span><input class="input" name="mk" type="password" autocomplete="current-password" required></label>
               <div class="form-error hide" id="dnLoi" role="alert"></div>
               <button class="btn btn--primary btn--lg btn--block" type="submit">Đăng nhập</button>
-              <p class="qmk__note">Quên mật khẩu? Liên hệ shop qua Zalo / hotline <b>${esc(SITE.hotline)}</b> để được đặt lại.</p></form>`
+              <p class="qmk__note" style="text-align:center"><a class="text-primary fw-700" href="quen-mat-khau.html?doitac=1">Quên mật khẩu?</a> Nhận mã OTP qua email đã đăng ký.</p></form>`
           : `<form id="fDk" class="qmk__form mt-12" novalidate>
               <label class="field"><span>Họ tên *</span><input class="input" name="ten" autocomplete="name" value="${esc(kh.ten || '')}" required></label>
               <div class="form-grid form-grid--2"><label class="field"><span>Số điện thoại *</span><input class="input" name="sdt" type="tel" inputmode="numeric" value="${esc(kh.sdt || '')}" required></label>

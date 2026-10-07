@@ -9,14 +9,14 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261007k">
+  <link rel="stylesheet" href="css/style.css?v=20261007m">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container"><div class="qmk" id="qmk"></div></div></main>
-<script src="js/data.js?v=20261007k"></script>
+<script src="js/data.js?v=20261007m"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261007k"></script>
+<script src="js/app.js?v=20261007m"></script>
 <script>
 /* QUÊN MẬT KHẨU – email OTP (ưu tiên) hoặc OTP số điện thoại → mật khẩu mới nhập 2 lần.
    Máy chủ: Apps Script qmkGui / qmkXacThuc / qmkDatLai (xem tools/apps-script.gs, phần QUÊN MẬT KHẨU).
@@ -30,25 +30,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!XEM) loyaltyApi('qmkCauHinh').then((c) => { if (c && c.ok) { st.phut = c.otpPhut; st.min = c.mkToiThieu; if (st.buoc === 'mk') ve(); } }).catch(() => {});
   if (XEM) { st.emailAn = 'h***@gmail.com'; st.cho = 59; st.taiKhoan = [{ k: 0, sdt: '09****67', ten: 'N*** An' }]; }
 
-  const khung = (tieuDe, moTa, than) => `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="account.html">Tài khoản</a><span>›</span><span>Quên mật khẩu</span></nav>
+  /* ?doitac=1: quên mật khẩu tài khoản ĐỐI TÁC (chỉ qua email đã đăng ký đối tác, xong quay về doi-tac.html) */
+  const DT = !!param('doitac'); const VE_DN = DT ? 'doi-tac.html' : 'account.html?dangnhap=1';
+  const khung = (tieuDe, moTa, than) => `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span>${DT ? '<a href="doi-tac.html">Đối tác</a>' : '<a href="account.html">Tài khoản</a>'}<span>›</span><span>Quên mật khẩu</span></nav>
     <div class="card card--pad qmk__card"><h1 class="qmk__h">${tieuDe}</h1>${moTa ? `<p class="qmk__mo">${moTa}</p>` : ''}${than}</div>`;
   const loiHTML = () => `<div class="form-error ${st.loi ? '' : 'hide'}" id="qmkLoi" role="alert">${esc(st.loi)}</div>`;
 
   function ve() {
     const box = $('#qmk'); clearInterval(tCho);
     if (st.buoc === 'email') {
-      box.innerHTML = khung('Quên mật khẩu?', 'Nhập email đã đăng ký để nhận mã OTP và đặt lại mật khẩu.', `
+      box.innerHTML = khung(DT ? 'Quên mật khẩu đối tác?' : 'Quên mật khẩu?', DT ? 'Nhập email bạn đã dùng khi đăng ký đối tác để nhận mã OTP và đặt lại mật khẩu.' : 'Nhập email đã đăng ký để nhận mã OTP và đặt lại mật khẩu.', `
         <form id="fEmail" class="qmk__form" novalidate>
           <div class="qmk__pt"><span class="qmk__ic">✉️</span><b>Email</b><span class="badge badge--teal">Khuyên dùng</span></div>
           <label class="field"><span>Email</span><input class="input" name="email" type="email" inputmode="email" autocomplete="email" placeholder="example@email.com" value="${esc(st.email)}" required></label>
           ${loiHTML()}
           <button class="btn btn--primary btn--lg btn--block" type="submit">Gửi mã OTP</button>
-          <p class="qmk__note">Mã chỉ gửi tới email đã lưu trong tài khoản. Tài khoản chưa có email? Dùng số điện thoại bên dưới.</p>
+          <p class="qmk__note">${DT ? 'Mã chỉ gửi tới email đã đăng ký tài khoản đối tác (đã được duyệt).' : 'Mã chỉ gửi tới email đã lưu trong tài khoản. Tài khoản chưa có email? Dùng số điện thoại bên dưới.'}</p>
         </form>
-        <div class="qmk__hoac"><span>Hoặc sử dụng số điện thoại</span></div>
-        <button class="btn btn--outline btn--block" type="button" id="btnSdt">📱 Lấy OTP qua số điện thoại</button>
-        <p class="qmk__note" style="text-align:center">Nhớ ra mật khẩu? <a class="text-primary fw-600" href="account.html?dangnhap=1">Đăng nhập</a></p>`);
-      $('#fEmail').addEventListener('submit', guiOtp); $('#btnSdt').addEventListener('click', quaSdt);
+        ${DT ? '' : `<div class="qmk__hoac"><span>Hoặc sử dụng số điện thoại</span></div>
+        <button class="btn btn--outline btn--block" type="button" id="btnSdt">📱 Lấy OTP qua số điện thoại</button>`}
+        <p class="qmk__note" style="text-align:center">Nhớ ra mật khẩu? <a class="text-primary fw-600" href="${VE_DN}">Đăng nhập</a></p>`);
+      $('#fEmail').addEventListener('submit', guiOtp); $('#btnSdt')?.addEventListener('click', quaSdt);
       if (!XEM) $('#fEmail').email.focus();
     } else if (st.buoc === 'otp') {
       box.innerHTML = khung('Nhập mã OTP', `Nếu email đã được đăng ký, mã OTP gồm 6 số đã được gửi đến <b>${esc(st.emailAn)}</b>. Mã có hiệu lực ${st.phut} phút. Kiểm tra cả hộp thư Quảng cáo / Spam nhé.`, `
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ganMk(); if (!XEM) $('#mk1').focus();
     } else if (st.buoc === 'xong') {
       box.innerHTML = khung('Đổi mật khẩu thành công!', '', `<div class="qmk__xong"><div class="qmk__tick">✓</div><p>Bạn đã đặt lại mật khẩu thành công.${st.sdtAn ? ` Tài khoản <b>${esc(st.sdtAn)}</b>.` : ''}</p><p class="qmk__note">Để an toàn, mọi thiết bị đang đăng nhập đã được đăng xuất. Mẹ đăng nhập lại bằng mật khẩu mới nhé.</p>
-        <a class="btn btn--primary btn--lg btn--block" href="account.html?dangnhap=1">Đăng nhập</a></div>`);
+        <a class="btn btn--primary btn--lg btn--block" href="${VE_DN}">Đăng nhập</a></div>`);
     } else if (st.buoc === 'hethan') {
       box.innerHTML = khung('Phiên đặt lại mật khẩu đã hết hạn.', 'Vì lý do an toàn, mỗi lần đặt lại chỉ có hiệu lực trong thời gian ngắn và dùng được 1 lần.', `<button class="btn btn--primary btn--lg btn--block" type="button" id="btnMoi">Yêu cầu mã OTP mới</button>`);
       $('#btnMoi').addEventListener('click', () => { st.buoc = 'email'; st.loi = ''; ve(); });
@@ -90,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const f = $('#fEmail'); const email = (f ? f.email.value : st.email).trim(); st.email = email;
     if (!/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(email)) { baoLoi('Email chưa đúng định dạng.'); return; }
     const b = f ? $('button[type=submit]', f) : $('#btnGuiLai'); nut(b, true, 'Đang gửi…');
-    loyaltyApi('qmkGui', { email, may }).then((r) => {
+    loyaltyApi('qmkGui', { email, may, ...(DT ? { loai: 'doiTac' } : {}) }).then((r) => {
       if (r && r.ok) { Object.assign(st, { maYc: r.maYc, emailAn: r.emailAn, cho: r.choGiay || 60, phut: Math.round((r.hetHanGiay || st.phut * 60) / 60), buoc: 'otp', loi: '' }); ve(); toast(r.msg, { type: 'ok' }); return; }
       if (r && r.code === 'RATE_LIMITED' && r.choGiay && st.maYc) { st.cho = r.choGiay; st.buoc = 'otp'; ve(); }
       nut(b, false, f ? 'Gửi mã OTP' : 'Gửi lại OTP'); baoLoi((r && r.msg) || 'Chưa gửi được mã, mẹ thử lại nhé.');
@@ -158,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const goi = st.kenh === 'sdt' ? loyaltyApi('doiMatKhau', { token: st.token, mkMoi: a.value, mkMoi2: b.value, datLai: '1' })
         : loyaltyApi('qmkDatLai', { maYc: st.maYc, token: st.token, mk: a.value, mk2: b.value, k: st.k == null ? '' : st.k });
       goi.then((r) => {
-        if (r && r.ok) { st.token = ''; st.sdtAn = r.sdtAn || (st.sdt ? maskPhone(st.sdt) : ''); Session.clear(); st.buoc = 'xong'; ve(); return; }
+        if (r && r.ok) { st.token = ''; st.sdtAn = r.sdtAn || (st.sdt ? maskPhone(st.sdt) : ''); if (DT) store.set('mc_dt_token', ''); else Session.clear(); st.buoc = 'xong'; ve(); return; }
         if (r && (r.code === 'RESET_TOKEN_EXPIRED' || r.code === 'RESET_TOKEN_INVALID' || r.loi === 'token')) { st.buoc = 'hethan'; ve(); return; }
         nut(nutMk, false, 'Đổi mật khẩu'); baoLoi((r && r.msg) || 'Chưa đổi được mật khẩu, mẹ thử lại nhé.');
       }).catch((e2) => { nut(nutMk, false, 'Đổi mật khẩu'); baoLoi(e2.message); });

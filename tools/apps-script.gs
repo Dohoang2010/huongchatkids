@@ -937,17 +937,19 @@ function apiQmkGui(p) {
   if (!demGioiHan('qmk_ht', Number(cfg.heThongToiDa15p)) || (may && !demGioiHan('qmk_m_' + may, Number(cfg.mayToiDa15p))) || !demGioiHan('qmk_e_' + email, Number(cfg.guiToiDa15p)))
     return { ok: false, code: 'RATE_LIMITED', msg: 'Mẹ đã yêu cầu quá nhiều lần. Vui lòng thử lại sau 15 phút hoặc gọi hotline ' + HOTLINE + '.' };
   c.put('qmk_cd_' + email, String(Date.now()), 900);
-  var ds = timTheoEmail(email); var ma = taoMaQmk();
+  /* p.loai = 'doiTac': quên mật khẩu tài khoản ĐỐI TÁC (email trong sheet Đối tác), còn lại: tài khoản khách */
+  var laDT = p.loai === 'doiTac'; var kenh = laDT ? 'email-doi-tac' : 'email';
+  var ds = laDT ? timDTTheoEmail(email) : timTheoEmail(email); var ma = taoMaQmk();
   var traLoi = { ok: true, code: 'OTP_SENT', maYc: ma, emailAn: anEmail(email), choGiay: Number(cfg.choGuiLaiGiay), hetHanGiay: Number(cfg.otpPhut) * 60,
     msg: 'Nếu email này đã được đăng ký, chúng tôi đã gửi mã OTP đến email đó.' };
   if (!ds.length) { qmkNhatKy(anEmail(email), 'PASSWORD_RESET_REQUESTED', 'email chưa đăng ký – không gửi'); return traLoi; }
   var kq = voiKhoa(function () {
     var s = sheetQMK(); var n = s.getLastRow();
     if (n >= 2) s.getRange(2, 1, n - 1, 5).getValues().forEach(function (r, i) {   // huỷ yêu cầu cũ của email này
-      if (chuanEmail(r[1]) === email && (r[4] === QMK.PENDING || r[4] === QMK.VERIFIED)) s.getRange(i + 2, 5).setValue(QMK.CANCELLED);
+      if (chuanEmail(r[1]) === email && String(r[3] || 'email') === kenh && (r[4] === QMK.PENDING || r[4] === QMK.VERIFIED)) s.getRange(i + 2, 5).setValue(QMK.CANCELLED);
     });
     var otp = soNgauNhien6(), muoi = Utilities.getUuid();
-    s.appendRow([ma, email, "'" + ds.map(function (x) { return x.sdt; }).join(','), 'email', QMK.PENDING, new Date(), bamHex(muoi + '|' + otp), muoi,
+    s.appendRow([ma, email, "'" + ds.map(function (x) { return x.sdt; }).join(','), kenh, QMK.PENDING, new Date(), bamHex(muoi + '|' + otp), muoi,
       new Date(Date.now() + Number(cfg.otpPhut) * 60000), 0, '', '', '', '', may, '']);
     return { ok: true, otp: otp };
   });
@@ -987,7 +989,7 @@ function apiQmkXacThuc(p) {
     var token = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
     s.getRange(r.dong, 5).setValue(QMK.VERIFIED); s.getRange(r.dong, 11, 1, 3).setValues([[new Date(), bamHex(token), new Date(Date.now() + Number(cfg.tokenPhut) * 60000)]]);
     qmkNhatKy(anEmail(email), 'OTP_VERIFIED', '');
-    var ten = tenTheoSdt();
+    var ten = String(r.v[3]) === 'email-doi-tac' ? tenDoiTacTheoSdt() : tenTheoSdt();
     var tk = String(r.v[2]).split(',').filter(String).map(function (x, i) { return { k: i, sdt: anSdt(x), ten: anTen(ten[chuanSdt(x)] || '') }; });
     return { ok: true, code: 'OTP_VERIFIED', token: token, hetHanGiay: Number(cfg.tokenPhut) * 60, taiKhoan: tk };
   });
@@ -1003,14 +1005,15 @@ function apiQmkDatLai(p) {
     var ds = String(r.v[2]).split(',').filter(String).map(chuanSdt);
     var k = p.k != null && p.k !== '' ? Number(p.k) : (ds.length === 1 ? 0 : -1);
     if (!(k >= 0 && k < ds.length)) return { ok: false, code: 'CHOOSE_ACCOUNT', msg: 'Mẹ chọn tài khoản (số điện thoại) cần đặt lại mật khẩu nhé.' };
-    var sdt = ds[k]; var email = chuanEmail(r.v[1]);
-    if (!timTheoEmail(email).some(function (x) { return x.sdt === sdt; })) return hong;   // email đã bị đổi khỏi tài khoản trong lúc chờ
-    luuMatKhau(sdt, String(p.mk));
+    var sdt = ds[k]; var email = chuanEmail(r.v[1]); var laDT = String(r.v[3]) === 'email-doi-tac';
+    if (!(laDT ? timDTTheoEmail(email) : timTheoEmail(email)).some(function (x) { return x.sdt === sdt; })) return hong;   // email đã bị đổi khỏi tài khoản trong lúc chờ
+    var dx = laDT ? luuMkDoiTac(sdt, String(p.mk)) : (luuMatKhau(sdt, String(p.mk)), huyMoiPhien(sdt));
     var s = sheetQMK(); s.getRange(r.dong, 5).setValue(QMK.DONE); s.getRange(r.dong, 12, 1, 3).setValues([['', r.v[12], new Date()]]);
-    s.getRange(r.dong, 16).setValue('Đã đặt lại cho ' + anSdt(sdt));
-    var dx = huyMoiPhien(sdt);
-    qmkNhatKy(sdt, 'PASSWORD_RESET_SUCCESS', 'qua email ' + anEmail(email) + ', đăng xuất ' + dx + ' phiên');
-    guiMailDoiMk(sdt, (tenTheoSdt()[sdt] || ''), cfg);
+    s.getRange(r.dong, 16).setValue('Đã đặt lại cho ' + (laDT ? 'đối tác ' : '') + anSdt(sdt));
+    qmkNhatKy(sdt, 'PASSWORD_RESET_SUCCESS', (laDT ? 'tài khoản ĐỐI TÁC, ' : '') + 'qua email ' + anEmail(email) + ', đăng xuất ' + dx + ' phiên');
+    if (laDT) { try { var vv = { ten: tenDoiTacTheoSdt()[sdt] || 'bạn', sdt: anSdt(sdt), shop: TEN_SHOP, hotline: HOTLINE, luc: Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'HH:mm dd/MM/yyyy') };
+      MailApp.sendEmail(email, dien(cfg.tieuDeDoi, vv), dien(cfg.noiDungDoi, vv), { name: TEN_SHOP }); } catch (em) { Logger.log(em); } }
+    else guiMailDoiMk(sdt, (tenTheoSdt()[sdt] || ''), cfg);
     return { ok: true, code: 'PASSWORD_RESET_SUCCESS', sdtAn: anSdt(sdt), msg: 'Bạn đã đặt lại mật khẩu thành công.' };
   });
 }
@@ -1070,7 +1073,8 @@ var NGUON = { link: 'Qua link', khacMay: 'Qua link – khác máy', zalo: 'Zalo 
 var DTT = { CHO: 'Chờ duyệt', DUYET: 'Đã duyệt', TU_CHOI: 'Từ chối', KHOA: 'Đã khoá' };
 var DDT = { CHO: 'Chờ giao', GIAO: 'Đã giao', HUY: 'Đã huỷ', HOAN: 'Hoàn hàng', KHONG: 'Không tính' };
 var AFF_MAC_DINH = { bat: true, ngay: 7, hh: { link: 10, khacMay: 10, zalo: 8, ganTay: 5 }, choDoiTraNgay: 7, ngayTra: 10,
-  thueTyLe: 10, thueNguong: 2000000, gioiThieu: 'Chia sẻ link sản phẩm Hương Chất Kids, nhận hoa hồng cho mỗi đơn giao thành công.' };
+  thueTyLe: 10, thueNguong: 2000000, gioiThieu: 'Chia sẻ link sản phẩm Hương Chất Kids, nhận hoa hồng cho mỗi đơn giao thành công.', hienTyLe: false,
+  coChe: 'Bạn nhận hoa hồng cho mỗi đơn hàng khách mua qua link của bạn và giao thành công.\nMức hoa hồng, thời gian ghi nhận và lịch thanh toán theo thoả thuận với Hương Chất Kids – shop sẽ thông báo cụ thể khi duyệt tài khoản.\nHoa hồng được thanh toán hằng tháng; shop khấu trừ thuế TNCN theo quy định pháp luật.' };
 function sheetDT() { return sheetPhu(SHEET_DT, H_DT); } function sheetLB() { return sheetPhu(SHEET_LB, H_LB); }
 function sheetDD() { return sheetPhu(SHEET_DD, H_DD); } function sheetKY() { return sheetPhu(SHEET_KY, H_KY); }
 function sheetPDT() { return sheetPhu(SHEET_PDT, ['Token', 'Mã đối tác', 'Hết hạn', 'Tạo lúc']); }
@@ -1086,6 +1090,14 @@ function timDT(ma) { ma = chuanMaDT(ma); if (!ma) return null; var v = docBang(s
 function timDTTheoSdt(sdt) { var v = docBang(sheetDT(), H_DT.length); for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][2]) === sdt) return { dong: i + 2, v: v[i] }; return null; }
 function dtHoatDong(r) { return r && String(r.v[10]) === DTT.DUYET; }
 function anTK(s) { s = String(s || ''); return s.length > 4 ? '••••' + s.slice(-4) : s; }
+/* Quên mật khẩu đối tác (dùng chung luồng OTP email của khách – xem QUÊN MẬT KHẨU) */
+function timDTTheoEmail(email) { var kq = []; if (!email) return kq; docBang(sheetDT(), H_DT.length).forEach(function (r) { if (chuanEmail(r[3]) === email && String(r[10]) === DTT.DUYET && sdtHopLe(chuanSdt(r[2]))) kq.push({ sdt: chuanSdt(r[2]), ten: String(r[1] || '') }); }); return kq; }
+function tenDoiTacTheoSdt() { var m = {}; docBang(sheetDT(), 3).forEach(function (r) { m[chuanSdt(r[2])] = String(r[1] || ''); }); return m; }
+function luuMkDoiTac(sdt, mk) {
+  var dt = timDTTheoSdt(sdt); if (!dt) return 0; var muoi = Utilities.getUuid(); sheetDT().getRange(dt.dong, 15, 1, 2).setValues([[bamMkManh(mk, muoi), muoi]]);
+  var s = sheetPDT(); var v = docBang(s, 3); var dem = 0; for (var i = 0; i < v.length; i++) if (String(v[i][1]) === String(dt.v[0]) && new Date(v[i][2]).getTime() > Date.now()) { s.getRange(i + 2, 3).setValue(new Date(0)); dem++; }
+  return dem;
+}
 
 /* ---------- 1. Lượt bấm (công khai) ---------- */
 function apiAffBam(p) {
@@ -1202,10 +1214,10 @@ function apiAffHoSo(p) {
     return { ma: String(r[0]), ngay: Utilities.formatDate(new Date(r[2]), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy'), soDon: r[3], tong: soNguyen(r[4]), dc: soNguyen(r[5]), thue: soNguyen(r[7]), nhan: soNguyen(r[8]), tt: String(r[9]), traLuc: r[10] ? ngayVN(r[10]) : '' };
   });
   return { ok: true, doiTac: { ma: ma, ten: String(dt.v[1]), sdt: anSdt(dt.v[2]), email: anEmail(dt.v[3]), nganHang: String(dt.v[5]), stk: anTK(dt.v[6]), loaiThue: String(dt.v[9]) },
-    cauHinh: { ngay: cfg.ngay, hh: cfg.hh, ngayTra: cfg.ngayTra, choDoiTraNgay: cfg.choDoiTraNgay, thueTyLe: cfg.thueTyLe, thueNguong: cfg.thueNguong },
+    cauHinh: { ngay: cfg.ngay, hh: cfg.hh, hienTyLe: !!cfg.hienTyLe, coChe: String(cfg.coChe || ''), ngayTra: cfg.ngayTra, choDoiTraNgay: cfg.choDoiTraNgay, thueTyLe: cfg.thueTyLe, thueNguong: cfg.thueNguong },
     luotBam: lb.length, bieuDo: bieuDo, tk: tk, don: dsDon, ky: ky };
 }
-function apiAffCongKhai() { var c = affCauHinh(); return { ok: true, bat: !!c.bat, ngay: c.ngay, hh: c.hh, ngayTra: c.ngayTra, choDoiTraNgay: c.choDoiTraNgay, thueTyLe: c.thueTyLe, thueNguong: c.thueNguong, gioiThieu: c.gioiThieu }; }
+function apiAffCongKhai() { var c = affCauHinh(); return { ok: true, bat: !!c.bat, hienTyLe: !!c.hienTyLe, coChe: String(c.coChe || ''), ngay: c.ngay, hh: c.hh, ngayTra: c.ngayTra, choDoiTraNgay: c.choDoiTraNgay, thueTyLe: c.thueTyLe, thueNguong: c.thueNguong, gioiThieu: c.gioiThieu }; }
 
 /* ---------- 6. Xử lý nền theo CRM + chốt kỳ ngày 10 ---------- */
 function xuLyAff() {
@@ -1348,6 +1360,8 @@ function apiQtAffCauHinh(p) {
   moi.thueTyLe = so(p.thueTyLe, 0, 50, cu.thueTyLe); moi.thueNguong = so(p.thueNguong, 0, 1e9, cu.thueNguong);
   ['link', 'khacMay', 'zalo', 'ganTay'].forEach(function (k) { moi.hh[k] = so(p['hh_' + k], 0, 50, cu.hh[k]); });
   if (p.gioiThieu != null) moi.gioiThieu = String(p.gioiThieu).slice(0, 500);
+  if (p.coChe != null) moi.coChe = String(p.coChe).slice(0, 3000);
+  if (p.hienTyLe != null) moi.hienTyLe = String(p.hienTyLe) === '1';
   PropertiesService.getScriptProperties().setProperty('AFF_CAU_HINH', JSON.stringify(moi));
   ghiNhatKy('Cấu hình đối tác', tenQT(p), JSON.stringify(moi.hh) + ', hạn ' + moi.ngay + ' ngày, thuế ' + moi.thueTyLe + '% từ ' + moi.thueNguong);
   return { ok: true, cauHinh: moi };
