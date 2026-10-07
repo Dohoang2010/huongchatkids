@@ -1,3 +1,6 @@
 .DS_Store
 Thumbs.db
 tools/apps-script-CUA-SHOP.gs
+
+# Apps Script that (clasp) - co khoa bi mat, khong dua len git
+tools/appscript-live/
