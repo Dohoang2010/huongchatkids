@@ -14,6 +14,13 @@
   const sua = () => A.co('affiliate.settings');
   const S = { q: '', loc: 'dung', chon: new Set(), them: false, qThem: '', chonThem: new Set() };
   let dl = null, cdDl = null, ed = null;
+  const boDau = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+  const khopDt = (x) => !ed || !ed.qDt || boDau([x.ma, x.ten, x.sdt].join(' ')).includes(boDau(ed.qDt).trim());
+  /* Lọc / đếm danh sách đối tác ngay trên trang, không vẽ lại cả form (giữ chỗ con trỏ khi gõ) */
+  const locDt = () => { const k = boDau(ed.qDt || '').trim(); let hien = 0, chonHet = true;
+    $$('[data-tim]').forEach((l) => { const ok = !k || l.dataset.tim.includes(k); l.hidden = !ok; if (ok) { hien++; if (!l.querySelector('input').checked) chonHet = false; } });
+    const a = $('#cdDtAll'); if (a) { a.checked = hien > 0 && chonHet; a.disabled = !hien; } const r = $('#cdDtRong'); if (r) r.hidden = hien > 0;
+    const so = $('#cdDtSo'); if (so && cdDl) so.textContent = `Đã chọn ${ed.dts.size}/${cdDl.dts.length}`; };
 
   /* ================= HOA HỒNG SẢN PHẨM ================= */
   async function veSp(el, khung) {
@@ -104,7 +111,9 @@
       <div class="grid-2"><label>Tên chiến dịch <i>*</i><input id="cdTen" maxlength="100" value="${esc(ed.ten)}" placeholder="VD: HCK x Mẹ Bi – tháng 10"></label>
         <div class="grid-2" style="gap:10px"><label>Bắt đầu<input id="cdBd" type="datetime-local" value="${esc(ed.batDau)}"><small class="hint">Trống = ngay bây giờ</small></label><label>Kết thúc<input id="cdKt" type="datetime-local" value="${esc(ed.ketThuc)}"><small class="hint">Trống = không giới hạn</small></label></div></div>
       <label>Đối tác áp dụng <i>*</i></label>
-      <div class="hh-dt">${cdDl.dts.map((x) => `<label class="hh-dt__it"><input type="checkbox" data-cd-dt="${esc(x.ma)}" ${ed.dts.has(x.ma) ? 'checked' : ''}> <b>${esc(x.ma)}</b> · ${esc(x.ten)}</label>`).join('') || '<p class="muted">Chưa có đối tác đã duyệt.</p>'}</div>
+      ${cdDl.dts.length ? `<div class="hh-dt-tool"><div class="tool__tim"><input id="cdDtQ" placeholder="Tìm đối tác theo mã, tên, SĐT…" value="${esc(ed.qDt || '')}" autocomplete="off"></div>
+        <label class="hh-dt-tool__all"><input type="checkbox" id="cdDtAll"> Chọn tất cả đang hiện</label><small class="muted" id="cdDtSo">Đã chọn ${ed.dts.size}/${cdDl.dts.length}</small></div>` : ''}
+      <div class="hh-dt">${cdDl.dts.map((x) => `<label class="hh-dt__it" data-tim="${esc(boDau([x.ma, x.ten, x.sdt].join(' ')))}" ${khopDt(x) ? '' : 'hidden'}><input type="checkbox" data-cd-dt="${esc(x.ma)}" ${ed.dts.has(x.ma) ? 'checked' : ''}> <b>${esc(x.ma)}</b> · ${esc(x.ten)}</label>`).join('') || '<p class="muted">Chưa có đối tác đã duyệt.</p>'}<p class="muted" id="cdDtRong" ${cdDl.dts.some(khopDt) ? 'hidden' : ''}>Không thấy đối tác phù hợp.</p></div>
       <label style="margin-top:12px">Sản phẩm áp dụng</label>
       <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px"><label class="qmk__tk" style="margin:0"><input type="radio" style="width:auto;margin:0" name="cdPham" value="chon" ${ed.tatCa ? '' : 'checked'}> Chọn từng sản phẩm, mỗi SP một mức %</label>
         <label class="qmk__tk" style="margin:0"><input type="radio" style="width:auto;margin:0" name="cdPham" value="tatCa" ${ed.tatCa ? 'checked' : ''}> Toàn bộ sản phẩm của shop, 1 mức</label></div>
@@ -119,6 +128,7 @@
         </tbody></table></div>`}
       <div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn--primary" id="cdLuu">${ed.ma ? 'Lưu thay đổi' : 'Tạo chiến dịch'}</button><a class="btn btn--ghost" href="#/doi-tac/cd">Huỷ</a></div>
       <p class="muted" style="margin-top:8px">Đơn đã ghi nhận giữ mức % lúc đặt. Đối tác thấy mức riêng của mình ngay trong trang đối tác.</p></div>`;
+    locDt();
   }
   const docEd = () => { if (!ed || !$('#cdTen')) return; ed.ten = $('#cdTen').value; ed.batDau = $('#cdBd').value; ed.ketThuc = $('#cdKt').value; if ($('#cdPtChung')) ed.ptChung = $('#cdPtChung').value; };
 
@@ -129,6 +139,7 @@
     if (!location.hash.startsWith('#/doi-tac')) return;
     if (e.target.id === 'hhQ') { S.q = e.target.value; tre(); } if (e.target.id === 'hhThemQ') { S.qThem = e.target.value; tre(); }
     if (e.target.id === 'cdQ') { docEd(); ed.q = e.target.value; tre(); }
+    if (e.target.id === 'cdDtQ' && ed) { ed.qDt = e.target.value; locDt(); }
     const p = e.target.closest('[data-cd-pt]'); if (p && ed) ed.sp[p.dataset.cdPt] = p.value;
   });
   document.addEventListener('change', (e) => {
@@ -137,7 +148,8 @@
     if (e.target.id === 'hhAll') { $$('[data-hh-chon]').forEach((c) => (e.target.checked ? S.chon.add(c.dataset.hhChon) : S.chon.delete(c.dataset.hhChon))); veLai(); }
     const c = e.target.closest('[data-hh-chon]'); if (c) { c.checked ? S.chon.add(c.dataset.hhChon) : S.chon.delete(c.dataset.hhChon); veLai(); }
     const t = e.target.closest('[data-them]'); if (t) { t.checked ? S.chonThem.add(t.dataset.them) : S.chonThem.delete(t.dataset.them); const n = $('#hhThemLuu'); if (n) n.textContent = `Thêm ${S.chonThem.size || ''} SP`; }
-    const dt = e.target.closest('[data-cd-dt]'); if (dt && ed) dt.checked ? ed.dts.add(dt.dataset.cdDt) : ed.dts.delete(dt.dataset.cdDt);
+    const dt = e.target.closest('[data-cd-dt]'); if (dt && ed) { dt.checked ? ed.dts.add(dt.dataset.cdDt) : ed.dts.delete(dt.dataset.cdDt); locDt(); }
+    if (e.target.id === 'cdDtAll' && ed) { const on = e.target.checked; $$('[data-tim]:not([hidden]) [data-cd-dt]').forEach((c) => { c.checked = on; on ? ed.dts.add(c.dataset.cdDt) : ed.dts.delete(c.dataset.cdDt); }); locDt(); }
     if (e.target.name === 'cdPham' && ed) { docEd(); ed.tatCa = e.target.value === 'tatCa'; veLai(); }
     if (e.target.id === 'cdAll' && ed) { docEd(); const on = e.target.checked; $$('[data-cd-sp]').forEach((x) => { const id = x.dataset.cdSp; if (!on) return delete ed.sp[id]; if (ed.sp[id] == null) { const h = (dl && dl.sp && dl.sp[id]) || null; ed.sp[id] = h && h.pt != null ? h.pt : (cdDl.macDinh.link ?? 10); } }); return veLai(); }
     const sp = e.target.closest('[data-cd-sp]'); if (sp && ed) { docEd(); const id = sp.dataset.cdSp; if (sp.checked) { const h = (dl && dl.sp && dl.sp[id]) || null; ed.sp[id] = h && h.pt != null ? h.pt : (cdDl.macDinh.link ?? 10); } else delete ed.sp[id]; veLai(); }

@@ -616,3 +616,6 @@ tr.is-dim{opacity:.55}
 .hh-dt{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-bottom:6px}
 .hh-dt__it{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:0;font-weight:500;cursor:pointer}.hh-dt__it input{width:16px;height:16px;margin:0}
 .hh-dt__it input,[data-cd-sp],[data-hh-chon],#hhAll,[data-them]{width:16px!important;height:16px;flex:none}
+.hh-dt-tool{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.hh-dt-tool .tool__tim{flex:1 1 240px}
+.hh-dt-tool__all{display:flex;gap:6px;align-items:center;margin:0;font-weight:500;white-space:nowrap;cursor:pointer}.hh-dt-tool__all input{width:16px!important;height:16px;margin:0}
+.hh-dt{max-height:260px;overflow:auto}.hh-dt__it[hidden],#cdDtRong[hidden]{display:none}#cdDtRong{grid-column:1/-1;margin:4px 0}
