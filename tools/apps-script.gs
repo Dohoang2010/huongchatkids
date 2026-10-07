@@ -775,11 +775,12 @@ function apiQtGioiThieu(p) {
       trangThai: String(r[4]), maDon: String(r[5] || ''), giam: soNguyen(r[7]), pGiam: r[8], pThuong: r[9], giaTri: soNguyen(r[10]),
       diem: soNguyen(r[11]), capNhat: r[12] ? ngayVN(r[12]) : '', ghiChu: String(r[13] || '') };
   }).reverse();
-  var lich = false; try { lich = ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === 'dongBoCRMTuDong'; }); } catch (e) { lich = null; }
+  /* Lịch chạy nền ghi thời điểm mỗi lần chạy (web app không có quyền đọc danh sách lịch) */
+  var lichLuc = Number(PropertiesService.getScriptProperties().getProperty('LICH_LUC') || 0); var lich = !!lichLuc && Date.now() - lichLuc < 45 * 60e3;
   var so = docSoDiem(); var tongThuong = 0, tongDung = 0;
   so.forEach(function (r) { if (r[3] === 'EARN') tongThuong += soNguyen(r[4]); if (r[3] === 'REVERSE') tongThuong += soNguyen(r[4]); if (r[3] === 'SPEND') tongDung -= soNguyen(r[4]); if (r[3] === 'REFUND') tongDung -= soNguyen(r[4]); });
   return { ok: true, cauHinh: gtCauHinh(), ds: ds, top: Object.keys(top).map(function (k) { return top[k]; }).sort(function (a, b) { return b.diem - a.diem || b.soNguoi - a.soNguoi; }).slice(0, 10),
-    tongThuong: tongThuong, tongDung: tongDung, lich: lich };
+    tongThuong: tongThuong, tongDung: tongDung, lich: lich, lichLuc: lichLuc ? ngayVN(new Date(lichLuc)) : '' };
 }
 function apiQtDiem(p) {
   if (!coQuyen(p, 'points.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
@@ -1423,6 +1424,7 @@ function apiDongBoCRM(p) {
 }
 /* Chạy nền (trigger) */
 function dongBoCRMTuDong() {
+  PropertiesService.getScriptProperties().setProperty('LICH_LUC', String(Date.now()));   // để trang quản trị biết lịch đang chạy
   try { Logger.log(JSON.stringify(dongBoCRMNhieu())); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
 }
