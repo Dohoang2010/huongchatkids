@@ -40,7 +40,8 @@
     const trang = loc.slice((S.trang - 1) * S.moiTrang, S.trang * S.moiTrang);
     $('#pageAct').innerHTML = `${A.co('referral.update') ? '<button class="btn btn--ghost" id="gtXuLy">⟳ Xử lý ngay theo CRM</button>' : ''}${A.co('referral.export') ? '<button class="btn btn--ghost" id="gtXuat">⭳ Xuất Excel</button>' : ''}`;
     body.innerHTML = `
-      ${d.lich === false ? `<div class="card err-box"><h3>⏰ Chưa bật lịch tự xử lý</h3><p>Điểm thưởng / trừ điểm được xử lý khi CRM báo trạng thái đơn. Bật lịch để hệ thống tự chạy 30 phút/lần (cùng lúc đồng bộ trạng thái đơn từ CRM).</p>${A.co('referral_settings.update') ? '<button class="btn btn--primary" id="gtBatLich">Bật lịch 30 phút</button>' : ''}</div>` : ''}
+      ${d.lich === false ? `<div class="card err-box"><h3>⏰ Chưa bật lịch tự xử lý</h3><p>Điểm thưởng / trừ điểm được xử lý khi CRM báo trạng thái đơn. Bật lịch để hệ thống tự chạy 30 phút/lần (cùng lúc đồng bộ trạng thái đơn từ CRM).</p>${A.co('referral_settings.update') ? '<button class="btn btn--primary" id="gtBatLich">Bật lịch 30 phút</button>' : ''}</div>`
+        : d.lich === null ? `<div class="card err-box"><h3>⏰ Cần bật lịch tự xử lý (làm 1 lần)</h3><p>Apps Script chưa được cấp quyền tạo lịch chạy nền. Mở <b>Apps Script</b> của shop → chọn hàm <code>taoLichDongBoCRM</code> ở thanh trên → bấm <b>▶ Chạy</b> → <b>Cho phép</b>. Xong hệ thống tự cộng / trừ điểm theo trạng thái CRM 30 phút/lần. Trong lúc chờ, bấm “⟳ Xử lý ngay theo CRM” để xử lý tay.</p></div>` : ''}
       <div class="kpis">
         ${A.the('Lượt giới thiệu', n0(ds.length), `${n0(nguoiGT)} người giới thiệu`)}
         ${A.the('Đã mua (giao thành công)', n0(daMua), ds.length ? `Tỉ lệ chuyển đổi ${Math.round(daMua / ds.length * 100)}%` : '', 'kpi--teal')}
