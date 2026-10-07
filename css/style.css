@@ -1748,3 +1748,14 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 .checkout__side .dt-hh { grid-template-columns: 1fr; }
 .dt-moi { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: linear-gradient(135deg, var(--primary-50), #FFF6E5); border: 1px dashed var(--primary-100); }
 .dt-moi > div { flex: 1 1 320px; } .dt-moi h3 { margin-bottom: 4px; }
+/* Đối tác: danh sách sản phẩm có hoa hồng */
+.dt-loc { display: grid; grid-template-columns: 1fr 200px; gap: 8px; margin-bottom: 10px; }
+.dt-sp { max-height: 640px; overflow: auto; }
+.dt-sp__it { grid-template-columns: 72px 1fr auto; padding: 10px; }
+.dt-sp__it img { width: 72px; height: 72px; }
+.dt-sp__tt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.dt-sp__gia { color: var(--price); font-weight: 700; }
+.dt-sp__hh { font-size: 13px; color: var(--ink-2); } .dt-sp__hh b { color: var(--primary-600); font-size: 15px; } .dt-sp__hh em { font-style: normal; color: var(--teal-600); font-weight: 600; margin-left: 4px; }
+.dt-sp__lk { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dt-sp__nut { display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 560px) { .dt-loc { grid-template-columns: 1fr; } .dt-sp__it { grid-template-columns: 56px 1fr; } .dt-sp__it img { width: 56px; height: 56px; } .dt-sp__nut { grid-column: 1 / -1; flex-direction: row; } .dt-sp__nut .btn { flex: 1; } }

@@ -1130,6 +1130,7 @@
 
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
+    if (AFF.moLinkGon()) return;   // link rút gọn ?r=MÃ.sp → chuyển tới sản phẩm (kèm ?aff=MÃ)
     renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk(); GT.batRef(); AFF.batLink();
     syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
@@ -1732,10 +1733,25 @@
       const da = store.get('mc_aff_noi', []) || []; const k = v.lb + ':' + sdt; if (da.includes(k)) return;
       store.set('mc_aff_noi', [...da, k].slice(-10)); loyaltyApi('affSdt', { lb: v.lb, sdt }).catch(() => {});
     },
+    /* Link rút gọn: https://huongchatkids.vn/?r=MEBI.c0xyz7 (mã SP dạng số đổi sang cơ số 36 cho ngắn; mã chữ thì ~mã) */
+    linkGon(ma, id) {
+      const goc = location.origin + location.pathname.replace(/[^/]*$/, '');
+      if (!id) return `${goc}?r=${ma}`;
+      return `${goc}?r=${ma}.${/^\d+$/.test(String(id)) ? Number(id).toString(36) : '~' + id}`;
+    },
+    moLinkGon() {
+      if (!/(^|\/)(index\.html)?$/.test(location.pathname)) return false;   // chỉ trang chủ (product.html dùng ?r= để tải lại)
+      const r = String(param('r') || '').trim(); const m = r.match(/^([A-Za-z0-9]{2,16})(?:\.(~?[\w-]+))?$/); if (!m) return false;
+      const ma = m[1].toUpperCase(); const k = m[2] || '';
+      const id = !k ? '' : k[0] === '~' ? k.slice(1) : parseInt(k, 36).toString();
+      location.replace(id ? `product.html?id=${encodeURIComponent(id)}&aff=${ma}` : `index.html?aff=${ma}`);
+      return true;
+    },
     ganDon(o) {
       if (!o || o.type === 'callback' || !o.customer || !phoneOk(o.customer.phone)) return;
       const v = this.get();
       loyaltyApi('affGanDon', { maDon: o.code, sdt: phoneKey(o.customer.phone), lb: v ? v.lb : '', tien: Math.max(0, (Number(o.total) || 0) - (Number(o.ship) || 0)), tong: Number(o.total) || 0,
+        ds: JSON.stringify((o.items || []).slice(0, 50).map((it) => [it.id, it.qty || 1, Number(it.price) || 0])),   // hoa hồng tính theo từng sản phẩm
         sp: (o.items || []).map((it) => `${it.short || it.name}${it.variant ? ' – ' + it.variant : ''} ×${it.qty || 1}`).join('; ').slice(0, 280) }, 30000).catch(() => {});
     },
   };

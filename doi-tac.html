@@ -8,14 +8,14 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261007n">
+  <link rel="stylesheet" href="css/style.css?v=20261007o">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="dt"></div></main>
-<script src="js/data.js?v=20261007n"></script>
+<script src="js/data.js?v=20261007o"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261007n"></script>
+<script src="js/app.js?v=20261007o"></script>
 <script>
 /* TRANG ĐỐI TÁC – đăng ký (shop duyệt), đăng nhập, lấy link sản phẩm, xem lượt bấm / đơn / hoa hồng / kỳ thanh toán.
    Máy chủ: Apps Script affDangKy / affDangNhap / affHoSo / affCongKhai (tools/apps-script.gs, phần ĐỐI TÁC). */
@@ -82,11 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="checkout">
         <div class="flex flex-col gap-16">
-          <div class="card card--pad"><h3>🔗 Tạo link chia sẻ</h3>
-            <div class="dt-tim"><input class="input" id="dtTim" placeholder="Tìm sản phẩm theo tên…" autocomplete="off"></div>
+          <div class="card card--pad"><h3>🛍️ Sản phẩm có hoa hồng – chọn & copy link</h3>
+            <div class="dt-loc"><input class="input" id="dtTim" placeholder="Tìm sản phẩm…" autocomplete="off">
+              <select class="input" id="dtSx"><option value="hh">Hoa hồng cao nhất</option><option value="ban">Bán chạy nhất</option><option value="cuaBan">Bạn bán nhiều nhất</option><option value="gia">Giá thấp → cao</option></select></div>
             <div class="dt-sp" id="dtSp"></div>
-            <div class="dt-link"><span>Link trang chủ</span><code id="lkHome">${esc(BASE)}?aff=${esc(d.ma)}</code><button class="btn btn--dark btn--sm" type="button" data-copy="${esc(BASE)}?aff=${esc(d.ma)}">Copy</button></div>
-            <p class="qmk__note mt-8">Mọi link của web thêm <code>?aff=${esc(d.ma)}</code> (hoặc <code>&aff=${esc(d.ma)}</code>) đều được ghi nhận.</p></div>
+            <div class="dt-link"><span>Link trang chủ</span><code>${esc(MC.AFF.linkGon(d.ma))}</code><button class="btn btn--dark btn--sm" type="button" data-copy="${esc(MC.AFF.linkGon(d.ma))}">Copy</button></div>
+            <p class="qmk__note mt-8">Link rút gọn tự chuyển tới sản phẩm và ghi nhận cho bạn trong ${cfg.ngay} ngày kể từ lần khách bấm gần nhất.</p></div>
           <div class="card card--pad"><h3>📈 Lượt bấm 14 ngày</h3><div class="dt-chart">${hs.bieuDo.map((x) => `<div title="${x.ngay}: ${x.luot} lượt"><i style="height:${Math.round(x.luot / max * 100)}%"></i><small>${x.ngay.slice(0, 2)}</small></div>`).join('')}</div></div>
           <div class="card card--pad"><h3>🧾 Đơn hàng (${hs.don.length})</h3>${hs.don.length ? `<div class="diem-ls">${hs.don.map((o) => `<div class="diem-ls__it"><div><b>${esc(o.ma)} · khách ${esc(o.khach)}</b><small>${esc(o.ngay)} · ${esc(o.nguon)}${o.sp ? ' · ' + esc(o.sp) : ''}</small></div><div class="diem-ls__so"><span class="badge ${TT[o.tt] || 'badge--soft'}">${esc(o.tt)}</span><small>${fmt(o.tien)} × ${o.pt}% = <b>${fmt(o.hh)}</b>${o.ky ? ' · ' + esc(o.ky) : ''}</small></div></div>`).join('')}</div>` : '<p class="text-muted fs-14">Chưa có đơn nào. Đăng link sản phẩm để bắt đầu nhé!</p>'}</div>
         </div>
@@ -101,10 +102,30 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>`;
     veSp('');
   }
+  /* % hoa hồng của đối tác cho 1 sản phẩm – cùng thứ tự với máy chủ: chiến dịch riêng (cao nhất) > % sản phẩm > (chưa thêm → không có) */
+  function mucHH(id) {
+    const b = hs.bangHH || {}; let best = null, cd = null;
+    (b.cds || []).forEach((c) => { const v = c.tatCa ? c.ptChung : (c.sp && c.sp[id] != null ? Number(c.sp[id]) : null); if (v != null && (best === null || v > best)) { best = v; cd = c; } });
+    if (best !== null) return { pt: best, cd };
+    const s = (b.sp || {})[id]; if (s && s.tat) return null;
+    if (s) return { pt: s.pt != null ? s.pt : b.macDinh, cd: null };
+    return b.chiSpTrongDs === false ? { pt: b.macDinh, cd: null } : null;
+  }
+  let sx = 'hh';
   function veSp(q) {
     const box = $('#dtSp'); if (!box || !hs) return;
-    const k = String(q || '').toLowerCase(); const ds = (window.PRODUCTS || []).filter((p) => !p.hidden && (!k || (p.name + ' ' + (p.short || '')).toLowerCase().includes(k))).slice(0, 8);
-    box.innerHTML = ds.map((p) => { const url = `${BASE}product.html?id=${p.id}&aff=${hs.doiTac.ma}`; return `<div class="dt-sp__it"><img src="${productThumb(p)}" alt=""><div><b>${esc(shortName(p))}</b><small>${fmt(p.price)}</small></div><button class="btn btn--primary btn--sm" type="button" data-copy="${esc(url)}">Copy link</button></div>`; }).join('') || '<p class="text-muted fs-14">Không thấy sản phẩm.</p>';
+    const k = String(q ?? ($('#dtTim') || {}).value ?? '').toLowerCase();
+    const ds = (window.PRODUCTS || []).filter((p) => !p.hidden).map((p) => ({ p, m: mucHH(String(p.id)), ban: (hs.banSp || {})[p.id] || 0 }))
+      .filter((x) => x.m && x.m.pt > 0 && (!k || (x.p.name + ' ' + (x.p.short || '')).toLowerCase().includes(k)));
+    ds.sort((a, b) => (sx === 'ban' ? (b.p.sold || 0) - (a.p.sold || 0) : sx === 'cuaBan' ? b.ban - a.ban : sx === 'gia' ? a.p.price - b.p.price : b.m.pt * b.p.price - a.m.pt * a.p.price));
+    box.innerHTML = ds.map(({ p, m, ban }) => { const url = MC.AFF.linkGon(hs.doiTac.ma, p.id);
+      return `<div class="dt-sp__it"><img src="${productThumb(p)}" alt="" loading="lazy"><div class="dt-sp__tt"><b>${esc(shortName(p))}</b>
+        <small class="dt-sp__gia">${fmt(p.price)}</small>
+        <span class="dt-sp__hh">Hoa hồng <b>${String(m.pt).replace('.', ',')}%</b> ≈ ${fmt(Math.round(p.price * m.pt / 100))}/sp${m.cd ? ` <em>🎯 Riêng cho bạn${m.cd.kt ? ' · đến ' + esc(m.cd.kt.slice(0, 10)) : ''}</em>` : ''}</span>
+        <small class="text-muted">Đã bán ${Number(p.sold || 0).toLocaleString('vi-VN')}${ban ? ` · <b class="text-teal">bạn bán ${ban} đơn</b>` : ''}</small>
+        <code class="dt-sp__lk">${esc(url.replace(/^https?:\/\//, ''))}</code></div>
+        <div class="dt-sp__nut"><button class="btn btn--primary btn--sm" type="button" data-copy="${esc(url)}">Copy link</button><a class="btn btn--ghost btn--sm" href="product.html?id=${p.id}" target="_blank">Xem</a></div></div>`; }).join('')
+      || `<p class="text-muted fs-14">${k ? 'Không thấy sản phẩm phù hợp.' : 'Shop chưa mở sản phẩm nào cho chương trình đối tác. Bạn quay lại sau nhé!'}</p>`;
   }
   const tai = () => { const tk = store.get(KHOA, ''); if (!tk) { veKhach(); return; }
     $('#dt').innerHTML = '<p class="text-muted" style="padding:40px 0">Đang tải…</p>';
@@ -117,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'dtThoat') { store.set(KHOA, ''); hs = null; veKhach(); }
   });
   document.addEventListener('input', (e) => { if (e.target.id === 'dtTim') veSp(e.target.value); });
+  document.addEventListener('change', (e) => { if (e.target.id === 'dtSx') { sx = e.target.value; veSp(); } });
   document.addEventListener('submit', (e) => {
     e.preventDefault(); const f = e.target; const v = Object.fromEntries(new FormData(f).entries()); const btn = $('button[type=submit]', f);
     const loi = (id, m) => { const x = $(id); x.textContent = m; x.classList.toggle('hide', !m); };

@@ -3,7 +3,7 @@
 (() => {
   'use strict';
   const A = window.ADMIN, { $, $$, esc, fmt, ngayISO } = A;
-  const TAB = [['', '🤝 Đối tác', 'affiliate.view'], ['don', '🧾 Đơn & nguồn', 'affiliate.view'], ['thanh-toan', '💳 Thanh toán', 'affiliate.view'], ['cau-hinh', '⚙️ Cấu hình', 'affiliate.view']];
+  const TAB = [['', '📦 Hoa hồng sản phẩm', 'affiliate.view'], ['cd', '🎯 Chiến dịch riêng', 'affiliate.view'], ['doi-tac', '🤝 Đối tác', 'affiliate.view'], ['don', '🧾 Đơn & nguồn', 'affiliate.view'], ['thanh-toan', '💳 Thanh toán', 'affiliate.view'], ['cau-hinh', '⚙️ Cấu hình', 'affiliate.view']];
   const TT_DT = { 'Chờ duyệt': '', 'Đã duyệt': 'tag--ok', 'Từ chối': 'tag--no', 'Đã khoá': 'tag--no' };
   const TT_DON = { 'Chờ giao': '', 'Đã giao': 'tag--ok', 'Đã huỷ': 'tag--no', 'Hoàn hàng': 'tag--no', 'Không tính': 'tag--no' };
   const LOAI = { 'ca-nhan': 'Cá nhân – khấu trừ TNCN', 'cam-ket-08': 'Cam kết 08/CK-TNCN', 'doanh-nghiep': 'DN / HKD xuất hoá đơn' };
@@ -19,7 +19,7 @@
 
   /* ---------------- Đối tác ---------------- */
   async function veDs(el) {
-    const b = khung(el, '');
+    const b = khung(el, 'doi-tac');
     try { const d = await A.api('qtAffDs', {}); if (!d || !d.ok) { b.innerHTML = A.loiTai((d && d.msg) || 'Apps Script chưa có phần Đối tác'); return; } duLieu.ds = d; veBangDs(b, d); }
     catch (e) { b.innerHTML = A.loiTai(e.message); }
   }
@@ -43,7 +43,7 @@
           <td class="num">${n0(x.tk.bam)}</td><td class="num">${n0(x.tk.don)}</td><td class="num">${fmt(x.tk.doanhThu)}</td><td class="num"><b>${fmt(x.tk.hh)}</b></td>
           <td>${A.badge(x.tt, TT_DT[x.tt] || '')}${x.ghiChu ? `<br><small class="muted">${esc(x.ghiChu)}</small>` : ''}</td>
           <td class="num">${A.co('affiliate.update') ? (x.tt === 'Chờ duyệt' ? `<button class="btn btn--primary btn--sm" data-duyet="${esc(x.ma)}">Duyệt</button> <button class="btn btn--ghost btn--sm" data-tuchoi="${esc(x.ma)}">Từ chối</button>`
-            : x.tt === 'Đã duyệt' ? `<button class="btn btn--ghost btn--sm" data-khoa="${esc(x.ma)}">Khoá</button>` : x.tt === 'Đã khoá' ? `<button class="btn btn--ghost btn--sm" data-mokhoa="${esc(x.ma)}">Mở khoá</button>` : '') : ''}</td></tr>`).join('')}
+            : x.tt === 'Đã duyệt' ? `<a class="btn btn--primary btn--sm" href="#/doi-tac/cd/moi-${esc(x.ma)}">✏️ Hoa hồng riêng</a> <button class="btn btn--ghost btn--sm" data-khoa="${esc(x.ma)}">Khoá</button>` : x.tt === 'Đã khoá' ? `<button class="btn btn--ghost btn--sm" data-mokhoa="${esc(x.ma)}">Mở khoá</button>` : '') : ''}</td></tr>`).join('')}
       </tbody></table></div>` : A.trong('Chưa có đối tác', 'Chia sẻ trang huongchatkids.vn/doi-tac.html để mời đối tác đăng ký.', '🤝')}</div>`;
   }
 
@@ -127,6 +127,7 @@
           <label>Áp dụng khi khoản trả từ (đồng)<input id="ac_thueNguong" type="number" min="0" step="100000" value="${esc(c.thueNguong)}" ${dis}></label></div>
         <label>Lời giới thiệu trên trang đối tác<textarea id="ac_gioiThieu" rows="2" maxlength="500" ${dis}>${esc(c.gioiThieu)}</textarea></label>
         <label>Nội dung "Cơ chế hoa hồng" hiển thị cho đối tác<textarea id="ac_coChe" rows="6" maxlength="3000" ${dis}>${esc(c.coChe || '')}</textarea><small class="hint">Mỗi dòng là 1 ý. Viết <code>**chữ**</code> để in đậm. Mức hoa hồng, thời gian, lịch trả… bạn tự soạn theo thoả thuận – trang đối tác hiển thị đúng nội dung này.</small></label>
+        <label class="sw"><input type="checkbox" id="acChiSp" ${c.chiSpTrongDs !== false ? 'checked' : ''} ${dis}> <span>Chỉ sản phẩm đã thêm ở tab "Hoa hồng sản phẩm" mới có hoa hồng<small class="hint">Tắt: mọi sản phẩm của shop đều có hoa hồng theo mức mặc định của nguồn.</small></span></label>
         <label class="sw"><input type="checkbox" id="acHienTyLe" ${c.hienTyLe ? 'checked' : ''} ${dis}> <span>Hiện bảng % hoa hồng theo nguồn trên trang đối tác<small class="hint">Tắt: đối tác chỉ thấy nội dung bạn soạn ở trên (mặc định).</small></span></label>
         ${dis ? '<p class="muted">Bạn chỉ có quyền xem.</p>' : '<button class="btn btn--primary" id="acLuu">Lưu cấu hình</button>'}
         <p class="muted" style="margin-top:8px">Đơn đã ghi nhận giữ % lúc đặt; thay đổi chỉ áp dụng cho đơn mới. Mọi thay đổi ghi vào Nhật ký.</p></div>`;
@@ -169,7 +170,7 @@
       if (await goi('qtAffGanTay', p, 'Đã gán đơn cho ' + p.maDT)) A.veTrang(); return;
     }
     if (e.target.id === 'acLuu') {
-      const v = (id) => ($('#' + id) || {}).value; const p = { luu: '1', bat: $('#acBat').checked ? '1' : '0', ngay: v('ac_ngay'), choDoiTraNgay: v('ac_choDoiTraNgay'), ngayTra: v('ac_ngayTra'), thueTyLe: v('ac_thueTyLe'), thueNguong: v('ac_thueNguong'), gioiThieu: v('ac_gioiThieu'), coChe: v('ac_coChe'), hienTyLe: $('#acHienTyLe').checked ? '1' : '0' };
+      const v = (id) => ($('#' + id) || {}).value; const p = { luu: '1', bat: $('#acBat').checked ? '1' : '0', ngay: v('ac_ngay'), choDoiTraNgay: v('ac_choDoiTraNgay'), ngayTra: v('ac_ngayTra'), thueTyLe: v('ac_thueTyLe'), thueNguong: v('ac_thueNguong'), gioiThieu: v('ac_gioiThieu'), coChe: v('ac_coChe'), hienTyLe: $('#acHienTyLe').checked ? '1' : '0', chiSpTrongDs: $('#acChiSp').checked ? '1' : '0' };
       ['link', 'khacMay', 'zalo', 'ganTay'].forEach((k) => { p['hh_' + k] = v('ac_hh_' + k); });
       if (!(await A.hoi({ tieuDe: 'Lưu cấu hình đối tác?', noiDung: `Hoa hồng: link ${esc(p.hh_link)}% · khác máy ${esc(p.hh_khacMay)}% · Zalo ${esc(p.hh_zalo)}% · gán tay ${esc(p.hh_ganTay)}%<br>Hạn ${esc(p.ngay)} ngày · trả ngày ${esc(p.ngayTra)} · thuế ${esc(p.thueTyLe)}% từ ${fmt(Number(p.thueNguong))}`, nutOk: 'Lưu' }))) return;
       if (await goi('qtAffCauHinh', p, 'Đã lưu cấu hình')) A.veTrang(); return;
@@ -183,5 +184,5 @@
   });
 
   A.dangKy({ route: '/doi-tac', ten: 'Đối tác (affiliate)', icon: '🤝', nhom: 'ban-hang', quyen: 'affiliate.view', mo: 'Đối tác bán hàng, đơn theo nguồn, hoa hồng & thuế',
-    ve(el, { sub }) { if (sub === 'don') return veDon(el); if (sub === 'thanh-toan') return veKy(el); if (sub === 'cau-hinh') return veCauHinh(el); return veDs(el); } });
+    ve(el, { sub }) { if (!sub) return A.affHH.veSp(el, khung); if (sub === 'cd' || sub.startsWith('cd/')) return A.affHH.veCd(el, khung, sub); if (sub === 'doi-tac') return veDs(el); if (sub === 'don') return veDon(el); if (sub === 'thanh-toan') return veKy(el); if (sub === 'cau-hinh') return veCauHinh(el); return veDs(el); } });
 })();
