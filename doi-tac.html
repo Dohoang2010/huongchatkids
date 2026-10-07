@@ -8,14 +8,14 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261007m">
+  <link rel="stylesheet" href="css/style.css?v=20261007n">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="dt"></div></main>
-<script src="js/data.js?v=20261007m"></script>
+<script src="js/data.js?v=20261007n"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261007m"></script>
+<script src="js/app.js?v=20261007n"></script>
 <script>
 /* TRANG ĐỐI TÁC – đăng ký (shop duyệt), đăng nhập, lấy link sản phẩm, xem lượt bấm / đơn / hoa hồng / kỳ thanh toán.
    Máy chủ: Apps Script affDangKy / affDangNhap / affHoSo / affCongKhai (tools/apps-script.gs, phần ĐỐI TÁC). */
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="bm-row"><span>Hình thức</span><b>${esc(LOAI[d.loaiThue] || d.loaiThue)}</b></div>
             <div class="bm-row"><span>Liên hệ</span><b>${esc(d.sdt)} · ${esc(d.email)}</b></div>
             <p class="qmk__note mt-8">Cần đổi tài khoản ngân hàng / hình thức thuế? Nhắn shop qua Zalo ${esc(SITE.hotline)}.</p>
-          </div>${coCheHTML()}</div>
+          </div></div>
       </div>`;
     veSp('');
   }
