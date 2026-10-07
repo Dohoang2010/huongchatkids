@@ -1746,3 +1746,5 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 .dt-chart div { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
 .dt-chart i { width: 100%; min-height: 3px; background: linear-gradient(180deg, var(--primary), #FF9DB4); border-radius: 6px 6px 2px 2px; } .dt-chart small { font-size: 11px; color: var(--muted); }
 .checkout__side .dt-hh { grid-template-columns: 1fr; }
+.dt-moi { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: linear-gradient(135deg, var(--primary-50), #FFF6E5); border: 1px dashed var(--primary-100); }
+.dt-moi > div { flex: 1 1 320px; } .dt-moi h3 { margin-bottom: 4px; }

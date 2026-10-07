@@ -8,20 +8,21 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261007j">
+  <link rel="stylesheet" href="css/style.css?v=20261007k">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="dt"></div></main>
-<script src="js/data.js?v=20261007j"></script>
+<script src="js/data.js?v=20261007k"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261007j"></script>
+<script src="js/app.js?v=20261007k"></script>
 <script>
 /* TRANG ĐỐI TÁC – đăng ký (shop duyệt), đăng nhập, lấy link sản phẩm, xem lượt bấm / đơn / hoa hồng / kỳ thanh toán.
    Máy chủ: Apps Script affDangKy / affDangNhap / affHoSo / affCongKhai (tools/apps-script.gs, phần ĐỐI TÁC). */
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, esc, fmt, store, toast, loyaltyApi, phoneOk, productThumb, shortName } = MC;
-  const KHOA = 'mc_dt_token'; let cfg = { hh: {}, ngay: 7, ngayTra: 10, choDoiTraNgay: 7, thueTyLe: 10, thueNguong: 2000000 }; let hs = null; let tab = 'dang-nhap';
+  const KHOA = 'mc_dt_token'; let cfg = { hh: {}, ngay: 7, ngayTra: 10, choDoiTraNgay: 7, thueTyLe: 10, thueNguong: 2000000 }; let hs = null; let tab = MC.param('dk') ? 'dang-ky' : 'dang-nhap';
+  const kh = (MC.Session.get() && MC.Session.kh()) || {};   // khách đang đăng nhập bấm "Trở thành đối tác" → điền sẵn
   const n0 = (x) => Number(x || 0).toLocaleString('vi-VN');
   const BASE = location.origin + location.pathname.replace(/[^/]*$/, '');
   const TT = { 'Chờ giao': 'badge--hot', 'Đã giao': 'badge--teal', 'Đã huỷ': 'badge--soft', 'Hoàn hàng': 'badge--soft', 'Không tính': 'badge--soft', 'Chờ trả': 'badge--hot', 'Đã trả': 'badge--teal' };
@@ -52,9 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <button class="btn btn--primary btn--lg btn--block" type="submit">Đăng nhập</button>
               <p class="qmk__note">Quên mật khẩu? Liên hệ shop qua Zalo / hotline <b>${esc(SITE.hotline)}</b> để được đặt lại.</p></form>`
           : `<form id="fDk" class="qmk__form mt-12" novalidate>
-              <label class="field"><span>Họ tên *</span><input class="input" name="ten" autocomplete="name" required></label>
-              <div class="form-grid form-grid--2"><label class="field"><span>Số điện thoại *</span><input class="input" name="sdt" type="tel" inputmode="numeric" required></label>
-                <label class="field"><span>Email *</span><input class="input" name="email" type="email" required></label></div>
+              <label class="field"><span>Họ tên *</span><input class="input" name="ten" autocomplete="name" value="${esc(kh.ten || '')}" required></label>
+              <div class="form-grid form-grid--2"><label class="field"><span>Số điện thoại *</span><input class="input" name="sdt" type="tel" inputmode="numeric" value="${esc(kh.sdt || '')}" required></label>
+                <label class="field"><span>Email *</span><input class="input" name="email" type="email" value="${esc(kh.email || '')}" required></label></div>
               <label class="field"><span>Mã đối tác mong muốn</span><input class="input" name="ma" maxlength="12" placeholder="VD: MEBI (3–12 chữ / số, không dấu – để trống shop tự tạo)"></label>
               <label class="field"><span>Kênh bán của bạn</span><input class="input" name="kenh" placeholder="Link Facebook / TikTok / nhóm Zalo…"></label>
               <div class="form-grid form-grid--2"><label class="field"><span>Ngân hàng *</span><input class="input" name="nganHang" placeholder="VD: Vietcombank" required></label>
