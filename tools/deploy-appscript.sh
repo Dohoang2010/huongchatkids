@@ -13,6 +13,8 @@ CLASP="${APPDATA:+$APPDATA/npm/}clasp.cmd"; command -v "$CLASP" >/dev/null 2>&1 
 MOTA="${1:-Cập nhật từ máy}"
 
 cd "$DIR"
+# Chỉ đưa lên Google đúng 2 file thật (không đưa bản so sánh .last-pushed.gs)
+printf '**/**\n!appsscript.json\n!Mã.js\n' > .claspignore
 # 1. Lấy bản đang chạy trên Google, so với bản đã đẩy lần trước: khác nhau = có người sửa trực tiếp trên trình duyệt
 "$CLASP" pull >/dev/null
 if [ -f .last-pushed.gs ] && ! diff --strip-trailing-cr -q .last-pushed.gs "Mã.js" >/dev/null; then
