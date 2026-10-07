@@ -2007,7 +2007,7 @@ function capPhienQT_(tk, v, dong) {
     quyen: rieng ? rieng.split(',') : (VAI_TRO_QT[String(v[2])] || []), quyenRieng: !!rieng };
 }
 
-/* ===================== BẢO MẬT: cảnh báo (D2), giới hạn tần suất (C2), khoá bí mật & sao lưu (A3, D1) ===================== */
+/* ===================== BẢO MẬT: cảnh báo (D2), giới hạn tần suất (C2), khoá bí mật (A3) ===================== */
 /* D2 – Gửi cảnh báo qua bot Zalo + email shop. Cùng 1 loại chỉ gửi 1 lần / 10 phút để không spam. */
 function canhBao_(khoa, noiDung) {
   var c = CacheService.getScriptCache(), k = 'cb_' + String(khoa).replace(/[^\w-]/g, '').slice(0, 200);
@@ -2043,7 +2043,7 @@ function chanTanSuat_(action) {
   return { ok: false, code: 'RATE_LIMITED', msg: 'Hệ thống đang bận, vui lòng thử lại sau ít phút.' };
 }
 function laChuShop_(p) { var ph = phienQT(p.token); if (ph && ph.vaiTro === 'SUPER_ADMIN') return true; var kc = khoaChuShop_(); return !!(kc && String(p.key || '') === kc); }
-/* Quản trị → Hệ thống → Khoá bí mật & sao lưu (chỉ SUPER_ADMIN) */
+/* Quản trị → Hệ thống → Bảo mật hệ thống (chỉ SUPER_ADMIN) */
 function apiQtBiMat(p) {
   if (!laChuShop_(p)) return { ok: false, msg: 'Chỉ tài khoản chủ shop (SUPER_ADMIN) dùng được mục này' };
   var pr = PropertiesService.getScriptProperties();
@@ -2055,29 +2055,7 @@ function apiQtBiMat(p) {
     return { ok: true, msg: 'Đã lưu token mới trên máy chủ', kiemTra: kt };
   }
   if (p.viec === 'otp') { pr.setProperty('QT_OTP', p.giaTri === 'tat' ? 'tat' : 'bat'); return { ok: true, msg: p.giaTri === 'tat' ? 'Đã TẮT đăng nhập 2 lớp' : 'Đã bật đăng nhập 2 lớp' }; }
-  if (p.viec === 'saoLuu') return saoLuuHangNgay_(true);
-  var lc = pr.getProperty('SAO_LUU_LUC'), ds = [];
-  for (var d = 1; d <= 31; d++) { var id = pr.getProperty('SAO_LUU_' + (d < 10 ? '0' : '') + d); if (id) ds.push({ ngay: d, url: 'https://docs.google.com/spreadsheets/d/' + id }); }
-  return { ok: true, zalo: pr.getProperty('ZALO_BOT_TOKEN') ? 'moi' : (ZALO_BOT_TOKEN ? 'cu' : 'chua'), khoaDuPhong: !!khoaChuShop_(), otp: pr.getProperty('QT_OTP') !== 'tat', email: anEmail(EMAIL),
-    saoLuu: lc ? Utilities.formatDate(new Date(Number(lc)), 'Asia/Ho_Chi_Minh', 'HH:mm dd/MM/yyyy') : '', saoLuuDs: ds };
-}
-/* D1 – Sao lưu toàn bộ Google Sheet mỗi đêm (1h–5h) sang 31 file xoay vòng theo ngày trong tháng.
-   Chỉ dùng quyền Google Sheets sẵn có (không cần cấp thêm quyền Drive). File sao lưu nằm trong Drive của chủ shop. */
-function saoLuuHangNgay_(ep) {
-  var pr = PropertiesService.getScriptProperties(), now = new Date();
-  var hom = Utilities.formatDate(now, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd'), gio = Number(Utilities.formatDate(now, 'Asia/Ho_Chi_Minh', 'H'));
-  if (!ep && (pr.getProperty('SAO_LUU_NGAY') === hom || gio < 1 || gio > 5)) return { ok: true, boQua: true };
-  var ngay = hom.slice(8), khoa = 'SAO_LUU_' + ngay, id = pr.getProperty(khoa), dich = null;
-  if (id) { try { dich = SpreadsheetApp.openById(id); } catch (e) { dich = null; } }
-  if (!dich) { dich = SpreadsheetApp.create(TEN_SHOP + ' – Sao lưu ngày ' + ngay); pr.setProperty(khoa, dich.getId()); }
-  var tam = dich.insertSheet('tam' + now.getTime());
-  dich.getSheets().forEach(function (x) { if (x.getSheetId() !== tam.getSheetId()) dich.deleteSheet(x); });
-  var nguon = ss().getSheets();
-  nguon.forEach(function (x) { var c = x.copyTo(dich); try { c.setName(x.getName()); } catch (e) { Logger.log(e); } });
-  dich.deleteSheet(tam);
-  dich.rename(TEN_SHOP + ' – Sao lưu ngày ' + ngay + ' (bản ' + hom + ')');
-  pr.setProperty('SAO_LUU_NGAY', hom); pr.setProperty('SAO_LUU_LUC', String(now.getTime()));
-  return { ok: true, msg: 'Đã sao lưu ' + nguon.length + ' trang tính', url: dich.getUrl() };
+  return { ok: true, zalo: pr.getProperty('ZALO_BOT_TOKEN') ? 'moi' : (ZALO_BOT_TOKEN ? 'cu' : 'chua'), khoaDuPhong: !!khoaChuShop_(), otp: pr.getProperty('QT_OTP') !== 'tat', email: anEmail(EMAIL) };
 }
 function phienQT(token) {
   if (!token) return null;
@@ -2263,7 +2241,6 @@ function dongBoCRMTuDong() {
   try { Logger.log(JSON.stringify(dongBoCRMNhieu())); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
   try { Logger.log(JSON.stringify(xuLyAff())); } catch (e3) { Logger.log('Xử lý đối tác lỗi: ' + e3); }   // đối tác: hoa hồng + chốt kỳ ngày 10
-  try { Logger.log(JSON.stringify(saoLuuHangNgay_(false))); } catch (e4) { Logger.log('Sao lưu lỗi: ' + e4); canhBao_('sao-luu-loi', '⚠️ Sao lưu dữ liệu đêm nay bị lỗi: ' + String(e4).slice(0, 200)); }   // sao lưu mỗi đêm
 }
 /* CHẠY TAY 1 LẦN trong trình soạn thảo Apps Script: tạo lịch tự đồng bộ trạng thái đơn từ CRM mỗi 30 phút */
 function taoLichDongBoCRM() {

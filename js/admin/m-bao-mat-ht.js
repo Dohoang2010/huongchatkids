@@ -1,4 +1,4 @@
-/* ===== BẢO MẬT HỆ THỐNG – khoá bí mật (token bot Zalo), đăng nhập 2 lớp, sao lưu dữ liệu mỗi đêm =====
+/* ===== BẢO MẬT HỆ THỐNG – khoá bí mật (token bot Zalo), đăng nhập 2 lớp =====
    Máy chủ: Apps Script qtBiMat (chỉ SUPER_ADMIN). Khoá bí mật lưu trong Script Properties, không bao giờ hiện lại. */
 (() => {
   'use strict';
@@ -21,13 +21,8 @@
         <p>Trạng thái: <span class="badge ${d.otp ? 'badge--teal' : 'badge--hot'}">${d.otp ? 'Đang bật' : 'Đang TẮT'}</span></p>
         <p class="muted">Tài khoản chủ shop và quản lý: sau mật khẩu phải nhập mã 6 số gửi về email ${esc(d.email || '')}. Nhân viên chỉ cần mật khẩu.</p>
         <button class="btn ${d.otp ? 'btn--ghost' : 'btn--primary'}" id="bmOtp" data-gia-tri="${d.otp ? 'tat' : 'bat'}">${d.otp ? 'Tắt tạm thời (khi không nhận được email)' : 'Bật lại'}</button></div>
-      <div class="card"><h3>💾 Sao lưu dữ liệu</h3>
-        <p>Lần gần nhất: <b>${esc(d.saoLuu || 'chưa có')}</b></p>
-        <p class="muted">Mỗi đêm (1h–5h) toàn bộ Google Sheet được chép sang file sao lưu theo ngày trong tháng, giữ 31 bản xoay vòng, trong Google Drive của shop.</p>
-        <button class="btn btn--primary" id="bmSaoLuu">Sao lưu ngay</button>
-        ${(d.saoLuuDs || []).length ? `<div class="bm-sl">${d.saoLuuDs.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">Ngày ${x.ngay}</a>`).join('')}</div>` : ''}</div>
       <div class="card"><h3>🔔 Cảnh báo</h3>
-        <p class="muted">Gửi về bot Zalo và email shop khi: đăng nhập quản trị, nhập sai mật khẩu / mã nhiều lần, đổi % hoa hồng, chốt / trả tiền đối tác, điều chỉnh điểm, sửa tài khoản quản trị, có quá nhiều yêu cầu bất thường (bot), sao lưu lỗi.</p>
+        <p class="muted">Gửi về bot Zalo và email shop khi: đăng nhập quản trị, nhập sai mật khẩu / mã nhiều lần, đổi % hoa hồng, chốt / trả tiền đối tác, điều chỉnh điểm, sửa tài khoản quản trị, có quá nhiều yêu cầu bất thường (bot).</p>
         <p class="muted">Khoá dự phòng máy chủ: <b>${d.khoaDuPhong ? 'đang đặt' : 'không đặt (an toàn)'}</b>.</p></div></div>`;
   }
 
@@ -40,8 +35,7 @@
     if (e.target.id === 'bmOtp') { const tat = e.target.dataset.giaTri === 'tat';
       if (tat && !(await A.hoi({ tieuDe: 'Tắt đăng nhập 2 lớp?', noiDung: 'Chỉ nên tắt khi email shop không nhận được mã. Nhớ bật lại sau.', nutOk: 'Tắt', nguyHiem: true }))) return;
       const r = await goi({ viec: 'otp', giaTri: tat ? 'tat' : 'bat' }, e.target); A.toast(r.msg || 'Lỗi', r.ok ? 'ok' : 'err'); return A.veTrang(); }
-    if (e.target.id === 'bmSaoLuu') { e.target.textContent = 'Đang sao lưu…'; const r = await goi({ viec: 'saoLuu' }, e.target); A.toast(r.ok ? r.msg : r.msg || 'Lỗi', r.ok ? 'ok' : 'err'); return A.veTrang(); }
   });
 
-  A.dangKy({ route: '/bao-mat-he-thong', ten: 'Bảo mật hệ thống', icon: '🛡️', nhom: 'he-thong', quyen: '*', mo: 'Khoá bí mật, đăng nhập 2 lớp, sao lưu, cảnh báo', ve });
+  A.dangKy({ route: '/bao-mat-he-thong', ten: 'Bảo mật hệ thống', icon: '🛡️', nhom: 'he-thong', quyen: '*', mo: 'Khoá bí mật, đăng nhập 2 lớp, cảnh báo', ve });
 })();
