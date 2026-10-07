@@ -1679,8 +1679,8 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 .gt-nut { display: flex; gap: 8px; flex-wrap: wrap; } .gt-nut .btn { flex: 1 1 auto; }
 .gt-tk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; text-align: center; } .gt-tk div { align-items: center; }
 /* Mua nhanh: ô mã giảm giá / mã giới thiệu hiện sẵn, nhãn bên trái – ô nhập bên phải */
-.qb__ma { display: grid; grid-template-columns: 132px 1fr; align-items: center; gap: 10px; margin-top: 10px; }
-.qb__ma label { font-size: 13px; font-weight: 600; color: var(--ink-2); display: flex; align-items: center; gap: 6px; margin: 0; }
+.qb__ma { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; margin-top: 10px; }
+.qb__ma label { font-size: 13px; font-weight: 600; color: var(--ink-2); white-space: nowrap; display: flex; align-items: center; gap: 6px; margin: 0; }
 .qb__ma label svg { width: 16px; height: 16px; color: var(--primary); }
 .qb__ma .coupon { margin: 0; }
 .qb__ma + .coupon-hint:empty { display: none; }

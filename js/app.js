@@ -620,6 +620,18 @@
       qbRefresh();
     }).catch((e) => { if (QB.gt.ma === ma) { QB.gt = { ma, ok: false, msg: e.message, sdt }; qbRefresh(); } });
   }
+  /* Ô "Mã giảm giá / giới thiệu": nhập SĐT → mã giới thiệu; chữ → mã giảm giá; để trống → bỏ cả hai.
+     Hai loại không cộng dồn nên chỉ giữ 1 cái đang nhập. */
+  function qbApMa(v) {
+    v = String(v || '').trim(); const so = phoneKey(v);
+    if (!v) { QB.coupon = ''; QB.gt = { ma: '', ok: false, msg: '' }; GT.boRef(); qbRefresh(); return; }
+    if (/^[+\d][\d\s.-]{8,}$/.test(v) && phoneOk(so)) {
+      QB.coupon = '';
+      if (!QB.gtCfg.bat) { QB.gt = { ma: so, ok: false, msg: 'Chương trình giới thiệu đang tạm dừng.' }; qbRefresh(); return; }
+      qbGtXet(so); return;
+    }
+    QB.gt = { ma: '', ok: false, msg: '' }; QB.coupon = v.toUpperCase(); qbRefresh();
+  }
   /* Ví điểm khi SĐT đang nhập trùng tài khoản đang đăng nhập */
   function qbTaiVi() {
     const s = Session.get();
@@ -650,9 +662,8 @@
             <label class="pay-option"><input type="radio" name="payment" value="cod" ${(c.payment || 'cod') !== 'bank' ? 'checked' : ''}><span class="ico">💵</span><span><b>Thanh toán khi nhận hàng</b><small>Kiểm tra hàng rồi mới trả tiền</small></span></label>
             <label class="pay-option"><input type="radio" name="payment" value="bank" ${c.payment === 'bank' ? 'checked' : ''}><span class="ico">🏦</span><span><b>Chuyển khoản / VietQR</b><small>${SITE.bank ? `${SITE.bank.name} ${SITE.bank.account} · quét QR sau khi đặt` : 'Quét mã QR sau khi đặt'}</small></span></label>
           </div>
-          <div class="qb__ma"><label for="qbCoupon">${I.tag}Mã giảm giá</label><div class="coupon"><input class="input" id="qbCoupon" value="${esc(QB.coupon)}" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div></div><div class="coupon-hint" id="qbCouponHint"></div><div id="qbMaLuu"></div>
+          <div class="qb__ma"><label for="qbCoupon">${I.tag}Mã giảm giá / giới thiệu</label><div class="coupon"><input class="input" id="qbCoupon" value="${esc(QB.gt.ma || QB.coupon)}" placeholder="Mã giảm giá hoặc SĐT người giới thiệu" aria-label="Mã giảm giá hoặc số điện thoại người giới thiệu"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div></div><div class="coupon-hint" id="qbCouponHint"></div><div id="qbMaLuu"></div>
           <div id="qbGift"></div>
-          <div class="hide" id="qbGtWrap"><div class="qb__ma"><label for="qbGtInput">🤝 Mã giới thiệu</label><div class="coupon"><input class="input" id="qbGtInput" type="tel" inputmode="numeric" value="${esc(GT.ref())}" placeholder="SĐT người giới thiệu" aria-label="Mã giới thiệu (số điện thoại người giới thiệu)"><button class="btn btn--dark" type="button" data-qb-gt>Áp dụng</button></div></div><div class="coupon-hint" id="qbGtHint" aria-live="polite"></div></div>
           <div id="qbDiem"></div>
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
           <div class="form-error hide" id="qbError" role="alert"></div>
@@ -741,15 +752,14 @@
     const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
     const gw = $('#qbGift'); if (gw) gw.innerHTML = giftBox(g, true, QB.quaVi);
     $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
-    const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = k.boMa ? `<span class="text-muted">Mã ${esc(k.cr.code)} không cộng dồn với giảm giá giới thiệu – web đang dùng mức có lợi hơn.</span>` : k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`) : '';
-    const gh = $('#qbGtHint'); if (gh) {
-      const G2 = QB.gt;
-      gh.innerHTML = G2.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
+    const qbGtHint = (k) => { const G2 = QB.gt;
+      return G2.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
         : G2.ok && k.dungGT ? `<span class="text-teal fw-600">✓ Mã hợp lệ${G2.tenAn ? ` (${esc(G2.tenAn)})` : ''} – giảm ${QB.gtCfg.giam}% đơn đầu tiên</span>`
         : G2.ok ? `<span class="text-muted">✓ Mã hợp lệ, nhưng ${k.base < (Number(QB.gtCfg.donToiThieu) || 0) ? `đơn từ ${fmt(QB.gtCfg.donToiThieu)} mới được giảm` : 'ưu đãi khác của đơn đang có lợi hơn (không cộng dồn)'}.</span>`
-        : G2.msg ? `<span class="text-red">✕ ${esc(G2.msg)}</span>` : `<span class="text-muted">Nhập SĐT người giới thiệu để giảm ${QB.gtCfg.giam || 5}% cho đơn đầu tiên.</span>`;
-      const b = $('[data-qb-gt]'); if (b) b.textContent = G2.ok ? 'Bỏ mã' : 'Áp dụng';
-    }
+        : G2.msg ? `<span class="text-red">✕ ${esc(G2.msg)}</span>` : `<span class="text-muted">Nhập SĐT người giới thiệu để giảm ${QB.gtCfg.giam || 5}% cho đơn đầu tiên.</span>`; };
+    /* Ô chung: đang dùng SĐT → trạng thái mã giới thiệu; còn lại → trạng thái mã giảm giá */
+    const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = QB.gt.ma ? qbGtHint(k) : k.boMa ? `<span class="text-muted">Mã ${esc(k.cr.code)} không cộng dồn với giảm giá giới thiệu – web đang dùng mức có lợi hơn.</span>` : k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`)
+      : QB.gtCfg.bat ? `<span class="text-muted">Được bạn bè giới thiệu? Nhập SĐT người giới thiệu để giảm ${QB.gtCfg.giam}% đơn đầu tiên.</span>` : '';
     const dw = $('#qbDiem'); if (dw) {
       const v = QB.vi;
       dw.innerHTML = !v || !(v.khaDung > 0) ? ''
@@ -887,8 +897,8 @@
       else if (t.dataset.qbPlus !== undefined) { QB.qty = Math.min(99, QB.qty + 1); qbRefresh(); }
       else if (t.dataset.qbVariant !== undefined) { QB.variant = Number(t.dataset.qbVariant); qbRefresh(); }
       else if (t.dataset.qbClear !== undefined) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); $('#qbForm input[name=name]')?.focus(); }
-      else if (t.dataset.qbCoupon !== undefined) { QB.coupon = ($('#qbCoupon').value || '').trim().toUpperCase(); qbRefresh(); }
-      else if (t.dataset.qbMa !== undefined) { QB.coupon = t.dataset.qbMa; const inp = $('#qbCoupon'); if (inp) inp.value = QB.coupon; qbRefresh(); }
+      else if (t.dataset.qbCoupon !== undefined) qbApMa($('#qbCoupon').value);
+      else if (t.dataset.qbMa !== undefined) { QB.gt = { ma: '', ok: false, msg: '' }; QB.coupon = t.dataset.qbMa; const inp = $('#qbCoupon'); if (inp) inp.value = QB.coupon; qbRefresh(); }
       else if (t.dataset.copy !== undefined) { try { navigator.clipboard?.writeText(t.dataset.copy); toast('Đã sao chép: ' + t.dataset.copy); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.payQr !== undefined) { const o = store.get('mc_orders', []).find((x) => x.code === t.dataset.payQr); if (o) openPayQR(o); }
       else if (t.dataset.zaloCopy !== undefined) { try { navigator.clipboard?.writeText(`Mình muốn đặt: ${t.dataset.zaloCopy}`); toast('Đã sao chép tên sản phẩm – mẹ dán vào Zalo là xong'); } catch (err) { /* bỏ qua */ } }
