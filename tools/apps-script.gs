@@ -847,6 +847,207 @@ function apiQtGtLich(p) {
   catch (e) { return { ok: false, msg: 'Chưa bật được lịch: ' + e + '. Mở Apps Script, chọn hàm taoLichDongBoCRM rồi bấm Chạy 1 lần.' }; }
 }
 
+/* ===================== QUÊN MẬT KHẨU – OTP QUA EMAIL =====================
+   Luồng: qmkGui (email đã đăng ký → gửi OTP 6 số) → qmkXacThuc (OTP đúng → cấp reset token dùng 1 lần)
+          → qmkDatLai (mật khẩu mới nhập 2 lần → đổi mật khẩu, đăng xuất mọi máy, email thông báo).
+   - Chỉ gửi tới email ĐÃ LƯU trong hồ sơ khách (sheet Khách hàng). Email lạ: trả lời trung lập, không gửi gì.
+   - Sheet "Đặt lại mật khẩu": mỗi yêu cầu 1 dòng, chỉ lưu MÃ BĂM của OTP và token (không lưu mã thật).
+   - Yêu cầu mới → yêu cầu cũ của email đó bị huỷ (CANCELLED). Sai 5 lần → LOCKED. Hết hạn → EXPIRED.
+   - Giới hạn: chờ 60 giây giữa 2 lần gửi, tối đa N lần / email / 15 phút, theo máy và toàn hệ thống
+     (Apps Script không biết IP của khách nên giới hạn theo mã máy + tổng hệ thống).
+   - Cấu hình + mẫu email: Thuộc tính tập lệnh QMK_CAU_HINH (sửa ở trang quản trị). */
+var SHEET_QMK = 'Đặt lại mật khẩu';
+var H_QMK = ['Mã yêu cầu', 'Email', 'Tài khoản (SĐT)', 'Kênh', 'Trạng thái', 'Tạo lúc', 'OTP băm', 'Muối', 'OTP hết hạn', 'Số lần sai',
+             'Xác thực lúc', 'Token băm', 'Token hết hạn', 'Hoàn tất lúc', 'Mã máy', 'Ghi chú'];
+var QMK = { PENDING: 'PENDING', VERIFIED: 'OTP_VERIFIED', DONE: 'PASSWORD_RESET', EXPIRED: 'EXPIRED', LOCKED: 'LOCKED', CANCELLED: 'CANCELLED' };
+var QMK_MAC_DINH = {
+  otpPhut: 15, saiToiDa: 5, choGuiLaiGiay: 60, guiToiDa15p: 5, mayToiDa15p: 10, heThongToiDa15p: 80, tokenPhut: 15, mkToiThieu: 8,
+  tieuDeOtp: 'Mã OTP đặt lại mật khẩu',
+  noiDungOtp: 'Xin chào {ten},\n\nBạn vừa yêu cầu đặt lại mật khẩu tài khoản tại {shop}.\n\nMã OTP của bạn là: {otp}\n\nMã OTP có hiệu lực trong {phut} phút và chỉ dùng được 1 lần.\n\nNếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.\n\nTrân trọng,\n{shop}',
+  tieuDeDoi: 'Mật khẩu tài khoản đã được thay đổi',
+  noiDungDoi: 'Xin chào {ten},\n\nMật khẩu tài khoản {sdt} tại {shop} vừa được thay đổi thành công lúc {luc}.\nMọi thiết bị đang đăng nhập đã được đăng xuất.\n\nNếu bạn không thực hiện thao tác này, vui lòng liên hệ ngay hotline {hotline}.\n\n{shop}'
+};
+function sheetQMK() { return sheetPhu(SHEET_QMK, H_QMK); }
+function qmkCauHinh() {
+  var c = {}; try { c = JSON.parse(PropertiesService.getScriptProperties().getProperty('QMK_CAU_HINH') || '{}'); } catch (e) { c = {}; }
+  var kq = {}; for (var k in QMK_MAC_DINH) kq[k] = c[k] != null && c[k] !== '' ? c[k] : QMK_MAC_DINH[k];
+  return kq;
+}
+function bamHex(s) { return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s), Utilities.Charset.UTF_8).map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join(''); }
+/* Mật khẩu kiểu mới: băm lặp 300 vòng có muối (Apps Script không có bcrypt/Argon2). Tiền tố v2$ để phân biệt kiểu cũ. */
+function bamMkManh(mk, muoi) { var h = String(muoi) + '|' + String(mk); for (var i = 0; i < 300; i++) h = bamHex(h + '|' + muoi + '|' + i); return 'v2$' + h; }
+function kiemMk(mk, tk) { if (!tk || !tk.hash) return false; return tk.hash.indexOf('v2$') === 0 ? bamMkManh(mk, tk.muoi) === tk.hash : bamMk(mk, tk.muoi) === tk.hash; }
+/* So sánh không lộ thời gian (tránh đoán dần mã băm) */
+function bangNhau(a, b) { a = String(a); b = String(b); if (a.length !== b.length) return false; var d = 0; for (var i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; }
+function soNgauNhien6() { var h = Utilities.getUuid().replace(/-/g, ''); return ('000000' + (parseInt(h.slice(0, 12), 16) % 1000000)).slice(-6); }
+function taoMaQmk() { return 'QM' + Utilities.getUuid().replace(/-/g, '').slice(0, 14).toUpperCase(); }
+function dien(mau, v) { return String(mau || '').replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }); }
+function chuanEmail(e) { return String(e || '').trim().toLowerCase(); }
+/* Tài khoản có email này trong sheet Khách hàng (1 email có thể gắn nhiều SĐT) */
+function timTheoEmail(email) {
+  var s = sheetKH(); var n = s.getLastRow(); var kq = []; if (n < 2 || !email) return kq;
+  s.getRange(2, 1, n - 1, 12).getValues().forEach(function (r) {
+    if (chuanEmail(r[5]) === email && sdtHopLe(chuanSdt(r[0])) && String(r[11] || '').indexOf('KHOA') < 0) kq.push({ sdt: chuanSdt(r[0]), ten: String(r[1] || '') });
+  });
+  return kq;
+}
+/* Đếm theo khoá trong CacheService (cửa sổ cố định 15 phút) */
+function demGioiHan(k, toiDa, giay) {
+  var c = CacheService.getScriptCache(); var n = Number(c.get(k) || 0);
+  if (n >= toiDa) return false; c.put(k, String(n + 1), giay || 900); return true;
+}
+function qmkNhatKy(maSo, viec, chiTiet) { ghiNhatKy('Bảo mật', maSo, viec + (chiTiet ? ' – ' + chiTiet : '')); }
+/* Đăng xuất mọi máy của 1 số điện thoại (cho phiên hết hạn ngay). giuToken: giữ lại phiên đang dùng (đổi mật khẩu khi đang đăng nhập) */
+function huyMoiPhien(sdt, giuToken) {
+  var s = sheetPhien(); var n = s.getLastRow(); if (n < 2) return 0; var v = s.getRange(2, 1, n - 1, 3).getValues(); var dem = 0;
+  for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][1]) === sdt && String(v[i][0]) !== String(giuToken || '') && new Date(v[i][2]).getTime() > Date.now()) { s.getRange(i + 2, 3).setValue(new Date(0)); dem++; }
+  return dem;
+}
+/* Ghi mật khẩu mới (kiểu băm mạnh) cho 1 số điện thoại */
+function luuMatKhau(sdt, mk) {
+  var muoi = Utilities.getUuid(); var hang = ["'" + sdt, bamMkManh(mk, muoi), muoi, new Date()];
+  var tk = timTK(sdt); var s = sheetTK();
+  if (tk) s.getRange(tk.dong, 1, 1, 4).setValues([hang]); else s.appendRow(hang);
+}
+function kiemMkMoi(mk, mk2, cfg) {
+  mk = String(mk || ''); var toiThieu = Number(cfg.mkToiThieu) || 8;
+  if (mk2 != null && mk !== String(mk2)) return { ok: false, code: 'PASSWORD_MISMATCH', msg: 'Hai mật khẩu không khớp.' };
+  if (mk.length < toiThieu) return { ok: false, code: 'PASSWORD_INVALID', msg: 'Mật khẩu cần ít nhất ' + toiThieu + ' ký tự.' };
+  if (mk.length > 100) return { ok: false, code: 'PASSWORD_INVALID', msg: 'Mật khẩu quá dài (tối đa 100 ký tự).' };
+  if (mk === MK_MAC_DINH) return { ok: false, code: 'PASSWORD_INVALID', msg: 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé.' };
+  return { ok: true };
+}
+function guiMailDoiMk(sdt, ten, cfg) {
+  try {
+    var dong = timDongKH(sdt); var mail = dong ? String(sheetKH().getRange(dong, 6).getValue() || '') : '';
+    if (!emailHopLe(mail)) return;
+    var v = { ten: ten || 'quý khách', sdt: anSdt(sdt), shop: TEN_SHOP, hotline: HOTLINE, luc: Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'HH:mm dd/MM/yyyy') };
+    MailApp.sendEmail(mail, dien(cfg.tieuDeDoi, v), dien(cfg.noiDungDoi, v), { name: TEN_SHOP });
+  } catch (e) { Logger.log('Email báo đổi mật khẩu lỗi: ' + e); }
+}
+
+/* ---------- API khách ---------- */
+function apiQmkCauHinh() { var c = qmkCauHinh(); return { ok: true, otpPhut: Number(c.otpPhut), choGuiLaiGiay: Number(c.choGuiLaiGiay), mkToiThieu: Number(c.mkToiThieu), saiToiDa: Number(c.saiToiDa) }; }
+/* B1. Gửi OTP. Luôn trả lời giống nhau dù email có tồn tại hay không. */
+function apiQmkGui(p) {
+  var cfg = qmkCauHinh(); var email = chuanEmail(p.email); var may = String(p.may || '').replace(/[^\w-]/g, '').slice(0, 40);
+  if (!emailHopLe(email)) return { ok: false, code: 'EMAIL_INVALID', msg: 'Email chưa đúng định dạng.' };
+  var c = CacheService.getScriptCache(); var cd = Number(c.get('qmk_cd_' + email) || 0);
+  if (cd && Date.now() - cd < Number(cfg.choGuiLaiGiay) * 1000) return { ok: false, code: 'RATE_LIMITED', choGiay: Math.ceil((Number(cfg.choGuiLaiGiay) * 1000 - (Date.now() - cd)) / 1000), msg: 'Mẹ chờ một chút rồi gửi lại mã nhé.' };
+  if (!demGioiHan('qmk_ht', Number(cfg.heThongToiDa15p)) || (may && !demGioiHan('qmk_m_' + may, Number(cfg.mayToiDa15p))) || !demGioiHan('qmk_e_' + email, Number(cfg.guiToiDa15p)))
+    return { ok: false, code: 'RATE_LIMITED', msg: 'Mẹ đã yêu cầu quá nhiều lần. Vui lòng thử lại sau 15 phút hoặc gọi hotline ' + HOTLINE + '.' };
+  c.put('qmk_cd_' + email, String(Date.now()), 900);
+  var ds = timTheoEmail(email); var ma = taoMaQmk();
+  var traLoi = { ok: true, code: 'OTP_SENT', maYc: ma, emailAn: anEmail(email), choGiay: Number(cfg.choGuiLaiGiay), hetHanGiay: Number(cfg.otpPhut) * 60,
+    msg: 'Nếu email này đã được đăng ký, chúng tôi đã gửi mã OTP đến email đó.' };
+  if (!ds.length) { qmkNhatKy(anEmail(email), 'PASSWORD_RESET_REQUESTED', 'email chưa đăng ký – không gửi'); return traLoi; }
+  var kq = voiKhoa(function () {
+    var s = sheetQMK(); var n = s.getLastRow();
+    if (n >= 2) s.getRange(2, 1, n - 1, 5).getValues().forEach(function (r, i) {   // huỷ yêu cầu cũ của email này
+      if (chuanEmail(r[1]) === email && (r[4] === QMK.PENDING || r[4] === QMK.VERIFIED)) s.getRange(i + 2, 5).setValue(QMK.CANCELLED);
+    });
+    var otp = soNgauNhien6(), muoi = Utilities.getUuid();
+    s.appendRow([ma, email, "'" + ds.map(function (x) { return x.sdt; }).join(','), 'email', QMK.PENDING, new Date(), bamHex(muoi + '|' + otp), muoi,
+      new Date(Date.now() + Number(cfg.otpPhut) * 60000), 0, '', '', '', '', may, '']);
+    return { ok: true, otp: otp };
+  });
+  if (!kq.ok) return kq;
+  try {
+    var v = { ten: ds[0].ten || 'quý khách', otp: kq.otp, phut: cfg.otpPhut, shop: TEN_SHOP, hotline: HOTLINE };
+    MailApp.sendEmail(email, dien(cfg.tieuDeOtp, v), dien(cfg.noiDungOtp, v), { name: TEN_SHOP });
+    qmkNhatKy(anEmail(email), 'OTP_SENT', ds.length + ' tài khoản (' + ds.map(function (x) { return anSdt(x.sdt); }).join(', ') + ')');
+  } catch (e) { Logger.log('Gửi OTP email lỗi: ' + e); qmkNhatKy(anEmail(email), 'PASSWORD_RESET_FAILED', 'gửi email lỗi'); return { ok: false, code: 'SEND_FAILED', msg: 'Chưa gửi được email, mẹ thử lại sau ít phút nhé.' }; }
+  return traLoi;
+}
+function qmkTimDong(ma) {
+  var s = sheetQMK(); var n = s.getLastRow(); if (n < 2 || !ma) return null;
+  var v = s.getRange(2, 1, n - 1, H_QMK.length).getValues();
+  for (var i = v.length - 1; i >= 0; i--) if (String(v[i][0]) === String(ma)) return { dong: i + 2, v: v[i] };
+  return null;
+}
+/* B2. Xác thực OTP → cấp reset token (chỉ trả 1 lần, máy chủ chỉ giữ mã băm) */
+function apiQmkXacThuc(p) {
+  var cfg = qmkCauHinh(); var email = chuanEmail(p.email); var otp = String(p.otp || '').replace(/\D/g, '');
+  if (!demGioiHan('qmk_xt_' + String(p.maYc || '').slice(0, 20), 30)) return { ok: false, code: 'RATE_LIMITED', msg: 'Thử quá nhiều lần, vui lòng yêu cầu mã mới.' };
+  return voiKhoa(function () {
+    var r = qmkTimDong(p.maYc); var sai = { ok: false, code: 'OTP_INVALID', msg: 'Mã OTP không chính xác. Vui lòng kiểm tra và thử lại.' };
+    if (!r || chuanEmail(r.v[1]) !== email || otp.length !== 6) return sai;
+    var s = sheetQMK(), tt = String(r.v[4]);
+    if (tt === QMK.CANCELLED) return { ok: false, code: 'OTP_EXPIRED', msg: 'Mã này đã được thay bằng mã mới. Vui lòng dùng mã OTP mới nhất.' };
+    if (tt === QMK.LOCKED) return { ok: false, code: 'OTP_LOCKED', msg: 'Mã OTP đã bị vô hiệu hóa do nhập sai quá nhiều lần. Vui lòng yêu cầu mã OTP mới.' };
+    if (tt !== QMK.PENDING) return { ok: false, code: 'OTP_EXPIRED', msg: 'Mã OTP đã được sử dụng. Vui lòng yêu cầu mã OTP mới.' };
+    if (new Date(r.v[8]).getTime() < Date.now()) { s.getRange(r.dong, 5).setValue(QMK.EXPIRED); return { ok: false, code: 'OTP_EXPIRED', msg: 'Mã OTP đã hết hạn. Vui lòng yêu cầu mã OTP mới.' }; }
+    if (!bangNhau(bamHex(r.v[7] + '|' + otp), r.v[6])) {
+      var lan = Number(r.v[9] || 0) + 1, toiDa = Number(cfg.saiToiDa) || 5;
+      s.getRange(r.dong, 10).setValue(lan);
+      if (lan >= toiDa) { s.getRange(r.dong, 5).setValue(QMK.LOCKED); qmkNhatKy(anEmail(email), 'OTP_LOCKED', 'sai ' + lan + ' lần'); return { ok: false, code: 'OTP_LOCKED', msg: 'Mã OTP đã bị vô hiệu hóa do nhập sai quá nhiều lần. Vui lòng yêu cầu mã OTP mới.' }; }
+      qmkNhatKy(anEmail(email), 'OTP_FAILED', 'lần ' + lan + '/' + toiDa);
+      return { ok: false, code: 'OTP_INVALID', conLan: toiDa - lan, msg: 'Mã OTP không chính xác. Vui lòng kiểm tra và thử lại (còn ' + (toiDa - lan) + ' lần).' };
+    }
+    var token = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
+    s.getRange(r.dong, 5).setValue(QMK.VERIFIED); s.getRange(r.dong, 11, 1, 3).setValues([[new Date(), bamHex(token), new Date(Date.now() + Number(cfg.tokenPhut) * 60000)]]);
+    qmkNhatKy(anEmail(email), 'OTP_VERIFIED', '');
+    var ten = tenTheoSdt();
+    var tk = String(r.v[2]).split(',').filter(String).map(function (x, i) { return { k: i, sdt: anSdt(x), ten: anTen(ten[chuanSdt(x)] || '') }; });
+    return { ok: true, code: 'OTP_VERIFIED', token: token, hetHanGiay: Number(cfg.tokenPhut) * 60, taiKhoan: tk };
+  });
+}
+/* B3. Đặt mật khẩu mới bằng reset token (dùng 1 lần) */
+function apiQmkDatLai(p) {
+  var cfg = qmkCauHinh(); var kt = kiemMkMoi(p.mk, p.mk2, cfg); if (!kt.ok) return kt;
+  if (!demGioiHan('qmk_dl_' + String(p.maYc || '').slice(0, 20), 20)) return { ok: false, code: 'RATE_LIMITED', msg: 'Thử quá nhiều lần, vui lòng yêu cầu mã mới.' };
+  return voiKhoa(function () {
+    var r = qmkTimDong(p.maYc); var hong = { ok: false, code: 'RESET_TOKEN_INVALID', msg: 'Phiên đặt lại mật khẩu không hợp lệ. Vui lòng yêu cầu mã OTP mới.' };
+    if (!r || String(r.v[4]) !== QMK.VERIFIED || !p.token || !bangNhau(bamHex(p.token), r.v[11])) return hong;
+    if (new Date(r.v[12]).getTime() < Date.now()) { sheetQMK().getRange(r.dong, 5).setValue(QMK.EXPIRED); return { ok: false, code: 'RESET_TOKEN_EXPIRED', msg: 'Phiên đặt lại mật khẩu đã hết hạn.' }; }
+    var ds = String(r.v[2]).split(',').filter(String).map(chuanSdt);
+    var k = p.k != null && p.k !== '' ? Number(p.k) : (ds.length === 1 ? 0 : -1);
+    if (!(k >= 0 && k < ds.length)) return { ok: false, code: 'CHOOSE_ACCOUNT', msg: 'Mẹ chọn tài khoản (số điện thoại) cần đặt lại mật khẩu nhé.' };
+    var sdt = ds[k]; var email = chuanEmail(r.v[1]);
+    if (!timTheoEmail(email).some(function (x) { return x.sdt === sdt; })) return hong;   // email đã bị đổi khỏi tài khoản trong lúc chờ
+    luuMatKhau(sdt, String(p.mk));
+    var s = sheetQMK(); s.getRange(r.dong, 5).setValue(QMK.DONE); s.getRange(r.dong, 12, 1, 3).setValues([['', r.v[12], new Date()]]);
+    s.getRange(r.dong, 16).setValue('Đã đặt lại cho ' + anSdt(sdt));
+    var dx = huyMoiPhien(sdt);
+    qmkNhatKy(sdt, 'PASSWORD_RESET_SUCCESS', 'qua email ' + anEmail(email) + ', đăng xuất ' + dx + ' phiên');
+    guiMailDoiMk(sdt, (tenTheoSdt()[sdt] || ''), cfg);
+    return { ok: true, code: 'PASSWORD_RESET_SUCCESS', sdtAn: anSdt(sdt), msg: 'Bạn đã đặt lại mật khẩu thành công.' };
+  });
+}
+
+/* ---------- API quản trị ---------- */
+function apiQtBaoMatKhach(p) {
+  if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var sdt = chuanSdt(p.sdt); if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var dong = timDongKH(sdt); var row = dong ? sheetKH().getRange(dong, 1, 1, 12).getValues()[0] : [];
+  var email = chuanEmail(row[5]); var tk = timTK(sdt);
+  var tkLuc = tk ? sheetTK().getRange(tk.dong, 4).getValue() : '';
+  var phien = 0; var sp = sheetPhien(); var np = sp.getLastRow();
+  if (np >= 2) sp.getRange(2, 1, np - 1, 5).getValues().forEach(function (r) { if (chuanSdt(r[1]) === sdt && new Date(r[2]).getTime() > Date.now()) phien++; });
+  var yc = []; var sq = sheetQMK(); var nq = sq.getLastRow();
+  if (nq >= 2) sq.getRange(2, 1, nq - 1, H_QMK.length).getValues().forEach(function (r) {
+    if ((email && chuanEmail(r[1]) === email) || String(r[2]).split(',').map(chuanSdt).indexOf(sdt) > -1)
+      yc.push({ ngay: ngayVN(r[5]), kenh: String(r[3]), trangThai: String(r[4]), sai: Number(r[9] || 0), hoanTat: r[13] ? ngayVN(r[13]) : '' });
+  });
+  return { ok: true, email: email, coEmail: emailHopLe(email), sdt: sdt, matKhau: tk && tk.hash ? (tk.hash.indexOf('v2$') === 0 ? 'Mật khẩu riêng (băm mạnh)' : 'Mật khẩu riêng') : 'Mật khẩu mặc định',
+    doiMkLuc: tkLuc ? ngayVN(tkLuc) : '', phienDangMo: phien, khoa: String(row[11] || '').indexOf('KHOA') > -1, yeuCau: yc.reverse().slice(0, 30) };
+}
+function apiQtQmkCauHinh(p) {
+  if (!coQuyen(p, 'setting.view')) return { ok: false, msg: 'Không có quyền' };
+  if (p.luu !== '1') return { ok: true, cauHinh: qmkCauHinh(), shop: TEN_SHOP, hotline: HOTLINE };
+  var cu = qmkCauHinh(), moi = {};
+  var so = function (k, min, max) { var v = Number(p[k]); return p[k] == null || p[k] === '' || !isFinite(v) ? cu[k] : Math.max(min, Math.min(max, Math.round(v))); };
+  moi.otpPhut = so('otpPhut', 1, 60); moi.saiToiDa = so('saiToiDa', 1, 20); moi.choGuiLaiGiay = so('choGuiLaiGiay', 10, 600);
+  moi.guiToiDa15p = so('guiToiDa15p', 1, 50); moi.mayToiDa15p = so('mayToiDa15p', 1, 100); moi.heThongToiDa15p = so('heThongToiDa15p', 5, 1000);
+  moi.tokenPhut = so('tokenPhut', 5, 60); moi.mkToiThieu = so('mkToiThieu', 6, 32);
+  ['tieuDeOtp', 'noiDungOtp', 'tieuDeDoi', 'noiDungDoi'].forEach(function (k) { moi[k] = p[k] != null ? String(p[k]).slice(0, 2000) : cu[k]; });
+  if (moi.noiDungOtp.indexOf('{otp}') < 0) return { ok: false, msg: 'Nội dung email OTP phải có {otp}' };
+  PropertiesService.getScriptProperties().setProperty('QMK_CAU_HINH', JSON.stringify(moi));
+  var doi = Object.keys(moi).filter(function (k) { return String(moi[k]) !== String(cu[k]); });
+  if (doi.length) ghiNhatKy('Cấu hình bảo mật', tenQT(p), 'Sửa: ' + doi.join(', '));
+  return { ok: true, cauHinh: moi };
+}
+
 /* ===================== API CHO WEBSITE (JSONP) ===================== */
 function traVe(data, callback) {
   var json = JSON.stringify(data);
@@ -884,6 +1085,12 @@ function doGet(e) {
     if (action === 'qtLuu')        return traVe(apiQtLuu(p), cb);
     if (action === 'qtXoa')        return traVe(apiQtXoa(p), cb);
     if (action === 'doiMatKhau') return traVe(apiDoiMatKhau(p), cb);
+    if (action === 'qmkCauHinh')    return traVe(apiQmkCauHinh(), cb);
+    if (action === 'qmkGui')        return traVe(apiQmkGui(p), cb);
+    if (action === 'qmkXacThuc')    return traVe(apiQmkXacThuc(p), cb);
+    if (action === 'qmkDatLai')     return traVe(apiQmkDatLai(p), cb);
+    if (action === 'qtBaoMatKhach') return traVe(apiQtBaoMatKhach(p), cb);
+    if (action === 'qtQmkCauHinh')  return traVe(apiQtQmkCauHinh(p), cb);
     if (action === 'gtCauHinh')     return traVe(apiGtCauHinh(), cb);
     if (action === 'gtKiemTra')     return traVe(apiGtKiemTra(p), cb);
     if (action === 'gtGiuCho')      return traVe(apiGtGiuCho(p), cb);
@@ -941,7 +1148,7 @@ function apiDangNhap(p) {
   var d = docKH(sdt);
   var co = !!d.dong || !!d.kh.ten || Number(d.kh.soDon) > 0;
   if (!co) return { ok: false, chuaMua: true, msg: 'Số này chưa mua hàng tại shop. Mẹ cứ đặt hàng không cần đăng nhập nhé, lần sau đăng nhập bằng mật khẩu ' + MK_MAC_DINH };
-  var tk = timTK(sdt); var dung = tk && tk.hash ? bamMk(p.mk, tk.muoi) === tk.hash : String(p.mk) === MK_MAC_DINH;
+  var tk = timTK(sdt); var dung = tk && tk.hash ? kiemMk(p.mk, tk) : String(p.mk) === MK_MAC_DINH;
   if (!dung) { cache.put(k, String(dem + 1), 3600); return { ok: false, msg: tk && tk.hash ? 'Mật khẩu chưa đúng. Quên mật khẩu thì bấm nhận mã OTP nhé' : 'Mật khẩu chưa đúng (mật khẩu mặc định là ' + MK_MAC_DINH + ')' }; }
   cache.remove(k);
   if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});
@@ -1578,16 +1785,19 @@ function apiNhatKy(p) {
 }
 
 function apiDoiMatKhau(p) {
-  var sdt = sdtTheoToken(p.token);
-  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
-  var mk = String(p.mkMoi || '');
-  if (mk.length < 4) return { ok: false, msg: 'Mật khẩu mới cần ít nhất 4 ký tự' };
-  if (mk === MK_MAC_DINH) return { ok: false, msg: 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé' };
-  var muoi = Utilities.getUuid(); var hang = ["'" + sdt, bamMk(mk, muoi), muoi, new Date()];
-  var tk = timTK(sdt); var s = sheetTK();
-  if (tk) s.getRange(tk.dong, 1, 1, 4).setValues([hang]); else s.appendRow(hang);
-  var ph = phienKhach(p.token); if (ph) sheetPhien().getRange(ph.dong, 5).setValue('mk');   // phiên này giờ là mật khẩu riêng
-  return { ok: true };
+  var ph = phienKhach(p.token); var sdt = ph ? ph.sdt : '';
+  if (!sdt) return { ok: false, loi: 'token', code: 'RESET_TOKEN_INVALID', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var cfg = qmkCauHinh(); var mk = String(p.mkMoi || '');
+  var kt = kiemMkMoi(mk, p.mkMoi2 != null ? p.mkMoi2 : mk, cfg); if (!kt.ok) return kt;
+  if (!demGioiHan('doimk_' + sdt, 10)) return { ok: false, code: 'RATE_LIMITED', msg: 'Mẹ thử lại sau 15 phút nhé.' };
+  luuMatKhau(sdt, mk);
+  /* datLai = '1': quên mật khẩu qua OTP số điện thoại → đăng xuất MỌI máy (kể cả máy này). Còn lại: giữ máy đang dùng, đăng xuất máy khác */
+  var datLai = String(p.datLai) === '1' && ph.kieu === 'otp';
+  var dx = huyMoiPhien(sdt, datLai ? '' : p.token);
+  if (!datLai) sheetPhien().getRange(ph.dong, 5).setValue('mk');   // phiên này giờ là mật khẩu riêng
+  qmkNhatKy(sdt, datLai ? 'PASSWORD_RESET_SUCCESS' : 'PASSWORD_CHANGED', (datLai ? 'qua OTP số điện thoại, ' : '') + 'đăng xuất ' + dx + ' phiên khác');
+  guiMailDoiMk(sdt, (tenTheoSdt()[sdt] || ''), cfg);
+  return { ok: true, code: 'PASSWORD_RESET_SUCCESS', dangXuat: datLai };
 }
 
 function apiGuiOtp(p) {
