@@ -1275,14 +1275,14 @@ function apiQtAffDs(p) {
 }
 function apiQtAffDuyet(p) {
   if (!coQuyen(p, 'affiliate.update')) return { ok: false, msg: 'Không có quyền' };
-  var tt = { duyet: DTT.DUYET, tuChoi: DTT.TU_CHOI, khoa: DTT.KHOA, moKhoa: DTT.DUYET }[p.viec]; if (!tt) return { ok: false, msg: 'Thao tác không hợp lệ' };
+  var tt = { duyet: DTT.DUYET, tuChoi: DTT.TU_CHOI, khoa: DTT.KHOA, moKhoa: DTT.DUYET }[p.viec]; if (!tt && p.viec !== 'capNhat') return { ok: false, msg: 'Thao tác không hợp lệ' };
   return voiKhoa(function () {
     var dt = timDT(p.ma); if (!dt) return { ok: false, msg: 'Không thấy đối tác' };
-    var s = sheetDT(); s.getRange(dt.dong, 11).setValue(tt);
+    var s = sheetDT(); if (tt) s.getRange(dt.dong, 11).setValue(tt);
     if (p.viec === 'duyet') s.getRange(dt.dong, 13, 1, 2).setValues([[new Date(), tenQT(p)]]);
     if (p.loaiThue && ['ca-nhan', 'cam-ket-08', 'doanh-nghiep'].indexOf(p.loaiThue) > -1) s.getRange(dt.dong, 10).setValue(p.loaiThue);
     if (p.ghiChu != null) s.getRange(dt.dong, 17).setValue(String(p.ghiChu).slice(0, 300));
-    ghiNhatKy('Đối tác', String(dt.v[0]), tt + ' – bởi ' + tenQT(p));
+    ghiNhatKy('Đối tác', String(dt.v[0]), (tt || 'Cập nhật' + (p.loaiThue ? ' hình thức thuế: ' + p.loaiThue : '')) + ' – bởi ' + tenQT(p));
     var mail = String(dt.v[3]);
     if (emailHopLe(mail) && (p.viec === 'duyet' || p.viec === 'tuChoi')) { try { MailApp.sendEmail(mail, p.viec === 'duyet' ? 'Chào mừng bạn trở thành đối tác ' + TEN_SHOP : 'Kết quả đăng ký đối tác ' + TEN_SHOP,
       p.viec === 'duyet' ? 'Xin chào ' + dt.v[1] + ',\n\nĐăng ký đối tác của bạn đã được duyệt. Mã đối tác: ' + dt.v[0] + '\nĐăng nhập để lấy link sản phẩm và theo dõi hoa hồng: ' + WEB + '/doi-tac.html\n\n' + TEN_SHOP
