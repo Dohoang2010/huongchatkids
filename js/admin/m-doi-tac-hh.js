@@ -111,7 +111,7 @@
       ${ed.tatCa ? `<label style="max-width:240px">% hoa hồng chung <i>*</i><input id="cdPtChung" type="number" min="0" max="50" step="0.5" value="${esc(ed.ptChung)}"></label>`
       : `<div class="tool" style="grid-template-columns:1fr auto auto"><div class="tool__tim"><input id="cdQ" placeholder="Tìm sản phẩm…" value="${esc(ed.q)}" autocomplete="off"></div>
           <input id="cdLoatPt" type="number" min="0" max="50" step="0.5" placeholder="%" style="width:90px"><button class="btn btn--ghost btn--sm" id="cdLoat">Áp % cho SP đã chọn (${Object.keys(ed.sp).length})</button></div>
-        <div class="tbl-wrap" style="max-height:460px;overflow:auto"><table><thead><tr><th style="width:34px"></th><th>Sản phẩm</th><th class="num">% sản phẩm hiện tại</th><th class="num" style="width:150px">% riêng chiến dịch</th></tr></thead><tbody>
+        <div class="tbl-wrap" style="max-height:460px;overflow:auto"><table><thead><tr><th style="width:34px"><input type="checkbox" id="cdAll" title="Chọn toàn bộ sản phẩm đang hiển thị" ${ds.length && ds.every((p) => ed.sp[p.id] != null) ? "checked" : ""}></th><th>Sản phẩm</th><th class="num">% sản phẩm hiện tại</th><th class="num" style="width:150px">% riêng chiến dịch</th></tr></thead><tbody>
           ${ds.map((p) => { const co = ed.sp[p.id] != null; const h = mHh[p.id]; return `<tr><td><input type="checkbox" data-cd-sp="${esc(p.id)}" ${co ? 'checked' : ''}></td>
             <td><div style="display:flex;gap:10px;align-items:center">${anh(p, 36)}<div><b>${esc(p.short || p.name)}</b><br><small class="muted">${fmt(p.price || 0)}</small></div></div></td>
             <td class="num"><small>${h && !h.tat ? (h.pt != null ? pct(h.pt) : pct(cdDl.macDinh.link) + ' (mặc định)') : '<span class="muted">không tham gia</span>'}</small></td>
@@ -139,6 +139,7 @@
     const t = e.target.closest('[data-them]'); if (t) { t.checked ? S.chonThem.add(t.dataset.them) : S.chonThem.delete(t.dataset.them); const n = $('#hhThemLuu'); if (n) n.textContent = `Thêm ${S.chonThem.size || ''} SP`; }
     const dt = e.target.closest('[data-cd-dt]'); if (dt && ed) dt.checked ? ed.dts.add(dt.dataset.cdDt) : ed.dts.delete(dt.dataset.cdDt);
     if (e.target.name === 'cdPham' && ed) { docEd(); ed.tatCa = e.target.value === 'tatCa'; veLai(); }
+    if (e.target.id === 'cdAll' && ed) { docEd(); const on = e.target.checked; $$('[data-cd-sp]').forEach((x) => { const id = x.dataset.cdSp; if (!on) return delete ed.sp[id]; if (ed.sp[id] == null) { const h = (dl && dl.sp && dl.sp[id]) || null; ed.sp[id] = h && h.pt != null ? h.pt : (cdDl.macDinh.link ?? 10); } }); return veLai(); }
     const sp = e.target.closest('[data-cd-sp]'); if (sp && ed) { docEd(); const id = sp.dataset.cdSp; if (sp.checked) { const h = (dl && dl.sp && dl.sp[id]) || null; ed.sp[id] = h && h.pt != null ? h.pt : (cdDl.macDinh.link ?? 10); } else delete ed.sp[id]; veLai(); }
   });
   document.addEventListener('click', async (e) => {
