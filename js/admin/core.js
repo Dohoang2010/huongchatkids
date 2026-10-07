@@ -103,7 +103,7 @@ window.ADMIN = (() => {
     });
   }
   /* Khoá dự phòng: không còn khoá mặc định (khoá cũ đã lộ). Chỉ dùng khi chủ shop tự đặt ADMIN_KEY trên máy chủ và dán vào đây. */
-  if (/^hck-admin-d+$/.test(localStorage.getItem('hck_admin_key') || '')) localStorage.removeItem('hck_admin_key');
+  if (/^hck-admin-\d+$/.test(localStorage.getItem('hck_admin_key') || '')) localStorage.removeItem('hck_admin_key');
   const adminKey = () => localStorage.getItem('hck_admin_key') || '';
   /* Tham số xác thực gửi kèm mọi lệnh quản trị: token của tài khoản đang đăng nhập,
      kèm khoá chủ shop làm phương án dự phòng khi chưa tạo tài khoản nào. */
