@@ -2,7 +2,7 @@
    - Hoa hồng sản phẩm: chỉ sản phẩm shop THÊM vào chương trình mới có hoa hồng; sửa % nhanh, sửa hàng loạt, loại bỏ, xem hiệu quả.
    - Chiến dịch riêng: mức % riêng cho 1 / nhiều đối tác, theo từng sản phẩm hoặc toàn bộ, có thời gian bắt đầu / kết thúc.
    Thứ tự tính (máy chủ): chiến dịch riêng (cao nhất) > % sản phẩm > sản phẩm chưa thêm = 0. Mọi nguồn đơn dùng chung mức này.
-   Máy chủ: qtAffSp / qtAffSpLuu / qtAffCd / qtAffCdLuu / qtAffCdDung. Được m-doi-tac.js gọi qua A.affHH. */
+   Máy chủ: qtAffSp / qtAffSpLuu / qtAffCd / qtAffCdLuu / qtAffCdDung / qtAffCdXoa. Được m-doi-tac.js gọi qua A.affHH. */
 (() => {
   'use strict';
   const A = window.ADMIN, { $, $$, esc, fmt } = A;
@@ -89,12 +89,12 @@
             <td class="num"><b>${lo === hi ? pct(lo) : pct(lo) + ' – ' + pct(hi)}</b></td>
             <td class="num"><small>${n0(c.hieuQua.don)} đơn · ${fmt(c.hieuQua.tien)}<br>HH <b>${fmt(c.hieuQua.hh)}</b></small></td>
             <td>${A.badge(c.trangThai, TT[c.trangThai] || '')}</td>
-            <td class="num" style="white-space:nowrap">${sua() ? `<a class="btn btn--ghost btn--sm" href="#/doi-tac/cd/${esc(c.ma)}">Chỉnh sửa</a> ${c.tt === 'Đã dừng' ? `<button class="btn btn--ghost btn--sm" data-cd-dung="chay" data-ma="${esc(c.ma)}">Chạy lại</button>` : `<button class="btn btn--ghost btn--sm" data-cd-dung="dung" data-ma="${esc(c.ma)}">Dừng</button>`}` : ''}</td></tr>`; }).join('')}
+            <td class="num" style="white-space:nowrap">${sua() ? `<a class="btn btn--ghost btn--sm" href="#/doi-tac/cd/${esc(c.ma)}">Chỉnh sửa</a> ${c.tt === 'Đã dừng' ? `<button class="btn btn--ghost btn--sm" data-cd-dung="chay" data-ma="${esc(c.ma)}">Chạy lại</button>` : `<button class="btn btn--ghost btn--sm" data-cd-dung="dung" data-ma="${esc(c.ma)}">Dừng</button>`} <button class="btn btn--ghost btn--sm" style="color:var(--danger,#d33)" data-cd-xoa="${esc(c.ma)}" data-ten="${esc(c.ten)}">Xoá</button>` : ''}</td></tr>`; }).join('')}
       </tbody></table></div>` : A.trong('Chưa có chiến dịch riêng', 'Tạo chiến dịch để đặt hoa hồng riêng cho đối tác (vd KOC bán tốt được 15%).', '🎯')}</div>`;
   }
   function moEd(c, maDt) {
     ed = c ? { ma: c.ma, ten: c.ten, dts: new Set(c.dts), tatCa: c.tatCa, ptChung: c.ptChung ?? '', sp: { ...c.sp }, batDau: c.batDau, ketThuc: c.ketThuc, q: '' }
-      : { ma: '', ten: maDt ? 'Hoa hồng riêng – ' + maDt.toUpperCase() : '', dts: new Set(maDt ? [maDt.toUpperCase()] : []), tatCa: false, ptChung: '', sp: {}, batDau: '', ketThuc: '', q: '' };
+      : { ma: '', ten: maDt ? 'Hoa hồng riêng – ' + maDt.toUpperCase() : '', dts: new Set(maDt ? [maDt.toUpperCase()] : []), tatCa: false, ptChung: '', sp: {}, batDau: '', ketThuc: '', q: '', phien: Date.now().toString(36) + Math.random().toString(36).slice(2, 8) };
   }
   function veEd(b) {
     $('#pageAct').innerHTML = '<a class="btn btn--ghost" href="#/doi-tac/cd">← Danh sách chiến dịch</a>';
@@ -166,11 +166,16 @@
       try { const r = await A.api('qtAffCdDung', { ma: dg.dataset.ma, viec: dg.dataset.cdDung }); A.toast(r && r.ok ? 'Đã cập nhật' : (r && r.msg) || 'Lỗi', r && r.ok ? 'ok' : 'err'); } catch (err) { A.toast(err.message, 'err'); } return A.veTrang(); }
     if (e.target.id === 'cdLuu') { docEd();
       const sp = {}; Object.keys(ed.sp).forEach((id) => { if (ed.sp[id] !== '' && ed.sp[id] != null) sp[id] = ed.sp[id]; });
-      const p = { ma: ed.ma, ten: ed.ten.trim(), dts: [...ed.dts].join(','), tatCa: ed.tatCa ? '1' : '0', ptChung: ed.ptChung, sp: JSON.stringify(sp), batDau: ed.batDau, ketThuc: ed.ketThuc };
+      const p = { ma: ed.ma, ten: ed.ten.trim(), dts: [...ed.dts].join(','), tatCa: ed.tatCa ? '1' : '0', ptChung: ed.ptChung, sp: JSON.stringify(sp), batDau: ed.batDau, ketThuc: ed.ketThuc, phien: ed.phien || '' };
       if (!p.ten) return A.toast('Nhập tên chiến dịch', 'err'); if (!ed.dts.size) return A.toast('Chọn ít nhất 1 đối tác', 'err');
       if (!ed.tatCa && !Object.keys(sp).length) return A.toast('Chọn sản phẩm và nhập %', 'err');
-      try { const r = await A.api('qtAffCdLuu', p); if (!r || !r.ok) return A.toast((r && r.msg) || 'Chưa lưu được', 'err'); A.toast(ed.ma ? 'Đã lưu chiến dịch' : 'Đã tạo chiến dịch ' + r.ma, 'ok'); ed = null; location.hash = '#/doi-tac/cd'; }
-      catch (err) { A.toast(err.message, 'err'); } }
+      const nut = e.target; if (nut.disabled) return; nut.disabled = true; const nhan = nut.textContent; nut.textContent = 'Đang lưu…';
+      const mo = () => { nut.disabled = false; nut.textContent = nhan; };
+      try { const r = await A.api('qtAffCdLuu', p); if (!r || !r.ok) { mo(); return A.toast((r && r.msg) || 'Chưa lưu được', 'err'); } A.toast(ed.ma ? 'Đã lưu chiến dịch' : 'Đã tạo chiến dịch ' + r.ma, 'ok'); ed = null; location.hash = '#/doi-tac/cd'; }
+      catch (err) { mo(); A.toast(err.message, 'err'); } }
+    const xo = e.target.closest('[data-cd-xoa]'); if (xo) {
+      if (!(await A.hoi({ tieuDe: 'Xoá chiến dịch?', noiDung: 'Xoá hẳn chiến dịch ' + xo.dataset.ten + '. Đơn mới của đối tác về mức % sản phẩm; đơn đã ghi nhận giữ nguyên hoa hồng. Không hoàn tác được.', nutOk: 'Xoá', nguyHiem: true }))) return;
+      xo.disabled = true; try { const r = await A.api('qtAffCdXoa', { ma: xo.dataset.cdXoa }); A.toast(r && r.ok ? 'Đã xoá chiến dịch' : (r && r.msg) || 'Lỗi', r && r.ok ? 'ok' : 'err'); } catch (err) { A.toast(err.message, 'err'); } return A.veTrang(); }
   });
 
   A.affHH = { veSp, veCd };

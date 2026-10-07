@@ -79,7 +79,7 @@ window.ADMIN = (() => {
 
   /* ---------------- Gọi Apps Script (JSONP) ---------------- */
   let seq = 0;
-  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtDiemDieuChinh', 'qtGtCauHinh', 'qtGtXuLy', 'qtGtLich', 'qtBaoMatKhach', 'qtQmkCauHinh', 'qtAffDs', 'qtAffDuyet', 'qtAffDon', 'qtAffGanTay', 'qtAffKy', 'qtAffChotKy', 'qtAffTra', 'qtAffCauHinh', 'qtAffXuLy', 'qtAffSp', 'qtAffSpLuu', 'qtAffCd', 'qtAffCdLuu', 'qtAffCdDung'];
+  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtDiemDieuChinh', 'qtGtCauHinh', 'qtGtXuLy', 'qtGtLich', 'qtBaoMatKhach', 'qtQmkCauHinh', 'qtAffDs', 'qtAffDuyet', 'qtAffDon', 'qtAffGanTay', 'qtAffKy', 'qtAffChotKy', 'qtAffTra', 'qtAffCauHinh', 'qtAffXuLy', 'qtAffSp', 'qtAffSpLuu', 'qtAffCd', 'qtAffCdLuu', 'qtAffCdDung', 'qtAffCdXoa'];
   /* Lệnh chỉ đọc: hết giờ thì tự gửi lại 1 lần (Apps Script lần đầu sau khi nghỉ có thể mất 20–40 giây để "thức dậy") */
   const LENH_DOC = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtBaoMatKhach', 'qtQmkCauHinh', 'qtAffDs', 'qtAffDuyet', 'qtAffDon', 'qtAffGanTay', 'qtAffKy', 'qtAffChotKy', 'qtAffTra', 'qtAffCauHinh', 'qtAffXuLy', 'qtAffSp', 'qtAffSpLuu', 'qtAffCd', 'qtAffCdLuu', 'qtAffCdDung'];
   function api(action, params = {}, timeout = 45000) {

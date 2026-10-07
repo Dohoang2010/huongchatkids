@@ -1338,8 +1338,13 @@ function apiQtAffCdLuu(p) {
     var hang = [ten, dtsCo.join(','), tatCa ? '1' : '', tatCa ? ptChung : '', JSON.stringify(tatCa ? {} : sp), bd, kt];
     var s = sheetCD(); var cu = p.ma ? docCD().filter(function (c) { return c.ma === String(p.ma); })[0] : null;
     if (cu) { s.getRange(cu.dong, 2, 1, 7).setValues([hang]); s.getRange(cu.dong, 12).setValue(new Date()); ghiNhatKy('Chiến dịch ĐT', cu.ma, 'Sửa: ' + ten + ' – bởi ' + ai); return { ok: true, ma: cu.ma }; }
-    var ma = 'CD' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyMMddHHmm') + Math.floor(Math.random() * 90 + 10);
+    /* Chống tạo trùng khi bấm 2 lần: mỗi lần mở form có 1 mã phiên, gửi lại cùng mã → trả chiến dịch đã tạo */
+    var bn = CacheService.getScriptCache(), kp = p.phien ? 'cdTao_' + String(p.phien).replace(/[^\w-]/g, '').slice(0, 40) : '';
+    var daTao = kp ? bn.get(kp) : null; if (daTao) return { ok: true, ma: daTao, trung: true };
+    var daCo = {}, ma = ''; docCD().forEach(function (c) { daCo[c.ma] = 1; });
+    do { ma = 'CD' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyMMddHHmm') + Math.floor(Math.random() * 900 + 100); } while (daCo[ma]);
     s.appendRow([ma].concat(hang).concat(['Đang chạy', new Date(), ai, new Date()]));
+    if (kp) bn.put(kp, ma, 1800);
     ghiNhatKy('Chiến dịch ĐT', ma, 'Tạo: ' + ten + ' (' + dtsCo.join(', ') + ') – bởi ' + ai);
     return { ok: true, ma: ma };
   });
@@ -1349,6 +1354,11 @@ function apiQtAffCdDung(p) {
   var tt = p.viec === 'chay' ? 'Đang chạy' : 'Đã dừng';
   return voiKhoa(function () { var c = docCD().filter(function (x) { return x.ma === String(p.ma); })[0]; if (!c) return { ok: false, msg: 'Không thấy chiến dịch' };
     sheetCD().getRange(c.dong, 9).setValue(tt); sheetCD().getRange(c.dong, 12).setValue(new Date()); ghiNhatKy('Chiến dịch ĐT', c.ma, tt + ' – bởi ' + tenQT(p)); return { ok: true }; });
+}
+function apiQtAffCdXoa(p) {
+  if (!coQuyen(p, 'affiliate.settings')) return { ok: false, msg: 'Không có quyền' };
+  return voiKhoa(function () { var c = docCD().filter(function (x) { return x.ma === String(p.ma); })[0]; if (!c) return { ok: false, msg: 'Không thấy chiến dịch' };
+    sheetCD().deleteRow(c.dong); ghiNhatKy('Chiến dịch ĐT', c.ma, 'Xoá: ' + c.ten + ' – bởi ' + tenQT(p)); return { ok: true }; });
 }
 
 /* ---------- 6. Xử lý nền theo CRM + chốt kỳ ngày 10 ---------- */
@@ -1560,6 +1570,7 @@ function doGet(e) {
     if (action === 'qtAffCd')       return traVe(apiQtAffCd(p), cb);
     if (action === 'qtAffCdLuu')    return traVe(apiQtAffCdLuu(p), cb);
     if (action === 'qtAffCdDung')   return traVe(apiQtAffCdDung(p), cb);
+    if (action === 'qtAffCdXoa')    return traVe(apiQtAffCdXoa(p), cb);
     if (action === 'qmkCauHinh')    return traVe(apiQmkCauHinh(), cb);
     if (action === 'qmkGui')        return traVe(apiQmkGui(p), cb);
     if (action === 'qmkXacThuc')    return traVe(apiQmkXacThuc(p), cb);
