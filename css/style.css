@@ -1647,3 +1647,34 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 @keyframes sjFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 @keyframes sjSpin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .sj-chip, .sj-ring { animation: none; } }
+
+/* ===== Giới thiệu bạn bè + ví điểm (thanh toán, tài khoản, mua nhanh) ===== */
+.gt-co, .diem-co { margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--bg-soft); border: 1px dashed var(--primary-100); }
+.diem-co { background: var(--amber-100); border-color: #FFD98A; }
+.gt-co h4, .diem-co h4 { font-size: 14px; margin: 0 0 8px; }
+.gt-co .coupon { margin: 0; }
+.diem-co__h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.diem-co__h h4 { margin: 0; } .diem-co__h span { font-size: 13px; color: var(--ink-2); } .diem-co__h b { color: var(--price); }
+.diem-co__chk { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; margin-top: 8px; cursor: pointer; }
+.diem-co__chk input { width: 18px; height: 18px; accent-color: var(--primary); }
+.diem-co__nhap { display: flex; gap: 8px; margin-top: 8px; } .diem-co__nhap .input { flex: 1; min-width: 0; }
+.diem-co--goi { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }
+.qb__gtnote { font-size: 13px; color: var(--ink-2); background: var(--bg-soft); border-radius: var(--radius-xs); padding: 8px 10px; margin: 8px 0 0; }
+.qb__gtnote button { color: var(--primary-600); font-weight: 700; text-decoration: underline; }
+.grid-diem-gt { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 1100px) { .grid-diem-gt { grid-template-columns: 1fr 1fr; } }
+.diem-vi { display: grid; gap: 12px; }
+.diem-vi__so { background: linear-gradient(135deg, #FFB020, #F28C00); color: #3a2a00; border-radius: var(--radius); padding: 16px 18px; display: flex; flex-direction: column; }
+.diem-vi__so small { font-size: 12px; font-weight: 700; opacity: .8; } .diem-vi__so b { font-family: var(--font-head); font-size: 34px; line-height: 1.1; } .diem-vi__so span { font-size: 13px; }
+.diem-vi__ct { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.diem-vi__ct div, .gt-tk div { background: var(--bg-gray); border-radius: var(--radius-sm); padding: 8px 10px; display: flex; flex-direction: column; }
+.diem-vi__ct small, .gt-tk small { font-size: 12px; color: var(--muted); } .diem-vi__ct b, .gt-tk b { font-size: 16px; }
+.diem-ls { display: flex; flex-direction: column; max-height: 340px; overflow: auto; border-top: 1px solid var(--line-2); }
+.diem-ls__it { display: flex; justify-content: space-between; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--line-2); font-size: 14px; }
+.diem-ls__it > div:first-child { display: flex; flex-direction: column; min-width: 0; } .diem-ls__it small { font-size: 12px; color: var(--muted); }
+.diem-ls__so { display: flex; flex-direction: column; align-items: flex-end; font-weight: 700; white-space: nowrap; }
+.diem-ls__so.is-cong { color: var(--green); } .diem-ls__so.is-tru { color: var(--red); }
+.gt-ma { margin: 12px 0 10px; border: 2px dashed var(--primary); border-radius: var(--radius-sm); padding: 10px; text-align: center; background: var(--primary-50); }
+.gt-ma small { display: block; font-size: 12px; color: var(--muted); } .gt-ma b { font-family: var(--font-head); font-size: 26px; letter-spacing: 2px; color: var(--primary-700); }
+.gt-nut { display: flex; gap: 8px; flex-wrap: wrap; } .gt-nut .btn { flex: 1 1 auto; }
+.gt-tk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; text-align: center; } .gt-tk div { align-items: center; }

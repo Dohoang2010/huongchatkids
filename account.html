@@ -10,19 +10,56 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261005n">
+  <link rel="stylesheet" href="css/style.css?v=20261007a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261005n"></script>
-<script src="js/diachi.js?v=20261005n"></script>
+<script src="js/data.js?v=20261007a"></script>
+<script src="js/diachi.js?v=20261007a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261005n"></script>
+<script src="js/app.js?v=20261007a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
-          Session, tierOf, tierNext, tierBadge, tiers, loyaltyApi, openOtp, refreshProfile, couponsFor, addrParse, addrStore, addrFull } = MC;
+          Session, tierOf, tierNext, tierBadge, tiers, loyaltyApi, openOtp, refreshProfile, couponsFor, addrParse, addrStore, addrFull, GT } = MC;
+  const n0 = (x) => Number(x || 0).toLocaleString('vi-VN');
+  const DANG_TAI = '<p class="text-muted fs-14">Đang tải…</p>';
+  const LOAI_DIEM = { EARN: 'Thưởng giới thiệu', SPEND: 'Dùng điểm mua hàng', REVERSE: 'Thu hồi điểm thưởng', REFUND: 'Hoàn điểm', ADJUSTMENT: 'Shop điều chỉnh', EXPIRE: 'Điểm hết hạn' };
+
+  /* ---------- ⭐ Ví điểm + 🤝 Giới thiệu bạn bè (tải sau khi vẽ hồ sơ) ---------- */
+  let gtDaTai = null;
+  const diemHTML = (v) => `<div class="diem-vi">
+      <div class="diem-vi__so"><small>Điểm khả dụng</small><b>${n0(v.khaDung)}</b><span>điểm · 1 điểm = ${fmt(v.giaTriDiem)}</span></div>
+      <div class="diem-vi__ct"><div><small>Đang giữ cho đơn</small><b>${n0(v.dangGiu)}</b></div><div><small>Tổng đã nhận</small><b>${n0(v.tongNhan)}</b></div><div><small>Tổng đã dùng</small><b>${n0(v.tongDung)}</b></div><div><small>Tiết kiệm nhờ điểm</small><b>${fmt(v.tietKiem)}</b></div></div>
+    </div>
+    ${!v.dungDuoc && v.khaDung ? '<p class="fs-13 text-muted mt-8">🔐 Mẹ đang đăng nhập bằng mật khẩu mặc định. Để dùng điểm khi thanh toán, mẹ xác thực mã OTP hoặc đặt mật khẩu riêng (nút bên phải).</p>' : ''}
+    ${v.khaDung ? `<p class="fs-13 mt-8">💡 Dùng điểm ở bước <a class="text-primary fw-600" href="checkout.html">Thanh toán</a> – trừ thẳng vào tiền hàng.</p>` : ''}
+    <h4 class="fs-14 mt-16 mb-8">Lịch sử điểm</h4>
+    ${(v.lichSu || []).length ? `<div class="diem-ls">${v.lichSu.map((x) => `<div class="diem-ls__it"><div><b>${esc(LOAI_DIEM[x.loai] || x.loai)}</b><small>${esc(x.ngay)}${x.noiDung ? ' · ' + esc(x.noiDung) : ''}</small></div><div class="diem-ls__so ${x.diem > 0 ? 'is-cong' : 'is-tru'}">${x.diem > 0 ? '+' : ''}${n0(x.diem)}<small>Số dư ${n0(x.soDu)}</small></div></div>`).join('')}</div>`
+      : '<p class="text-muted fs-14">Chưa có giao dịch điểm nào. Giới thiệu bạn bè mua hàng để nhận điểm nhé!</p>'}`;
+  const TT_GT = { 'Đã liên kết': 'badge--soft', 'Chờ giao': 'badge--hot', 'Đã thưởng': 'badge--teal', 'Đã thu hồi': 'badge--soft' };
+  const gtHTML = (g) => {
+    const c = g.cauHinh || {};
+    return `${c.bat ? '' : '<p class="text-red fs-14 mb-8">Chương trình giới thiệu đang tạm dừng.</p>'}
+      <p class="fs-14">Bạn bè nhập mã của mẹ được <b>giảm ${c.giam}%</b> cho đơn hàng đầu tiên. Đơn giao thành công, mẹ nhận <b>${c.thuong}% giá trị đơn</b> thành điểm (1 điểm = ${fmt(c.giaTriDiem || 1)}) để trừ tiền khi mua hàng.</p>
+      <div class="gt-ma"><small>Mã giới thiệu của mẹ</small><b>${esc(g.ma)}</b></div>
+      <div class="gt-nut"><button class="btn btn--primary btn--sm" type="button" data-gt-copy="ma">📋 Copy mã</button><button class="btn btn--outline btn--sm" type="button" data-gt-copy="link">🔗 Copy link</button><button class="btn btn--teal btn--sm" type="button" data-gt-share>📤 Chia sẻ</button></div>
+      <div class="gt-tk"><div><b>${n0(g.soNguoi)}</b><small>Người đã giới thiệu</small></div><div><b>${n0(g.daMua)}</b><small>Đã mua hàng</small></div><div><b>${n0(g.tongDiem)}</b><small>Điểm đã nhận</small></div></div>
+      ${(g.ds || []).length ? `<div class="diem-ls mt-12">${g.ds.map((x) => `<div class="diem-ls__it"><div><b>Khách ${esc(x.khach)}</b><small>${esc(x.ngay)}</small></div><div class="diem-ls__so"><span class="badge ${TT_GT[x.trangThai] || 'badge--soft'}">${esc(x.trangThai === 'Đã liên kết' ? 'Chưa mua' : x.trangThai)}</span>${x.diem ? `<small>+${n0(x.diem)} điểm</small>` : ''}</div></div>`).join('')}</div>` : '<p class="text-muted fs-14 mt-12">Chưa có ai dùng mã của mẹ. Bấm Chia sẻ để gửi cho bạn bè qua Zalo, Facebook nhé!</p>'}
+      ${g.cuaToi ? `<p class="fs-13 text-muted mt-8">Mẹ được giới thiệu bởi ${esc(g.cuaToi.nguoiGT)}.</p>` : ''}`;
+  };
+  function taiDiemGT() {
+    if (!$('#diemCard')) return;
+    Promise.all([GT.vi().catch((e) => ({ ok: false, msg: e.message })), GT.cuaToi().catch((e) => ({ ok: false, msg: e.message }))]).then(([v, g]) => {
+      const dc = $('#diemCard'), gc = $('#gtCard'); if (!dc || !gc) return;
+      if ((v && v.loi === 'token') || (g && g.loi === 'token')) { Session.clear(); render(); return; }
+      dc.innerHTML = v && v.ok ? diemHTML(v) : `<p class="text-muted fs-14">${esc((v && v.msg) || 'Chưa tải được ví điểm, mẹ tải lại trang sau ít phút nhé.')}</p>`;
+      gtDaTai = g && g.ok ? g : null;
+      gc.innerHTML = gtDaTai ? gtHTML(gtDaTai) : `<p class="text-muted fs-14">${esc((g && g.msg) || 'Chưa tải được thông tin giới thiệu.')}</p>`;
+      const h = location.hash.slice(1); if (h === 'diem' || h === 'gioi-thieu') document.getElementById(h)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
   const loy = SITE.loyalty || {};
   const DIA = window.DIA_CHI || [];
   const donLocal = () => store.get('mc_orders', []).filter((o) => o.type !== 'callback');
@@ -75,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const c = Customer.get();
     $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Thông tin khách hàng</span></nav>
       <h1 class="page-title">Thông tin khách hàng</h1>
+      ${GT.ref() ? `<div class="qb__saved mb-16">🤝 Mẹ được giới thiệu bởi <b>${esc(maskPhone(GT.ref()))}</b> – đăng ký hoặc đặt hàng để được giảm giá cho đơn hàng đầu tiên (mã đã điền sẵn).</div>` : ''}
       <p class="text-muted fs-14 mb-16">${esc(SITE.name)} không bắt buộc đăng ký – mẹ chỉ cần số điện thoại. Để xem hồ sơ, hạng và lịch sử đơn, mẹ xác thực mã OTP gửi về số của mình.</p>
       <div class="checkout">
         <div class="flex flex-col gap-16">
@@ -101,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="dangky__perk"><i>🎁</i><span>Khách mới: đơn từ ${fmt(((window.QUA_TANG || {}).donTu || {}).muc || 0)} được tặng ${((window.QUA_TANG || {}).donTu || {}).soQua || 0} ${esc((window.QUA_TANG || {}).ten || '')}</span></div>
             <div class="dangky__perk"><i>🥈</i><span>Mua đủ ${fmt((tiers()[1] || {}).min || 0)} lên hạng ${esc((tiers()[1] || {}).label || '')} – giảm ${(tiers()[1] || {}).discount || 0}% mọi đơn sau đó</span></div>
             <div class="dangky__perk"><i>⚡</i><span>Lần sau đặt hàng chỉ 1 chạm, địa chỉ điền sẵn</span></div>
+            <div class="dangky__perk"><i>🤝</i><span>Có mã giới thiệu: giảm giá đơn đầu tiên · Giới thiệu bạn bè: nhận điểm trừ tiền khi mua</span></div>
             <button class="btn btn--teal btn--lg btn--block mt-12" type="button" id="btnDangKy">Đăng ký khách hàng mới</button>
           </div>
           <form id="dkForm" class="hide">
@@ -111,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="field mt-8"><label>Xã / Phường</label><select class="input" name="xa" id="dkXa"><option value="">Chọn tỉnh/thành trước</option></select></div>
             <div class="field mt-8"><label>Địa chỉ cụ thể</label><input class="input" name="diaChi" placeholder="Số nhà, tên đường, thôn/xóm…"></div>
             <div class="field mt-8"><label>Email</label><input class="input" name="email" type="email" placeholder="Không bắt buộc"><small class="field__hint">Có email thì shop gửi xác nhận đơn hàng vào đây.</small></div>
+            <div class="field mt-8"><label>Mã giới thiệu</label><input class="input" name="ref" type="tel" inputmode="numeric" placeholder="SĐT người giới thiệu (nếu có)" value="${esc(GT.ref())}"><small class="field__hint">🤝 Có mã giới thiệu của bạn bè: được giảm giá cho đơn hàng đầu tiên.</small></div>
             <div class="form-error hide mt-8" id="dkErr" role="alert"></div>
             <button class="btn btn--primary btn--lg btn--block mt-12" type="submit">Tạo tài khoản</button>
             <button class="btn btn--ghost btn--block mt-8" type="button" id="dkHuy">Quay lại</button>
@@ -145,6 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="checkout">
         <div class="flex flex-col gap-16">
           <div class="card card--pad"><div class="tier-hero">${theThanhVien({ spent, ten: kh.ten, sdt: kh.sdt })}<div><h3>🎖️ Hạng khách hàng & ưu đãi</h3>${thangHang(spent)}</div></div></div>
+          <div class="grid-diem-gt">
+            <div class="card card--pad" id="diem"><h3>⭐ Điểm của tôi</h3><div id="diemCard">${DANG_TAI}</div></div>
+            <div class="card card--pad" id="gioi-thieu"><h3>🤝 Giới thiệu bạn bè</h3><div id="gtCard">${DANG_TAI}</div></div>
+          </div>
 
           <div class="card card--pad"><h3>📦 Lịch sử đơn hàng <span class="text-muted fs-13" style="font-weight:500">(${don.length} đơn · ${fmt(spent)})</span></h3>
             ${don.length ? don.map(donServerHTML).join('') : `<div class="empty"><div class="emoji">🧾</div><p>Chưa có đơn nào được ghi nhận. <a class="text-primary fw-600" href="collections.html">Mua sắm ngay</a></p></div>`}
@@ -211,7 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const ten = f.ten.value.trim(); const sdt = phoneKey(f.sdt.value); const email = f.email.value.trim();
       if (!ten) { err.textContent = 'Mẹ nhập họ tên nhé'; err.classList.remove('hide'); f.ten.focus(); return; }
       if (!phoneOk(sdt)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); f.sdt.focus(); return; }
-      const hoSo = { sdt, ten, tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email };
+      const ref = phoneKey(f.ref.value || '');
+      if (ref && !phoneOk(ref)) { err.textContent = 'Mã giới thiệu là số điện thoại 10 số của người giới thiệu'; err.classList.remove('hide'); f.ref.focus(); return; }
+      if (ref && ref === sdt) { err.textContent = 'Mẹ không thể dùng mã giới thiệu của chính mình'; err.classList.remove('hide'); f.ref.focus(); return; }
+      const hoSo = { sdt, ten, tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email, ...(ref ? { ref } : {}) };
       const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Đang tạo tài khoản…';
       const loi = (msg, daCo) => {
         err.innerHTML = esc(msg) + (daCo ? ' <button type="button" class="text-primary fw-700" id="dkDangNhap">Đăng nhập</button> · <button type="button" class="text-primary fw-700" id="dkOtp">Nhận mã OTP</button>' : '');
@@ -224,22 +271,33 @@ document.addEventListener('DOMContentLoaded', () => {
         Customer.set({ ...(Customer.get() || {}), name: kh.ten || ten, phone: sdt, email: kh.email || email,
           address: addrStore({ tinh: kh.tinh || hoSo.tinh, xa: kh.xa || hoSo.xa, chiTiet: kh.diaChi || hoSo.diaChi }) });
         store.set('mc_hang_sdt', null);   // xoá bộ nhớ tạm để lần sau tra lại hạng cho đúng
+        if (res.gioiThieu && res.gioiThieu.ok) store.set(GT.refKey, { ma: ref, luc: Date.now() });   // thanh toán tự áp mã
         toast('Đã tạo tài khoản cho mẹ 🎉', { type: 'ok' });
         f.outerHTML = `<div class="card card--pad" style="background:var(--teal-50,#F1FAF8);border:1px solid var(--teal-200,#B9E3DC)">
           <h3>🎉 Đã tạo tài khoản cho mẹ</h3>
           <p class="fs-14">Từ giờ mẹ đặt hàng chỉ cần 1 chạm, địa chỉ tự điền sẵn. Ưu đãi theo hạng sẽ tự trừ vào đơn khi mẹ nhập số điện thoại này.</p>
+          ${res.gioiThieu ? (res.gioiThieu.ok ? `<p class="fs-14 mt-8 text-teal fw-600">🤝 Đã liên kết mã giới thiệu ${esc(maskPhone(ref))} – đơn hàng đầu tiên của mẹ được giảm ${res.gioiThieu.discountPercent || ''}%, web tự áp khi thanh toán.</p>` : `<p class="fs-14 mt-8 text-red">Mã giới thiệu chưa dùng được: ${esc(res.gioiThieu.message || res.gioiThieu.msg || '')}</p>`) : ''}
           <p class="fs-14 mt-8">Muốn xem hồ sơ, lịch sử đơn và tổng chi tiêu thì mẹ đăng nhập bằng số <b>${esc(sdt)}</b>, mật khẩu mặc định là <b>${esc(res.mkMacDinh || '1')}</b>.</p>
           <div class="flex gap-8 mt-12"><button class="btn btn--primary btn--block" type="button" id="dkVaoLogin">Đăng nhập ngay</button><a class="btn btn--ghost" href="collections.html">Mua sắm</a></div></div>`;
       }).catch((e2) => loi(e2.message));
     });
   }
-  const render = () => { Session.get() ? renderHoSo() : renderKhach(); ganFormDangKy(); };
+  const render = () => { if (Session.get()) { renderHoSo(); taiDiemGT(); } else renderKhach(); ganFormDangKy(); };
   render();
+  /* Vào từ link giới thiệu (account.html?ref=SĐT) mà chưa đăng nhập → mở sẵn form đăng ký, mã đã điền */
+  if (!Session.get() && GT.ref() && MC.param('ref')) setTimeout(() => $('#btnDangKy')?.click(), 50);
   if (Session.get()) refreshProfile().then(() => render());
 
   $('#acc').addEventListener('click', (e) => {
     const r = e.target.closest('[data-reorder-code]');
     if (r) { const o = donLocal().find((x) => x.code === r.dataset.reorderCode); if (o) { o.items.forEach((it) => { const p = byId(it.id); if (p) MC.Cart.add(it.id, it.qty || 1, it.variant && p.variants ? Math.max(0, p.variants.findIndex((v) => v.label === it.variant)) : null); }); location.href = 'checkout.html'; } }
+    const gc = e.target.closest('[data-gt-copy]');
+    if (gc && gtDaTai) { const t = gc.dataset.gtCopy === 'link' ? GT.link(gtDaTai.ma) : gtDaTai.ma; navigator.clipboard?.writeText(t).then(() => toast(gc.dataset.gtCopy === 'link' ? 'Đã chép link giới thiệu' : 'Đã chép mã ' + t, { type: 'ok' }), () => toast(t)); }
+    if (e.target.closest('[data-gt-share]') && gtDaTai) {
+      const text = GT.noiDung(gtDaTai.cauHinh, gtDaTai.ma); const url = GT.link(gtDaTai.ma);
+      if (navigator.share) navigator.share({ title: SITE.name, text: text.replace(url, '').trim(), url }).catch(() => {});
+      else navigator.clipboard?.writeText(text).then(() => toast('Đã chép nội dung giới thiệu – mẹ dán vào Zalo / Facebook để gửi bạn bè nhé', { type: 'ok' }), () => toast(text));
+    }
     const cp = e.target.closest('[data-copy-coupon]');
     if (cp) { const ma = cp.dataset.copyCoupon; navigator.clipboard?.writeText(ma); store.set('mc_coupon', ma); toast('Đã chép mã ' + ma + ' – mã sẽ tự điền ở bước thanh toán', { type: 'ok' }); }
     if (e.target.id === 'btnLogin' || e.target.closest('[data-otp]')) MC.openLogin({ title: 'Đăng nhập xem hồ sơ' }).then((s) => { if (s) render(); });

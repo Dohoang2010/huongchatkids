@@ -91,6 +91,7 @@
       const sau = (window.TIERS || []).find((t) => t.min > (k.tongChiTieu || 0));
       $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/thanh-vien">← Danh sách</a>
         <a class="btn btn--ghost" href="tel:${esc(k.sdt)}">📞 Gọi</a>
+        ${A.co('points.view') ? `<a class="btn btn--ghost" href="#/gioi-thieu/diem/${esc(k.sdt)}">⭐ Điểm & giới thiệu</a>` : ''}
         <button class="btn ${d.khoa ? 'btn--primary' : 'btn--red'}" data-khoa="${esc(k.sdt)}" data-tt="${d.khoa ? '0' : '1'}">${d.khoa ? 'Mở khoá tài khoản' : 'Khoá tài khoản'}</button>`;
 
       el.innerHTML = `

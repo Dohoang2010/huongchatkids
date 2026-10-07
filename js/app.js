@@ -182,7 +182,7 @@
   function submitOrder(order) {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const code = 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 900) + 100);
+        const code = order.code || taoMaDon();
         const saved = { ...order, code, createdAt: new Date().toISOString(), site: location.host };
         const orders = store.get('mc_orders', []); orders.unshift(saved); store.set('mc_orders', orders.slice(0, 20));
         store.set('mc_last_order', saved); if (saved.type !== 'callback') trackSu('mua', code);
@@ -618,6 +618,7 @@
           </div>
           <details class="qb__coupon" ${QB.coupon ? "open" : ""}><summary>${I.tag}Có mã giảm giá?</summary><div class="coupon mt-8"><input class="input" id="qbCoupon" value="${esc(QB.coupon)}" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div><div id="qbMaLuu"></div></details>
           <div id="qbGift"></div>
+          ${GT.ref() || Session.get() ? `<p class="qb__gtnote">🤝 Có mã giới thiệu hoặc điểm thưởng? <button type="button" data-qb-sang-tt>Đặt qua trang Thanh toán</button> để được trừ tiền.</p>` : ''}
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
           <div class="form-error hide" id="qbError" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block btn--stack" type="submit" id="qbSubmit"><span>ĐẶT HÀNG · <span id="qbTotal"></span></span><small>Không cần tài khoản · Kiểm tra hàng trước khi thanh toán</small></button>
@@ -731,7 +732,9 @@
   function orderSuccessHTML(order, inModal) {
     const payNote = order.payment === 'bank' ? `<span><i>2</i><p>Mẹ chuyển khoản <b>${fmt(order.total)}</b> theo mã QR ở trên (số tiền và nội dung đã điền sẵn). Đơn được giao ngay khi nhận được tiền.</p></span>` : `<span><i>2</i><p>Mẹ thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</p></span>`;
     const items = (order.items || []).map((it) => `<li>${esc(it.short || it.name)}${it.variant ? ` – ${esc(it.variant)}` : ''} <b>× ${it.qty || 1}</b></li>`).join('')
-      + (order.qua && order.qua.soQua ? `<li class="li-gift">🎁 Quà tặng: ${esc(order.qua.moTa || order.qua.ten)}</li>` : '');
+      + (order.qua && order.qua.soQua ? `<li class="li-gift">🎁 Quà tặng: ${esc(order.qua.moTa || order.qua.ten)}</li>` : '')
+      + (order.gioiThieu && order.gioiThieu.giam ? `<li class="li-gift">🤝 Giảm giới thiệu ${order.gioiThieu.phanTram || ''}%: −${fmt(order.gioiThieu.giam)}</li>` : '')
+      + (order.diem && order.diem.so ? `<li class="li-gift">⭐ Đã dùng ${Number(order.diem.so).toLocaleString('vi-VN')} điểm: −${fmt(order.diem.giam)}</li>` : '');
     return `${inModal ? `<div class="modal__head"><h3>${I.checkCircle}Đặt hàng thành công</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>` : ''}
       <div class="modal__body"><div class="qb__success">
         <div class="check">${I.check}</div>
@@ -1036,7 +1039,7 @@
 
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
-    renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk();
+    renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk(); GT.batRef();
     syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
@@ -1586,7 +1589,34 @@
   }
   (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(() => { try { tcBatDau(); } catch { /* không ảnh hưởng web */ } });
 
+  /* ---------------- Giới thiệu bạn bè + ví điểm (máy chủ: Apps Script – xem tools/apps-script.gs, phần GIỚI THIỆU BẠN BÈ) ----------------
+     Mã giới thiệu = SĐT người giới thiệu. Link ?ref=SĐT được nhớ 30 ngày để tự điền ở trang thanh toán / đăng ký.
+     Mọi con số (giảm giới thiệu, số điểm được dùng) đều do máy chủ quyết định lúc giữ chỗ, web chỉ hiển thị trước. */
+  const GT = {
+    refKey: 'mc_ref',
+    batRef() { const r = phoneKey(param('ref') || ''); if (phoneOk(r)) store.set(this.refKey, { ma: r, luc: Date.now() }); },
+    ref() { const v = store.get(this.refKey, null); return v && v.ma && Date.now() - v.luc < 30 * 864e5 ? v.ma : ''; },
+    boRef() { store.set(this.refKey, null); },
+    _cfg: null,
+    cauHinh() {
+      if (this._cfg) return this._cfg;
+      const c = store.get('mc_gt_cfg', null);
+      if (c && Date.now() - c.luc < 10 * 60e3) return (this._cfg = Promise.resolve(c));
+      return (this._cfg = loyaltyApi('gtCauHinh').then((r) => { if (r && r.ok) { const v = { ...r, luc: Date.now() }; store.set('mc_gt_cfg', v); return v; } return c || { bat: false }; }).catch(() => c || { bat: false }));
+    },
+    kiemTra(ref, sdt) { return loyaltyApi('gtKiemTra', { ref: phoneKey(ref), sdt: phoneKey(sdt || '') }); },
+    giuCho(o) { return loyaltyApi('gtGiuCho', o, 45000); },
+    vi() { const s = Session.get(); return s ? loyaltyApi('diemCuaToi', { token: s.token }) : Promise.resolve(null); },
+    cuaToi() { const s = Session.get(); return s ? loyaltyApi('gtCuaToi', { token: s.token }) : Promise.resolve(null); },
+    link(sdt) { return `${location.origin}${location.pathname.replace(/[^/]*$/, '')}account.html?ref=${phoneKey(sdt)}`; },
+    noiDung(cfg, sdt) { return String((cfg && cfg.noiDungChiaSe) || 'Dùng mã giới thiệu của mình: {ma} {link}').replace('{giam}', (cfg && cfg.giam) || 5).replace('{ma}', phoneKey(sdt)).replace('{link}', this.link(sdt)).trim(); },
+  };
+  const taoMaDon = () => 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 9000) + 1000);
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-qb-sang-tt]') && QB.id) { Cart.add(QB.id, QB.qty, QB.variant); location.href = 'checkout.html'; }
+  });
+
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
-    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
     giftFor, giftNote, giftBox, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

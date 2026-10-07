@@ -50,7 +50,7 @@ window.ADMIN = (() => {
      quyết định ẩn/hiện menu và nút bấm theo vai trò. */
   const VAI_TRO = {
     SUPER_ADMIN:   { ten: 'Quản trị cao nhất', quyen: ['*'] },
-    MANAGER:       { ten: 'Quản lý', quyen: ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'] },
+    MANAGER:       { ten: 'Quản lý', quyen: ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'referral.*', 'points.*', 'referral_settings.view', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'] },
     ORDER_STAFF:   { ten: 'Nhân viên đơn hàng', quyen: ['dashboard.view', 'order.view', 'order.update', 'customer.view'] },
     PRODUCT_STAFF: { ten: 'Nhân viên sản phẩm', quyen: ['dashboard.view', 'product.*', 'category.*', 'flashsale.*', 'combo.*'] },
     CONTENT_STAFF: { ten: 'Nhân viên nội dung', quyen: ['dashboard.view', 'content.*', 'banner.*', 'seo.*'] },
@@ -79,9 +79,9 @@ window.ADMIN = (() => {
 
   /* ---------------- Gọi Apps Script (JSONP) ---------------- */
   let seq = 0;
-  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa'];
+  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtDiemDieuChinh', 'qtGtCauHinh', 'qtGtXuLy', 'qtGtLich'];
   /* Lệnh chỉ đọc: hết giờ thì tự gửi lại 1 lần (Apps Script lần đầu sau khi nghỉ có thể mất 20–40 giây để "thức dậy") */
-  const LENH_DOC = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo'];
+  const LENH_DOC = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu'];
   function api(action, params = {}, timeout = 45000) {
     const lan1 = goiApi(action, params, timeout);
     return LENH_DOC.includes(action) ? lan1.catch((e) => (/không phản hồi/i.test(e.message) ? goiApi(action, params, timeout) : Promise.reject(e))) : lan1;
