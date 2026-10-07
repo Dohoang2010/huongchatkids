@@ -1189,6 +1189,18 @@ function apiAffDangNhap(p) {
   var token = taoToken(); sheetPDT().appendRow([token, String(dt.v[0]), new Date(Date.now() + 30 * 864e5), new Date()]);
   return { ok: true, token: token, ma: String(dt.v[0]) };
 }
+/* Khách đã đăng nhập (trang Tài khoản) → biết mình là đối tác chưa; vao=1 cấp phiên đối tác, khỏi đăng nhập lại.
+   Chỉ cấp khi phiên khách mạnh (OTP / mật khẩu riêng) – mật khẩu mặc định của shop ai cũng đoán được. */
+function apiAffTuKhach(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đăng nhập đã hết hạn' };
+  var dt = timDTTheoSdt(ph.sdt); if (!dt) return { ok: true, la: false };
+  var tt = String(dt.v[10]), ma = String(dt.v[0]), kq = { ok: true, la: true, ma: ma, tt: tt, duocVao: tt === DTT.DUYET && ph.manh };
+  if (String(p.vao) !== '1') return kq;
+  if (tt !== DTT.DUYET) return { ok: false, msg: tt === DTT.CHO ? 'Đăng ký đối tác đang chờ shop duyệt.' : 'Tài khoản đối tác đang ' + tt.toLowerCase() + '. Liên hệ shop ' + HOTLINE + '.' };
+  if (!ph.manh) return { ok: false, canMk: true, msg: 'Mẹ đăng nhập bằng OTP hoặc mật khẩu riêng để vào thẳng trang đối tác nhé.' };
+  var token = taoToken(); sheetPDT().appendRow([token, ma, new Date(Date.now() + 30 * 864e5), new Date()]);
+  return { ok: true, token: token, ma: ma };
+}
 function phienDT(token) {
   if (!token) return null; var v = docBang(sheetPDT(), 3);
   for (var i = v.length - 1; i >= 0; i--) if (String(v[i][0]) === String(token)) { if (new Date(v[i][2]).getTime() < Date.now()) return null; var dt = timDT(v[i][1]); return dtHoatDong(dt) ? dt : null; }
@@ -1554,6 +1566,7 @@ function doGet(e) {
     if (action === 'affGanDon')     return traVe(apiAffGanDon(p), cb);
     if (action === 'affDangKy')     return traVe(apiAffDangKy(p), cb);
     if (action === 'affDangNhap')   return traVe(apiAffDangNhap(p), cb);
+    if (action === 'affTuKhach')    return traVe(apiAffTuKhach(p), cb);
     if (action === 'affHoSo')       return traVe(apiAffHoSo(p), cb);
     if (action === 'affCongKhai')   return traVe(apiAffCongKhai(), cb);
     if (action === 'qtAffDs')       return traVe(apiQtAffDs(p), cb);

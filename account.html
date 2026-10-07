@@ -10,15 +10,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261007q">
+  <link rel="stylesheet" href="css/style.css?v=20261007r">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261007q"></script>
-<script src="js/diachi.js?v=20261007q"></script>
+<script src="js/data.js?v=20261007r"></script>
+<script src="js/diachi.js?v=20261007r"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261007q"></script>
+<script src="js/app.js?v=20261007r"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const don = s.donHang || []; const ma = couponsFor(kh);
     const dc = { tinh: kh.tinh || '', xa: kh.xa || '', chiTiet: kh.diaChi || '' };
     $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Thông tin khách hàng</span></nav>
-      <div class="flex justify-between items-center wrap gap-8 mb-16"><h1 class="page-title" style="margin:0">Chào ${esc(kh.ten || 'mẹ')} 👋</h1><button class="btn btn--ghost btn--sm" type="button" id="btnOut">Thoát khỏi máy này</button></div>
+      <div class="flex justify-between items-center wrap gap-8 mb-16"><h1 class="page-title" style="margin:0">Chào ${esc(kh.ten || 'mẹ')} 👋</h1><div class="flex gap-8 items-center wrap"><span id="dtNut"></span><button class="btn btn--ghost btn--sm" type="button" id="btnOut">Thoát khỏi máy này</button></div></div>
       <div class="checkout">
         <div class="flex flex-col gap-16">
           <div class="card card--pad"><div class="tier-hero">${theThanhVien({ spent, ten: kh.ten, sdt: kh.sdt })}<div><h3>🎖️ Hạng khách hàng & ưu đãi</h3>${thangHang(spent)}</div></div></div>
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="card card--pad" id="diem"><h3>⭐ Điểm của tôi</h3><div id="diemCard">${DANG_TAI}</div></div>
             <div class="card card--pad" id="gioi-thieu"><h3>🤝 Giới thiệu bạn bè</h3><div id="gtCard">${DANG_TAI}</div></div>
           </div>
-          <div class="card card--pad dt-moi"><div><h3>💼 Trở thành đối tác bán hàng</h3><p class="fs-14 text-muted">Chia sẻ link sản phẩm của shop lên Facebook, TikTok, Zalo – nhận <b>hoa hồng</b> cho mỗi đơn giao thành công, thanh toán ngày 10 hằng tháng.</p></div>
+          <div class="card card--pad dt-moi" id="dtMoi"><div><h3>💼 Trở thành đối tác bán hàng</h3><p class="fs-14 text-muted">Chia sẻ link sản phẩm của shop lên Facebook, TikTok, Zalo – nhận <b>hoa hồng</b> cho mỗi đơn giao thành công, thanh toán ngày 10 hằng tháng.</p></div>
             <a class="btn btn--primary" href="doi-tac.html?dk=1">Đăng ký làm đối tác</a></div>
 
           <div class="card card--pad"><h3>📦 Lịch sử đơn hàng <span class="text-muted fs-13" style="font-weight:500">(${don.length} đơn · ${fmt(spent)})</span></h3>
@@ -289,7 +289,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }).catch((e2) => loi(e2.message));
     });
   }
-  const render = () => { if (Session.get()) { renderHoSo(); taiDiemGT(); } else renderKhach(); ganFormDangKy(); };
+  /* Đã là đối tác → nút vào thẳng trang đối tác (máy chủ cấp phiên đối tác từ phiên khách, khỏi đăng nhập lại) */
+  function taiDoiTac() {
+    const s = Session.get(); if (!s || !$('#dtNut')) return;
+    loyaltyApi('affTuKhach', { token: s.token }).then((r) => {
+      if (!r || !r.ok || !r.la || !$('#dtNut')) return;
+      const the = $('#dtMoi');
+      if (r.tt === 'Đã duyệt') { $('#dtNut').innerHTML = `<button class="btn btn--primary btn--sm" type="button" id="btnDT" data-vao="${r.duocVao ? 1 : ''}">💼 Trang đối tác</button>`; the?.remove(); return; }
+      if (the) the.innerHTML = `<div><h3>💼 Đối tác bán hàng · mã ${esc(r.ma)}</h3><p class="fs-14 text-muted">${r.tt === 'Chờ duyệt' ? 'Đăng ký của mẹ đang chờ shop duyệt. Shop sẽ liên hệ khi tài khoản được mở.' : 'Tài khoản đối tác đang ' + esc(String(r.tt).toLowerCase()) + '. Mẹ liên hệ shop để được hỗ trợ nhé.'}</p></div>`;
+    }).catch(() => {});
+  }
+  const render = () => { if (Session.get()) { renderHoSo(); taiDiemGT(); taiDoiTac(); } else renderKhach(); ganFormDangKy(); };
   render();
   /* Vào từ link giới thiệu (account.html?ref=SĐT) mà chưa đăng nhập → mở sẵn form đăng ký, mã đã điền */
   if (!Session.get() && GT.ref() && MC.param('ref')) setTimeout(() => $('#btnDangKy')?.click(), 50);
@@ -316,7 +326,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'dkDangNhap' || e.target.id === 'dkVaoLogin') $('#btnLogin')?.click();
     if (e.target.id === 'dkOtp') openOtp({ title: 'Xác thực số điện thoại' }).then((ss) => { if (ss) render(); });
     if (e.target.id === 'btnDoiMk') MC.openDoiMk(false).then((ok) => { if (ok) render(); });
-    if (e.target.id === 'btnOut') { Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
+    if (e.target.id === 'btnDT') { const b = e.target, s = Session.get();
+      if (!b.dataset.vao || !s) { location.href = 'doi-tac.html'; return; }
+      b.disabled = true; b.textContent = 'Đang mở…';
+      loyaltyApi('affTuKhach', { token: s.token, vao: 1 }).then((r) => { if (r && r.ok && r.token) store.set('mc_dt_token', r.token); location.href = 'doi-tac.html'; })
+        .catch(() => { location.href = 'doi-tac.html'; }); return; }
+    if (e.target.id === 'btnOut') { store.set('mc_dt_token', ''); Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
     if (e.target.closest('[data-them-email]')) { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); $('#khForm').email.focus(); }
     if (e.target.id === 'btnEdit') { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); }
     if (e.target.id === 'btnCancel') { $('#khForm').classList.add('hide'); $('#khView').classList.remove('hide'); }
