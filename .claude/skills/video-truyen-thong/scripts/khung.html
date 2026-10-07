@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="UTF-8">
+<!-- Khung cảnh video: đọc window.KB (canh.js do build.mjs ghi ra), vẽ cảnh ?s=<id>&k=<số khung>.
+     Phần tử có data-k="n" chỉ hiện khi k >= n (hiện lần lượt theo lời đọc). Màu / font theo DESIGN.md của web. -->
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root { --p: #F0537A; --p6: #D93E66; --p7: #B92C51; --p1: #FFE9EF; --teal: #17A398; --amber: #FFB020; --ink: #22202A; --ink2: #4E4B58; --muted: #6F6B78; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; }
+body { font-family: 'Be Vietnam Pro', sans-serif; color: var(--ink); background: radial-gradient(120% 70% at 85% 0%, #FFE3EC 0%, #FFF6F1 45%, #FFF9EC 100%); position: relative; }
+body::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(240, 83, 122, .12) 2.5px, transparent 2.6px); background-size: 46px 46px; -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 40%); }
+.top { position: absolute; top: 70px; left: 72px; right: 72px; display: flex; align-items: center; gap: 18px; }
+.top img { width: 84px; height: 84px; border-radius: 50%; background: #fff; box-shadow: 0 8px 24px rgba(240, 83, 122, .2); }
+.top b { font-family: 'Quicksand'; font-size: 40px; color: var(--p); } .top span { margin-left: auto; font-size: 26px; font-weight: 700; color: var(--muted); }
+.wrap { position: absolute; top: 210px; left: 72px; right: 72px; bottom: 400px; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+.pill { align-self: flex-start; background: var(--p); color: #fff; font-weight: 800; font-size: 34px; padding: 12px 30px; border-radius: 999px; box-shadow: 0 10px 26px rgba(240, 83, 122, .3); }
+.pill--teal { background: var(--teal); box-shadow: 0 10px 26px rgba(23, 163, 152, .3); } .pill--amber { background: var(--amber); color: #3a2a00; }
+h1 { font-family: 'Quicksand'; font-size: 92px; line-height: 1.08; letter-spacing: -.01em; } h1 em, h2 em { font-style: normal; color: var(--p); } h1 .t, h2 .t { color: var(--teal); }
+h2 { font-family: 'Quicksand'; font-size: 70px; line-height: 1.12; }
+.lead { font-size: 40px; line-height: 1.45; color: var(--ink2); font-weight: 500; } .lead b { color: var(--ink); }
+.ui { background: #fff; border-radius: 40px; box-shadow: 0 30px 80px rgba(34, 32, 42, .16); overflow: hidden; align-self: center; position: relative; }
+.ui img { display: block; width: 100%; }
+.crop { position: relative; overflow: hidden; } .crop img { position: absolute; left: 0; width: 100%; }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.box { background: #fff; border-radius: 36px; padding: 40px; box-shadow: 0 20px 60px rgba(34, 32, 42, .1); }
+.box small { display: block; font-size: 30px; color: var(--muted); font-weight: 600; } .box b { display: block; font-family: 'Quicksand'; font-size: 64px; margin-top: 6px; }
+.phone { text-align: center; padding: 60px 30px; border: 6px dashed var(--p); background: #FFF5F8; } .phone b { font-size: 112px; letter-spacing: 4px; color: var(--p7); }
+.flow { display: flex; flex-direction: column; gap: 22px; }
+.row { display: flex; align-items: center; gap: 26px; background: #fff; border-radius: 30px; padding: 30px 36px; box-shadow: 0 14px 40px rgba(34, 32, 42, .08); font-size: 40px; font-weight: 700; }
+.row i { font-style: normal; font-size: 58px; width: 80px; text-align: center; } .row span { flex: 1; } .row b { font-family: 'Quicksand'; font-size: 52px; }
+.row--minus b { color: var(--teal); } .row--tot { background: var(--p); color: #fff; } .row--tot b { font-size: 66px; } .row--teal { background: var(--teal); color: #fff; }
+.list { display: flex; flex-direction: column; gap: 24px; }
+.li { display: flex; gap: 24px; align-items: flex-start; background: #fff; border-radius: 30px; padding: 30px 34px; font-size: 38px; line-height: 1.4; font-weight: 600; box-shadow: 0 14px 40px rgba(34, 32, 42, .08); } .li i { font-style: normal; font-size: 50px; line-height: 1.1; }
+.cta { background: linear-gradient(135deg, #F0537A, #FF8A65); color: #fff; border-radius: 48px; padding: 60px 50px; text-align: center; box-shadow: 0 30px 80px rgba(240, 83, 122, .35); }
+.cta h2 { color: #fff; font-size: 80px; } .cta p { font-size: 44px; margin-top: 20px; font-weight: 700; } .cta .web { display: inline-block; margin-top: 30px; background: #fff; color: var(--p6); font-family: 'Quicksand'; font-size: 58px; padding: 18px 46px; border-radius: 999px; }
+.big { font-size: 180px; line-height: 1; } .ct { text-align: center; }
+.coin { display: inline-flex; align-items: center; justify-content: center; width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFE08A, #FFB020 60%, #F28C00); color: #5a3a00; font-family: 'Quicksand'; font-size: 66px; box-shadow: 0 24px 60px rgba(242, 140, 0, .35); }
+.eq { display: flex; align-items: center; justify-content: center; gap: 36px; font-family: 'Quicksand'; font-size: 90px; } .eq .vnd { background: var(--teal); color: #fff; border-radius: 40px; padding: 30px 46px; font-size: 80px; }
+.sp { display: grid; grid-template-columns: 300px 1fr; gap: 34px; align-items: center; background: #fff; border-radius: 36px; padding: 30px; box-shadow: 0 20px 60px rgba(34, 32, 42, .1); }
+.sp img { width: 300px; height: 300px; object-fit: cover; border-radius: 26px; } .sp b { font-family: 'Quicksand'; font-size: 50px; line-height: 1.15; display: block; } .sp .gia { color: #C9285D; font-size: 58px; margin-top: 12px; }
+.an { opacity: 0; }
+/* Khổ ngang 16:9 */
+body.ngang, .ngang html { width: 1920px; height: 1080px; }
+.ngang .wrap { top: 160px; bottom: 170px; left: 120px; right: 120px; gap: 28px; } .ngang .top { top: 44px; left: 120px; right: 120px; }
+.ngang h1 { font-size: 80px; } .ngang h2 { font-size: 60px; } .ngang .lead { font-size: 34px; }
+</style></head>
+<body><div class="top"><img id="logo" alt=""><b id="brand"></b><span id="buoc"></span></div><div class="wrap" id="w"></div>
+<script src="canh.js"></script>
+<script>
+const q = new URLSearchParams(location.search); const s = q.get('s'); const k = Number(q.get('k') || 99);
+const KB = window.KB || { canh: [] };
+if (KB.khuon === '16:9') { document.documentElement.style.cssText = 'width:1920px;height:1080px'; document.body.classList.add('ngang'); document.body.style.cssText = 'width:1920px;height:1080px'; }
+document.getElementById('logo').src = KB.logo || 'file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/logo-192.png';
+document.getElementById('brand').textContent = KB.thuongHieu || 'Hương Chất Kids';
+const c = KB.canh.find((x) => String(x.id) === String(s)) || KB.canh[0];
+document.getElementById('w').innerHTML = c.html;
+document.getElementById('buoc').textContent = c.nhan || '';
+document.querySelectorAll('[data-k]').forEach((el) => { if (Number(el.dataset.k) > k) el.classList.add('an'); });
+</script></body></html>
