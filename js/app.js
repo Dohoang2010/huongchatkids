@@ -573,7 +573,8 @@
   function closeModal(el) { const m = el.closest ? el.closest('.modal') : $(el); if (m) { m.classList.remove('is-open'); m.setAttribute('aria-hidden', 'true'); m.dispatchEvent(new CustomEvent('mc:closed')); } unlockScroll(); }
 
   /* ---------------- Quick Buy (Mua nhanh 1-chạm) ---------------- */
-  const QB = { id: null, variant: null, qty: 1, coupon: '', quaVi: '' };
+  const QB = { id: null, variant: null, qty: 1, coupon: '', quaVi: '',
+    gtCfg: { bat: false }, gt: { ma: '', ok: false, msg: '' }, vi: null, diemMuon: 0, maDon: '', daGiu: false };
   /* Dòng giỏ hàng giả lập để tính quà tặng cho đơn mua nhanh */
   function qbLines() { const p = byId(QB.id); if (!p) return []; const { price, label } = qbPrice(); return [{ p, id: p.id, qty: QB.qty, price, total: price * QB.qty, variantLabel: label }]; }
   /* Tỉnh nhận của đơn mua nhanh: đoán từ ô địa chỉ; gõ đủ địa chỉ mà không nhận ra tỉnh → tính như liên vùng */
@@ -589,14 +590,47 @@
     const hang = hangCho(qbPhone()) || tierOf(0); const hangAmt = pct ? Math.round(base * pct / 100) : 0;
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
     if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
-    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0);
-    const ship = cr && cr.ok && cr.freeship ? 0 : shipFee(base - discount, 'standard', { tinh: qbTinh(), lines: qbLines() });
-    return { sub, multi, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, ship, total: Math.max(0, base - discount) + (ship || 0) };
+    /* Giảm giới thiệu = 1 mã giảm giá (không cộng dồn mã / hạng, lấy mức lợi hơn); điểm chỉ trừ tiền hàng còn lại */
+    const C = QB.gtCfg || {};
+    const gtAmt = QB.gt.ok && C.bat && base >= (Number(C.donToiThieu) || 0) ? Math.round(base * (Number(C.giam) || 0) / 100) : 0;
+    let dungGT = gtAmt > 0, boMa = false;
+    if (dungGT && cr && cr.ok) {
+      const giaTriMa = (dungMa ? couponAmt : 0) + (cr.freeship ? (shipFee(base, 'standard', { tinh: qbTinh(), lines: qbLines() }) || 0) : 0);
+      if (giaTriMa > gtAmt) dungGT = false; else { dungMa = false; boMa = true; }
+    }
+    if (dungGT && dungHang && !ketHop().hangMa) { if (hangAmt > gtAmt) dungGT = false; else dungHang = false; }
+    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0);
+    const gtd = Number(C.giaTriDiem) || 1;
+    const diemToiDa = QB.vi && QB.vi.dungDuoc ? Math.max(0, Math.min(QB.vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd))) : 0;
+    const diemDung = Math.max(0, Math.min(QB.diemMuon, diemToiDa)), giamDiem = diemDung * gtd;
+    const ship = cr && cr.ok && cr.freeship && !boMa ? 0 : shipFee(base - discount, 'standard', { tinh: qbTinh(), lines: qbLines() });
+    return { sub, multi, base, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+  }
+  const qbQuaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : maChoQua(k.boMa ? null : k.cr, k.dungMa));
+  /* Mã giới thiệu trong Mua nhanh: kiểm tra với SĐT đang nhập (khách mới mới được giảm) */
+  function qbGtXet(ma) {
+    ma = phoneKey(ma || ''); const sdt = phoneOk(phoneKey(qbPhone())) ? phoneKey(qbPhone()) : '';
+    if (!ma) { QB.gt = { ma: '', ok: false, msg: '' }; qbRefresh(); return; }
+    if (!phoneOk(ma)) { QB.gt = { ma, ok: false, msg: 'Mã giới thiệu là số điện thoại 10 số của người giới thiệu.', sdt }; qbRefresh(); return; }
+    QB.gt = { ...QB.gt, ma, dangXet: true }; qbRefresh();
+    GT.kiemTra(ma, sdt).then((r) => {
+      if (QB.gt.ma !== ma) return;
+      QB.gt = { ma, ok: !!(r && r.ok), msg: (r && (r.message || r.msg)) || '', tenAn: (r && r.tenAn) || '', sdt };
+      if (QB.gt.ok && sdt) toast(`✓ Mã giới thiệu hợp lệ – giảm ${QB.gtCfg.giam}% đơn đầu tiên`, { type: 'ok' });
+      qbRefresh();
+    }).catch((e) => { if (QB.gt.ma === ma) { QB.gt = { ma, ok: false, msg: e.message, sdt }; qbRefresh(); } });
+  }
+  /* Ví điểm khi SĐT đang nhập trùng tài khoản đang đăng nhập */
+  function qbTaiVi() {
+    const s = Session.get();
+    if (!s || phoneKey(s.sdt) !== phoneKey(qbPhone())) { if (QB.vi) { QB.vi = null; QB.diemMuon = 0; qbRefresh(); } return; }
+    GT.vi().then((r) => { QB.vi = r && r.ok ? r : null; if ($('#qbForm')) qbRefresh(); }).catch(() => {});
   }
   const qbTotal = () => qbCalc().total;
   function openQuickBuy(id, opts = {}) {
     const p = byId(id); if (!p) return;
-    QB.id = id; QB.variant = opts.variant ?? (p.variants ? Math.max(0, p.variants.findIndex((v) => !v.oos)) : null); QB.qty = opts.qty || 1; QB.coupon = ''; { const l = qbLines(), s = l.reduce((a, x) => a + x.total, 0); QB.coupon = maTotNhat(s - (QB.qty >= 2 ? Math.round(s * MULTI_RATE) : 0), l); }
+    QB.id = id; QB.variant = opts.variant ?? (p.variants ? Math.max(0, p.variants.findIndex((v) => !v.oos)) : null); QB.qty = opts.qty || 1; QB.coupon = '';
+    QB.gt = { ma: GT.ref(), ok: false, msg: '' }; QB.vi = null; QB.diemMuon = 0; QB.maDon = ''; QB.daGiu = false; { const l = qbLines(), s = l.reduce((a, x) => a + x.total, 0); QB.coupon = maTotNhat(s - (QB.qty >= 2 ? Math.round(s * MULTI_RATE) : 0), l); }
     const c = Customer.get() || {}; const known = !!c.phone;
     const manyVariants = p.variants && p.variants.length > 4;
     $('#quickBuyContent').innerHTML = `
@@ -618,7 +652,8 @@
           </div>
           <details class="qb__coupon" ${QB.coupon ? "open" : ""}><summary>${I.tag}Có mã giảm giá?</summary><div class="coupon mt-8"><input class="input" id="qbCoupon" value="${esc(QB.coupon)}" placeholder="Nhập mã" aria-label="Mã giảm giá"><button class="btn btn--dark" type="button" data-qb-coupon>Áp dụng</button></div><div class="coupon-hint" id="qbCouponHint"></div><div id="qbMaLuu"></div></details>
           <div id="qbGift"></div>
-          ${GT.ref() || Session.get() ? `<p class="qb__gtnote">🤝 Có mã giới thiệu hoặc điểm thưởng? <button type="button" data-qb-sang-tt>Đặt qua trang Thanh toán</button> để được trừ tiền.</p>` : ''}
+          <details class="qb__coupon hide" id="qbGtWrap" ${GT.ref() ? 'open' : ''}><summary>🤝 Có mã giới thiệu?</summary><div class="coupon mt-8"><input class="input" id="qbGtInput" type="tel" inputmode="numeric" value="${esc(GT.ref())}" placeholder="SĐT người giới thiệu" aria-label="Mã giới thiệu (số điện thoại người giới thiệu)"><button class="btn btn--dark" type="button" data-qb-gt>Áp dụng</button></div><div class="coupon-hint" id="qbGtHint" aria-live="polite"></div></details>
+          <div id="qbDiem"></div>
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
           <div class="form-error hide" id="qbError" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block btn--stack" type="submit" id="qbSubmit"><span>ĐẶT HÀNG · <span id="qbTotal"></span></span><small>Không cần tài khoản · Kiểm tra hàng trước khi thanh toán</small></button>
@@ -636,7 +671,10 @@
     $('#qbForm input[name=phone]').addEventListener('input', debounce(qbPhoneTyped, 600));
     if (phoneOk(phoneKey(c.phone || ''))) qbPhoneTyped();   // khách cũ trên máy này: áp hạng ngay khi mở
     $('#qbLookupPhone')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qbLookup(); } });
+    $('#qbGtInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qbGtXet(e.target.value); } });
     qbRefresh(); openModal('#quickBuy'); setTimeout(() => { if (!known) $('#qbForm input[name=name]').focus(); else $('#qbSubmit').focus(); }, 300);
+    GT.cauHinh().then((cf) => { QB.gtCfg = cf || { bat: false }; if (!$('#qbForm')) return; $('#qbGtWrap')?.classList.toggle('hide', !QB.gtCfg.bat); if (QB.gt.ma && QB.gtCfg.bat) qbGtXet(QB.gt.ma); else qbRefresh(); });
+    qbTaiVi();
   }
   /* Tra cứu khách cũ theo SĐT: có hồ sơ (Sheet/CRM) → xác thực OTP → tự điền tên, SĐT, địa chỉ.
      Không điền khi chưa có OTP: tránh người lạ gõ số của khách khác để xem địa chỉ. */
@@ -651,7 +689,7 @@
     if (dc) f.elements.address.value = dc;
     const t = tierOf(Number(kh.tongChiTieu) || 0);
     qbLookupMsg(`✓ Đã điền thông tin của <b>${esc(kh.ten || 'mẹ')}</b>${t.discount ? ` · hạng ${tierBadge(t)} giảm ${t.discount}% đơn này` : ''}${dc ? '' : '. Mẹ nhập thêm địa chỉ nhận hàng nhé'}`, 'ok');
-    qbRefresh();
+    qbRefresh(); qbTaiVi(); if (QB.gt.ma && QB.gtCfg.bat) qbGtXet(QB.gt.ma);
     (dc ? $('#qbSubmit') : f.elements.address).focus();
   }
   function qbLookup() {
@@ -691,6 +729,7 @@
   function qbPhoneTyped() {
     const sdt = phoneKey(($('#qbForm') || {}).elements?.phone?.value || '');
     if (!phoneOk(sdt)) { qbRefresh(); return; }
+    qbTaiVi(); if (QB.gt.ma && QB.gtCfg.bat && QB.gt.sdt !== sdt) qbGtXet(QB.gt.ma);
     traHang(sdt).then((v) => { if (phoneKey($('#qbForm')?.elements.phone.value || '') !== sdt) return; if (v && v.co) { qbDienTuTraCuu(v, false); if ($('#qbLookupMsg')) qbGreet(sdt); else qbRefresh(); } else qbRefresh(); });
   }
   function qbRefresh() {
@@ -699,10 +738,24 @@
     $('#qbTotal').textContent = fmt(k.total);
     $('#qbQty').value = QB.qty;
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
-    const g = giftFor(qbLines(), (() => { const q = qbCalc(); return maChoQua(q.cr, q.dungMa); })()); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
+    const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
     const gw = $('#qbGift'); if (gw) gw.innerHTML = giftBox(g, true, QB.quaVi);
-    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
-    const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`) : '';
+    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
+    const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = k.boMa ? `<span class="text-muted">Mã ${esc(k.cr.code)} không cộng dồn với giảm giá giới thiệu – web đang dùng mức có lợi hơn.</span>` : k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`) : '';
+    const gh = $('#qbGtHint'); if (gh) {
+      const G2 = QB.gt;
+      gh.innerHTML = G2.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
+        : G2.ok && k.dungGT ? `<span class="text-teal fw-600">✓ Mã hợp lệ${G2.tenAn ? ` (${esc(G2.tenAn)})` : ''} – giảm ${QB.gtCfg.giam}% đơn đầu tiên</span>`
+        : G2.ok ? `<span class="text-muted">✓ Mã hợp lệ, nhưng ${k.base < (Number(QB.gtCfg.donToiThieu) || 0) ? `đơn từ ${fmt(QB.gtCfg.donToiThieu)} mới được giảm` : 'ưu đãi khác của đơn đang có lợi hơn (không cộng dồn)'}.</span>`
+        : G2.msg ? `<span class="text-red">✕ ${esc(G2.msg)}</span>` : `<span class="text-muted">Nhập SĐT người giới thiệu để giảm ${QB.gtCfg.giam || 5}% cho đơn đầu tiên.</span>`;
+      const b = $('[data-qb-gt]'); if (b) b.textContent = G2.ok ? 'Bỏ mã' : 'Áp dụng';
+    }
+    const dw = $('#qbDiem'); if (dw) {
+      const v = QB.vi;
+      dw.innerHTML = !v || !(v.khaDung > 0) ? ''
+        : !v.dungDuoc ? `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Mẹ có <b>${v.khaDung.toLocaleString('vi-VN')}</b> điểm</span></div><p class="fs-13 text-muted">Xác thực OTP để dùng điểm (bảo vệ điểm của mẹ). <button type="button" class="text-primary fw-700" data-qb-diem-otp>Xác thực ngay</button></p></div>`
+        : `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Mẹ có <b>${v.khaDung.toLocaleString('vi-VN')}</b> điểm</span></div><label class="diem-co__chk"><input type="checkbox" id="qbDiemDung" ${QB.diemMuon > 0 ? 'checked' : ''}> Dùng ${k.diemToiDa.toLocaleString('vi-VN')} điểm giảm ${fmt(k.diemToiDa * k.gtd)}</label></div>`;
+    }
     const ml = $("#qbMaLuu"); if (ml) ml.innerHTML = chipMaDaLuu(k.sub - k.multi, qbLines(), QB.coupon).replace(/data-coupon=/g, "data-qb-ma=");
     $$('#qbVariants [data-qb-variant]').forEach((b) => { const on = Number(b.dataset.qbVariant) === QB.variant; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
     const z = $('#quickBuy [data-zalo-copy]'); const p = byId(QB.id); if (z && p) z.dataset.zaloCopy = `${shortName(p)}${p.variants && QB.variant != null ? ' – ' + p.variants[QB.variant].label : ''} × ${QB.qty}`;
@@ -718,13 +771,39 @@
     Customer.set({ ...(Customer.get() || {}), name, phone, address, payment, email });
     const btn = $('#qbSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang gửi đơn…</span>';
     const p = byId(QB.id); const { price, label } = qbPrice(); const k = qbCalc();
-    const g = giftFor(qbLines(), (() => { const q = qbCalc(); return maChoQua(q.cr, q.dungMa); })()); const ss = Session.get();
-    const order = await submitOrder({ type: 'quick', customer: { name, phone: phoneKey(phone), address, email }, payment,
+    const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); const ss = Session.get();
+    /* Giữ chỗ ưu đãi giới thiệu / điểm trên máy chủ (kiểm tra lại + khoá chống dùng trùng) */
+    const sdtDat = phoneKey(phone); const code = QB.maDon || (QB.maDon = taoMaDon()); let maGiu = '';
+    if (k.dungGT || k.diemDung > 0 || QB.daGiu) {
+      btn.innerHTML = '<span>Đang giữ ưu đãi…</span>';
+      const loiGiu = (msg) => { err.textContent = msg; err.classList.remove('hide'); btn.disabled = false; btn.innerHTML = `<span>ĐẶT HÀNG · <span id="qbTotal"></span></span><small>Không cần tài khoản · Kiểm tra hàng trước khi thanh toán</small>`; qbRefresh(); };
+      let res;
+      try {
+        res = await GT.giuCho({ sdt: sdtDat, token: ss && phoneKey(ss.sdt) === sdtDat ? ss.token : '', maDon: code, ref: k.dungGT ? QB.gt.ma : '', dungGT: k.dungGT ? '1' : '0',
+          diem: k.diemDung, giaTri: k.base, giamKhac: (k.dungHang ? k.hangAmt : 0) + k.coupon, tongDon: k.total });
+      } catch (e2) { return loiGiu(e2.message + ' – mẹ bấm Đặt hàng lại giúp shop nhé.'); }
+      if (!res || !res.ok) {
+        if (res && res.code === 'REQUIRE_AUTH') { QB.diemMuon = 0; if (QB.vi) QB.vi = { ...QB.vi, dungDuoc: false }; }
+        else if (res && k.dungGT && res.code !== 'BUSY') QB.gt = { ...QB.gt, ok: false, msg: res.message || res.msg };
+        return loiGiu((res && (res.msg || res.message)) || 'Chưa giữ được ưu đãi, mẹ thử lại nhé');
+      }
+      QB.daGiu = !!res.maGiu;
+      if ((k.dungGT ? k.gtAmt : 0) !== (res.giamGT || 0) || k.diemDung !== (res.diem || 0)) {
+        if (k.dungGT && !res.giamGT) QB.gt = { ...QB.gt, ok: false, msg: 'Ưu đãi giới thiệu không còn áp dụng được cho đơn này.' };
+        QB.diemMuon = res.diem || 0; qbTaiVi();
+        return loiGiu('Ưu đãi vừa được cập nhật theo dữ liệu mới nhất. Mẹ kiểm tra lại tổng tiền rồi bấm Đặt hàng lần nữa nhé.');
+      }
+      maGiu = res.maGiu || '';
+    }
+    const uuDai = [k.dungGT ? `Giảm giới thiệu ${QB.gtCfg.giam}% (người giới thiệu ${QB.gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
+    const order = await submitOrder({ type: 'quick', code, customer: { name, phone: sdtDat, address, email }, payment,
+      note: uuDai ? `[${uuDai}]` : '', gioiThieu: k.dungGT ? { ma: QB.gt.ma, giam: k.gtAmt, phanTram: QB.gtCfg.giam } : null, diem: k.diemDung ? { so: k.diemDung, giam: k.giamDiem } : null, maGiu,
       coupon: k.dungMa && k.cr && k.cr.ok ? k.cr.code : '',
       hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (ss && phoneKey(ss.sdt) === phoneKey(phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
       token: ss ? ss.token : '',
       qua: g && g.soQua ? { soQua: g.soQua, ten: g.ten, vi: QB.quaVi, chuongTrinh: g.chuongTrinh, moTa: `${g.moTa} (${QB.quaVi})` } : null,
-      items: [{ id: p.id, name: p.name, short: shortName(p), variant: label, qty: QB.qty, price }], subtotal: k.sub, discount: k.multi + (k.dungHang ? k.hangAmt : 0) + k.coupon, ship: k.ship, total: k.total });
+      items: [{ id: p.id, name: p.name, short: shortName(p), variant: label, qty: QB.qty, price }], subtotal: k.sub, discount: k.multi + k.discount + k.giamDiem, ship: k.ship, total: k.total });
+    if (k.dungGT) GT.boRef();
     if (Session.get()) refreshProfile();
     $('#quickBuyContent').innerHTML = orderSuccessHTML(order, true);
     setTimeout(() => $('#quickBuy .qb__success h3')?.focus(), 100);
@@ -1614,7 +1693,10 @@
   const taoMaDon = () => 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 9000) + 1000);
   document.addEventListener('click', (e) => {
     if (e.target.closest('[data-qb-sang-tt]') && QB.id) { Cart.add(QB.id, QB.qty, QB.variant); location.href = 'checkout.html'; }
+    if (e.target.closest('[data-qb-gt]')) { if (QB.gt.ok) { GT.boRef(); $('#qbGtInput').value = ''; qbGtXet(''); } else qbGtXet($('#qbGtInput').value); }
+    if (e.target.closest('[data-qb-diem-otp]')) openOtp({ phone: phoneKey(qbPhone()), title: 'Xác thực để dùng điểm' }).then((s) => { if (s) qbTaiVi(); });
   });
+  document.addEventListener('change', (e) => { if (e.target.id === 'qbDiemDung') { QB.diemMuon = e.target.checked ? qbCalc().diemToiDa : 0; qbRefresh(); } });
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
