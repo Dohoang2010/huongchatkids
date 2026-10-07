@@ -616,6 +616,16 @@ tr.is-dim{opacity:.55}
 .hh-dt{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-bottom:6px}
 .hh-dt__it{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:0;font-weight:500;cursor:pointer}.hh-dt__it input{width:16px;height:16px;margin:0}
 .hh-dt__it input,[data-cd-sp],[data-hh-chon],#hhAll,[data-them]{width:16px!important;height:16px;flex:none}
-.hh-dt-tool{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.hh-dt-tool .tool__tim{flex:1 1 240px}
-.hh-dt-tool__all{display:flex;gap:6px;align-items:center;margin:0;font-weight:500;white-space:nowrap;cursor:pointer}.hh-dt-tool__all input{width:16px!important;height:16px;margin:0}
-.hh-dt{max-height:260px;overflow:auto}.hh-dt__it[hidden],#cdDtRong[hidden]{display:none}#cdDtRong{grid-column:1/-1;margin:4px 0}
+/* Chiến dịch riêng – ô chọn đối tác dạng danh sách thả xuống */
+.dt-pick{position:relative;max-width:560px}
+.dt-pick__dd{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);background:var(--card,#fff);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:6px}
+.dt-pick__dd[hidden],.dt-pick__it[hidden],#cdDtRong[hidden]{display:none}
+.dt-pick__all{display:flex;gap:8px;align-items:center;margin:0;padding:8px 10px;border-bottom:1px solid var(--line);font-weight:600;cursor:pointer}
+.dt-pick__ds{max-height:260px;overflow:auto}
+.dt-pick__it{display:flex;gap:8px;align-items:center;margin:0;padding:8px 10px;border-radius:8px;font-weight:500;cursor:pointer}.dt-pick__it:hover{background:var(--bg)}
+.dt-pick__it span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dt-pick__all input,.dt-pick__it input{width:16px!important;height:16px;margin:0;flex:none}
+#cdDtRong{margin:8px 10px}
+.dt-pick__chon{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 6px}
+.dt-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;border-radius:999px;background:var(--primary-soft,#fde8ee);font-size:13px}
+.dt-chip button{border:0;background:transparent;cursor:pointer;font-size:16px;line-height:1;width:22px;height:22px;border-radius:50%;padding:0;color:inherit}.dt-chip button:hover{background:rgba(0,0,0,.08)}

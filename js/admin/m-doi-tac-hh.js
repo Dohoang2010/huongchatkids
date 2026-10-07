@@ -20,7 +20,10 @@
   const locDt = () => { const k = boDau(ed.qDt || '').trim(); let hien = 0, chonHet = true;
     $$('[data-tim]').forEach((l) => { const ok = !k || l.dataset.tim.includes(k); l.hidden = !ok; if (ok) { hien++; if (!l.querySelector('input').checked) chonHet = false; } });
     const a = $('#cdDtAll'); if (a) { a.checked = hien > 0 && chonHet; a.disabled = !hien; } const r = $('#cdDtRong'); if (r) r.hidden = hien > 0;
-    const so = $('#cdDtSo'); if (so && cdDl) so.textContent = `Đã chọn ${ed.dts.size}/${cdDl.dts.length}`; };
+    const so = $('#cdDtSo'); if (so && cdDl) so.textContent = `· đã chọn ${ed.dts.size}/${cdDl.dts.length}`;
+    const ch = $('#cdDtChon'); if (ch && cdDl) ch.innerHTML = ed.dts.size ? [...ed.dts].map((m) => { const x = cdDl.dts.find((d) => d.ma === m) || { ma: m, ten: '' };
+      return `<span class="dt-chip"><b>${esc(x.ma)}</b>${x.ten ? ' · ' + esc(x.ten) : ''}<button type="button" data-dt-bo="${esc(x.ma)}" title="Bỏ chọn">×</button></span>`; }).join('') : '<small class="muted">Chưa chọn đối tác nào.</small>'; };
+  const moDd = (mo) => { const d = $('#cdDtDd'); if (d) d.hidden = !mo; };
 
   /* ================= HOA HỒNG SẢN PHẨM ================= */
   async function veSp(el, khung) {
@@ -111,9 +114,10 @@
       <div class="grid-2"><label>Tên chiến dịch <i>*</i><input id="cdTen" maxlength="100" value="${esc(ed.ten)}" placeholder="VD: HCK x Mẹ Bi – tháng 10"></label>
         <div class="grid-2" style="gap:10px"><label>Bắt đầu<input id="cdBd" type="datetime-local" value="${esc(ed.batDau)}"><small class="hint">Trống = ngay bây giờ</small></label><label>Kết thúc<input id="cdKt" type="datetime-local" value="${esc(ed.ketThuc)}"><small class="hint">Trống = không giới hạn</small></label></div></div>
       <label>Đối tác áp dụng <i>*</i></label>
-      ${cdDl.dts.length ? `<div class="hh-dt-tool"><div class="tool__tim"><input id="cdDtQ" placeholder="Tìm đối tác theo mã, tên, SĐT…" value="${esc(ed.qDt || '')}" autocomplete="off"></div>
-        <label class="hh-dt-tool__all"><input type="checkbox" id="cdDtAll"> Chọn tất cả đang hiện</label><small class="muted" id="cdDtSo">Đã chọn ${ed.dts.size}/${cdDl.dts.length}</small></div>` : ''}
-      <div class="hh-dt">${cdDl.dts.map((x) => `<label class="hh-dt__it" data-tim="${esc(boDau([x.ma, x.ten, x.sdt].join(' ')))}" ${khopDt(x) ? '' : 'hidden'}><input type="checkbox" data-cd-dt="${esc(x.ma)}" ${ed.dts.has(x.ma) ? 'checked' : ''}> <b>${esc(x.ma)}</b> · ${esc(x.ten)}</label>`).join('') || '<p class="muted">Chưa có đối tác đã duyệt.</p>'}<p class="muted" id="cdDtRong" ${cdDl.dts.some(khopDt) ? 'hidden' : ''}>Không thấy đối tác phù hợp.</p></div>
+      ${cdDl.dts.length ? `<div class="dt-pick" id="cdDtPick"><div class="tool__tim"><input id="cdDtQ" placeholder="Bấm để tìm & chọn đối tác (mã, tên, SĐT)…" value="${esc(ed.qDt || '')}" autocomplete="off"></div>
+        <div class="dt-pick__dd" id="cdDtDd" hidden><label class="dt-pick__all"><input type="checkbox" id="cdDtAll"> Chọn tất cả đang hiện <small class="muted" id="cdDtSo"></small></label>
+          <div class="dt-pick__ds">${cdDl.dts.map((x) => `<label class="dt-pick__it" data-tim="${esc(boDau([x.ma, x.ten, x.sdt].join(' ')))}" ${khopDt(x) ? '' : 'hidden'}><input type="checkbox" data-cd-dt="${esc(x.ma)}" ${ed.dts.has(x.ma) ? 'checked' : ''}><b>${esc(x.ma)}</b><span>${esc(x.ten)}</span>${x.sdt ? `<small class="muted">${esc(x.sdt)}</small>` : ''}</label>`).join('')}<p class="muted" id="cdDtRong" hidden>Không thấy đối tác phù hợp.</p></div></div></div>
+      <div class="dt-pick__chon" id="cdDtChon"></div>` : '<p class="muted">Chưa có đối tác đã duyệt.</p>'}
       <label style="margin-top:12px">Sản phẩm áp dụng</label>
       <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px"><label class="qmk__tk" style="margin:0"><input type="radio" style="width:auto;margin:0" name="cdPham" value="chon" ${ed.tatCa ? '' : 'checked'}> Chọn từng sản phẩm, mỗi SP một mức %</label>
         <label class="qmk__tk" style="margin:0"><input type="radio" style="width:auto;margin:0" name="cdPham" value="tatCa" ${ed.tatCa ? 'checked' : ''}> Toàn bộ sản phẩm của shop, 1 mức</label></div>
@@ -139,7 +143,7 @@
     if (!location.hash.startsWith('#/doi-tac')) return;
     if (e.target.id === 'hhQ') { S.q = e.target.value; tre(); } if (e.target.id === 'hhThemQ') { S.qThem = e.target.value; tre(); }
     if (e.target.id === 'cdQ') { docEd(); ed.q = e.target.value; tre(); }
-    if (e.target.id === 'cdDtQ' && ed) { ed.qDt = e.target.value; locDt(); }
+    if (e.target.id === 'cdDtQ' && ed) { ed.qDt = e.target.value; locDt(); moDd(true); }
     const p = e.target.closest('[data-cd-pt]'); if (p && ed) ed.sp[p.dataset.cdPt] = p.value;
   });
   document.addEventListener('change', (e) => {
@@ -154,8 +158,13 @@
     if (e.target.id === 'cdAll' && ed) { docEd(); const on = e.target.checked; $$('[data-cd-sp]').forEach((x) => { const id = x.dataset.cdSp; if (!on) return delete ed.sp[id]; if (ed.sp[id] == null) { const h = (dl && dl.sp && dl.sp[id]) || null; ed.sp[id] = h && h.pt != null ? h.pt : (cdDl.macDinh.link ?? 10); } }); return veLai(); }
     const sp = e.target.closest('[data-cd-sp]'); if (sp && ed) { docEd(); const id = sp.dataset.cdSp; if (sp.checked) { const h = (dl && dl.sp && dl.sp[id]) || null; ed.sp[id] = h && h.pt != null ? h.pt : (cdDl.macDinh.link ?? 10); } else delete ed.sp[id]; veLai(); }
   });
+  /* Ô chọn đối tác: bấm vào ô tìm mở danh sách, bấm ra ngoài / Esc thì đóng */
+  document.addEventListener('focusin', (e) => { if (e.target.id === 'cdDtQ') moDd(true); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && e.target.id === 'cdDtQ') { moDd(false); e.target.blur(); } });
   document.addEventListener('click', async (e) => {
     if (!location.hash.startsWith('#/doi-tac')) return;
+    if ($('#cdDtDd') && !e.target.closest('#cdDtPick')) moDd(false);
+    const bo = e.target.closest('[data-dt-bo]'); if (bo && ed) { ed.dts.delete(bo.dataset.dtBo); const c = $(`[data-cd-dt="${bo.dataset.dtBo}"]`); if (c) c.checked = false; locDt(); return; }
     if (e.target.id === 'hhThemMo') { S.them = true; S.chonThem.clear(); return veLai(); }
     if (e.target.id === 'hhThemDong') { S.them = false; return veLai(); }
     if (e.target.id === 'hhThemTatCa') { $$('[data-them]').forEach((c) => S.chonThem.add(c.dataset.them)); return veLai(); }
