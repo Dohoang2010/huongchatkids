@@ -87,7 +87,7 @@ function sheetPhu(ten, headers) {
 }
 function sheetKH()    { return sheetPhu(SHEET_KH, H_KH); }
 function sheetOtp()   { return sheetPhu(SHEET_OTP, ['Điện thoại', 'Mã', 'Hết hạn', 'Số lần sai', 'Gửi lúc', 'Kênh']); }
-function sheetPhien() { return sheetPhu(SHEET_PHIEN, ['Token', 'Điện thoại', 'Hết hạn', 'Tạo lúc']); }
+function sheetPhien() { return sheetPhu(SHEET_PHIEN, ['Token', 'Điện thoại', 'Hết hạn', 'Tạo lúc', 'Kiểu']); }
 
 function chuanSdt(v) {
   var s = String(v == null ? '' : v).replace(/[\s.()\-']/g, '');
@@ -363,9 +363,10 @@ function kiemTraOtp(sdt, ma) {
   }
   return { ok: false, msg: 'Mẹ bấm gửi mã OTP trước nhé' };
 }
-function luuPhien(sdt) {
+/* kieu: 'otp' | 'mk' (mật khẩu riêng) | 'mkMacDinh' – dùng điểm chỉ cho phép phiên otp / mk */
+function luuPhien(sdt, kieu) {
   var token = taoToken();
-  sheetPhien().appendRow([token, "'" + sdt, new Date(Date.now() + PHIEN_NGAY * 864e5), new Date()]);
+  sheetPhien().appendRow([token, "'" + sdt, new Date(Date.now() + PHIEN_NGAY * 864e5), new Date(), kieu || '']);
   return token;
 }
 function sdtTheoToken(token) {
@@ -416,6 +417,435 @@ function guiMaOtp(sdt, ma, emailKhach) {
   return { kenh: 'shop' };
 }
 
+/* ===================== GIỚI THIỆU BẠN BÈ + VÍ ĐIỂM =====================
+   Mã giới thiệu = số điện thoại của khách. Người mới nhập mã → giảm X% đơn đầu (mặc định 5%).
+   Đơn đó GIAO THÀNH CÔNG (theo trạng thái CRM) → người giới thiệu được cộng Y% giá trị hàng thành điểm (mặc định 5%).
+   1 điểm = giaTriDiem đồng (mặc định 1đ), dùng để trừ thẳng vào tiền hàng khi thanh toán (không trừ phí ship).
+
+   Lưu trữ (Google Sheet):
+   - "Giới thiệu"        : mỗi người được giới thiệu đúng 1 dòng (không đổi người giới thiệu sau khi đã liên kết).
+   - "Điểm - Giao dịch"  : sổ cái điểm, chỉ thêm không xoá. Số dư = tổng cột Điểm. Cột Khoá chống ghi trùng
+                           (VD EARN:HCK2610071234 – gọi lại bao nhiêu lần cũng chỉ cộng 1 lần).
+   - "Điểm - Giữ chỗ"    : mỗi đơn có dùng điểm / giảm giới thiệu có 1 mã giữ chỗ. Đang giữ → Đã dùng / Đã trả lại / Đã hoàn điểm.
+   - Cấu hình            : Thuộc tính tập lệnh GT_CAU_HINH (sửa ở trang quản trị, không sửa code).
+   Mọi thao tác ghi điểm chạy trong khoá tập lệnh (LockService) → 2 yêu cầu cùng lúc không dùng trùng điểm. */
+var SHEET_GT = 'Giới thiệu';
+var H_GT = ['Người được GT', 'Người GT', 'Tạo lúc', 'Nguồn', 'Trạng thái', 'Mã đơn', 'Mã giữ chỗ', 'Tiền giảm', '% giảm',
+            '% thưởng', 'Giá trị tính thưởng', 'Điểm thưởng', 'Cập nhật', 'Ghi chú'];
+var SHEET_DG = 'Điểm - Giao dịch';
+var H_DG = ['Thời gian', 'Mã GD', 'Điện thoại', 'Loại', 'Điểm', 'Số dư trước', 'Số dư sau', 'Loại tham chiếu', 'Mã tham chiếu',
+            'Nội dung', 'Người tạo', 'Khoá'];
+var SHEET_GC = 'Điểm - Giữ chỗ';
+var H_GC = ['Mã giữ chỗ', 'Điện thoại', 'Mã đơn', 'Điểm', 'Trạng thái', 'Tạo lúc', 'Xử lý lúc', 'Người GT', 'Giảm GT',
+            'Giá trị tính GT', '% giảm', '% thưởng', 'Tổng đơn', 'Ghi chú'];
+var GT = { LIEN_KET: 'Đã liên kết', CHO_GIAO: 'Chờ giao', DA_THUONG: 'Đã thưởng', THU_HOI: 'Đã thu hồi' };
+var GC = { GIU: 'Đang giữ', DUNG: 'Đã dùng', TRA: 'Đã trả lại', HOAN: 'Đã hoàn điểm' };
+var GT_MAC_DINH = {
+  bat: true,            // bật chương trình giới thiệu
+  giam: 5,              // % giảm cho người được giới thiệu (đơn đầu)
+  thuong: 5,            // % giá trị đơn thưởng cho người giới thiệu (thành điểm)
+  giaTriDiem: 1,        // 1 điểm = bao nhiêu đồng
+  donToiThieu: 0,       // giá trị hàng tối thiểu để được giảm giới thiệu
+  canXacThuc: false,    // true = người mới phải xác thực OTP mới được giảm giới thiệu
+  giuChoGio: 72,        // giữ điểm tối đa bao nhiêu giờ nếu CRM chưa thấy đơn
+  theoDoiNgay: 60,      // theo dõi hoàn hàng bao nhiêu ngày sau khi thưởng / dùng điểm
+  noiDungChiaSe: 'Mua sắm tại Hương Chất Kids và nhận ưu đãi {giam}% cho đơn hàng đầu tiên. Dùng mã giới thiệu của mình: {ma} {link}'
+};
+
+function sheetGT() { return sheetPhu(SHEET_GT, H_GT); }
+function sheetDG() { return sheetPhu(SHEET_DG, H_DG); }
+function sheetGC() { return sheetPhu(SHEET_GC, H_GC); }
+function anSdt(s) { s = chuanSdt(s); return s.length >= 9 ? s.slice(0, 2) + '****' + s.slice(-2) : s; }
+function soNguyen(v) { var n = Math.round(Number(v) || 0); return isFinite(n) ? n : 0; }
+
+function gtCauHinh() {
+  var c = {}; try { c = JSON.parse(PropertiesService.getScriptProperties().getProperty('GT_CAU_HINH') || '{}'); } catch (e) { c = {}; }
+  var kq = {}; for (var k in GT_MAC_DINH) kq[k] = c[k] != null ? c[k] : GT_MAC_DINH[k];
+  return kq;
+}
+/* Chạy trong khoá tập lệnh; flush trước khi nhả khoá để lần gọi sau đọc được dữ liệu mới */
+function voiKhoa(fn) {
+  var lock = LockService.getScriptLock();
+  try { lock.waitLock(20000); } catch (e) { return { ok: false, code: 'BUSY', msg: 'Máy chủ đang bận, mẹ thử lại sau vài giây nhé' }; }
+  try { return fn(); } finally { try { SpreadsheetApp.flush(); } catch (e2) {} lock.releaseLock(); }
+}
+function gtLoi(code, msg) { return { ok: false, valid: false, code: code, message: msg, msg: msg }; }
+
+/* ---------- Phiên khách: biết phiên đến từ OTP / mật khẩu riêng (mạnh) hay mật khẩu mặc định (yếu) ---------- */
+function phienKhach(token) {
+  if (!token) return null;
+  var s = sheetPhien(); var n = s.getLastRow(); if (n < 2) return null;
+  var v = s.getRange(2, 1, n - 1, 5).getValues();
+  for (var i = v.length - 1; i >= 0; i--) {
+    if (String(v[i][0]) !== String(token)) continue;
+    if (new Date(v[i][2]).getTime() < Date.now()) return null;
+    var kieu = String(v[i][4] || '');
+    return { sdt: chuanSdt(v[i][1]), kieu: kieu, manh: kieu === 'otp' || kieu === 'mk', dong: i + 2 };
+  }
+  return null;
+}
+
+/* ---------- Sổ điểm ---------- */
+function docSoDiem() {
+  var s = sheetDG(); var n = s.getLastRow();
+  return n < 2 ? [] : s.getRange(2, 1, n - 1, H_DG.length).getValues();
+}
+function docGiuCho() {
+  var s = sheetGC(); var n = s.getLastRow();
+  return n < 2 ? [] : s.getRange(2, 1, n - 1, H_GC.length).getValues();
+}
+/* Số dư của 1 khách: tổng sổ cái; đang giữ = điểm của các mã giữ chỗ chưa xử lý */
+function viDiem(sdt, so, gc) {
+  so = so || docSoDiem(); gc = gc || docGiuCho();
+  var kq = { soDu: 0, tongNhan: 0, tongDung: 0, dangGiu: 0, soGD: 0, ganNhat: null };
+  so.forEach(function (r) {
+    if (chuanSdt(r[2]) !== sdt) return;
+    var d = soNguyen(r[4]); kq.soDu += d; kq.soGD++;
+    if (r[3] === 'EARN' || (r[3] === 'ADJUSTMENT' && d > 0)) kq.tongNhan += d;
+    if (r[3] === 'SPEND') kq.tongDung += -d;
+    if (r[3] === 'REFUND') kq.tongDung -= d;
+    kq.ganNhat = r[0];
+  });
+  gc.forEach(function (r) { if (chuanSdt(r[1]) === sdt && r[4] === GC.GIU) kq.dangGiu += soNguyen(r[3]); });
+  kq.khaDung = Math.max(0, kq.soDu - kq.dangGiu);
+  return kq;
+}
+/* Ghi 1 giao dịch điểm (PHẢI gọi trong voiKhoa). khoa trùng → không ghi, trả trung:true. Không bao giờ để số dư âm. */
+function ghiDiem(sdt, loai, diem, refLoai, refMa, noiDung, nguoiTao, khoa) {
+  diem = soNguyen(diem); if (!diem) return { ok: true, khongDoi: true };
+  var so = docSoDiem();
+  if (khoa) for (var i = 0; i < so.length; i++) if (String(so[i][11]) === String(khoa)) return { ok: true, trung: true };
+  var truoc = viDiem(sdt, so, []).soDu;
+  if (truoc + diem < 0) return { ok: false, code: 'INSUFFICIENT', msg: 'Số điểm vượt quá số dư (' + truoc + ' điểm)' };
+  var ma = 'GD' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyMMddHHmmss') + Math.floor(Math.random() * 90 + 10);
+  sheetDG().appendRow([new Date(), ma, "'" + sdt, loai, diem, truoc, truoc + diem, refLoai || '', refMa || '', noiDung || '', nguoiTao || 'hệ thống', khoa || '']);
+  return { ok: true, ma: ma, soDu: truoc + diem };
+}
+
+/* ---------- Quan hệ giới thiệu ---------- */
+function gtTimDong(sdt) {
+  var s = sheetGT(); var n = s.getLastRow(); if (n < 2) return null;
+  var v = s.getRange(2, 1, n - 1, H_GT.length).getValues();
+  for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][0]) === sdt) return { dong: i + 2, v: v[i] };
+  return null;
+}
+function khachBiKhoa(sdt) {
+  var dong = timDongKH(sdt); if (!dong) return false;
+  return String(sheetKH().getRange(dong, 12).getValue() || '').indexOf('KHOA') > -1;
+}
+/* Kiểm tra mã giới thiệu (không ghi gì). sdt = số của người nhập mã (có thể trống khi chưa nhập) */
+function gtXetMa(ref, sdt, cfg, maDon) {
+  cfg = cfg || gtCauHinh();
+  if (!cfg.bat) return gtLoi('REFERRAL_DISABLED', 'Chương trình giới thiệu đang tạm dừng.');
+  ref = chuanSdt(ref); sdt = sdt ? chuanSdt(sdt) : '';
+  if (!sdtHopLe(ref)) return gtLoi('INVALID_REFERRAL_CODE', 'Mã giới thiệu không hợp lệ. Mã là số điện thoại 10 số của người giới thiệu.');
+  if (sdt && sdt === ref) return gtLoi('SELF_REFERRAL', 'Bạn không thể sử dụng mã giới thiệu của chính mình.');
+  if (sdt) { var e = gtXetNguoiMoi(sdt, ref, maDon); if (e) return e; }
+  var nguoi = docKH(ref);
+  if (!(nguoi.dong || nguoi.kh.ten || Number(nguoi.kh.soDon) > 0)) return gtLoi('INVALID_REFERRAL_CODE', 'Mã giới thiệu không tồn tại: số này chưa là khách hàng của shop.');
+  if (khachBiKhoa(ref)) return gtLoi('REFERRER_BLOCKED', 'Mã giới thiệu này đang bị khoá.');
+  return { ok: true, valid: true, code: 'OK', tenAn: anTen(nguoi.kh.ten) || anSdt(ref), discountPercent: Number(cfg.giam),
+    donToiThieu: Number(cfg.donToiThieu) || 0, message: 'Mã giới thiệu hợp lệ', msg: 'Mã giới thiệu hợp lệ' };
+}
+/* Người nhập mã có còn đủ điều kiện không: chưa có người giới thiệu khác, chưa dùng ưu đãi, chưa từng mua */
+/* Phần kiểm tra chỉ dựa trên sheet "Giới thiệu" (nhanh, dùng được trong khoá) */
+function gtXetDong(sdt, ref, maDon) {
+  var r = gtTimDong(sdt);
+  if (r) {
+    var tt = String(r.v[4]);
+    if (chuanSdt(r.v[1]) !== ref) return { r: r, loi: gtLoi('REFERRAL_ALREADY_USED', 'Số điện thoại này đã được liên kết với mã giới thiệu khác (' + anSdt(r.v[1]) + ').') };
+    if (tt === GT.DA_THUONG || tt === GT.THU_HOI) return { r: r, loi: gtLoi('REFERRAL_ALREADY_USED', 'Ưu đãi giới thiệu chỉ dùng 1 lần cho đơn đầu tiên.') };
+    if (tt === GT.CHO_GIAO && String(r.v[5]) !== String(maDon || '')) return { r: r, loi: gtLoi('REFERRAL_ALREADY_USED', 'Ưu đãi giới thiệu đã được dùng cho đơn ' + r.v[5] + ' đang chờ giao.') };
+  }
+  return { r: r, loi: null };
+}
+function gtXetNguoiMoi(sdt, ref, maDon) {
+  var x = gtXetDong(sdt, ref, maDon); if (x.loi) return x.loi;
+  if (x.r && String(x.r.v[4]) === GT.CHO_GIAO) return null;   // chính đơn đang giữ chỗ: CRM có thể đã thấy đơn này
+  var kh = docKH(sdt);
+  if (Number(kh.kh.soDon) > 0) return gtLoi('CUSTOMER_NOT_ELIGIBLE', 'Ưu đãi giới thiệu chỉ dành cho khách mới chưa từng mua hàng.');
+  if (khachBiKhoa(sdt)) return gtLoi('CUSTOMER_NOT_ELIGIBLE', 'Tài khoản này đang bị khoá.');
+  return null;
+}
+/* Tạo / cập nhật quan hệ giới thiệu (PHẢI gọi trong voiKhoa, sau khi đã gtXetMa) */
+function gtLienKet(sdt, ref, nguon) {
+  var r = gtTimDong(sdt);
+  if (r) return r;
+  sheetGT().appendRow(["'" + sdt, "'" + ref, new Date(), nguon || '', GT.LIEN_KET, '', '', 0, '', '', 0, 0, new Date(), '']);
+  ghiNhatKy('Giới thiệu', sdt, 'Liên kết với người giới thiệu ' + ref + ' (' + (nguon || '') + ')');
+  return gtTimDong(sdt);
+}
+
+/* ===================== API KHÁCH ===================== */
+function apiGtCauHinh() {
+  var c = gtCauHinh();
+  return { ok: true, bat: !!c.bat, giam: Number(c.giam), thuong: Number(c.thuong), giaTriDiem: Number(c.giaTriDiem) || 1,
+    donToiThieu: Number(c.donToiThieu) || 0, canXacThuc: !!c.canXacThuc, noiDungChiaSe: String(c.noiDungChiaSe || '') };
+}
+function apiGtKiemTra(p) {
+  var cache = CacheService.getScriptCache(); var k = 'gtkt_' + chuanSdt(p.sdt || '') + '_' + chuanSdt(p.ref || '');
+  var dem = Number(cache.get(k) || 0); if (dem >= 20) return gtLoi('RATE_LIMIT', 'Mẹ thử lại sau ít phút nhé');
+  cache.put(k, String(dem + 1), 3600);
+  return gtXetMa(p.ref, p.sdt);
+}
+/* Giữ chỗ ưu đãi khi bấm Đặt hàng: khoá quan hệ giới thiệu + giữ điểm. Gọi lại cùng mã đơn → tính lại (không giữ trùng).
+   p: sdt, token, maDon, ref, dungGT ('1'), diem, giaTri (tiền hàng sau giảm sản phẩm), giamKhac (mã / hạng), tongDon */
+function apiGtGiuCho(p) {
+  var cfg = gtCauHinh(); var sdt = chuanSdt(p.sdt); var maDon = String(p.maDon || '').trim().slice(0, 30);
+  if (!sdtHopLe(sdt)) return { ok: false, code: 'BAD_PHONE', msg: 'Số điện thoại chưa đúng' };
+  if (!/^[A-Z0-9-]{6,30}$/i.test(maDon)) return { ok: false, code: 'BAD_ORDER', msg: 'Mã đơn không hợp lệ' };
+  var giaTri = Math.max(0, soNguyen(p.giaTri)), giamKhac = Math.max(0, soNguyen(p.giamKhac)), tongDon = Math.max(0, soNguyen(p.tongDon));
+  var muonDiem = Math.max(0, soNguyen(p.diem)), dungGT = String(p.dungGT) === '1';
+  var ph = phienKhach(p.token); var cuaToi = ph && ph.sdt === sdt;
+  var ref = '';
+  if (dungGT) {   // đọc CRM bên ngoài khoá (chậm), trong khoá chỉ kiểm tra lại dữ liệu sheet
+    var r0 = gtTimDong(sdt); ref = chuanSdt(p.ref || (r0 ? r0.v[1] : ''));
+    if (!ref) return gtLoi('INVALID_REFERRAL_CODE', 'Mẹ nhập mã giới thiệu trước nhé');
+    var xet = gtXetMa(ref, sdt, cfg, maDon); if (!xet.ok) return xet;
+    if (cfg.canXacThuc && !cuaToi) return gtLoi('REQUIRE_OTP', 'Mẹ xác thực số điện thoại (mã OTP) để nhận ưu đãi giới thiệu nhé.');
+    if (giaTri < (Number(cfg.donToiThieu) || 0)) return gtLoi('MIN_ORDER', 'Ưu đãi giới thiệu áp dụng cho đơn từ ' + tien(cfg.donToiThieu) + '.');
+  }
+  if (muonDiem > 0 && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH', msg: 'Mẹ xác thực mã OTP (hoặc đăng nhập bằng mật khẩu riêng) để dùng điểm nhé.' };
+  return voiKhoa(function () {
+    var gcS = sheetGC(); var gc = docGiuCho(); var maGiu = '';
+    /* Đơn này đã giữ chỗ trước đó (khách bấm lại) → trả chỗ cũ rồi tính lại */
+    for (var i = 0; i < gc.length; i++) if (String(gc[i][2]) === maDon) {
+      if (chuanSdt(gc[i][1]) !== sdt) return { ok: false, code: 'BAD_ORDER', msg: 'Mã đơn đã được dùng' };
+      if (gc[i][4] === GC.DUNG || gc[i][4] === GC.HOAN) return { ok: false, code: 'ORDER_DONE', msg: 'Đơn này đã được xử lý' };
+      if (gc[i][4] !== GC.GIU) continue;
+      maGiu = String(gc[i][0]); gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.TRA, gc[i][5], new Date()]]); gc[i][4] = GC.TRA;
+    }
+    /* Quan hệ giới thiệu đang gắn với đơn này (lần bấm trước) → trả về "Đã liên kết", tính lại bên dưới */
+    var cu = gtTimDong(sdt);
+    if (cu && String(cu.v[4]) === GT.CHO_GIAO && String(cu.v[5]) === maDon) sheetGT().getRange(cu.dong, 5, 1, 9).setValues([[GT.LIEN_KET, '', '', 0, '', '', 0, 0, new Date()]]);
+    var giamGT = 0, phanTram = 0;
+    if (dungGT) {
+      var x = gtXetDong(sdt, ref, maDon); if (x.loi) return x.loi;   // kiểm tra lại trong khoá (2 tab cùng lúc)
+      if (!x.r) gtLienKet(sdt, ref, 'Thanh toán');
+      phanTram = Number(cfg.giam) || 0; giamGT = Math.round(giaTri * phanTram / 100);
+    }
+    var gtd = Number(cfg.giaTriDiem) || 1, diem = 0;
+    if (muonDiem > 0) {
+      var vi = viDiem(sdt, docSoDiem(), gc);
+      var toiDa = Math.floor(Math.max(0, giaTri - giamGT - giamKhac) / gtd);
+      diem = Math.max(0, Math.min(muonDiem, vi.khaDung, toiDa));
+    }
+    if (!giamGT && !diem) return { ok: true, maGiu: '', giamGT: 0, phanTram: 0, diem: 0, giamDiem: 0 };
+    maGiu = maGiu || ('GC' + Utilities.getUuid().replace(/-/g, '').slice(0, 10).toUpperCase());
+    gcS.appendRow([maGiu, "'" + sdt, maDon, diem, GC.GIU, new Date(), '', dungGT ? "'" + ref : '', giamGT, giaTri, phanTram,
+      dungGT ? Number(cfg.thuong) || 0 : '', tongDon, '']);
+    if (dungGT) {
+      var rr = gtTimDong(sdt);
+      sheetGT().getRange(rr.dong, 5, 1, 9).setValues([[GT.CHO_GIAO, maDon, maGiu, giamGT, phanTram, Number(cfg.thuong) || 0, giaTri, 0, new Date()]]);
+      ghiNhatKy('Giới thiệu', sdt, 'Dùng ưu đãi giới thiệu ' + phanTram + '% (−' + tien(giamGT) + ') cho đơn ' + maDon + ', người giới thiệu ' + ref);
+    }
+    if (diem) ghiNhatKy('Điểm', sdt, 'Giữ ' + diem + ' điểm cho đơn ' + maDon + ' (' + maGiu + ')');
+    return { ok: true, maGiu: maGiu, giamGT: giamGT, phanTram: phanTram, diem: diem, giamDiem: diem * gtd };
+  });
+}
+/* Ví điểm của khách đang đăng nhập */
+function apiDiemCuaToi(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var so = docSoDiem(), gc = docGiuCho(), cfg = gtCauHinh(); var vi = viDiem(ph.sdt, so, gc);
+  var ls = [];
+  for (var i = so.length - 1; i >= 0 && ls.length < 100; i--) if (chuanSdt(so[i][2]) === ph.sdt)
+    ls.push({ ngay: ngayVN(so[i][0]), loai: String(so[i][3]), diem: soNguyen(so[i][4]), soDu: soNguyen(so[i][6]), noiDung: String(so[i][9] || ''), don: String(so[i][8] || '') });
+  var giu = [];
+  gc.forEach(function (r) { if (chuanSdt(r[1]) === ph.sdt && r[4] === GC.GIU && soNguyen(r[3])) giu.push({ maDon: String(r[2]), diem: soNguyen(r[3]), ngay: ngayVN(r[5]) }); });
+  return { ok: true, sdt: ph.sdt, soDu: vi.soDu, dangGiu: vi.dangGiu, khaDung: vi.khaDung, tongNhan: vi.tongNhan, tongDung: vi.tongDung,
+    tietKiem: vi.tongDung * (Number(cfg.giaTriDiem) || 1), giaTriDiem: Number(cfg.giaTriDiem) || 1, dungDuoc: ph.manh, lichSu: ls, giu: giu };
+}
+/* Bảng giới thiệu của khách đang đăng nhập (không lộ thông tin người được giới thiệu) */
+function apiGtCuaToi(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var s = sheetGT(); var n = s.getLastRow(); var v = n < 2 ? [] : s.getRange(2, 1, n - 1, H_GT.length).getValues();
+  var ds = [], daMua = 0, tongDiem = 0, cuaToi = null;
+  v.forEach(function (r) {
+    if (chuanSdt(r[0]) === ph.sdt) cuaToi = { nguoiGT: anSdt(r[1]), trangThai: String(r[4]) };
+    if (chuanSdt(r[1]) !== ph.sdt) return;
+    if (r[4] === GT.DA_THUONG) { daMua++; tongDiem += soNguyen(r[11]); }
+    ds.push({ khach: anSdt(r[0]), ngay: ngayVN(r[2]), trangThai: String(r[4]), diem: soNguyen(r[11]) });
+  });
+  ds.reverse();
+  return { ok: true, ma: ph.sdt, cauHinh: apiGtCauHinh(), soNguoi: ds.length, daMua: daMua, tongDiem: tongDiem, ds: ds.slice(0, 100), cuaToi: cuaToi };
+}
+
+/* ===================== XỬ LÝ NỀN: theo trạng thái đơn trong CRM =====================
+   - Giữ chỗ "Đang giữ": CRM thấy đơn → trừ điểm (SPEND) "Đã dùng"; đơn huỷ / quá giuChoGio không thấy đơn → "Đã trả lại".
+   - Giữ chỗ "Đã dùng": đơn huỷ / hoàn hàng (trong theoDoiNgay) → hoàn điểm (REFUND).
+   - Giới thiệu "Chờ giao": đơn Đã giao → thưởng người giới thiệu (EARN, khoá EARN:<mã đơn>);
+     đơn huỷ / không thấy đơn → quay lại "Đã liên kết" (khách vẫn dùng ưu đãi được ở đơn đầu tiếp theo).
+   - Giới thiệu "Đã thưởng": hoàn hàng → thu hồi (REVERSE); CRM ghi tiền thấp hơn (hoàn 1 phần) → thu hồi phần chênh. */
+function xuLyDiemGT() {
+  var cfg = gtCauHinh(); var now = Date.now(); var kq = { ok: true, daDung: 0, traLai: 0, hoanDiem: 0, thuong: 0, thuHoi: 0, quayLai: 0, loi: [] };
+  var gc = docGiuCho(); var sGT = sheetGT(); var nGT = sGT.getLastRow();
+  var gt = nGT < 2 ? [] : sGT.getRange(2, 1, nGT - 1, H_GT.length).getValues();
+  var theoDoi = (Number(cfg.theoDoiNgay) || 60) * 864e5;
+  var canXem = {};
+  gc.forEach(function (r) { if (r[4] === GC.GIU || (r[4] === GC.DUNG && now - new Date(r[6] || r[5]).getTime() < theoDoi)) canXem[chuanSdt(r[1])] = 1; });
+  gt.forEach(function (r) { if (r[4] === GT.CHO_GIAO || (r[4] === GT.DA_THUONG && now - new Date(r[12]).getTime() < theoDoi)) canXem[chuanSdt(r[0])] = 1; });
+  var ds = Object.keys(canXem); if (!ds.length) return kq;
+  var crm = {};   // gọi CRM ngoài khoá
+  ds.slice(0, 60).forEach(function (sdt) { try { crm[sdt] = crmKhachCache(sdt); } catch (e) { crm[sdt] = null; } });
+  var donCRM = function (sdt, maDon, tong, ngay) {
+    var c = crm[sdt]; if (!c || !c.ok) return undefined;     // undefined = chưa biết (CRM lỗi) → để lần sau
+    var d = timDonCRM(c, maDon, tong, ngay); if (!d) return null;
+    return { tt: ttTuCRM(d.trangThai), tien: Number(d.tien != null ? d.tien : d.tong) || 0, raw: String(d.trangThai || '') };
+  };
+  return voiKhoa(function () {
+    var gcS = sheetGC(); gc = docGiuCho();
+    for (var i = 0; i < gc.length; i++) {
+      var r = gc[i], sdt = chuanSdt(r[1]); if (!(sdt in crm)) continue;
+      var d = donCRM(sdt, r[2], r[12], r[5]); if (d === undefined) continue;
+      var huy = d && (d.tt === 'Đã huỷ' || d.tt === 'Đã hoàn hàng');
+      if (r[4] === GC.GIU) {
+        if (d && !huy) {
+          var w = soNguyen(r[3]) ? ghiDiem(sdt, 'SPEND', -soNguyen(r[3]), 'ORDER', r[2], 'Dùng điểm cho đơn ' + r[2], 'hệ thống', 'SPEND:' + r[0]) : { ok: true };
+          if (!w.ok) { kq.loi.push(r[0] + ': ' + w.msg); gcS.getRange(i + 2, 14).setValue('Lỗi trừ điểm: ' + w.msg); continue; }
+          gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.DUNG, r[5], new Date()]]); kq.daDung++;
+        } else if (huy || (!d && now - new Date(r[5]).getTime() > (Number(cfg.giuChoGio) || 72) * 3600e3)) {
+          gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.TRA, r[5], new Date()]]);
+          gcS.getRange(i + 2, 14).setValue(huy ? 'Đơn huỷ trước khi xử lý' : 'Quá hạn, CRM chưa thấy đơn'); kq.traLai++;
+        }
+      } else if (r[4] === GC.DUNG && huy && soNguyen(r[3])) {
+        var h = ghiDiem(sdt, 'REFUND', soNguyen(r[3]), 'ORDER', r[2], 'Hoàn điểm do đơn ' + r[2] + ' ' + d.tt.toLowerCase(), 'hệ thống', 'REFUND:' + r[0]);
+        if (h.ok) { gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.HOAN, r[5], new Date()]]); kq.hoanDiem++; }
+      }
+    }
+    var gtS = sheetGT(); gt = gtS.getLastRow() < 2 ? [] : gtS.getRange(2, 1, gtS.getLastRow() - 1, H_GT.length).getValues();
+    for (var j = 0; j < gt.length; j++) {
+      var g = gt[j], nguoiMoi = chuanSdt(g[0]), ref = chuanSdt(g[1]); if (!(nguoiMoi in crm)) continue;
+      if (g[4] !== GT.CHO_GIAO && g[4] !== GT.DA_THUONG) continue;
+      var gcDong = null; for (var q = 0; q < gc.length; q++) if (String(gc[q][2]) === String(g[5]) && String(gc[q][0]) === String(g[6])) gcDong = gc[q];
+      var tongDon = gcDong ? soNguyen(gcDong[12]) : 0;
+      var dd = donCRM(nguoiMoi, g[5], tongDon, gcDong ? gcDong[5] : g[12]); if (dd === undefined) continue;
+      var giaTri = soNguyen(g[10]), pt = Number(g[9]) || 0, gtd = Number(cfg.giaTriDiem) || 1;
+      /* Giá trị tính thưởng thực tế: CRM ghi tổng thấp hơn tổng đơn lúc đặt quá 1.000đ (hoàn 1 phần) → trừ phần chênh */
+      var thucTe = function () { return dd && tongDon && dd.tien && tongDon - dd.tien > 1000 ? Math.max(0, giaTri - (tongDon - dd.tien)) : giaTri; };
+      if (g[4] === GT.CHO_GIAO) {
+        if (dd && dd.tt === 'Đã giao') {
+          var diem = Math.floor(thucTe() * pt / 100 / gtd);
+          var e = ghiDiem(ref, 'EARN', diem, 'ORDER', g[5], 'Thưởng giới thiệu: đơn ' + g[5] + ' của khách ' + anSdt(nguoiMoi), 'hệ thống', 'EARN:' + g[5]);
+          if (!e.ok) { kq.loi.push(g[5] + ': ' + e.msg); continue; }
+          gtS.getRange(j + 2, 5).setValue(GT.DA_THUONG); gtS.getRange(j + 2, 12, 1, 2).setValues([[diem, new Date()]]); kq.thuong++;
+          ghiNhatKy('Giới thiệu', ref, 'Cộng ' + diem + ' điểm thưởng giới thiệu (đơn ' + g[5] + ')');
+          try { zaloBotGuiTin('⭐ Cộng ' + diem.toLocaleString('vi-VN') + ' điểm cho ' + ref + ' – giới thiệu khách ' + anSdt(nguoiMoi) + ' (đơn ' + g[5] + ' đã giao)'); } catch (z) { Logger.log(z); }
+          try { var dk = timDongKH(ref); var mail = dk ? String(sheetKH().getRange(dk, 6).getValue() || '') : '';
+            if (emailHopLe(mail)) MailApp.sendEmail(mail, '⭐ Bạn vừa nhận ' + diem.toLocaleString('vi-VN') + ' điểm từ ' + TEN_SHOP,
+              'Bạn vừa nhận được ' + diem.toLocaleString('vi-VN') + ' điểm từ đơn hàng của người bạn đã giới thiệu.\n1 điểm = ' + gtd + 'đ, dùng để giảm giá khi đặt hàng tại ' + WEB + '\nXem ví điểm: ' + WEB + '/account.html#diem'); } catch (m) { Logger.log(m); }
+        } else if ((dd && dd.tt === 'Đã huỷ') || (!dd && now - new Date(g[12]).getTime() > (Number(cfg.giuChoGio) || 72) * 3600e3)) {
+          gtS.getRange(j + 2, 5, 1, 9).setValues([[GT.LIEN_KET, '', '', 0, '', '', 0, 0, new Date()]]);
+          gtS.getRange(j + 2, 14).setValue('Đơn ' + g[5] + (dd ? ' huỷ trước khi giao' : ' không thấy trong CRM') + ' – ưu đãi được dùng lại');
+          kq.quayLai++;
+        }
+      } else if (g[4] === GT.DA_THUONG && dd) {
+        var daCong = soNguyen(g[11]);
+        var dich = dd.tt === 'Đã hoàn hàng' || dd.tt === 'Đã huỷ' ? 0 : Math.floor(thucTe() * pt / 100 / gtd);
+        if (dich < daCong) {
+          var conLai = viDiem(ref, docSoDiem(), []).soDu; var tru = Math.min(daCong - dich, Math.max(0, conLai));
+          var rv = tru ? ghiDiem(ref, 'REVERSE', -tru, 'ORDER', g[5], 'Thu hồi điểm thưởng: đơn ' + g[5] + (dich ? ' hoàn một phần' : ' ' + dd.tt.toLowerCase()), 'hệ thống', 'REVERSE:' + g[5] + ':' + dich) : { ok: true };
+          if (!rv.ok) continue;
+          gtS.getRange(j + 2, 12, 1, 2).setValues([[daCong - tru, new Date()]]);
+          if (!dich) gtS.getRange(j + 2, 5).setValue(GT.THU_HOI);
+          if (tru < daCong - dich) gtS.getRange(j + 2, 14).setValue('Chỉ thu hồi được ' + tru + '/' + (daCong - dich) + ' điểm (khách đã dùng bớt)');
+          ghiNhatKy('Giới thiệu', ref, 'Thu hồi ' + tru + ' điểm thưởng (đơn ' + g[5] + ')'); kq.thuHoi++;
+        }
+      }
+    }
+    return kq;
+  });
+}
+
+/* ===================== API QUẢN TRỊ ===================== */
+function tenQT(p) { var ph = phienQT(p.token); return ph ? ph.tk : 'chủ shop'; }
+function tenTheoSdt() {
+  var s = sheetKH(); var n = s.getLastRow(); var m = {};
+  if (n >= 2) s.getRange(2, 1, n - 1, 2).getValues().forEach(function (r) { m[chuanSdt(r[0])] = String(r[1] || ''); });
+  return m;
+}
+function apiQtGioiThieu(p) {
+  if (!coQuyen(p, 'referral.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var s = sheetGT(); var n = s.getLastRow(); var v = n < 2 ? [] : s.getRange(2, 1, n - 1, H_GT.length).getValues();
+  var ten = tenTheoSdt(); var top = {};
+  var ds = v.map(function (r) {
+    var ref = chuanSdt(r[1]);
+    if (!top[ref]) top[ref] = { sdt: ref, ten: ten[ref] || '', soNguoi: 0, daMua: 0, diem: 0 };
+    top[ref].soNguoi++; if (r[4] === GT.DA_THUONG) { top[ref].daMua++; top[ref].diem += soNguyen(r[11]); }
+    return { duoc: chuanSdt(r[0]), tenDuoc: ten[chuanSdt(r[0])] || '', gt: ref, tenGt: ten[ref] || '', ngay: ngayVN(r[2]), nguon: String(r[3] || ''),
+      trangThai: String(r[4]), maDon: String(r[5] || ''), giam: soNguyen(r[7]), pGiam: r[8], pThuong: r[9], giaTri: soNguyen(r[10]),
+      diem: soNguyen(r[11]), capNhat: r[12] ? ngayVN(r[12]) : '', ghiChu: String(r[13] || '') };
+  }).reverse();
+  var lich = false; try { lich = ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === 'dongBoCRMTuDong'; }); } catch (e) { lich = null; }
+  var so = docSoDiem(); var tongThuong = 0, tongDung = 0;
+  so.forEach(function (r) { if (r[3] === 'EARN') tongThuong += soNguyen(r[4]); if (r[3] === 'REVERSE') tongThuong += soNguyen(r[4]); if (r[3] === 'SPEND') tongDung -= soNguyen(r[4]); if (r[3] === 'REFUND') tongDung -= soNguyen(r[4]); });
+  return { ok: true, cauHinh: gtCauHinh(), ds: ds, top: Object.keys(top).map(function (k) { return top[k]; }).sort(function (a, b) { return b.diem - a.diem || b.soNguoi - a.soNguoi; }).slice(0, 10),
+    tongThuong: tongThuong, tongDung: tongDung, lich: lich };
+}
+function apiQtDiem(p) {
+  if (!coQuyen(p, 'points.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var so = docSoDiem(), gc = docGiuCho(), ten = tenTheoSdt(), m = {};
+  so.forEach(function (r) { m[chuanSdt(r[2])] = 1; }); gc.forEach(function (r) { m[chuanSdt(r[1])] = 1; });
+  var ds = Object.keys(m).map(function (sdt) { var v = viDiem(sdt, so, gc); v.sdt = sdt; v.ten = ten[sdt] || ''; v.ganNhat = v.ganNhat ? ngayVN(v.ganNhat) : ''; v.khoa = khachBiKhoa(sdt); return v; });
+  ds.sort(function (a, b) { return b.soDu - a.soDu; });
+  return { ok: true, ds: ds };
+}
+function apiQtDiemLichSu(p) {
+  if (!coQuyen(p, 'points.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var sdt = p.sdt ? chuanSdt(p.sdt) : ''; var so = docSoDiem(), gc = docGiuCho(); var ls = [], giu = [];
+  for (var i = so.length - 1; i >= 0 && ls.length < 1000; i--) {
+    var r = so[i]; if (sdt && chuanSdt(r[2]) !== sdt) continue;
+    ls.push({ ngay: ngayVN(r[0]), ma: String(r[1]), sdt: chuanSdt(r[2]), loai: String(r[3]), diem: soNguyen(r[4]), truoc: soNguyen(r[5]), sau: soNguyen(r[6]),
+      refLoai: String(r[7] || ''), ref: String(r[8] || ''), noiDung: String(r[9] || ''), nguoiTao: String(r[10] || '') });
+  }
+  for (var j = gc.length - 1; j >= 0 && giu.length < 500; j--) {
+    var g = gc[j]; if (sdt && chuanSdt(g[1]) !== sdt) continue;
+    giu.push({ ma: String(g[0]), sdt: chuanSdt(g[1]), maDon: String(g[2]), diem: soNguyen(g[3]), trangThai: String(g[4]), ngay: ngayVN(g[5]),
+      xuLy: g[6] ? ngayVN(g[6]) : '', giamGT: soNguyen(g[8]), tongDon: soNguyen(g[12]), ghiChu: String(g[13] || '') });
+  }
+  return { ok: true, sdt: sdt, ten: sdt ? (tenTheoSdt()[sdt] || '') : '', vi: sdt ? viDiem(sdt, so, gc) : null, ls: ls, giu: giu };
+}
+/* Cộng / trừ điểm tay: bắt buộc lý do, ghi sổ ADJUSTMENT + nhật ký. maYc chống bấm 2 lần. */
+function apiQtDiemDieuChinh(p) {
+  if (!coQuyen(p, 'points.adjust')) return { ok: false, msg: 'Không có quyền cộng / trừ điểm' };
+  var sdt = chuanSdt(p.sdt); var diem = soNguyen(p.diem); var lyDo = String(p.lyDo || '').trim().slice(0, 200);
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  if (!diem) return { ok: false, msg: 'Nhập số điểm khác 0' };
+  if (Math.abs(diem) > 100000000) return { ok: false, msg: 'Số điểm quá lớn' };
+  if (lyDo.length < 3) return { ok: false, msg: 'Bắt buộc nhập lý do' };
+  var ai = tenQT(p);
+  return voiKhoa(function () {
+    var w = ghiDiem(sdt, 'ADJUSTMENT', diem, 'ADMIN', ai, lyDo, ai, p.maYc ? 'ADJ:' + String(p.maYc).slice(0, 40) : '');
+    if (!w.ok) return w;
+    if (!w.trung) ghiNhatKy('Điểm', sdt, (diem > 0 ? '+' : '') + diem + ' điểm – ' + lyDo + ' – bởi ' + ai);
+    return { ok: true, trung: !!w.trung, soDu: w.soDu };
+  });
+}
+function apiQtGtCauHinh(p) {
+  if (p.luu !== '1') { if (!coQuyen(p, 'referral_settings.view') && !coQuyen(p, 'referral.view')) return { ok: false, msg: 'Không có quyền' }; return { ok: true, cauHinh: gtCauHinh() }; }
+  if (!coQuyen(p, 'referral_settings.update')) return { ok: false, msg: 'Không có quyền sửa cấu hình giới thiệu' };
+  var cu = gtCauHinh(), moi = {};
+  var so = function (k, min, max) { var v = Number(p[k]); if (p[k] == null || p[k] === '' || !isFinite(v)) return cu[k]; return Math.max(min, Math.min(max, v)); };
+  moi.bat = p.bat != null ? String(p.bat) === '1' : cu.bat;
+  moi.canXacThuc = p.canXacThuc != null ? String(p.canXacThuc) === '1' : cu.canXacThuc;
+  moi.giam = so('giam', 0, 50); moi.thuong = so('thuong', 0, 50); moi.giaTriDiem = so('giaTriDiem', 0.01, 100000);
+  moi.donToiThieu = so('donToiThieu', 0, 1e9); moi.giuChoGio = so('giuChoGio', 1, 720); moi.theoDoiNgay = so('theoDoiNgay', 1, 365);
+  moi.noiDungChiaSe = p.noiDungChiaSe != null ? String(p.noiDungChiaSe).slice(0, 300) : cu.noiDungChiaSe;
+  PropertiesService.getScriptProperties().setProperty('GT_CAU_HINH', JSON.stringify(moi));
+  var doi = Object.keys(moi).filter(function (k) { return String(moi[k]) !== String(cu[k]); }).map(function (k) { return k + ': ' + cu[k] + ' → ' + moi[k]; });
+  if (doi.length) ghiNhatKy('Cấu hình giới thiệu', tenQT(p), doi.join('; '));
+  return { ok: true, cauHinh: moi };
+}
+function apiQtGtXuLy(p) {
+  if (!coQuyen(p, 'referral.update')) return { ok: false, msg: 'Không có quyền' };
+  return xuLyDiemGT();
+}
+/* Bật lịch chạy nền 30 phút (đồng bộ trạng thái CRM + xử lý điểm) từ trang quản trị */
+function apiQtGtLich(p) {
+  if (!coQuyen(p, 'referral_settings.update')) return { ok: false, msg: 'Không có quyền' };
+  try { taoLichDongBoCRM(); ghiNhatKy('Cấu hình giới thiệu', tenQT(p), 'Bật lịch tự xử lý 30 phút/lần'); return { ok: true }; }
+  catch (e) { return { ok: false, msg: 'Chưa bật được lịch: ' + e + '. Mở Apps Script, chọn hàm taoLichDongBoCRM rồi bấm Chạy 1 lần.' }; }
+}
+
 /* ===================== API CHO WEBSITE (JSONP) ===================== */
 function traVe(data, callback) {
   var json = JSON.stringify(data);
@@ -453,6 +883,18 @@ function doGet(e) {
     if (action === 'qtLuu')        return traVe(apiQtLuu(p), cb);
     if (action === 'qtXoa')        return traVe(apiQtXoa(p), cb);
     if (action === 'doiMatKhau') return traVe(apiDoiMatKhau(p), cb);
+    if (action === 'gtCauHinh')     return traVe(apiGtCauHinh(), cb);
+    if (action === 'gtKiemTra')     return traVe(apiGtKiemTra(p), cb);
+    if (action === 'gtGiuCho')      return traVe(apiGtGiuCho(p), cb);
+    if (action === 'diemCuaToi')    return traVe(apiDiemCuaToi(p), cb);
+    if (action === 'gtCuaToi')      return traVe(apiGtCuaToi(p), cb);
+    if (action === 'qtGioiThieu')   return traVe(apiQtGioiThieu(p), cb);
+    if (action === 'qtDiem')        return traVe(apiQtDiem(p), cb);
+    if (action === 'qtDiemLichSu')  return traVe(apiQtDiemLichSu(p), cb);
+    if (action === 'qtDiemDieuChinh') return traVe(apiQtDiemDieuChinh(p), cb);
+    if (action === 'qtGtCauHinh')   return traVe(apiQtGtCauHinh(p), cb);
+    if (action === 'qtGtXuLy')      return traVe(apiQtGtXuLy(p), cb);
+    if (action === 'qtGtLich')      return traVe(apiQtGtLich(p), cb);
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
     Logger.log('doGet lỗi: ' + err);
@@ -502,14 +944,24 @@ function apiDangNhap(p) {
   if (!dung) { cache.put(k, String(dem + 1), 3600); return { ok: false, msg: tk && tk.hash ? 'Mật khẩu chưa đúng. Quên mật khẩu thì bấm nhận mã OTP nhé' : 'Mật khẩu chưa đúng (mật khẩu mặc định là ' + MK_MAC_DINH + ')' }; }
   cache.remove(k);
   if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});
-  var token = luuPhien(sdt);
+  var token = luuPhien(sdt, tk && tk.hash ? 'mk' : 'mkMacDinh');
   return { ok: true, token: token, kh: d.kh, donHang: d.don, macDinh: !(tk && tk.hash) };
 }
 /* Đăng ký khách mới – KHÔNG cần OTP, chỉ điền thông tin.
    An toàn: số điện thoại ĐÃ có hồ sơ thì từ chối, bắt đăng nhập hoặc xác thực OTP,
    để người lạ không ghi đè tên/địa chỉ của khách cũ. Không trả token: muốn xem
    hồ sơ, lịch sử đơn, tổng chi tiêu thì vẫn phải đăng nhập. */
+/* Đăng ký kèm mã giới thiệu (p.ref): tạo tài khoản xong mới liên kết, ngoài khoá của phần đăng ký */
 function apiDangKy(p) {
+  var kq = apiDangKyGoc(p);
+  if (kq && kq.ok && p.ref) {
+    var sdt = chuanSdt(p.sdt), x = gtXetMa(p.ref, sdt);
+    if (!x.ok) kq.gioiThieu = x;
+    else kq.gioiThieu = voiKhoa(function () { var d = gtXetDong(sdt, chuanSdt(p.ref), ''); if (d.loi) return d.loi; if (!d.r) gtLienKet(sdt, chuanSdt(p.ref), 'Đăng ký'); return x; });
+  }
+  return kq;
+}
+function apiDangKyGoc(p) {
   var sdt = chuanSdt(p.sdt);
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' };
   var ten = String(p.ten || '').trim();
@@ -722,7 +1174,7 @@ function apiThongKe(p) {
 var H_QT = ['Tài khoản', 'Họ tên', 'Vai trò', 'Hash', 'Muối', 'Trạng thái', 'Tạo lúc', 'Đăng nhập cuối', 'Quyền riêng'];
 var VAI_TRO_QT = {
   SUPER_ADMIN:   ['*'],
-  MANAGER:       ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'],
+  MANAGER:       ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'referral.*', 'points.*', 'referral_settings.view', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'],
   ORDER_STAFF:   ['dashboard.view', 'order.view', 'order.update', 'customer.view'],
   PRODUCT_STAFF: ['dashboard.view', 'product.*', 'category.*', 'flashsale.*', 'combo.*'],
   CONTENT_STAFF: ['dashboard.view', 'content.*', 'banner.*', 'seo.*']
@@ -733,6 +1185,7 @@ var DANH_MUC_QUYEN = [
   { nhom: 'Đơn hàng',  ds: [['order.view', 'Xem đơn hàng'], ['order.update', 'Đổi trạng thái đơn']] },
   { nhom: 'Sản phẩm',  ds: [['product.view', 'Xem sản phẩm'], ['product.update', 'Thêm / sửa sản phẩm'], ['product.delete', 'Xoá sản phẩm']] },
   { nhom: 'Khách hàng',ds: [['customer.view', 'Xem khách hàng'], ['customer.update', 'Khoá / mở tài khoản khách']] },
+  { nhom: 'Giới thiệu & điểm', ds: [['referral.view', 'Xem giới thiệu'], ['referral.update', 'Xử lý giới thiệu / điểm'], ['referral.export', 'Xuất báo cáo giới thiệu'], ['points.view', 'Xem ví điểm'], ['points.adjust', 'Cộng / trừ điểm'], ['points.export', 'Xuất báo cáo điểm'], ['referral_settings.view', 'Xem cấu hình giới thiệu'], ['referral_settings.update', 'Sửa cấu hình giới thiệu']] },
   { nhom: 'Khuyến mãi',ds: [['flashsale.view', 'Flash sale'], ['combo.view', 'Combo']] },
   { nhom: 'Website',   ds: [['banner.view', 'Banner'], ['content.view', 'Menu & bài viết'], ['seo.view', 'SEO'], ['theme.view', 'Giao diện']] },
   { nhom: 'Hệ thống',  ds: [['setting.view', 'Cấu hình, tài khoản, nhật ký']] }
@@ -969,7 +1422,10 @@ function apiDongBoCRM(p) {
   return dongBoCRMNhieu();
 }
 /* Chạy nền (trigger) */
-function dongBoCRMTuDong() { try { Logger.log(JSON.stringify(dongBoCRMNhieu())); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); } }
+function dongBoCRMTuDong() {
+  try { Logger.log(JSON.stringify(dongBoCRMNhieu())); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
+  try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
+}
 /* CHẠY TAY 1 LẦN trong trình soạn thảo Apps Script: tạo lịch tự đồng bộ trạng thái đơn từ CRM mỗi 30 phút */
 function taoLichDongBoCRM() {
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'dongBoCRMTuDong') ScriptApp.deleteTrigger(t); });
@@ -1128,6 +1584,7 @@ function apiDoiMatKhau(p) {
   var muoi = Utilities.getUuid(); var hang = ["'" + sdt, bamMk(mk, muoi), muoi, new Date()];
   var tk = timTK(sdt); var s = sheetTK();
   if (tk) s.getRange(tk.dong, 1, 1, 4).setValues([hang]); else s.appendRow(hang);
+  var ph = phienKhach(p.token); if (ph) sheetPhien().getRange(ph.dong, 5).setValue('mk');   // phiên này giờ là mật khẩu riêng
   return { ok: true };
 }
 
@@ -1162,7 +1619,7 @@ function apiXacThuc(p) {
   if (!kq.ok) return { ok: false, msg: kq.msg };
   var d = docKH(sdt);
   if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});   // khách mới trên web: tạo hồ sơ (lấy sẵn tên/địa chỉ từ CRM nếu có)
-  var token = luuPhien(sdt);
+  var token = luuPhien(sdt, 'otp');
   return { ok: true, token: token, kh: d.kh, donHang: d.don };
 }
 
@@ -1239,3 +1696,4 @@ function testDonHang() {
   }) } });
 }
 function testGuiOtp() { Logger.log(JSON.stringify(apiGuiOtp({ sdt: '0900000000' }))); }
+
