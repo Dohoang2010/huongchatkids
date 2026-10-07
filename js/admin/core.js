@@ -79,9 +79,9 @@ window.ADMIN = (() => {
 
   /* ---------------- Gọi Apps Script (JSONP) ---------------- */
   let seq = 0;
-  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtDiemDieuChinh', 'qtGtCauHinh', 'qtGtXuLy', 'qtGtLich'];
+  const LENH_QT = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'doiTrangThai', 'dongBoCRM', 'khachHang', 'khachChiTiet', 'khoaKhach', 'nhatKy', 'qtDs', 'qtLuu', 'qtXoa', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtDiemDieuChinh', 'qtGtCauHinh', 'qtGtXuLy', 'qtGtLich', 'qtBaoMatKhach', 'qtQmkCauHinh'];
   /* Lệnh chỉ đọc: hết giờ thì tự gửi lại 1 lần (Apps Script lần đầu sau khi nghỉ có thể mất 20–40 giây để "thức dậy") */
-  const LENH_DOC = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu'];
+  const LENH_DOC = ['thongKe', 'truyCap', 'donHang', 'donChiTiet', 'khachHang', 'khachChiTiet', 'nhatKy', 'qtDs', 'qtHoSo', 'qtGioiThieu', 'qtDiem', 'qtDiemLichSu', 'qtBaoMatKhach', 'qtQmkCauHinh'];
   function api(action, params = {}, timeout = 45000) {
     const lan1 = goiApi(action, params, timeout);
     return LENH_DOC.includes(action) ? lan1.catch((e) => (/không phản hồi/i.test(e.message) ? goiApi(action, params, timeout) : Promise.reject(e))) : lan1;

@@ -1396,7 +1396,7 @@
           <label class="sr-only" for="loginPass">Mật khẩu</label><input class="input" id="loginPass" name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu (mặc định: ${MK_MAC_DINH})">
           <div class="form-error hide" id="loginErr" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block" type="submit">Đăng nhập</button>
-          <p class="fs-13 text-muted" style="text-align:center">Quên mật khẩu? <button type="button" class="text-primary fw-600" id="loginOtp">Nhận mã OTP</button> · Chưa mua lần nào? Mẹ cứ đặt hàng, không cần tài khoản.</p>
+          <p class="fs-13 text-muted" style="text-align:center"><a class="text-primary fw-700" href="quen-mat-khau.html">Quên mật khẩu?</a> · Đăng nhập bằng <button type="button" class="text-primary fw-600" id="loginOtp">mã OTP</button> · Chưa mua lần nào? Mẹ cứ đặt hàng, không cần tài khoản.</p>
         </form></div>`;
       $('#loginForm').addEventListener('submit', (e) => {
         e.preventDefault(); const sdt = phoneKey($('#loginPhone').value); const mk = $('#loginPass').value; const err = $('#loginErr'); err.classList.add('hide');
@@ -1427,7 +1427,7 @@
         <div class="modal__body">${goiY ? `<p class="fs-14 text-muted mb-12">Tài khoản <b>${esc(maskPhone(s.sdt))}</b> đang dùng mật khẩu mặc định <b>${MK_MAC_DINH}</b>. Đặt mật khẩu riêng để chỉ mẹ xem được địa chỉ và lịch sử đơn.</p>` : ''}
         <form id="doiMkForm" class="qb__form" novalidate>
           <input type="text" name="username" autocomplete="username" value="${esc(phoneKey(s.sdt))}" hidden>
-          <input class="input" id="mkMoi" type="password" autocomplete="new-password" placeholder="Mật khẩu mới (ít nhất 4 ký tự)" aria-label="Mật khẩu mới">
+          <input class="input" id="mkMoi" type="password" autocomplete="new-password" placeholder="Mật khẩu mới (ít nhất 8 ký tự)" aria-label="Mật khẩu mới">
           <input class="input" id="mkMoi2" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" aria-label="Nhập lại mật khẩu mới">
           <div class="form-error hide" id="doiMkErr" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block" type="submit">Lưu mật khẩu</button>
@@ -1435,13 +1435,13 @@
         </form></div>`;
       $('#doiMkForm').addEventListener('submit', (e) => {
         e.preventDefault(); const a = $('#mkMoi').value, b = $('#mkMoi2').value; const err = $('#doiMkErr'); err.classList.add('hide');
-        const loi = a.length < 4 ? 'Mật khẩu cần ít nhất 4 ký tự' : a === MK_MAC_DINH ? 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé' : a !== b ? 'Hai lần nhập mật khẩu chưa giống nhau' : '';
+        const loi = a.length < 8 ? 'Mật khẩu cần ít nhất 8 ký tự' : a === MK_MAC_DINH ? 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé' : a !== b ? 'Hai lần nhập mật khẩu chưa giống nhau' : '';
         if (loi) { err.textContent = loi; err.classList.remove('hide'); return; }
         const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang lưu…';
-        loyaltyApi('doiMatKhau', { token: s.token, mkMoi: a }).then((res) => {
+        loyaltyApi('doiMatKhau', { token: s.token, mkMoi: a, mkMoi2: b }).then((res) => {
           btn.disabled = false; btn.textContent = 'Lưu mật khẩu';
           if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, mẹ thử lại nhé'; err.classList.remove('hide'); if (res && res.loi === 'token') Session.clear(); return; }
-          Session.patch({ macDinh: false }); toast('Đã đổi mật khẩu – lần sau mẹ đăng nhập bằng mật khẩu mới nhé', { type: 'ok' });
+          Session.patch({ macDinh: false }); toast('Đã đổi mật khẩu – các thiết bị khác đã được đăng xuất, lần sau mẹ đăng nhập bằng mật khẩu mới nhé', { type: 'ok' });
           dong(true); closeModal('#otpModal');
         }).catch((e2) => { btn.disabled = false; btn.textContent = 'Lưu mật khẩu'; err.textContent = e2.message; err.classList.remove('hide'); });
       });
@@ -1700,6 +1700,8 @@
     link(sdt) { return `${location.origin}${location.pathname.replace(/[^/]*$/, '')}account.html?ref=${phoneKey(sdt)}`; },
     noiDung(cfg, sdt) { return String((cfg && cfg.noiDungChiaSe) || 'Dùng mã giới thiệu của mình: {ma} {link}').replace('{giam}', (cfg && cfg.giam) || 5).replace('{ma}', phoneKey(sdt)).replace('{link}', this.link(sdt)).trim(); },
   };
+  /* Che email: hung@gmail.com → h***@gmail.com, nguyenabc@gmail.com → n******c@gmail.com */
+  const anEmail = (e) => { const [u, d] = String(e || "").split("@"); if (!d) return ""; return u.length <= 4 ? u[0] + "***@" + d : u[0] + "*".repeat(Math.max(3, u.length - 2)) + u.slice(-1) + "@" + d; };
   const taoMaDon = () => 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 9000) + 1000);
   document.addEventListener('click', (e) => {
     if (e.target.closest('[data-qb-sang-tt]') && QB.id) { Cart.add(QB.id, QB.qty, QB.variant); location.href = 'checkout.html'; }
@@ -1709,6 +1711,6 @@
   document.addEventListener('change', (e) => { if (e.target.id === 'qbDiemDung') { QB.diemMuon = e.target.checked ? qbCalc().diemToiDa : 0; qbRefresh(); } });
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
-    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, anEmail, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
     giftFor, giftNote, giftBox, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

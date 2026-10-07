@@ -1686,3 +1686,38 @@ html.che-do-sua [data-khoi]:hover::before{content:'✏️ Bấm để sửa kh�
 .qb__ma + .coupon-hint:empty { display: none; }
 @media (max-width: 420px) { .qb__ma { grid-template-columns: 1fr; gap: 6px; } }
 #qbForm > :empty:not(input):not(textarea) { display: none; }
+
+/* ===== Quên mật khẩu (quen-mat-khau.html) ===== */
+.qmk { max-width: 480px; margin: 0 auto 40px; }
+.qmk__card { padding: 28px 24px; }
+.qmk__h { font-size: 24px; margin: 0 0 6px; }
+.qmk__mo { color: var(--ink-2); font-size: 14px; margin: 0 0 18px; }
+.qmk__form { display: flex; flex-direction: column; gap: 12px; }
+.qmk__form .field > span { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.qmk__pt { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.qmk__ic { font-size: 18px; }
+.qmk__note { font-size: 13px; color: var(--muted); margin: 0; }
+.qmk__hoac { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; margin: 20px 0 12px; }
+.qmk__hoac::before, .qmk__hoac::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.otp6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.otp6 .input { text-align: center; font-size: 22px; font-weight: 700; padding: 0; height: 54px; font-family: var(--font-head); }
+.qmk__mk { position: relative; } .qmk__mk .input { padding-right: 46px; }
+.qmk__mat { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; opacity: .55; font-size: 16px; }
+.qmk__mat.is-on { opacity: 1; background: var(--primary-50); }
+.qmk__manh { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--muted); margin-top: -4px; }
+.qmk__manh i { flex: 0 0 120px; height: 6px; border-radius: 99px; background: var(--line); position: relative; overflow: hidden; }
+.qmk__manh i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; transition: width .25s, background .25s; }
+.qmk__manh[data-muc="0"] i::after { width: 12%; background: var(--red); }
+.qmk__manh[data-muc="1"] i::after { width: 34%; background: var(--red); }
+.qmk__manh[data-muc="2"] i::after { width: 67%; background: var(--amber); }
+.qmk__manh[data-muc="3"] i::after { width: 100%; background: var(--green); }
+.qmk__khop { font-size: 13px; font-weight: 600; min-height: 18px; margin-top: -4px; } .qmk__khop.is-ok { color: var(--green); } .qmk__khop.is-no { color: var(--red); }
+.qmk__tk { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); margin-top: 6px; cursor: pointer; font-size: 14px; }
+.qmk__tk small { color: var(--muted); }
+.qmk__xong { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+.qmk__tick { width: 64px; height: 64px; border-radius: 50%; background: var(--teal-100); color: var(--teal-600); font-size: 32px; font-weight: 700; display: grid; place-items: center; margin: 4px auto 0; }
+@media (max-width: 480px) { .qmk__card { padding: 22px 16px; } .otp6 { gap: 6px; } .otp6 .input { height: 48px; font-size: 20px; } }
+/* Thẻ bảo mật trong trang tài khoản */
+.bm-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line-2); font-size: 14px; flex-wrap: wrap; }
+.bm-row > span { color: var(--muted); } .bm-row b { display: flex; align-items: center; gap: 6px; }
+.bm-nut { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; } .bm-nut .btn { flex: 1 1 auto; }

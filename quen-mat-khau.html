@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Quên mật khẩu – Hương Chất Kids</title>
+  <meta name="description" content="Lấy lại mật khẩu tài khoản Hương Chất Kids bằng mã OTP gửi qua email hoặc số điện thoại.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261007g">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
+</head>
+<body>
+<main id="app"><div class="container"><div class="qmk" id="qmk"></div></div></main>
+<script src="js/data.js?v=20261007g"></script>
+<script src="js/qrcode.min.js"></script>
+<script src="js/app.js?v=20261007g"></script>
+<script>
+/* QUÊN MẬT KHẨU – email OTP (ưu tiên) hoặc OTP số điện thoại → mật khẩu mới nhập 2 lần.
+   Máy chủ: Apps Script qmkGui / qmkXacThuc / qmkDatLai (xem tools/apps-script.gs, phần QUÊN MẬT KHẨU).
+   ?xem=email|otp|mk|xong|hethan&phut=15&min=8 : chế độ xem trước cho trang quản trị (không gọi máy chủ). */
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, $$, esc, param, store, toast, loyaltyApi, openOtp, Session, phoneKey, maskPhone } = MC;
+  const XEM = param('xem');
+  const st = { buoc: XEM || 'email', email: '', emailAn: '', maYc: '', token: '', taiKhoan: [], k: null, kenh: 'email', cho: 0, loi: '', phut: Number(param('phut')) || 15, min: Number(param('min')) || 8 };
+  let tCho = 0;
+  const may = (() => { let m = store.get('mc_may', ''); if (!m) { m = Math.random().toString(36).slice(2) + Date.now().toString(36); store.set('mc_may', m); } return m; })();
+  if (!XEM) loyaltyApi('qmkCauHinh').then((c) => { if (c && c.ok) { st.phut = c.otpPhut; st.min = c.mkToiThieu; if (st.buoc === 'mk') ve(); } }).catch(() => {});
+  if (XEM) { st.emailAn = 'h***@gmail.com'; st.cho = 59; st.taiKhoan = [{ k: 0, sdt: '09****67', ten: 'N*** An' }]; }
+
+  const khung = (tieuDe, moTa, than) => `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="account.html">Tài khoản</a><span>›</span><span>Quên mật khẩu</span></nav>
+    <div class="card card--pad qmk__card"><h1 class="qmk__h">${tieuDe}</h1>${moTa ? `<p class="qmk__mo">${moTa}</p>` : ''}${than}</div>`;
+  const loiHTML = () => `<div class="form-error ${st.loi ? '' : 'hide'}" id="qmkLoi" role="alert">${esc(st.loi)}</div>`;
+
+  function ve() {
+    const box = $('#qmk'); clearInterval(tCho);
+    if (st.buoc === 'email') {
+      box.innerHTML = khung('Quên mật khẩu?', 'Nhập email đã đăng ký để nhận mã OTP và đặt lại mật khẩu.', `
+        <form id="fEmail" class="qmk__form" novalidate>
+          <div class="qmk__pt"><span class="qmk__ic">✉️</span><b>Email</b><span class="badge badge--teal">Khuyên dùng</span></div>
+          <label class="field"><span>Email</span><input class="input" name="email" type="email" inputmode="email" autocomplete="email" placeholder="example@email.com" value="${esc(st.email)}" required></label>
+          ${loiHTML()}
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Gửi mã OTP</button>
+          <p class="qmk__note">Mã chỉ gửi tới email đã lưu trong tài khoản. Tài khoản chưa có email? Dùng số điện thoại bên dưới.</p>
+        </form>
+        <div class="qmk__hoac"><span>Hoặc sử dụng số điện thoại</span></div>
+        <button class="btn btn--outline btn--block" type="button" id="btnSdt">📱 Lấy OTP qua số điện thoại</button>
+        <p class="qmk__note" style="text-align:center">Nhớ ra mật khẩu? <a class="text-primary fw-600" href="account.html?dangnhap=1">Đăng nhập</a></p>`);
+      $('#fEmail').addEventListener('submit', guiOtp); $('#btnSdt').addEventListener('click', quaSdt);
+      if (!XEM) $('#fEmail').email.focus();
+    } else if (st.buoc === 'otp') {
+      box.innerHTML = khung('Nhập mã OTP', `Nếu email đã được đăng ký, mã OTP gồm 6 số đã được gửi đến <b>${esc(st.emailAn)}</b>. Mã có hiệu lực ${st.phut} phút. Kiểm tra cả hộp thư Quảng cáo / Spam nhé.`, `
+        <form id="fOtp" class="qmk__form" novalidate>
+          <div class="otp6" id="otp6">${Array.from({ length: 6 }, (_, i) => `<input class="input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="${i ? 'off' : 'one-time-code'}" aria-label="Số thứ ${i + 1} của mã OTP">`).join('')}</div>
+          ${loiHTML()}
+          <button class="btn btn--primary btn--lg btn--block" type="submit" id="btnOtp">Xác nhận OTP</button>
+          <p class="qmk__note" style="text-align:center">Chưa nhận được mã? <button type="button" class="text-primary fw-700" id="btnGuiLai" disabled></button></p>
+          <p class="qmk__note" style="text-align:center"><button type="button" class="text-primary fw-600" id="btnDoiEmail">← Nhập email khác</button></p>
+        </form>`);
+      ganOtp(); demCho(); if (!XEM) $('#otp6 input').focus();
+    } else if (st.buoc === 'mk') {
+      const nhieu = st.taiKhoan.length > 1;
+      box.innerHTML = khung('Đặt lại mật khẩu', st.kenh === 'sdt' ? `Tạo mật khẩu mới cho tài khoản <b>${esc(maskPhone(st.sdt || ''))}</b>.` : 'Tạo mật khẩu mới cho tài khoản của mẹ.', `
+        <form id="fMk" class="qmk__form" novalidate>
+          ${nhieu ? `<div class="field"><span>Email này dùng cho ${st.taiKhoan.length} tài khoản – chọn tài khoản cần đặt lại</span>${st.taiKhoan.map((t) => `<label class="qmk__tk"><input type="radio" name="tk" value="${t.k}" ${st.k === t.k ? 'checked' : ''}> <b>${esc(t.sdt)}</b> ${t.ten ? `<small>${esc(t.ten)}</small>` : ''}</label>`).join('')}</div>` : ''}
+          <label class="field"><span>Mật khẩu mới</span><div class="qmk__mk"><input class="input" id="mk1" type="password" autocomplete="new-password" placeholder="Ít nhất ${st.min} ký tự"><button type="button" class="qmk__mat" data-mat="mk1" aria-label="Hiện mật khẩu">👁</button></div></label>
+          <div class="qmk__manh" id="manh"><i></i><span></span></div>
+          <label class="field"><span>Nhập lại mật khẩu mới</span><div class="qmk__mk"><input class="input" id="mk2" type="password" autocomplete="new-password" placeholder="Nhập lại đúng mật khẩu trên"><button type="button" class="qmk__mat" data-mat="mk2" aria-label="Hiện mật khẩu">👁</button></div></label>
+          <div class="qmk__khop" id="khop" aria-live="polite"></div>
+          ${loiHTML()}
+          <button class="btn btn--primary btn--lg btn--block" type="submit" id="btnMk" disabled>Đổi mật khẩu</button>
+        </form>`);
+      ganMk(); if (!XEM) $('#mk1').focus();
+    } else if (st.buoc === 'xong') {
+      box.innerHTML = khung('Đổi mật khẩu thành công!', '', `<div class="qmk__xong"><div class="qmk__tick">✓</div><p>Bạn đã đặt lại mật khẩu thành công.${st.sdtAn ? ` Tài khoản <b>${esc(st.sdtAn)}</b>.` : ''}</p><p class="qmk__note">Để an toàn, mọi thiết bị đang đăng nhập đã được đăng xuất. Mẹ đăng nhập lại bằng mật khẩu mới nhé.</p>
+        <a class="btn btn--primary btn--lg btn--block" href="account.html?dangnhap=1">Đăng nhập</a></div>`);
+    } else if (st.buoc === 'hethan') {
+      box.innerHTML = khung('Phiên đặt lại mật khẩu đã hết hạn.', 'Vì lý do an toàn, mỗi lần đặt lại chỉ có hiệu lực trong thời gian ngắn và dùng được 1 lần.', `<button class="btn btn--primary btn--lg btn--block" type="button" id="btnMoi">Yêu cầu mã OTP mới</button>`);
+      $('#btnMoi').addEventListener('click', () => { st.buoc = 'email'; st.loi = ''; ve(); });
+    }
+  }
+  const baoLoi = (m) => { st.loi = m || ''; const e = $('#qmkLoi'); if (e) { e.textContent = st.loi; e.classList.toggle('hide', !st.loi); } };
+  const nut = (b, dang, chu) => { if (!b) return; b.disabled = dang; if (chu) b.textContent = chu; };
+
+  /* ---- B1: gửi OTP qua email ---- */
+  function guiOtp(e) {
+    e && e.preventDefault(); if (XEM) return;
+    const f = $('#fEmail'); const email = (f ? f.email.value : st.email).trim(); st.email = email;
+    if (!/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(email)) { baoLoi('Email chưa đúng định dạng.'); return; }
+    const b = f ? $('button[type=submit]', f) : $('#btnGuiLai'); nut(b, true, 'Đang gửi…');
+    loyaltyApi('qmkGui', { email, may }).then((r) => {
+      if (r && r.ok) { Object.assign(st, { maYc: r.maYc, emailAn: r.emailAn, cho: r.choGiay || 60, phut: Math.round((r.hetHanGiay || st.phut * 60) / 60), buoc: 'otp', loi: '' }); ve(); toast(r.msg, { type: 'ok' }); return; }
+      if (r && r.code === 'RATE_LIMITED' && r.choGiay && st.maYc) { st.cho = r.choGiay; st.buoc = 'otp'; ve(); }
+      nut(b, false, f ? 'Gửi mã OTP' : 'Gửi lại OTP'); baoLoi((r && r.msg) || 'Chưa gửi được mã, mẹ thử lại nhé.');
+    }).catch((e2) => { nut(b, false, f ? 'Gửi mã OTP' : 'Gửi lại OTP'); baoLoi(e2.message); });
+  }
+  function demCho() {
+    const b = $('#btnGuiLai'); if (!b) return;
+    const capNhat = () => { if (st.cho > 0) { b.disabled = true; b.textContent = `Gửi lại sau ${st.cho} giây`; } else { b.disabled = false; b.textContent = 'Gửi lại OTP'; clearInterval(tCho); } };
+    capNhat(); if (!XEM) tCho = setInterval(() => { st.cho--; capNhat(); }, 1000);
+    b.addEventListener('click', () => { st.loi = ''; guiOtp(); });
+    $('#btnDoiEmail').addEventListener('click', () => { st.buoc = 'email'; st.loi = ''; ve(); });
+  }
+  /* 6 ô OTP: chỉ số, tự nhảy ô, Backspace quay lại, dán 6 số, đủ 6 số tự xác nhận */
+  function ganOtp() {
+    const o = $$('#otp6 input'); const ma = () => o.map((x) => x.value).join('');
+    const dien = (s, tu) => { String(s).replace(/\D/g, '').split('').slice(0, 6 - tu).forEach((d, i) => { o[tu + i].value = d; }); const tiep = o.find((x) => !x.value); (tiep || o[5]).focus(); if (ma().length === 6) xacThuc(); };
+    o.forEach((inp, i) => {
+      inp.addEventListener('input', () => { const v = inp.value.replace(/\D/g, ''); if (v.length > 1) { inp.value = ''; dien(v, i); return; } inp.value = v; if (v && i < 5) o[i + 1].focus(); if (ma().length === 6) xacThuc(); });
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !inp.value && i > 0) { o[i - 1].value = ''; o[i - 1].focus(); e.preventDefault(); } if (e.key === 'ArrowLeft' && i > 0) o[i - 1].focus(); if (e.key === 'ArrowRight' && i < 5) o[i + 1].focus(); });
+      inp.addEventListener('paste', (e) => { e.preventDefault(); dien((e.clipboardData || window.clipboardData).getData('text'), i); });
+    });
+    $('#fOtp').addEventListener('submit', (e) => { e.preventDefault(); xacThuc(); });
+  }
+  let dangXt = false;
+  function xacThuc() {
+    if (XEM || dangXt) return; const o = $$('#otp6 input'); const otp = o.map((x) => x.value).join('');
+    if (otp.length !== 6) { baoLoi('Mẹ nhập đủ 6 số nhé.'); return; }
+    dangXt = true; const b = $('#btnOtp'); nut(b, true, 'Đang kiểm tra…');
+    loyaltyApi('qmkXacThuc', { maYc: st.maYc, email: st.email, otp }).then((r) => {
+      dangXt = false;
+      if (r && r.ok) { Object.assign(st, { token: r.token, taiKhoan: r.taiKhoan || [], k: (r.taiKhoan || []).length === 1 ? 0 : null, kenh: 'email', buoc: 'mk', loi: '' }); ve(); return; }
+      nut(b, false, 'Xác nhận OTP'); o.forEach((x) => { x.value = ''; }); o[0].focus();
+      baoLoi((r && r.msg) || 'Mã OTP không chính xác. Vui lòng kiểm tra và thử lại.');
+      if (r && (r.code === 'OTP_LOCKED' || r.code === 'OTP_EXPIRED')) { st.cho = 0; const g = $('#btnGuiLai'); if (g) { g.disabled = false; g.textContent = 'Gửi mã OTP mới'; } nut(b, true); }
+    }).catch((e2) => { dangXt = false; nut(b, false, 'Xác nhận OTP'); baoLoi(e2.message); });
+  }
+
+  /* ---- Cách 2: OTP số điện thoại (luồng cũ) → đặt mật khẩu mới, đăng xuất mọi máy ---- */
+  function quaSdt() {
+    if (XEM) return;
+    openOtp({ title: 'Quên mật khẩu', desc: 'Nhập số điện thoại của tài khoản. Shop gửi mã OTP để xác nhận đúng chủ tài khoản, sau đó mẹ tạo mật khẩu mới.' }).then((s) => {
+      if (!s) return; Object.assign(st, { kenh: 'sdt', sdt: s.sdt, token: s.token, taiKhoan: [], k: 0, buoc: 'mk', loi: '' }); ve();
+    });
+  }
+
+  /* ---- B3: mật khẩu mới ×2 ---- */
+  const doManh = (m) => { let d = 0; if (m.length >= st.min) d++; if (m.length >= 12) d++; if (/[a-z]/.test(m) && /[A-Z]/.test(m)) d++; if (/\d/.test(m)) d++; if (/[^\w\s]/.test(m)) d++; return m.length < st.min ? 0 : d <= 2 ? 1 : d === 3 ? 2 : 3; };
+  function ganMk() {
+    const a = $('#mk1'), b = $('#mk2');
+    const kiem = () => {
+      const m1 = a.value, m2 = b.value, md = doManh(m1);
+      const mh = $('#manh'); mh.dataset.muc = m1 ? md : ''; $('span', mh).textContent = !m1 ? '' : m1.length < st.min ? `Cần ít nhất ${st.min} ký tự (còn ${st.min - m1.length})` : ['', 'Độ mạnh: Yếu', 'Độ mạnh: Trung bình', 'Độ mạnh: Mạnh'][md];
+      const khop = $('#khop'); khop.className = 'qmk__khop' + (m2 ? (m1 === m2 ? ' is-ok' : ' is-no') : '');
+      khop.textContent = !m2 ? '' : m1 === m2 ? '✓ Mật khẩu khớp' : '✕ Mật khẩu không khớp';
+      const chon = st.taiKhoan.length <= 1 || st.k != null;
+      $('#btnMk').disabled = !(m1.length >= st.min && m1 === m2 && chon);
+    };
+    a.addEventListener('input', kiem); b.addEventListener('input', kiem);
+    $$('[name=tk]').forEach((r) => r.addEventListener('change', () => { st.k = Number(r.value); kiem(); }));
+    $$('[data-mat]').forEach((x) => x.addEventListener('click', () => { const i = $('#' + x.dataset.mat); const hien = i.type === 'password'; i.type = hien ? 'text' : 'password'; x.setAttribute('aria-label', hien ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'); x.classList.toggle('is-on', hien); }));
+    if (XEM) { a.value = 'Matkhau2026'; b.value = 'Matkhau2026'; kiem(); }
+    $('#fMk').addEventListener('submit', (e) => {
+      e.preventDefault(); if (XEM) return; kiem(); if ($('#btnMk').disabled) return;
+      const nutMk = $('#btnMk'); nut(nutMk, true, 'Đang lưu…');
+      const goi = st.kenh === 'sdt' ? loyaltyApi('doiMatKhau', { token: st.token, mkMoi: a.value, mkMoi2: b.value, datLai: '1' })
+        : loyaltyApi('qmkDatLai', { maYc: st.maYc, token: st.token, mk: a.value, mk2: b.value, k: st.k == null ? '' : st.k });
+      goi.then((r) => {
+        if (r && r.ok) { st.token = ''; st.sdtAn = r.sdtAn || (st.sdt ? maskPhone(st.sdt) : ''); Session.clear(); st.buoc = 'xong'; ve(); return; }
+        if (r && (r.code === 'RESET_TOKEN_EXPIRED' || r.code === 'RESET_TOKEN_INVALID' || r.loi === 'token')) { st.buoc = 'hethan'; ve(); return; }
+        nut(nutMk, false, 'Đổi mật khẩu'); baoLoi((r && r.msg) || 'Chưa đổi được mật khẩu, mẹ thử lại nhé.');
+      }).catch((e2) => { nut(nutMk, false, 'Đổi mật khẩu'); baoLoi(e2.message); });
+    });
+  }
+  ve();
+});
+</script>
+</body>
+</html>

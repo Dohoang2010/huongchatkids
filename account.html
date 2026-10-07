@@ -10,15 +10,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261007f">
+  <link rel="stylesheet" href="css/style.css?v=20261007g">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261007f"></script>
-<script src="js/diachi.js?v=20261007f"></script>
+<script src="js/data.js?v=20261007g"></script>
+<script src="js/diachi.js?v=20261007g"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261007f"></script>
+<script src="js/app.js?v=20261007g"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3>👤 Đăng nhập</h3>
           <p class="fs-14 text-muted">Tài khoản là <b>số điện thoại mẹ đã mua hàng</b>, mật khẩu mặc định là <b>1</b> (nếu mẹ chưa đổi). Đăng nhập để xem hạng, tổng chi tiêu, lịch sử đơn và sửa địa chỉ.</p>
           <button class="btn btn--primary btn--lg btn--block mt-12" type="button" id="btnLogin">Đăng nhập</button>
-          <p class="fs-13 text-muted mt-8" style="text-align:center">Quên mật khẩu? <button type="button" class="text-primary fw-600" id="btnOtp">Nhận mã OTP</button></p>
+          <p class="fs-13 text-muted mt-8" style="text-align:center"><a class="text-primary fw-700" href="quen-mat-khau.html">Quên mật khẩu?</a> · Đăng nhập bằng <button type="button" class="text-primary fw-600" id="btnOtp">mã OTP</button></p>
           <div class="divider"></div>
           <div id="dkWrap">
             <h3>✨ Mẹ chưa có tài khoản</h3>
@@ -214,8 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="kh-row"><span>Tổng chi tiêu</span><b class="text-primary">${fmt(spent)}</b></div>
             <div class="kh-row"><span>Số đơn đã mua</span><b>${Number(kh.soDon) || don.length || 0}</b></div>
             <button class="btn btn--outline btn--block mt-12" type="button" id="btnEdit">✏️ Sửa thông tin / địa chỉ</button>
-            <button class="btn btn--ghost btn--block mt-8" type="button" id="btnDoiMk">🔑 ${s.macDinh ? 'Đặt mật khẩu riêng (đang dùng mật khẩu mặc định)' : 'Đổi mật khẩu'}</button>
           </div>
+          <div class="divider"></div><h3>🔐 Bảo mật</h3>
+          <div class="bm-row"><span>Email</span><b>${kh.email ? `${esc(MC.anEmail(kh.email))} <span class="badge badge--teal">Dùng lấy lại mật khẩu</span>` : '<span class="text-muted">Chưa có</span>'}</b></div>
+          <div class="bm-row"><span>Số điện thoại</span><b>${esc(maskPhone(kh.sdt || ''))} <span class="badge badge--teal">✓ Đã xác minh</span></b></div>
+          <div class="bm-row"><span>Mật khẩu</span><b>${s.macDinh ? '<span class="text-red">Mật khẩu mặc định</span>' : '••••••••'}</b></div>
+          ${!kh.email ? '<p class="fs-13 text-muted mt-8">Thêm email để lấy lại mật khẩu nhanh khi quên (mã OTP gửi về email).</p>' : ''}
+          <div class="bm-nut"><button class="btn btn--outline btn--sm" type="button" id="btnDoiMk">🔑 ${s.macDinh ? 'Đặt mật khẩu riêng' : 'Đổi mật khẩu'}</button><a class="btn btn--ghost btn--sm" href="quen-mat-khau.html">Quên mật khẩu</a>${!kh.email ? '<button class="btn btn--ghost btn--sm" type="button" data-them-email>✉️ Thêm email</button>' : ''}</div>
           <form id="khForm" class="hide">
             <div class="field"><label>Họ tên</label><input class="input" name="ten" value="${esc(kh.ten || '')}" required></div>
             <div class="field mt-8"><label>Tỉnh / Thành phố</label><select class="input" name="tinh"><option value="">Chọn tỉnh/thành</option>${DIA.map((x) => `<option ${x.t === dc.tinh ? 'selected' : ''}>${esc(x.t)}</option>`).join('')}</select></div>
@@ -286,6 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
   render();
   /* Vào từ link giới thiệu (account.html?ref=SĐT) mà chưa đăng nhập → mở sẵn form đăng ký, mã đã điền */
   if (!Session.get() && GT.ref() && MC.param('ref')) setTimeout(() => $('#btnDangKy')?.click(), 50);
+  /* Vừa đặt lại mật khẩu (account.html?dangnhap=1) → mở sẵn cửa sổ đăng nhập */
+  if (!Session.get() && MC.param('dangnhap')) setTimeout(() => $('#btnLogin')?.click(), 50);
   if (Session.get()) refreshProfile().then(() => render());
 
   $('#acc').addEventListener('click', (e) => {
@@ -308,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'dkOtp') openOtp({ title: 'Xác thực số điện thoại' }).then((ss) => { if (ss) render(); });
     if (e.target.id === 'btnDoiMk') MC.openDoiMk(false).then((ok) => { if (ok) render(); });
     if (e.target.id === 'btnOut') { Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
+    if (e.target.closest('[data-them-email]')) { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); $('#khForm').email.focus(); }
     if (e.target.id === 'btnEdit') { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); }
     if (e.target.id === 'btnCancel') { $('#khForm').classList.add('hide'); $('#khView').classList.remove('hide'); }
   });

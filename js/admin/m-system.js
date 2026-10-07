@@ -45,11 +45,12 @@
   }
 
   /* ---------------- CẤU HÌNH ---------------- */
-  const TAB_CH = [['github', '🔑 Kết nối GitHub'], ['chung', '🏪 Thông tin shop'], ['van-chuyen', '🚚 Vận chuyển'], ['thanh-toan', '💳 Thanh toán'], ['bao-mat', '🔒 Bảo mật']];
+  const TAB_CH = [['github', '🔑 Kết nối GitHub'], ['chung', '🏪 Thông tin shop'], ['van-chuyen', '🚚 Vận chuyển'], ['thanh-toan', '💳 Thanh toán'], ['bao-mat', '🔒 Bảo mật'], ['quen-mat-khau', '🔁 Quên mật khẩu & email']];
   function veCauHinh(el, sub) {
     const tab = sub || 'github';
     el.innerHTML = `<div class="card"><div class="tabs2">${TAB_CH.map(([k, t]) => `<a class="tab2 ${k === tab ? 'is-on' : ''}" href="#/cau-hinh/${k}">${t}</a>`).join('')}</div><div id="chBody"></div></div>`;
     const b = $('#chBody');
+    if (tab === 'quen-mat-khau') return A.veQmkCauHinh ? A.veQmkCauHinh(b) : null;
 
     if (tab === 'github') b.innerHTML = `
       <h3>Kết nối GitHub</h3>

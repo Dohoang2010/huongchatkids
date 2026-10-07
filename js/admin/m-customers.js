@@ -123,6 +123,7 @@
               <td class="num">${fmt(o.tong)}</td><td>${esc(o.thanhToan)}</td>
               <td>${A.badge(o.trangThai || 'Chờ xác nhận', /huỷ|hoàn/i.test(o.trangThai) ? 'tag--no' : 'tag--ok')}</td></tr>`).join('')}
           </tbody></table></div>` : '<p class="muted">Khách chưa có đơn nào.</p>'}</div>`;
+      if (A.veBaoMatKhach) { const bm = document.createElement('div'); bm.className = 'card'; el.appendChild(bm); A.veBaoMatKhach(bm, k.sdt); }
     } catch (e) { el.innerHTML = A.loiTai(e.message); }
   }
 
