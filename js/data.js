@@ -3500,17 +3500,21 @@ window.QUA_TANG = {
     },
     {
       "id": "ct-1010-chuchu",
-      "ten": "10.10 · Hồng sâm ChuChu mua 3 thùng tặng quà",
+      "ten": "10.10 · Hồng sâm ChuChu mua 3 thùng tặng 20 gói",
       "suKien": "1010",
       "batDau": "2026-10-10T00:00",
       "ketThuc": "2026-10-11T00:00",
       "kieu": "soLuong",
       "donVi": "thùng",
-      "tenQua": "phần quà (1 hộp GP Kid hoặc 20 gói ChuChu)",
+      "tenQua": "phần 20 gói hồng sâm ChuChu",
       "bac": [
         {
           "muc": 3,
           "soQua": 1
+        },
+        {
+          "muc": 6,
+          "soQua": 2
         }
       ],
       "muc": 3,
@@ -3534,12 +3538,7 @@ window.QUA_TANG = {
       ],
       "quaTang": [
         {
-          "ten": "1 hộp GP Kid",
-          "gia": 580000
-        },
-        {
           "id": "22644617070",
-          "tenNgan": "ChuChu",
           "bienThe": {
             "Việt quất – nho · 10 gói": false,
             "Táo lê · 10 gói": false,
@@ -3621,7 +3620,7 @@ window.SU_KIEN = {
   ],
   khoi: [
     { nhan: 'Lotte 3 màu', tieuDe: 'Nước ép Lotte Organic', dong: ['Mua 1 thùng tặng 5 gói', 'Mua 2 thùng tặng 10 gói'], ghiChu: 'Mẹ chọn vị quà Hồng hoặc Cam khi thanh toán.', sp: ['22686115682', '41353214697', '25632276959', '23660586997'] },
-    { nhan: 'Hồng sâm ChuChu', tieuDe: 'Hồng sâm ChuChu Hàn Quốc', noiBat: '1.160.000đ / thùng 40 gói', huyHieu: 'Duy nhất ngày 10.10', dong: ['Mua 3 thùng tặng 1 hộp GP Kid hoặc 20 gói hồng sâm ChuChu'], ghiChu: '2 phần 20 gói (nửa thùng) tính bằng 1 thùng.', sp: ['22644617070'] },
+    { nhan: 'Hồng sâm ChuChu', tieuDe: 'Hồng sâm ChuChu Hàn Quốc', noiBat: '1.160.000đ / thùng 40 gói', huyHieu: 'Duy nhất ngày 10.10', dong: ['Mua 3 thùng tặng 20 gói hồng sâm ChuChu', 'Mua 6 thùng tặng 40 gói hồng sâm ChuChu'], ghiChu: 'Mẹ chọn vị quà khi thanh toán. 2 phần 20 gói (nửa thùng) tính bằng 1 thùng.', sp: ['22644617070'] },
     { nhan: 'Canxi váng sữa', tieuDe: 'Canxi hữu cơ Calciumore', huyHieu: 'Daily deals', dong: ['Mua 2 hộp tặng 1 lọ D3K2', 'Mua 3 hộp tặng 2 lọ D3K2', 'Mua 4 hộp tặng 3 lọ D3K2'], sp: ['26060839019', 'combo-vangsua-d3k2', '42878618667'] },
   ],
 };
