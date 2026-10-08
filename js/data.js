@@ -3391,22 +3391,240 @@ window.QUA_TANG = {
       "donVi": "hộp",
       "tenQua": "lọ D3K2",
       "bac": [
-        { "muc": 2, "soQua": 1 },
-        { "muc": 3, "soQua": 2 },
-        { "muc": 4, "soQua": 3 }
+        {
+          "muc": 2,
+          "soQua": 1
+        },
+        {
+          "muc": 3,
+          "soQua": 2
+        },
+        {
+          "muc": 4,
+          "soQua": 3
+        }
       ],
       "muc": 2,
       "soQua": 1,
       "sanPhamChinh": [
-        { "id": "26060839019", "bat": true, "heSo": { "30 gói (không hộp)": 0, "1 hộp 90 gói": 1, "2 hộp 180 gói": 2 } }
+        {
+          "id": "26060839019",
+          "bat": true,
+          "heSo": {
+            "30 gói (không hộp)": 0,
+            "1 hộp 90 gói": 1,
+            "2 hộp 180 gói": 2
+          }
+        }
       ],
       "quaTang": [
-        { "id": "42878618667", "bienThe": { "1 lọ": true, "2 lọ": false } }
+        {
+          "id": "42878618667",
+          "bienThe": {
+            "1 lọ": true,
+            "2 lọ": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "ct-1010-lotte",
+      "ten": "10.10 · Nước ép Lotte mua thùng tặng gói",
+      "suKien": "1010",
+      "batDau": "2026-10-10T00:00",
+      "ketThuc": "2026-10-11T00:00",
+      "kieu": "soLuong",
+      "donVi": "thùng",
+      "tenQua": "gói nước ép Lotte",
+      "bac": [
+        {
+          "muc": 1,
+          "soQua": 5
+        },
+        {
+          "muc": 2,
+          "soQua": 10
+        }
+      ],
+      "muc": 1,
+      "soQua": 5,
+      "sanPhamChinh": [
+        {
+          "id": "22686115682",
+          "bat": true,
+          "heSo": {
+            "Tăng cao (Xanh) · 10 gói": 0,
+            "Tăng cân (Hồng) · 10 gói": 0,
+            "Đề kháng (Cam) · 10 gói": 0,
+            "Tăng cao (Xanh) · Thùng 30 gói": 1,
+            "Tăng cân (Hồng) · Thùng 30 gói": 1,
+            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Mix vị · Thùng 30 gói": 1
+          }
+        },
+        {
+          "id": "41353214697",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        },
+        {
+          "id": "25632276959",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        },
+        {
+          "id": "23660586997",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "ten": "Hồng – Tăng cân tự nhiên",
+          "gia": 44800
+        },
+        {
+          "ten": "Cam – Đề kháng",
+          "gia": 44800
+        }
+      ]
+    },
+    {
+      "id": "ct-1010-chuchu",
+      "ten": "10.10 · Hồng sâm ChuChu mua 3 thùng tặng quà",
+      "suKien": "1010",
+      "batDau": "2026-10-10T00:00",
+      "ketThuc": "2026-10-11T00:00",
+      "kieu": "soLuong",
+      "donVi": "thùng",
+      "tenQua": "phần quà (1 hộp GP Kid hoặc 20 gói ChuChu)",
+      "bac": [
+        {
+          "muc": 3,
+          "soQua": 1
+        }
+      ],
+      "muc": 3,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "22644617070",
+          "bat": true,
+          "heSo": {
+            "Việt quất – nho · 10 gói": 0,
+            "Táo lê · 10 gói": 0,
+            "Mix vị · 10 gói": 0,
+            "Mix vị · 20 gói (nửa thùng)": 0.5,
+            "Táo lê · 20 gói (nửa thùng)": 0.5,
+            "Việt quất – nho · 20 gói (nửa thùng)": 0.5,
+            "Mix vị · 40 gói (1 thùng)": 1,
+            "Việt quất – nho · 40 gói (1 thùng)": 1,
+            "Táo lê · 40 gói (1 thùng)": 1
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "ten": "1 hộp GP Kid",
+          "gia": 580000
+        },
+        {
+          "id": "22644617070",
+          "tenNgan": "ChuChu",
+          "bienThe": {
+            "Việt quất – nho · 10 gói": false,
+            "Táo lê · 10 gói": false,
+            "Mix vị · 10 gói": false,
+            "Mix vị · 20 gói (nửa thùng)": true,
+            "Táo lê · 20 gói (nửa thùng)": true,
+            "Việt quất – nho · 20 gói (nửa thùng)": true,
+            "Mix vị · 40 gói (1 thùng)": false,
+            "Việt quất – nho · 40 gói (1 thùng)": false,
+            "Táo lê · 40 gói (1 thùng)": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "ct-1010-calciumore",
+      "ten": "10.10 · Canxi Calciumore mua 2–4 hộp tặng D3K2",
+      "suKien": "1010",
+      "batDau": "2026-10-10T00:00",
+      "ketThuc": "2026-10-11T00:00",
+      "kieu": "soLuong",
+      "donVi": "hộp",
+      "tenQua": "lọ D3K2",
+      "bac": [
+        {
+          "muc": 2,
+          "soQua": 1
+        },
+        {
+          "muc": 3,
+          "soQua": 2
+        },
+        {
+          "muc": 4,
+          "soQua": 3
+        }
+      ],
+      "muc": 2,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "26060839019",
+          "bat": true,
+          "heSo": {
+            "30 gói (không hộp)": 0,
+            "1 hộp 90 gói": 1,
+            "2 hộp 180 gói": 2
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "id": "42878618667",
+          "bienThe": {
+            "1 lọ": true,
+            "2 lọ": false
+          }
+        }
       ]
     }
   ]
 };
 /* ===/ADMIN:QUA_TANG=== */
+
+/* =====================================================================
+   SỰ KIỆN THEO NGÀY (vd Siêu sale 10.10) – web tự hiện / tự ẩn theo giờ:
+   - hienTu → ketThuc : hiện tab "10.10" (menu + trang chủ) và 2 banner đầu trang
+   - batDau → ketThuc : trang chủ mở sẵn tab sự kiện; CHỈ chạy chương trình quà có suKien = id,
+                        mọi chương trình cũ tạm dừng (không cộng dồn, mỗi đơn 1 chương trình có lợi nhất)
+   - sau ketThuc      : mọi thứ tự biến mất, web về như ngày thường
+   ===================================================================== */
+window.SU_KIEN = {
+  id: '1010', nhan: '10.10', ten: 'Siêu sale 10.10', khau: 'Chốt đơn rinh quà',
+  hienTu: '2026-10-08T00:00:00+07:00', batDau: '2026-10-10T00:00:00+07:00', ketThuc: '2026-10-11T00:00:00+07:00',
+  poster: 'img/su-kien/1010-poster.jpg',
+  banners: [
+    { pc: 'img/su-kien/1010-b1pc.jpg', mb: 'img/su-kien/1010-b1mb.jpg', link: 'index.html?tab=1010', alt: 'Siêu sale 10.10 – Lotte mua thùng tặng đến 10 gói, hồng sâm ChuChu 3 thùng tặng quà, canxi mua 2 hộp tặng D3K2' },
+    { pc: 'img/su-kien/1010-b2pc.jpg', mb: 'img/su-kien/1010-b2mb.jpg', link: 'product.html?id=22644617070', alt: 'Duy nhất ngày 10.10 – Hồng sâm ChuChu 1.160.000đ/thùng 40 gói, mua 3 thùng tặng 1 hộp GP Kid hoặc 20 gói ChuChu' },
+  ],
+  khoi: [
+    { nhan: 'Lotte 3 màu', tieuDe: 'Nước ép Lotte Organic', dong: ['Mua 1 thùng tặng 5 gói', 'Mua 2 thùng tặng 10 gói'], ghiChu: 'Mẹ chọn vị quà Hồng hoặc Cam khi thanh toán.', sp: ['22686115682', '41353214697', '25632276959', '23660586997'] },
+    { nhan: 'Hồng sâm ChuChu', tieuDe: 'Hồng sâm ChuChu Hàn Quốc', noiBat: '1.160.000đ / thùng 40 gói', huyHieu: 'Duy nhất ngày 10.10', dong: ['Mua 3 thùng tặng 1 hộp GP Kid hoặc 20 gói hồng sâm ChuChu'], ghiChu: '2 phần 20 gói (nửa thùng) tính bằng 1 thùng.', sp: ['22644617070'] },
+    { nhan: 'Canxi váng sữa', tieuDe: 'Canxi hữu cơ Calciumore', huyHieu: 'Daily deals', dong: ['Mua 2 hộp tặng 1 lọ D3K2', 'Mua 3 hộp tặng 2 lọ D3K2', 'Mua 4 hộp tặng 3 lọ D3K2'], sp: ['26060839019', 'combo-vangsua-d3k2', '42878618667'] },
+  ],
+};
 
 /* =====================================================================
    SẢN PHẨM NÊN MUA KÈM – hiện ở trang thanh toán để khách thêm vào đơn 1 chạm

@@ -458,6 +458,7 @@
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>
           <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
         <li class="navbar__item"><a class="navbar__link navbar__link--about" href="gioi-thieu.html">💗 Giới thiệu</a></li>
+        ${(() => { const sk = suKienHien(); return sk ? `<li class="navbar__item"><a class="navbar__link navbar__link--sk" href="index.html?tab=${sk.id}">⚡ ${esc(sk.nhan)}</a></li>` : ''; })()}
         ${NAV.map(navItem).join('')}
       </ul></div></nav>
     </header>
@@ -468,6 +469,7 @@
         <div class="mmenu__ages">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label}</a>`).join('')}</div>
         <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với chuyên gia dinh dưỡng</a></div>
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
+        ${(() => { const sk = suKienHien(); return sk ? `<a class="mmenu__link mmenu__link--sk" href="index.html?tab=${sk.id}">⚡ ${esc(sk.ten)}</a>` : ''; })()}
         <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
         <a class="mmenu__link" href="account.html">👤 Tài khoản / Đơn hàng</a>
@@ -1483,7 +1485,7 @@
     return [moi, giftNoteCu(p)].filter(Boolean).join('<br>');
   }
   function giftNoteCu(p) {
-    const cfg = QT(); if (!cfg) return '';
+    const cfg = QT(); if (!cfg || suKienDangChay()) return '';
     const vi = (cfg.vi || []).map((v) => v.split('–')[0].trim().toLowerCase()).join(' hoặc ');
     const t = hangCho(sdtDangDung()); const vip = !!(t && t.discount > 0);
     if (laNuocLotte(p)) {
@@ -1503,22 +1505,35 @@
   /* VIP = đã lên hạng có chiết khấu (Silver trở lên) */
   function laVip(phone) { const t = hangCho(phone != null ? phone : sdtDangDung()); return !!(t && t.discount > 0); }
   /* ---- Chương trình "Mua để nhận quà" tạo ở trang quản trị (QUA_TANG.chuongTrinh) ---- */
+  /* Sự kiện (SU_KIEN, vd 10.10): trong khung giờ sự kiện CHỈ chạy các chương trình gắn suKien = id sự kiện,
+     mọi chương trình cũ (kể cả quà đơn từ 1 triệu / mua thùng Lotte) tạm dừng; hết giờ thì tự quay lại như cũ. */
+  function suKienDangChay() {
+    const s = window.SU_KIEN; if (!s || !s.batDau || !s.ketThuc) return null;
+    const n = Date.now(); return n >= Date.parse(s.batDau) && n < Date.parse(s.ketThuc) ? s : null;
+  }
+  /* Thời gian hiện tab / banner sự kiện (từ hienTu, sớm hơn ngày chạy để khách biết trước) */
+  function suKienHien() {
+    const s = window.SU_KIEN; if (!s || !s.ketThuc) return null;
+    const n = Date.now(); return n >= Date.parse(s.hienTu || s.batDau) && n < Date.parse(s.ketThuc) ? s : null;
+  }
   function ctDangChay() {
-    const now = Date.now();
-    return ((window.QUA_TANG || {}).chuongTrinh || []).filter((c) => !c.tat && Date.parse(c.batDau) <= now && now < Date.parse(c.ketThuc)).map((c) => {
-      const qua = (c.quaTang || []).map((g) => ({ g, p: byId(g.id) })).filter((x) => x.p && x.p.stock > 0 && !x.p.an);
+    const now = Date.now(), sk = suKienDangChay();
+    return ((window.QUA_TANG || {}).chuongTrinh || []).filter((c) => !c.tat && Date.parse(c.batDau) <= now && now < Date.parse(c.ketThuc) && (sk ? c.suKien === sk.id : !c.suKien)).map((c) => {
+      /* Quà có thể là sản phẩm trên web (id) hoặc quà ghi chữ (ten, vd "1 hộp GP Kid") khi web chưa bán món đó */
+      const qua = (c.quaTang || []).map((g) => ({ g, p: g.id ? byId(g.id) : null })).filter((x) => (x.p ? x.p.stock > 0 && !x.p.an : !!x.g.ten && x.g.bat !== false));
       const vi = [];
       qua.forEach(({ g, p }) => {
-        if (p.variants && p.variants.length) p.variants.forEach((v) => { if (!v.oos && (g.bienThe || {})[v.label] !== false) vi.push(qua.length > 1 ? `${shortName(p)} – ${v.label}` : v.label); });
+        if (!p) { vi.push(g.ten); return; }
+        if (p.variants && p.variants.length) p.variants.forEach((v) => { if (!v.oos && (g.bienThe || {})[v.label] !== false) vi.push(qua.length > 1 ? `${g.tenNgan || shortName(p)} – ${v.label}` : v.label); });
         else if (g.bat !== false) vi.push(shortName(p));
       });
-      if (vi.length === 1 && qua.length === 1) vi[0] = shortName(qua[0].p);   // chỉ 1 lựa chọn → hiện tên sản phẩm quà
+      if (vi.length === 1 && qua.length === 1 && qua[0].p) vi[0] = shortName(qua[0].p);   // chỉ 1 lựa chọn → hiện tên sản phẩm quà
       const dsChinh = (c.sanPhamChinh || []).filter((x) => x.bat !== false);
       const chinh = new Set(dsChinh.map((x) => x.id));
       const heSo = {}; dsChinh.forEach((x) => { heSo[x.id] = x.heSo || {}; });
       /* Nhiều bậc: bac = [{ muc, soQua }]; chương trình cũ chỉ có muc/soQua = 1 bậc */
       const bac = (c.bac && c.bac.length ? c.bac : [{ muc: Number(c.muc) || 0, soQua: Number(c.soQua) || 1 }]).filter((b) => b.muc > 0).sort((a, b) => a.muc - b.muc);
-      const ten = c.tenQua || (qua.length === 1 ? shortName(qua[0].p) : 'quà tặng');
+      const ten = c.tenQua || (qua.length === 1 && qua[0].p ? shortName(qua[0].p) : 'quà tặng');
       return { c, vi, chinh, heSo, bac, ten, soLuong: c.kieu === 'soLuong', donVi: c.donVi || 'hộp' };
     }).filter((x) => x.vi.length && x.chinh.size && x.bac.length);
   }
@@ -1567,7 +1582,7 @@
     ctDangChay().forEach((x) => {
       const dat = ctDat(x, lines); if (!dat) return;
       const bacDat = [...x.bac].reverse().find((b) => dat >= b.muc), bacSau = x.bac.find((b) => dat < b.muc);
-      const giaQua = Math.min(...(x.c.quaTang || []).map((g) => { const p = byId(g.id); return p ? Math.min(...(p.variants && p.variants.length ? p.variants.filter((v) => (g.bienThe || {})[v.label] !== false).map((v) => v.price) : [p.price]), Infinity) : Infinity; }), Infinity);
+      const giaQua = Math.min(...(x.c.quaTang || []).map((g) => { if (!g.id) return Number(g.gia) || Infinity; const p = byId(g.id); return p ? Math.min(...(p.variants && p.variants.length ? p.variants.filter((v) => (g.bienThe || {})[v.label] !== false).map((v) => v.price) : [p.price]), Infinity) : Infinity; }), Infinity);
       const giaTri = bacDat ? bacDat.soQua * (isFinite(giaQua) ? giaQua : 1) : 0;
       if (bacDat && giaTri > giaTriTot) {
         giaTriTot = giaTri;
@@ -1586,7 +1601,7 @@
     return goiY ? { soQua: 0, chuongTrinh: '', thung: 0, vi: [], ten: '', goiY, moTa: '', lyDo: '' } : cu;
   }
   function giftForCu(lines, opts) {
-    const cfg = QT(); if (!cfg) return null;
+    const cfg = QT(); if (!cfg || suKienDangChay()) return null;   // ngày sự kiện: chương trình cũ tạm dừng
     const vip = opts && opts.vip != null ? !!opts.vip : laVip();
     let thung = 0, tienKhac = 0;
     (lines || []).forEach((l) => {
@@ -1758,5 +1773,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    giftFor, giftNote, giftBox, suKienDangChay, suKienHien, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();
