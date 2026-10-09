@@ -1,0 +1,152 @@
+{
+  "tenFile": "sale-10-10.mp4",
+  "khuon": "9:16",
+  "giong": "vi-VN-HoaiMyNeural",
+  "tocDo": "+6%",
+  "mauPhuDe": "#D93E66",
+  "nhac": {
+    "bpm": 112
+  },
+  "canh": [
+    {
+      "id": 1,
+      "html": "<div class=\"pill\">⚡ Siêu sale 10.10</div><h1>Sale đôi – Deal đôi<br><em>Chốt đơn rinh quà</em></h1><div class=\"ui crop\" style=\"width:820px;height:1000px\"><img src=\"file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/su-kien/1010-poster.jpg\" style=\"top:0\"></div>",
+      "vo": "Mẹ ơi! Siêu sale đôi mười tháng mười đã đến tại Hương Chất Kids. Chốt đơn là rinh quà, cùng Hương xem ngay các deal hot nhé!",
+      "sub": [
+        "Siêu sale đôi 10.10 tại Hương Chất Kids",
+        "Chốt đơn là rinh quà",
+        "Cùng xem ngay các deal hot nhé!"
+      ]
+    },
+    {
+      "id": 2,
+      "nhan": "1/4",
+      "k": [
+        0,
+        0.35,
+        0.6,
+        0.82
+      ],
+      "html": "<div class=\"pill pill--teal\">🥤 Lotte 3 màu</div><h2>Nước ép Lotte Organic<br><em>Mua 3 tặng 1</em></h2><div class=\"sp\"><img src=\"file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/22686115682.jpg\"><div><b>Nước ép Lotte 3 màu</b><div class=\"gia\">448.000đ</div></div></div><div class=\"flow\"><div class=\"row\" data-k=\"1\"><i>📦</i><span>Mua 1 thùng</span><b>+5 gói</b></div><div class=\"row row--teal\" data-k=\"2\"><i>📦</i><span>Mua 2 thùng</span><b>+10 gói</b></div></div><p class=\"lead\" data-k=\"3\">Mẹ chọn vị quà <b>Hồng</b> hoặc <b>Cam</b> khi thanh toán.</p>",
+      "vo": "Deal thứ nhất: nước ép Lotte ba màu, mua ba tặng một. Mua một thùng tặng năm gói, mua hai thùng tặng mười gói. Mẹ chọn vị quà Hồng hoặc Cam khi thanh toán.",
+      "sub": [
+        "Deal 1: nước ép Lotte 3 màu – mua 3 tặng 1",
+        "Mua 1 thùng tặng 5 gói",
+        "Mua 2 thùng tặng 10 gói",
+        "Chọn vị quà Hồng hoặc Cam khi thanh toán"
+      ]
+    },
+    {
+      "id": 3,
+      "nhan": "2/4",
+      "k": [
+        0,
+        0.3,
+        0.62,
+        0.8
+      ],
+      "html": "<div class=\"pill pill--amber\">🐻 Duy nhất ngày 10.10</div><h2>Hồng sâm <em>ChuChu</em></h2><div class=\"box ct\" data-k=\"1\"><small>Giá đặc biệt</small><b style=\"color:var(--p)\">1.160.000đ</b><small style=\"margin-top:8px\">/ thùng 40 gói</small></div><div class=\"flow\"><div class=\"row\" data-k=\"2\"><i>🎁</i><span>Mua 3 thùng</span><b>+20 gói</b></div><div class=\"row row--teal\" data-k=\"3\"><i>🎁</i><span>Mua 6 thùng</span><b>+40 gói</b></div></div>",
+      "vo": "Deal thứ hai, duy nhất ngày mười tháng mười: hồng sâm ChuChu chỉ một triệu một trăm sáu mươi nghìn đồng một thùng bốn mươi gói. Mua ba thùng tặng hai mươi gói, mua sáu thùng tặng bốn mươi gói.",
+      "sub": [
+        "Deal 2 – duy nhất ngày 10/10: hồng sâm ChuChu",
+        "1.160.000đ / thùng 40 gói",
+        "Mua 3 thùng tặng 20 gói",
+        "Mua 6 thùng tặng 40 gói"
+      ]
+    },
+    {
+      "id": 4,
+      "nhan": "3/4",
+      "k": [
+        0,
+        0.4,
+        0.58,
+        0.76
+      ],
+      "html": "<div class=\"pill pill--teal\">🥛 Canxi váng sữa</div><h2>Calciumore<br><em>tặng lọ D3K2</em></h2><div class=\"duo\"><div class=\"box ct\"><img src=\"file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/26060839019.jpg\" style=\"width:100%;border-radius:24px\"><small style=\"margin-top:14px\">Canxi váng sữa</small></div><div class=\"box ct\"><img src=\"file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/42878618667.jpg\" style=\"width:100%;border-radius:24px\"><small style=\"margin-top:14px\">Quà: D3K2</small></div></div><div class=\"flow\"><div class=\"row\" data-k=\"1\"><i>📦</i><span>Mua 2 hộp</span><b>+1 D3K2</b></div><div class=\"row\" data-k=\"2\"><i>📦</i><span>Mua 3 hộp</span><b>+2 D3K2</b></div><div class=\"row row--teal\" data-k=\"3\"><i>📦</i><span>Mua 4 hộp</span><b>+3 D3K2</b></div></div>",
+      "vo": "Deal thứ ba: canxi váng sữa Calciumore, hỗ trợ bổ sung canxi cho hệ xương của bé. Mua hai hộp tặng một lọ D3K2, mua ba hộp tặng hai lọ, mua bốn hộp tặng ba lọ.",
+      "sub": [
+        "Deal 3: canxi váng sữa Calciumore",
+        "Mua 2 hộp tặng 1 lọ D3K2",
+        "Mua 3 hộp tặng 2 lọ",
+        "Mua 4 hộp tặng 3 lọ"
+      ]
+    },
+    {
+      "id": 5,
+      "nhan": "4/4",
+      "k": [
+        0,
+        0.3,
+        0.52,
+        0.74
+      ],
+      "html": "<div class=\"pill\">🦌 Gạc hươu non Sumo</div><h2>Giảm <em>5%</em> + tặng gói</h2><div class=\"sp\"><img src=\"file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/26156646705.jpg\"><div><b>Gạc hươu non Sumo</b><div class=\"gia\">390.000đ</div></div></div><div class=\"flow\"><div class=\"row\" data-k=\"1\"><i>📦</i><span>Mua 1 thùng</span><b>−5%</b></div><div class=\"row\" data-k=\"2\"><i>📦</i><span>2 thùng: −5%</span><b>+10 gói</b></div><div class=\"row row--teal\" data-k=\"3\"><i>📦</i><span>3 thùng: −5%</span><b>+20 gói</b></div></div>",
+      "vo": "Deal thứ tư: gạc hươu non Sumo. Mua một thùng giảm năm phần trăm. Mua hai thùng giảm năm phần trăm và tặng mười gói. Mua ba thùng giảm năm phần trăm và tặng hai mươi gói.",
+      "sub": [
+        "Deal 4: gạc hươu non Sumo",
+        "Mua 1 thùng giảm 5%",
+        "2 thùng: giảm 5% + tặng 10 gói",
+        "3 thùng: giảm 5% + tặng 20 gói"
+      ]
+    },
+    {
+      "id": 6,
+      "nhan": "Bước 1",
+      "html": "<div class=\"pill pill--teal\">Cách đặt · Bước 1</div><h2>Vào <em>huongchatkids.vn</em><br>bấm tab <span class=\"t\">⚡ 10.10</span></h2><div class=\"duo\"><div class=\"box ct\" style=\"padding:26px\"><b style=\"font-size:48px;margin:0\">🏠 Trang chủ</b></div><div class=\"box ct\" style=\"padding:26px;background:linear-gradient(135deg,#1E3FBF,#3B6BFF);color:#fff\"><b style=\"font-size:48px;margin:0;color:#FFD54A\">⚡ 10.10</b></div></div><div class=\"ui crop\" style=\"width:760px;height:880px\"><img src=\"ui_lotte.png\" style=\"top:0\"></div>",
+      "vo": "Cách đặt hàng rất đơn giản. Bước một: mẹ vào Hương Chất Kids chấm vi en, bấm tab mười chấm mười ở đầu trang để xem đủ các deal.",
+      "sub": [
+        "Bước 1: vào huongchatkids.vn",
+        "bấm tab ⚡ 10.10 ở đầu trang để xem các deal"
+      ]
+    },
+    {
+      "id": 7,
+      "nhan": "Bước 2",
+      "html": "<div class=\"pill pill--teal\">Cách đặt · Bước 2</div><h2>Bấm <em>Mua ngay</em><br>chọn loại & số lượng</h2><div class=\"ui crop\" style=\"width:860px;height:900px\"><img src=\"ui_qb.png\" style=\"top:0\"></div><p class=\"lead\">Điền <b>họ tên, số điện thoại, địa chỉ</b> – không cần tạo tài khoản.</p>",
+      "vo": "Bước hai: bấm Mua ngay ở sản phẩm mẹ chọn, chọn loại và số lượng, rồi điền họ tên, số điện thoại và địa chỉ. Không cần tạo tài khoản.",
+      "sub": [
+        "Bước 2: bấm Mua ngay, chọn loại và số lượng",
+        "điền họ tên, số điện thoại, địa chỉ",
+        "không cần tạo tài khoản"
+      ]
+    },
+    {
+      "id": 8,
+      "nhan": "Bước 3",
+      "html": "<div class=\"pill pill--teal\">Cách đặt · Bước 3</div><h2>Bấm <em>Đặt hàng</em><br>hoặc <span class=\"t\">Đặt qua Zalo</span></h2><div class=\"ui crop\" style=\"width:860px;height:480px\"><img src=\"ui_qb.png\" style=\"top:-1690px\"></div><p class=\"lead\">Thanh toán khi nhận hàng, được <b>kiểm tra hàng trước</b>. Hương gọi xác nhận đơn và quà cho mẹ.</p>",
+      "vo": "Bước ba: bấm Đặt hàng, hoặc Đặt qua Zalo nếu mẹ muốn nhắn tin cho Hương. Mẹ thanh toán khi nhận hàng, được kiểm tra hàng trước. Hương sẽ gọi xác nhận đơn và quà tặng cho mẹ.",
+      "sub": [
+        "Bước 3: bấm Đặt hàng hoặc Đặt qua Zalo",
+        "Thanh toán khi nhận, được kiểm tra hàng trước",
+        "Hương gọi xác nhận đơn và quà cho mẹ"
+      ]
+    },
+    {
+      "id": 9,
+      "k": [
+        0,
+        0.3,
+        0.6
+      ],
+      "html": "<div class=\"pill pill--amber\">Lưu ý</div><h2>Đừng bỏ lỡ nha mẹ</h2><div class=\"list\"><div class=\"li\" data-k=\"1\"><i>⏰</i><span>Deal sale đôi chỉ trong <b>ngày 9 – 10/10</b>. Giá ChuChu 1.160.000đ <b>duy nhất ngày 10/10</b></span></div><div class=\"li\" data-k=\"2\"><i>🎁</i><span>Quà tính theo số thùng / hộp trong đơn</span></div><div class=\"li\" data-k=\"3\"><i>✨</i><span>Không cộng dồn – mỗi đơn nhận ưu đãi của <b>1 chương trình có lợi nhất</b></span></div></div>",
+      "vo": "Lưu ý: deal sale đôi chỉ trong ngày chín và mười tháng mười, riêng giá hồng sâm ChuChu chỉ có duy nhất ngày mười tháng mười. Quà tính theo số thùng, số hộp trong đơn. Các chương trình không cộng dồn, mỗi đơn nhận ưu đãi của một chương trình có lợi nhất.",
+      "sub": [
+        "Deal sale đôi chỉ trong ngày 9 – 10/10",
+        "Giá ChuChu duy nhất ngày 10/10",
+        "Quà tính theo số thùng / hộp trong đơn",
+        "Không cộng dồn – mỗi đơn 1 chương trình có lợi nhất"
+      ]
+    },
+    {
+      "id": 10,
+      "html": "<div class=\"cta\"><div class=\"big\">🎉</div><h2>Chốt đơn<br>rinh quà 10.10!</h2><p>Ưu đãi tốt không phải<br>lúc nào cũng có</p><span class=\"web\">huongchatkids.vn</span></div><p class=\"lead ct\">Hotline / Zalo <b>0967 233 003</b></p>",
+      "vo": "Chăm con là hành trình mỗi ngày, còn ưu đãi tốt thì không phải lúc nào cũng có. Mẹ vào Hương Chất Kids chấm vi en, hoặc nhắn Zalo không chín sáu bảy, hai ba ba, không không ba để chốt đơn rinh quà nhé!",
+      "sub": [
+        "Ưu đãi tốt không phải lúc nào cũng có",
+        "Vào huongchatkids.vn",
+        "hoặc nhắn Zalo 0967 233 003 để chốt đơn nhé!"
+      ]
+    }
+  ]
+}
