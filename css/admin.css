@@ -652,3 +652,4 @@ tr.is-dim{opacity:.55}
 .bt-media__it figcaption{font-size:12px;color:var(--muted);margin:5px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bt-media__it div{display:flex;gap:4px;flex-wrap:wrap}
 .bt-media__it .btn{padding:3px 8px;font-size:12px}
+td.nowrap{white-space:nowrap}

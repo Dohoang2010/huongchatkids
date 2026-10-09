@@ -1577,6 +1577,7 @@ function doGet(e) {
     if (action === 'donChiTiet')   return traVe(apiDonChiTiet(p), cb);
     if (action === 'doiTrangThai') return traVe(apiDoiTrangThai(p), cb);
     if (action === 'dongBoCRM')    return traVe(apiDongBoCRM(p), cb);
+    if (action === 'xoaDon')       return traVe(apiXoaDon(p), cb);
     if (action === 'truyCap')      return traVe(apiTruyCap(p), cb);
     if (action === 'khachHang')    return traVe(apiKhachHang(p), cb);
     if (action === 'khachChiTiet') return traVe(apiKhachChiTiet(p), cb);
@@ -2032,7 +2033,7 @@ function canhBao_(khoa, noiDung) {
   try { ghiNhatKy('Bảo mật', 'Cảnh báo', String(noiDung).slice(0, 300)); } catch (e3) { Logger.log(e3); }
 }
 /* Thao tác quản trị đụng tới tiền / quyền → báo cho chủ shop (gộp theo người làm, 10 phút / lần) */
-var LENH_BAO = { qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
+var LENH_BAO = { xoaDon: 'xoá đơn hàng', qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
   qtAffCauHinh: 'đổi cấu hình chương trình đối tác', qtAffChotKy: 'chốt kỳ thanh toán đối tác', qtAffTra: 'đánh dấu đã trả tiền đối tác', qtAffGanTay: 'gán tay đơn cho đối tác',
   qtDiemDieuChinh: 'điều chỉnh điểm của khách', qtLuu: 'tạo / sửa tài khoản quản trị', qtXoa: 'xoá tài khoản quản trị', qtBiMat: 'đổi cài đặt bảo mật' };
 var HD_ = null;   // lệnh đang xử lý (gán ở doGet) để traVe biết mà cảnh báo
@@ -2203,19 +2204,36 @@ function crmKhachCache(sdt) {
   try { c.put(k, JSON.stringify(d || { ok: false }), 300); } catch (e) {}
   return d;
 }
-/* Tìm đơn CRM khớp đơn web: đúng mã (hoặc mã CRM chứa mã web); không có mã thì cùng ngày + cùng số tiền và chỉ có 1 đơn như vậy */
+/* Ngày của đơn CRM → "dd/MM/yyyy" (CRM có thể trả dd/MM/yyyy, yyyy-MM-dd hoặc ISO) */
+function ngayCRM(x) {
+  var t = String(x || '').trim(); if (!t) return '';
+  var m = t.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/);
+  if (m) return ('0' + m[1]).slice(-2) + '/' + ('0' + m[2]).slice(-2) + '/' + m[3];
+  var d = new Date(t); if (isNaN(d.getTime())) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return t.slice(8, 10) + '/' + t.slice(5, 7) + '/' + t.slice(0, 4);
+  return Utilities.formatDate(d, 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy');
+}
+function soNgay_(ddmmyyyy) { var m = String(ddmmyyyy).match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? Date.UTC(+m[3], m[2] - 1, +m[1]) / 864e5 : NaN; }
+/* Tìm đơn CRM khớp đơn web:
+   1) mã CRM = / chứa mã web; 2) mã web nằm ở bất kỳ trường nào của đơn CRM (ghi chú, mã ngoài…);
+   3) không có mã → cùng ngày (lệch ≤ 1 ngày) + cùng số tiền (±1.000đ) và chỉ có đúng 1 đơn như vậy */
 function timDonCRM(crm, ma, tong, ngay) {
   var ds = (crm && crm.donHang) || []; var m = String(ma || '').toUpperCase();
   for (var i = 0; i < ds.length; i++) { var x = String(ds[i].ma || '').toUpperCase(); if (m && x && (x === m || x.indexOf(m) > -1 || m.indexOf(x) > -1)) return ds[i]; }
-  var ng = ngay ? Utilities.formatDate(new Date(ngay), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy') : '';
-  var hop = ds.filter(function (d) { var tien = Number(d.tien != null ? d.tien : d.tong) || 0; return ng && String(d.ngay || '').indexOf(ng) === 0 && Math.abs(tien - Number(tong || 0)) < 1000; });
+  if (m.length >= 5) for (var j = 0; j < ds.length; j++) { try { if (JSON.stringify(ds[j]).toUpperCase().indexOf(m) > -1) return ds[j]; } catch (e) {} }
+  var ng = ngay ? soNgay_(Utilities.formatDate(new Date(ngay), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy')) : NaN;
+  if (isNaN(ng)) return null;
+  var hop = ds.filter(function (d) {
+    var tien = Number(d.tien != null ? d.tien : d.tong) || 0, tong2 = Number(d.tong) || 0, nd = soNgay_(ngayCRM(d.ngay));
+    return !isNaN(nd) && Math.abs(nd - ng) <= 1 && (Math.abs(tien - Number(tong || 0)) < 1000 || Math.abs(tong2 - Number(tong || 0)) < 1000);
+  });
   return hop.length === 1 ? hop[0] : null;
 }
 var TT_CUOI = ['Đã huỷ', 'Đã hoàn hàng'];
 /* Đồng bộ 1 dòng đơn; trả { crm: {...} | null, trangThai, doi } */
-function dongBoDongCRM(s, dong, v) {
+function dongBoDongCRM(s, dong, v, crmSan) {
   var cu = chuanTT(v[18]), sdt = chuanSdt(v[4]), ma = String(v[1] || '');
-  var crm = crmKhachCache(sdt); if (!crm || !crm.ok) return { crm: null, trangThai: cu, doi: false };
+  var crm = crmSan !== undefined ? crmSan : crmKhachCache(sdt); if (!crm || !crm.ok) return { crm: null, trangThai: cu, doi: false };
   var d = timDonCRM(crm, ma, v[10], v[0]); if (!d) return { crm: { coDon: false }, trangThai: cu, doi: false };
   var raw = String(d.trangThai || ''), moi = ttTuCRM(raw);
   var info = { coDon: true, ma: String(d.ma || ''), trangThai: raw, quyDoi: moi };
@@ -2229,30 +2247,74 @@ function dongBoDongCRM(s, dong, v) {
   try { zaloBotGuiTin('🔄 Đơn ' + ma + ' (CRM): ' + cu + ' → ' + moi); } catch (e) { Logger.log(e); }
   return { crm: info, trangThai: moi, doi: true };
 }
-/* Đồng bộ các đơn chưa xong trong 60 ngày gần nhất (tối đa 40 khách mỗi lần để không quá giờ) */
-function dongBoCRMNhieu() {
-  var s = sheetDon(); var n = s.getLastRow(); var kq = { ok: true, kiemTra: 0, doi: 0, ds: [] };
-  if (n < 2 || !PropertiesService.getScriptProperties().getProperty('CRM_KEY')) { kq.msg = 'Chưa có CRM_KEY trong Thuộc tính tập lệnh'; return kq; }
-  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues(); var tu = Date.now() - 60 * 864e5; var khach = {};
+/* Đồng bộ trạng thái mọi đơn 60 ngày gần nhất theo CRM (cả đơn đã giao – để bắt hoàn hàng).
+   Gọi CRM theo lô 25 khách (fetchAll); trả thêm số liệu chẩn đoán để biết vì sao đơn chưa đổi. */
+function dongBoCRMNhieu(giayToiDa) {
+  var s = sheetDon(); var n = s.getLastRow();
+  var kq = { ok: true, kiemTra: 0, doi: 0, ds: [], khongCoKhach: 0, khongKhop: 0, loiCRM: 0, mau: [] };
+  var key = PropertiesService.getScriptProperties().getProperty('CRM_KEY');
+  if (!key) { kq.msg = 'Chưa có CRM_KEY trong Thuộc tính tập lệnh'; return kq; }
+  if (n < 2) return kq;
+  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues(); var tu = Date.now() - 60 * 864e5;
+  var theoKhach = {}, thuTu = [];
   for (var i = v.length - 1; i >= 0; i--) {
     if (!v[i][0] || new Date(v[i][0]).getTime() < tu) continue;
-    var cu = chuanTT(v[i][18]); if (cu === 'Đã giao' || TT_CUOI.indexOf(cu) > -1) continue;
-    var sdt = chuanSdt(v[i][4]); if (!sdt) continue;
-    if (!khach[sdt] && Object.keys(khach).length >= 40) continue;
-    khach[sdt] = 1; kq.kiemTra++;
-    var r = dongBoDongCRM(s, i + 2, v[i]);
-    if (r.doi) { kq.doi++; kq.ds.push(String(v[i][1]) + ': ' + cu + ' → ' + r.trangThai); }
+    if (String(v[i][2] || '').indexOf('gọi lại') > -1) continue;
+    var cu = chuanTT(v[i][18]); if (TT_CUOI.indexOf(cu) > -1) continue;
+    var sdt = chuanSdt(v[i][4]); if (!sdtHopLe(sdt)) continue;
+    if (!theoKhach[sdt]) { theoKhach[sdt] = []; thuTu.push(sdt); }
+    theoKhach[sdt].push(i);
+  }
+  var t0 = Date.now();
+  for (var b = 0; b < thuTu.length; b += 25) {
+    if (Date.now() - t0 > (giayToiDa || 240) * 1000) { kq.chuaXong = true; break; }
+    var lo = thuTu.slice(b, b + 25);
+    var res = UrlFetchApp.fetchAll(lo.map(function (sdt) {
+      return { url: CRM_KHACH_URL + '?sdt=' + encodeURIComponent(sdt) + '&key=' + encodeURIComponent(key), muteHttpExceptions: true };
+    }));
+    lo.forEach(function (sdt, k) {
+      var crm = null;
+      try { if (res[k].getResponseCode() === 200) { crm = JSON.parse(res[k].getContentText()); if (!crm || !crm.ok) crm = null; } } catch (e) { crm = null; }
+      theoKhach[sdt].forEach(function (i) {
+        kq.kiemTra++;
+        if (!crm) { kq.loiCRM++; return; }
+        if (!crm.co && !(crm.donHang || []).length) { kq.khongCoKhach++; return; }
+        var r = dongBoDongCRM(s, i + 2, v[i], crm);
+        if (r.crm && r.crm.coDon === false) {
+          kq.khongKhop++;
+          if (kq.mau.length < 5) kq.mau.push({ ma: String(v[i][1] || ''), ngay: ngayVN(v[i][0]), tong: Number(v[i][10]) || 0,
+            crm: (crm.donHang || []).slice(0, 3).map(function (d) { return String(d.ma || '?') + ' · ' + ngayCRM(d.ngay) + ' · ' + tien(d.tien != null ? d.tien : d.tong) + ' · ' + String(d.trangThai || ''); }) });
+        }
+        if (r.doi) { kq.doi++; if (kq.ds.length < 50) kq.ds.push(String(v[i][1]) + ': ' + chuanTT(v[i][18]) + ' → ' + r.trangThai); }
+      });
+    });
   }
   return kq;
 }
 function apiDongBoCRM(p) {
   if (!coQuyen(p, 'order.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
-  return dongBoCRMNhieu();
+  var kq = dongBoCRMNhieu(80);
+  kq.lichLuc = Number(PropertiesService.getScriptProperties().getProperty('LICH_LUC') || 0);
+  return kq;
+}
+
+/* Xoá 1 đơn khỏi danh sách đơn của web (sheet Đơn hàng). Không xoá bên CRM. Kiểm tra đúng mã đơn ở dòng đó. */
+function apiXoaDon(p) {
+  if (!coQuyen(p, 'order.update')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var s = sheetDon(); var dong = Number(p.dong || 0);
+  if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
+  var v = s.getRange(dong, 1, 1, HEADERS.length).getValues()[0];
+  var ma = String(v[1] || '');
+  if (String(p.ma || '') !== ma) return { ok: false, msg: 'Danh sách đơn vừa thay đổi – tải lại trang rồi xoá lại' };
+  s.deleteRow(dong);
+  ghiNhatKy('Đơn hàng', ma, 'Xoá đơn khỏi web: ' + String(v[3] || '') + ' ' + chuanSdt(v[4]) + ' · ' + tien(v[10]) + ' · ' + chuanTT(v[18]));
+  var sdt = chuanSdt(v[4]); if (sdt) { try { capNhatKhachHang(sdt, { name: '', phone: sdt }, {}); } catch (e) { Logger.log(e); } }
+  return { ok: true, ma: ma };
 }
 /* Chạy nền (trigger) */
 function dongBoCRMTuDong() {
   PropertiesService.getScriptProperties().setProperty('LICH_LUC', String(Date.now()));   // để trang quản trị biết lịch đang chạy
-  try { Logger.log(JSON.stringify(dongBoCRMNhieu())); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
+  try { Logger.log(JSON.stringify(dongBoCRMNhieu(150))); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
   try { Logger.log(JSON.stringify(xuLyAff())); } catch (e3) { Logger.log('Xử lý đối tác lỗi: ' + e3); }   // đối tác: hoa hồng + chốt kỳ ngày 10
   try { Logger.log(JSON.stringify(dongBoChiTieuKHNen())); } catch (e4) { Logger.log('Cập nhật chi tiêu thành viên lỗi: ' + e4); }   // thành viên: chi tiêu + hạng theo CRM
@@ -2427,7 +2489,7 @@ function apiDongBoChiTieuKH(p) {
 function dongBoChiTieuKHNen() {
   var pr = PropertiesService.getScriptProperties();
   var tu = Number(pr.getProperty('KH_CRM_VT') || 0);
-  var kq = dongBoChiTieuKH(tu, 150, 120);
+  var kq = dongBoChiTieuKH(tu, 150, 90);
   if (!kq.ok) return kq;
   var tiep = kq.tiep != null ? kq.tiep : tu + 150;
   pr.setProperty('KH_CRM_VT', String(tiep >= kq.tong ? 0 : tiep));
