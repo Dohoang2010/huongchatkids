@@ -49,13 +49,13 @@
     const slice = all.slice((S.trang - 1) * S.moiTrang, S.trang * S.moiTrang);
     const tongTien = d.ds.reduce((s, x) => s + x.tongChiTieu, 0);
     const vip = d.ds.filter((x) => x.hang && x.hang !== 'moi').length;
-    $('#pageAct').innerHTML = `<button class="btn btn--ghost" id="khXuat">⭳ Xuất Excel</button>`;
+    $('#pageAct').innerHTML = `${A.co('customer.update') ? '<button class="btn btn--primary" id="khCRM" title="Khách cũ đã từng mua của shop: cộng các đơn trước đây trong CRM vào tổng chi tiêu và tự lên hạng">🔄 Cập nhật chi tiêu từ CRM</button>' : ''}<button class="btn btn--ghost" id="khXuat">⭳ Xuất Excel</button>`;
 
     el.innerHTML = `
       <div class="kpis">
         ${A.the('Tổng khách hàng', d.tong, 'có hồ sơ trong hệ thống')}
         ${A.the('Khách đã lên hạng', vip, `${d.tong ? Math.round(vip / d.tong * 100) : 0}% tổng số`, 'kpi--teal')}
-        ${A.the('Tổng chi tiêu', fmt(tongTien), '', 'kpi--pink')}
+        ${A.the('Tổng chi tiêu', fmt(tongTien), 'gồm cả đơn mua trước đây (CRM)', 'kpi--pink')}
         ${A.the('Chi tiêu TB/khách', fmt(d.tong ? tongTien / d.tong : 0), '')}
       </div>
       <div class="card">
@@ -65,7 +65,7 @@
           <select id="khNhom">${NHOM.map((n) => `<option value="${n.k}" ${S.nhom === n.k ? 'selected' : ''}>${n.t}</option>`).join('')}</select>
         </div>
         ${tong ? `<div class="tbl-wrap"><table>
-          <thead><tr><th>Khách hàng</th><th>Địa chỉ</th><th class="num">Số đơn</th><th class="num">Tổng chi tiêu</th><th>Hạng</th><th>Đơn gần nhất</th><th>Trạng thái</th><th></th></tr></thead>
+          <thead><tr><th>Khách hàng</th><th>Địa chỉ</th><th class="num">Số đơn</th><th class="num">Đã chi tiêu</th><th>Hạng</th><th>Đơn gần nhất</th><th>Trạng thái</th><th></th></tr></thead>
           <tbody>${slice.map((x) => `<tr>
             <td><a href="#/thanh-vien/${esc(x.sdt)}"><b>${esc(x.ten || '(chưa có tên)')}</b></a><br><small class="muted">${esc(x.sdt)}</small></td>
             <td data-nhan="Địa chỉ">${esc([x.diaChi, x.xa, x.tinh].filter(Boolean).join(', ') || '—')}</td>
@@ -106,7 +106,7 @@
           </div>
           <div class="card"><h3>🏅 Hạng & chi tiêu</h3>
             <div class="kpis" style="grid-template-columns:1fr 1fr">
-              ${A.the('Tổng chi tiêu', fmt(k.tongChiTieu), '', 'kpi--pink')}
+              ${A.the('Đã chi tiêu', fmt(k.tongChiTieu), 'gồm cả đơn mua trước đây (CRM)', 'kpi--pink')}
               ${A.the('Số đơn đã mua', k.soDon, '')}
             </div>
             <div class="hang-box"><span class="hang-badge" style="--c:${esc(tier.color || '#78909C')}">${tier.icon || ''} ${esc(k.hangLabel || '')}</span>
@@ -137,6 +137,7 @@
   document.addEventListener('click', async (e) => {
     const pg = e.target.closest('[data-kh-pg]'); if (pg) { S.trang = Number(pg.dataset.khPg); return A.veTrang(); }
     if (e.target.id === 'khXuat') return xuat();
+    if (e.target.id === 'khCRM') return dongBoCRM(e.target);
     const kb = e.target.closest('[data-khoa]');
     if (kb) {
       const khoa = kb.dataset.tt === '1';
@@ -151,6 +152,27 @@
       } catch (err) { A.toast(err.message, 'err'); }
     }
   });
+
+  /* Cộng các đơn đã mua trong CRM vào tổng chi tiêu + hạng của mọi thành viên (máy chủ chạy theo lượt ~20 giây, tự gọi tiếp) */
+  async function dongBoCRM(nut) {
+    nut.disabled = true; const chu = nut.textContent;
+    const tong = { xem: 0, doi: 0, lenHang: 0, loi: 0, ds: [] };
+    try {
+      let tu = 0;
+      for (;;) {
+        nut.textContent = `⏳ Đang cập nhật… ${tong.xem}${data ? '/' + data.tong : ''}`;
+        const r = await A.api('dongBoChiTieuKH', { key: A.adminKey(), tu }, 60000);
+        if (!r || !r.ok) { A.toast((r && r.msg) || 'Chưa cập nhật được', 'err'); break; }
+        tong.xem += r.xem; tong.doi += r.doi; tong.lenHang += r.lenHang; tong.loi += r.loi; tong.ds.push(...(r.ds || []));
+        if (r.tiep == null) {
+          await A.hoi({ tieuDe: '✅ Đã cập nhật chi tiêu từ CRM', nutOk: 'Xong', noiDung: `Đã xem <b>${tong.xem}</b> khách · cập nhật <b>${tong.doi}</b> khách · <b>${tong.lenHang}</b> khách lên hạng${tong.loi ? ` · ${tong.loi} khách CRM chưa trả lời (bấm lại sau)` : ''}.${tong.ds.length ? '<br><br>' + tong.ds.slice(0, 20).map((x) => `• ${esc(x.ten || x.sdt)}: ${esc(x.tu)} → <b>${esc(x.len)}</b> (${fmt(x.tong)})`).join('<br>') : ''}` });
+          break;
+        }
+        tu = r.tiep;
+      }
+    } catch (err) { A.toast(err.message, 'err'); }
+    nut.disabled = false; nut.textContent = chu; A.veTrang();
+  }
 
   function xuat() {
     if (!data) return;
