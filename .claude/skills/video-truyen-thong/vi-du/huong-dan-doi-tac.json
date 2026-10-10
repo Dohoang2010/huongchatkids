@@ -1,0 +1,97 @@
+{
+  "tenFile": "huong-dan-doi-tac.mp4",
+  "khuon": "9:16",
+  "giong": "vi-VN-HoaiMyNeural",
+  "tocDo": "+2%",
+  "mauPhuDe": "#D93E66",
+  "nhac": {
+    "bpm": 96
+  },
+  "amLuongNhac": 0.26,
+  "canh": [
+    {
+      "id": 1,
+      "html": "<div class=\"pill\">🤝 Đối tác Hương Chất Kids</div><h1>Chia sẻ link<br><em>Nhận hoa hồng</em></h1><p class=\"lead\">Mỗi đơn khách mua qua link của mẹ và <b>giao thành công</b> là mẹ có hoa hồng.</p><div class=\"duo\"><div class=\"box ct\"><div class=\"big\">🔗</div><small style=\"margin-top:14px\">Mẹ chia sẻ</small><b style=\"color:var(--p)\">Link SP</b></div><div class=\"box ct\"><div class=\"big\">💰</div><small style=\"margin-top:14px\">Mẹ nhận</small><b style=\"color:var(--teal)\">Hoa hồng</b></div></div>",
+      "vo": "Mẹ muốn có thêm thu nhập? Hãy trở thành đối tác của Hương Chất Kids. Mẹ chia sẻ link sản phẩm, khách mua và nhận hàng thành công, mẹ nhận hoa hồng.",
+      "sub": [
+        "Trở thành đối tác Hương Chất Kids",
+        "Mẹ chia sẻ link sản phẩm",
+        "khách mua thành công – mẹ nhận hoa hồng"
+      ]
+    },
+    {
+      "id": 2,
+      "nhan": "1/5",
+      "k": [
+        0,
+        0.45
+      ],
+      "html": "<div class=\"pill pill--teal\">Bước 1 · Mở trang đối tác</div><h2>Vào <em>huongchatkids.vn</em></h2><div class=\"big ct\">🌐</div><div class=\"flow\"><div class=\"row\" data-k=\"1\"><i>👇</i><span>Kéo xuống chân trang, bấm<br><b>Đối tác bán hàng</b></span></div><div class=\"row row--teal\" data-k=\"2\"><i>👤</i><span>Hoặc vào Tài khoản, bấm<br>Đăng ký làm đối tác</span></div></div>",
+      "vo": "Bước một: vào Hương Chất Kids chấm vi en, kéo xuống chân trang và bấm Đối tác bán hàng. Hoặc vào trang Tài khoản, bấm Đăng ký làm đối tác.",
+      "sub": [
+        "Bước 1: vào huongchatkids.vn",
+        "kéo xuống chân trang, bấm \"Đối tác bán hàng\"",
+        "hoặc vào Tài khoản → Đăng ký làm đối tác"
+      ]
+    },
+    {
+      "id": 3,
+      "nhan": "2/5",
+      "html": "<div class=\"pill pill--teal\">Bước 2 · Điền thông tin</div><h2>Họ tên, SĐT, email<br><span class=\"t\">& tài khoản ngân hàng</span></h2><div class=\"ui crop\" style=\"width:760px;height:1060px\"><img src=\"ui_form.png\" style=\"top:-270px\"></div><p class=\"lead\">Thêm <b>CCCD hoặc mã số thuế</b> để shop khấu trừ thuế đúng quy định.</p>",
+      "vo": "Bước hai: chọn Đăng ký đối tác, điền họ tên, số điện thoại, email, ngân hàng và số tài khoản để nhận tiền. Thêm căn cước công dân hoặc mã số thuế để shop khấu trừ thuế đúng quy định.",
+      "sub": [
+        "Bước 2: điền họ tên, số điện thoại, email",
+        "ngân hàng và số tài khoản nhận tiền",
+        "thêm CCCD hoặc mã số thuế"
+      ]
+    },
+    {
+      "id": 4,
+      "nhan": "3/5",
+      "html": "<div class=\"pill pill--teal\">Bước 3 · Gửi đăng ký</div><h2>Tạo mật khẩu<br>bấm <em>Gửi đăng ký</em></h2><div class=\"ui crop\" style=\"width:820px;height:500px\"><img src=\"ui_form.png\" style=\"top:-1935px\"></div><div class=\"row row--teal\"><i>📧</i><span>Shop duyệt và báo cho mẹ qua email</span></div>",
+      "vo": "Bước ba: tạo mật khẩu, tích đồng ý cơ chế hoa hồng, rồi bấm Gửi đăng ký. Shop sẽ duyệt và báo cho mẹ qua email.",
+      "sub": [
+        "Bước 3: tạo mật khẩu, tích đồng ý",
+        "bấm Gửi đăng ký",
+        "Shop duyệt và báo cho mẹ qua email"
+      ]
+    },
+    {
+      "id": 5,
+      "nhan": "4/5",
+      "k": [
+        0,
+        0.35,
+        0.65
+      ],
+      "html": "<div class=\"pill pill--teal\">Bước 4 · Lấy link</div><h2>Đăng nhập, chọn sản phẩm<br>bấm <em>Copy link</em></h2><div class=\"box\" data-k=\"1\" style=\"display:flex;align-items:center;gap:24px\"><code style=\"flex:1;font-size:40px;font-weight:700;color:var(--teal)\">huongchatkids.vn/?r=MEBI.k3x9</code><span class=\"pill\" style=\"margin:0\">Copy</span></div><div class=\"flow\" data-k=\"2\"><div class=\"row\"><i>📘</i><span>Facebook</span></div><div class=\"row\"><i>🎵</i><span>TikTok</span></div><div class=\"row\"><i>💬</i><span>Zalo, nhóm của mẹ</span></div></div><p class=\"lead\" data-k=\"3\">Link ghi nhận cho mẹ <b>7 ngày</b> kể từ lần khách bấm gần nhất.</p>",
+      "vo": "Bước bốn: khi được duyệt, mẹ đăng nhập bằng số điện thoại và mật khẩu. Chọn sản phẩm, bấm Copy link, rồi đăng lên Facebook, TikTok, Zalo. Khách bấm link trong vòng bảy ngày rồi mua, đơn được tính cho mẹ.",
+      "sub": [
+        "Bước 4: đăng nhập, chọn sản phẩm, bấm Copy link",
+        "đăng lên Facebook, TikTok, Zalo",
+        "Khách bấm link trong 7 ngày rồi mua – đơn tính cho mẹ"
+      ]
+    },
+    {
+      "id": 6,
+      "nhan": "5/5",
+      "html": "<div class=\"pill pill--amber\">Bước 5 · Theo dõi & nhận tiền</div><h2>Xem lượt bấm, đơn<br>và <em>hoa hồng</em></h2><div class=\"ui\" style=\"width:860px\"><img src=\"ui_kpi.png\"></div><p class=\"lead ct\" style=\"font-size:30px\">(số liệu minh hoạ)</p><div class=\"row row--tot\"><i>📅</i><span>Nhận tiền ngày 10 hằng tháng</span></div>",
+      "vo": "Bước năm: theo dõi lượt bấm, đơn hàng và hoa hồng ngay trên trang đối tác. Hoa hồng được chuyển khoản vào ngày mười hằng tháng, cho các đơn đã giao quá bảy ngày.",
+      "sub": [
+        "Bước 5: theo dõi lượt bấm, đơn và hoa hồng",
+        "Nhận tiền ngày 10 hằng tháng",
+        "cho đơn đã giao quá 7 ngày"
+      ]
+    },
+    {
+      "id": 7,
+      "html": "<div class=\"cta\"><div class=\"big\">🤝</div><h2>Đăng ký đối tác<br>ngay hôm nay!</h2><p>Chia sẻ điều mẹ tin dùng<br>nhận thêm thu nhập</p><span class=\"web\">huongchatkids.vn</span></div><p class=\"lead ct\">Cần hỗ trợ? Zalo <b>0967 233 003</b></p>",
+      "vo": "Chia sẻ điều mẹ tin dùng, nhận thêm thu nhập mỗi tháng. Đăng ký đối tác ngay tại Hương Chất Kids chấm vi en nhé! Cần hỗ trợ, mẹ nhắn Zalo cho Hương.",
+      "sub": [
+        "Chia sẻ điều mẹ tin dùng – nhận thêm thu nhập",
+        "Đăng ký ngay tại huongchatkids.vn",
+        "Cần hỗ trợ: Zalo 0967 233 003"
+      ]
+    }
+  ]
+}
