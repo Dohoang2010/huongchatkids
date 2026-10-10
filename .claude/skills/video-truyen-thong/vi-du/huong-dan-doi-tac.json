@@ -84,6 +84,26 @@
       ]
     },
     {
+      "id": 8,
+      "nhan": "Ví dụ",
+      "k": [
+        0,
+        0.18,
+        0.34,
+        0.5,
+        0.62
+      ],
+      "html": "<div class=\"pill pill--amber\">✨ Ví dụ thực tế</div><h2>Mẹ Bi đăng link<br>lên <em>TikTok & Facebook</em></h2><div class=\"duo\" data-k=\"1\"><div class=\"box ct\"><div class=\"big\" style=\"font-size:120px\">🎵</div><small style=\"margin-top:10px\">Video TikTok</small><b style=\"font-size:40px;color:var(--teal)\">+ link SP</b></div><div class=\"box ct\"><div class=\"big\" style=\"font-size:120px\">📘</div><small style=\"margin-top:10px\">Bài Facebook</small><b style=\"font-size:40px;color:var(--teal)\">+ link SP</b></div></div><div class=\"flow\"><div class=\"row\" data-k=\"2\"><i>👆</i><span>Khách bấm vào link</span><b>120 lượt</b></div><div class=\"row\" data-k=\"3\"><i>🛒</i><span>Khách đặt mua</span><b>3 đơn</b></div><div class=\"row row--teal\" data-k=\"4\"><i>📦</i><span>Giao thành công</span><b>✓</b></div><div class=\"row row--tot\" data-k=\"5\"><i>💰</i><span>Mẹ Bi được cộng</span><b>+250.000đ</b></div></div><p class=\"lead ct\" data-k=\"5\" style=\"font-size:30px\">(số liệu minh hoạ)</p>",
+      "vo": "Ví dụ: Mẹ Bi copy link, đăng video lên TikTok và bài viết lên Facebook. Có một trăm hai mươi lượt bấm vào link, ba khách đặt mua. Đơn giao thành công, tiền hoa hồng tự cộng vào tài khoản đối tác của Mẹ Bi, chờ đến ngày mười là nhận tiền.",
+      "sub": [
+        "Ví dụ: Mẹ Bi đăng link lên TikTok và Facebook",
+        "120 lượt bấm – 3 khách đặt mua",
+        "Đơn giao thành công",
+        "hoa hồng tự cộng vào tài khoản đối tác",
+        "đến ngày 10 là nhận tiền"
+      ]
+    },
+    {
       "id": 7,
       "html": "<div class=\"cta\"><div class=\"big\">🤝</div><h2>Đăng ký đối tác<br>ngay hôm nay!</h2><p>Chia sẻ điều mẹ tin dùng<br>nhận thêm thu nhập</p><span class=\"web\">huongchatkids.vn</span></div><p class=\"lead ct\">Cần hỗ trợ? Zalo <b>0967 233 003</b></p>",
       "vo": "Chia sẻ điều mẹ tin dùng, nhận thêm thu nhập mỗi tháng. Đăng ký đối tác ngay tại Hương Chất Kids chấm vi en nhé! Cần hỗ trợ, mẹ nhắn Zalo cho Hương.",
