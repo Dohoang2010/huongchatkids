@@ -11,7 +11,8 @@ Kết quả giao cho chủ shop: **1 file MP4** (mặc định dọc 9:16, 45–
 - Node: `C:\Program Files\nodejs` · Chrome: `C:\Program Files\Google\Chrome\Application\chrome.exe`
 - ffmpeg/ffprobe (winget Gyan.FFmpeg): `C:\Users\B-Tech Computer\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin\` (chưa có → `winget install --id Gyan.FFmpeg -e`)
 - Giọng đọc: thư viện npm `msedge-tts` (giọng Edge neural, cần mạng; lời thoại được gửi tới dịch vụ đọc của Microsoft – chỉ đưa lời thoại, không đưa dữ liệu khách). Giọng: `vi-VN-HoaiMyNeural` (nữ, mặc định) hoặc `vi-VN-NamMinhNeural` (nam).
-- Nhạc nền: build.mjs tự soạn bằng đàn gảy (không bản quyền). Không dùng nhạc tải trên mạng.
+- Nhạc nền: build.mjs tự soạn (không bản quyền) – mặc định `soi-dong` (trống kick, vỗ tay, hi-hat, bass, hợp âm, 128 bpm); `nhac.kieu: "nhe"` = đàn gảy nhẹ. Hiệu ứng âm thanh tự có: "vút" chuyển cảnh, "bụp" khi chữ hiện (`k`). Không dùng nhạc tải trên mạng.
+- Giọng chủ shop chọn (10/2026): `vi-VN-NamMinhNeural`, `tocDo` "+22%", `caoDo` "+4Hz", `amLuongNhac` 0.45 – giọng chậm bị chê "buồn ngủ".
 
 ## Quy trình
 1. **Nắm nội dung thật từ code/dữ liệu web** (đừng bịa): % giảm, giá, điều kiện, các bước khách bấm. Nguồn: `js/data.js`, các trang HTML, Apps Script (`tools/apps-script.gs`). Chủ đề mơ hồ thì hỏi 1 câu.
@@ -31,7 +32,8 @@ Kết quả giao cho chủ shop: **1 file MP4** (mặc định dọc 9:16, 45–
    - `k` (tuỳ chọn): hiện lần lượt – phần tử gắn `data-k="1|2|3"`, `k: [0, 0.3, 0.6]` là thời điểm (tỉ lệ lời đọc) mỗi phần xuất hiện.
    - `nhan` (tuỳ chọn): chữ góc phải trên, vd "1/5".
    - Bố cục chuẩn 7–9 cảnh: mở đầu lợi ích → khái niệm → các bước (ảnh thật) → ví dụ số → lưu ý → kêu gọi + web + hotline 0967 233 003.
-   - Tuỳ chọn chung: `khuon` ("9:16" | "16:9"), `giong`, `tocDo` ("+6%"), `mauPhuDe` ("#D93E66"), `nhac.bpm`, `amLuongNhac`, `tenFile`.
+   - Tuỳ chọn chung: `khuon` ("9:16" | "16:9"), `giong`, `tocDo` ("+6%"), `mauPhuDe` ("#D93E66"), `caoDo` ("+4Hz"), `nhac.bpm`, `nhac.kieu`, `amLuongNhac`, `amThanh` (false = tắt hiệu ứng), `amLuongHieuUng` (0.5), `tenFile`.
+   - Âm riêng từng cảnh: `sfx: [{ "k": 3, "loai": "tien" }, { "p": 0.5, "loai": "click" }]` – `k` = lúc khung thứ k hiện, `p` = tỉ lệ lời đọc; `loai`: `click` (bấm nút), `ting` (thông báo), `tien` (ting ting tiền về), `bup`, `vut`.
 5. **Xem trước bố cục** trước khi dựng: chạy `node build.mjs` lần đầu sẽ chụp các cảnh vào `build/c*.png`; hoặc mở `khung.html?s=<id>` (cần `canh.js` – build ghi ra). Ghép lưới để xem nhanh, chỉnh `top:-Npx` / chiều cao `crop` cho đúng chỗ.
 6. **Dựng**:
    ```sh

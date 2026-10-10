@@ -2,12 +2,13 @@
   "tenFile": "huong-dan-doi-tac.mp4",
   "khuon": "9:16",
   "giong": "vi-VN-NamMinhNeural",
-  "tocDo": "+12%",
+  "tocDo": "+22%",
   "mauPhuDe": "#D93E66",
   "nhac": {
-    "bpm": 120
+    "bpm": 128,
+    "kieu": "soi-dong"
   },
-  "amLuongNhac": 0.3,
+  "amLuongNhac": 0.45,
   "canh": [
     {
       "id": 1,
@@ -17,6 +18,12 @@
         "Trở thành đối tác Hương Chất Kids",
         "Mẹ chia sẻ link sản phẩm",
         "khách mua thành công – mẹ nhận hoa hồng"
+      ],
+      "sfx": [
+        {
+          "p": 0.88,
+          "loai": "tien"
+        }
       ]
     },
     {
@@ -54,6 +61,16 @@
         "Bước 3: tạo mật khẩu, tích đồng ý",
         "bấm Gửi đăng ký",
         "Shop duyệt và báo cho mẹ qua email"
+      ],
+      "sfx": [
+        {
+          "p": 0.5,
+          "loai": "click"
+        },
+        {
+          "p": 0.72,
+          "loai": "ting"
+        }
       ]
     },
     {
@@ -70,6 +87,12 @@
         "Bước 4: đăng nhập, chọn sản phẩm, bấm Copy link",
         "đăng lên Facebook, TikTok, Zalo",
         "Khách bấm link trong 7 ngày rồi mua – đơn tính cho mẹ"
+      ],
+      "sfx": [
+        {
+          "p": 0.42,
+          "loai": "click"
+        }
       ]
     },
     {
@@ -81,6 +104,12 @@
         "Bước 5: theo dõi lượt bấm, đơn và hoa hồng",
         "Nhận tiền ngày 10 hằng tháng",
         "cho đơn đã giao quá 7 ngày"
+      ],
+      "sfx": [
+        {
+          "p": 0.62,
+          "loai": "tien"
+        }
       ]
     },
     {
@@ -101,6 +130,12 @@
         "Đơn giao thành công",
         "hoa hồng tự cộng vào tài khoản đối tác",
         "đến ngày 10 là nhận tiền"
+      ],
+      "sfx": [
+        {
+          "k": 5,
+          "loai": "tien"
+        }
       ]
     },
     {
@@ -111,8 +146,15 @@
         "Chia sẻ điều mẹ tin dùng – nhận thêm thu nhập",
         "Đăng ký ngay tại huongchatkids.vn",
         "Cần hỗ trợ: Zalo 0967 233 003"
+      ],
+      "sfx": [
+        {
+          "p": 0.05,
+          "loai": "ting"
+        }
       ]
     }
   ],
-  "caoDo": "+4Hz"
+  "caoDo": "+4Hz",
+  "amLuongHieuUng": 0.5
 }

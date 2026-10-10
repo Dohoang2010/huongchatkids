@@ -69,29 +69,93 @@ for (const c of CANH) {
   console.log('clip', c.id);
 }
 
-/* 5) Nhạc nền tự tạo (đàn gảy Karplus-Strong) – không vướng bản quyền. KB.nhac: { bpm, hop: [[midi…]…] } */
-{
-  const NH = KB.nhac || {}; const SR = 44100, N = Math.ceil((TONG + 1) * SR); const L = new Float32Array(N), R = new Float32Array(N);
-  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
-  const gay = (t0, midi, vol, pan) => {
-    const p = Math.round(SR / hz(midi)); const buf = new Float32Array(p).map(() => Math.random() * 2 - 1); const i0 = Math.floor(t0 * SR);
-    for (let n = 0; n < SR * 2.2 && i0 + n < N; n++) { const k = n % p; const v = buf[k]; buf[k] = 0.996 * 0.5 * (buf[k] + buf[(k + 1) % p]); const e = v * vol; L[i0 + n] += e * (1 - pan); R[i0 + n] += e * (1 + pan); }
-  };
-  const HOP = NH.hop || [[60, 64, 67, 72], [57, 60, 64, 69], [53, 57, 60, 65], [55, 59, 62, 67]];   // C – Am – F – G
-  const beat = 60 / (NH.bpm || 96); let t0 = 0, b = 0;
-  while (t0 < TONG + 0.5) {
-    const h = HOP[Math.floor(b / 8) % HOP.length]; const thuTu = [0, 2, 1, 3, 2, 1, 3, 2];
-    gay(t0, h[thuTu[b % 8]], 0.22, (b % 2 ? 0.25 : -0.25));
-    if (b % 8 === 0) gay(t0, h[0] - 12, 0.28, 0);
-    if (b % 8 === 4) gay(t0, h[2] - 12, 0.18, 0);
-    t0 += beat / 2; b++;
-  }
-  let mx = 0; for (let i = 0; i < N; i++) mx = Math.max(mx, Math.abs(L[i]), Math.abs(R[i]));
+/* 5) Nhạc nền tự tạo – không vướng bản quyền. KB.nhac: { bpm, kieu: 'soi-dong' | 'nhe', hop: [[midi…]…] }
+   'soi-dong' (mặc định): trống kick 4 phách, vỗ tay phách 2–4, hi-hat, bass, hợp âm gảy – kiểu nhạc TikTok vui tươi.
+   'nhe': chỉ đàn gảy nhẹ nhàng như bản cũ. */
+const SR = 44100;
+const ghiWav = (file, L, R, dinh, fade) => {
+  const N = L.length; let mx = 1e-9; for (let i = 0; i < N; i++) mx = Math.max(mx, Math.abs(L[i]), Math.abs(R[i]));
   const buf = Buffer.alloc(44 + N * 4); const w = (s, o) => buf.write(s, o);
   w('RIFF', 0); buf.writeUInt32LE(36 + N * 4, 4); w('WAVE', 8); w('fmt ', 12); buf.writeUInt32LE(16, 16); buf.writeUInt16LE(1, 20); buf.writeUInt16LE(2, 22);
   buf.writeUInt32LE(SR, 24); buf.writeUInt32LE(SR * 4, 28); buf.writeUInt16LE(4, 32); buf.writeUInt16LE(16, 34); w('data', 36); buf.writeUInt32LE(N * 4, 40);
-  for (let i = 0; i < N; i++) { const f = Math.min(1, i / (SR * 1.5), (N - i) / (SR * 2.5)); buf.writeInt16LE(Math.round(L[i] / mx * 0.8 * f * 32767), 44 + i * 4); buf.writeInt16LE(Math.round(R[i] / mx * 0.8 * f * 32767), 46 + i * 4); }
-  fs.writeFileSync(out('nhac.wav'), buf);
+  for (let i = 0; i < N; i++) { const f = fade ? Math.min(1, i / (SR * 1.2), (N - i) / (SR * 2.5)) : 1;
+    buf.writeInt16LE(Math.round(Math.max(-1, Math.min(1, L[i] / mx * dinh * f)) * 32767), 44 + i * 4); buf.writeInt16LE(Math.round(Math.max(-1, Math.min(1, R[i] / mx * dinh * f)) * 32767), 46 + i * 4); }
+  fs.writeFileSync(file, buf);
+};
+{
+  const NH = KB.nhac || {}; const N = Math.ceil((TONG + 1) * SR); const L = new Float32Array(N), R = new Float32Array(N);
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const cong = (i, v, pan = 0) => { if (i >= 0 && i < N) { L[i] += v * (1 - pan); R[i] += v * (1 + pan); } };
+  const gay = (t0, midi, vol, pan, dai = 2.2) => {
+    const p = Math.round(SR / hz(midi)); const buf = new Float32Array(p).map(() => Math.random() * 2 - 1); const i0 = Math.floor(t0 * SR);
+    for (let n = 0; n < SR * dai && i0 + n < N; n++) { const k = n % p; const v = buf[k]; buf[k] = 0.996 * 0.5 * (buf[k] + buf[(k + 1) % p]); cong(i0 + n, v * vol, pan); }
+  };
+  const beat = 60 / (NH.bpm || 128);
+  if (NH.kieu === 'nhe') {
+    const HOP = NH.hop || [[60, 64, 67, 72], [57, 60, 64, 69], [53, 57, 60, 65], [55, 59, 62, 67]];   // C – Am – F – G
+    let t0 = 0, b = 0;
+    while (t0 < TONG + 0.5) {
+      const h = HOP[Math.floor(b / 8) % HOP.length]; const thuTu = [0, 2, 1, 3, 2, 1, 3, 2];
+      gay(t0, h[thuTu[b % 8]], 0.22, (b % 2 ? 0.25 : -0.25));
+      if (b % 8 === 0) gay(t0, h[0] - 12, 0.28, 0);
+      if (b % 8 === 4) gay(t0, h[2] - 12, 0.18, 0);
+      t0 += beat / 2; b++;
+    }
+  } else {
+    const HOP = NH.hop || [[62, 66, 69, 74], [57, 61, 64, 69], [59, 62, 66, 71], [55, 59, 62, 67]];   // D – A – Bm – G (vui, sáng)
+    const kick = (t0, vol) => { const i0 = Math.floor(t0 * SR); let ph = 0;
+      for (let n = 0; n < SR * 0.32; n++) { const t = n / SR; const f = 48 + 110 * Math.exp(-t * 28); ph += 2 * Math.PI * f / SR; cong(i0 + n, Math.sin(ph) * Math.exp(-t * 9) * vol); } };
+    const clap = (t0, vol) => { const i0 = Math.floor(t0 * SR); let tr = 0;
+      for (let n = 0; n < SR * 0.22; n++) { const t = n / SR; const x = Math.random() * 2 - 1; const hp = x - tr; tr = x;
+        const e = (t < 0.03 ? (Math.floor(t / 0.01) % 2 ? 0.6 : 1) : 1) * Math.exp(-t * 18); cong(i0 + n, hp * e * vol, 0.1); } };
+    const hat = (t0, vol, dai, pan) => { const i0 = Math.floor(t0 * SR); let a = 0, b2 = 0;
+      for (let n = 0; n < SR * dai; n++) { const x = Math.random() * 2 - 1; const h1 = x - a; a = x; const h2 = h1 - b2; b2 = h1; cong(i0 + n, h2 * Math.exp(-(n / SR) * (dai < 0.06 ? 70 : 22)) * vol, pan); } };
+    const bass = (t0, midi, vol, dai) => { const i0 = Math.floor(t0 * SR); const f = hz(midi);
+      for (let n = 0; n < SR * dai; n++) { const t = n / SR; const ph = 2 * Math.PI * f * t;
+        const v = Math.sin(ph) + 0.45 * Math.sin(2 * ph) + 0.2 * Math.sin(3 * ph); cong(i0 + n, v * Math.min(1, t / 0.005) * Math.exp(-t * 5) * vol); } };
+    let t0 = 0, b = 0;   // b = nốt móc đơn (1/2 phách)
+    while (t0 < TONG + 0.5) {
+      const bar = Math.floor(b / 8), h = HOP[bar % HOP.length], vao = bar >= 1;   // ô nhịp đầu chưa có trống (mở bài)
+      if (vao && b % 2 === 0) kick(t0, 1.0);
+      if (vao && b % 4 === 2) clap(t0, 0.32);
+      hat(t0 + (b % 2 ? 0 : 0.0), b % 2 ? 0.14 : 0.07, b % 4 === 3 ? 0.12 : 0.045, b % 2 ? 0.3 : -0.3);
+      if (vao) bass(t0 + (b % 2 ? 0 : 0.02), h[0] - 24 + (b % 4 === 3 ? 12 : 0), 0.26, beat * 0.45);
+      if ([1, 3, 6].includes(b % 8)) { gay(t0, h[1], 0.15, -0.35, 1.0); gay(t0, h[2], 0.15, 0.35, 1.0); gay(t0, h[3], 0.12, 0, 1.0); }
+      if (b % 2 === 0) gay(t0, h[[0, 2, 1, 3][(b / 2) % 4]] + 12, 0.09, (b % 4 ? 0.4 : -0.4), 0.6);   // rải nốt cao lấp lánh
+      t0 += beat / 2; b++;
+    }
+  }
+  ghiWav(out('nhac.wav'), L, R, 0.85, true);
+}
+
+/* 5b) Hiệu ứng âm thanh (KB.amThanh !== false): "vút" khi chuyển cảnh, "bụp" khi chữ hiện lần lượt,
+   và âm riêng do kịch bản đặt: c.sfx = [{ k: <khung thứ mấy> | p: <tỉ lệ lời đọc>, loai: 'ting' | 'tien' | 'click' | 'bup' | 'vut' }]
+   ('tien' = "ting ting" tiền về). */
+const CO_SFX = KB.amThanh !== false;
+if (CO_SFX) {
+  const N = Math.ceil((TONG + 1) * SR); const L = new Float32Array(N), R = new Float32Array(N);
+  const cong = (i, v, pan = 0) => { if (i >= 0 && i < N) { L[i] += v * (1 - pan); R[i] += v * (1 + pan); } };
+  const chuong = (t0, f, vol, dai = 0.7) => { const i0 = Math.floor(t0 * SR);
+    for (let n = 0; n < SR * dai; n++) { const t = n / SR; const e = Math.min(1, t / 0.002) * Math.exp(-t * 6);
+      cong(i0 + n, (Math.sin(2 * Math.PI * f * t) + 0.5 * Math.sin(2 * Math.PI * f * 2.76 * t) * Math.exp(-t * 10) + 0.25 * Math.sin(2 * Math.PI * f * 5.4 * t) * Math.exp(-t * 18)) * e * vol); } };
+  const AM = {
+    bup: (t0) => { const i0 = Math.floor(t0 * SR); let ph = 0; for (let n = 0; n < SR * 0.09; n++) { const t = n / SR; ph += 2 * Math.PI * (320 + 700 * Math.exp(-t * 60)) / SR; cong(i0 + n, Math.sin(ph) * Math.exp(-t * 40) * 0.55); } },
+    click: (t0) => { const i0 = Math.floor(t0 * SR); for (let n = 0; n < SR * 0.03; n++) { const t = n / SR; cong(i0 + n, ((Math.random() * 2 - 1) * 0.5 + Math.sin(2 * Math.PI * 2200 * t)) * Math.exp(-t * 160) * 0.6); }
+      for (let n = 0; n < SR * 0.03; n++) { const t = n / SR; cong(i0 + Math.floor(0.07 * SR) + n, Math.sin(2 * Math.PI * 1500 * t) * Math.exp(-t * 180) * 0.35); } },
+    ting: (t0) => chuong(t0, 1760, 0.32, 0.9),
+    tien: (t0) => { chuong(t0, 1568, 0.3, 0.6); chuong(t0 + 0.11, 2093, 0.3, 0.6); chuong(t0 + 0.3, 1568, 0.26, 0.6); chuong(t0 + 0.41, 2093, 0.3, 1.0); },
+    vut: (t0) => { const i0 = Math.floor((t0 - 0.18) * SR), d = 0.42; let y = 0;
+      for (let n = 0; n < SR * d; n++) { const t = n / SR, u = t / d; const a = 0.02 + 0.25 * Math.sin(Math.PI * u); y += a * ((Math.random() * 2 - 1) - y);
+        cong(i0 + n, y * Math.sin(Math.PI * u) * 1.4, -0.8 + 1.6 * u); } },
+  };
+  CANH.forEach((c, i) => {
+    if (i) AM.vut(c.bd + X / 2);
+    const rieng = c.sfx || [];
+    (c.k || []).forEach((p, j) => { if (!j) return; const r = rieng.find((x) => x.k === j + 1); const ten = r ? r.loai : 'bup';
+      if (AM[ten]) AM[ten](c.bd + PAD_DAU + p * c.vd); });
+    rieng.filter((x) => x.p != null).forEach((x) => { if (AM[x.loai]) AM[x.loai](c.bd + PAD_DAU + x.p * c.vd); });
+  });
+  ghiWav(out('sfx.wav'), L, R, 0.9, false);
 }
 
 /* 6) Phụ đề ASS: chữ trắng trên nền màu thương hiệu, mỗi đoạn chia theo độ dài chữ trong lúc đọc */
@@ -118,7 +182,8 @@ for (const c of CANH) {
   const ain = CANH.flatMap((c) => ['-i', out(`vo${c.id}.mp3`)]);
   let fa = CANH.map((c, i) => `[${nV + i}:a]adelay=${Math.round(c.vo0 * 1000)}|${Math.round(c.vo0 * 1000)},aformat=channel_layouts=stereo[a${i}];`).join('');
   fa += `${CANH.map((_, i) => `[a${i}]`).join('')}amix=inputs=${nV}:normalize=0,volume=1.6[voice];[voice]asplit[vo1][vo2];`;
-  fa += `[${nV * 2}:a]volume=${KB.amLuongNhac ?? 0.32}[m];[m][vo1]sidechaincompress=threshold=0.03:ratio=6:attack=40:release=500[mduck];[vo2][mduck]amix=inputs=2:normalize=0,alimiter=limit=0.95[aout]`;
-  execFileSync(FF, ['-y', ...vin, ...ain, '-i', out('nhac.wav'), '-filter_complex', fv + fa, '-map', '[vout]', '-map', '[aout]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '19', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-t', TONG.toFixed(2), ten], { cwd: DIR, stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 1 << 26 });
+  fa += `[${nV * 2}:a]volume=${KB.amLuongNhac ?? 0.32}[m];[m][vo1]sidechaincompress=threshold=0.03:ratio=6:attack=40:release=500[mduck];`;
+  fa += CO_SFX ? `[${nV * 2 + 1}:a]volume=${KB.amLuongHieuUng ?? 0.5}[sfx];[vo2][mduck][sfx]amix=inputs=3:normalize=0,alimiter=limit=0.95[aout]` : `[vo2][mduck]amix=inputs=2:normalize=0,alimiter=limit=0.95[aout]`;
+  execFileSync(FF, ['-y', ...vin, ...ain, '-i', out('nhac.wav'), ...(CO_SFX ? ['-i', out('sfx.wav')] : []), '-filter_complex', fv + fa, '-map', '[vout]', '-map', '[aout]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '19', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-t', TONG.toFixed(2), ten], { cwd: DIR, stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 1 << 26 });
   console.log('XONG', path.join(DIR, ten), TONG.toFixed(1), 'giây');
 }
