@@ -1,8 +1,8 @@
 {
   "tenFile": "huong-dan-doi-tac.mp4",
   "khuon": "9:16",
-  "giong": "vi-VN-HoaiMyNeural",
-  "tocDo": "+16%",
+  "giong": "vi-VN-NamMinhNeural",
+  "tocDo": "+12%",
   "mauPhuDe": "#D93E66",
   "nhac": {
     "bpm": 120
@@ -114,5 +114,5 @@
       ]
     }
   ],
-  "caoDo": "+10Hz"
+  "caoDo": "+4Hz"
 }
