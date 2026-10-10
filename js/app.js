@@ -1476,11 +1476,14 @@
      Hai chương trình không cộng dồn: lấy chương trình cho nhiều quà hơn.
      ===================================================================== */
   const QT = () => (window.QUA_TANG && window.QUA_TANG.enabled ? window.QUA_TANG : null);
-  /* Combo đã có ưu đãi riêng nên KHÔNG tính vào chương trình "mua thùng tặng gói";
-     giá trị combo vẫn tính vào mốc "đơn từ 1 triệu" như sản phẩm thường. */
+  /* Combo đã được giảm giá (có giá gạch cao hơn giá bán) KHÔNG được nhận quà: không tính vào mọi chương trình quà
+     (mua thùng tặng gói, đơn từ 1 triệu, chương trình cài ở trang quản trị, sự kiện 10.10…). */
+  function laComboGiam(p) { return !!(p && p.isCombo && (Number(p.oldPrice) > Number(p.price) || (p.variants || []).some((v) => Number(v.oldPrice) > Number(v.price)))); }
+  const COMBO_KHONG_QUA = 'Combo đã được giảm giá nên không kèm quà tặng.';
   function laNuocLotte(p) { const cfg = QT(); if (!cfg || !p || p.isCombo) return false; const l = cfg.loc || {}; return (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand); }
   /* Ghi chú quà hiện trên trang sản phẩm */
   function giftNote(p) {
+    if (laComboGiam(p)) return COMBO_KHONG_QUA;
     const moi = ctChoSP(p).map((x) => `<b>${esc(ctMoTa(x))}</b>${x.vi.length > 1 ? " (mẹ chọn " + esc(x.vi.join(" / ")) + ")" : ""}.`).join("<br>");
     return [moi, giftNoteCu(p)].filter(Boolean).join('<br>');
   }
@@ -1542,7 +1545,7 @@
   /* Mức khách đã đạt của 1 chương trình: tổng tiền hoặc tổng số lượng các sản phẩm chính trong giỏ */
   function ctDat(x, lines) {
     return (lines || []).reduce((s, l) => {
-      if (!l.p || !x.chinh.has(l.p.id)) return s;
+      if (!l.p || !x.chinh.has(l.p.id) || laComboGiam(l.p)) return s;
       if (!x.soLuong) return s + l.total;
       const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || '';
       return s + l.qty * (hs[k] != null ? Number(hs[k]) || 0 : heSoMacDinh(k, x.donVi));
@@ -1566,7 +1569,10 @@
   }
   /* opts.coMa = đơn đang dùng mã (đã áp được), opts.maShip = mã đó chỉ là mã freeship */
   function giftFor(lines, opts) {
-    const g = giftForGop(lines, opts); if (!g || !g.soQua) return g;
+    const g = giftForGop(lines, opts);
+    if ((!g || !g.soQua) && (lines || []).some((l) => laComboGiam(l.p)))   // nhắc vì sao combo không kèm quà
+      return { soQua: 0, chuongTrinh: '', thung: 0, vi: [], ten: '', moTa: '', lyDo: '', ...(g || {}), goiY: [g && g.goiY, 'Combo đã giảm giá không tính vào quà tặng.'].filter(Boolean).join(' ') };
+    if (!g || !g.soQua) return g;
     const k = ketHop(), vip = opts && opts.vip != null ? !!opts.vip : laVip();
     const bo = (goiY) => ({ ...g, soQua: 0, chuongTrinh: '', moTa: '', lyDo: '', goiY });
     if (!k.quaHang && vip) { const t = hangCho(sdtDangDung()); return bo(`Hạng ${t ? t.label : ''} đã được giảm ${t ? t.discount : 0}% nên đơn không kèm quà tặng.`); }
@@ -1605,6 +1611,7 @@
     const vip = opts && opts.vip != null ? !!opts.vip : laVip();
     let thung = 0, tienKhac = 0;
     (lines || []).forEach((l) => {
+      if (laComboGiam(l.p)) return;   // combo đã giảm giá không tính quà
       if (laNuocLotte(l.p)) { if (String(l.variantLabel || '').toLowerCase().includes(String(cfg.tuKhoaThung || 'thùng').toLowerCase())) thung += l.qty; }
       else tienKhac += l.total;
     });
@@ -1773,5 +1780,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, suKienDangChay, suKienHien, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();
