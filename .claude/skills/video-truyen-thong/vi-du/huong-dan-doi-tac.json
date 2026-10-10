@@ -2,12 +2,12 @@
   "tenFile": "huong-dan-doi-tac.mp4",
   "khuon": "9:16",
   "giong": "vi-VN-HoaiMyNeural",
-  "tocDo": "+2%",
+  "tocDo": "+16%",
   "mauPhuDe": "#D93E66",
   "nhac": {
-    "bpm": 96
+    "bpm": 120
   },
-  "amLuongNhac": 0.26,
+  "amLuongNhac": 0.3,
   "canh": [
     {
       "id": 1,
@@ -113,5 +113,6 @@
         "Cần hỗ trợ: Zalo 0967 233 003"
       ]
     }
-  ]
+  ],
+  "caoDo": "+10Hz"
 }
