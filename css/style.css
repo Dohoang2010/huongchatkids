@@ -1922,9 +1922,13 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .dv-cum > * { min-width: 0; }
 .dv-cum > :empty { display: none; }
 @media (min-width: 900px) {
-  .dv-cum { grid-template-columns: minmax(0, 1fr) 360px; }
-  .dv-cum:has(> #voucherStrip:empty) { grid-template-columns: minmax(0, 400px); }
-  .dv-cum .vstrip { flex-direction: column; align-items: stretch; margin: 0; height: 100%; padding: 14px; gap: 12px; }
+  /* Trái: mã giảm giá (gọn) + 4 ô cam kết 2×2 · Phải: lịch điểm danh – hai cột cao bằng nhau */
+  .dv-cum { grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: "v d" "t d"; grid-template-rows: auto 1fr; }
+  .dv-cum > #voucherStrip { grid-area: v; } .dv-cum > #ddMini { grid-area: d; }
+  .dv-cum > .trust { grid-area: t; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 12px; margin: 0; }
+  .dv-cum:has(> #ddMini[hidden]) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "v" "t"; }
+  .dv-cum:has(> #ddMini[hidden]) > .trust { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dv-cum .vstrip { flex-direction: column; align-items: stretch; margin: 0; padding: 12px 14px; gap: 10px; }
   .dv-cum .vstrip__h small { max-width: none; }
   .dv-cum .vstrip__row { flex: none; flex-direction: column; overflow: visible; gap: 10px; }
   .dv-cum .vstrip .vc { width: auto; }

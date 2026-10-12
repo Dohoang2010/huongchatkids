@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261012e">
+  <link rel="stylesheet" href="css/style.css?v=20261012f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -32,8 +32,7 @@
       </div>
     </div>
     <div id="reorderStrip"></div>
-    <div class="dv-cum"><div id="voucherStrip"></div><div id="ddMini"></div></div>
-    <div class="trust" id="trust"></div>
+    <div class="dv-cum"><div id="voucherStrip"></div><div id="ddMini"></div><div class="trust" id="trust"></div></div>
   </div></section>
 
   <!-- FLASH SALE -->
@@ -167,7 +166,7 @@
 <script src="js/data.js?v=20261012e"></script>
 <script src="js/qrcode.min.js"></script>
 <script src="js/app.js?v=20261012s"></script>
-<script src="js/diem-danh-ui.js?v=20261012c"></script>
+<script src="js/diem-danh-ui.js?v=20261012d"></script>
 <script src="js/su-kien.js?v=20261008b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -226,19 +225,6 @@ TỰ ÁP</i></a>`; }
   const vstripDau = `<div class="vstrip__h"><span class="vstrip__ic">🎟️</span><div><b>Mã giảm giá cho mẹ</b><small>Bấm <b>Lưu</b> – web tự áp mã lợi nhất khi mẹ thanh toán</small></div><a class="vstrip__vi" href="vi-voucher.html">Ví voucher ›</a></div>`;
   const veVstrip = (them = '') => { if (!dsMa.length && !them) return; $('#voucherStrip').innerHTML = `<section class="vstrip" aria-label="Mã giảm giá">${vstripDau}${dsMa.length ? `<div class="vstrip__row">${dsMa.map(MC.voucherTicket).join('')}</div>` : ''}${them}</section>`; };
   veVstrip();
-  /* Cạnh lịch điểm danh: khách đã đăng nhập thấy voucher trong ví, khách chưa đăng nhập thấy quà điểm danh (máy tính) */
-  MC.DD.cauHinh().then((cf) => {
-    if (!cf || cf.bat === false) return;
-    const s0 = MC.Session.get();
-    const qua = () => veVstrip(`<div class="vstrip__them"><b>🎁 Quà điểm danh hằng ngày</b><div class="vstrip__qua">${cf.ngayDoi ? `<span><b>${fmt(cf.ngayDoi)}</b>Voucher ngày đôi</span>` : ''}${[10, 20, 30].filter((m) => cf['m' + m]).map((m) => `<span><b>${fmt(cf['m' + m])}</b>Chuỗi ${m} ngày liên tiếp</span>`).join('')}</div></div>`);
-    if (!s0) return qua();
-    MC.DD.vi().then((r) => {
-      if (!r || !r.ok || (MC.Session.get() || {}).token !== s0.token) return qua();
-      const con = r.ds.filter((v) => v.trangThai === 'AVAILABLE');
-      if (!con.length) return qua();
-      veVstrip(`<div class="vstrip__them"><b>🎟️ Voucher trong ví của mẹ (${con.length})</b>${con.slice(0, 3).map((v) => `<div class="ddp-vc"><b>${fmt(v.giaTri)}</b><div><span>${esc(v.ten)}</span><small>${v.donToiThieu ? 'Đơn từ ' + fmt(v.donToiThieu) + ' · ' : ''}HSD ${new Date(v.hetHan).toLocaleDateString('vi-VN')}</small></div></div>`).join('')}<a class="btn btn--outline btn--sm" href="vi-voucher.html">Xem ví voucher</a></div>`);
-    }).catch(qua);
-  });
 
   /* Lịch điểm danh mini cạnh Mã giảm giá: điểm danh ngay tại trang chủ, không hiện số dư điểm */
   if (window.DDUI) DDUI.mini($('#ddMini'), { che: 'storefront' });

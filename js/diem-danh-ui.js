@@ -164,7 +164,7 @@
           ${moc.length ? `<div class="ddm-moc">${moc.map((x) => `<span class="${nhanMoc['STREAK_' + x] ? 'is-on' : ''}"><b>${nhanMoc['STREAK_' + x] ? '✓' : x}</b><small>${x} ngày · ${tien(cfg['m' + x])}</small></span>`).join('')}</div>` : ''}
           ${ke ? `<p class="fs-13 text-muted">Còn <b>${ke.conLai} ngày</b> liên tiếp nữa để nhận voucher ${tien(ke.giaTri)}.</p>` : ''}
           ${(d.daNhan || []).length ? `<p class="fs-13">🎟️ Tháng này đã nhận: ${d.daNhan.map((v) => `<b>${tien(v.giaTri)}</b> (${esc(NGUON[v.nguon] || v.nguonTen)})`).join(', ')}</p>` : ''}</div>` : ''}
-      ${!tk && dangNhap && ke ? `<p class="ddm-ghi">🔥 Chuỗi ${so(d.chuoi)} ngày – còn ${ke.conLai} ngày nữa nhận voucher ${tien(ke.giaTri)}</p>` : ''}
+      ${!tk && dangNhap && ke ? `<p class="ddm-ghi">${d.chuoi ? `🔥 Chuỗi ${so(d.chuoi)} ngày – còn ${ke.conLai} ngày nữa nhận voucher ${tien(ke.giaTri)}` : `🔥 Điểm danh ${ke.moc} ngày liên tiếp để nhận voucher ${tien(ke.giaTri)}`}</p>` : ''}
       <a class="ddm-link" href="diem-danh.html">Thể lệ & lịch sử ›</a></div>`;
   }
   /* Gắn lịch mini vào phần tử. Mỗi phiên đăng nhập (token) chỉ tải 1 lần; đổi tài khoản / thoát thì tự bỏ dữ liệu cũ. */
