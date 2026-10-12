@@ -851,6 +851,14 @@ window.PRODUCTS = [
         "label": "30 gói (không hộp)",
         "price": 830000,
         "oldPrice": 1075000
+      },
+      {
+        "label": "3 hộp tặng 2 lọ d3k2",
+        "price": 7440000
+      },
+      {
+        "label": "4 hộp tặng 3 lọ d3k2",
+        "price": 9920000
       }
     ],
     "desc": "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ, hỗ trợ xương chắc khoẻ và bé phát triển chiều cao.",
