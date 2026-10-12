@@ -78,17 +78,33 @@
     return `<div class="card card--pad ddp-ls"><h3>🗓️ Lịch sử điểm danh</h3>${ds.length ? `<div class="diem-ls">${ds.map((x) => `<div class="diem-ls__it"><div><b>${ngayVN(x.ngay)}${x.gio ? ' · ' + esc(x.gio) : ''}</b><small>${esc(x.nguon)} · chuỗi ${x.chuoi} ngày${x.thuong ? ' · có voucher' : ''}</small></div><div class="diem-ls__so is-cong">+${so(x.diem)}</div></div>`).join('')}</div>` : '<p class="text-muted fs-14">Tháng này chưa có lượt điểm danh nào.</p>'}</div>`;
   }
   /* Trang chính (dữ liệu từ máy chủ, hoặc dữ liệu minh hoạ khi xem trước) */
+  /* Trang chính – gọn trong 1 màn hình máy tính: thanh đầu 1 hàng, lịch bên trái, chuỗi + quà bên phải,
+     lịch sử và thể lệ gập lại (bấm để mở). Dữ liệu từ máy chủ, hoặc dữ liệu minh hoạ khi xem trước. */
   function trang(d, cfg, opts = {}) {
     cfg = cfg || d.cauHinh || {};
     const daXong = d.daDiemDanhHomNay, dangChay = d.trongChuongTrinh !== false && cfg.bat !== false;
-    const nut = !dangChay ? '<button class="btn btn--lg ddp-nut" type="button" disabled>Chương trình đang tạm dừng</button>'
-      : daXong ? '<button class="btn btn--lg ddp-nut is-xong" type="button" disabled>✓ Hôm nay đã điểm danh</button>'
-      : `<button class="btn btn--lg ddp-nut" type="button" ${opts.xemTruoc ? 'disabled' : 'data-dd-nut'}>Điểm danh nhận +${so(cfg.diemNgay)} điểm</button>`;
+    const nut = !dangChay ? '<button class="btn ddq-nut" type="button" disabled>Chương trình đang tạm dừng</button>'
+      : daXong ? '<button class="btn ddq-nut is-xong" type="button" disabled>✓ Hôm nay đã điểm danh</button>'
+      : `<button class="btn ddq-nut" type="button" ${opts.xemTruoc ? 'disabled' : 'data-dd-nut'}>Điểm danh nhận +${so(cfg.diemNgay)} điểm</button>`;
+    const K = (v) => (v >= 1000 && v % 1000 === 0 ? v / 1000 + 'K' : tien(v));
+    const quaChip = [cfg.ngayDoi ? `<span>🎁 Ngày đôi <b>${K(cfg.ngayDoi)}</b></span>` : '', ...[10, 20, 30].filter((m) => cfg['m' + m]).map((m) => `<span>🔥 ${m} ngày <b>${K(cfg['m' + m])}</b></span>`)].join('');
+    const soLs = (d.lich || []).length;
     return `${opts.xemTruoc ? '<div class="ddp-xt">👁️ Xem trước – dữ liệu minh hoạ, chưa lưu</div>' : ''}
-      ${hero(cfg, `<div class="ddp-hero__nut"><div class="ddp-diem"><small>Điểm hiện có</small><b>${so((d.diem || {}).soDu)}</b></div>${nut}
-      <p class="ddp-tt">${daXong ? '🎉 Mẹ đã điểm danh hôm nay – quay lại ngày mai nhé!' : dangChay ? 'Hôm nay mẹ chưa điểm danh' : ''}</p></div>`)}
-      ${quaTomTat(cfg)}
-      <div class="ddp-cot"><div>${lich(d, cfg)}${lichSu(d)}</div><div>${tienDo(d, cfg)}${thuong(d)}${theLeKhoi(cfg)}</div></div>`;
+      <div class="ddq" style="--dd:${mauHop(cfg.mau)}">
+        <div class="ddq-dau"><span class="ddq-dau__ic" aria-hidden="true">${esc(cfg.icon || '📅')}</span>
+          <div class="ddq-dau__tx"><h1>${esc(cfg.ten || 'Điểm danh mỗi ngày')}</h1><p>${daXong ? '🎉 Mẹ đã điểm danh hôm nay – quay lại ngày mai nhé!' : dangChay ? `Mỗi ngày đăng nhập nhận <b>${so(cfg.diemNgay)} điểm</b> · 1.000 điểm = 1.000đ` : 'Chương trình đang tạm dừng'}</p></div>
+          <div class="ddq-diem"><small>Điểm hiện có</small><b>${so((d.diem || {}).soDu)}</b></div>${nut}</div>
+        <div class="ddq-cot">
+          <div class="ddq-trai">${lich(d, cfg)}
+            <div class="ddq-mo"><details><summary>🗓️ Lịch sử điểm danh tháng này (${soLs})</summary>${lichSu(d)}</details>
+              <details><summary>📜 Thể lệ chương trình</summary>${theLeKhoi(cfg)}</details></div>
+          </div>
+          <div class="ddq-phai">
+            ${quaChip ? `<div class="ddq-qua">${quaChip}</div>` : ''}
+            ${tienDo(d, cfg)}${thuong(d)}
+          </div>
+        </div>
+      </div>`;
   }
   /* Hộp chúc mừng sau khi điểm danh thành công (chỉ gọi khi máy chủ đã xác nhận) */
   function chucMung(r) {

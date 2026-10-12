@@ -2038,3 +2038,57 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 /* Lịch điểm danh: viền đồng bộ, đầu thẻ có dải màu thương hiệu mảnh */
 .dv-cum .ddm { border-top: 4px solid var(--dd); }
 @media (max-width: 899px) { .dv-cum { padding: 10px; border-radius: 18px; } .dv-cum > .trust { margin: 0 -10px; padding: 0 10px; } .dv-cum .trust__item { box-shadow: none; } }
+
+/* ===== Trang Điểm danh gọn 1 màn hình (DDUI.trang) ===== */
+.ddp { padding-top: 14px; padding-bottom: 24px; }
+.ddq { --dd: #F0537A; display: flex; flex-direction: column; gap: 12px; }
+.ddq-dau { display: flex; align-items: center; gap: 14px; background: linear-gradient(100deg, var(--dd), color-mix(in srgb, var(--dd) 72%, #FFB36B)); color: #fff; border-radius: 18px; padding: 10px 12px 10px 14px; box-shadow: 0 8px 22px color-mix(in srgb, var(--dd) 28%, transparent); }
+.ddq-dau__ic { font-size: 26px; width: 48px; height: 48px; flex: none; display: grid; place-items: center; background: rgba(255,255,255,.22); border-radius: 14px; }
+.ddq-dau__tx { flex: 1; min-width: 0; }
+.ddq-dau__tx h1 { font-family: 'Quicksand', sans-serif; font-size: 20px; line-height: 1.2; margin: 0; color: #fff; }
+.ddq-dau__tx p { margin: 2px 0 0; font-size: 13px; opacity: .95; } .ddq-dau__tx p b { color: #fff; }
+.ddq-diem { text-align: right; padding: 0 14px; border-left: 1px solid rgba(255,255,255,.35); flex: none; }
+.ddq-diem small { display: block; font-size: 11.5px; opacity: .9; } .ddq-diem b { font-family: 'Quicksand', sans-serif; font-size: 24px; line-height: 1.1; }
+.ddq-nut { background: #fff; color: var(--dd); font-weight: 800; border-radius: 999px; min-height: 46px; padding: 0 22px; flex: none; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.ddq-nut:disabled { opacity: 1; cursor: default; } .ddq-nut.is-xong { background: rgba(255,255,255,.22); color: #fff; box-shadow: none; }
+.ddq-cot { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.ddq-phai { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ddq .card { margin: 0; }
+/* Lịch: ô thấp lại cho vừa màn hình */
+.ddq .ddp-lich { padding: 12px 14px; }
+.ddq .ddp-lich__dau { margin-bottom: 6px; } .ddq .ddp-lich__dau h3 { font-size: 15px; }
+.ddq .ddp-luoi { gap: 5px; } .ddq .ddp-thu { font-size: 11.5px; padding: 0; }
+.ddq .ddp-o { aspect-ratio: auto; height: 46px; border-radius: 10px; }
+.ddq .ddp-chu { margin-top: 8px; }
+/* Chip quà */
+.ddq-qua { display: flex; flex-wrap: wrap; gap: 6px; }
+.ddq-qua span { background: #fff; border: 1px solid #F6D3DE; border-radius: 999px; padding: 6px 12px; font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+.ddq-qua b { color: var(--dd); }
+/* Chuỗi + phần thưởng: gọn */
+.ddq .ddp-td, .ddq .ddp-th { padding: 12px 14px; }
+.ddq .ddp-td h3, .ddq .ddp-th h3 { font-size: 15px; margin: 0 0 8px; }
+.ddq .ddp-td__so { margin-bottom: 22px; } .ddq .ddp-td__so b { font-size: 20px; }
+.ddq .ddp-bar { margin: 4px 14px 28px; }
+.ddq .ddp-td p { margin: 0; font-size: 13px; } .ddq .ddp-td .mt-12 { margin-top: 6px; }
+.ddq .ddp-th .btn { margin-top: 8px; min-height: 38px; }
+.ddq .ddp-th p { font-size: 13px; margin: 0; }
+/* Lịch sử + thể lệ: gập lại */
+.ddq-mo { display: flex; flex-direction: column; gap: 6px; }
+.ddq-mo details { background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.ddq-mo summary { cursor: pointer; padding: 10px 14px; font-weight: 700; font-size: 13.5px; list-style: none; display: flex; justify-content: space-between; }
+.ddq-mo summary::after { content: '+'; color: var(--dd); font-weight: 800; } .ddq-mo details[open] summary::after { content: '−'; }
+.ddq-mo summary::-webkit-details-marker { display: none; }
+.ddq-mo details > .card { border: 0; box-shadow: none; padding: 0 14px 12px; background: none; }
+.ddq-mo details > .card > h3 { display: none; }
+.ddq-mo .diem-ls { max-height: 220px; }
+@media (max-width: 860px) {
+  .ddq-cot { grid-template-columns: 1fr; }
+  .ddq-dau { flex-wrap: wrap; } .ddq-dau__tx { flex-basis: calc(100% - 62px); }
+  .ddq-diem { border-left: 0; padding: 0; text-align: left; } .ddq-nut { flex: 1; }
+  .ddq .ddp-o { height: 42px; }
+}
+.ddq-trai { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ddq-qua { flex-wrap: nowrap; gap: 5px; } .ddq-qua span { padding: 5px 9px; font-size: 12px; flex: 1; text-align: center; }
+.ddq .ddp-td .fs-12 { display: none; } .ddq .ddp-td__so { margin-bottom: 18px; } .ddq .ddp-td__so small { font-size: 11.5px; }
+@media (max-width: 1100px) { .ddq-qua { flex-wrap: wrap; } .ddq-qua span { flex: none; } }
+.ddq .ddp-lich { order: 0; } .ddq-trai > .ddq-mo { order: 1; } .ddq-qua span { min-width: 0; }
