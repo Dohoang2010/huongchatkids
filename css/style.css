@@ -1807,3 +1807,8 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .sk-khoi__sp { margin-top: 12px; }
 .sk-khoi--ma .vstrip__row { margin-top: 12px; }
 .sk-goiy h2 { color: #0b2470; margin: 26px 0 12px; font-size: 22px; }
+
+/* Giờ vàng (GIO_VANG) + tab Khuyến mãi */
+.gvang { background: #FFF6E0; border: 1px dashed #F0A500; color: #7a4b00; border-radius: 12px; padding: 9px 12px; font-size: 13.5px; line-height: 1.45; margin-bottom: 10px; }
+.gvang--on { background: linear-gradient(90deg, #FFE7EC, #FFF3D6); border: 1px solid #F25C7A; color: #9b1238; }
+.navbar__link--km { color: #E8335B !important; font-weight: 800; }

@@ -3804,6 +3804,18 @@ window.SU_KIEN = {
   ],
 };
 
+
+/* =====================================================================
+   GIỜ VÀNG – giảm giá theo khung giờ trong ngày (giờ Việt Nam), web tự bật / tự tắt:
+   - tu → den mỗi ngày (trong khoảng tuNgay → denNgay; denNgay trống = chạy mãi đến khi tắt)
+   - giam: % giảm trừ thẳng vào giá bán của sản phẩm thuộc brands (hoặc sanPham: [id])
+   - bỏ qua combo và sữa công thức (formula) theo quy định; tat: true để tắt nhanh
+   - ngày có SU_KIEN đang chạy (vd 10.10) thì giờ vàng tạm nghỉ
+   ===================================================================== */
+window.GIO_VANG = [
+  { id: 'lotte-5', ten: 'Giờ vàng Lotte', giam: 5, tu: '20:00', den: '22:00', brands: ['lotte'], sanPham: [], tuNgay: '2026-10-12', denNgay: '', tat: false },
+];
+
 /* =====================================================================
    SẢN PHẨM NÊN MUA KÈM – hiện ở trang thanh toán để khách thêm vào đơn 1 chạm
    Theo DANH MỤC của sản phẩm đang có trong giỏ: [mã sản phẩm, lý do ngắn hiện dưới tên].

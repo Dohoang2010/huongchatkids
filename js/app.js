@@ -19,6 +19,35 @@
   const param = (k) => new URLSearchParams(location.search).get(k);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const byId = (id) => PRODUCTS.find((p) => p.id === id);
+  /* ---- Giờ vàng (GIO_VANG trong data.js): trong khung giờ, giá sản phẩm áp dụng được giảm thẳng X% ---- */
+  const phutVN = (t) => { const m = String(t || '').match(/^(\d{1,2}):(\d{2})/); return m ? Number(m[1]) * 60 + Number(m[2]) : 0; };
+  const ngayVN = (n) => new Date(n + 7 * 3600e3).toISOString().slice(0, 10);
+  const gioVangHopLe = (g, p) => !!(g && !g.tat && p && !p.isCombo && !p.formula && ((g.sanPham || []).includes(p.id) || (g.brands || []).includes(p.brand)));
+  function gioVangChay(g, n = Date.now()) {
+    if (!g || g.tat || suKienDangChay()) return false;
+    const ng = ngayVN(n); if ((g.tuNgay && ng < g.tuNgay) || (g.denNgay && ng > g.denNgay)) return false;
+    const ph = Math.floor((n + 7 * 3600e3) / 60000) % 1440; return ph >= phutVN(g.tu) && ph < phutVN(g.den);
+  }
+  const gioVangCua = (p) => (window.GIO_VANG || []).find((g) => gioVangHopLe(g, p));
+  const giamGia = (x, g) => Math.round(x * (1 - g.giam / 100) / 100) * 100;
+  (window.PRODUCTS || []).forEach((p) => {
+    const g = gioVangCua(p); if (!g || !gioVangChay(g)) return;
+    p.gioVang = g; p.giaGoc = p.price; p.price = giamGia(p.price, g);
+    (p.variants || []).forEach((v) => { v.giaGoc = v.price; v.price = giamGia(v.price, g); });
+  });
+  /* Hết / tới khung giờ khi khách đang mở trang → tải lại để giá đúng (trừ trang thanh toán đang điền dở) */
+  (() => { const n = Date.now(), ph = Math.floor((n + 7 * 3600e3) / 60000) % 1440; let gan = Infinity;
+    (window.GIO_VANG || []).filter((g) => !g.tat).forEach((g) => [phutVN(g.tu), phutVN(g.den)].forEach((m) => { const c = (m - ph + 1440) % 1440 || 1440; gan = Math.min(gan, c); }));
+    if (gan < 360 && !/checkout/.test(location.pathname)) setTimeout(() => location.reload(), (gan * 60 - Math.floor(n / 1000) % 60 + 2) * 1000); })();
+  /* Dòng giờ vàng ở trang sản phẩm */
+  function gioVangNhan(p) {
+    const g = (p && p.gioVang) || gioVangCua(p); if (!g) return '';
+    if (p.gioVang) { const con = (phutVN(g.den) - Math.floor((Date.now() + 7 * 3600e3) / 60000) % 1440 + 1440) % 1440;
+      return `<div class="gvang gvang--on">⏰ <b>${esc(g.ten)} đang diễn ra: giảm ${g.giam}%</b> (đã trừ vào giá) · còn ${Math.floor(con / 60) ? Math.floor(con / 60) + ' giờ ' : ''}${con % 60} phút, đến ${esc(g.den)}</div>`; }
+    return `<div class="gvang">⏰ <b>${esc(g.ten)} ${esc(g.tu)} – ${esc(g.den)} mỗi ngày:</b> giảm ${g.giam}% sản phẩm này</div>`;
+  }
+  /* Sản phẩm đang có khuyến mãi (tab Khuyến mãi): giờ vàng, chương trình quà, combo ưu đãi */
+  const dangKhuyenMai = (p) => !p.an && (!!gioVangCua(p) || ctChoSP(p).length > 0 || (p.isCombo && ((p.uuDai || []).length > 0 || laComboGiam(p))));
   const brandOf = (p) => BRANDS.find((b) => b.key === p.brand) || { label: p.brand, color: '#888' };
   const ageLabel = (k) => (AGES.find((a) => a.key === k) || {}).label || k;
   /* Gộp dải tuổi: ['6-12m','1-3y','3-6y'] -> '6 tháng – 6 tuổi'; ['0-6m','6-12m'] -> '0–12 tháng' */
@@ -382,14 +411,14 @@
     return `<article class="pcard ${oos ? 'pcard--oos' : ''}" data-id="${p.id}">
       <a class="pcard__media" href="product.html?id=${p.id}">
         <img src="${productThumb(p)}" alt="${esc(shortName(p))}" loading="lazy" width="420" height="420">
-        <div class="pcard__badges">${d >= 5 ? `<span class="badge badge--sale">-${d}%</span>` : ''}${tags.map((t) => `<span class="badge ${tagCls(t)}">${t === 'Sản phẩm hot' ? '🔥 ' : ''}${t}</span>`).join('')}</div>
+        <div class="pcard__badges">${p.gioVang ? `<span class="badge badge--sale">⏰ -${p.gioVang.giam}% giờ vàng</span>` : d >= 5 ? `<span class="badge badge--sale">-${d}%</span>` : ''}${tags.map((t) => `<span class="badge ${tagCls(t)}">${t === 'Sản phẩm hot' ? '🔥 ' : ''}${t}</span>`).join('')}</div>
         <button class="pcard__wish ${Wish.has(p.id) ? 'is-on' : ''}" type="button" data-wish="${p.id}" aria-label="Lưu vào yêu thích" aria-pressed="${Wish.has(p.id)}">${I.heart}</button>
       </a>
       <div class="pcard__body">
         <div class="pcard__brand">${esc(b.label)}${p.origin && p.origin !== 'Hàn Quốc' ? ` · ${esc(p.origin)}` : ''}</div>
         <a class="pcard__name" href="product.html?id=${p.id}" title="${esc(p.name)}">${esc(shortName(p))}</a>
         <div class="pcard__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)} <span class="text-muted">(${p.reviews})</span></span>` : ''}${p.reviews > 0 && p.sold > 0 ? '<span>·</span>' : ''}${p.sold > 0 ? `<span>Đã bán ${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'k' : p.sold}</span>` : ''}${!p.reviews && !p.sold ? `<span class="text-teal fw-600">${I.check} Chính hãng</span>` : ''}</div>
-        <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div>
+        <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : p.giaGoc ? `<s>${fmt(p.giaGoc)}</s>` : ''}</div>
         <div class="pcard__age">${p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
         <div class="pcard__actions">
           <button class="btn btn--primary" type="button" data-buy="${p.id}" ${oos ? 'disabled' : ''}>${I.zap}Mua ngay</button>
@@ -459,6 +488,7 @@
           <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
         <li class="navbar__item"><a class="navbar__link navbar__link--about" href="gioi-thieu.html">💗 Giới thiệu</a></li>
         ${(() => { const sk = suKienHien(); return sk ? `<li class="navbar__item"><a class="navbar__link navbar__link--sk" href="index.html?tab=${sk.id}">⚡ ${esc(sk.nhan)}</a></li>` : ''; })()}
+        <li class="navbar__item"><a class="navbar__link navbar__link--km" href="collections.html?km=1">🏷️ Khuyến mãi</a></li>
         ${NAV.map(navItem).join('')}
       </ul></div></nav>
     </header>
@@ -470,6 +500,7 @@
         <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với chuyên gia dinh dưỡng</a></div>
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
         ${(() => { const sk = suKienHien(); return sk ? `<a class="mmenu__link mmenu__link--sk" href="index.html?tab=${sk.id}">⚡ ${esc(sk.ten)}</a>` : ''; })()}
+        <a class="mmenu__link mmenu__link--sk" href="collections.html?km=1">🏷️ Sản phẩm đang khuyến mãi</a>
         <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
         <a class="mmenu__link" href="account.html">👤 Tài khoản / Đơn hàng</a>
@@ -1780,5 +1811,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

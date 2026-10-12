@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261008b">
+  <link rel="stylesheet" href="css/style.css?v=20261012a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -53,9 +53,9 @@
   </div>
 </div></main>
 
-<script src="js/data.js?v=20261012c"></script>
+<script src="js/data.js?v=20261012d"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261012n"></script>
+<script src="js/app.js?v=20261012p"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productCard, brandOf, ageLabel, esc } = MC;
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* State from URL */
   const url = new URLSearchParams(location.search);
-  const S = { age: url.getAll('age'), cat: url.getAll('cat'), need: url.getAll('need'), brand: url.getAll('brand'), price: url.getAll('price'), q: url.get('q') || '', tag: url.get('tag') || '', sort: url.get('sort') || 'best', page: Number(url.get('page')) || 1 };
+  const S = { age: url.getAll('age'), cat: url.getAll('cat'), need: url.getAll('need'), brand: url.getAll('brand'), price: url.getAll('price'), q: url.get('q') || '', tag: url.get('tag') || '', sort: url.get('sort') || 'best', page: Number(url.get('page')) || 1, km: url.get('km') === '1' };
   // hỗ trợ dạng ?cat=a,b và chỉ giữ giá trị hợp lệ (tránh lỗi/XSS từ URL)
   const VALID = { age: AGES.map((a) => a.key), cat: CATEGORIES.map((c) => c.key), need: NEEDS.map((n) => n.key), brand: BRANDS.map((b) => b.key), price: PRICE_RANGES.map((r) => r.key) };
   ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => { S[k] = S[k].flatMap((v) => v.split(',')).filter((v) => VALID[k].includes(v)); });
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function syncUrl() {
     const u = new URLSearchParams();
     ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => S[k].forEach((v) => u.append(k, v)));
-    if (S.q) u.set('q', S.q); if (S.tag) u.set('tag', S.tag); if (S.sort !== 'best') u.set('sort', S.sort); if (S.page > 1) u.set('page', S.page);
+    if (S.km) u.set('km', '1'); if (S.q) u.set('q', S.q); if (S.tag) u.set('tag', S.tag); if (S.sort !== 'best') u.set('sort', S.sort); if (S.page > 1) u.set('page', S.page);
     history.replaceState(null, '', 'collections.html' + (u.toString() ? '?' + u : ''));
   }
 
@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (S.brand.length && !S.brand.includes(p.brand)) return false;
       if (S.price.length && !S.price.some((k) => { const r = PRICE_RANGES.find((x) => x.key === k); return p.price >= r.min && p.price < r.max; })) return false;
       if (S.tag && !(p.tags || []).includes(S.tag)) return false;
+      if (S.km && !MC.dangKhuyenMai(p)) return false;
       if (q && !(p.name + ' ' + brandOf(p).label + ' ' + p.needs.map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ') + ' ' + p.origin).toLowerCase().includes(q)) return false;
       return true;
     });
@@ -97,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function titleText() {
     if (S.q) return `Kết quả cho "${S.q}"`;
+    if (S.km) return '🏷️ Sản phẩm đang khuyến mãi';
     if (S.tag) return S.tag === 'Combo' ? 'Combo tiết kiệm' : (S.tag === 'Sản phẩm hot' ? '🔥 Sản phẩm hot của shop' : S.tag);
     if (S.cat.length === 1) return (CATEGORIES.find((c) => c.key === S.cat[0]) || {}).label || 'Sản phẩm';
     if (S.need.length === 1) return (NEEDS.find((n) => n.key === S.need[0]) || {}).label || 'Sản phẩm';
@@ -119,14 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const chips = [];
     const add = (k, v, label) => chips.push(`<button class="chip chip--sm is-active" type="button" data-rm="${k}" data-val="${esc(v)}">${esc(label)} <span class="chip__x">×</span></button>`);
     S.age.forEach((a) => add('age', a, ageLabel(a))); S.cat.forEach((c) => add('cat', c, (CATEGORIES.find((x) => x.key === c) || {}).label)); S.need.forEach((n) => add('need', n, (NEEDS.find((x) => x.key === n) || {}).label)); S.brand.forEach((b) => add('brand', b, brandOf({ brand: b }).label)); S.price.forEach((p) => add('price', p, PRICE_RANGES.find((x) => x.key === p).label));
-    if (S.q) add('q', S.q, `"${esc(S.q)}"`); if (S.tag) add('tag', S.tag, S.tag);
+    if (S.km) add('km', '1', 'Đang khuyến mãi'); if (S.q) add('q', S.q, `"${esc(S.q)}"`); if (S.tag) add('tag', S.tag, S.tag);
     $('#activeFilters').innerHTML = chips.length ? chips.join('') + `<button class="chip chip--sm" type="button" id="clearAllChips">Xoá tất cả</button>` : '';
   }
 
   function render() {
     const list = filtered(); const pages = Math.max(1, Math.ceil(list.length / PER)); S.page = Math.min(S.page, pages);
     const t = titleText(); $('#title').textContent = t; document.title = t + ' – ' + SITE.name;
-    $('#subtitle').textContent = S.age.length === 1 ? `Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ${ageLabel(S.age[0])}` : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả 7 ngày';
+    $('#subtitle').textContent = S.km ? (window.GIO_VANG || []).filter((g) => !g.tat).map((g) => `⏰ ${g.ten} ${g.tu}–${g.den} mỗi ngày giảm ${g.giam}%${MC.gioVangChay(g) ? ' (đang diễn ra)' : ''}`).concat(['🎁 Mua kèm quà tặng', '💰 Combo tiết kiệm']).join(' · ') : S.age.length === 1 ? `Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ${ageLabel(S.age[0])}` : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả 7 ngày';
     $('#crumb').innerHTML = `<a href="index.html">Trang chủ</a><span>›</span><a href="collections.html">Sản phẩm</a>${t !== 'Tất cả sản phẩm' ? `<span>›</span><span>${esc(t)}</span>` : ''}`;
     $('#ageChips').innerHTML = `<a class="chip ${!S.age.length ? 'is-active' : ''}" href="#" data-age="">Tất cả tuổi</a>` + AGES.map((a) => `<a class="chip ${S.age.length === 1 && S.age[0] === a.key ? 'is-active' : ''}" href="#" data-age="${a.key}">${a.emoji} ${a.label}</a>`).join('');
     $('#count').textContent = `${list.length} sản phẩm`;
@@ -145,13 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Events */
   $('#filters').addEventListener('change', (e) => { const i = e.target; if (i.type !== 'checkbox') return; const arr = S[i.name]; if (i.checked) { if (!arr.includes(i.value)) arr.push(i.value); } else S[i.name] = arr.filter((v) => v !== i.value); S.page = 1; if (window.innerWidth >= 992) render(); else $('#count').textContent = `${filtered().length} sản phẩm`; });
   $('#filters').addEventListener('click', (e) => { const c = e.target.closest('[data-clear]'); if (c) { S[c.dataset.clear] = []; renderFilters(); render(); } });
-  $('#resetAll').addEventListener('click', () => { ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => S[k] = []); S.q = ''; S.tag = ''; renderFilters(); render(); });
+  $('#resetAll').addEventListener('click', () => { ['age', 'cat', 'need', 'brand', 'price'].forEach((k) => S[k] = []); S.q = ''; S.tag = ''; S.km = false; renderFilters(); render(); });
   $('#applyFilters').addEventListener('click', () => { $('#filters').classList.remove('is-open'); document.body.classList.remove('no-scroll'); render(); });
   $('#openFilters').addEventListener('click', () => { $('#filters').classList.add('is-open'); document.body.classList.add('no-scroll'); });
   $('#closeFilters').addEventListener('click', () => { $('#filters').classList.remove('is-open'); document.body.classList.remove('no-scroll'); });
   $('#sort').addEventListener('change', (e) => { S.sort = e.target.value; S.page = 1; render(); });
   $('#ageChips').addEventListener('click', (e) => { const a = e.target.closest('[data-age]'); if (!a) return; e.preventDefault(); S.age = a.dataset.age ? [a.dataset.age] : []; S.page = 1; renderFilters(); render(); });
-  $('#activeFilters').addEventListener('click', (e) => { const rm = e.target.closest('[data-rm]'); if (rm) { const k = rm.dataset.rm; if (k === 'q' || k === 'tag') S[k] = ''; else S[k] = S[k].filter((v) => v !== rm.dataset.val); S.page = 1; renderFilters(); render(); } if (e.target.id === 'clearAllChips') $('#resetAll').click(); });
+  $('#activeFilters').addEventListener('click', (e) => { const rm = e.target.closest('[data-rm]'); if (rm) { const k = rm.dataset.rm; if (k === 'q' || k === 'tag') S[k] = ''; else if (k === 'km') S.km = false; else S[k] = S[k].filter((v) => v !== rm.dataset.val); S.page = 1; renderFilters(); render(); } if (e.target.id === 'clearAllChips') $('#resetAll').click(); });
   $('#pagination').addEventListener('click', (e) => { const b = e.target.closest('[data-page]'); if (b && !b.disabled) { S.page = Number(b.dataset.page); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
   $('#grid').addEventListener('click', (e) => { if (e.target.id === 'emptyReset') $('#resetAll').click(); });
   const si = $('#searchInput'); if (si && S.q) si.value = S.q;
