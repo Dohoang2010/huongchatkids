@@ -1995,3 +1995,10 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
   .vstrip__qua b { display: block; color: var(--primary); font-size: 15px; }
   .vstrip__them a.btn { align-self: flex-start; }
 }
+
+/* Ưu đãi sinh nhật (trang tài khoản) */
+.sn-bang { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: linear-gradient(100deg, #FFF1F5, #FFF6E0); border: 1px solid #FFD9E3; border-radius: var(--radius, 16px); padding: 12px 14px; font-size: 14px; }
+.sn-bang > div { flex: 1; min-width: 200px; } .sn-bang b { color: var(--primary); } .sn-bang > div > b:first-child { color: var(--ink); }
+.sn-bang--goi { background: #fff; border-style: dashed; }
+.sn-form { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.sn-form .input { width: 160px; min-height: 38px; padding: 6px 10px; }

@@ -86,6 +86,7 @@ window.SITE = {
     combineWithCoupon: false,  // false = KHÔNG cộng dồn ưu đãi hạng với mã giảm giá, web tự lấy mức có lợi nhất cho khách
     otpPhut: 10,               // mã OTP sống bao nhiêu phút
     nhoPhienNgay: 30,          // đăng nhập bằng OTP xong thì nhớ máy khách bao nhiêu ngày
+    sinhNhat: { bat: true, giam: 10 },   // tháng sinh nhật: giảm giam% mọi đơn (khách đã đăng nhập, có ngày sinh); không cộng dồn với ưu đãi hạng – lấy mức cao hơn
   },
   flashSaleEnd: 'daily',  // 'daily' = ưu đãi trong hôm nay (đếm ngược tới 24:00, mỗi ngày tự đếm lại); hoặc đặt hạn cụ thể '2026-09-30T23:59:59+07:00' (qua ngày này countdown tự ẩn)
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon

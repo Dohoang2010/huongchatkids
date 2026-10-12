@@ -309,6 +309,7 @@ function docKH(sdt) {
     kh.ten = String(v[1] || ''); kh.tinh = String(v[2] || ''); kh.xa = String(v[3] || '');
     kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || '');
   }
+  kh.ngaySinh = snDoc_(sdt) || (crm && crm.kh ? chuanNgaySinh_(crm.kh.ngaySinh || crm.kh.sinhNhat || '') : '');
   /* Sheet chưa có → lấy tên, địa chỉ, email từ CRM (CRM trả thêm tinh / xa / diaChi / email thì tự dùng) */
   if (crm && crm.co && crm.kh) {
     var ck = crm.kh;
@@ -782,6 +783,60 @@ function xuLyDiemGT() {
       }
     }
     return kq;
+  });
+}
+
+/* ===================== NGÀY SINH KHÁCH (ưu đãi tháng sinh nhật) =====================
+   Sheet riêng "Sinh nhật" (không đổi cột sheet Khách hàng). Khách tự điền 1 lần sau khi đăng nhập;
+   đã có ngày sinh thì chỉ quản trị (customer.update) sửa được – chống đổi ngày để lấy giảm giá. CRM có ngày sinh thì dùng luôn. */
+var SHEET_SN = 'Sinh nhật';
+function sheetSN_() { return sheetPhu(SHEET_SN, ['Điện thoại', 'Ngày sinh', 'Cập nhật lúc', 'Người sửa', 'Nguồn']); }
+/* Nhận dd/mm/yyyy, yyyy-mm-dd hoặc ô ngày của Sheets → 'yyyy-MM-dd' (trống nếu sai / tương lai / quá 120 tuổi) */
+function chuanNgaySinh_(v) {
+  if (v instanceof Date && !isNaN(v)) return Utilities.formatDate(v, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
+  var t = String(v || '').trim(), m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/), y, mo, d;
+  if (m) { y = +m[1]; mo = +m[2]; d = +m[3]; } else { m = t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/); if (!m) return ''; d = +m[1]; mo = +m[2]; y = +m[3]; }
+  var dt = new Date(Date.UTC(y, mo - 1, d));
+  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return '';
+  var nay = Utilities.formatDate(new Date(Date.now()), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd'), kq = y + '-' + ('0' + mo).slice(-2) + '-' + ('0' + d).slice(-2);
+  if (kq > nay || y < +nay.slice(0, 4) - 120) return '';
+  return kq;
+}
+function snTim_(sdt) {
+  var sh = sheetSN_(), n = sh.getLastRow(); if (n < 2) return null;
+  var v = sh.getRange(2, 1, n - 1, 2).getValues();
+  for (var i = v.length - 1; i >= 0; i--) if (chuanSdt(v[i][0]) === sdt) return { dong: i + 2, ngay: chuanNgaySinh_(v[i][1]) };
+  return null;
+}
+function snDoc_(sdt) { try { var r = snTim_(sdt); return r ? r.ngay : ''; } catch (e) { Logger.log(e); return ''; } }
+function snGhi_(sdt, ngay, ai, nguon) {
+  var r = snTim_(sdt), dong = ["'" + sdt, "'" + ngay, new Date(Date.now()), ai, nguon];
+  if (r) sheetSN_().getRange(r.dong, 1, 1, 5).setValues([dong]); else sheetSN_().appendRow(dong);
+}
+/* Khách đang đăng nhập tự điền ngày sinh (1 lần) */
+function apiSnLuu(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ngay = chuanNgaySinh_(p.ngaySinh); if (!ngay) return { ok: false, msg: 'Ngày sinh chưa đúng (dd/mm/yyyy)' };
+  if (!demGioiHan('sn_' + ph.sdt, 10, 3600)) return { ok: false, msg: 'Mẹ thử lại sau ít phút nhé' };
+  return voiKhoa(function () {
+    var cu = snDoc_(ph.sdt);
+    if (cu) return cu === ngay ? { ok: true, ngaySinh: cu } : { ok: false, daCo: true, ngaySinh: cu, msg: 'Ngày sinh đã lưu, muốn sửa mẹ nhắn shop qua Zalo / hotline ' + HOTLINE + ' nhé.' };
+    snGhi_(ph.sdt, ngay, 'khách', 'Khách tự điền');
+    ghiNhatKy('Sinh nhật', ph.sdt, 'Khách thêm ngày sinh ' + ngay);
+    return { ok: true, ngaySinh: ngay };
+  });
+}
+/* Quản trị sửa / xoá ngày sinh (customer.update), có nhật ký */
+function apiQtSnLuu(p) {
+  if (!coQuyen(p, 'customer.update')) return { ok: false, msg: 'Không có quyền sửa thông tin khách' };
+  var sdt = chuanSdt(p.sdt); if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var xoa = String(p.xoa) === '1', ngay = xoa ? '' : chuanNgaySinh_(p.ngaySinh);
+  if (!xoa && !ngay) return { ok: false, msg: 'Ngày sinh chưa đúng' };
+  return voiKhoa(function () {
+    var cu = snDoc_(sdt);
+    snGhi_(sdt, ngay, tenQT(p), xoa ? 'Quản trị xoá' : 'Quản trị sửa');
+    ghiNhatKy('Sinh nhật', sdt, (xoa ? 'Xoá' : 'Sửa') + ' ngày sinh: ' + (cu || 'trống') + ' → ' + (ngay || 'trống') + ' – bởi ' + tenQT(p));
+    return { ok: true, ngaySinh: ngay };
   });
 }
 
@@ -1946,6 +2001,8 @@ function doGet(e) {
     if (action === 'qtGtXuLy')      return traVe(apiQtGtXuLy(p), cb);
     if (action === 'qtGtLich')      return traVe(apiQtGtLich(p), cb);
     if (action === 'ddCauHinh')     return traVe(apiDdCauHinh(), cb);
+    if (action === 'snLuu')         return traVe(apiSnLuu(p), cb);
+    if (action === 'qtSnLuu')       return traVe(apiQtSnLuu(p), cb);
     if (action === 'ddTongQuan')    return traVe(apiDdTongQuan(p), cb);
     if (action === 'ddDiemDanh')    return traVe(apiDdDiemDanh(p), cb);
     if (action === 'vcCuaToi')      return traVe(apiVcCuaToi(p), cb);
@@ -2355,7 +2412,7 @@ function canhBao_(khoa, noiDung) {
   try { ghiNhatKy('Bảo mật', 'Cảnh báo', String(noiDung).slice(0, 300)); } catch (e3) { Logger.log(e3); }
 }
 /* Thao tác quản trị đụng tới tiền / quyền → báo cho chủ shop (gộp theo người làm, 10 phút / lần) */
-var LENH_BAO = { xoaDon: 'xoá đơn hàng', qtVcThuHoi: 'thu hồi voucher của khách', qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
+var LENH_BAO = { xoaDon: 'xoá đơn hàng', qtSnLuu: 'sửa ngày sinh của khách', qtVcThuHoi: 'thu hồi voucher của khách', qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
   qtAffCauHinh: 'đổi cấu hình chương trình đối tác', qtAffChotKy: 'chốt kỳ thanh toán đối tác', qtAffTra: 'đánh dấu đã trả tiền đối tác', qtAffGanTay: 'gán tay đơn cho đối tác',
   qtDiemDieuChinh: 'điều chỉnh điểm của khách', qtLuu: 'tạo / sửa tài khoản quản trị', qtXoa: 'xoá tài khoản quản trị', qtBiMat: 'đổi cài đặt bảo mật' };
 var HD_ = null;   // lệnh đang xử lý (gán ở doGet) để traVe biết mà cảnh báo
@@ -2373,7 +2430,7 @@ function baoLenh_(data) {
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
 var GIOI_HAN_10P = { guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
-  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60 };
+  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
   canhBao_('tan-suat-' + action, '⚠️ Có hơn ' + t + ' yêu cầu "' + action + '" trong 10 phút – có thể bot đang tấn công. Hệ thống đã tạm chặn lệnh này, tự mở lại sau khi lắng xuống.');

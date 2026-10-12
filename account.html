@@ -10,15 +10,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261012d">
+  <link rel="stylesheet" href="css/style.css?v=20261012e">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261012d"></script>
+<script src="js/data.js?v=20261012e"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261012r"></script>
+<script src="js/app.js?v=20261012s"></script>
 <script src="js/diem-danh-ui.js?v=20261012c"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,6 +27,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const n0 = (x) => Number(x || 0).toLocaleString('vi-VN');
   const DANG_TAI = '<p class="text-muted fs-14">Đang tải…</p>';
   const LOAI_DIEM = { EARN: 'Thưởng giới thiệu', SPEND: 'Dùng điểm mua hàng', REVERSE: 'Thu hồi điểm thưởng', REFUND: 'Hoàn điểm', ADJUSTMENT: 'Shop điều chỉnh', EXPIRE: 'Điểm hết hạn' };
+
+  /* ---------- 🎂 Ngày sinh: khách điền 1 lần, tháng sinh nhật giảm % mọi đơn (SITE.loyalty.sinhNhat) ---------- */
+  const SN = () => (SITE.loyalty || {}).sinhNhat || {};
+  const snHTML = (kh) => kh.ngaySinh ? `${esc(kh.ngaySinh.split('-').reverse().join('/'))}${MC.sinhNhat().dangThang ? ' <span class="badge badge--hot">🎂 Tháng sinh nhật</span>' : ''}`
+    : SN().bat ? `<button type="button" class="text-primary fw-700" data-sn-them>+ Thêm để nhận ưu đãi sinh nhật</button>` : '<span class="text-muted">—</span>';
+  const snBang = () => { const sn = MC.sinhNhat(); return sn.dangThang ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật mẹ!</b> Cả tháng này mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này).</div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
+    : sn.bat && !sn.ngaySinh ? `<div class="sn-bang sn-bang--goi">🎁 <div><b>Thêm ngày sinh để nhận quà sinh nhật:</b> trong tháng sinh nhật mọi đơn được giảm <b>${sn.giam}%</b>.</div><button class="btn btn--outline btn--sm" type="button" data-sn-them>Thêm ngày sinh</button></div>` : ''; };
+  document.addEventListener('click', async (e) => {
+    if (!e.target.closest('[data-sn-them]')) return;
+    const row = $('#snRow'); if (!row) return;
+    row.querySelector('b').innerHTML = `<span class="sn-form"><input class="input input--sm" type="date" id="snNgay" max="${new Date().toISOString().slice(0, 10)}" aria-label="Ngày sinh"><button class="btn btn--primary btn--sm" type="button" id="snLuu">Lưu</button></span>`;
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#snNgay').focus();
+  });
+  document.addEventListener('click', async (e) => {
+    if (e.target.id !== 'snLuu') return;
+    const v = ($('#snNgay') || {}).value; if (!v) { toast('Mẹ chọn ngày sinh nhé', { type: 'err' }); return; }
+    const [y, m, d] = v.split('-');
+    if (!confirm(`Lưu ngày sinh ${d}/${m}/${y}? Sau khi lưu, muốn sửa mẹ cần nhắn shop.`)) return;
+    const s = Session.get(); if (!s) return;
+    e.target.disabled = true; e.target.textContent = 'Đang lưu…';
+    let r; try { r = await loyaltyApi('snLuu', { token: s.token, ngaySinh: v }); } catch (err) { r = { ok: false, msg: err.message }; }
+    if (r && r.loi === 'token') { Session.clear(); render(); return; }
+    if (!r || !r.ok) { toast((r && r.msg) || 'Chưa lưu được', { type: 'err' }); e.target.disabled = false; e.target.textContent = 'Lưu'; return; }
+    Session.patch({ kh: { ...(Session.get().kh || {}), ngaySinh: r.ngaySinh } });
+    toast('Đã lưu ngày sinh 🎂', { type: 'ok' }); render();
+  });
 
   /* ---------- 🎟️ Ví voucher (tóm tắt) + 📅 lịch điểm danh ngay trong trang tài khoản ---------- */
   const NGUON_VC = { DOUBLE_DATE: 'Ngày đôi', STREAK_10: 'Chuỗi 10 ngày', STREAK_20: 'Chuỗi 20 ngày', STREAK_30: 'Chuỗi 30 ngày' };
@@ -210,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="checkout">
         <div class="flex flex-col gap-16">
           <div class="card card--pad"><div class="tier-hero">${theThanhVien({ spent, ten: kh.ten, sdt: kh.sdt })}<div><h3>🎖️ Hạng khách hàng & ưu đãi</h3>${thangHang(spent)}</div></div></div>
+          ${snBang()}
           <div class="acc-dv" id="diemDanh"><div class="card card--pad acc-vc" id="vcCard">${DANG_TAI}</div><div id="ddAcc"></div></div>
           <div class="grid-diem-gt">
             <div class="card card--pad" id="diem"><h3>⭐ Điểm của tôi</h3><div id="diemCard">${DANG_TAI}</div></div>
@@ -238,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="kh-row"><span>Số điện thoại</span><b>${esc(kh.sdt || '')}</b></div>
             <div class="kh-row"><span>Địa chỉ</span><b>${esc(addrFull(dc) || '—')}</b></div>
             <div class="kh-row"><span>Email</span><b>${esc(kh.email || '—')}</b></div>
+            <div class="kh-row" id="snRow"><span>Ngày sinh</span><b>${snHTML(kh)}</b></div>
             <div class="kh-row"><span>Hạng</span><b>${tierBadge(cur)}</b></div>
             <div class="kh-row"><span>Tổng chi tiêu</span><b class="text-primary">${fmt(spent)}</b></div>
             <div class="kh-row"><span>Số đơn đã mua</span><b>${Number(kh.soDon) || don.length || 0}</b></div>

@@ -677,3 +677,6 @@ td.nowrap{white-space:nowrap}
 .dd-xt__khung.is-pc iframe{width:1100px;height:calc((100vh - 210px) / .5);transform:scale(.5);transform-origin:top center}
 @media (max-width:1100px){.dd-ch{grid-template-columns:1fr}.dd-ch__xt{position:static}.dd-xt__khung{height:640px}.dd-xt__khung.is-pc iframe{height:1280px}}
 .dd-ch__form input[type=color]{height:40px;padding:3px;cursor:pointer}
+/* Nhãn trạng thái dễ nhìn (Quà tặng & hạng): đang diễn ra = đỏ, đang chạy liên tục = vàng */
+.tag--do{background:#E53935;color:#fff}
+.tag--vang{background:#FFC107;color:#3A2A00}

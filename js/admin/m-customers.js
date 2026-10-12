@@ -100,6 +100,7 @@
             <div class="kh-row"><span>Họ tên</span><b>${esc(k.ten || '(chưa có)')}</b></div>
             <div class="kh-row"><span>Điện thoại</span><b>${esc(k.sdt)}</b></div>
             <div class="kh-row"><span>Email</span><b>${esc(k.email || '—')}</b></div>
+            <div class="kh-row"><span>Ngày sinh</span><b>${esc(k.ngaySinh ? k.ngaySinh.split('-').reverse().join('/') : '—')}${k.ngaySinh && k.ngaySinh.slice(5, 7) === new Date(Date.now() + 7 * 3600e3).toISOString().slice(5, 7) ? ' ' + A.badge('🎂 Tháng sinh nhật', 'tag--hot') : ''}${A.co('customer.update') ? ` <button class="btn btn--ghost btn--sm" data-sn-sua="${esc(k.sdt)}" data-sn="${esc(k.ngaySinh || '')}">Sửa</button>` : ''}</b></div>
             <div class="kh-row"><span>Địa chỉ</span><b>${esc([k.diaChi, k.xa, k.tinh].filter(Boolean).join(', ') || '—')}</b></div>
             <div class="kh-row"><span>Đơn gần nhất</span><b>${esc(k.donGanNhat || '—')}</b></div>
             <div class="kh-row"><span>Trạng thái</span><b>${d.khoa ? A.badge('Đã khoá', 'tag--no') : A.badge('Bình thường', 'tag--ok')}</b></div>
@@ -126,6 +127,17 @@
       if (A.veBaoMatKhach) { const bm = document.createElement('div'); bm.className = 'card'; el.appendChild(bm); A.veBaoMatKhach(bm, k.sdt); }
     } catch (e) { el.innerHTML = A.loiTai(e.message); }
   }
+
+  /* Sửa / xoá ngày sinh khách (khách chỉ tự điền được 1 lần) – có nhật ký trên máy chủ */
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-sn-sua]'); if (!b) return;
+    const cu = b.dataset.sn ? b.dataset.sn.split('-').reverse().join('/') : '';
+    const v = prompt('Ngày sinh của khách (dd/mm/yyyy). Để trống rồi bấm OK để xoá ngày sinh:', cu); if (v == null) return;
+    b.disabled = true;
+    let r; try { r = await A.api('qtSnLuu', v.trim() ? { sdt: b.dataset.snSua, ngaySinh: v.trim() } : { sdt: b.dataset.snSua, xoa: '1' }); } catch (err) { r = { ok: false, msg: err.message }; }
+    A.toast(r.ok ? 'Đã lưu ngày sinh' : (r.msg || 'Chưa lưu được'), r.ok ? 'ok' : 'err'); b.disabled = false;
+    if (r.ok) A.veTrang();
+  });
 
   /* ---------------- Sự kiện ---------------- */
   const timTre = A.tre(() => { S.trang = 1; A.veTrang(); }, 420);

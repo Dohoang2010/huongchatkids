@@ -19,7 +19,7 @@
     if (c.tat) return ['Đã tắt', 'tag--off', 'tat'];
     const now = Date.now(), s = Date.parse(c.batDau), e = Date.parse(c.ketThuc);
     if (now < s) return ['Sắp diễn ra', 'tag--wait', 'sap'];
-    if (now < e) return ['Đang diễn ra', 'tag--ok', 'dang'];
+    if (now < e) return ['Đang diễn ra', 'tag--do', 'dang'];
     return ['Đã kết thúc', 'tag--off', 'het'];
   }
 
@@ -56,7 +56,7 @@
               <button data-ct-sao="${esc(c.id)}">Sao chép</button>
               ${k === 'dang' ? `<button data-ct-tat="${esc(c.id)}">Kết thúc sớm</button>` : `<button class="red" data-ct-xoa="${esc(c.id)}">Xoá</button>`}</div></td></tr>`; }).join('')}
           ${q.ten || q.donTu || q.thung ? `<tr>
-            <td data-nhan="Chương trình">${A.badge(q.enabled ? 'Đang chạy liên tục' : 'Đang tắt', q.enabled ? 'tag--ok' : 'tag--off')}<br><a class="ct-ten" href="#/qua-tang/mac-dinh">Quà ${esc(q.ten || 'mặc định')} (đơn từ ${fmt((q.donTu || {}).muc || 0)} · mua thùng)</a><small class="muted">Chương trình cũ, không giới hạn thời gian</small></td>
+            <td data-nhan="Chương trình">${A.badge(q.enabled ? 'Đang chạy liên tục' : 'Đang tắt', q.enabled ? 'tag--vang' : 'tag--off')}<br><a class="ct-ten" href="#/qua-tang/mac-dinh">Quà ${esc(q.ten || 'mặc định')} (đơn từ ${fmt((q.donTu || {}).muc || 0)} · mua thùng)</a><small class="muted">Chương trình cũ, không giới hạn thời gian</small></td>
             <td data-nhan="Loại">Tặng theo giá trị đơn / số thùng</td><td data-nhan="Sản phẩm"><span class="muted">${esc((q.vi || []).join(', '))}</span></td>
             <td data-nhan="Thời gian">Không thời hạn</td><td data-nhan="Thao tác"><div class="ct-act"><a href="#/qua-tang/mac-dinh">Chỉnh sửa</a></div></td></tr>` : ''}
         </tbody></table></div>
