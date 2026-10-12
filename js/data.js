@@ -3090,6 +3090,11 @@ window.PRODUCTS = [
         "label": "1 hộp",
         "price": 65000,
         "oldPrice": 88000
+      },
+      {
+        "label": "2 hộp",
+        "price": 130000,
+        "oldPrice": 176000
       }
     ],
     "desc": "Miến gà sấy thăng hoa – Masterchef Phạm Tuấn Hải. Sợi miến khoai tây & đậu xanh: sợi mềm dai, dễ chín, để lâu trong nước dùng vẫn giữ được độ ngon, không nhanh nở nhũn. Nước dùng ninh 8 giờ: nấu từ xương gà, cổ cánh gà, xương heo kết hợp rau củ và gia vị, tạo vị ngọt đậm đà, thơm ngon. Gà – măng – nấm thật: không chỉ có sợi miến và gia vị, mỗi tô có đầy đủ thịt gà, măng, nấm hương, hành lá, ngò và gia vị. Sấy thăng hoa 48 giờ: ứng dụng công nghệ sấy thăng hoa giúp giữ tốt cấu trúc, màu sắc và hương vị của nguyên liệu. Khi pha với nước nóng, các thành phần hoàn nguyên để thưởng thức.",
