@@ -621,15 +621,16 @@
   function qbCalc() {
     const { price } = qbPrice(); const sub = price * QB.qty; const multi = QB.qty >= 2 ? Math.round(sub * MULTI_RATE) : 0;
     const base = sub - multi;
-    const cr = QB.coupon ? applyCoupon(QB.coupon, base, qbLines()) : null; const couponAmt = cr && cr.ok ? cr.discount : 0;
     const loy = SITE.loyalty || {};
     const pct = loy.enabled ? Session.discountFor(qbPhone()) : 0;
-    const hang = hangCho(qbPhone()) || tierOf(0); const hangAmt = pct ? Math.round(base * pct / 100) : 0;
+    const hang = hangCho(qbPhone()) || tierOf(0);
+    const laSN = !!(pct > 0 && hang.laSinhNhat);   // tháng sinh nhật: không dùng kèm mã / giới thiệu / quà, vẫn dùng điểm
+    const cr = QB.coupon && !laSN ? applyCoupon(QB.coupon, base, qbLines()) : null; const couponAmt = cr && cr.ok ? cr.discount : 0; const hangAmt = pct ? Math.round(base * pct / 100) : 0;
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
     if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     /* Giảm giới thiệu = 1 mã giảm giá (không cộng dồn mã / hạng, lấy mức lợi hơn); điểm chỉ trừ tiền hàng còn lại */
     const C = QB.gtCfg || {};
-    const gtAmt = QB.gt.ok && C.bat && base >= (Number(C.donToiThieu) || 0) ? Math.round(base * (Number(C.giam) || 0) / 100) : 0;
+    const gtAmt = !laSN && QB.gt.ok && C.bat && base >= (Number(C.donToiThieu) || 0) ? Math.round(base * (Number(C.giam) || 0) / 100) : 0;
     let dungGT = gtAmt > 0, boMa = false;
     if (dungGT && cr && cr.ok) {
       const giaTriMa = (dungMa ? couponAmt : 0) + (cr.freeship ? (shipFee(base, 'standard', { tinh: qbTinh(), lines: qbLines() }) || 0) : 0);
@@ -1618,6 +1619,7 @@
     if (!g || !g.soQua) return g;
     const k = ketHop(), vip = opts && opts.vip != null ? !!opts.vip : laVip();
     const bo = (goiY) => ({ ...g, soQua: 0, chuongTrinh: '', moTa: '', lyDo: '', goiY });
+    const tSN = hangCho(sdtDangDung()); if (tSN && tSN.laSinhNhat) return bo(`Đơn đang được giảm ${tSN.discount}% sinh nhật nên không kèm quà tặng.`);
     if (!k.quaHang && vip) { const t = hangCho(sdtDangDung()); return bo(`Hạng ${t ? t.label : ''} đã được giảm ${t ? t.discount : 0}% nên đơn không kèm quà tặng.`); }
     if (!k.quaMa && opts && opts.coMa && !(k.quaShip && opts.maShip)) return bo('Mã giảm giá không dùng chung với quà tặng – bỏ mã để nhận quà.');
     return g;

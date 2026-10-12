@@ -21,7 +21,7 @@
 <script src="js/data.js?v=20261012e"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261012s"></script>
+<script src="js/app.js?v=20261012t"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -49,9 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const calc = () => {
     const base = sub - multi;
-    const vc = vcChon && vcVi ? (vcVi.ds || []).find((x) => x.ma === vcChon) : null;
+    const hSN = hangCho(phoneNow()); const laSN = !!(hSN && hSN.laSinhNhat && tierPct() > 0);   // tháng sinh nhật: không dùng kèm mã / voucher / giới thiệu / quà, vẫn dùng điểm
+    const vc = vcChon && vcVi && !laSN ? (vcVi.ds || []).find((x) => x.ma === vcChon) : null;
     const rv = vc ? MC.DD.giam(vc, base, lines) : null; const vcAmt = rv && rv.ok ? rv.giam : 0;
-    const r = coupon && !vcAmt ? applyCoupon(coupon, base, lines) : null;
+    const r = coupon && !vcAmt && !laSN ? applyCoupon(coupon, base, lines) : null;
     const couponAmt = r && r.ok ? r.discount : 0;
     const pct = tierPct(); const hang = hangCho(phoneNow()) || tierOf(0);
     const hangAmt = pct ? Math.round(base * pct / 100) : 0;
@@ -60,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const city = form.elements.city.value;
     /* Giảm giới thiệu tính như 1 mã giảm giá: không cộng dồn với mã khác (kể cả freeship) và ưu đãi hạng – lấy mức có lợi hơn */
-    const gtAmt = gt.ok && gtCfg.bat && base >= (Number(gtCfg.donToiThieu) || 0) ? Math.round(base * (Number(gtCfg.giam) || 0) / 100) : 0;
+    const gtAmt = !laSN && gt.ok && gtCfg.bat && base >= (Number(gtCfg.donToiThieu) || 0) ? Math.round(base * (Number(gtCfg.giam) || 0) / 100) : 0;
     let dungGT = gtAmt > 0, boMa = false;
     if (dungGT && r && r.ok) {
       const giaTriMa = (dungMa ? couponAmt : 0) + (r.freeship && shipMethod !== 'express' ? (shipFee(base, shipMethod, { tinh: city || '?', lines }) || 0) : 0);
@@ -77,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
     let ship = r && r.ok && r.freeship && !boMa && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
     if (!city && ship && shipMethod !== 'express') ship = null;
-    return { ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
   /* Quy tắc quà: giảm giới thiệu tính như 1 mã giảm giá (không phải freeship) */
   const quaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : k.dungVc ? MC.maChoQua({ ok: true, discount: k.vcAmt, freeship: false, code: k.vc.ma }, true) : MC.maChoQua(k.boMa ? null : k.r, k.dungMa));
@@ -157,7 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const fe = $('#stdFee'); fe.innerHTML = shipText(std); fe.classList.toggle('text-teal', std === 0);
     $('#coTotal').textContent = fmt(k.total); $('#stickyTotal').textContent = fmt(k.total);
     const bandMa = !loy.combineWithCoupon && k.couponAmt > 0 && !k.dungMa;
-    $('#couponHint').innerHTML = k.boMa ? `<span class="text-muted">Mã ${esc(k.r.code)} không cộng dồn với giảm giá giới thiệu – web đang dùng mức có lợi hơn cho mẹ.</span>`
+    $('#couponHint').innerHTML = k.laSN ? `<span class="text-teal fw-600">🎂 Tháng sinh nhật: đơn được giảm ${k.pct}% – không dùng kèm mã giảm giá, voucher, giảm giá giới thiệu và quà tặng. Điểm thưởng vẫn dùng được.</span>`
+      : k.boMa ? `<span class="text-muted">Mã ${esc(k.r.code)} không cộng dồn với giảm giá giới thiệu – web đang dùng mức có lợi hơn cho mẹ.</span>`
       : bandMa ?`<span class="text-muted">Mã ${esc(k.r.code)} giảm ${fmt(k.couponAmt)} – ít hơn ${k.hang.laSinhNhat ? 'ưu đãi sinh nhật' : 'ưu đãi hạng ' + esc(k.hang.label)} nên web đang áp dụng mức có lợi hơn cho mẹ.</span>`
       : k.r && k.r.ok ? `<span class="text-teal fw-600">✓ ${k.r.desc}</span>`
       : k.r ? `<span class="text-red">${k.r.msg}</span>`
@@ -174,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const s = Session.get(), cuaSo = s && phoneKey(s.sdt) === phoneNow();
     if (!cuaSo) { box.innerHTML = s ? '' : '<p class="fs-13 text-muted mt-8">🎟️ Có voucher điểm danh? <button type="button" class="text-primary fw-700" data-vc-login>Đăng nhập</button> để dùng.</p>'; return; }
     const ds = (vcVi && vcVi.ds) || []; if (!ds.length) { box.innerHTML = ''; return; }
+    if (k.laSN) { box.innerHTML = `<p class="fs-13 text-muted mt-8">🎟️ Mẹ có ${ds.length} voucher – tháng sinh nhật đơn đã giảm ${k.pct}% nên chưa dùng kèm voucher; voucher vẫn giữ trong ví.</p>`; return; }
     const base = sub - multi;
     box.innerHTML = `<div class="co-vc"><h4>🎟️ Voucher của mẹ (${ds.length})</h4>${!vcVi.dungDuoc ? '<p class="fs-13 text-muted mb-8">🔐 Để dùng voucher, mẹ <button type="button" class="text-primary fw-700" data-vc-otp>xác thực mã OTP</button> (bảo vệ voucher của mẹ).</p>' : ''}
       <div class="co-vc__ds">${ds.map((v) => { const g = MC.DD.giam(v, base, lines), on = v.ma === vcChon;
