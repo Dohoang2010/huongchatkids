@@ -507,7 +507,7 @@
           <div class="footer__pay"><span>💵 Tiền mặt khi nhận hàng (COD)</span><span>🏦 Chuyển khoản / VietQR ${SITE.bank ? SITE.bank.name : ''}</span></div>
         </div>
       </div>
-      <p class="footer__note">* Thực phẩm bảo vệ sức khoẻ không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Hiệu quả có thể khác nhau tuỳ cơ địa. Vui lòng đọc kỹ hướng dẫn sử dụng trước khi dùng.</p>
+      <p class="footer__note">* Thực phẩm bảo vệ sức khoẻ không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Sữa mẹ là thức ăn tốt nhất cho sức khoẻ và sự phát triển toàn diện của trẻ nhỏ. Hiệu quả có thể khác nhau tuỳ cơ địa. Vui lòng đọc kỹ hướng dẫn sử dụng trước khi dùng.</p>
       <div class="footer__bottom"><span>© 2026 ${SITE.company} · ${SITE.address}</span><span><a href="policy.html?p=bao-mat">Bảo mật</a> · <a href="policy.html?p=dieu-khoan">Điều khoản</a></span></div>
     </div></footer>
     <div class="floating">

@@ -176,7 +176,7 @@ window.NAV = [
     { title: 'Sữa tươi', links: [['Norco nguyên kem nội địa Úc', 'product.html?id=26523206270']] },
     { title: 'Theo độ tuổi', ages: ['0-6m', '6-12m', '1-3y', '3-6y', '6-12y'] } ] },
   { label: 'Hồng sâm & đề kháng', short: 'Hồng sâm', tiny: 'Hồng sâm', link: 'collections.html?cat=hong-sam', columns: [
-    { title: 'Sản phẩm', links: [['Hồng sâm ChuChu ăn ngon, phục hồi sau ốm', 'product.html?id=22644617070'], ['Hồng sâm Rich Kid – trí não', 'product.html?id=27355720019'], ['Sâm Organic Pinkfong Kid Up', 'product.html?id=47357633686'], ['Gạc hươu non Sumo tăng cân', 'product.html?id=26156646705']] },
+    { title: 'Sản phẩm', links: [['Hồng sâm ChuChu – hỗ trợ ăn ngon, phục hồi sau ốm', 'product.html?id=22644617070'], ['Hồng sâm Rich Kid – trí não', 'product.html?id=27355720019'], ['Sâm Organic Pinkfong Kid Up', 'product.html?id=47357633686'], ['Gạc hươu non Sumo tăng cân', 'product.html?id=26156646705']] },
     { title: 'Theo nhu cầu', needs: ['de-khang', 'phuc-hoi', 'tang-can', 'tri-nao'] },
     { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Vitamin & canxi', short: 'Vitamin & canxi', tiny: 'Vitamin', link: 'collections.html?cat=vitamin', columns: [
@@ -408,7 +408,7 @@ window.PRODUCTS = [
   },
   {
     "id": "42878618667",
-    "name": "Vitamin D3K2– Hỗ Trợ Phát Triển Xương Răng, Tăng Đề Kháng, Tim Mạch – Lọ 30ml",
+    "name": "Vitamin D3K2 – Hỗ Trợ Phát Triển Xương Răng, Hỗ Trợ Tăng Đề Kháng, Tim Mạch – Lọ 30ml",
     "short": "Vitamin D3K2 Pure Vitality 30ml",
     "brand": "purevitality",
     "cat": "vitamin",
@@ -468,7 +468,7 @@ window.PRODUCTS = [
         "price": 2726000
       }
     ],
-    "desc": "Vitamin D3 + K2 Pure Vitality (New Zealand) dạng nhỏ giọt 30ml, hương táo NZ. Theo nhà sản xuất, D3 hỗ trợ hấp thu canxi, K2 giúp đưa canxi vào xương, hỗ trợ phát triển xương răng và đề kháng cho bé. Có chứng nhận HACCP, GMP. Mua 2 lọ tiết kiệm hơn.",
+    "desc": "Vitamin D3 + K2 Pure Vitality (New Zealand) dạng nhỏ giọt 30ml, hương táo NZ. Theo nhà sản xuất, D3 hỗ trợ hấp thu canxi, K2 hỗ trợ đưa canxi vào xương, hỗ trợ phát triển xương răng và đề kháng cho bé. Có chứng nhận HACCP, GMP. Mua 2 lọ tiết kiệm hơn.",
     "highlights": [
       "Sản xuất tại New Zealand, chứng nhận HACCP & GMP",
       "D3 hỗ trợ hấp thu canxi, K2 dẫn canxi vào xương",
@@ -555,8 +555,8 @@ window.PRODUCTS = [
   },
   {
     "id": "22644617070",
-    "name": "Hồng Sâm ChuChu Hàn Quốc Giúp Trẻ Tăng Sức Đề Kháng, ăn ngon Và Phục Hồi Sức Khoẻ Sau Khi Bị Ốm",
-    "short": "Hồng sâm ChuChu ăn ngon & phục hồi sau ốm",
+    "name": "Hồng Sâm ChuChu Hàn Quốc Hỗ Trợ Tăng Sức Đề Kháng, Giúp Trẻ Ăn Ngon, Hỗ Trợ Phục Hồi Sức Khoẻ Sau Ốm",
+    "short": "Hồng sâm ChuChu hỗ trợ ăn ngon & phục hồi sau ốm",
     "brand": "chuchu",
     "cat": "hong-sam",
     "ages": [
@@ -639,7 +639,7 @@ window.PRODUCTS = [
         "oldPrice": 1566000
       }
     ],
-    "desc": "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm giúp trẻ tăng sức đề kháng, ăn ngon và phục hồi sức khoẻ sau khi bị ốm. Có gói 10, nửa thùng và nguyên thùng.",
+    "desc": "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm hỗ trợ tăng sức đề kháng, giúp trẻ ăn ngon và hỗ trợ phục hồi sức khoẻ sau ốm. Có gói 10, nửa thùng và nguyên thùng.",
     "highlights": [
       "Cho bé hay ốm vặt, mới ốm dậy, biếng ăn",
       "Vị táo lê, việt quất – nho hoặc mix",
@@ -851,7 +851,7 @@ window.PRODUCTS = [
         "oldPrice": 1075000
       }
     ],
-    "desc": "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ giúp xương phát triển, hỗ trợ bé cao tối đa.",
+    "desc": "Canxi bổ sung dạng gói sệt vị váng sữa (không phải váng sữa tráng miệng) – Calciumore Calcium Supplement Hàn Quốc. Theo nhà sản xuất, sản phẩm bổ sung canxi hữu cơ, hỗ trợ xương chắc khoẻ và bé phát triển chiều cao.",
     "highlights": [
       "Canxi hữu cơ dễ hấp thu",
       "Dạng váng sữa thơm ngon, bé không sợ uống",
@@ -906,7 +906,7 @@ window.PRODUCTS = [
         "oldPrice": 3484000
       }
     ],
-    "desc": "Tinh chất nghệ nano Curcumin 365 Plus Hàn Quốc, hộp 32 tép. Theo nhà sản xuất, sản phẩm hỗ trợ dạ dày, giúp đẹp da, mờ thâm sẹo – phù hợp cho mẹ sau sinh.",
+    "desc": "Tinh chất nghệ nano Curcumin 365 Plus Hàn Quốc, hộp 32 tép. Theo nhà sản xuất, sản phẩm hỗ trợ dạ dày, hỗ trợ làm đẹp da, giảm thâm sẹo – phù hợp cho mẹ sau sinh.",
     "highlights": [
       "Nano curcumin hấp thu tốt hơn nghệ thường",
       "Hỗ trợ dạ dày, đẹp da, mờ thâm",
@@ -1351,7 +1351,7 @@ window.PRODUCTS = [
   },
   {
     "id": "47357633686",
-    "name": "Sâm Organic Pinkfong Kid Up 40ml – Tăng Chiều Cao, Tăng Đề Kháng, Giúp Bé Ăn Ngon Ngủ Ngon",
+    "name": "Sâm Organic Pinkfong Kid Up 40ml – Hỗ Trợ Phát Triển Chiều Cao, Tăng Đề Kháng, Giúp Bé Ăn Ngon Ngủ Ngon",
     "short": "Sâm Organic Pinkfong Kid Up 40ml",
     "brand": "pinkfong",
     "cat": "hong-sam",
@@ -1402,7 +1402,7 @@ window.PRODUCTS = [
         "oldPrice": 3213000
       }
     ],
-    "desc": "Sâm hữu cơ Pinkfong Kid Up gói 40ml (Hàn Quốc), hạn dùng 24 tháng. Theo nhà sản xuất: hỗ trợ bé phát triển chiều cao và thể chất, tăng đề kháng, giảm biếng ăn.",
+    "desc": "Sâm hữu cơ Pinkfong Kid Up gói 40ml (Hàn Quốc), hạn dùng 24 tháng. Theo nhà sản xuất: hỗ trợ bé phát triển chiều cao và thể chất, hỗ trợ tăng đề kháng và cải thiện tình trạng biếng ăn.",
     "highlights": [
       "Nhân sâm organic Hàn Quốc",
       "Nhân vật Pinkfong bé thích",
@@ -1590,7 +1590,7 @@ window.PRODUCTS = [
   },
   {
     "id": "57413220644",
-    "name": "Mặt Nạ Chữa Lành Lô Hội CURE Hàn Quốc - Cấp Ẩm, Làm Dịu Da, Phục Hồi Da, Dưỡng Sáng Da,",
+    "name": "Mặt Nạ Thạch Lô Hội CURE Hàn Quốc - Cấp Ẩm, Làm Dịu Da, Hỗ Trợ Phục Hồi Da, Dưỡng Sáng Da",
     "short": "Mặt nạ thạch lô hội Cure Hàn Quốc",
     "brand": "kimjeongmoon",
     "cat": "cho-me",
@@ -1688,7 +1688,7 @@ window.PRODUCTS = [
   },
   {
     "id": "27355720019",
-    "name": "Hồng Sâm Siêu Trí Tuệ Rich Kid- Tăng Cường Trí Tuệ , Cải Thiện Chức Năng Não Bộ",
+    "name": "Hồng Sâm Siêu Trí Tuệ Rich Kid – Hỗ Trợ Phát Triển Trí Não, Tăng Khả Năng Tập Trung",
     "short": "Hồng sâm Siêu Trí Tuệ Rich Kid (Kinigini) hộp 10 gói",
     "brand": "kinigini",
     "cat": "hong-sam",
@@ -1809,7 +1809,7 @@ window.PRODUCTS = [
   },
   {
     "id": "24767149051",
-    "name": "Viên Uống PURE NMN 12000MG+ Chống Lão Hóa Cơ Thể Giúp Trẻ Hóa, Kéo Dài Tuổi Thọ Cải Thiện Sức Khỏe Và Sắc Đẹp Toàn Diện",
+    "name": "Viên Uống PURE NMN 12000MG+ Hỗ Trợ Chống Lão Hóa, Hỗ Trợ Cải Thiện Sức Khỏe Và Sắc Đẹp",
     "short": "Viên uống Pure NMN 12000mg+ hộp 60 viên",
     "brand": "clastive",
     "cat": "cho-me",
@@ -1862,8 +1862,8 @@ window.PRODUCTS = [
   },
   {
     "id": "50002678694",
-    "name": "Thảm ngải cứu trị liệu Đông y giúp Giảm cảm lạnh chân tay tiêu viêm ngủ ngon giấc Lưu thông khí huyết Điều khiển t",
-    "short": "Thảm ngải cứu trị liệu 150×60cm",
+    "name": "Thảm Ngải Cứu Đông Y Toả Nhiệt – Thư Giãn Lưng, Vai Gáy, Tay Chân, Hỗ Trợ Ngủ Ngon, Lưu Thông Khí Huyết, Có Điều Khiển",
+    "short": "Thảm ngải cứu toả nhiệt 150×60cm",
     "brand": "khac",
     "cat": "cho-me",
     "ages": [],
@@ -1906,7 +1906,7 @@ window.PRODUCTS = [
         "oldPrice": 1215000
       }
     ],
-    "desc": "Thảm ngải cứu trị liệu kích thước 150×60cm, đệm sưởi điện tích hợp 220V–50Hz, có bộ điều khiển. Theo nhà sản xuất: hơi ấm từ ngải cứu giúp thư giãn vùng lưng, vai gáy và tay chân, hỗ trợ giấc ngủ và lưu thông khí huyết.",
+    "desc": "Thảm ngải cứu toả nhiệt kích thước 150×60cm, đệm sưởi điện tích hợp 220V–50Hz, có bộ điều khiển. Theo nhà sản xuất: hơi ấm từ ngải cứu giúp thư giãn vùng lưng, vai gáy và tay chân, hỗ trợ giấc ngủ và lưu thông khí huyết.",
     "highlights": [
       "Thảm ngải cứu 150×60cm, điều khiển thông minh",
       "Toả nhiệt ấm đều vùng lưng – vai gáy",
@@ -2136,7 +2136,7 @@ window.PRODUCTS = [
   },
   {
     "id": "24015583018",
-    "name": "Mặt Nạ Trẻ Hóa NMN Giúp Dưỡng Da Trắng Sáng, Trẻ Hóa Tế Bào Da, Bổ Sung Nước Cấp Ẩm Cho Da, Ngăn Ngừa Nếp Nhăn",
+    "name": "Mặt Nạ NMN Giúp Dưỡng Da Trắng Sáng, Trẻ Trung, Bổ Sung Nước Cấp Ẩm Cho Da, Hỗ Trợ Hạn Chế Nếp Nhăn",
     "short": "Mặt nạ trẻ hoá NMN Kousa hộp 8 miếng",
     "brand": "kousa",
     "cat": "cho-me",
@@ -2191,7 +2191,7 @@ window.PRODUCTS = [
   },
   {
     "id": "28902157429",
-    "name": "Men Vi Phụ Khoa ARRAVITE Bổ Sung Lợi Khuẩn Cân Bằng Và Bảo Vệ V.ùng K.ín, Ngăn Ngừa Viêm Nhiễm Hỗ Trợ Tiêu Hóa, Giảm Cân",
+    "name": "Men Vi Sinh Phụ Khoa ARRAVITE Bổ Sung Lợi Khuẩn, Hỗ Trợ Cân Bằng Hệ Vi Sinh Vùng Kín, Hỗ Trợ Tiêu Hóa",
     "short": "Men vi sinh phụ khoa Arravite hộp 30 viên",
     "brand": "arravite",
     "cat": "cho-me",
@@ -2607,7 +2607,7 @@ window.PRODUCTS = [
   },
   {
     "id": "26900366084",
-    "name": "Combo Dưỡng Da Hyalu C+ Giúp Da Trắng Sáng, Căng Bóng, Mịn Màng Dưỡng Ẩm, Chống Lão Hóa Cải Thiện Làn Da Lên Tới 95%",
+    "name": "Combo Dưỡng Da Hyalu C+ Giúp Da Trắng Sáng, Căng Bóng, Mịn Màng, Dưỡng Ẩm, Hỗ Trợ Chống Lão Hóa",
     "short": "Combo dưỡng da Hyalu C+ (kem + serum + toner)",
     "brand": "rvblab",
     "cat": "cho-me",
@@ -2920,7 +2920,7 @@ window.PRODUCTS = [
       "Mua 3 hộp canxi 7.440.000₫ → tặng ngay 2 lọ D3K2 (tiết kiệm 780.000₫)",
       "Mua 4 hộp canxi 9.920.000₫ → tặng ngay 3 lọ D3K2 (tiết kiệm 1.170.000₫)"
     ],
-    "desc": "Bộ đôi canxi cho bé: váng sữa canxi hữu cơ Calciumore (hộp 90 gói) bổ sung canxi sữa dễ hấp thu, kết hợp vitamin D3K2 Pure Vitality (New Zealand) giúp đưa canxi vào xương. Theo nhà sản xuất, dùng cùng nhau hỗ trợ bé phát triển chiều cao và răng chắc khoẻ tốt hơn so với dùng riêng canxi.",
+    "desc": "Bộ đôi canxi cho bé: váng sữa canxi hữu cơ Calciumore (hộp 90 gói) bổ sung canxi sữa dễ hấp thu, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ đưa canxi vào xương. Theo nhà sản xuất, dùng cùng nhau hỗ trợ bé phát triển chiều cao và răng chắc khoẻ.",
     "highlights": [
       "Mua 1 hộp váng sữa + 1 D3K2 được giảm 5% so với mua lẻ",
       "Mua 2 hộp tặng 1 lọ D3K2 · 3 hộp tặng 2 lọ · 4 hộp tặng 3 lọ",

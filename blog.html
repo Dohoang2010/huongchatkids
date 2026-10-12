@@ -15,9 +15,9 @@
 </head>
 <body>
 <main id="app"><div class="container" id="blogPage"></div></main>
-<script src="js/data.js?v=20261008b"></script>
+<script src="js/data.js?v=20261012a"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261010a"></script>
+<script src="js/app.js?v=20261012a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, param, esc, I, productCard, productThumb, shortName, fmt, byId } = MC;
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sug.length < 4) { const u = new URLSearchParams(rel); sug = [...sug, ...PRODUCTS.filter((p) => !sug.includes(p) && (!u.get('cat') || p.cat === u.get('cat')) && (!u.get('need') || (p.needs || []).includes(u.get('need'))) && (!u.get('age') || (p.ages || []).includes(u.get('age')))).sort((a, b) => b.sold - a.sold)].slice(0, 4); }
     $('#blogPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="blog.html">${TEN}</a><span>›</span><span>${esc(post.cat)}</span></nav>
       <article class="post"><div class="post__hero" style="background:${esc(post.color || '#FFE9EF')}">${post.image ? `<img src="${esc(post.image)}" alt="">` : post.emoji}</div><div class="post-card__meta mb-12"><span class="badge badge--soft">${esc(post.cat)}</span><span>${esc(post.date)} · ${esc(post.read)} đọc · Chuyên gia dinh dưỡng Hương Chất Kids</span></div><h1>${esc(post.title)}</h1><p class="text-muted mb-16" style="font-size:16px">${esc(post.excerpt)}</p><div class="post__body">${veBody(post.body)}</div>
-      <p class="post__luu">Thông tin trong bài chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ. Thực phẩm bổ sung không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.</p>
+      <p class="post__luu">Thông tin trong bài chỉ mang tính tham khảo, không thay thế lời khuyên của bác sĩ. Thực phẩm bổ sung không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.${spCua(post).some((x) => x.formula || x.cat === 'sua' || (x.ages || []).some((g) => g === '0-6m' || g === '6-12m')) ? ' Sữa mẹ là thức ăn tốt nhất cho sức khoẻ và sự phát triển toàn diện của trẻ nhỏ.' : ''}</p>
       <div class="post__cta"><span class="emoji">👩‍⚕️</span><div><b>Mẹ còn băn khoăn về bé?</b><small>Để lại số điện thoại, chuyên gia dinh dưỡng gọi tư vấn miễn phí trong 5 phút.</small></div><button class="btn btn--teal" type="button" data-callback>${I.headset}Gọi lại cho tôi</button></div></article>
       ${sug.length ? `<section class="section"><div class="section-head"><div><h2>Sản phẩm trong bài</h2></div><a class="link" href="collections.html?${rel}">Xem thêm ${I.arrowR}</a></div><div class="grid grid--4">${sug.map((p) => productCard(p)).join('')}</div></section>` : ''}
       <section class="section"><div class="section-head"><div><h2>Bài viết mới</h2></div><a class="link" href="blog.html">Tất cả bài ${I.arrowR}</a></div><div class="grid grid--3">${POSTS.filter((p) => p.id !== id).slice(0, 3).map(card).join('')}</div></section>`;
