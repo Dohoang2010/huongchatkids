@@ -161,6 +161,7 @@ window.BRANDS = [
   { key: 'hiskin', label: 'Hiskin', origin: 'Hàn Quốc', color: '#0288D1' },
   { key: 'arganicare', label: 'Arganicare', origin: 'Ma-rốc', color: '#8D6E63' },
   { key: 'akiko', label: 'Akiko', origin: 'Nhật Bản', color: '#26A69A' },
+  { key: 'chef-to-factory', label: 'CF – Chef To Factory', origin: 'Việt Nam', color: '#8A2A2A' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' },
 ];
 
@@ -3051,6 +3052,54 @@ window.PRODUCTS = [
       "GMP · Probiocap · Synbiotic – nội địa Hàn, Pasteur thuộc Lotte"
     ],
     "usage": "Mỗi ngày 1 gói. Pha cùng bột, cháo, sữa hoặc nước dưới 50°C; bé lớn có thể uống trực tiếp. Dùng theo hướng dẫn của bác sĩ hoặc chuyên gia dinh dưỡng. Hộp tròn gồm 6 gói lớn, mỗi gói lớn 10 gói nhỏ; hạn dùng 18 tháng kể từ ngày sản xuất."
+  },
+  {
+    "id": "mien-ga-cf",
+    "name": "Miến Gà Sấy Thăng Hoa – Masterchef Phạm Tuấn Hải (CF Chef To Factory), Nước Dùng Ninh 8 Giờ, Gà – Măng – Nấm Thật",
+    "short": "Miến gà sấy thăng hoa – Masterchef Phạm Tuấn Hải",
+    "brand": "chef-to-factory",
+    "cat": "thuc-pham",
+    "ages": [],
+    "needs": [],
+    "price": 65000,
+    "oldPrice": 88000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "shape": "box",
+    "color": "#8A2A2A",
+    "weight": "1 hộp",
+    "origin": "Việt Nam",
+    "family": true,
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/mien-ga-cf.jpg",
+    "thumb": "img/thumb/mien-ga-cf.jpg",
+    "images": [
+      "img/mien-ga-cf.jpg",
+      "img/mien-ga-cf-2.jpg",
+      "img/mien-ga-cf-3.jpg",
+      "img/mien-ga-cf-4.jpg",
+      "img/mien-ga-cf-5.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 hộp",
+        "price": 65000,
+        "oldPrice": 88000
+      }
+    ],
+    "desc": "Miến gà sấy thăng hoa – Masterchef Phạm Tuấn Hải. Sợi miến khoai tây & đậu xanh: sợi mềm dai, dễ chín, để lâu trong nước dùng vẫn giữ được độ ngon, không nhanh nở nhũn. Nước dùng ninh 8 giờ: nấu từ xương gà, cổ cánh gà, xương heo kết hợp rau củ và gia vị, tạo vị ngọt đậm đà, thơm ngon. Gà – măng – nấm thật: không chỉ có sợi miến và gia vị, mỗi tô có đầy đủ thịt gà, măng, nấm hương, hành lá, ngò và gia vị. Sấy thăng hoa 48 giờ: ứng dụng công nghệ sấy thăng hoa giúp giữ tốt cấu trúc, màu sắc và hương vị của nguyên liệu. Khi pha với nước nóng, các thành phần hoàn nguyên để thưởng thức.",
+    "highlights": [
+      "Sợi miến khoai tây & đậu xanh – mềm dai, dễ chín, không nhanh nở nhũn",
+      "Nước dùng ninh 8 giờ từ xương gà, cổ cánh gà, xương heo, rau củ và gia vị",
+      "Gà – măng – nấm thật: thịt gà, măng, nấm hương, hành lá, ngò và gia vị",
+      "Sấy thăng hoa 48 giờ – giữ cấu trúc, màu sắc và hương vị nguyên liệu"
+    ],
+    "usage": "Pha với nước nóng, các thành phần hoàn nguyên để thưởng thức. Làm theo hướng dẫn in trên bao bì."
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */
