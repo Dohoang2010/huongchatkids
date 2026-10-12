@@ -162,6 +162,7 @@ window.BRANDS = [
   { key: 'arganicare', label: 'Arganicare', origin: 'Ma-rốc', color: '#8D6E63' },
   { key: 'akiko', label: 'Akiko', origin: 'Nhật Bản', color: '#26A69A' },
   { key: 'chef-to-factory', label: 'CF – Chef To Factory', origin: 'Việt Nam', color: '#8A2A2A' },
+  { key: 'hexacare', label: 'Hexacare', origin: 'Pháp', color: '#C2185B' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' },
 ];
 
@@ -3105,6 +3106,76 @@ window.PRODUCTS = [
       "Sấy thăng hoa 48 giờ – giữ cấu trúc, màu sắc và hương vị nguyên liệu"
     ],
     "usage": "Pha với nước nóng, các thành phần hoàn nguyên để thưởng thức. Làm theo hướng dẫn in trên bao bì."
+  },
+  {
+    "id": "hexacare",
+    "name": "Dung Dịch Vệ Sinh Hexacare Pháp 200ml – 4 Loại: Điều Tiết Hằng Ngày pH 3.6, Ngăn Ngừa Kháng Viêm pH 5.0, Dịu Nhẹ Da Nhạy Cảm pH 4.5, Lành Tính Cho Bé Gái pH 4.5",
+    "short": "Dung dịch vệ sinh Hexacare (Pháp) 200ml",
+    "brand": "hexacare",
+    "cat": "cho-me",
+    "ages": [
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 195000,
+    "oldPrice": 195000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "shape": "bottle",
+    "color": "#C2185B",
+    "weight": "200ml/chai",
+    "origin": "Pháp",
+    "family": true,
+    "cosmetic": true,
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/hexacare.jpg",
+    "thumb": "img/thumb/hexacare.jpg",
+    "images": [
+      "img/hexacare.jpg",
+      "img/hexacare-2.jpg",
+      "img/hexacare-3.jpg",
+      "img/hexacare-4.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Điều tiết hằng ngày – pH 3.6",
+        "price": 195000,
+        "oldPrice": 195000
+      },
+      {
+        "label": "Ngăn ngừa kháng viêm – pH 5.0",
+        "price": 195000,
+        "oldPrice": 195000
+      },
+      {
+        "label": "Dịu nhẹ da nhạy cảm – pH 4.5",
+        "price": 195000,
+        "oldPrice": 195000
+      },
+      {
+        "label": "Lành tính cho bé gái – pH 4.5",
+        "price": 195000,
+        "oldPrice": 195000
+      }
+    ],
+    "desc": "Dung dịch vệ sinh Hexacare – sản xuất tại Pháp, chai 200ml, giá bán lẻ 195.000đ/chai. Có 4 loại theo nhu cầu:\n\n1. Dung dịch vệ sinh điều tiết hằng ngày – pH 3.6 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: làm sạch và duy trì độ ẩm tự nhiên; pH 3.6 hỗ trợ bảo vệ vùng kín, hạn chế tình trạng viêm nhiễm; hỗ trợ khử mùi, mang lại cảm giác sạch thoáng, tươi mát; phù hợp sử dụng hằng ngày.\n\n2. Dung dịch vệ sinh ngăn ngừa kháng viêm – pH 5.0 (200ml). Đối tượng: phụ nữ, kể cả trong thai kỳ và chu kỳ kinh nguyệt; trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: cấp ẩm, làm dịu tình trạng khô rát và khó chịu; pH 5.0 hỗ trợ hệ lợi khuẩn bảo vệ vùng kín; hỗ trợ làm dịu và chăm sóc vùng da đang nhạy cảm; hương hoa cúc La Mã nhẹ nhàng.\n\n3. Dung dịch vệ sinh dịu nhẹ cho da nhạy cảm – pH 4.5 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên, đặc biệt phù hợp với làn da nhạy cảm. Công dụng: làm sạch dịu nhẹ và dưỡng ẩm; pH 4.5 hỗ trợ bảo vệ môi trường vùng kín; hỗ trợ hạn chế cảm giác khô rát; hỗ trợ khử mùi, tạo cảm giác sạch và thoải mái.\n\n4. Dung dịch vệ sinh lành tính dành cho bé gái – pH 4.5 (200ml). Đối tượng: bé gái từ 3–12 tuổi. Công dụng: làm sạch nhẹ nhàng, không gây khô da; duy trì độ pH sinh lý phù hợp cho bé; hỗ trợ bảo vệ vùng kín và hạn chế tình trạng khó chịu.",
+    "highlights": [
+      "Điều tiết hằng ngày pH 3.6 – làm sạch, giữ ẩm tự nhiên, hỗ trợ khử mùi (phụ nữ & trẻ từ 12 tuổi)",
+      "Ngăn ngừa kháng viêm pH 5.0 – cấp ẩm, làm dịu khô rát, hương hoa cúc La Mã (dùng được cả thai kỳ & kỳ kinh nguyệt)",
+      "Dịu nhẹ cho da nhạy cảm pH 4.5 – làm sạch dịu nhẹ, dưỡng ẩm, hỗ trợ hạn chế khô rát",
+      "Lành tính cho bé gái pH 4.5 – làm sạch nhẹ nhàng, không gây khô da (bé gái 3–12 tuổi)",
+      "Sản xuất tại Pháp – chai 200ml"
+    ],
+    "usage": "Dùng ngoài. Lấy lượng vừa đủ, làm sạch nhẹ nhàng vùng kín bên ngoài rồi rửa lại bằng nước sạch. Tránh tiếp xúc với mắt. Chọn đúng loại theo độ tuổi và nhu cầu; làm theo hướng dẫn in trên bao bì."
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */
