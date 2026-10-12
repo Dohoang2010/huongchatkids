@@ -17,7 +17,7 @@
 <main id="app"><div class="container" id="pdp"></div></main>
 <div class="sticky-buy" id="stickyBuy"></div>
 
-<script src="js/data.js?v=20261012b"></script>
+<script src="js/data.js?v=20261012c"></script>
 <script src="js/qrcode.min.js"></script>
 <script src="js/app.js?v=20261012n"></script>
 <script>
@@ -38,7 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const suaMe = !p.cosmetic && (p.formula || p.cat === 'sua' || (p.ages || []).some((a) => a === '0-6m' || a === '6-12m'));
   const CAU_SUA_ME = 'Sữa mẹ là thức ăn tốt nhất cho sức khoẻ và sự phát triển toàn diện của trẻ nhỏ.';
   document.title = (p.short || p.name) + ' – ' + SITE.name;
-  const { productThumb, shortName } = MC; const manyVariants = p.variants && p.variants.length > 12;  // >12 mới dùng ô chọn; còn lại hiện nút bấm cho dễ chọn
+  const { productThumb, shortName } = MC; const manyVariants = p.variants && p.variants.length > 12 && !p.chon2;
+  /* Phân loại 2 tầng (vd. Loại × Số chai): nhãn "A · B", p.chon2 = [tên tầng 1, tên tầng 2] */
+  const tang = (v, k) => String(v.label).split(' · ')[k] || '';
+  const ds2 = (k) => p.chon2 ? [...new Set(p.variants.map((v) => tang(v, k)))] : [];
+  const tim2 = (a, b) => p.variants.findIndex((v) => tang(v, 0) === a && tang(v, 1) === b && !v.oos);
+  const chips2 = () => [0, 1].map((k) => `<div class="pdp__opt"><label>${esc(p.chon2[k])}</label><div class="chips" data-tang="${k}" role="group" aria-label="${esc(p.chon2[k])}">${ds2(k).map((x) => { const on = tang(p.variants[variant], k) === x; return `<button type="button" class="chip ${on ? 'is-active' : ''}" data-gt="${esc(x)}" aria-pressed="${on}">${esc(x)}${k ? ` <small>· ${fmt((p.variants.find((v) => tang(v, 0) === tang(p.variants[variant], 0) && tang(v, 1) === x) || {}).price || 0)}</small>` : ''}</button>`; }).join('')}</div></div>`).join('');  // >12 mới dùng ô chọn; còn lại hiện nút bấm cho dễ chọn
   /* Chương trình mua theo combo (trường uuDai của combo): hiện ở trang combo và trang các sản phẩm lẻ trong combo */
   const comboUuDai = PRODUCTS.filter((c) => c.isCombo && c.uuDai && c.uuDai.length && (c.id === p.id || (c.items || []).includes(p.id)))
     .map((c) => `<li class="li-gift li-combo">🎁 <b>${c.id === p.id ? 'Chương trình của combo' : `Mua theo ${esc(shortName(c))}`}</b><ul class="uudai">${c.uuDai.map((u) => `<li>✅ ${esc(u)}</li>`).join('')}</ul>${c.id === p.id ? '' : `<a class="btn btn--primary btn--sm mt-8" href="product.html?id=${encodeURIComponent(c.id)}">Xem combo & chọn số hộp ${I.arrowR}</a>`}</li>`).join('');
@@ -64,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="pdp__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)}</span><a href="#reviews" class="text-primary" data-goto-reviews>${p.reviews} đánh giá trên Shopee</a>` : `<a href="#reviews" class="text-muted" data-goto-reviews>Chưa có đánh giá</a>`}${p.sold > 0 ? `<span>Đã bán ${p.sold.toLocaleString('vi-VN')}</span>` : ''}<span>${p.stock > 0 ? `<span class="text-teal fw-600">● Còn hàng</span>` : `<span class="text-red fw-600">● Tạm hết</span>`}</span></div>
         ${p.ages.length ? `<div class="pdp__ages">${I.user} Phù hợp cho bé <b>${MC.ageRange(p.ages)}</b>${p.family ? ' và cả gia đình' : ''} · ${p.ages.map((a) => `<a href="collections.html?age=${a}">${ageLabel(a)}</a>`).join(', ')}</div>` : `<div class="pdp__ages">${I.user} Sản phẩm dành cho <b>${p.family ? 'cả gia đình' : 'mẹ / người lớn'}</b></div>`}
         <div class="pdp__price"><b id="pPrice">${fmt(price())}</b>${oldPrice() ? `<s id="pOld">${fmt(oldPrice())}</s><span class="badge badge--sale">Tiết kiệm ${fmt(oldPrice() - price())}</span>` : ''}</div>
-        ${p.variants ? (manyVariants ? `<div class="pdp__opt"><label for="variantSel">Phân loại</label><select class="input" id="variantSel">${p.variants.map((v, i) => `<option value="${i}" ${v.oos ? 'disabled' : ''}>${esc(v.label)} – ${fmt(v.price)}${v.oos ? ' (tạm hết)' : v.oldPrice ? ` (giá gốc ${fmt(v.oldPrice)})` : ''}</option>`).join('')}</select></div>` : `<div class="pdp__opt"><label>Phân loại</label><div class="chips" id="variants" role="group" aria-label="Phân loại">${p.variants.map((v, i) => `<button type="button" class="chip ${i === variant ? 'is-active' : ''} ${v.oos ? 'chip--oos' : ''}" data-variant="${i}" aria-pressed="${i === variant}" ${v.oos ? 'disabled' : ''}>${esc(v.label)} <small>· ${v.oos ? 'tạm hết' : fmt(v.price)}</small></button>`).join('')}</div></div>`) : ''}
+        ${p.variants && p.chon2 ? `<div id="variants2">${chips2()}</div>` : p.variants ? (manyVariants ? `<div class="pdp__opt"><label for="variantSel">Phân loại</label><select class="input" id="variantSel">${p.variants.map((v, i) => `<option value="${i}" ${v.oos ? 'disabled' : ''}>${esc(v.label)} – ${fmt(v.price)}${v.oos ? ' (tạm hết)' : v.oldPrice ? ` (giá gốc ${fmt(v.oldPrice)})` : ''}</option>`).join('')}</select></div>` : `<div class="pdp__opt"><label>Phân loại</label><div class="chips" id="variants" role="group" aria-label="Phân loại">${p.variants.map((v, i) => `<button type="button" class="chip ${i === variant ? 'is-active' : ''} ${v.oos ? 'chip--oos' : ''}" data-variant="${i}" aria-pressed="${i === variant}" ${v.oos ? 'disabled' : ''}>${esc(v.label)} <small>· ${v.oos ? 'tạm hết' : fmt(v.price)}</small></button>`).join('')}</div></div>`) : ''}
         <div class="pdp__opt"><label>Số lượng</label><div class="flex items-center gap-12"><div class="qty" role="group" aria-label="Số lượng"><button type="button" id="qMinus" aria-label="Giảm số lượng">−</button><input type="number" id="qInput" value="1" min="1" max="99" inputmode="numeric" aria-label="Số lượng"><button type="button" id="qPlus" aria-label="Tăng số lượng">+</button></div><span class="fs-13 text-teal fw-600" id="qHint">Mua từ 2 giảm thêm 3%</span></div></div>
         <div class="pdp__buy">
           <button class="btn btn--primary btn--lg btn--block btn--stack" type="button" id="btnBuy"><span>${I.zap} MUA NGAY · <span id="buyTotal">${fmt(price())}</span></span><small>Chỉ cần SĐT & địa chỉ · Kiểm tra hàng trước khi thanh toán</small></button>
@@ -102,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const lineTotal = () => Math.round(price() * qty * (qty >= 2 ? 1 - MC.MULTI_RATE : 1));
   const refreshPrice = () => { $('#pPrice').textContent = fmt(price()); const o = $('#pOld'); if (o) o.textContent = oldPrice() ? fmt(oldPrice()) : ''; $('#stickyPrice').textContent = fmt(lineTotal()); $('#buyTotal').textContent = fmt(lineTotal()); $('#qHint').textContent = qty >= 2 ? '🎉 Đã giảm thêm 3%' : 'Mua từ 2 giảm thêm 3%'; const bm = $('#bundleMainPrice'); if (bm) bm.textContent = fmt(price()); bundleCalc(); };
   $('#variants')?.addEventListener('click', (e) => { const c = e.target.closest('[data-variant]'); if (!c) return; variant = Number(c.dataset.variant); $$('#variants .chip').forEach((x) => { x.classList.toggle('is-active', x === c); x.setAttribute('aria-pressed', x === c); }); refreshPrice(); });
+  $('#variants2')?.addEventListener('click', (e) => { const c = e.target.closest('[data-gt]'); if (!c) return; const k = Number(c.closest('[data-tang]').dataset.tang); const cur = p.variants[variant]; const a = k ? tang(cur, 0) : c.dataset.gt, b = k ? c.dataset.gt : tang(cur, 1); let i = tim2(a, b); if (i < 0) i = p.variants.findIndex((v) => tang(v, k) === c.dataset.gt && !v.oos); if (i < 0) return; variant = i; $('#variants2').innerHTML = chips2(); refreshPrice(); });
   $('#variantSel')?.addEventListener('change', (e) => { variant = Number(e.target.value); refreshPrice(); });
   $('#qMinus').addEventListener('click', () => { qty = Math.max(1, qty - 1); $('#qInput').value = qty; refreshPrice(); });
   $('#qPlus').addEventListener('click', () => { qty = Math.min(99, qty + 1); $('#qInput').value = qty; refreshPrice(); });

@@ -3147,25 +3147,49 @@ window.PRODUCTS = [
     ],
     "variants": [
       {
-        "label": "Điều tiết hằng ngày – pH 3.6",
+        "label": "Điều tiết hằng ngày – pH 3.6 · 1 chai",
         "price": 195000,
         "oldPrice": 195000
       },
       {
-        "label": "Ngăn ngừa kháng viêm – pH 5.0",
+        "label": "Điều tiết hằng ngày – pH 3.6 · 2 chai",
+        "price": 390000,
+        "oldPrice": 390000
+      },
+      {
+        "label": "Ngăn ngừa kháng viêm – pH 5.0 · 1 chai",
         "price": 195000,
         "oldPrice": 195000
       },
       {
-        "label": "Dịu nhẹ da nhạy cảm – pH 4.5",
+        "label": "Ngăn ngừa kháng viêm – pH 5.0 · 2 chai",
+        "price": 390000,
+        "oldPrice": 390000
+      },
+      {
+        "label": "Dịu nhẹ da nhạy cảm – pH 4.5 · 1 chai",
         "price": 195000,
         "oldPrice": 195000
       },
       {
-        "label": "Lành tính cho bé gái – pH 4.5",
+        "label": "Dịu nhẹ da nhạy cảm – pH 4.5 · 2 chai",
+        "price": 390000,
+        "oldPrice": 390000
+      },
+      {
+        "label": "Lành tính cho bé gái – pH 4.5 · 1 chai",
         "price": 195000,
         "oldPrice": 195000
+      },
+      {
+        "label": "Lành tính cho bé gái – pH 4.5 · 2 chai",
+        "price": 390000,
+        "oldPrice": 390000
       }
+    ],
+    "chon2": [
+      "Loại",
+      "Số chai"
     ],
     "desc": "Dung dịch vệ sinh Hexacare – sản xuất tại Pháp, chai 200ml, giá bán lẻ 195.000đ/chai. Có 4 loại theo nhu cầu:\n\n1. Dung dịch vệ sinh điều tiết hằng ngày – pH 3.6 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: làm sạch và duy trì độ ẩm tự nhiên; pH 3.6 hỗ trợ bảo vệ vùng kín, hạn chế tình trạng viêm nhiễm; hỗ trợ khử mùi, mang lại cảm giác sạch thoáng, tươi mát; phù hợp sử dụng hằng ngày.\n\n2. Dung dịch vệ sinh ngăn ngừa kháng viêm – pH 5.0 (200ml). Đối tượng: phụ nữ, kể cả trong thai kỳ và chu kỳ kinh nguyệt; trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: cấp ẩm, làm dịu tình trạng khô rát và khó chịu; pH 5.0 hỗ trợ hệ lợi khuẩn bảo vệ vùng kín; hỗ trợ làm dịu và chăm sóc vùng da đang nhạy cảm; hương hoa cúc La Mã nhẹ nhàng.\n\n3. Dung dịch vệ sinh dịu nhẹ cho da nhạy cảm – pH 4.5 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên, đặc biệt phù hợp với làn da nhạy cảm. Công dụng: làm sạch dịu nhẹ và dưỡng ẩm; pH 4.5 hỗ trợ bảo vệ môi trường vùng kín; hỗ trợ hạn chế cảm giác khô rát; hỗ trợ khử mùi, tạo cảm giác sạch và thoải mái.\n\n4. Dung dịch vệ sinh lành tính dành cho bé gái – pH 4.5 (200ml). Đối tượng: bé gái từ 3–12 tuổi. Công dụng: làm sạch nhẹ nhàng, không gây khô da; duy trì độ pH sinh lý phù hợp cho bé; hỗ trợ bảo vệ vùng kín và hạn chế tình trạng khó chịu.",
     "highlights": [
