@@ -109,5 +109,105 @@
     return { homNay, thang: homNay.slice(0, 7), chuoi, chuoiDaiNhat: chuoi, soNgay: lichMau.length, lich: lichMau, daNhan, daDiemDanhHomNay: false,
       sapDat: [10, 20, 30].filter((m) => chuoi < m && cfg['m' + m]).map((m) => ({ moc: m, giaTri: cfg['m' + m], conLai: m - chuoi })), diem: { soDu: lichMau.length * cfg.diemNgay }, trongChuongTrinh: true };
   }
-  window.DDUI = { trang, dangTai, loi, chuaDangNhap, chucMung, mau, theLe };
+  /* =====================================================================
+     LỊCH ĐIỂM DANH MINI – gắn trực tiếp vào trang (không cần sang diem-danh.html)
+     DDUI.mini(el, { che: 'storefront' | 'account', sauDiemDanh(r) })
+     - storefront: lịch + nút + trạng thái + tóm tắt quà, KHÔNG hiện số dư điểm
+     - account   : thêm tổng điểm, chuỗi, tiến độ mốc, voucher đã nhận trong tháng
+     Mọi số liệu lấy từ máy chủ (ddTongQuan / ddDiemDanh); chưa đăng nhập chỉ đọc cấu hình công khai (ddCauHinh).
+     ===================================================================== */
+  const homNayVN = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  function luoiMini(d, cfg) {
+    const thang = d.thang, homNay = d.homNay, [y, m] = thang.split('-').map(Number), dau = thang + '-01';
+    const soNgay = new Date(Date.UTC(y, m, 0)).getUTCDate(), thu = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7;
+    const daDD = {}; (d.lich || []).forEach((x) => { daDD[x.ngay] = x; });
+    const o = [];
+    for (let i = thu; i > 0; i--) { const ng = congNgay(dau, -i); o.push(`<span class="ddm-o ddm-o--ngoai" aria-hidden="true">${Number(ng.slice(8))}</span>`); }
+    for (let i = 0; i < soNgay; i++) {
+      const ng = congNgay(dau, i), x = daDD[ng], nay = ng === homNay, doi = ng.slice(5, 7) === ng.slice(8, 10) && !!cfg.ngayDoi;
+      const nhan = x ? 'đã điểm danh' : nay ? 'hôm nay' : ng < homNay ? 'chưa điểm danh' : 'chưa tới';
+      o.push(`<span class="ddm-o${x ? ' ddm-o--da' : ''}${nay ? ' ddm-o--nay' : ''}${!x && ng < homNay ? ' ddm-o--qua' : ''}${doi ? ' ddm-o--doi' : ''}" title="${ngayVN(ng)}: ${nhan}${doi ? ' · ngày đôi có voucher' : ''}" aria-label="Ngày ${i + 1}, ${nhan}">${x ? '<i aria-hidden="true">✓</i>' : i + 1}</span>`);
+    }
+    const du = (7 - (o.length % 7)) % 7; for (let i = 1; i <= du; i++) o.push(`<span class="ddm-o ddm-o--ngoai" aria-hidden="true">${i}</span>`);
+    return `<div class="ddm-luoi" role="grid" aria-label="Lịch điểm danh tháng ${m}/${y}">${['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((t) => `<span class="ddm-thu">${t}</span>`).join('')}${o.join('')}</div>`;
+  }
+  function veMini(st) {
+    const { che, d, cfg, dangNhap, dangGui, bao } = st;
+    if (!cfg || cfg.bat === false) return '';
+    const tk = che === 'account';
+    const thangNay = homNayVN().slice(0, 7), thang = d ? d.thang : thangNay;
+    const xem = d || { thang, homNay: homNayVN(), lich: [] };
+    const daXong = !!(d && d.daDiemDanhHomNay), tamDung = d && d.trongChuongTrinh === false;
+    const [y, m] = thang.split('-').map(Number);
+    const truoc = congNgay(thang + '-01', -1).slice(0, 7), sau = congNgay(thang + '-01', 32).slice(0, 7);
+    const nut = !dangNhap ? `<button type="button" class="btn btn--primary btn--block ddm-nut" data-ddm-login>Đăng nhập để điểm danh</button>`
+      : !d ? '<button type="button" class="btn btn--block ddm-nut" disabled aria-busy="true"><span class="ddp-spin"></span> Đang tải…</button>'
+      : tamDung ? '<button type="button" class="btn btn--block ddm-nut" disabled>Chương trình đang tạm dừng</button>'
+      : daXong ? '<button type="button" class="btn btn--block ddm-nut is-xong" disabled>✓ Bạn đã điểm danh hôm nay</button>'
+      : `<button type="button" class="btn btn--primary btn--block ddm-nut" data-ddm-nut ${dangGui ? 'disabled aria-busy="true"' : ''}>${dangGui ? '<span class="ddp-spin"></span> Đang điểm danh…' : `Điểm danh ngay · +${so(cfg.diemNgay)} điểm`}</button>`;
+    const tomTat = !dangNhap ? `Điểm danh mỗi ngày nhận <b>${so(cfg.diemNgay)} điểm</b>${cfg.ngayDoi ? `, ngày đôi nhận voucher <b>${tien(cfg.ngayDoi)}</b>` : ''}.`
+      : !d ? 'Đang tải trạng thái điểm danh của bạn…'
+      : daXong ? `Hôm nay đã nhận thưởng · chuỗi <b>${so(d.chuoi)} ngày</b> liên tiếp.`
+      : `Điểm danh hôm nay nhận <b>${so(cfg.diemNgay)} điểm</b>${xem.homNay.slice(5, 7) === xem.homNay.slice(8, 10) && cfg.ngayDoi ? ` + voucher ngày đôi <b>${tien(cfg.ngayDoi)}</b>` : ''}.`;
+    const moc = d && [10, 20, 30].filter((x) => cfg['m' + x]);
+    const nhanMoc = {}; ((d && d.daNhan) || []).forEach((v) => { nhanMoc[v.nguon] = true; });
+    const ke = (d && (d.sapDat || []).find((x) => x.conLai > 0)) || null;
+    return `<div class="ddm ddm--${che}" style="--dd:${mauHop(cfg.mau)}">
+      <div class="ddm-dau"><span class="ddm-ic" aria-hidden="true">${esc(cfg.icon || '📅')}</span><div><h3>${tk ? 'Điểm danh hằng ngày' : 'Điểm danh nhận thưởng'}</h3><p>${tomTat}</p></div>
+        ${tk && d ? `<div class="ddm-diem"><small>Điểm hiện có</small><b>${so((d.diem || {}).soDu)}</b></div>` : ''}</div>
+      <div class="ddm-thang">${dangNhap ? `<button type="button" class="ddm-dh" data-ddm-thang="${truoc}" aria-label="Tháng trước">‹</button>` : '<span></span>'}<b>Tháng ${m}/${y}</b>${dangNhap ? `<button type="button" class="ddm-dh" data-ddm-thang="${sau}" ${sau > thangNay ? 'disabled' : ''} aria-label="Tháng sau">›</button>` : '<span></span>'}</div>
+      ${luoiMini(xem, cfg)}
+      <div class="ddm-chu"><span><i class="c-da">✓</i>Đã điểm danh</span><span><i class="c-nay"></i>Hôm nay</span>${cfg.ngayDoi ? '<span><i class="c-doi"></i>Ngày đôi</span>' : ''}</div>
+      ${thang === thangNay ? nut : `<button type="button" class="btn btn--ghost btn--block ddm-nut" data-ddm-thang="${thangNay}">Về tháng này</button>`}
+      ${bao ? `<p class="ddm-bao ddm-bao--${bao.kieu}" role="status">${bao.html}</p>` : ''}
+      ${tk && d ? `<div class="ddm-td"><div class="ddm-td__so"><span><b>${so(d.chuoi)}</b> ngày liên tiếp</span><span><b>${so(d.chuoiDaiNhat)}</b> dài nhất</span><span><b>${so(d.soNgay)}</b> ngày tháng này</span></div>
+          ${moc.length ? `<div class="ddm-moc">${moc.map((x) => `<span class="${nhanMoc['STREAK_' + x] ? 'is-on' : ''}"><b>${nhanMoc['STREAK_' + x] ? '✓' : x}</b><small>${x} ngày · ${tien(cfg['m' + x])}</small></span>`).join('')}</div>` : ''}
+          ${ke ? `<p class="fs-13 text-muted">Còn <b>${ke.conLai} ngày</b> liên tiếp nữa để nhận voucher ${tien(ke.giaTri)}.</p>` : ''}
+          ${(d.daNhan || []).length ? `<p class="fs-13">🎟️ Tháng này đã nhận: ${d.daNhan.map((v) => `<b>${tien(v.giaTri)}</b> (${esc(NGUON[v.nguon] || v.nguonTen)})`).join(', ')}</p>` : ''}</div>` : ''}
+      ${!tk && dangNhap && ke ? `<p class="ddm-ghi">🔥 Chuỗi ${so(d.chuoi)} ngày – còn ${ke.conLai} ngày nữa nhận voucher ${tien(ke.giaTri)}</p>` : ''}
+      <a class="ddm-link" href="diem-danh.html">Thể lệ & lịch sử ›</a></div>`;
+  }
+  /* Gắn lịch mini vào phần tử. Mỗi phiên đăng nhập (token) chỉ tải 1 lần; đổi tài khoản / thoát thì tự bỏ dữ liệu cũ. */
+  function mini(el, opts = {}) {
+    if (!el || !window.MC) return null;
+    const { DD, Session, openLogin, toast } = window.MC;
+    const st = { che: opts.che === 'account' ? 'account' : 'storefront', d: null, cfg: null, dangNhap: false, dangGui: false, bao: null, thang: '', token: '' };
+    const ve = () => { el.innerHTML = veMini(st); el.hidden = !el.innerHTML; };
+    async function tai() {
+      const s = Session.get(); st.dangNhap = !!s;
+      if (!s) { st.d = null; st.token = ''; st.cfg = await DD.cauHinh(); ve(); return; }
+      if (st.token && st.token !== s.token) { st.d = null; st.bao = null; }   // đổi tài khoản: không hiện dữ liệu người trước
+      const tok = s.token; st.token = tok;
+      if (!st.cfg) st.cfg = await DD.cauHinh();
+      if (!st.d) ve();
+      try {
+        const r = await DD.tongQuan(st.thang);
+        if (st.token !== tok) return;
+        if (r && r.loi === 'token') { Session.clear(); return tai(); }
+        if (!r || !r.ok) { st.bao = { kieu: 'loi', html: esc((r && r.msg) || 'Chưa tải được lịch điểm danh') + ' <button type="button" class="ddm-thu-lai" data-ddm-thu-lai>Thử lại</button>' }; ve(); return; }
+        st.d = r; st.cfg = r.cauHinh || st.cfg; ve();
+      } catch (e) { st.bao = { kieu: 'loi', html: esc(e.message) + ' <button type="button" class="ddm-thu-lai" data-ddm-thu-lai>Thử lại</button>' }; ve(); }
+    }
+    el.addEventListener('click', async (e) => {
+      if (e.target.closest('[data-ddm-thu-lai]')) { st.bao = null; return tai(); }
+      if (e.target.closest('[data-ddm-login]')) { const s = await openLogin(); if (s) { st.bao = null; tai(); if (opts.sauDangNhap) opts.sauDangNhap(s); } return; }
+      const t = e.target.closest('[data-ddm-thang]'); if (t && !t.disabled) { st.thang = t.dataset.ddmThang === homNayVN().slice(0, 7) ? '' : t.dataset.ddmThang; st.bao = null; return tai(); }
+      if (!e.target.closest('[data-ddm-nut]') || st.dangGui) return;
+      if (!Session.get()) { st.dangNhap = false; return ve(); }
+      st.dangGui = true; st.bao = null; ve();
+      let r;
+      try { r = await DD.diemDanh(); } catch (err) { r = { ok: false, msg: err.message }; }
+      st.dangGui = false;
+      if (r && r.loi === 'token') { Session.clear(); toast('Phiên đăng nhập đã hết hạn, mẹ đăng nhập lại nhé', { type: 'err' }); return tai(); }
+      if (!r || !r.ok) { st.bao = { kieu: 'loi', html: esc((r && r.msg) || 'Chưa điểm danh được') + ' <button type="button" class="ddm-thu-lai" data-ddm-nut>Thử lại</button>' }; ve(); return; }
+      const vc = (r.voucher || []).map((v) => `voucher <b>${tien(v.giaTri)}</b>`).join(', ');
+      st.bao = r.moi ? { kieu: 'ok', html: `🎉 Điểm danh thành công! +${so(r.diem)} điểm${vc ? ' · nhận ' + vc + ' vào <a href="vi-voucher.html">Ví voucher</a>' : ''}` }
+        : { kieu: 'ok', html: 'Bạn đã điểm danh hôm nay – hẹn bạn ngày mai nhé!' };
+      st.thang = ''; await tai();
+      if (opts.sauDiemDanh) opts.sauDiemDanh(r);
+    });
+    tai();
+    return { taiLai: () => { st.bao = null; return tai(); } };
+  }
+  window.DDUI = { trang, dangTai, loi, chuaDangNhap, chucMung, mau, theLe, mini };
 })();

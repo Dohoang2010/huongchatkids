@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261012c">
+  <link rel="stylesheet" href="css/style.css?v=20261012d">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -21,7 +21,7 @@
 <script src="js/data.js?v=20261012d"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261012q"></script>
+<script src="js/app.js?v=20261012r"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -71,12 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0) + (dungVc ? vcAmt : 0);
     /* Điểm: chỉ trừ vào tiền hàng còn lại (không trừ phí ship), không quá số điểm khả dụng */
     const gtd = Number(gtCfg.giaTriDiem) || 1;
-    const diemToiDa = vi && vi.dungDuoc ? Math.max(0, Math.min(vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd))) : 0;
+    const ptDiem = gtCfg.diemToiDaPhanTram != null ? Number(gtCfg.diemToiDaPhanTram) : 10;   // mỗi đơn dùng điểm tối đa ptDiem % giá trị đơn
+    const diemToiDa = vi && vi.dungDuoc ? Math.max(0, Math.min(vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd), Math.floor(base * ptDiem / 100 / gtd))) : 0;
     const diemDung = Math.max(0, Math.min(diemMuon, diemToiDa)); const giamDiem = diemDung * gtd;
     /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
     let ship = r && r.ok && r.freeship && !boMa && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
     if (!city && ship && shipMethod !== 'express') ship = null;
-    return { vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
   /* Quy tắc quà: giảm giới thiệu tính như 1 mã giảm giá (không phải freeship) */
   const quaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : k.dungVc ? MC.maChoQua({ ok: true, discount: k.vcAmt, freeship: false, code: k.vc.ma }, true) : MC.maChoQua(k.boMa ? null : k.r, k.dungMa));
@@ -233,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (kieu !== 'dung') return;
     const bat = diemMuon > 0; $('#diemDung').checked = bat; $('.diem-co__nhap', box).classList.toggle('hide', !bat);
     const o = $('#diemSo'); if (document.activeElement !== o) o.value = bat ? k.diemDung : '';
-    $('#diemHint').innerHTML = !bat ? `<span class="text-muted">1 điểm = ${fmt(k.gtd)} · dùng tối đa ${n0(k.diemToiDa)} điểm cho đơn này (không trừ phí ship).</span>`
+    $('#diemHint').innerHTML = !bat ? `<span class="text-muted">1 điểm = ${fmt(k.gtd)} · dùng tối đa ${n0(k.diemToiDa)} điểm cho đơn này (không quá ${k.ptDiem}% giá trị đơn, không trừ phí ship).</span>`
       : diemMuon > k.diemToiDa ? `<span class="text-muted">Chỉ dùng được tối đa <b>${n0(k.diemToiDa)}</b> điểm cho đơn này – đã tự điều chỉnh.</span>`
       : `<span class="text-teal fw-600">✓ Dùng ${n0(k.diemDung)} điểm = giảm ${fmt(k.giamDiem)}</span>`;
   };

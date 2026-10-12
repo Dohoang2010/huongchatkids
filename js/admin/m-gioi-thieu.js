@@ -73,6 +73,7 @@
     <div class="kh-row"><span>Giảm cho người mới (đơn đầu)</span><b>${c.giam}%</b></div>
     <div class="kh-row"><span>Thưởng người giới thiệu</span><b>${c.thuong}% giá trị đơn → điểm</b></div>
     <div class="kh-row"><span>Giá trị 1 điểm</span><b>${fmt(c.giaTriDiem)}</b></div>
+    <div class="kh-row"><span>Dùng điểm tối đa mỗi đơn</span><b>${c.diemToiDaPhanTram != null ? c.diemToiDaPhanTram : 10}% giá trị đơn</b></div>
     <div class="kh-row"><span>Đơn tối thiểu</span><b>${c.donToiThieu ? fmt(c.donToiThieu) : 'Không'}</b></div>
     <div class="kh-row"><span>Người mới phải OTP</span><b>${c.canXacThuc ? 'Có' : 'Không'}</b></div>
     <p class="muted" style="margin-top:8px">Giảm giới thiệu không cộng dồn với mã giảm giá / ưu đãi hạng và không kèm quà. Điểm dùng chung được với mọi ưu đãi, không trừ phí ship. Điểm thưởng cộng khi CRM báo <b>Đã giao</b>, tự thu hồi nếu hoàn hàng.</p>`;
@@ -178,6 +179,7 @@
           <label>Giảm cho người mới (đơn đầu) – %<input id="chGiam" type="number" min="0" max="50" step="0.5" value="${esc(c.giam)}" ${dis}></label>
           <label>Điểm thưởng người giới thiệu – % giá trị đơn<input id="chThuong" type="number" min="0" max="50" step="0.5" value="${esc(c.thuong)}" ${dis}></label>
           <label>1 điểm tương đương (đồng)<input id="chGtd" type="number" min="0.01" step="0.01" value="${esc(c.giaTriDiem)}" ${dis}></label>
+          <label>Mỗi đơn dùng điểm tối đa – % giá trị đơn<input id="chDiemPt" type="number" min="0" max="100" step="1" value="${esc(c.diemToiDaPhanTram != null ? c.diemToiDaPhanTram : 10)}" ${dis}></label>
           <label>Giá trị hàng tối thiểu để được giảm (đồng)<input id="chMin" type="number" min="0" step="10000" value="${esc(c.donToiThieu)}" ${dis}></label>
           <label>Giữ điểm tối đa khi CRM chưa thấy đơn (giờ)<input id="chGiu" type="number" min="1" max="720" value="${esc(c.giuChoGio)}" ${dis}></label>
           <label>Theo dõi hoàn hàng sau khi thưởng (ngày)<input id="chTheoDoi" type="number" min="1" max="365" value="${esc(c.theoDoiNgay)}" ${dis}></label>
@@ -237,7 +239,7 @@
     }
     if (e.target.id === 'chLuu') {
       const v = (id) => $('#' + id).value;
-      const p = { luu: '1', bat: $('#chBat').checked ? '1' : '0', canXacThuc: $('#chOtp').checked ? '1' : '0', giam: v('chGiam'), thuong: v('chThuong'), giaTriDiem: v('chGtd'), donToiThieu: v('chMin'), giuChoGio: v('chGiu'), theoDoiNgay: v('chTheoDoi'), noiDungChiaSe: v('chChiaSe') };
+      const p = { luu: '1', bat: $('#chBat').checked ? '1' : '0', canXacThuc: $('#chOtp').checked ? '1' : '0', giam: v('chGiam'), thuong: v('chThuong'), giaTriDiem: v('chGtd'), diemToiDaPhanTram: v('chDiemPt'), donToiThieu: v('chMin'), giuChoGio: v('chGiu'), theoDoiNgay: v('chTheoDoi'), noiDungChiaSe: v('chChiaSe') };
       const ok = await A.hoi({ tieuDe: 'Lưu cấu hình giới thiệu?', noiDung: `Chương trình: <b>${p.bat === '1' ? 'BẬT' : 'TẮT'}</b> · Giảm người mới <b>${esc(p.giam)}%</b> · Thưởng <b>${esc(p.thuong)}%</b> · 1 điểm = <b>${esc(p.giaTriDiem)}đ</b><br><small>Áp dụng ngay cho đơn mới; đơn đã đặt giữ % cũ.</small>`, nutOk: 'Lưu' });
       if (!ok) return;
       try { const r = await A.api('qtGtCauHinh', p); A.toast(r && r.ok ? 'Đã lưu cấu hình' : (r && r.msg) || 'Chưa lưu được', r && r.ok ? 'ok' : 'err'); try { localStorage.removeItem('mc_gt_cfg'); } catch { /* không sao */ } A.veTrang(); }

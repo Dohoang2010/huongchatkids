@@ -463,6 +463,7 @@ var GT_MAC_DINH = {
   giam: 5,              // % giảm cho người được giới thiệu (đơn đầu)
   thuong: 5,            // % giá trị đơn thưởng cho người giới thiệu (thành điểm)
   giaTriDiem: 1,        // 1 điểm = bao nhiêu đồng
+  diemToiDaPhanTram: 10, // mỗi đơn dùng điểm tối đa bao nhiêu % giá trị đơn (tiền hàng)
   donToiThieu: 0,       // giá trị hàng tối thiểu để được giảm giới thiệu
   canXacThuc: false,    // true = người mới phải xác thực OTP mới được giảm giới thiệu
   giuChoGio: 72,        // giữ điểm tối đa bao nhiêu giờ nếu CRM chưa thấy đơn
@@ -597,7 +598,7 @@ function gtLienKet(sdt, ref, nguon) {
 /* ===================== API KHÁCH ===================== */
 function apiGtCauHinh() {
   var c = gtCauHinh();
-  return { ok: true, bat: !!c.bat, giam: Number(c.giam), thuong: Number(c.thuong), giaTriDiem: Number(c.giaTriDiem) || 1,
+  return { ok: true, bat: !!c.bat, giam: Number(c.giam), thuong: Number(c.thuong), giaTriDiem: Number(c.giaTriDiem) || 1, diemToiDaPhanTram: Number(c.diemToiDaPhanTram),
     donToiThieu: Number(c.donToiThieu) || 0, canXacThuc: !!c.canXacThuc, noiDungChiaSe: String(c.noiDungChiaSe || '') };
 }
 function apiGtKiemTra(p) {
@@ -651,7 +652,7 @@ function apiGtGiuCho(p) {
     var gtd = Number(cfg.giaTriDiem) || 1, diem = 0;
     if (muonDiem > 0) {
       var vi = viDiem(sdt, docSoDiem(), gc);
-      var toiDa = Math.floor(Math.max(0, giaTri - giamGT - giamKhac - giamVc) / gtd);
+      var toiDa = Math.min(Math.floor(Math.max(0, giaTri - giamGT - giamKhac - giamVc) / gtd), Math.floor(giaTri * (Number(cfg.diemToiDaPhanTram) || 0) / 100 / gtd));
       diem = Math.max(0, Math.min(muonDiem, vi.khaDung, toiDa));
     }
     if (!giamGT && !diem && !giamVc) return { ok: true, maGiu: '', giamGT: 0, phanTram: 0, diem: 0, giamDiem: 0, giamVc: 0, maVc: '' };
@@ -1157,6 +1158,7 @@ function apiQtGtCauHinh(p) {
   moi.bat = p.bat != null ? String(p.bat) === '1' : cu.bat;
   moi.canXacThuc = p.canXacThuc != null ? String(p.canXacThuc) === '1' : cu.canXacThuc;
   moi.giam = so('giam', 0, 50); moi.thuong = so('thuong', 0, 50); moi.giaTriDiem = so('giaTriDiem', 0.01, 100000);
+  moi.diemToiDaPhanTram = so('diemToiDaPhanTram', 0, 100);
   moi.donToiThieu = so('donToiThieu', 0, 1e9); moi.giuChoGio = so('giuChoGio', 1, 720); moi.theoDoiNgay = so('theoDoiNgay', 1, 365);
   moi.noiDungChiaSe = p.noiDungChiaSe != null ? String(p.noiDungChiaSe).slice(0, 300) : cu.noiDungChiaSe;
   PropertiesService.getScriptProperties().setProperty('GT_CAU_HINH', JSON.stringify(moi));

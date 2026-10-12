@@ -638,7 +638,8 @@
     if (dungGT && dungHang && !ketHop().hangMa) { if (hangAmt > gtAmt) dungGT = false; else dungHang = false; }
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0);
     const gtd = Number(C.giaTriDiem) || 1;
-    const diemToiDa = QB.vi && QB.vi.dungDuoc ? Math.max(0, Math.min(QB.vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd))) : 0;
+    const ptDiem = C.diemToiDaPhanTram != null ? Number(C.diemToiDaPhanTram) : 10;   // mỗi đơn dùng điểm tối đa ptDiem % giá trị đơn
+    const diemToiDa = QB.vi && QB.vi.dungDuoc ? Math.max(0, Math.min(QB.vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd), Math.floor(base * ptDiem / 100 / gtd))) : 0;
     const diemDung = Math.max(0, Math.min(QB.diemMuon, diemToiDa)), giamDiem = diemDung * gtd;
     const ship = cr && cr.ok && cr.freeship && !boMa ? 0 : shipFee(base - discount, 'standard', { tinh: qbTinh(), lines: qbLines() });
     return { sub, multi, base, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };

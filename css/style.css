@@ -1916,3 +1916,82 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .co-vc__it b { color: var(--primary); white-space: nowrap; } .co-vc__it small { display: block; color: var(--muted); font-size: 12px; }
 .co-vc__it.is-on { border-color: var(--primary); background: #FFF4F7; } .co-vc__it.is-off { opacity: .55; cursor: not-allowed; }
 .co-vc__chon { margin-left: auto; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); flex: none; } .co-vc__it.is-on .co-vc__chon { border: 5px solid var(--primary); }
+
+/* ===== Lịch điểm danh mini (DDUI.mini) – trang chủ cạnh Mã giảm giá, trang tài khoản cạnh Ví voucher ===== */
+.dv-cum { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 12px 0; align-items: stretch; }
+.dv-cum > * { min-width: 0; }
+.dv-cum > :empty { display: none; }
+@media (min-width: 900px) {
+  .dv-cum { grid-template-columns: minmax(0, 1fr) 360px; }
+  .dv-cum:has(> #voucherStrip:empty) { grid-template-columns: minmax(0, 400px); }
+  .dv-cum .vstrip { flex-direction: column; align-items: stretch; margin: 0; height: 100%; padding: 14px; gap: 12px; }
+  .dv-cum .vstrip__h small { max-width: none; }
+  .dv-cum .vstrip__row { flex: none; flex-direction: column; overflow: visible; gap: 10px; }
+  .dv-cum .vstrip .vc { width: auto; }
+}
+.dv-cum .vstrip { margin: 0; }
+.vstrip__vi { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+.ddm { --dd: #F0537A; background: #fff; border: 1px solid #FFD9E3; border-radius: var(--radius, 16px); padding: 14px; display: flex; flex-direction: column; gap: 10px; height: 100%; box-shadow: 0 2px 10px rgba(240, 83, 122, .06); }
+.ddm-dau { display: flex; gap: 10px; align-items: flex-start; }
+.ddm-ic { font-size: 22px; width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px; background: #FFF1F5; }
+.ddm-dau h3 { font-size: 15px; margin: 0 0 2px; }
+.ddm-dau p { font-size: 12.5px; margin: 0; color: var(--ink-2); line-height: 1.45; }
+.ddm-dau p b { color: var(--dd); }
+.ddm-diem { margin-left: auto; text-align: right; flex: none; } .ddm-diem small { display: block; font-size: 11px; color: var(--muted); } .ddm-diem b { font-size: 20px; color: var(--dd); font-family: 'Quicksand', sans-serif; }
+.ddm-thang { display: flex; align-items: center; justify-content: space-between; font-size: 13.5px; }
+.ddm-dh { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-gray); font-size: 18px; line-height: 1; color: var(--ink-2); }
+.ddm-dh:disabled { opacity: .35; cursor: default; }
+.ddm-luoi { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; }
+.ddm-thu { font-size: 11px; font-weight: 700; color: var(--muted); padding: 2px 0; }
+.ddm-o { height: 34px; display: grid; place-items: center; border-radius: 9px; font-size: 12.5px; color: var(--ink); font-weight: 600; position: relative; }
+.ddm-o--ngoai { color: #C9C6CF; font-weight: 500; }
+.ddm-o--qua { color: #A9A5B0; }
+.ddm-o--da { background: var(--teal-100); color: var(--teal-600); } .ddm-o--da i { font-style: normal; font-weight: 900; font-size: 14px; }
+.ddm-o--nay { box-shadow: inset 0 0 0 2px var(--dd); color: var(--dd); }
+.ddm-o--nay.ddm-o--da { background: var(--dd); color: #fff; box-shadow: none; }
+.ddm-o--doi::after { content: ''; position: absolute; top: 4px; right: 5px; width: 5px; height: 5px; border-radius: 50%; background: #F5A300; }
+.ddm-chu { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); }
+.ddm-chu i { display: inline-grid; place-items: center; width: 13px; height: 13px; border-radius: 4px; margin-right: 4px; vertical-align: -2px; font-style: normal; font-size: 9px; font-weight: 900; }
+.ddm-chu .c-da { background: var(--teal-100); color: var(--teal-600); } .ddm-chu .c-nay { box-shadow: inset 0 0 0 2px var(--dd); } .ddm-chu .c-doi { width: 6px; height: 6px; border-radius: 50%; background: #F5A300; margin: 0 6px 0 3px; vertical-align: 1px; }
+.ddm-nut { min-height: 46px; border-radius: 999px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.ddm .btn--primary.ddm-nut { background: var(--dd); border-color: var(--dd); }
+.ddm-nut.is-xong { background: var(--teal-100); color: var(--teal-600); opacity: 1; }
+.ddm-nut:disabled { cursor: default; }
+.ddm-bao { margin: 0; font-size: 13px; border-radius: 10px; padding: 8px 10px; line-height: 1.45; }
+.ddm-bao--ok { background: #EAF8F1; color: #0B7B5E; } .ddm-bao--ok a { color: inherit; font-weight: 700; text-decoration: underline; }
+.ddm-bao--loi { background: #FFF0F0; color: #B3261E; }
+.ddm-thu-lai { font-weight: 700; text-decoration: underline; color: inherit; }
+.ddm-ghi { margin: 0; font-size: 12.5px; color: var(--ink-2); }
+.ddm-td { border-top: 1px dashed var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.ddm-td p { margin: 0; }
+.ddm-td__so { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--ink-2); } .ddm-td__so b { color: var(--dd); font-size: 15px; }
+.ddm-moc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ddm-moc span { border: 1px solid var(--line); border-radius: 10px; padding: 6px; text-align: center; }
+.ddm-moc b { display: grid; place-items: center; width: 24px; height: 24px; margin: 0 auto 2px; border-radius: 50%; background: var(--bg-gray); font-size: 12px; }
+.ddm-moc small { font-size: 11px; color: var(--ink-2); display: block; line-height: 1.3; }
+.ddm-moc .is-on { border-color: var(--teal-600); } .ddm-moc .is-on b { background: var(--teal-600); color: #fff; }
+.ddm-link { font-size: 12.5px; color: var(--ink-2); text-align: center; margin-top: auto; }
+.ddm-link:hover { color: var(--dd); }
+@media (max-width: 420px) { .ddm { padding: 12px; } .ddm-o { height: 38px; } }
+
+/* Trang tài khoản: thẻ Ví voucher cạnh thẻ Điểm danh */
+.acc-dv { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 900px) { .acc-dv { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.acc-vc { display: flex; flex-direction: column; gap: 10px; height: 100%; }
+.acc-vc h3 { margin: 0; }
+.acc-vc__tk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+.acc-vc__tk div { background: var(--bg-gray); border-radius: 12px; padding: 8px 4px; } .acc-vc__tk b { display: block; font-size: 18px; color: var(--primary); } .acc-vc__tk small { font-size: 11.5px; color: var(--muted); }
+.acc-vc__ds { display: flex; flex-direction: column; gap: 8px; }
+.acc-vc .ddp-vc small a { color: var(--primary); }
+.acc-vc__cuoi { margin-top: auto; }
+/* Thẻ mã giảm giá trang chủ: phần "ví của mẹ" / "quà điểm danh" lấp khoảng trống cạnh lịch (chỉ máy tính) */
+.vstrip__them { display: none; }
+@media (min-width: 900px) {
+  .dv-cum .vstrip__them { display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed #FFC9D6; padding-top: 12px; }
+  .vstrip__them > b { font-size: 13.5px; }
+  .vstrip__them .ddp-vc { background: #fff; }
+  .vstrip__qua { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .vstrip__qua span { background: #fff; border: 1px solid #FFD9E3; border-radius: 12px; padding: 8px 10px; font-size: 12.5px; color: var(--ink-2); }
+  .vstrip__qua b { display: block; color: var(--primary); font-size: 15px; }
+  .vstrip__them a.btn { align-self: flex-start; }
+}
