@@ -312,15 +312,15 @@ window.PRODUCTS = [
     "desc": "Rong biển vụn ăn liền Sung Gyung – rắc cơm, cháo hoặc trộn cơm nắm cho bé. Rong biển Hàn Quốc sấy giòn, vị nhạt, giúp bữa ăn của con nhanh gọn mà vẫn bổ dưỡng.",
     "highlights": [
       "Rong biển Hàn Quốc sấy giòn, thơm, vị nhạt phù hợp trẻ nhỏ",
-      "Rắc cơm, cháo, cơm nắm, kimbap – bé ăn ngon hơn",
+      "Rắc cơm, cháo, cơm nắm, kimbap – hỗ trợ bé ăn ngon miệng hơn",
       "Tiện lợi cho bữa sáng và hộp cơm đi học"
     ],
     "usage": "Rắc trực tiếp lên cơm, cháo hoặc trộn cơm nắm cho bé. Đậy kín sau khi mở, bảo quản nơi khô ráo, tránh ẩm."
   },
   {
     "id": "22686115682",
-    "name": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
-    "short": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Giúp Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
+    "name": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
+    "short": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
     "brand": "lotte",
     "cat": "nuoc-ep",
     "ages": [
@@ -398,7 +398,7 @@ window.PRODUCTS = [
         "oldPrice": 1844000
       }
     ],
-    "desc": "Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic giúp bé ăn ngon miệng, hỗ trợ phát triển chiều cao và tăng cường sức khoẻ.",
+    "desc": "Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic, hỗ trợ bé ăn ngon miệng, phát triển chiều cao và tăng cường sức khoẻ.",
     "highlights": [
       "Nguyên liệu hoa quả & rau củ hữu cơ (Organic)",
       "Gói nhỏ có ống hút – tiện mang đi học, đi chơi",
@@ -478,7 +478,7 @@ window.PRODUCTS = [
   },
   {
     "id": "45462512687",
-    "name": "Rong biển Tăng cao Busan trộn cơm Hàn Quốc, giúp bé cao lớn, bổ sung chất xơ vitamin",
+    "name": "Rong biển Tăng cao Busan trộn cơm Hàn Quốc, bổ sung chất xơ, vitamin, hỗ trợ bé cao lớn",
     "short": "Rong biển tăng cao Busan trộn cơm",
     "brand": "busan",
     "cat": "rong-bien",
@@ -555,7 +555,7 @@ window.PRODUCTS = [
   },
   {
     "id": "22644617070",
-    "name": "Hồng Sâm ChuChu Hàn Quốc Hỗ Trợ Tăng Sức Đề Kháng, Giúp Trẻ Ăn Ngon, Hỗ Trợ Phục Hồi Sức Khoẻ Sau Ốm",
+    "name": "Hồng Sâm ChuChu Hàn Quốc Hỗ Trợ Tăng Sức Đề Kháng, Ăn Ngon Và Phục Hồi Sức Khoẻ Sau Ốm",
     "short": "Hồng sâm ChuChu hỗ trợ ăn ngon & phục hồi sau ốm",
     "brand": "chuchu",
     "cat": "hong-sam",
@@ -639,7 +639,7 @@ window.PRODUCTS = [
         "oldPrice": 1566000
       }
     ],
-    "desc": "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm hỗ trợ tăng sức đề kháng, giúp trẻ ăn ngon và hỗ trợ phục hồi sức khoẻ sau ốm. Có gói 10, nửa thùng và nguyên thùng.",
+    "desc": "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm hỗ trợ tăng sức đề kháng, ăn ngon và phục hồi sức khoẻ sau ốm cho trẻ. Có gói 10, nửa thùng và nguyên thùng.",
     "highlights": [
       "Cho bé hay ốm vặt, mới ốm dậy, biếng ăn",
       "Vị táo lê, việt quất – nho hoặc mix",
@@ -649,7 +649,7 @@ window.PRODUCTS = [
   },
   {
     "id": "26156646705",
-    "name": "Gạc Hươu Non Sumo Chiết Xuất Nhung Hươu Hỗ Trợ Tăng Cân, Giúp Con Ăn Ngon",
+    "name": "Gạc Hươu Non Sumo Chiết Xuất Nhung Hươu Hỗ Trợ Tăng Cân, Ăn Ngon",
     "short": "Gạc hươu non Sumo",
     "brand": "sumo",
     "cat": "tang-can",
@@ -720,7 +720,7 @@ window.PRODUCTS = [
   },
   {
     "id": "23660586997",
-    "name": "Nước ép Lotte Đề Kháng – nước ép lê & rễ cát cánh Hàn Quốc cho bé",
+    "name": "Nước ép Lotte dòng Đề Kháng – nước ép lê & rễ cát cánh hữu cơ Hàn Quốc, hỗ trợ đề kháng cho bé",
     "short": "Nước ép Lotte Đề Kháng",
     "brand": "lotte",
     "cat": "nuoc-ep",
@@ -916,7 +916,7 @@ window.PRODUCTS = [
   },
   {
     "id": "41353214697",
-    "name": "Nước ép Lotte Tăng Cao – nước ép táo & củ dền hữu cơ Hàn Quốc cho bé",
+    "name": "Nước ép Lotte dòng Tăng Cao – nước ép táo & củ dền hữu cơ Hàn Quốc, hỗ trợ bé phát triển chiều cao",
     "short": "Nước ép Lotte Tăng Cao",
     "brand": "lotte",
     "cat": "nuoc-ep",
@@ -979,7 +979,7 @@ window.PRODUCTS = [
   },
   {
     "id": "28467224687",
-    "name": "TẢO ĐÔ HOÀNG GIA Hotan Tân Cương bigsize hàng loại 1 cao cấp giúp bồi bổ sức khoẻ, hỗ trợ giấc ngủ",
+    "name": "TẢO ĐÔ HOÀNG GIA Hotan Tân Cương bigsize hàng loại 1 cao cấp, hỗ trợ bồi bổ sức khoẻ và giấc ngủ",
     "short": "Táo đỏ Hoàng Gia Hotan Tân Cương gói 1kg",
     "brand": "primefood",
     "cat": "thuc-pham",
@@ -1088,7 +1088,7 @@ window.PRODUCTS = [
     "highlights": [
       "Thương hiệu Norco 128 năm, hàng nội địa Úc",
       "Sữa bò ăn cỏ, không đường, không chất bảo quản",
-      "Giàu canxi & đạm cho bé tăng chiều cao"
+      "Giàu canxi & đạm, hỗ trợ bé phát triển chiều cao"
     ],
     "usage": "Bé trên 1 tuổi uống 1–2 ly (200–400ml)/ngày. Sau khi mở nắp bảo quản lạnh và dùng trong 3 ngày."
   },
@@ -1146,7 +1146,7 @@ window.PRODUCTS = [
         "oldPrice": 2296000
       }
     ],
-    "desc": "Sữa dê Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: bổ sung canxi, vitamin D, Alpha-lactalbumin (1.050mg/100g) hỗ trợ miễn dịch và hệ lợi khuẩn thực vật (100 triệu CFU/lon) giúp tiêu hoá tốt; đạm sữa dê dễ hấp thu, phù hợp bé chậm tăng cân.",
+    "desc": "Sữa dê Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: bổ sung canxi, vitamin D, Alpha-lactalbumin (1.050mg/100g) hỗ trợ miễn dịch và hệ lợi khuẩn thực vật (100 triệu CFU/lon) hỗ trợ tiêu hoá tốt; đạm sữa dê dễ hấp thu, phù hợp bé chậm tăng cân.",
     "highlights": [
       "Sữa dê dễ hấp thu, hỗ trợ tăng cân & chiều cao",
       "Alpha-lactalbumin + lợi khuẩn hỗ trợ miễn dịch, tiêu hoá",
@@ -1156,7 +1156,7 @@ window.PRODUCTS = [
   },
   {
     "id": "19491505209",
-    "name": "Sữa Bò Biostime SN-2 Bio Plus HPO- ON FORMULA LON- Tăng Cường Đề Kháng, Dưỡng Chất- Giúp Bé Ngủ Ngon, Ít Quấy Khóc",
+    "name": "Sữa Bò Biostime SN-2 Bio Plus HPO – ON FORMULA LON – Hỗ Trợ Tăng Cường Đề Kháng, Bổ Sung Dưỡng Chất, Hỗ Trợ Bé Ngủ Ngon",
     "short": "Sữa bò Biostime SN-2 Bio Plus HPO 800g",
     "brand": "biostime",
     "cat": "sua",
@@ -1285,7 +1285,7 @@ window.PRODUCTS = [
   },
   {
     "id": "20992159167",
-    "name": "SỮA BÒ ORGANIC BIOSTIME- GIÚP BÉ TĂNG ĐỀ KH.ÁNG, PHÁT TRIỂN CHIỀU CAO, PHÁT TRIỂN NÃO BỘ",
+    "name": "Sữa Bò Organic Biostime – Hỗ Trợ Bé Tăng Đề Kháng, Phát Triển Chiều Cao Và Não Bộ",
     "short": "Sữa bò Organic Biostime 800g (Pháp)",
     "brand": "biostime",
     "cat": "sua",
@@ -1341,7 +1341,7 @@ window.PRODUCTS = [
         "oldPrice": 1742000
       }
     ],
-    "desc": "Sữa bò hữu cơ Biostime Organic nội địa Pháp, lon 800g. Theo nhà sản xuất: nguyên liệu organic, chất béo SN-2 giúp hấp thu tốt, hỗ trợ tăng đề kháng và phát triển chiều cao.",
+    "desc": "Sữa bò hữu cơ Biostime Organic nội địa Pháp, lon 800g. Theo nhà sản xuất: nguyên liệu organic, chất béo SN-2 hỗ trợ hấp thu tốt, tăng đề kháng và phát triển chiều cao.",
     "highlights": [
       "Sữa hữu cơ nội địa Pháp",
       "Chất béo liên kết SN-2",
@@ -1351,7 +1351,7 @@ window.PRODUCTS = [
   },
   {
     "id": "47357633686",
-    "name": "Sâm Organic Pinkfong Kid Up 40ml – Hỗ Trợ Phát Triển Chiều Cao, Tăng Đề Kháng, Giúp Bé Ăn Ngon Ngủ Ngon",
+    "name": "Sâm Organic Pinkfong Kid Up 40ml – Hỗ Trợ Phát Triển Chiều Cao, Tăng Đề Kháng, Ăn Ngon Ngủ Ngon",
     "short": "Sâm Organic Pinkfong Kid Up 40ml",
     "brand": "pinkfong",
     "cat": "hong-sam",
@@ -1466,7 +1466,7 @@ window.PRODUCTS = [
   },
   {
     "id": "25632276959",
-    "name": "Nước ép Lotte Tăng Cân Tự Nhiên – nước ép mận, nho & táo hữu cơ Hàn Quốc cho bé",
+    "name": "Nước ép Lotte dòng Tăng Cân Tự Nhiên – nước ép mận, nho & táo hữu cơ Hàn Quốc, hỗ trợ bé ăn ngon",
     "short": "Nước ép Lotte Tăng Cân Tự Nhiên",
     "brand": "lotte",
     "cat": "nuoc-ep",
@@ -1525,7 +1525,7 @@ window.PRODUCTS = [
     "desc": "Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
     "highlights": [
       "99,94% nguyên liệu hữu cơ, chứng nhận HACCP & Organic",
-      "Mận giúp nhuận tràng, giảm táo bón",
+      "Mận hỗ trợ nhuận tràng, giảm táo bón",
       "Đã công bố ATTP tại Việt Nam (xem ảnh cuối)"
     ],
     "usage": "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay."
@@ -2981,12 +2981,12 @@ window.PRODUCTS = [
         "oldPrice": 1707000
       }
     ],
-    "desc": "Bộ đôi tăng chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) giúp bé uống ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
+    "desc": "Bộ đôi hỗ trợ phát triển chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) bé dễ uống, ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
     "highlights": [
       "Mua trọn bộ 1 chạm, không phải chọn từng món",
       "Nước ép hữu cơ Hàn Quốc, bé dễ uống",
       "Thùng 30 gói dùng được khoảng 1 tháng",
-      "D3K2 giúp hấp thu canxi, dùng cùng nước ép tăng cao"
+      "D3K2 hỗ trợ hấp thu canxi, dùng cùng nước ép tăng cao"
     ],
     "usage": "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn."
   },
@@ -3044,7 +3044,7 @@ window.PRODUCTS = [
         "oldPrice": 1282000
       }
     ],
-    "desc": "Men vi sinh Sysy (Pasteur 아이생각 생유산균) – hàng nội địa Hàn Quốc của Pasteur thuộc tập đoàn Lotte. Men Baby (hộp nâu, cho bé từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng. Men Kids (hộp xanh, cho bé từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng, bổ sung kẽm 2,55mg và vitamin D 400 IU. Đạt GMP, công nghệ Probiocap bao bọc lợi khuẩn và Synbiotic (lợi khuẩn kết hợp chất xơ nuôi lợi khuẩn); nhà sản xuất cam kết ít nhất 2 tỉ lợi khuẩn sống. Theo nhà sản xuất: hỗ trợ tiêu hoá, giúp bé ăn ngon, hấp thu tốt; hỗ trợ giảm táo bón, tiêu chảy và tác dụng phụ khi dùng kháng sinh; hỗ trợ cải thiện biếng ăn, chậm tăng cân, giảm trớ sữa ở trẻ nhỏ.",
+    "desc": "Men vi sinh Sysy (Pasteur 아이생각 생유산균) – hàng nội địa Hàn Quốc của Pasteur thuộc tập đoàn Lotte. Men Baby (hộp nâu, cho bé từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng. Men Kids (hộp xanh, cho bé từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng, bổ sung kẽm 2,55mg và vitamin D 400 IU. Đạt GMP, công nghệ Probiocap bao bọc lợi khuẩn và Synbiotic (lợi khuẩn kết hợp chất xơ nuôi lợi khuẩn); nhà sản xuất cam kết ít nhất 2 tỉ lợi khuẩn sống. Theo nhà sản xuất: hỗ trợ tiêu hoá, ăn ngon, hấp thu tốt; hỗ trợ giảm táo bón, tiêu chảy và tác dụng phụ khi dùng kháng sinh; hỗ trợ cải thiện biếng ăn, chậm tăng cân, giảm trớ sữa ở trẻ nhỏ.",
     "highlights": [
       "Men Baby (từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng",
       "Men Kids (từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng + kẽm 2,55mg, vitamin D 400 IU",
@@ -3148,7 +3148,7 @@ window.POSTS = [
       '- Mua 2 thùng tặng 10 gói.',
       '[[sp:22686115682]]',
       '## 🐻 Hồng sâm ChuChu: Mua 3 thùng tặng quà',
-      'Lựa chọn bổ sung hồng sâm cho bé theo độ tuổi phù hợp, tăng cường đề kháng.',
+      'Lựa chọn bổ sung hồng sâm cho bé theo độ tuổi phù hợp, hỗ trợ tăng cường đề kháng.',
       '[[sp:22644617070]]',
       '## 🥛 Canxi váng sữa: Mua 2 tặng 1 D3K2',
       'Hỗ trợ bổ sung canxi và dưỡng chất đồng hành cùng quá trình phát triển hệ xương.',
@@ -3170,7 +3170,7 @@ window.POSTS = [
     excerpt: 'Ba dòng nước ép hữu cơ Lotte có thành phần và độ tuổi dùng khác nhau. Chuyên gia dinh dưỡng Hương Chất Kids giúp mẹ chọn đúng loại theo nhu cầu của bé.',
     body: ['Nước ép hữu cơ Lotte (Hàn Quốc) là món bé dễ uống nhất trong nhóm dinh dưỡng bổ sung: gói nhỏ có ống hút hoặc nắp vặn, vị trái cây tự nhiên. Nhưng mỗi dòng có thành phần riêng, mẹ nên chọn theo điều bé đang cần.',
       '## Dòng Tăng Cân – Ăn Ngon (mận, nho, táo)',
-      'Theo nhà sản xuất, dòng này dùng 99,94% nguyên liệu hữu cơ, có mận giúp nhuận tràng. Phù hợp bé biếng ăn, đi ngoài khó, cần bữa phụ ngọt tự nhiên thay bánh kẹo.',
+      'Theo nhà sản xuất, dòng này dùng 99,94% nguyên liệu hữu cơ, có mận hỗ trợ nhuận tràng. Phù hợp bé biếng ăn, đi ngoài khó, cần bữa phụ ngọt tự nhiên thay bánh kẹo.',
       '[[sp:25632276959]]',
       '## Dòng Tăng Cao (táo, củ dền)',
       'Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm. Nhà sản xuất bổ sung canxi, sắt và axit folic. Đây là lựa chọn của nhiều mẹ có con đang tuổi lớn nhanh hoặc bước vào dậy thì.',
@@ -3198,7 +3198,7 @@ window.POSTS = [
       '- Chia nhỏ nếu liều lớn: cơ thể hấp thu tốt nhất từng lượng nhỏ.',
       '- Không uống cùng lúc với viên sắt; nên cách nhau khoảng 2 giờ.',
       '## Vì sao cần D3 và K2?',
-      'Vitamin D3 giúp ruột hấp thu canxi; vitamin K2 (MK7) giúp đưa canxi vào xương. Trẻ dưới 12 tháng cần khoảng 400IU vitamin D mỗi ngày, trẻ lớn hơn khoảng 600IU, đặc biệt khi bé ít ra nắng.',
+      'Vitamin D3 hỗ trợ ruột hấp thu canxi; vitamin K2 (MK7) hỗ trợ đưa canxi vào xương. Trẻ dưới 12 tháng cần khoảng 400IU vitamin D mỗi ngày, trẻ lớn hơn khoảng 600IU, đặc biệt khi bé ít ra nắng.',
       '![Váng sữa canxi Calciumore dạng gói, bé dễ uống](img/26060839019-2.jpg)',
       '[[sp:26060839019]]',
       '[[sp:42878618667]]',
@@ -3213,7 +3213,7 @@ window.POSTS = [
       '## 2. Số lợi khuẩn (CFU)',
       'CFU là số lợi khuẩn sống trong mỗi gói. Số càng cao chưa chắc càng tốt; quan trọng là còn sống đến ruột. Men Sysy Baby có 15,1 tỉ lợi khuẩn, Kids có 16,1 tỉ lợi khuẩn mỗi gói (theo nhà sản xuất).',
       '## 3. Số chủng',
-      'Nhiều chủng giúp hỗ trợ nhiều vùng của ruột. Sysy Baby có 8 chủng; Sysy Kids có 7 chủng và bổ sung thêm kẽm 2,55mg, vitamin D 400IU.',
+      'Nhiều chủng hỗ trợ nhiều vùng của ruột. Sysy Baby có 8 chủng; Sysy Kids có 7 chủng và bổ sung thêm kẽm 2,55mg, vitamin D 400IU.',
       '![Men vi sinh Sysy Pasteur – Baby 0+ và Kids 24m+](img/men-sysy-2.jpg)',
       '[[sp:men-sysy]]',
       '## 4. Pha và bảo quản',
@@ -3223,8 +3223,8 @@ window.POSTS = [
       'Nếu bé tiêu chảy kéo dài, có máu trong phân, sốt cao hoặc bỏ bú, mẹ cần đưa bé đi khám thay vì chỉ dùng men vi sinh.'] },
   { id: 'be-hay-om-giao-mua', title: 'Bé hay ốm vặt khi giao mùa: 6 việc mẹ nên làm để con khoẻ hơn', cat: 'Chăm con', date: '14/10/2026', read: '5 phút', emoji: '🍂', color: '#FFF3D6', image: 'img/22644617070.jpg', noiBat: true,
     sanPham: ['22644617070', '23660586997', '47357633686'],
-    excerpt: 'Trời chuyển lạnh, bé đi học về là ho, sổ mũi. Sáu thói quen đơn giản giúp hệ miễn dịch của con vững vàng hơn trong mùa thu đông.',
-    body: ['Trẻ dưới 6 tuổi có thể ốm 6–8 lần mỗi năm vì hệ miễn dịch đang hoàn thiện. Mẹ không thể giúp con không bao giờ ốm, nhưng có thể giúp con ốm ít hơn và mau khoẻ hơn.',
+    excerpt: 'Trời chuyển lạnh, bé đi học về là ho, sổ mũi. Sáu thói quen đơn giản hỗ trợ hệ miễn dịch của con vững vàng hơn trong mùa thu đông.',
+    body: ['Trẻ dưới 6 tuổi có thể ốm 6–8 lần mỗi năm vì hệ miễn dịch đang hoàn thiện. Không có cách nào giúp con không bao giờ ốm, nhưng dinh dưỡng và sinh hoạt hợp lý hỗ trợ con khoẻ mạnh và mau lại sức hơn.',
       '## 6 việc mẹ nên làm',
       '- Ngủ đủ giấc: bé 3–5 tuổi cần 10–13 giờ/ngày kể cả giấc trưa.',
       '- Rửa tay bằng xà phòng khi đi học về và trước khi ăn.',
@@ -3313,10 +3313,10 @@ window.POSTS = [
       'Mẹ đưa bé đi khám dinh dưỡng nếu bé đứng cân hoặc sụt cân liên tục trên 3 tháng, hoặc nằm dưới đường thấp nhất của biểu đồ.'] },
   { id: 'rong-bien-cho-be-an-dam', title: 'Rong biển cho bé: lợi ích, lượng dùng và lưu ý về muối, i-ốt', cat: 'Dinh dưỡng', date: '29/10/2026', read: '4 phút', emoji: '🌊', color: '#E3F6F8', image: 'img/45462512687.jpg',
     sanPham: ['41002695070', '45462512687'],
-    excerpt: 'Rong biển giàu chất xơ, i-ốt và khoáng chất, lại giúp bé ăn cơm ngon hơn. Nhưng ăn bao nhiêu là vừa và chọn loại nào ít muối?',
+    excerpt: 'Rong biển giàu chất xơ, i-ốt và khoáng chất, lại hỗ trợ bé ăn cơm ngon miệng hơn. Nhưng ăn bao nhiêu là vừa và chọn loại nào ít muối?',
     body: ['Rong biển là món quen thuộc trong bữa ăn của trẻ em Hàn Quốc và Nhật Bản. Rắc một chút lên cơm, cháo giúp bữa ăn thơm hơn và bé hợp tác hơn.',
       '## Lợi ích',
-      '- Chất xơ tự nhiên giúp bé đi ngoài đều.',
+      '- Chất xơ tự nhiên hỗ trợ bé đi ngoài đều.',
       '- I-ốt cần cho tuyến giáp và sự phát triển trí não.',
       '- Có canxi, sắt, magie và vitamin nhóm B.',
       '## Bé ăn bao nhiêu là vừa?',
@@ -3351,16 +3351,16 @@ window.POSTS = [
     body: ['0–6 tháng: sữa mẹ (hoặc sữa công thức) là nguồn dinh dưỡng chính. Chỉ nên bổ sung vitamin D3 (có thể kèm K2) dạng nhỏ giọt theo khuyến cáo 400IU/ngày; không dùng nước ép, hồng sâm hay thực phẩm bổ sung khác.', '6–12 tháng: bắt đầu ăn dặm. Có thể tập cho bé nước ép hoa quả – rau củ hữu cơ loại dành cho bé từ 6 tháng (pha loãng, 1/2 gói/ngày), rong biển vụn rắc cháo với lượng nhỏ.', '1–3 tuổi: bé hay ốm vặt khi đi nhà trẻ. Hồng sâm cho trẻ em, váng sữa canxi, D3K2 có thể dùng theo liều trên bao bì; ưu tiên sản phẩm ghi rõ độ tuổi.', '3–6 tuổi và tiểu học: giai đoạn tăng chiều cao nhanh, chú ý canxi + D3K2 + vận động; bé biếng ăn có thể cân nhắc gạc hươu, kẽm.', 'Nguyên tắc chung: đọc kỹ độ tuổi trên bao bì, không dùng cùng lúc nhiều sản phẩm cùng công dụng, ngưng và hỏi bác sĩ nếu bé dị ứng. Chuyên gia dinh dưỡng Hương Chất Kids tư vấn miễn phí qua Zalo trước khi mẹ đặt hàng.'] },
   { id: 'vitamin-d3-k2-cho-be', sanPham: ['42878618667', 'combo-vangsua-d3k2'], title: 'Vitamin D3 K2: vì sao bé cần bổ sung ngay từ sơ sinh?', cat: 'Vitamin', date: '08/09/2026', read: '4 phút', emoji: '☀️', color: '#FFF3D6', image: 'img/thumb/42878618667.jpg',
     excerpt: 'Theo Viện Dinh dưỡng Quốc gia, tỷ lệ trẻ em Việt Nam thiếu vitamin D còn cao. Cùng tìm hiểu liều 400IU/ngày và cách nhỏ D3 K2 đúng cho bé.',
-    body: ['Vitamin D3 giúp cơ thể hấp thu canxi từ ruột, còn vitamin K2 (MK7) dẫn canxi vào đúng xương thay vì lắng đọng ở mạch máu, thận.', 'Bộ Y tế khuyến cáo bổ sung 400IU vitamin D/ngày cho trẻ từ sơ sinh, đặc biệt trẻ bú mẹ hoàn toàn.', 'Nên nhỏ D3 K2 vào buổi sáng, sau ăn để hấp thu tốt nhất. Kết hợp tắm nắng nhẹ 10–15 phút trước 9h sáng.', 'Dấu hiệu thiếu vitamin D: bé hay quấy khóc đêm, ra mồ hôi trộm, rụng tóc vành khăn, chậm mọc răng, chậm biết đi.'] },
+    body: ['Vitamin D3 hỗ trợ cơ thể hấp thu canxi từ ruột, còn vitamin K2 (MK7) dẫn canxi vào đúng xương thay vì lắng đọng ở mạch máu, thận.', 'Bộ Y tế khuyến cáo bổ sung 400IU vitamin D/ngày cho trẻ từ sơ sinh, đặc biệt trẻ bú mẹ hoàn toàn.', 'Nên nhỏ D3 K2 vào buổi sáng, sau ăn để hấp thu tốt nhất. Kết hợp tắm nắng nhẹ 10–15 phút trước 9h sáng.', 'Dấu hiệu thiếu vitamin D: bé hay quấy khóc đêm, ra mồ hôi trộm, rụng tóc vành khăn, chậm mọc răng, chậm biết đi.'] },
   { id: 'be-bieng-an', sanPham: ['26156646705', '22644617070'], title: 'Bé biếng ăn: 7 sai lầm mẹ hay mắc và cách khắc phục', cat: 'Chăm con', date: '03/09/2026', read: '6 phút', emoji: '🥄', color: '#E0F5F2', image: 'img/thumb/26156646705.jpg',
     excerpt: 'Ép ăn, cho xem tivi khi ăn, bữa ăn kéo dài quá 30 phút… là những thói quen khiến bé càng sợ ăn. Cùng xem cách sửa.',
     body: ['Biếng ăn ở trẻ có thể do sinh lý (mọc răng, tập đi), bệnh lý (thiếu kẽm, thiếu sắt, rối loạn tiêu hoá) hoặc tâm lý (bị ép ăn).', 'Sai lầm phổ biến: ép ăn, cho ăn vặt sát bữa chính, bữa ăn quá 30 phút, cho bé xem điện thoại khi ăn, thay đổi món liên tục, cho uống sữa quá nhiều, so sánh bé với trẻ khác.', 'Giải pháp: cho bé tự xúc, ăn cùng gia đình, tạo không khí vui vẻ, bổ sung kẽm/lysine nếu thiếu, đưa bé đi khám nếu biếng ăn kéo dài trên 1 tháng kèm sụt cân.'] },
   { id: 'tang-chieu-cao-tuoi-day-thi', sanPham: ['26060839019', '41353214697', '42878618667'], title: 'Giai đoạn vàng tăng chiều cao: mẹ đừng bỏ lỡ tuổi 10–16', cat: 'Tuổi teen', date: '28/08/2026', read: '5 phút', emoji: '📏', color: '#F3E9FF', image: 'img/thumb/26060839019.jpg',
-    excerpt: 'Tuổi dậy thì là cơ hội cuối để con tăng 8–12cm/năm. Dinh dưỡng, giấc ngủ và vận động nào giúp con cao tối đa?',
+    excerpt: 'Tuổi dậy thì là cơ hội cuối để con tăng 8–12cm/năm. Dinh dưỡng, giấc ngủ và vận động nào hỗ trợ con phát triển chiều cao tốt?',
     body: ['Trước khi sụn tăng trưởng đóng lại (khoảng 16–18 tuổi ở nữ, 18–20 tuổi ở nam), con có thể tăng 8–12cm mỗi năm trong giai đoạn dậy thì.', 'Dinh dưỡng: đủ canxi (1.000–1.300mg/ngày), vitamin D3, K2, kẽm, đạm chất lượng. Sữa tươi 500ml/ngày là nguồn canxi dễ hấp thu nhất.', 'Giấc ngủ: 90% hormone tăng trưởng tiết ra khi ngủ sâu, con nên ngủ trước 22h và đủ 8–9 tiếng.', 'Vận động: bơi, bóng rổ, nhảy dây, xà đơn 30–60 phút/ngày.'] },
   { id: 'men-vi-sinh-khi-nao', sanPham: ['men-sysy'], title: 'Khi nào bé cần men vi sinh? Phân biệt men vi sinh và men tiêu hoá', cat: 'Tiêu hoá', date: '20/08/2026', read: '4 phút', emoji: '🌿', color: '#EEF8E6', image: 'img/thumb/45462512687.jpg',
     excerpt: 'Nhiều mẹ nhầm men vi sinh với men tiêu hoá. Dùng sai có thể khiến bé phụ thuộc. Chuyên gia dinh dưỡng giải thích rõ.',
-    body: ['Men vi sinh (probiotics) là lợi khuẩn sống, giúp cân bằng hệ vi sinh đường ruột – dùng khi bé táo bón, tiêu chảy, sau kháng sinh, khóc dạ đề.', 'Men tiêu hoá là enzyme giúp phân giải thức ăn – chỉ dùng ngắn ngày khi bé thiếu enzyme, theo chỉ định bác sĩ.', 'Chọn men vi sinh có chủng được nghiên cứu (L. reuteri DSM 17938, B. infantis…), dùng cách kháng sinh 2 tiếng, pha với nước/sữa nguội dưới 40°C.'] },
+    body: ['Men vi sinh (probiotics) là lợi khuẩn sống, hỗ trợ cân bằng hệ vi sinh đường ruột – dùng khi bé táo bón, tiêu chảy, sau kháng sinh, khóc dạ đề.', 'Men tiêu hoá là enzyme giúp phân giải thức ăn – chỉ dùng ngắn ngày khi bé thiếu enzyme, theo chỉ định bác sĩ.', 'Chọn men vi sinh có chủng được nghiên cứu (L. reuteri DSM 17938, B. infantis…), dùng cách kháng sinh 2 tiếng, pha với nước/sữa nguội dưới 40°C.'] },
   { id: 'phan-biet-hang-chinh-hang', title: 'Cách kiểm tra hàng Hàn Quốc nhập khẩu chính hãng trước khi cho bé dùng', cat: 'Mua sắm', date: '15/08/2026', read: '3 phút', emoji: '🔍', color: '#EAF0FF', image: 'img/thumb/22644617070.jpg',
     excerpt: 'Kiểm tra tem phụ, mã QR, số lô, hạn dùng… 5 bước đơn giản để mẹ tự kiểm tra sản phẩm trước khi cho con dùng.',
     body: ['1. Tem phụ tiếng Việt: ghi rõ nhà nhập khẩu, số công bố, hạn dùng.', '2. Mã QR/mã vạch: quét được thông tin sản phẩm trùng với hộp.', '3. Bao bì: seal, nắp nguyên vẹn, không móp rách; hạn dùng còn dài.', '4. Chữ Hàn trên bao bì rõ nét, in sắc; hàng giả thường mờ, sai chính tả.', '5. Hoá đơn: yêu cầu hoá đơn VAT khi mua – Hương Chất Kids xuất hoá đơn cho mọi đơn hàng.'] },
@@ -3667,45 +3667,45 @@ window.MUA_KEM = {
   theoDanhMuc: {
     'sua': [
       ['42878618667', 'Uống cùng sữa – D3K2 hỗ trợ hấp thu canxi'],
-      ['41353214697', 'Bộ đôi tăng chiều cao mẹ hay chọn'],
+      ['41353214697', 'Bộ đôi hỗ trợ phát triển chiều cao mẹ hay chọn'],
       ['26060839019', 'Thêm canxi hữu cơ cho bé ăn vặt'],
-      ['45462512687', 'Trộn cơm giúp bé ăn ngon hơn'],
+      ['45462512687', 'Trộn cơm hỗ trợ bé ăn ngon miệng hơn'],
     ],
     'nuoc-ep': [
-      ['22644617070', 'Hồng sâm giúp bé ăn ngon, mau lại sức'],
-      ['42878618667', 'Thêm D3K2 cho bé phát triển chiều cao'],
+      ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ'],
+      ['42878618667', 'Thêm D3K2 hỗ trợ bé phát triển chiều cao'],
       ['27355720019', 'Hồng sâm hỗ trợ trí não khi đi học'],
-      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
     ],
     'hong-sam': [
       ['25632276959', 'Nước ép tăng cân uống xen với hồng sâm'],
-      ['42878618667', 'Thêm D3K2 cho bé phát triển chiều cao'],
+      ['42878618667', 'Thêm D3K2 hỗ trợ bé phát triển chiều cao'],
       ['26156646705', 'Gạc hươu hỗ trợ bé tăng cân'],
-      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
     ],
     'vitamin': [
       ['13899935993', 'Sữa dê bổ sung canxi, dễ hấp thu'],
-      ['41353214697', 'Bộ đôi tăng chiều cao mẹ hay chọn'],
+      ['41353214697', 'Bộ đôi hỗ trợ phát triển chiều cao mẹ hay chọn'],
       ['42878618667', 'Mẹ hay dùng D3K2 cùng canxi'],
-      ['45462512687', 'Trộn cơm giúp bé ăn ngon hơn'],
+      ['45462512687', 'Trộn cơm hỗ trợ bé ăn ngon miệng hơn'],
     ],
     'tang-can': [
-      ['22644617070', 'Hồng sâm giúp bé ăn ngon, mau lại sức'],
+      ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ'],
       ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
       ['13899935993', 'Sữa dê dễ hấp thu, hỗ trợ tăng cân'],
-      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
     ],
     'rong-bien': [
       ['41002695070', 'Đổi vị rong biển cho bé đỡ ngán'],
       ['45462512687', 'Đổi vị rong biển cho bé đỡ ngán'],
       ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
-      ['22644617070', 'Hồng sâm giúp bé ăn ngon, mau lại sức'],
+      ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ'],
     ],
     'thuc-pham': [
       ['43532388498', 'Ăn sáng nhanh cùng sữa chua, sữa tươi'],
       ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà'],
       ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
-      ['41002695070', 'Rắc cơm giúp bữa ăn của bé ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
     ],
     'cho-me': [
       ['27734205778', 'Chống nắng mỗi ngày – bước dưỡng không thể thiếu'],
