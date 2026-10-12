@@ -60,7 +60,7 @@
             <td data-nhan="Thao tác"><div class="ct-act">
               <a href="#/ma-giam-gia/${encodeURIComponent(ma)}">${k === 'het' ? 'Chi tiết' : 'Chỉnh sửa'}</a>
               <button data-vc-sao="${esc(ma)}">Sao chép</button>
-              ${k === 'dang' && c.hetHan ? `<button data-vc-ket="${esc(ma)}">Kết thúc</button>` : ''}
+              ${k === 'dang' ? `<button data-vc-ket="${esc(ma)}">Kết thúc</button>` : ''}
               <button class="red" data-vc-xoa="${esc(ma)}">Xoá</button></div></td></tr>`; }).join('')}
         </tbody></table></div>` : A.trong('Không có mã giảm giá', tab === 'tat' && !tim.q ? 'Chọn một loại Voucher ở trên để tạo mã đầu tiên.' : 'Không có mã nào khớp bộ lọc.', '🎟️')}
         <div class="box-note">Khách nhập mã ở bước thanh toán. Dùng chung với ưu đãi hạng / quà tặng hay không: chỉnh ở thẻ <b>Quy tắc dùng chung ưu đãi</b> bên dưới. Voucher toàn shop và Voucher sản phẩm hiện ở trang tài khoản của khách; Voucher riêng tư chỉ ai có mã mới dùng được.</div>

@@ -58,7 +58,10 @@
           ${q.ten || q.donTu || q.thung ? `<tr>
             <td data-nhan="Chương trình">${A.badge(q.enabled ? 'Đang chạy liên tục' : 'Đang tắt', q.enabled ? 'tag--vang' : 'tag--off')}<br><a class="ct-ten" href="#/qua-tang/mac-dinh">Quà ${esc(q.ten || 'mặc định')} (đơn từ ${fmt((q.donTu || {}).muc || 0)} · mua thùng)</a><small class="muted">Chương trình cũ, không giới hạn thời gian</small></td>
             <td data-nhan="Loại">Tặng theo giá trị đơn / số thùng</td><td data-nhan="Sản phẩm"><span class="muted">${esc((q.vi || []).join(', '))}</span></td>
-            <td data-nhan="Thời gian">Không thời hạn</td><td data-nhan="Thao tác"><div class="ct-act"><a href="#/qua-tang/mac-dinh">Chỉnh sửa</a></div></td></tr>` : ''}
+            <td data-nhan="Thời gian">Không thời hạn</td><td data-nhan="Thao tác"><div class="ct-act"><a href="#/qua-tang/mac-dinh">Chỉnh sửa</a>
+              ${(q.thung || []).length ? '<button data-md-sao="thung">Sao chép (mua thùng)</button>' : ''}
+              ${(q.donTu || {}).muc ? `<button data-md-sao="don">Sao chép (đơn từ ${fmt(q.donTu.muc)})</button>` : ''}
+              ${q.enabled ? '<button data-md-tat>Kết thúc</button>' : '<button data-md-bat>Bật lại</button>'}</div></td></tr>` : ''}
         </tbody></table></div>
         ${!list.length && !(q.ten || q.donTu) ? A.trong('Chưa có chương trình', 'Bấm "Tạo chương trình" để tạo chương trình Mua để nhận quà.', '🎁') : ''}
       </div>
@@ -144,7 +147,8 @@
       <div class="ct-buoc"><span class="ct-so">3</span><div class="card">
         <div class="ct-h"><div><h3>Quà tặng</h3><p class="muted">Người mua chỉ có thể nhận quà tặng khi đơn đạt điều kiện. Bật / tắt từng phân loại khách được chọn làm quà.</p></div>
           ${chiXem ? '' : '<button class="btn btn--outline" data-chon="qua">+ Thêm quà tặng</button>'}</div>
-        ${(nhap.quaTang || []).map((g) => { const p = sp(g.id); if (!p) return ''; const pl = p.variants && p.variants.length ? p.variants : null; return `<div class="ct-qua">
+        ${(nhap.quaTang || []).map((g, gi) => { const p = sp(g.id); if (!p) return g.ten ? `<div class="ct-qua ct-qua--chu"><div class="ct-qua__h"><div class="ct-sp"><span class="ct-qua__ic">🎁</span><span>${esc(g.ten)} <small class="muted">· quà ghi chữ (không bán trên web)</small></span></div>
+            ${chiXem ? '' : `<label class="sw"><input type="checkbox" data-bat-qua-chu="${gi}" ${g.bat !== false ? 'checked' : ''}> <span>Bật</span></label><button class="icobtn" data-xoa-qua-chu="${gi}" title="Xoá quà">🗑</button>`}</div></div>` : ''; const pl = p.variants && p.variants.length ? p.variants : null; return `<div class="ct-qua">
           <div class="ct-qua__h"><div class="ct-sp"><img src="${anh(p)}" alt="" onerror="this.style.visibility='hidden'"><span>${esc(p.short || p.name)}</span></div>
             ${chiXem ? '' : `<button class="icobtn" data-xoa-qua="${esc(g.id)}" title="Xoá quà">🗑</button>`}</div>
           <div class="tbl-wrap"><table><thead><tr><th>Phân Loại</th><th class="num">Giá Bán Hiện Tại</th><th class="num">Giá quà tặng</th><th class="num">Số Lượng Hàng</th><th>Trạng thái</th></tr></thead><tbody>
@@ -185,7 +189,7 @@
     if (bac.some((b) => !(b.muc > 0))) loi.push(c.kieu === 'soLuong' ? 'Nhập số lượng mua cho mọi bậc' : 'Nhập số tiền tối thiểu cho mọi bậc');
     if (new Set(bac.map((b) => b.muc)).size !== bac.length) loi.push('Hai bậc không được trùng mức mua');
     if (!(c.sanPhamChinh || []).some((x) => x.bat !== false && sp(x.id))) loi.push('Thêm và bật ít nhất 1 sản phẩm chính');
-    const coQua = (c.quaTang || []).some((g) => { const p = sp(g.id); if (!p) return false; return p.variants && p.variants.length ? p.variants.some((v) => (g.bienThe || {})[v.label] !== false) : g.bat !== false; });
+    const coQua = (c.quaTang || []).some((g) => { const p = sp(g.id); if (!p) return !!g.ten && g.bat !== false; return p.variants && p.variants.length ? p.variants.some((v) => (g.bienThe || {})[v.label] !== false) : g.bat !== false; });
     if (!coQua) loi.push('Thêm và bật ít nhất 1 quà tặng');
     return loi;
   }
@@ -264,6 +268,30 @@
     const t = e.target;
     if (t.closest('[data-ct-huy]')) { nhap = null; goc = null; return; }
     if (t.id === 'ctDatLai') { loc = { q: '', tu: '', den: '' }; return A.veTrang(); }
+    /* Chương trình chạy liên tục (QUA_TANG cũ): kết thúc / bật lại / sao chép thành chương trình mới có thời hạn */
+    if (t.closest('[data-md-tat]')) {
+      if (!await A.hoi({ tieuDe: 'Kết thúc chương trình chạy liên tục?', noiDung: `Quà <b>${esc(QT().ten || 'mặc định')}</b> (đơn từ … / mua thùng) sẽ dừng tặng sau khi Xuất bản. Cấu hình vẫn giữ nguyên – bấm <b>Bật lại</b> khi cần.`, nutOk: 'Kết thúc' })) return;
+      QT().enabled = false; A.doiDuLieu(); A.veTrang(); return;
+    }
+    if (t.closest('[data-md-bat]')) { QT().enabled = true; A.doiDuLieu(); A.veTrang(); return; }
+    const mdSao = t.closest('[data-md-sao]'); if (mdSao) {
+      const q = QT(), now = Date.now() + 15 * 6e4, l = q.loc || {}, tk = String(q.tuKhoaThung || 'thùng').toLowerCase();
+      const quaTang = (q.vi || []).map((v) => ({ ten: v, gia: 0 }));
+      const co = { id: 'ct' + Date.now().toString(36), batDau: isoGio(now), ketThuc: isoGio(now + 30 * 864e5), tenQua: q.ten || 'quà tặng', quaTang, tat: false, moi: true };
+      if (mdSao.dataset.mdSao === 'thung') {
+        const bac = (q.thung || []).map((x) => ({ muc: Number(x.tu) || 1, soQua: Number(x.soQua) || 1 }));
+        const sanPhamChinh = ds().filter((p) => !p.an && !p.isCombo && (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand))
+          .map((p) => ({ id: p.id, bat: true, heSo: Object.fromEntries((p.variants || []).map((v) => [v.label, String(v.label).toLowerCase().includes(tk) ? 1 : 0])) }));
+        nhap = { ...co, ten: `Mua thùng tặng ${q.ten || 'quà'} (bản sao)`, kieu: 'soLuong', donVi: 'thùng', bac, muc: bac[0].muc, soQua: bac[0].soQua, sanPhamChinh };
+      } else {
+        const d = q.donTu || {};
+        nhap = { ...co, ten: `Đơn từ ${fmt(d.muc)} tặng ${q.ten || 'quà'} (bản sao)`, kieu: 'tien', bac: [{ muc: Number(d.muc) || 0, soQua: Number(d.soQua) || 1 }], muc: Number(d.muc) || 0, soQua: Number(d.soQua) || 1,
+          sanPhamChinh: ds().filter((p) => !p.an && !p.isCombo).map((p) => ({ id: p.id, bat: true, heSo: {} })),
+          moTa: d.chiKhachMoi ? 'Bản gốc chỉ tặng khách chưa có hạng giảm giá – chương trình mới áp cho mọi khách, sửa lại nếu cần.' : '' };
+      }
+      goc = null; chonCT = new Set();
+      A.toast('Đã tạo bản sao – kiểm tra rồi bấm Xác nhận', 'ok'); A.di('#/qua-tang/moi'); return;
+    }
     const sao = t.closest('[data-ct-sao]'); if (sao) {
       const c = QT().chuongTrinh.find((x) => x.id === sao.dataset.ctSao); if (!c) return;
       const now = Date.now() + 15 * 6e4, dai = Math.max(36e5, Date.parse(c.ketThuc) - Date.parse(c.batDau));
@@ -283,6 +311,8 @@
     if (!nhap) return;
     const ch = t.closest('[data-chon]'); if (ch) { thuThongTin(); moChon(ch.dataset.chon); return; }
     const xc = t.closest('[data-xoa-chinh]'); if (xc) { thuThongTin(); nhap.sanPhamChinh = nhap.sanPhamChinh.filter((x) => x.id !== xc.dataset.xoaChinh); chonCT.delete(xc.dataset.xoaChinh); A.veTrang(); return; }
+    const xqc = t.closest('[data-xoa-qua-chu]'); if (xqc) { thuThongTin(); nhap.quaTang.splice(Number(xqc.dataset.xoaQuaChu), 1); A.veTrang(); return; }
+    const bqc = t.closest('[data-bat-qua-chu]'); if (bqc) { const g = nhap.quaTang[Number(bqc.dataset.batQuaChu)]; if (g) g.bat = bqc.checked; return; }
     const xq = t.closest('[data-xoa-qua]'); if (xq) { thuThongTin(); nhap.quaTang = nhap.quaTang.filter((x) => x.id !== xq.dataset.xoaQua); A.veTrang(); return; }
     const lo = t.closest('[data-loat]'); if (lo && chonCT.size) {
       thuThongTin();
