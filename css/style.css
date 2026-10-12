@@ -2016,3 +2016,25 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .tier-gon__xem[open] summary { margin-bottom: 8px; }
 @media (max-width: 640px) { .tier-gon .tier-hero { grid-template-columns: 1fr; } .tier-gon .memcard { max-width: none; } }
 @media (max-width: 899px) { .acc-dv > #ddAcc { order: -1; } }   /* điện thoại: điểm danh lên trước ví voucher */
+
+/* ===== Cụm tiện ích trang chủ (mã giảm giá · cam kết · điểm danh): 1 tấm nền chung, thẻ trắng đồng bộ ===== */
+.dv-cum { --cum-vien: #F6D3DE; --cum-bong: 0 1px 2px rgba(142, 30, 74, .05), 0 6px 18px rgba(142, 30, 74, .06);
+  background: linear-gradient(160deg, #FFF3F7 0%, #FFF8F3 100%); border: 1px solid #FBE3EA; border-radius: 22px; padding: 14px; }
+.dv-cum .vstrip, .dv-cum .ddm, .dv-cum .trust__item { background: #fff; border: 1px solid var(--cum-vien); border-radius: 16px; box-shadow: var(--cum-bong); }
+/* Mã giảm giá: thẻ trắng, đầu khối có ô biểu tượng như các thẻ khác */
+.dv-cum .vstrip__ic { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; background: #FFF1F5; font-size: 19px; }
+.dv-cum .vstrip .vc { box-shadow: none; border: 1px solid #F3E3E9; }
+/* Ô cam kết: gọn, căn trái, biểu tượng trong ô màu riêng để dễ quét */
+.dv-cum .trust__item { padding: 14px 16px; gap: 14px; align-items: center; }
+.dv-cum .trust__item b { font-size: 14px; line-height: 1.35; }
+.dv-cum .trust__item small { font-size: 12.5px; line-height: 1.45; margin-top: 2px; }
+.dv-cum .trust__icon { width: 44px; height: 44px; border-radius: 14px; }
+.dv-cum .trust__item:nth-child(2) .trust__icon { background: #FFF1F5; color: var(--primary); }
+.dv-cum .trust__item:nth-child(3) .trust__icon { background: #FFF6DC; color: #C98A00; }
+.dv-cum .trust__item:nth-child(4) .trust__icon { background: #EFEAFF; color: #6B4FD8; }
+/* Ô gọi chuyên gia: điểm nhấn duy nhất của hàng cam kết (bấm được) */
+.dv-cum .trust__item--cta { background: linear-gradient(150deg, #E6F7F4, #F4FBFA); border-color: #9ADBD0; }
+.dv-cum .trust__item--cta:hover { border-color: var(--teal); }
+/* Lịch điểm danh: viền đồng bộ, đầu thẻ có dải màu thương hiệu mảnh */
+.dv-cum .ddm { border-top: 4px solid var(--dd); }
+@media (max-width: 899px) { .dv-cum { padding: 10px; border-radius: 18px; } .dv-cum > .trust { margin: 0 -10px; padding: 0 10px; } .dv-cum .trust__item { box-shadow: none; } }

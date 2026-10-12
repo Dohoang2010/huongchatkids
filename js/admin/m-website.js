@@ -15,6 +15,8 @@
           <button class="icobtn" data-bn-len="${i}" title="Lên trên" ${i === 0 ? 'disabled' : ''}>↑</button>
           <button class="icobtn" data-bn-xuong="${i}" title="Xuống dưới" ${i === bs.length - 1 ? 'disabled' : ''}>↓</button>
           <button class="btn btn--red btn--sm" data-xoa-bn="${i}">Xoá</button></div>
+        ${b.anh ? `<div class="bn-anh"><figure><img src="${esc(b.anh.pc)}" alt=""><figcaption>Máy tính</figcaption></figure><figure><img src="${esc(b.anh.mb)}" alt=""><figcaption>Điện thoại</figcaption></figure></div>
+        <div class="row row-2"><label>Link khi bấm<input data-f="link" value="${esc(b.link || '')}"></label><label>Mô tả ảnh (cho người khiếm thị / Google)<input data-f="alt" value="${esc(b.alt || '')}"></label></div>` : `
         <div class="row row-2">
           <label>Tiêu đề <span class="muted">(xuống dòng bằng Enter)</span><textarea data-f="title" rows="2">${esc(b.title || '')}</textarea></label>
           <label>Mô tả<textarea data-f="sub" rows="2">${esc(b.sub || '')}</textarea></label>
@@ -27,13 +29,13 @@
         </div>
         <div class="imgrow"><img src="${esc(b.image || '')}" alt="" onerror="this.style.opacity=.25">
           <button class="btn btn--ghost btn--sm" data-anh-bn="${i}">Đổi ảnh</button>
-          <span class="muted">${esc(b.image || 'chưa có ảnh')}</span></div>
+          <span class="muted">${esc(b.image || 'chưa có ảnh')}</span></div>`}
       </div>`).join('') || A.trong('Chưa có banner nào', 'Bấm “Thêm banner” để tạo banner đầu tiên.', '🖼️')}</div>`;
   }
   function thuBn() {
     $$('#bnList [data-bn]').forEach((el) => {
       const b = A.D.BANNERS[Number(el.dataset.bn)]; if (!b) return;
-      ['title', 'sub', 'cta', 'link', 'badge', 'theme'].forEach((f) => { const i = $(`[data-f="${f}"]`, el); if (i) b[f] = i.value; });
+      (b.anh ? ['link', 'alt'] : ['title', 'sub', 'cta', 'link', 'badge', 'theme']).forEach((f) => { const i = $(`[data-f="${f}"]`, el); if (i) b[f] = i.value; });
     });
   }
 

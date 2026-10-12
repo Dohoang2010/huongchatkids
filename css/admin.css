@@ -681,3 +681,6 @@ td.nowrap{white-space:nowrap}
 .tag--do{background:#E53935;color:#fff}
 .tag--vang{background:#FFC107;color:#3A2A00}
 .ct-qua--chu .ct-qua__h{margin:0}.ct-qua__ic{font-size:20px;width:36px;text-align:center}.ct-qua--chu .sw{margin-left:auto;margin-right:8px}
+
+/* Banner dạng ảnh (Quản trị › Banner) */
+.bn-anh{display:flex;gap:12px;margin:8px 0 12px}.bn-anh figure{margin:0}.bn-anh img{height:120px;border-radius:10px;border:1px solid var(--line);display:block}.bn-anh figcaption{font-size:12px;color:var(--muted);margin-top:4px}
