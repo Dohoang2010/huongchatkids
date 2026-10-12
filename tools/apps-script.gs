@@ -455,7 +455,7 @@ var H_DG = ['Thời gian', 'Mã GD', 'Điện thoại', 'Loại', 'Điểm', 'S�
             'Nội dung', 'Người tạo', 'Khoá'];
 var SHEET_GC = 'Điểm - Giữ chỗ';
 var H_GC = ['Mã giữ chỗ', 'Điện thoại', 'Mã đơn', 'Điểm', 'Trạng thái', 'Tạo lúc', 'Xử lý lúc', 'Người GT', 'Giảm GT',
-            'Giá trị tính GT', '% giảm', '% thưởng', 'Tổng đơn', 'Ghi chú'];
+            'Giá trị tính GT', '% giảm', '% thưởng', 'Tổng đơn', 'Ghi chú', 'Voucher'];
 var GT = { LIEN_KET: 'Đã liên kết', CHO_GIAO: 'Chờ giao', DA_THUONG: 'Đã thưởng', THU_HOI: 'Đã thu hồi' };
 var GC = { GIU: 'Đang giữ', DUNG: 'Đã dùng', TRA: 'Đã trả lại', HOAN: 'Đã hoàn điểm' };
 var GT_MAC_DINH = {
@@ -472,7 +472,7 @@ var GT_MAC_DINH = {
 
 function sheetGT() { return sheetPhu(SHEET_GT, H_GT); }
 function sheetDG() { return sheetPhu(SHEET_DG, H_DG); }
-function sheetGC() { return sheetPhu(SHEET_GC, H_GC); }
+function sheetGC() { var s = sheetPhu(SHEET_GC, H_GC); if (s.getLastColumn() < H_GC.length) s.getRange(1, 1, 1, H_GC.length).setValues([H_GC]); return s; }
 function anSdt(s) { s = chuanSdt(s); return s.length >= 9 ? s.slice(0, 2) + '****' + s.slice(-2) : s; }
 function soNguyen(v) { var n = Math.round(Number(v) || 0); return isFinite(n) ? n : 0; }
 
@@ -614,6 +614,8 @@ function apiGtGiuCho(p) {
   if (!/^[A-Z0-9-]{6,30}$/i.test(maDon)) return { ok: false, code: 'BAD_ORDER', msg: 'Mã đơn không hợp lệ' };
   var giaTri = Math.max(0, soNguyen(p.giaTri)), giamKhac = Math.max(0, soNguyen(p.giamKhac)), tongDon = Math.max(0, soNguyen(p.tongDon));
   var muonDiem = Math.max(0, soNguyen(p.diem)), dungGT = String(p.dungGT) === '1';
+  var maVc = String(p.maVc || '').trim().toUpperCase().slice(0, 24), tienVc = Math.max(0, soNguyen(p.tienVc));
+  if (maVc && !/^VC[A-Z0-9]{6,20}$/.test(maVc)) return { ok: false, code: 'VOUCHER_NOT_FOUND', msg: 'Mã voucher không hợp lệ' };
   var ph = phienKhach(p.token); var cuaToi = ph && ph.sdt === sdt;
   var ref = '';
   if (dungGT) {   // đọc CRM bên ngoài khoá (chậm), trong khoá chỉ kiểm tra lại dữ liệu sheet
@@ -624,6 +626,7 @@ function apiGtGiuCho(p) {
     if (giaTri < (Number(cfg.donToiThieu) || 0)) return gtLoi('MIN_ORDER', 'Ưu đãi giới thiệu áp dụng cho đơn từ ' + tien(cfg.donToiThieu) + '.');
   }
   if (muonDiem > 0 && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH', msg: 'Mẹ xác thực mã OTP (hoặc đăng nhập bằng mật khẩu riêng) để dùng điểm nhé.' };
+  if (maVc && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH_VC', msg: 'Mẹ đăng nhập (mã OTP hoặc mật khẩu riêng) đúng số điện thoại đặt hàng để dùng voucher nhé.' };
   return voiKhoa(function () {
     var gcS = sheetGC(); var gc = docGiuCho(); var maGiu = '';
     /* Đơn này đã giữ chỗ trước đó (khách bấm lại) → trả chỗ cũ rồi tính lại */
@@ -632,6 +635,7 @@ function apiGtGiuCho(p) {
       if (gc[i][4] === GC.DUNG || gc[i][4] === GC.HOAN) return { ok: false, code: 'ORDER_DONE', msg: 'Đơn này đã được xử lý' };
       if (gc[i][4] !== GC.GIU) continue;
       maGiu = String(gc[i][0]); gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.TRA, gc[i][5], new Date()]]); gc[i][4] = GC.TRA;
+      if (gc[i][14]) vcTraLai_(gc[i][14], maDon, 'Khách đặt lại đơn ' + maDon);
     }
     /* Quan hệ giới thiệu đang gắn với đơn này (lần bấm trước) → trả về "Đã liên kết", tính lại bên dưới */
     var cu = gtTimDong(sdt);
@@ -642,23 +646,27 @@ function apiGtGiuCho(p) {
       if (!x.r) gtLienKet(sdt, ref, 'Thanh toán');
       phanTram = Number(cfg.giam) || 0; giamGT = Math.round(giaTri * phanTram / 100);
     }
+    var giamVc = 0;
+    if (maVc) { var xv = vcXet_(docVC_(), maVc, sdt, maDon, Math.max(0, giaTri - giamGT), tienVc, Date.now()); if (!xv.ok) return xv; giamVc = xv.giam; }
     var gtd = Number(cfg.giaTriDiem) || 1, diem = 0;
     if (muonDiem > 0) {
       var vi = viDiem(sdt, docSoDiem(), gc);
-      var toiDa = Math.floor(Math.max(0, giaTri - giamGT - giamKhac) / gtd);
+      var toiDa = Math.floor(Math.max(0, giaTri - giamGT - giamKhac - giamVc) / gtd);
       diem = Math.max(0, Math.min(muonDiem, vi.khaDung, toiDa));
     }
-    if (!giamGT && !diem) return { ok: true, maGiu: '', giamGT: 0, phanTram: 0, diem: 0, giamDiem: 0 };
+    if (!giamGT && !diem && !giamVc) return { ok: true, maGiu: '', giamGT: 0, phanTram: 0, diem: 0, giamDiem: 0, giamVc: 0, maVc: '' };
     maGiu = maGiu || ('GC' + Utilities.getUuid().replace(/-/g, '').slice(0, 10).toUpperCase());
     gcS.appendRow([maGiu, "'" + sdt, maDon, diem, GC.GIU, new Date(), '', dungGT ? "'" + ref : '', giamGT, giaTri, phanTram,
-      dungGT ? Number(cfg.thuong) || 0 : '', tongDon, '']);
+      dungGT ? Number(cfg.thuong) || 0 : '', tongDon, '', giamVc ? maVc : '']);
+    if (giamVc) vcDoi_(maVc, VC.GIU, maDon, maGiu, 'RESERVED', sdt, 'Giữ cho đơn ' + maDon);
     if (dungGT) {
       var rr = gtTimDong(sdt);
       sheetGT().getRange(rr.dong, 5, 1, 9).setValues([[GT.CHO_GIAO, maDon, maGiu, giamGT, phanTram, Number(cfg.thuong) || 0, giaTri, 0, new Date()]]);
       ghiNhatKy('Giới thiệu', sdt, 'Dùng ưu đãi giới thiệu ' + phanTram + '% (−' + tien(giamGT) + ') cho đơn ' + maDon + ', người giới thiệu ' + ref);
     }
     if (diem) ghiNhatKy('Điểm', sdt, 'Giữ ' + diem + ' điểm cho đơn ' + maDon + ' (' + maGiu + ')');
-    return { ok: true, maGiu: maGiu, giamGT: giamGT, phanTram: phanTram, diem: diem, giamDiem: diem * gtd };
+    if (giamVc) ghiNhatKy('Voucher', sdt, 'Giữ voucher ' + maVc + ' (−' + tien(giamVc) + ') cho đơn ' + maDon + ' (' + maGiu + ')');
+    return { ok: true, maGiu: maGiu, giamGT: giamGT, phanTram: phanTram, diem: diem, giamDiem: diem * gtd, giamVc: giamVc, maVc: giamVc ? maVc : '' };
   });
 }
 /* Ví điểm của khách đang đăng nhập */
@@ -721,13 +729,15 @@ function xuLyDiemGT() {
           var w = soNguyen(r[3]) ? ghiDiem(sdt, 'SPEND', -soNguyen(r[3]), 'ORDER', r[2], 'Dùng điểm cho đơn ' + r[2], 'hệ thống', 'SPEND:' + r[0]) : { ok: true };
           if (!w.ok) { kq.loi.push(r[0] + ': ' + w.msg); gcS.getRange(i + 2, 14).setValue('Lỗi trừ điểm: ' + w.msg); continue; }
           gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.DUNG, r[5], new Date()]]); kq.daDung++;
+          if (r[14]) vcDoi_(r[14], VC.DUNG, r[2], r[0], 'USED', 'hệ thống', 'Đơn ' + r[2] + ' đã lên CRM');
         } else if (huy || (!d && now - new Date(r[5]).getTime() > (Number(cfg.giuChoGio) || 72) * 3600e3)) {
           gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.TRA, r[5], new Date()]]);
           gcS.getRange(i + 2, 14).setValue(huy ? 'Đơn huỷ trước khi xử lý' : 'Quá hạn, CRM chưa thấy đơn'); kq.traLai++;
+          if (r[14]) vcTraLai_(r[14], r[2], huy ? 'Đơn ' + r[2] + ' huỷ' : 'Quá hạn giữ chỗ, CRM chưa thấy đơn ' + r[2]);
         }
-      } else if (r[4] === GC.DUNG && huy && soNguyen(r[3])) {
-        var h = ghiDiem(sdt, 'REFUND', soNguyen(r[3]), 'ORDER', r[2], 'Hoàn điểm do đơn ' + r[2] + ' ' + d.tt.toLowerCase(), 'hệ thống', 'REFUND:' + r[0]);
-        if (h.ok) { gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.HOAN, r[5], new Date()]]); kq.hoanDiem++; }
+      } else if (r[4] === GC.DUNG && huy && (soNguyen(r[3]) || r[14])) {
+        var h = soNguyen(r[3]) ? ghiDiem(sdt, 'REFUND', soNguyen(r[3]), 'ORDER', r[2], 'Hoàn điểm do đơn ' + r[2] + ' ' + d.tt.toLowerCase(), 'hệ thống', 'REFUND:' + r[0]) : { ok: true };
+        if (h.ok) { gcS.getRange(i + 2, 5, 1, 3).setValues([[GC.HOAN, r[5], new Date()]]); kq.hoanDiem++; if (r[14]) vcTraLai_(r[14], r[2], 'Đơn ' + r[2] + ' ' + d.tt.toLowerCase()); }
       }
     }
     var gtS = sheetGT(); gt = gtS.getLastRow() < 2 ? [] : gtS.getRange(2, 1, gtS.getLastRow() - 1, H_GT.length).getValues();
@@ -771,6 +781,306 @@ function xuLyDiemGT() {
       }
     }
     return kq;
+  });
+}
+
+/* ===================== ĐIỂM DANH HÀNG NGÀY + VÍ VOUCHER KHÁCH =====================
+   - Mỗi ngày (giờ Việt Nam) khách đăng nhập thành công / bấm Điểm danh lần đầu → 1 bản ghi "Điểm danh" + cộng điểm qua sổ điểm.
+   - Ngày đôi (ngày = tháng: 01/01 … 12/12) → 1 voucher DOUBLE_DATE. Chuỗi liên tiếp trong tháng đủ 10 / 20 / 30 ngày
+     → voucher STREAK_10 / 20 / 30 (mỗi mốc 1 lần / tháng, cộng dồn, sang tháng tính lại).
+   - Chống trùng: chạy trong voiKhoa + khoá duy nhất trên từng dòng (DD:sdt:ngày, CHECKIN:sdt:ngày ở sổ điểm,
+     <NGUỒN>:sdt:<kỳ> ở sổ voucher). Gọi lại bao nhiêu lần cũng chỉ cấp đúng 1 lần, thiếu thì tự cấp bù đúng phần thiếu.
+   - Voucher dùng ở thanh toán qua giữ chỗ (gtGiuCho): AVAILABLE → RESERVED → USED; đơn huỷ / quá hạn → trả lại AVAILABLE
+     nếu còn hạn; REVOKED / EXPIRED không bao giờ tự quay lại. */
+var SHEET_DDANH = 'Điểm danh';
+var H_DDANH = ['Ngày', 'Điện thoại', 'Thời gian', 'Nguồn', 'Chuỗi', 'Điểm', 'Mã GD điểm', 'Phần thưởng', 'Khoá'];
+var SHEET_VC = 'Voucher khách';
+var H_VC = ['Mã voucher', 'Điện thoại', 'Nguồn', 'Kỳ', 'Tên', 'Kiểu', 'Giá trị', 'Đơn tối thiểu', 'Phạm vi', 'Bắt đầu', 'Hết hạn',
+            'Trạng thái', 'Mã đơn', 'Mã giữ chỗ', 'Cấp lúc', 'Cập nhật', 'Khoá', 'Ghi chú'];
+var SHEET_VCLS = 'Voucher - Lịch sử';
+var H_VCLS = ['Thời gian', 'Mã voucher', 'Điện thoại', 'Sự kiện', 'Mã đơn', 'Người làm', 'Ghi chú'];
+var VC = { CO: 'AVAILABLE', GIU: 'RESERVED', DUNG: 'USED', HET: 'EXPIRED', THU: 'REVOKED' };
+var NGUON_VC = { DOUBLE_DATE: 'Ngày đôi', STREAK_10: 'Chuỗi 10 ngày', STREAK_20: 'Chuỗi 20 ngày', STREAK_30: 'Chuỗi 30 ngày' };
+var DD_MAC_DINH = {
+  bat: true,                 // bật toàn bộ chương trình
+  tuDong: true,              // tự điểm danh khi đăng nhập thành công
+  ten: 'Điểm danh mỗi ngày – nhận quà liền tay',
+  moTa: 'Đăng nhập mỗi ngày nhận điểm, ngày đôi và chuỗi ngày liên tiếp nhận voucher.',
+  icon: '📅', mau: '#F0537A',
+  diemNgay: 1000,            // điểm mỗi ngày đăng nhập hợp lệ
+  ngayDoi: { bat: true, giaTri: 30000 },
+  moc: { m10: { bat: true, giaTri: 10000 }, m20: { bat: true, giaTri: 20000 }, m30: { bat: true, giaTri: 30000 } },
+  hanNgay: 30,               // voucher dùng được bao nhiêu ngày kể từ lúc nhận
+  donToiThieu: 200000,       // đơn tối thiểu để dùng voucher
+  phamVi: { loai: 'tatca', ds: [] },   // tatca | danhmuc | sanpham (ds = key danh mục / mã sản phẩm)
+  batDau: '', ketThuc: '',   // thời gian hiệu lực chương trình (yyyy-MM-dd, trống = không giới hạn)
+  ketHopHang: false,         // voucher có cộng dồn với ưu đãi hạng thành viên không (mặc định: dùng mức có lợi hơn)
+  thongBao: 'Điểm danh thành công! +{diem} điểm{voucher}',
+  theLe: 'Mỗi ngày đăng nhập (hoặc bấm Điểm danh) lần đầu nhận {diem} điểm.\nNgày đôi (01/01, 02/02 … 12/12) nhận voucher {ngayDoi}.\nĐăng nhập liên tiếp trong tháng đủ 10 / 20 / 30 ngày nhận voucher {m10} / {m20} / {m30}; bỏ lỡ 1 ngày chuỗi tính lại, sang tháng mới tính lại từ đầu.\nVoucher dùng cho đơn từ {donToiThieu}, hạn {hanNgay} ngày, mỗi đơn 1 voucher.'
+};
+function sheetDDanh_() { return sheetPhu(SHEET_DDANH, H_DDANH); }
+function sheetVC() { return sheetPhu(SHEET_VC, H_VC); }
+function sheetVCLS() { return sheetPhu(SHEET_VCLS, H_VCLS); }
+/* Thêm cột "Voucher" cho sheet Giữ chỗ (migration an toàn: chỉ ghi thêm tiêu đề, không đụng dữ liệu cũ) */
+
+function ddCauHinh() {
+  var c = {}; try { c = JSON.parse(PropertiesService.getScriptProperties().getProperty('DD_CAU_HINH') || '{}'); } catch (e) { c = {}; }
+  var kq = JSON.parse(JSON.stringify(DD_MAC_DINH));
+  for (var k in kq) if (c[k] != null) kq[k] = (typeof kq[k] === 'object' && !Array.isArray(kq[k])) ? gopSau_(kq[k], c[k]) : c[k];
+  return kq;
+}
+function gopSau_(a, b) { var o = JSON.parse(JSON.stringify(a)); for (var k in b) o[k] = (o[k] && typeof o[k] === 'object' && !Array.isArray(o[k]) && typeof b[k] === 'object') ? gopSau_(o[k], b[k]) : b[k]; return o; }
+/* Ngày lịch theo giờ Việt Nam */
+var TZ_DD = 'Asia/Ho_Chi_Minh';
+function ngayDD_(t) { return Utilities.formatDate(new Date(t == null ? Date.now() : t), TZ_DD, 'yyyy-MM-dd'); }
+function congNgay_(ngay, n) { var d = new Date(ngay + 'T12:00:00+07:00'); return ngayDD_(d.getTime() + n * 864e5); }
+function laNgayDoi_(ngay) { return ngay.slice(5, 7) === ngay.slice(8, 10); }
+function trongChuongTrinh_(cfg, ngay) { return !!cfg.bat && !(cfg.batDau && ngay < cfg.batDau) && !(cfg.ketThuc && ngay > cfg.ketThuc); }
+function giaTriNguon_(cfg, nguon) {
+  if (nguon === 'DOUBLE_DATE') return cfg.ngayDoi && cfg.ngayDoi.bat ? soNguyen(cfg.ngayDoi.giaTri) : 0;
+  var m = (cfg.moc || {})['m' + nguon.replace('STREAK_', '')]; return m && m.bat ? soNguyen(m.giaTri) : 0;
+}
+
+function docDD_() { var s = sheetDDanh_(); var n = s.getLastRow(); return n < 2 ? [] : s.getRange(2, 1, n - 1, H_DDANH.length).getValues(); }
+function docVC_() { var s = sheetVC(); var n = s.getLastRow(); return n < 2 ? [] : s.getRange(2, 1, n - 1, H_VC.length).getValues(); }
+function ngayO_(v) { return v instanceof Date ? ngayDD_(v.getTime()) : String(v || '').slice(0, 10); }
+/* Các ngày đã điểm danh của 1 khách trong tháng (yyyy-MM) */
+function ngayDaDD_(dd, sdt, thang) { var m = {}; dd.forEach(function (r) { var ng = ngayO_(r[0]); if (chuanSdt(r[1]) === sdt && ng.slice(0, 7) === thang) m[ng] = r; }); return m; }
+/* Chuỗi liên tiếp kết thúc ở ngày `ngay` (chỉ trong cùng tháng) */
+function chuoiDen_(daDD, ngay) { var n = 0, d = ngay; while (daDD[d] && d.slice(0, 7) === ngay.slice(0, 7)) { n++; d = congNgay_(d, -1); } return n; }
+function chuoiDaiNhat_(daDD) { var ds = Object.keys(daDD).sort(), best = 0, cur = 0, truoc = ''; ds.forEach(function (d) { cur = truoc && congNgay_(truoc, 1) === d ? cur + 1 : 1; best = Math.max(best, cur); truoc = d; }); return best; }
+
+function vcLs_(ma, sdt, suKien, maDon, ai, ghiChu) { sheetVCLS().appendRow([new Date(Date.now()), ma, "'" + sdt, suKien, maDon || '', ai || 'hệ thống', ghiChu || '']); }
+function taoMaVc_() { return 'VC' + Utilities.getUuid().replace(/-/g, '').slice(0, 10).toUpperCase(); }
+/* Cấp 1 voucher (PHẢI gọi trong voiKhoa). Khoá trùng → trả voucher cũ, không cấp thêm. */
+function capVoucher_(sdt, nguon, ky, cfg, vcs) {
+  var khoa = nguon + ':' + sdt + ':' + ky;
+  vcs = vcs || docVC_();
+  for (var i = 0; i < vcs.length; i++) if (String(vcs[i][16]) === khoa) return { ok: true, trung: true, ma: String(vcs[i][0]) };
+  var giaTri = giaTriNguon_(cfg, nguon); if (!giaTri) return { ok: true, tat: true };
+  var now = Date.now(), het = new Date(now + Math.max(1, soNguyen(cfg.hanNgay) || 30) * 864e5);
+  var ma = taoMaVc_(), ten = 'Giảm ' + giaTri.toLocaleString('vi-VN') + 'đ – ' + NGUON_VC[nguon];
+  var dong = [ma, "'" + sdt, nguon, "'" + ky, ten, 'fixed', giaTri, Math.max(0, soNguyen(cfg.donToiThieu)), JSON.stringify(cfg.phamVi || { loai: 'tatca', ds: [] }),
+    new Date(now), het, VC.CO, '', '', new Date(now), new Date(now), khoa, ''];
+  sheetVC().appendRow(dong); vcs.push(dong.map(function (x) { return typeof x === 'string' && x.charAt(0) === "'" ? x.slice(1) : x; }));
+  vcLs_(ma, sdt, 'ISSUED', '', 'hệ thống', NGUON_VC[nguon] + ' ' + ky);
+  return { ok: true, ma: ma, nguon: nguon, ten: ten, giaTri: giaTri, hetHan: ngayVN(het) };
+}
+
+/* Điểm danh 1 khách cho HÔM NAY (ngày do máy chủ tự xác định). nguon: 'dang-nhap' | 'nut' */
+function diemDanh_(sdt, nguon) {
+  var cfg = ddCauHinh(); var ngay = ngayDD_();
+  if (!sdtHopLe(sdt)) return { ok: false, code: 'BAD_PHONE', msg: 'Số điện thoại chưa đúng' };
+  if (!trongChuongTrinh_(cfg, ngay)) return { ok: false, code: 'DISABLED', msg: 'Chương trình điểm danh đang tạm dừng' };
+  if (khachBiKhoa(sdt)) return { ok: false, code: 'BLOCKED', msg: 'Tài khoản đang bị khoá' };
+  return voiKhoa(function () {
+    var dd = docDD_(), thang = ngay.slice(0, 7), daDD = ngayDaDD_(dd, sdt, thang), moi = !daDD[ngay];
+    var chuoi = chuoiDen_(daDD, congNgay_(ngay, -1)) + 1;
+    if (moi) {
+      sheetDDanh_().appendRow(["'" + ngay, "'" + sdt, new Date(Date.now()), nguon === 'nut' ? 'Bấm điểm danh' : 'Đăng nhập', chuoi, 0, '', '', 'DD:' + sdt + ':' + ngay]);
+      daDD[ngay] = true;
+    } else chuoi = chuoiDen_(daDD, ngay);
+    /* Phần thưởng: luôn chạy theo khoá → lần đầu cấp, lần sau (retry) chỉ cấp bù phần còn thiếu */
+    var diem = Math.max(0, soNguyen(cfg.diemNgay)), gd = { ok: true };
+    if (diem) gd = ghiDiem(sdt, 'EARN', diem, 'CHECKIN', "'" + ngay, 'Điểm danh ngày ' + ngay.split('-').reverse().join('/'), 'hệ thống', 'CHECKIN:' + sdt + ':' + ngay);
+    var vcs = docVC_(), nhan = [];
+    var cap = function (src, ky) { var r = capVoucher_(sdt, src, ky, cfg, vcs); if (r.ma && !r.trung) nhan.push(r); return r; };
+    if (laNgayDoi_(ngay)) cap('DOUBLE_DATE', ngay);
+    [10, 20, 30].forEach(function (m) { if (chuoi >= m) cap('STREAK_' + m, thang); });
+    if (moi) {   // ghi kết quả vào dòng điểm danh vừa tạo
+      var s = sheetDDanh_(), n = s.getLastRow();
+      s.getRange(n, 6, 1, 3).setValues([[gd.ok && !gd.trung && diem ? diem : 0, gd.ma || '', nhan.map(function (x) { return x.nguon + ' ' + x.ma; }).join(', ')]]);
+      ghiNhatKy('Điểm danh', sdt, 'Điểm danh ' + ngay + ' (' + (nguon === 'nut' ? 'bấm nút' : 'đăng nhập') + '), chuỗi ' + chuoi + ' ngày, +' + diem + ' điểm' + (nhan.length ? ', voucher: ' + nhan.map(function (x) { return x.nguon; }).join(', ') : ''));
+    }
+    return { ok: true, moi: moi, daDiemDanh: !moi, ngay: ngay, chuoi: chuoi, diem: moi && gd.ok && !gd.trung ? diem : 0, voucher: nhan,
+      soDu: viDiem(sdt, docSoDiem(), []).soDu, thongBao: String(cfg.thongBao || '') };
+  });
+}
+/* Gọi sau khi đăng nhập thành công (mật khẩu / OTP). Lỗi điểm danh KHÔNG làm hỏng đăng nhập. */
+function ddSauDangNhap_(sdt) {
+  try { var cfg = ddCauHinh(); if (!cfg.bat || !cfg.tuDong) return null; return diemDanh_(sdt, 'dang-nhap'); }
+  catch (e) { Logger.log('Điểm danh khi đăng nhập lỗi: ' + e); return null; }
+}
+
+/* Trạng thái voucher hiển thị (hết hạn tính theo giờ hiện tại, kể cả khi nền chưa kịp ghi EXPIRED) */
+function ttVc_(r, now) { var tt = String(r[11]); if (tt === VC.CO && new Date(r[10]).getTime() <= now) return VC.HET; return tt; }
+function vcRa_(r, now) {
+  var pv = {}; try { pv = JSON.parse(r[8] || '{}'); } catch (e) { pv = {}; }
+  var het = new Date(r[10]).getTime();
+  return { ma: String(r[0]), nguon: String(r[2]), nguonTen: NGUON_VC[r[2]] || String(r[2]), ky: String(r[3]), ten: String(r[4]), kieu: String(r[5]),
+    giaTri: soNguyen(r[6]), donToiThieu: soNguyen(r[7]), phamVi: pv, batDau: new Date(r[9]).toISOString(), hetHan: new Date(r[10]).toISOString(),
+    trangThai: ttVc_(r, now), maDon: String(r[12] || ''), capLuc: ngayVN(r[14]), sapHet: ttVc_(r, now) === VC.CO && het - now < 3 * 864e5 };
+}
+function cauHinhCongKhai_(cfg) {
+  return { bat: !!cfg.bat, tuDong: !!cfg.tuDong, ten: cfg.ten, moTa: cfg.moTa, icon: cfg.icon, mau: cfg.mau, diemNgay: soNguyen(cfg.diemNgay),
+    ngayDoi: giaTriNguon_(cfg, 'DOUBLE_DATE'), m10: giaTriNguon_(cfg, 'STREAK_10'), m20: giaTriNguon_(cfg, 'STREAK_20'), m30: giaTriNguon_(cfg, 'STREAK_30'),
+    hanNgay: soNguyen(cfg.hanNgay), donToiThieu: soNguyen(cfg.donToiThieu), phamVi: cfg.phamVi, batDau: cfg.batDau, ketThuc: cfg.ketThuc,
+    ketHopHang: !!cfg.ketHopHang, thongBao: cfg.thongBao, theLe: cfg.theLe, giaTriDiem: Number(gtCauHinh().giaTriDiem) || 1 };
+}
+
+/* ===================== API KHÁCH ===================== */
+function apiDdCauHinh() { return { ok: true, cauHinh: cauHinhCongKhai_(ddCauHinh()), homNay: ngayDD_() }; }
+/* Tổng quan trang điểm danh: p.thang = 'yyyy-MM' (tuỳ chọn, mặc định tháng này; không cho xem tháng tương lai) */
+function apiDdTongQuan(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var cfg = ddCauHinh(), homNay = ngayDD_(), thangNay = homNay.slice(0, 7);
+  var thang = /^\d{4}-\d{2}$/.test(String(p.thang || '')) && String(p.thang) <= thangNay ? String(p.thang) : thangNay;
+  var dd = docDD_(), daDD = ngayDaDD_(dd, ph.sdt, thang);
+  var chuoi = thang === thangNay ? (daDD[homNay] ? chuoiDen_(daDD, homNay) : chuoiDen_(daDD, congNgay_(homNay, -1))) : 0;
+  var vcs = docVC_(), now = Date.now(), daNhan = [];
+  vcs.forEach(function (r) { if (chuanSdt(r[1]) === ph.sdt && (String(r[3]).slice(0, 7) === thang)) daNhan.push(vcRa_(r, now)); });
+  var lich = Object.keys(daDD).sort().map(function (d) { var r = daDD[d]; return { ngay: d, gio: r[2] ? Utilities.formatDate(new Date(r[2]), TZ_DD, 'HH:mm') : '', nguon: String(r[3]), chuoi: soNguyen(r[4]), diem: soNguyen(r[5]), thuong: String(r[7] || '') }; });
+  var mocDaNhan = {}; daNhan.forEach(function (v) { mocDaNhan[v.nguon] = true; });
+  var sapDat = [10, 20, 30].filter(function (m) { return !mocDaNhan['STREAK_' + m] && giaTriNguon_(cfg, 'STREAK_' + m); })
+    .map(function (m) { return { moc: m, giaTri: giaTriNguon_(cfg, 'STREAK_' + m), conLai: Math.max(0, m - chuoi) }; });
+  var vi = viDiem(ph.sdt, docSoDiem(), docGiuCho());
+  return { ok: true, homNay: homNay, thang: thang, cauHinh: cauHinhCongKhai_(cfg), daDiemDanhHomNay: !!daDD[homNay] && thang === thangNay,
+    chuoi: chuoi, chuoiDaiNhat: chuoiDaiNhat_(daDD), soNgay: lich.length, lich: lich, daNhan: daNhan, sapDat: sapDat,
+    diem: { soDu: vi.soDu, khaDung: vi.khaDung }, trongChuongTrinh: trongChuongTrinh_(cfg, homNay) };
+}
+function apiDdDiemDanh(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  if (!demGioiHan('dd_' + ph.sdt, 20, 600)) return { ok: false, code: 'RATE_LIMIT', msg: 'Mẹ thao tác nhanh quá, thử lại sau ít phút nhé' };
+  return diemDanh_(ph.sdt, 'nut');
+}
+/* Ví voucher của khách đang đăng nhập (chỉ voucher của chính mình) */
+function apiVcCuaToi(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var now = Date.now(), ds = [];
+  docVC_().forEach(function (r) { if (chuanSdt(r[1]) === ph.sdt) ds.push(vcRa_(r, now)); });
+  ds.reverse();
+  var dem = { AVAILABLE: 0, RESERVED: 0, USED: 0, EXPIRED: 0, REVOKED: 0 }; ds.forEach(function (v) { dem[v.trangThai] = (dem[v.trangThai] || 0) + 1; });
+  return { ok: true, ds: ds, dem: dem, sapHet: ds.filter(function (v) { return v.sapHet; }).length, dungDuoc: ph.manh, cauHinh: cauHinhCongKhai_(ddCauHinh()) };
+}
+
+/* ===================== THANH TOÁN: giữ / trả / dùng voucher (gọi trong voiKhoa) ===================== */
+/* Kiểm tra voucher dùng được cho đơn: thuộc đúng khách, đang AVAILABLE (hoặc đang giữ cho chính đơn này), còn hạn, đủ đơn tối thiểu */
+function vcXet_(vcs, ma, sdt, maDon, giaTri, tienApDung, now) {
+  for (var i = 0; i < vcs.length; i++) {
+    var r = vcs[i]; if (String(r[0]) !== ma) continue;
+    if (chuanSdt(r[1]) !== sdt) return { ok: false, code: 'VOUCHER_NOT_FOUND', msg: 'Voucher không thuộc tài khoản này' };
+    var tt = ttVc_(r, now);
+    if (tt === VC.GIU && String(r[12]) === maDon) tt = VC.CO;
+    if (tt === VC.HET) return { ok: false, code: 'VOUCHER_EXPIRED', msg: 'Voucher đã hết hạn' };
+    if (tt === VC.DUNG) return { ok: false, code: 'VOUCHER_USED', msg: 'Voucher đã được sử dụng' };
+    if (tt === VC.THU) return { ok: false, code: 'VOUCHER_REVOKED', msg: 'Voucher đã bị thu hồi' };
+    if (tt === VC.GIU) return { ok: false, code: 'VOUCHER_RESERVED', msg: 'Voucher đang được giữ cho đơn ' + r[12] };
+    if (new Date(r[9]).getTime() > now) return { ok: false, code: 'VOUCHER_NOT_STARTED', msg: 'Voucher chưa đến thời gian sử dụng' };
+    var pv = {}; try { pv = JSON.parse(r[8] || '{}'); } catch (e) { pv = {}; }
+    var base = pv.loai && pv.loai !== 'tatca' ? Math.max(0, soNguyen(tienApDung)) : giaTri;
+    if (pv.loai && pv.loai !== 'tatca' && !base) return { ok: false, code: 'VOUCHER_SCOPE', msg: 'Giỏ hàng chưa có sản phẩm áp dụng voucher' };
+    if (base < soNguyen(r[7])) return { ok: false, code: 'VOUCHER_MIN', msg: 'Voucher áp dụng cho đơn từ ' + tien(r[7]) };
+    return { ok: true, i: i, giam: Math.min(soNguyen(r[6]), base) };
+  }
+  return { ok: false, code: 'VOUCHER_NOT_FOUND', msg: 'Không tìm thấy voucher' };
+}
+/* Đổi trạng thái voucher theo mã (trong voiKhoa) */
+function vcDoi_(ma, ttMoi, maDon, maGiu, suKien, ai, ghiChu) {
+  var s = sheetVC(), v = docVC_();
+  for (var i = 0; i < v.length; i++) if (String(v[i][0]) === String(ma)) {
+    s.getRange(i + 2, 12, 1, 3).setValues([[ttMoi, maDon || '', maGiu || '']]); s.getRange(i + 2, 16).setValue(new Date(Date.now()));
+    if (ghiChu) s.getRange(i + 2, 18).setValue(ghiChu);
+    vcLs_(ma, chuanSdt(v[i][1]), suKien, maDon, ai, ghiChu); return true;
+  }
+  return false;
+}
+/* Trả voucher của 1 giữ chỗ: còn hạn → AVAILABLE; hết hạn → EXPIRED; đã thu hồi / đã dùng cho đơn khác → giữ nguyên */
+function vcTraLai_(ma, maDon, lyDo) {
+  var v = docVC_(), now = Date.now();
+  for (var i = 0; i < v.length; i++) if (String(v[i][0]) === String(ma)) {
+    var tt = String(v[i][11]); if (tt === VC.THU || tt === VC.HET) return tt;
+    if ((tt === VC.GIU || tt === VC.DUNG) && String(v[i][12]) !== String(maDon)) return tt;
+    var moi = new Date(v[i][10]).getTime() > now ? VC.CO : VC.HET;
+    vcDoi_(ma, moi, '', '', tt === VC.DUNG ? 'RESTORED' : 'RELEASED', 'hệ thống', lyDo); return moi;
+  }
+  return '';
+}
+/* Chạy nền: ghi EXPIRED cho voucher AVAILABLE đã quá hạn */
+function vcHetHanNen() {
+  return voiKhoa(function () {
+    var s = sheetVC(), v = docVC_(), now = Date.now(), n = 0;
+    for (var i = 0; i < v.length; i++) if (String(v[i][11]) === VC.CO && new Date(v[i][10]).getTime() <= now) {
+      s.getRange(i + 2, 12).setValue(VC.HET); s.getRange(i + 2, 16).setValue(new Date(now)); vcLs_(v[i][0], chuanSdt(v[i][1]), 'EXPIRED', '', 'hệ thống', ''); n++;
+    }
+    return { ok: true, hetHan: n };
+  });
+}
+
+/* ===================== API QUẢN TRỊ ===================== */
+function locNgay_(p) { return { tu: /^\d{4}-\d{2}-\d{2}$/.test(String(p.tu || '')) ? String(p.tu) : '', den: /^\d{4}-\d{2}-\d{2}$/.test(String(p.den || '')) ? String(p.den) : '' }; }
+function trongKhoang_(ngay, k) { return !(k.tu && ngay < k.tu) && !(k.den && ngay > k.den); }
+function apiQtDdTongQuan(p) {
+  if (!coQuyen(p, 'loyalty.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var k = locNgay_(p), homNay = ngayDD_(), thang = homNay.slice(0, 7), now = Date.now();
+  var dd = docDD_(), vcs = docVC_(), khach = {}, homNayN = 0, thangN = 0, luot = 0, diem = 0;
+  dd.forEach(function (r) { var ng = ngayO_(r[0]); if (ng === homNay) homNayN++; if (ng.slice(0, 7) === thang) thangN++;
+    if (!trongKhoang_(ng, k)) return; luot++; diem += soNguyen(r[5]); khach[chuanSdt(r[1])] = 1; });
+  var theoNguon = {}, theoTT = { AVAILABLE: 0, RESERVED: 0, USED: 0, EXPIRED: 0, REVOKED: 0 }, giaTriCap = 0, chiPhi = 0, soCap = 0;
+  vcs.forEach(function (r) { var ng = ngayO_(r[14]); if (!trongKhoang_(ng, k)) return; soCap++;
+    var tt = ttVc_(r, now); theoTT[tt] = (theoTT[tt] || 0) + 1; var src = String(r[2]);
+    theoNguon[src] = theoNguon[src] || { nguon: src, ten: NGUON_VC[src] || src, cap: 0, dung: 0, giaTri: 0 };
+    theoNguon[src].cap++; theoNguon[src].giaTri += soNguyen(r[6]); giaTriCap += soNguyen(r[6]);
+    if (tt === VC.DUNG) { theoNguon[src].dung++; chiPhi += soNguyen(r[6]); } });
+  var gtd = Number(gtCauHinh().giaTriDiem) || 1;
+  return { ok: true, khoang: k, khachThamGia: Object.keys(khach).length, luotHomNay: homNayN, luotThang: thangN, luot: luot, diemPhat: diem,
+    giaTriDiem: diem * gtd, soVoucher: soCap, theoNguon: Object.keys(theoNguon).map(function (x) { return theoNguon[x]; }), theoTT: theoTT,
+    conHieuLuc: theoTT.AVAILABLE, daDung: theoTT.USED, tyLeDung: soCap ? Math.round(theoTT.USED * 1000 / soCap) / 10 : 0,
+    giaTriVoucherCap: giaTriCap, chiPhiThucTe: chiPhi + diem * gtd };
+}
+function apiQtDdCauHinh(p) {
+  if (!p.luu) { if (!coQuyen(p, 'loyalty.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' }; return { ok: true, cauHinh: ddCauHinh(), macDinh: DD_MAC_DINH }; }
+  if (!coQuyen(p, 'loyalty.update')) return { ok: false, msg: 'Không có quyền sửa cấu hình điểm danh' };
+  var d; try { d = JSON.parse(p.luu); } catch (e) { return { ok: false, msg: 'Dữ liệu không hợp lệ' }; }
+  var tien_ = function (x, max) { var n = soNguyen(x); return n < 0 ? 0 : Math.min(n, max); };
+  var chu = function (x, n) { return String(x == null ? '' : x).slice(0, n); };
+  var ngay = function (x) { return /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) ? String(x) : ''; };
+  var pv = d.phamVi || {}; var loai = ['tatca', 'danhmuc', 'sanpham'].indexOf(pv.loai) > -1 ? pv.loai : 'tatca';
+  var c = {
+    bat: !!d.bat, tuDong: !!d.tuDong, ten: chu(d.ten, 120), moTa: chu(d.moTa, 300), icon: chu(d.icon, 8) || '📅',
+    mau: /^#[0-9a-fA-F]{6}$/.test(String(d.mau || '')) ? String(d.mau) : DD_MAC_DINH.mau,
+    diemNgay: tien_(d.diemNgay, 1000000), hanNgay: Math.max(1, Math.min(365, soNguyen(d.hanNgay) || 30)), donToiThieu: tien_(d.donToiThieu, 100000000),
+    ngayDoi: { bat: !!(d.ngayDoi || {}).bat, giaTri: tien_((d.ngayDoi || {}).giaTri, 10000000) },
+    moc: { m10: { bat: !!((d.moc || {}).m10 || {}).bat, giaTri: tien_(((d.moc || {}).m10 || {}).giaTri, 10000000) },
+           m20: { bat: !!((d.moc || {}).m20 || {}).bat, giaTri: tien_(((d.moc || {}).m20 || {}).giaTri, 10000000) },
+           m30: { bat: !!((d.moc || {}).m30 || {}).bat, giaTri: tien_(((d.moc || {}).m30 || {}).giaTri, 10000000) } },
+    phamVi: { loai: loai, ds: loai === 'tatca' ? [] : (pv.ds || []).map(function (x) { return chu(x, 40); }).filter(String).slice(0, 200) },
+    batDau: ngay(d.batDau), ketThuc: ngay(d.ketThuc), ketHopHang: !!d.ketHopHang, thongBao: chu(d.thongBao, 300), theLe: chu(d.theLe, 3000)
+  };
+  var cu = JSON.stringify(ddCauHinh());
+  PropertiesService.getScriptProperties().setProperty('DD_CAU_HINH', JSON.stringify(c));
+  ghiNhatKy('Điểm danh', tenQT(p), 'Cập nhật cấu hình điểm danh & voucher. Trước: ' + cu.slice(0, 400) + ' | Sau: ' + JSON.stringify(c).slice(0, 400));
+  return { ok: true, cauHinh: ddCauHinh() };
+}
+/* Lịch sử điểm danh: lọc sdt / khoảng ngày, phân trang */
+function apiQtDdLichSu(p) {
+  if (!coQuyen(p, 'loyalty.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var k = locNgay_(p), q = chuanSdt(p.sdt || ''), ten = tenTheoSdt(), trang = Math.max(1, soNguyen(p.trang) || 1), moi = Math.min(200, Math.max(10, soNguyen(p.moiTrang) || 50));
+  var ds = docDD_().filter(function (r) { var ng = ngayO_(r[0]); return trongKhoang_(ng, k) && (!q || chuanSdt(r[1]).indexOf(q) > -1); }).reverse();
+  return { ok: true, tong: ds.length, trang: trang, moiTrang: moi, ds: ds.slice((trang - 1) * moi, trang * moi).map(function (r) {
+    return { ngay: ngayO_(r[0]), sdt: chuanSdt(r[1]), ten: ten[chuanSdt(r[1])] || '', luc: ngayVN(r[2]), nguon: String(r[3]), chuoi: soNguyen(r[4]), diem: soNguyen(r[5]), thuong: String(r[7] || '') }; }) };
+}
+/* Voucher đã cấp: lọc sdt / nguồn / trạng thái / khoảng ngày cấp, phân trang */
+function apiQtVcDs(p) {
+  if (!coQuyen(p, 'loyalty.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var k = locNgay_(p), q = chuanSdt(p.sdt || ''), ten = tenTheoSdt(), now = Date.now(), trang = Math.max(1, soNguyen(p.trang) || 1), moi = Math.min(200, Math.max(10, soNguyen(p.moiTrang) || 50));
+  var ds = docVC_().filter(function (r) { return trongKhoang_(ngayO_(r[14]), k) && (!q || chuanSdt(r[1]).indexOf(q) > -1) && (!p.nguon || String(r[2]) === String(p.nguon)) && (!p.trangThai || ttVc_(r, now) === String(p.trangThai)); }).reverse();
+  return { ok: true, tong: ds.length, trang: trang, moiTrang: moi, ds: ds.slice((trang - 1) * moi, trang * moi).map(function (r) { var o = vcRa_(r, now); o.sdt = chuanSdt(r[1]); o.ten = ten[o.sdt] || ''; o.ghiChu = String(r[17] || ''); return o; }) };
+}
+/* Thu hồi voucher (chỉ voucher chưa dùng) – có lý do, ghi nhật ký */
+function apiQtVcThuHoi(p) {
+  if (!coQuyen(p, 'loyalty.update')) return { ok: false, msg: 'Không có quyền thu hồi voucher' };
+  var ma = String(p.ma || '').trim().toUpperCase(), lyDo = String(p.lyDo || '').trim().slice(0, 200);
+  if (!/^VC[A-Z0-9]{6,20}$/.test(ma)) return { ok: false, msg: 'Mã voucher không hợp lệ' };
+  if (lyDo.length < 3) return { ok: false, msg: 'Nhập lý do thu hồi' };
+  return voiKhoa(function () {
+    var v = docVC_(); for (var i = 0; i < v.length; i++) if (String(v[i][0]) === ma) {
+      var tt = String(v[i][11]); if (tt === VC.DUNG) return { ok: false, msg: 'Voucher đã dùng cho đơn ' + v[i][12] + ', không thu hồi được' };
+      if (tt === VC.THU) return { ok: true, daThuHoi: true };
+      vcDoi_(ma, VC.THU, String(v[i][12] || ''), '', 'REVOKED', tenQT(p), lyDo);
+      ghiNhatKy('Voucher', chuanSdt(v[i][1]), 'Thu hồi voucher ' + ma + ' (' + tt + ') – ' + lyDo + ' – bởi ' + tenQT(p));
+      return { ok: true };
+    }
+    return { ok: false, msg: 'Không tìm thấy voucher' };
   });
 }
 
@@ -1633,6 +1943,15 @@ function doGet(e) {
     if (action === 'qtGtCauHinh')   return traVe(apiQtGtCauHinh(p), cb);
     if (action === 'qtGtXuLy')      return traVe(apiQtGtXuLy(p), cb);
     if (action === 'qtGtLich')      return traVe(apiQtGtLich(p), cb);
+    if (action === 'ddCauHinh')     return traVe(apiDdCauHinh(), cb);
+    if (action === 'ddTongQuan')    return traVe(apiDdTongQuan(p), cb);
+    if (action === 'ddDiemDanh')    return traVe(apiDdDiemDanh(p), cb);
+    if (action === 'vcCuaToi')      return traVe(apiVcCuaToi(p), cb);
+    if (action === 'qtDdTongQuan')  return traVe(apiQtDdTongQuan(p), cb);
+    if (action === 'qtDdCauHinh')   return traVe(apiQtDdCauHinh(p), cb);
+    if (action === 'qtDdLichSu')    return traVe(apiQtDdLichSu(p), cb);
+    if (action === 'qtVcDs')        return traVe(apiQtVcDs(p), cb);
+    if (action === 'qtVcThuHoi')    return traVe(apiQtVcThuHoi(p), cb);
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
     Logger.log('doGet lỗi: ' + err);
@@ -1685,7 +2004,7 @@ function apiDangNhap(p) {
   cache.remove(k);
   if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});
   var token = luuPhien(sdt, tk && tk.hash ? 'mk' : 'mkMacDinh');
-  return { ok: true, token: token, kh: d.kh, donHang: d.don, macDinh: !(tk && tk.hash) };
+  return { ok: true, token: token, kh: d.kh, donHang: d.don, macDinh: !(tk && tk.hash), diemDanh: ddSauDangNhap_(sdt) };
 }
 /* Đăng ký khách mới – KHÔNG cần OTP, chỉ điền thông tin.
    An toàn: số điện thoại ĐÃ có hồ sơ thì từ chối, bắt đăng nhập hoặc xác thực OTP,
@@ -1914,7 +2233,7 @@ function apiThongKe(p) {
 var H_QT = ['Tài khoản', 'Họ tên', 'Vai trò', 'Hash', 'Muối', 'Trạng thái', 'Tạo lúc', 'Đăng nhập cuối', 'Quyền riêng'];
 var VAI_TRO_QT = {
   SUPER_ADMIN:   ['*'],
-  MANAGER:       ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'referral.*', 'points.*', 'referral_settings.view', 'affiliate.view', 'affiliate.update', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'],
+  MANAGER:       ['dashboard.view', 'order.*', 'product.*', 'customer.*', 'referral.*', 'points.*', 'loyalty.*', 'referral_settings.view', 'affiliate.view', 'affiliate.update', 'banner.*', 'content.*', 'flashsale.*', 'combo.*', 'seo.*', 'theme.*', 'setting.view'],
   ORDER_STAFF:   ['dashboard.view', 'order.view', 'order.update', 'customer.view'],
   PRODUCT_STAFF: ['dashboard.view', 'product.*', 'category.*', 'flashsale.*', 'combo.*'],
   CONTENT_STAFF: ['dashboard.view', 'content.*', 'banner.*', 'seo.*']
@@ -1927,6 +2246,7 @@ var DANH_MUC_QUYEN = [
   { nhom: 'Khách hàng',ds: [['customer.view', 'Xem khách hàng'], ['customer.update', 'Khoá / mở tài khoản khách']] },
   { nhom: 'Đối tác (affiliate)', ds: [['affiliate.view', 'Xem đối tác, đơn, kỳ thanh toán'], ['affiliate.update', 'Duyệt / khoá đối tác, gán tay đơn'], ['affiliate.pay', 'Chốt kỳ & xác nhận đã trả hoa hồng'], ['affiliate.settings', 'Sửa mức hoa hồng, thuế, hạn tính']] },
   { nhom: 'Giới thiệu & điểm', ds: [['referral.view', 'Xem giới thiệu'], ['referral.update', 'Xử lý giới thiệu / điểm'], ['referral.export', 'Xuất báo cáo giới thiệu'], ['points.view', 'Xem ví điểm'], ['points.adjust', 'Cộng / trừ điểm'], ['points.export', 'Xuất báo cáo điểm'], ['referral_settings.view', 'Xem cấu hình giới thiệu'], ['referral_settings.update', 'Sửa cấu hình giới thiệu']] },
+  { nhom: 'Điểm danh & voucher', ds: [['loyalty.view', 'Xem điểm danh, voucher đã cấp, thống kê'], ['loyalty.update', 'Sửa cấu hình điểm danh, thu hồi voucher']] },
   { nhom: 'Khuyến mãi',ds: [['flashsale.view', 'Flash sale'], ['combo.view', 'Combo']] },
   { nhom: 'Website',   ds: [['banner.view', 'Banner'], ['content.view', 'Menu & bài viết'], ['seo.view', 'SEO'], ['theme.view', 'Giao diện']] },
   { nhom: 'Hệ thống',  ds: [['setting.view', 'Cấu hình, tài khoản, nhật ký']] }
@@ -2033,7 +2353,7 @@ function canhBao_(khoa, noiDung) {
   try { ghiNhatKy('Bảo mật', 'Cảnh báo', String(noiDung).slice(0, 300)); } catch (e3) { Logger.log(e3); }
 }
 /* Thao tác quản trị đụng tới tiền / quyền → báo cho chủ shop (gộp theo người làm, 10 phút / lần) */
-var LENH_BAO = { xoaDon: 'xoá đơn hàng', qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
+var LENH_BAO = { xoaDon: 'xoá đơn hàng', qtVcThuHoi: 'thu hồi voucher của khách', qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
   qtAffCauHinh: 'đổi cấu hình chương trình đối tác', qtAffChotKy: 'chốt kỳ thanh toán đối tác', qtAffTra: 'đánh dấu đã trả tiền đối tác', qtAffGanTay: 'gán tay đơn cho đối tác',
   qtDiemDieuChinh: 'điều chỉnh điểm của khách', qtLuu: 'tạo / sửa tài khoản quản trị', qtXoa: 'xoá tài khoản quản trị', qtBiMat: 'đổi cài đặt bảo mật' };
 var HD_ = null;   // lệnh đang xử lý (gán ở doGet) để traVe biết mà cảnh báo
@@ -2051,7 +2371,7 @@ function baoLenh_(data) {
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
 var GIOI_HAN_10P = { guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
-  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200 };
+  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
   canhBao_('tan-suat-' + action, '⚠️ Có hơn ' + t + ' yêu cầu "' + action + '" trong 10 phút – có thể bot đang tấn công. Hệ thống đã tạm chặn lệnh này, tự mở lại sau khi lắng xuống.');
@@ -2316,6 +2636,7 @@ function dongBoCRMTuDong() {
   PropertiesService.getScriptProperties().setProperty('LICH_LUC', String(Date.now()));   // để trang quản trị biết lịch đang chạy
   try { Logger.log(JSON.stringify(dongBoCRMNhieu(150))); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
+  try { Logger.log(JSON.stringify(vcHetHanNen())); } catch (e5) { Logger.log('Voucher hết hạn lỗi: ' + e5); }   // voucher điểm danh quá hạn
   try { Logger.log(JSON.stringify(xuLyAff())); } catch (e3) { Logger.log('Xử lý đối tác lỗi: ' + e3); }   // đối tác: hoa hồng + chốt kỳ ngày 10
   try { Logger.log(JSON.stringify(dongBoChiTieuKHNen())); } catch (e4) { Logger.log('Cập nhật chi tiêu thành viên lỗi: ' + e4); }   // thành viên: chi tiêu + hạng theo CRM
 }
@@ -2572,7 +2893,7 @@ function apiXacThuc(p) {
   var d = docKH(sdt);
   if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});   // khách mới trên web: tạo hồ sơ (lấy sẵn tên/địa chỉ từ CRM nếu có)
   var token = luuPhien(sdt, 'otp');
-  return { ok: true, token: token, kh: d.kh, donHang: d.don };
+  return { ok: true, token: token, kh: d.kh, donHang: d.don, diemDanh: ddSauDangNhap_(sdt) };
 }
 
 function apiHoSo(p) {

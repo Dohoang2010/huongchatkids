@@ -653,3 +653,27 @@ tr.is-dim{opacity:.55}
 .bt-media__it div{display:flex;gap:4px;flex-wrap:wrap}
 .bt-media__it .btn{padding:3px 8px;font-size:12px}
 td.nowrap{white-space:nowrap}
+
+/* ===== Điểm danh & Voucher (m-diem-danh.js) ===== */
+.dd-loc__h{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.dd-loc__h label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600;min-width:140px}
+.dd-tt{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.dd-tt>div{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.dd-ch{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.dd-ch__form{display:flex;flex-direction:column;gap:14px;min-width:0}
+.dd-ch__form .card label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;margin-bottom:10px}
+.dd-ch__form .card label.dd-bat{flex-direction:row;align-items:center;gap:8px;font-weight:500}
+.dd-bat input{width:17px;height:17px;accent-color:var(--pink)}
+.dd-th{display:grid;grid-template-columns:1fr 160px;gap:10px;align-items:end;border-top:1px dashed var(--line);padding-top:8px}
+.dd-pv{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:10px}
+.dd-pv .dd-bat{margin-bottom:4px!important}
+.dd-luu{position:sticky;bottom:0;z-index:5;display:flex;gap:8px;align-items:center;justify-content:flex-end;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 -6px 18px rgba(0,0,0,.06)}
+.dd-luu span{margin-right:auto}
+.dd-ch__xt{position:sticky;top:12px}
+.dd-xt h3 small{font-weight:500;font-size:12px}
+.dd-xt__seg{display:flex;gap:6px;margin-bottom:10px}.dd-xt__seg .is-on{background:var(--pink);color:#fff}
+.dd-xt__khung{--w:420px;height:calc(100vh - 210px);min-height:520px;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#f6f6f8;display:flex;justify-content:center}
+.dd-xt__khung iframe{width:var(--w);max-width:none;height:100%;border:0;background:#fff;flex:none}
+.dd-xt__khung.is-pc iframe{width:1100px;height:calc((100vh - 210px) / .5);transform:scale(.5);transform-origin:top center}
+@media (max-width:1100px){.dd-ch{grid-template-columns:1fr}.dd-ch__xt{position:static}.dd-xt__khung{height:640px}.dd-xt__khung.is-pc iframe{height:1280px}}
+.dd-ch__form input[type=color]{height:40px;padding:3px;cursor:pointer}

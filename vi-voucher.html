@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ví voucher – Hương Chất Kids</title>
+  <meta name="description" content="Voucher giảm giá của mẹ tại Hương Chất Kids: nhận từ điểm danh ngày đôi và chuỗi ngày liên tiếp.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261012c">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
+</head>
+<body>
+<main id="app"><div class="container vvp" id="vvp"></div></main>
+<script src="js/data.js?v=20261012d"></script>
+<script src="js/diachi.js?v=20261008b"></script>
+<script src="js/app.js?v=20261012q"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, esc, fmt, toast, Session, openLogin, DD, store, byId, CATEGORIES } = { ...MC, CATEGORIES: window.CATEGORIES };
+  const goc = $('#vvp');
+  const TT = { AVAILABLE: ['Chưa dùng', 'badge--teal'], RESERVED: ['Đang giữ cho đơn', 'badge--hot'], USED: ['Đã dùng', 'badge--soft'], EXPIRED: ['Hết hạn', 'badge--soft'], REVOKED: ['Đã thu hồi', 'badge--soft'] };
+  const TAB = [['AVAILABLE', 'Còn hiệu lực'], ['RESERVED', 'Đang giữ'], ['USED', 'Đã dùng'], ['EXPIRED', 'Hết hạn'], ['REVOKED', 'Đã thu hồi']];
+  const NGUON = { DOUBLE_DATE: '🎁 Điểm danh ngày đôi', STREAK_10: '🔥 Chuỗi 10 ngày', STREAK_20: '🔥 Chuỗi 20 ngày', STREAK_30: '🏆 Chuỗi 30 ngày' };
+  let tab = 'AVAILABLE', duLieu = null;
+  const ngay = (iso) => new Date(iso).toLocaleDateString('vi-VN');
+  const phamVi = (pv) => {
+    if (!pv || !pv.loai || pv.loai === 'tatca') return 'Tất cả sản phẩm';
+    if (pv.loai === 'danhmuc') return 'Danh mục: ' + (pv.ds || []).map((k) => (CATEGORIES.find((c) => c.key === k) || {}).label || k).join(', ');
+    return 'Sản phẩm: ' + (pv.ds || []).map((id) => { const p = byId(id); return p ? (p.short || p.name) : id; }).join(', ');
+  };
+  const the = (v) => `<div class="vvp-the vvp-the--${v.trangThai.toLowerCase()}">
+    <div class="vvp-the__l"><b>${fmt(v.giaTri).replace('₫', 'đ')}</b><small>GIẢM</small></div>
+    <div class="vvp-the__r">
+      <div class="vvp-the__dau"><h3>${esc(v.ten)}</h3><span class="badge ${TT[v.trangThai][1]}">${TT[v.trangThai][0]}</span>${v.sapHet ? '<span class="badge badge--hot">⏰ Sắp hết hạn</span>' : ''}</div>
+      <ul>
+        <li>Đơn tối thiểu: <b>${v.donToiThieu ? fmt(v.donToiThieu) : 'Không yêu cầu'}</b></li>
+        <li>Áp dụng: ${esc(phamVi(v.phamVi))}</li>
+        <li>Hiệu lực: ${ngay(v.batDau)} – ${ngay(v.hetHan)}</li>
+        <li>Nguồn: ${esc(NGUON[v.nguon] || v.nguonTen)} · nhận lúc ${esc(v.capLuc)}</li>
+        ${v.maDon ? `<li>Đơn hàng: <b>${esc(v.maDon)}</b></li>` : ''}
+      </ul>
+      <div class="vvp-the__ma"><code>${esc(v.ma)}</code><button type="button" class="btn btn--ghost btn--sm" data-copy="${esc(v.ma)}">📋 Sao chép</button>
+        ${v.trangThai === 'AVAILABLE' ? `<button type="button" class="btn btn--primary btn--sm" data-dung="${esc(v.ma)}">Dùng ngay</button>` : ''}</div>
+    </div></div>`;
+  function ve() {
+    const d = duLieu, ds = d.ds.filter((v) => v.trangThai === tab);
+    goc.innerHTML = `<div class="vvp-dau"><div><h1 class="page-title">🎟️ Ví voucher của tôi</h1><p class="text-muted fs-14">Voucher nhận từ điểm danh hằng ngày – mỗi đơn dùng 1 voucher, chọn ở bước thanh toán.</p></div>
+      <a class="btn btn--outline" href="diem-danh.html">📅 Điểm danh nhận thêm</a></div>
+      <div class="vvp-tk"><div><b>${d.dem.AVAILABLE || 0}</b><small>Còn hiệu lực</small></div><div><b>${d.sapHet}</b><small>Sắp hết hạn</small></div><div><b>${d.dem.USED || 0}</b><small>Đã dùng</small></div><div><b>${(d.dem.EXPIRED || 0) + (d.dem.REVOKED || 0)}</b><small>Hết hạn / thu hồi</small></div></div>
+      ${!d.dungDuoc && d.dem.AVAILABLE ? '<p class="vvp-luu">🔐 Mẹ đang đăng nhập bằng mật khẩu mặc định. Để dùng voucher khi thanh toán, mẹ đăng nhập bằng mã OTP hoặc đặt mật khẩu riêng ở trang <a href="account.html">Tài khoản</a>.</p>' : ''}
+      <div class="tabs mb-16 vvp-tabs" role="tablist">${TAB.map(([k, t]) => `<button class="tab ${k === tab ? 'is-active' : ''}" type="button" role="tab" aria-selected="${k === tab}" data-tab="${k}">${t} (${d.dem[k] || 0})</button>`).join('')}</div>
+      ${ds.length ? `<div class="vvp-ds">${ds.map(the).join('')}</div>` : `<div class="card card--pad text-center vvp-trong"><div class="vvp-trong__ic">🎟️</div><h3>${tab === 'AVAILABLE' ? 'Chưa có voucher còn hiệu lực' : 'Không có voucher nào ở mục này'}</h3><p class="text-muted fs-14">${tab === 'AVAILABLE' ? 'Điểm danh mỗi ngày: ngày đôi và chuỗi 10 / 20 / 30 ngày liên tiếp được tặng voucher.' : ''}</p>${tab === 'AVAILABLE' ? '<a class="btn btn--primary" href="diem-danh.html">Đi điểm danh</a>' : ''}</div>`}`;
+  }
+  function tai() {
+    if (!Session.get()) {
+      goc.innerHTML = `<div class="card card--pad text-center vvp-trong"><div class="vvp-trong__ic">🔐</div><h3>Đăng nhập để xem ví voucher</h3><p class="text-muted fs-14">Voucher gắn với tài khoản (số điện thoại) của mẹ.</p><button class="btn btn--primary btn--lg" type="button" id="vvLogin">Đăng nhập</button></div>`;
+      $('#vvLogin').addEventListener('click', () => openLogin().then((s) => { if (s) tai(); })); return;
+    }
+    goc.innerHTML = '<div class="ddp-skel"><div></div><div></div></div><p class="text-muted fs-14 text-center">Đang tải ví voucher…</p>';
+    DD.vi().then((r) => {
+      if (r && r.loi === 'token') { Session.clear(); return tai(); }
+      if (!r || !r.ok) { goc.innerHTML = `<div class="card card--pad text-center"><h3>Chưa tải được ví voucher</h3><p class="text-muted">${esc((r && r.msg) || '')}</p><button class="btn btn--primary" type="button" data-thu-lai>Thử lại</button></div>`; return; }
+      duLieu = r; if (!r.dem.AVAILABLE && r.dem.RESERVED) tab = 'RESERVED'; ve();
+    }).catch((e) => { goc.innerHTML = `<div class="card card--pad text-center"><h3>Chưa tải được ví voucher</h3><p class="text-muted">${esc(e.message)}</p><button class="btn btn--primary" type="button" data-thu-lai>Thử lại</button></div>`; });
+  }
+  goc.addEventListener('click', (e) => {
+    if (e.target.closest('[data-thu-lai]')) return tai();
+    const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; ve(); return; }
+    const c = e.target.closest('[data-copy]'); if (c) { (navigator.clipboard ? navigator.clipboard.writeText(c.dataset.copy) : Promise.reject()).then(() => toast('Đã sao chép mã ' + c.dataset.copy, { type: 'ok' })).catch(() => toast('Mã voucher: ' + c.dataset.copy)); return; }
+    const u = e.target.closest('[data-dung]'); if (u) { store.set('mc_vc_chon', u.dataset.dung); location.href = MC.Cart && MC.Cart.items().length ? 'checkout.html' : 'collections.html'; }
+  });
+  tai();
+});
+</script>
+</body>
+</html>

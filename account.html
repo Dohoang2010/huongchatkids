@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261012b">
+  <link rel="stylesheet" href="css/style.css?v=20261012c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -18,7 +18,7 @@
 <script src="js/data.js?v=20261012d"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261012p"></script>
+<script src="js/app.js?v=20261012q"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ${!v.dungDuoc && v.khaDung ? '<p class="fs-13 text-muted mt-8">🔐 Mẹ đang đăng nhập bằng mật khẩu mặc định. Để dùng điểm khi thanh toán, mẹ xác thực mã OTP hoặc đặt mật khẩu riêng (nút bên phải).</p>' : ''}
     ${v.khaDung ? `<p class="fs-13 mt-8">💡 Dùng điểm ở bước <a class="text-primary fw-600" href="checkout.html">Thanh toán</a> – trừ thẳng vào tiền hàng.</p>` : ''}
     <h4 class="fs-14 mt-16 mb-8">Lịch sử điểm</h4>
-    ${(v.lichSu || []).length ? `<div class="diem-ls">${v.lichSu.map((x) => `<div class="diem-ls__it"><div><b>${esc(LOAI_DIEM[x.loai] || x.loai)}</b><small>${esc(x.ngay)}${x.noiDung ? ' · ' + esc(x.noiDung) : ''}</small></div><div class="diem-ls__so ${x.diem > 0 ? 'is-cong' : 'is-tru'}">${x.diem > 0 ? '+' : ''}${n0(x.diem)}<small>Số dư ${n0(x.soDu)}</small></div></div>`).join('')}</div>`
+    ${(v.lichSu || []).length ? `<div class="diem-ls">${v.lichSu.map((x) => `<div class="diem-ls__it"><div><b>${esc(x.loai === 'EARN' && /^Điểm danh/.test(x.noiDung || '') ? 'Điểm danh hằng ngày' : (LOAI_DIEM[x.loai] || x.loai))}</b><small>${esc(x.ngay)}${x.noiDung ? ' · ' + esc(x.noiDung) : ''}</small></div><div class="diem-ls__so ${x.diem > 0 ? 'is-cong' : 'is-tru'}">${x.diem > 0 ? '+' : ''}${n0(x.diem)}<small>Số dư ${n0(x.soDu)}</small></div></div>`).join('')}</div>`
       : '<p class="text-muted fs-14">Chưa có giao dịch điểm nào. Giới thiệu bạn bè mua hàng để nhận điểm nhé!</p>'}`;
   const TT_GT = { 'Đã liên kết': 'badge--soft', 'Chờ giao': 'badge--hot', 'Đã thưởng': 'badge--teal', 'Đã thu hồi': 'badge--soft' };
   const gtHTML = (g) => {
@@ -186,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="flex flex-col gap-16">
           <div class="card card--pad"><div class="tier-hero">${theThanhVien({ spent, ten: kh.ten, sdt: kh.sdt })}<div><h3>🎖️ Hạng khách hàng & ưu đãi</h3>${thangHang(spent)}</div></div></div>
           <div class="grid-diem-gt">
+            <div class="card card--pad acc-dd" id="diemDanh"><h3>📅 Điểm danh & Ví voucher</h3><p class="fs-14 text-muted">Đăng nhập mỗi ngày nhận điểm; ngày đôi và chuỗi 10 / 20 / 30 ngày liên tiếp nhận voucher.</p><div class="flex gap-8 wrap mt-8"><a class="btn btn--primary btn--sm" href="diem-danh.html">📅 Điểm danh hôm nay</a><a class="btn btn--outline btn--sm" href="vi-voucher.html">🎟️ Ví voucher</a></div></div>
             <div class="card card--pad" id="diem"><h3>⭐ Điểm của tôi</h3><div id="diemCard">${DANG_TAI}</div></div>
             <div class="card card--pad" id="gioi-thieu"><h3>🤝 Giới thiệu bạn bè</h3><div id="gtCard">${DANG_TAI}</div></div>
           </div>

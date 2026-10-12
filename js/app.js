@@ -503,6 +503,8 @@
         <a class="mmenu__link mmenu__link--sk" href="collections.html?km=1">🏷️ Sản phẩm đang khuyến mãi</a>
         <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
+        <a class="mmenu__link" href="diem-danh.html">📅 Điểm danh nhận quà</a>
+        <a class="mmenu__link" href="vi-voucher.html">🎟️ Ví voucher của tôi</a>
         <a class="mmenu__link" href="account.html">👤 Tài khoản / Đơn hàng</a>
         <a class="mmenu__link" href="policy.html">📋 Hỗ trợ & chính sách</a>
       </div>
@@ -1396,7 +1398,7 @@
           const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang kiểm tra…';
           loyaltyApi('xacThuc', { sdt, ma }).then((res) => {
             if (!res || !res.ok) { buocMa(info, (res && res.msg) || 'Mã OTP không đúng hoặc đã hết hạn'); return; }
-            const s = saveSession(res); clearInterval(timer);
+            const s = saveSession(res); clearInterval(timer); DD.baoSauDangNhap(res);
             box.innerHTML = `${head}<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Xác thực thành công</h3><p>Chào ${esc((s.kh && s.kh.ten) || 'mẹ')} 👋 ${s.kh && Number(s.kh.tongChiTieu) ? `Hạng hiện tại: <b>${esc(tierOf(Number(s.kh.tongChiTieu)).label)}</b>` : 'Cảm ơn mẹ đã tin tưởng shop.'}</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Tiếp tục</button></div></div></div>`;
             xong = true; resolve(s); if (typeof opts.onDone === 'function') opts.onDone(s);
             setTimeout(() => { const m = $('#otpModal'); if (m && m.classList.contains('is-open')) closeModal('#otpModal'); }, 1600);
@@ -1443,7 +1445,7 @@
         loyaltyApi('dangNhap', { sdt, mk }).then((res) => {
           btn.disabled = false; btn.textContent = 'Đăng nhập';
           if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa đăng nhập được, mẹ thử lại nhé'; err.classList.remove('hide'); return; }
-          const s = saveSession(res); if (s) Session.patch({ macDinh: !!res.macDinh });
+          const s = saveSession(res); if (s) Session.patch({ macDinh: !!res.macDinh }); DD.baoSauDangNhap(res);
           store.set('mc_doimk_hoan', 0);
           toast(`Chào ${(res.kh && res.kh.ten) || 'mẹ'} 👋 đã đăng nhập`, { type: 'ok' });
           dong(Session.get()); closeModal('#otpModal');
@@ -1757,6 +1759,41 @@
     link(sdt) { return `${location.origin}${location.pathname.replace(/[^/]*$/, '')}account.html?ref=${phoneKey(sdt)}`; },
     noiDung(cfg, sdt) { return String((cfg && cfg.noiDungChiaSe) || 'Dùng mã giới thiệu của mình: {ma} {link}').replace('{giam}', (cfg && cfg.giam) || 5).replace('{ma}', phoneKey(sdt)).replace('{link}', this.link(sdt)).trim(); },
   };
+  /* ---- Điểm danh hàng ngày + Ví voucher (máy chủ tự tính ngày, điểm, voucher – web chỉ hiển thị) ---- */
+  const DD = {
+    _cfg: null,
+    cauHinh() {
+      if (this._cfg) return this._cfg;
+      const c = store.get('mc_dd_cfg', null);
+      if (c && Date.now() - c.luc < 10 * 60e3) return (this._cfg = Promise.resolve(c));
+      return (this._cfg = loyaltyApi('ddCauHinh').then((r) => { if (r && r.ok) { const v = { ...r.cauHinh, luc: Date.now() }; store.set('mc_dd_cfg', v); return v; } return c || { bat: false }; }).catch(() => c || { bat: false }));
+    },
+    tongQuan(thang) { const s = Session.get(); return s ? loyaltyApi('ddTongQuan', { token: s.token, ...(thang ? { thang } : {}) }) : Promise.resolve(null); },
+    diemDanh() { const s = Session.get(); return s ? loyaltyApi('ddDiemDanh', { token: s.token }, 30000) : Promise.resolve(null); },
+    vi() { const s = Session.get(); return s ? loyaltyApi('vcCuaToi', { token: s.token }) : Promise.resolve(null); },
+    /* Câu báo sau khi điểm danh (mẫu do shop cấu hình: {diem}, {voucher}) */
+    thongBao(d) {
+      if (!d || !d.ok || !d.moi) return '';
+      const vc = (d.voucher || []).map((v) => v.ten).join(', ');
+      return String(d.thongBao || 'Điểm danh thành công! +{diem} điểm{voucher}').replace('{diem}', Number(d.diem || 0).toLocaleString('vi-VN')).replace('{voucher}', vc ? ' · Nhận ' + vc : '');
+    },
+    baoSauDangNhap(res) { const t = this.thongBao(res && res.diemDanh); if (t) setTimeout(() => toast('📅 ' + t, { type: 'ok', action: { label: 'Xem', onClick: () => { location.href = 'diem-danh.html'; } } }), 900); },
+    /* Số tiền voucher giảm cho giỏ (giống cách máy chủ kiểm tra): base = tiền hàng sau giảm; phạm vi danh mục / sản phẩm tính trên tiền sản phẩm áp dụng */
+    giam(v, base, lines) {
+      if (!v || v.trangThai !== 'AVAILABLE') return { ok: false, msg: 'Voucher không còn dùng được' };
+      if (Date.parse(v.hetHan) <= Date.now()) return { ok: false, msg: 'Voucher đã hết hạn' };
+      if (Date.parse(v.batDau) > Date.now()) return { ok: false, msg: 'Voucher chưa đến thời gian sử dụng' };
+      const pv = v.phamVi || {}; let tien = base;
+      if (pv.loai && pv.loai !== 'tatca') {
+        const ds = new Set(pv.ds || []), ls = lines || [];
+        const tong = ls.reduce((t, l) => t + l.total, 0), ap = ls.reduce((t, l) => t + (l.p && ds.has(pv.loai === 'danhmuc' ? l.p.cat : l.p.id) ? l.total : 0), 0);
+        if (!ap) return { ok: false, msg: 'Giỏ hàng chưa có sản phẩm áp dụng voucher' };
+        tien = tong ? Math.round(base * ap / tong) : 0;
+      }
+      if (tien < (v.donToiThieu || 0)) return { ok: false, msg: `Voucher áp dụng cho ${pv.loai && pv.loai !== 'tatca' ? 'sản phẩm áp dụng' : 'đơn'} từ ${fmt(v.donToiThieu)}` };
+      return { ok: true, giam: Math.min(v.giaTri, tien), tienApDung: tien };
+    },
+  };
   /* Che email: hung@gmail.com → h***@gmail.com, nguyenabc@gmail.com → n******c@gmail.com */
   const anEmail = (e) => { const [u, d] = String(e || "").split("@"); if (!d) return ""; return u.length <= 4 ? u[0] + "***@" + d : u[0] + "*".repeat(Math.max(3, u.length - 2)) + u.slice(-1) + "@" + d; };
   const taoMaDon = () => 'HCK' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + String(Math.floor(Math.random() * 9000) + 1000);
@@ -1810,6 +1847,6 @@
   };
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
-    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
     giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

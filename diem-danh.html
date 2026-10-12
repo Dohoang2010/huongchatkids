@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Điểm danh nhận quà – Hương Chất Kids</title>
+  <meta name="description" content="Đăng nhập mỗi ngày nhận điểm, ngày đôi và chuỗi ngày liên tiếp nhận voucher giảm giá tại Hương Chất Kids.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#F0537A">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261012c">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
+</head>
+<body>
+<main id="app"><div class="container ddp" id="ddp"></div></main>
+<script src="js/data.js?v=20261012d"></script>
+<script src="js/diachi.js?v=20261008b"></script>
+<script src="js/app.js?v=20261012q"></script>
+<script src="js/diem-danh-ui.js?v=20261012a"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const { $, esc, toast, Session, openLogin, DD } = MC; const UI = window.DDUI;
+  const goc = $('#ddp');
+  const XEM_TRUOC = new URLSearchParams(location.search).get('preview') === '1' && window.parent !== window;
+  let thang = '', dangGui = false, duLieu = null;
+
+  /* Xem trước cho trang quản trị: chỉ nhận cấu hình từ chính trang quản trị (cùng tên miền), không gọi máy chủ */
+  if (XEM_TRUOC) {
+    document.body.classList.add('ddp-preview');
+    window.addEventListener('message', (e) => { if (e.origin !== location.origin || !e.data || e.data.type !== 'dd-preview') return; goc.innerHTML = UI.trang(UI.mau(e.data.cfg), e.data.cfg, { xemTruoc: true }); });
+    window.parent.postMessage({ type: 'dd-preview-ready' }, location.origin);
+    return;
+  }
+
+  function veChuaDangNhap(cfg) {
+    goc.innerHTML = UI.chuaDangNhap(cfg);
+    $('#ddLogin')?.addEventListener('click', () => openLogin().then((s) => { if (s) tai(); }));
+  }
+  function tai() {
+    if (!Session.get()) { goc.innerHTML = UI.dangTai(); DD.cauHinh().then(veChuaDangNhap); return; }
+    if (!duLieu) goc.innerHTML = UI.dangTai();
+    DD.tongQuan(thang).then((r) => {
+      if (r && r.loi === 'token') { Session.clear(); return DD.cauHinh().then(veChuaDangNhap); }
+      if (!r || !r.ok) { goc.innerHTML = UI.loi((r && r.msg) || 'Chưa tải được dữ liệu điểm danh'); return; }
+      duLieu = r; thang = r.thang; goc.innerHTML = UI.trang(r, r.cauHinh, {});
+    }).catch((e) => { goc.innerHTML = UI.loi(e.message); });
+  }
+  goc.addEventListener('click', (e) => {
+    if (e.target.closest('[data-dd-thu-lai]')) { tai(); return; }
+    const nt = e.target.closest('[data-dd-thang]'); if (nt) { thang = nt.dataset.ddThang; duLieu = null; tai(); return; }
+    const nut = e.target.closest('[data-dd-nut]'); if (!nut || dangGui) return;
+    dangGui = true; nut.disabled = true; nut.classList.add('is-loading'); nut.innerHTML = '<span class="ddp-spin"></span> Đang điểm danh…';
+    DD.diemDanh().then((r) => {
+      if (r && r.loi === 'token') { Session.clear(); toast('Phiên đăng nhập đã hết hạn, mẹ đăng nhập lại nhé', { type: 'err' }); return tai(); }
+      if (!r || !r.ok) { toast((r && r.msg) || 'Chưa điểm danh được, mẹ thử lại nhé', { type: 'err' }); return tai(); }
+      if (r.moi) { UI.chucMung(r); } else toast('Hôm nay mẹ đã điểm danh rồi – hẹn mẹ ngày mai nhé!', { type: 'ok' });
+      thang = ''; tai();
+    }).catch((e2) => { toast(e2.message, { type: 'err' }); tai(); })
+      .finally(() => { dangGui = false; });
+  });
+  tai();
+});
+</script>
+</body>
+</html>

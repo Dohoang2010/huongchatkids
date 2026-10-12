@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261012b">
+  <link rel="stylesheet" href="css/style.css?v=20261012c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -21,7 +21,7 @@
 <script src="js/data.js?v=20261012d"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261012p"></script>
+<script src="js/app.js?v=20261012q"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -37,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let gtCfg = { bat: false };
   let gt = { ma: GT.ref(), ok: false, msg: '', tenAn: '', sdt: '', dangXet: false };
   let vi = null; let diemMuon = 0; let maDonCho = ''; let daGiu = false;
+  /* ---- 🎟️ Ví voucher (điểm danh): máy chủ chốt lại khi bấm Đặt hàng (giữ chỗ), mỗi đơn 1 voucher ---- */
+  let vcVi = null, vcCfg = { ketHopHang: false }, vcChon = store.get('mc_vc_chon', '');
+  MC.DD.cauHinh().then((cf) => { vcCfg = cf || vcCfg; });
   const itemsHTML = () => `${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}${qua && qua.soQua ? `<div class="it it--gift"><span class="it__gift">🎁</span><div><div class="n">${esc(qua.moTa)}</div><div class="q" id="giftViNote">${esc(quaVi)}</div></div><b class="text-teal">Tặng</b></div>` : ''}`;
 
   /* ---- Ưu đãi hạng khách hàng: chỉ tính khi số điện thoại đang nhập đã xác thực OTP ---- */
@@ -46,11 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const calc = () => {
     const base = sub - multi;
-    const r = coupon ? applyCoupon(coupon, base, lines) : null;
+    const vc = vcChon && vcVi ? (vcVi.ds || []).find((x) => x.ma === vcChon) : null;
+    const rv = vc ? MC.DD.giam(vc, base, lines) : null; const vcAmt = rv && rv.ok ? rv.giam : 0;
+    const r = coupon && !vcAmt ? applyCoupon(coupon, base, lines) : null;
     const couponAmt = r && r.ok ? r.discount : 0;
     const pct = tierPct(); const hang = hangCho(phoneNow()) || tierOf(0);
     const hangAmt = pct ? Math.round(base * pct / 100) : 0;
-    let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
+    let dungHang = hangAmt > 0, dungMa = couponAmt > 0, dungVc = vcAmt > 0;
+    if (dungVc && dungHang && !vcCfg.ketHopHang) { if (hangAmt >= vcAmt) dungVc = false; else dungHang = false; }
     if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const city = form.elements.city.value;
     /* Giảm giới thiệu tính như 1 mã giảm giá: không cộng dồn với mã khác (kể cả freeship) và ưu đãi hạng – lấy mức có lợi hơn */
@@ -60,8 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const giaTriMa = (dungMa ? couponAmt : 0) + (r.freeship && shipMethod !== 'express' ? (shipFee(base, shipMethod, { tinh: city || '?', lines }) || 0) : 0);
       if (giaTriMa > gtAmt) dungGT = false; else { dungMa = false; boMa = true; }
     }
+    if (dungGT && dungVc) { if (vcAmt >= gtAmt) dungGT = false; else dungVc = false; }
     if (dungGT && dungHang && !ketHop().hangMa) { if (hangAmt > gtAmt) dungGT = false; else dungHang = false; }
-    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0);
+    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0) + (dungVc ? vcAmt : 0);
     /* Điểm: chỉ trừ vào tiền hàng còn lại (không trừ phí ship), không quá số điểm khả dụng */
     const gtd = Number(gtCfg.giaTriDiem) || 1;
     const diemToiDa = vi && vi.dungDuoc ? Math.max(0, Math.min(vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd))) : 0;
@@ -69,10 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
     let ship = r && r.ok && r.freeship && !boMa && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
     if (!city && ship && shipMethod !== 'express') ship = null;
-    return { r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
   /* Quy tắc quà: giảm giới thiệu tính như 1 mã giảm giá (không phải freeship) */
-  const quaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : MC.maChoQua(k.boMa ? null : k.r, k.dungMa));
+  const quaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : k.dungVc ? MC.maChoQua({ ok: true, discount: k.vcAmt, freeship: false, code: k.vc.ma }, true) : MC.maChoQua(k.boMa ? null : k.r, k.dungMa));
   const canExpress = (cityName) => (SITE.expressCities || []).some((x) => (cityName || '').includes(x));
   const dc = addrParse(c.address || '');
   const tinhOptions = (sel) => `<option value="">Chọn tỉnh/thành</option>${DIA.map((p) => `<option ${p.t === sel ? 'selected' : ''}>${esc(p.t)}</option>`).join('')}`;
@@ -109,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="divider"></div>
         <div class="coupon"><input class="input" id="couponInput" placeholder="Nhập mã giảm giá (nếu có)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div><div id="maLuu"></div>
         <div class="coupon-hint" id="couponHint"></div>
-        <div id="gtBox"></div><div id="diemBox"></div>
+        <div id="vcBox"></div><div id="gtBox"></div><div id="diemBox"></div>
         <div class="divider"></div>
         <div id="summary"></div>
         <button class="btn btn--primary btn--lg btn--block btn--stack mt-16" type="submit" id="coSubmit"><span>${I.zap} ĐẶT HÀNG · <span id="coTotal"></span></span><small>Kiểm tra hàng trước khi thanh toán · Giao dự kiến ${deliveryEstimate()}</small></button>
@@ -139,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       + (multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : '')
       + (k.dungHang ? `<div class="summary-line"><span>Ưu đãi hạng ${esc(k.hang.label)} (−${k.pct}%)</span><span class="text-teal">−${fmt(k.hangAmt)}</span></div>` : '')
       + (k.dungMa ? `<div class="summary-line"><span>Giảm giá (${k.r.code})</span><span class="text-teal">−${fmt(k.couponAmt)}</span></div>` : '')
+      + (k.dungVc ? `<div class="summary-line"><span>Voucher ${esc(k.vc.ma)}</span><span class="text-teal">−${fmt(k.vcAmt)}</span></div>` : '')
       + (k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${gtCfg.giam}%)</span><span class="text-teal">−${fmt(k.gtAmt)}</span></div>` : '')
       + (k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="text-teal">−${fmt(k.giamDiem)}</span></div>` : '')
       + (qua && qua.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">${esc(qua.moTa)}</span></div>` : '')
@@ -153,7 +161,23 @@ document.addEventListener('DOMContentLoaded', () => {
       : k.r && k.r.ok ? `<span class="text-teal fw-600">✓ ${k.r.desc}</span>`
       : k.r ? `<span class="text-red">${k.r.msg}</span>`
       : `<span class="text-muted">Có mã giảm giá của shop thì mẹ nhập vào đây nhé.</span>`;
-    renderGT(k); renderDiem(k);
+    renderGT(k); renderDiem(k); renderVc(k);
+  };
+  const taiVc = () => {
+    const s = Session.get();
+    if (!s || phoneKey(s.sdt) !== phoneNow()) { if (vcVi) { vcVi = null; renderSummary(); } return; }
+    MC.DD.vi().then((r) => { vcVi = r && r.ok ? { ...r, ds: (r.ds || []).filter((v) => v.trangThai === 'AVAILABLE') } : null; if (vcChon && vcVi && !vcVi.ds.some((v) => v.ma === vcChon)) { vcChon = ''; store.set('mc_vc_chon', ''); } renderSummary(); }).catch(() => {});
+  };
+  const renderVc = (k) => {
+    const box = $('#vcBox'); if (!box) return;
+    const s = Session.get(), cuaSo = s && phoneKey(s.sdt) === phoneNow();
+    if (!cuaSo) { box.innerHTML = s ? '' : '<p class="fs-13 text-muted mt-8">🎟️ Có voucher điểm danh? <button type="button" class="text-primary fw-700" data-vc-login>Đăng nhập</button> để dùng.</p>'; return; }
+    const ds = (vcVi && vcVi.ds) || []; if (!ds.length) { box.innerHTML = ''; return; }
+    const base = sub - multi;
+    box.innerHTML = `<div class="co-vc"><h4>🎟️ Voucher của mẹ (${ds.length})</h4>${!vcVi.dungDuoc ? '<p class="fs-13 text-muted mb-8">🔐 Để dùng voucher, mẹ <button type="button" class="text-primary fw-700" data-vc-otp>xác thực mã OTP</button> (bảo vệ voucher của mẹ).</p>' : ''}
+      <div class="co-vc__ds">${ds.map((v) => { const g = MC.DD.giam(v, base, lines), on = v.ma === vcChon;
+        return `<button type="button" class="co-vc__it ${on ? 'is-on' : ''} ${g.ok && vcVi.dungDuoc ? '' : 'is-off'}" data-vc="${esc(v.ma)}" ${g.ok && vcVi.dungDuoc ? '' : 'aria-disabled="true"'}><b>−${fmt(v.giaTri)}</b><span>${esc(v.ten)}<small>${g.ok ? (v.donToiThieu ? 'Đơn từ ' + fmt(v.donToiThieu) + ' · ' : '') + 'HSD ' + new Date(v.hetHan).toLocaleDateString('vi-VN') : esc(g.msg)}</small></span><i class="co-vc__chon" aria-hidden="true"></i></button>`; }).join('')}</div>
+      ${k.vc && !k.dungVc && k.vcAmt ? `<p class="fs-13 text-muted mt-8">Voucher không cộng dồn với ${k.dungGT ? 'giảm giá giới thiệu' : 'ưu đãi hạng'} – web đang dùng mức có lợi hơn cho mẹ.</p>` : ''}</div>`;
   };
 
   /* ---- 🤝 Mã giới thiệu: dựng khung 1 lần, sau đó chỉ cập nhật chữ (không làm mất con trỏ khi đang gõ) ---- */
@@ -302,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (kh.email && !form.elements.email.value) form.elements.email.value = kh.email;
     if (kh.tinh) { form.elements.city.value = kh.tinh; form.elements.ward.innerHTML = xaOptions(kh.tinh, kh.xa || ''); }
     if (kh.diaChi && !form.elements.address.value.trim()) form.elements.address.value = kh.diaChi;
-    syncExpress(); renderLoyalty(); renderSummary(); taiVi();
+    syncExpress(); renderLoyalty(); renderSummary(); taiVi(); taiVc();
     if (gt.ma && gt.sdt !== phoneNow()) xetGT(gt.ma);
     toast('Đã điền thông tin đã lưu của mẹ', { type: 'ok' });
   };
@@ -312,14 +336,14 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Có phiên đã xác thực mà ô thông tin còn trống → điền sẵn từ hồ sơ */
   if (Session.get() && !form.elements.phone.value.trim()) { const kh = Session.kh() || {}; if (kh.sdt) form.elements.phone.value = kh.sdt; if (kh.ten && !form.elements.name.value.trim()) form.elements.name.value = kh.ten; if (kh.tinh && !form.elements.city.value) { form.elements.city.value = kh.tinh; form.elements.ward.innerHTML = xaOptions(kh.tinh, kh.xa || ''); } if (kh.diaChi && !form.elements.address.value.trim()) form.elements.address.value = kh.diaChi; if (kh.email && !form.elements.email.value.trim()) form.elements.email.value = kh.email; }
   renderSummary(); syncExpress(); renderLoyalty(); renderUpsell();
-  if (Session.get()) refreshProfile().then(() => { renderLoyalty(); renderSummary(); taiVi(); });
+  if (Session.get()) refreshProfile().then(() => { renderLoyalty(); renderSummary(); taiVi(); taiVc(); });
   kiemTraSdt();
   GT.cauHinh().then((c) => { gtCfg = c || { bat: false }; if (gt.ma) xetGT(gt.ma); else renderSummary(); });
   $('#stickySubmit').addEventListener('click', () => form.requestSubmit());
   const io = new IntersectionObserver(([en]) => { const so = $('#stickyOrder'); if (so) so.classList.toggle('hide', en.isIntersecting); }, { threshold: 0 }); io.observe($('#coSubmit'));
 
   let tPhone = 0;
-  form.addEventListener('input', (e) => { if (e.target.name === 'phone') { clearTimeout(tPhone); tPhone = setTimeout(() => { kiemTraSdt(); taiVi(); if (gt.ma && phoneOk(phoneNow()) && gt.sdt !== phoneNow()) xetGT(gt.ma); }, 600); } });
+  form.addEventListener('input', (e) => { if (e.target.name === 'phone') { clearTimeout(tPhone); tPhone = setTimeout(() => { kiemTraSdt(); taiVi(); taiVc(); if (gt.ma && phoneOk(phoneNow()) && gt.sdt !== phoneNow()) xetGT(gt.ma); }, 600); } });
   /* Enter trong ô mã giới thiệu / ô điểm: áp dụng, không gửi đơn */
   form.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
@@ -337,11 +361,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'loyOut') { Session.clear(); renderLoyalty(); renderSummary(); }
   });
   form.addEventListener('click', (e) => {
-    if (e.target.id === 'applyCoupon') { coupon = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(coupon, sub - multi, lines); store.set('mc_coupon', r.ok ? coupon : ''); if (!r.ok) coupon = ''; toast(r.ok ? 'Đã áp dụng mã ' + r.code : r.msg, { type: r.ok ? 'ok' : 'error' }); renderSummary(); }
+    if (e.target.id === 'applyCoupon') { vcChon = ''; store.set('mc_vc_chon', ''); coupon = $('#couponInput').value.trim().toUpperCase(); const r = applyCoupon(coupon, sub - multi, lines); store.set('mc_coupon', r.ok ? coupon : ''); if (!r.ok) coupon = ''; toast(r.ok ? 'Đã áp dụng mã ' + r.code : r.msg, { type: r.ok ? 'ok' : 'error' }); renderSummary(); }
     const cb = e.target.closest('[data-coupon]'); if (cb) { coupon = cb.dataset.coupon; $('#couponInput').value = coupon; store.set('mc_coupon', coupon); renderSummary(); }
     if (e.target.id === 'clearInfo') { Customer.clear(); location.reload(); }
     if (e.target.id === 'gtApply') { if (gt.ok) { GT.boRef(); $('#gtInput').value = ''; xetGT(''); } else xetGT($('#gtInput').value); }
     if (e.target.id === 'diemMax') { diemMuon = calc().diemToiDa; renderSummary(); }
+    const vb = e.target.closest('[data-vc]'); if (vb) { if (vb.getAttribute('aria-disabled')) return; vcChon = vcChon === vb.dataset.vc ? '' : vb.dataset.vc; store.set('mc_vc_chon', vcChon); if (vcChon) { coupon = ''; store.set('mc_coupon', ''); const ci = $('#couponInput'); if (ci) ci.value = ''; } renderSummary(); return; }
+    if (e.target.closest('[data-vc-login]')) { openLogin({ phone: phoneNow() }).then((s) => { if (s) { dienHoSo(); taiVi(); taiVc(); } }); return; }
+    if (e.target.closest('[data-vc-otp]')) { openOtp({ phone: phoneNow(), title: 'Xác thực để dùng voucher', desc: 'Shop gửi mã OTP về số điện thoại của mẹ. Nhập đúng mã là dùng được voucher cho đơn này.' }).then((s) => { if (s) { dienHoSo(); taiVi(); taiVc(); } }); return; }
     if (e.target.closest('[data-diem-otp]')) openOtp({ phone: phoneNow(), title: 'Xác thực để dùng điểm', desc: 'Shop gửi mã OTP về số điện thoại của mẹ. Nhập đúng mã là dùng được điểm thưởng cho đơn này.' }).then((s) => { if (s) { dienHoSo(); taiVi(); } });
     const up = e.target.closest('[data-upsell]');
     if (up) { const p = byId(up.dataset.upsell); if (p) { const vi = bienTheCon(p); Cart.add(p.id, 1, vi != null && vi > -1 ? vi : null); toast(`Đã thêm ${shortName(p)} vào đơn`, { type: 'ok' }); } }
@@ -358,21 +385,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const k = calc(); const s = Session.get(); const sdtDat = phoneKey(v.phone);
     /* Giữ chỗ ưu đãi trên máy chủ: máy chủ kiểm tra lại mã giới thiệu / số điểm và khoá lại để không dùng trùng */
     const code = maDonCho || (maDonCho = taoMaDon()); let maGiu = '';
-    if (k.dungGT || k.diemDung > 0 || daGiu) {
+    if (k.dungGT || k.diemDung > 0 || k.dungVc || daGiu) {
       btn.innerHTML = '<span>Đang giữ ưu đãi cho đơn…</span>';
       const loiGiu = (msg) => { err.textContent = msg; err.classList.remove('hide'); btn.disabled = false; btn.innerHTML = btnHTML; renderSummary(); err.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
       let res;
       try {
         res = await GT.giuCho({ sdt: sdtDat, token: s && phoneKey(s.sdt) === sdtDat ? s.token : '', maDon: code, ref: k.dungGT ? gt.ma : '', dungGT: k.dungGT ? '1' : '0',
-          diem: k.diemDung, giaTri: sub - multi, giamKhac: (k.dungHang ? k.hangAmt : 0) + (k.dungMa ? k.couponAmt : 0), tongDon: k.total });
+          diem: k.diemDung, giaTri: sub - multi, giamKhac: (k.dungHang ? k.hangAmt : 0) + (k.dungMa ? k.couponAmt : 0), tongDon: k.total,
+          maVc: k.dungVc ? k.vc.ma : '', tienVc: k.dungVc ? k.rv.tienApDung : 0 });
       } catch (e2) { return loiGiu(e2.message + ' – mẹ bấm Đặt hàng lại giúp shop nhé.'); }
       if (!res || !res.ok) {
         if (res && res.code === 'REQUIRE_AUTH') { diemMuon = 0; if (vi) vi = { ...vi, dungDuoc: false }; }
+        else if (res && (res.code === 'REQUIRE_AUTH_VC' || /^VOUCHER_/.test(res.code || ''))) { vcChon = ''; store.set('mc_vc_chon', ''); taiVc(); }
         else if (res && k.dungGT && res.code !== 'BUSY') gt = { ...gt, ok: false, msg: res.message || res.msg };
         return loiGiu((res && (res.msg || res.message)) || 'Chưa giữ được ưu đãi, mẹ thử lại nhé');
       }
       daGiu = !!res.maGiu;
-      if ((k.dungGT ? k.gtAmt : 0) !== (res.giamGT || 0) || k.diemDung !== (res.diem || 0)) {
+      if ((k.dungGT ? k.gtAmt : 0) !== (res.giamGT || 0) || k.diemDung !== (res.diem || 0) || (k.dungVc ? k.vcAmt : 0) !== (res.giamVc || 0)) {
+        if (k.dungVc && !res.giamVc) { vcChon = ''; store.set('mc_vc_chon', ''); } taiVc();
         if (k.dungGT && !res.giamGT) gt = { ...gt, ok: false, msg: 'Ưu đãi giới thiệu không còn áp dụng được cho đơn này.' };
         diemMuon = res.diem || 0; taiVi();
         return loiGiu('Ưu đãi vừa được cập nhật theo dữ liệu mới nhất. Mẹ kiểm tra lại tổng tiền rồi bấm Đặt hàng lần nữa nhé.');
@@ -380,19 +410,19 @@ document.addEventListener('DOMContentLoaded', () => {
       maGiu = res.maGiu || '';
       btn.innerHTML = '<span>Đang xử lý đơn hàng…</span>';
     }
-    const uuDai = [k.dungGT ? `Giảm giới thiệu ${gtCfg.giam}% (người giới thiệu ${gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
+    const uuDai = [k.dungVc ? `Voucher ${k.vc.ma} (${k.vc.nguonTen}): -${fmt(k.vcAmt)}` : '', k.dungGT ? `Giảm giới thiệu ${gtCfg.giam}% (người giới thiệu ${gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
     const order = await submitOrder({ type: 'checkout', code,
       customer: { name: v.name.trim(), phone: sdtDat, address: fullAddress, email: v.email, tinh: v.city, xa: v.ward, diaChi: v.address.trim() },
       note: uuDai ? `[${uuDai}]${v.note ? '\n' + v.note : ''}` : v.note, shipMethod, payment: v.payment,
       gioiThieu: k.dungGT ? { ma: gt.ma, giam: k.gtAmt, phanTram: gtCfg.giam } : null, diem: k.diemDung ? { so: k.diemDung, giam: k.giamDiem } : null, maGiu,
-      coupon: k.dungMa ? k.r.code : '',
+      coupon: k.dungVc ? 'VC:' + k.vc.ma : k.dungMa ? k.r.code : '', voucher: k.dungVc ? { ma: k.vc.ma, giam: k.vcAmt } : null,
       hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (s && phoneKey(s.sdt) === phoneKey(v.phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
       token: s ? s.token : '',
       qua: qua && qua.soQua ? { soQua: qua.soQua, ten: qua.ten, vi: quaVi, chuongTrinh: qua.chuongTrinh, moTa: `${qua.moTa} (${quaVi})` } : null,
       items: lines.map((l) => ({ id: l.id, name: l.name, short: shortName(l.p), variant: l.variantLabel, qty: l.qty, price: l.price })),
       subtotal: sub, discount: multi + k.discount + k.giamDiem, ship: k.ship, total: k.total });
     io.disconnect(); $('#stickyOrder')?.remove();
-    daDat = true; Cart.clear(); store.set('mc_coupon', ''); if (k.dungGT) GT.boRef();
+    daDat = true; Cart.clear(); store.set('mc_coupon', ''); store.set('mc_vc_chon', ''); if (k.dungGT) GT.boRef();
     if (k.diemDung) toast(`Mẹ đã dùng ${k.diemDung.toLocaleString('vi-VN')} điểm cho đơn hàng ${order.code}`, { type: 'ok' });
     if (Session.get()) refreshProfile();
     $('#checkoutPage').innerHTML = `<div class="success-page card">${orderSuccessHTML(order, false)}</div>`;
