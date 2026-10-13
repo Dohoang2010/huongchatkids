@@ -1,0 +1,215 @@
+{
+  "tenFile": "theo-doi-suc-khoe-con.mp4",
+  "khuon": "9:16",
+  "giong": "vi-VN-NamMinhNeural",
+  "tocDo": "+32%",
+  "caoDo": "+4Hz",
+  "mauPhuDe": "#D93E66",
+  "nhac": {
+    "bpm": 128
+  },
+  "amLuongNhac": 0.45,
+  "canh": [
+    {
+      "id": 1,
+      "k": [
+        0,
+        0.125,
+        0.25,
+        0.375,
+        0.5,
+        0.625,
+        0.75,
+        0.875
+      ],
+      "html": "<div class=\"pill pill--teal\">📏 Tính năng mới</div><h1>Bé nhà mình<br><em>lớn có chuẩn</em><br>không mẹ?</h1><p class=\"lead\" style=\"max-width:430px\">Kiểm tra ngay theo <b>chuẩn WHO</b> – miễn phí tại Hương Chất Kids</p><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-noi=\"Chào mẹ! 👋\" data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"cuoi\" data-noi=\"Chào mẹ! 👋\" data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-noi=\"Chào mẹ! 👋\" data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"mo\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"chao\" data-mieng=\"cuoi\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"mo\"  data-k=\"6\" data-kh=\"7\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\"  data-k=\"7\" data-kh=\"8\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"cuoi\"  data-k=\"8\"></i>",
+      "vo": "Chào các mẹ! Bé nhà mình cao, nặng như vậy đã chuẩn chưa? Hương Chất Kids vừa có tính năng Theo dõi sức khỏe con, kiểm tra ngay theo chuẩn của Tổ chức Y tế Thế giới.",
+      "sub": [
+        "Bé nhà mình cao, nặng đã chuẩn chưa?",
+        "Hương Chất Kids có tính năng mới:",
+        "Theo dõi sức khỏe con",
+        "kiểm tra theo chuẩn WHO"
+      ]
+    },
+    {
+      "id": 2,
+      "nhan": "1/4",
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"pill\">Ngay trên trang chủ</div><h2>Bấm <em>“Kiểm tra cho bé”</em></h2><div class=\"ui trai\" style=\"width:660px\"><img src=\"ui_the.png\"></div><p class=\"lead\" style=\"max-width:600px\">Hoặc nút <b>📏 Sức khỏe con</b> trên đầu trang</p><i class=\"nv\" data-tu=\"chi\" data-mieng=\"mo\"  data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"chi2\" data-mieng=\"cuoi\"  data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chi\" data-mieng=\"mo\"  data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"chi2\" data-mieng=\"cuoi\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"chi\" data-mieng=\"mo\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"chi2\" data-mieng=\"cuoi\"  data-k=\"6\"></i>",
+      "vo": "Tính năng nằm ngay trên trang chủ, hoặc bấm nút Sức khỏe con trên đầu trang. Mẹ bấm Kiểm tra cho bé là bắt đầu.",
+      "sub": [
+        "Ngay trên trang chủ",
+        "hoặc nút \"Sức khỏe con\" trên đầu trang",
+        "Bấm \"Kiểm tra cho bé\" là bắt đầu"
+      ],
+      "sfx": [
+        {
+          "p": 0.78,
+          "loai": "click"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nhan": "2/4",
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"pill pill--teal\">Chỉ 4 thông tin</div><h2>Giới tính, ngày sinh,<br><em>chiều cao, cân nặng</em></h2><div class=\"ui crop trai\" style=\"width:640px;height:760px\"><img src=\"ui_form.png\" style=\"top:-130px\"></div><i class=\"nv\" data-tu=\"thuoc\" data-mieng=\"mo\"  data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"thuoc\" data-mieng=\"cuoi\"  data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"thuoc\" data-mieng=\"mo\"  data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"thuoc\" data-mieng=\"cuoi\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"thuoc\" data-mieng=\"mo\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"thuoc\" data-mieng=\"cuoi\"  data-k=\"6\"></i>",
+      "vo": "Mẹ chỉ cần nhập giới tính, ngày sinh, chiều cao và cân nặng của bé. Số đo chỉ lưu trên máy của mẹ, không gửi đi đâu.",
+      "sub": [
+        "Nhập giới tính, ngày sinh,",
+        "chiều cao và cân nặng của bé",
+        "Số đo chỉ lưu trên máy của mẹ"
+      ]
+    },
+    {
+      "id": 4,
+      "nhan": "3/4",
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"pill\">Chuẩn WHO</div><h2>Biết ngay bé <em>đạt chuẩn</em> chưa</h2><div class=\"ui crop trai\" style=\"width:640px;height:880px\"><img src=\"ui_kq.png\" style=\"top:-560px\"></div><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\"  data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"cuoi\"  data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"mo\"  data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"mo\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"like\" data-mat=\"nham\"  data-k=\"6\"></i>",
+      "vo": "Chỉ một chạm, web so với chuẩn WHO: cân nặng, chiều cao và chỉ số BMI theo tuổi, kèm mức so với các bạn cùng tuổi.",
+      "sub": [
+        "Chỉ 1 chạm, so với chuẩn WHO:",
+        "cân nặng, chiều cao và BMI theo tuổi",
+        "kèm mức so với các bạn cùng tuổi"
+      ],
+      "sfx": [
+        {
+          "p": 0.15,
+          "loai": "ting"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nhan": "3/4",
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"pill pill--teal\">📈 Biểu đồ tăng trưởng</div><h2>Thấy con <em>lớn lên</em><br>qua từng lần đo</h2><div class=\"ui crop trai\" style=\"width:640px;height:600px\"><img src=\"ui_kq.png\" style=\"top:-1575px\"></div><i class=\"nv\" data-tu=\"chi\" data-mieng=\"mo\"  data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"chi2\" data-mieng=\"cuoi\"  data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chi\" data-mieng=\"mo\"  data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"chi2\" data-mieng=\"cuoi\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"chi\" data-mieng=\"mo\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"chi2\" data-mieng=\"cuoi\"  data-k=\"6\"></i>",
+      "vo": "Biểu đồ tăng trưởng giúp mẹ thấy con lớn lên qua từng lần đo. Chấm hồng nằm trong vùng xanh là bé đạt chuẩn.",
+      "sub": [
+        "Biểu đồ tăng trưởng qua từng lần đo",
+        "Chấm hồng trong vùng xanh",
+        "là bé đạt chuẩn"
+      ]
+    },
+    {
+      "id": 6,
+      "nhan": "4/4",
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"pill pill--amber\">🥛 Dinh dưỡng theo tuổi</div><h2>Bé cần gì <em>mỗi ngày?</em></h2><div class=\"ui crop trai\" style=\"width:640px;height:820px\"><img src=\"ui_kq.png\" style=\"top:-2290px\"></div><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\"  data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"cuoi\"  data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\"  data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"cuoi\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"cuoi\"  data-k=\"6\"></i>",
+      "vo": "Web còn cho mẹ biết bé cần bao nhiêu canxi, vitamin D, sắt, kẽm, đạm mỗi ngày theo đúng độ tuổi.",
+      "sub": [
+        "Bé cần bao nhiêu canxi, vitamin D,",
+        "sắt, kẽm, đạm mỗi ngày",
+        "theo đúng độ tuổi"
+      ]
+    },
+    {
+      "id": 7,
+      "nhan": "4/4",
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"pill\">🎁 Gợi ý cho bé</div><h2>Sản phẩm <em>hợp tuổi</em>,<br>chọn ngay 1 chạm</h2><div class=\"ui crop trai\" style=\"width:640px;height:820px\"><img src=\"ui_kq.png\" style=\"top:-3390px\"></div><i class=\"nv\" data-tu=\"vo\" data-mieng=\"mo\"  data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"vo2\" data-mieng=\"cuoi\"  data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"vo\" data-mieng=\"mo\"  data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"vo2\" data-mieng=\"mo\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"vo\" data-mieng=\"cuoi\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"vo2\" data-mieng=\"mo\"  data-k=\"6\"></i>",
+      "vo": "Kèm theo là gợi ý sản phẩm hợp tuổi, hợp tình trạng của bé. Mẹ chọn mua ngay trong một chạm.",
+      "sub": [
+        "Gợi ý sản phẩm hợp tuổi,",
+        "hợp tình trạng của bé",
+        "chọn mua ngay trong 1 chạm"
+      ],
+      "sfx": [
+        {
+          "p": 0.55,
+          "loai": "click"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"pill pill--teal\">💾 Lưu lại để theo dõi</div><h2>Đo lần sau, web <em>tự so sánh</em></h2><div class=\"ui trai\" style=\"width:660px\"><img src=\"ui_the_luu.png\"></div><div class=\"flow\" style=\"max-width:680px;white-space:nowrap\"><div class=\"row\"><i>📏</i><span>12/04/2026</span><b>87,6 cm</b></div><div class=\"row row--teal\"><i>🌱</i><span>13/10/2026</span><b>92,0 cm</b></div></div><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\"  data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"cuoi\"  data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\"  data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"mo\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"like\" data-mat=\"nham\"  data-k=\"6\"></i>",
+      "vo": "Mỗi lần đo đều được lưu lại. Lần sau, web tự so với lần trước: bé Na đã cao thêm bốn phẩy bốn xăng ti mét chỉ sau sáu tháng!",
+      "sub": [
+        "Mỗi lần đo đều được lưu lại",
+        "Lần sau web tự so với lần trước:",
+        "bé Na cao thêm 4,4 cm sau 6 tháng!"
+      ],
+      "sfx": [
+        {
+          "p": 0.55,
+          "loai": "tien"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "k": [
+        0,
+        0.167,
+        0.333,
+        0.5,
+        0.667,
+        0.833
+      ],
+      "html": "<div class=\"cta\" style=\"margin-right:200px\"><div class=\"big\">📏💗</div><h2>Kiểm tra cho bé<br>ngay hôm nay!</h2><p>Miễn phí · 1 phút<br>Chuẩn WHO</p><span class=\"web\">huongchatkids.vn</span></div><i class=\"nv\" data-tu=\"vo\" data-mieng=\"mo\" data-noi=\"Thử ngay nhé!\" data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"vo2\" data-mieng=\"cuoi\" data-noi=\"Thử ngay nhé!\" data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-noi=\"Thử ngay nhé!\" data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"cuoi\"  data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\"  data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"vo\" data-mieng=\"cuoi\"  data-k=\"6\"></i>",
+      "vo": "Miễn phí, chỉ mất một phút. Vào Hương Chất Kids chấm vi en, kiểm tra cho bé ngay hôm nay nhé các mẹ!",
+      "sub": [
+        "Miễn phí, chỉ mất 1 phút",
+        "Vào huongchatkids.vn",
+        "kiểm tra cho bé ngay hôm nay nhé!"
+      ],
+      "sfx": [
+        {
+          "p": 0.1,
+          "loai": "ting"
+        }
+      ]
+    }
+  ]
+}

@@ -31,6 +31,7 @@ Kết quả giao cho chủ shop: **1 file MP4** (mặc định dọc 9:16, 45–
    - `sub`: phụ đề chia 2–4 đoạn ngắn (≤ 45 ký tự), dùng chữ số.
    - `k` (tuỳ chọn): hiện lần lượt – phần tử gắn `data-k="1|2|3"`, `k: [0, 0.3, 0.6]` là thời điểm (tỉ lệ lời đọc) mỗi phần xuất hiện.
    - `nhan` (tuỳ chọn): chữ góc phải trên, vd "1/5".
+   - **Nhân vật hoạt hình "Cô Hương"** (scripts/nhan-vat.js, tự nạp trong khung.html): chèn `<i class="nv" data-tu="chao|chao2|chi|chi2|thuoc|like|vo|vo2|noi" data-mieng="mo|cuoi" data-noi="bóng thoại"></i>` vào `html` – đứng góc phải dưới, trên phụ đề. Tạo cử chỉ: nhiều thẻ `.nv` với `data-k="n"` (hiện từ khung n) + `data-kh="n+1"` (ẩn từ khung n+1), `k` chia đều (6–8 khung/cảnh), xen kẽ tư thế (chao/chao2 = vẫy tay) và miệng mo/cuoi khi nói. Ảnh giao diện dồn trái bằng lớp `trai` (rộng ≤ 660px) để chừa chỗ. Mẫu: `vi-du/theo-doi-suc-khoe-con.json` (sinh bằng hàm nv() trong kịch bản mẫu).
    - Bố cục chuẩn 7–9 cảnh: mở đầu lợi ích → khái niệm → các bước (ảnh thật) → ví dụ số → lưu ý → kêu gọi + web + hotline 0967 233 003.
    - Tuỳ chọn chung: `khuon` ("9:16" | "16:9"), `giong`, `tocDo` ("+6%"), `mauPhuDe` ("#D93E66"), `caoDo` ("+4Hz"), `nhac.bpm`, `nhac.kieu`, `amLuongNhac`, `amThanh` (false = tắt hiệu ứng), `amLuongHieuUng` (0.5), `tenFile`.
    - Âm riêng từng cảnh: `sfx: [{ "k": 3, "loai": "tien" }, { "p": 0.5, "loai": "click" }]` – `k` = lúc khung thứ k hiện, `p` = tỉ lệ lời đọc; `loai`: `click` (bấm nút), `ting` (thông báo), `tien` (ting ting tiền về), `bup`, `vut`.
