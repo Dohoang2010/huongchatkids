@@ -2809,10 +2809,10 @@ window.PRODUCTS = [
       "12-18y"
     ],
     "needs": [
-      "sua-tuoi",
-      "organic",
+      "tang-chieu-cao",
       "canxi",
-      "tang-chieu-cao"
+      "organic",
+      "sua-tuoi"
     ],
     "price": 875000,
     "oldPrice": 1181000,
@@ -2842,12 +2842,14 @@ window.PRODUCTS = [
       {
         "label": "1 thùng 24 hộp",
         "price": 875000,
-        "oldPrice": 1181000
+        "oldPrice": 1181000,
+        "oos": true
       },
       {
         "label": "2 thùng 48 hộp",
         "price": 1750000,
-        "oldPrice": 2363000
+        "oldPrice": 2363000,
+        "oos": true
       }
     ],
     "desc": "Sữa xanh Lotte Organic (Pasteur 유기농 우유) – sữa tươi hữu cơ nguyên kem của Lotte Wellfood Hàn Quốc, hộp 125ml vừa một lần uống cho bé. Sữa đạt chứng nhận hữu cơ của Bộ Nông nghiệp Hàn Quốc, cơ sở sản xuất đạt HACCP. Mỗi hộp 125ml (80 kcal) có 4g đạm, 4,6g chất béo và 125mg canxi, vị thơm béo tự nhiên, dùng được cho cả bé và người lớn.",
