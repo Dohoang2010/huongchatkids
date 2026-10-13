@@ -3212,6 +3212,70 @@ window.PRODUCTS = [
       "Sản xuất tại Pháp – chai 200ml"
     ],
     "usage": "Dùng ngoài. Lấy lượng vừa đủ, làm sạch nhẹ nhàng vùng kín bên ngoài rồi rửa lại bằng nước sạch. Tránh tiếp xúc với mắt. Chọn đúng loại theo độ tuổi và nhu cầu; làm theo hướng dẫn in trên bao bì."
+  },
+  {
+    "id": "zinc-purevitality",
+    "name": "Kẽm ZinC Pure Vitality New Zealand – Bổ Sung Kẽm Hỗ Trợ Tăng Đề Kháng & Phát Triển Toàn Diện – Lọ Nhỏ Giọt 30ml Không Hương",
+    "short": "Kẽm ZinC Pure Vitality 30ml",
+    "brand": "purevitality",
+    "cat": "vitamin",
+    "ages": [
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "de-khang",
+      "tang-can",
+      "tri-nao",
+      "cho-me"
+    ],
+    "price": 290000,
+    "oldPrice": 290000,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "shape": "bottle",
+    "color": "#0E6B57",
+    "weight": "Lọ nhỏ giọt 30ml",
+    "origin": "New Zealand",
+    "family": true,
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/zinc-purevitality.jpg",
+    "thumb": "img/thumb/zinc-purevitality.jpg",
+    "images": [
+      "img/zinc-purevitality.jpg",
+      "img/zinc-purevitality-2.jpg",
+      "img/zinc-purevitality-3.jpg",
+      "img/zinc-purevitality-4.jpg",
+      "img/zinc-purevitality-5.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 lọ",
+        "price": 290000,
+        "oldPrice": 290000
+      },
+      {
+        "label": "2 lọ",
+        "price": 580000,
+        "oldPrice": 580000
+      }
+    ],
+    "desc": "ZinC – Bổ sung kẽm hỗ trợ đề kháng & phát triển toàn diện. Thành phần chính: Zinc (as Zinc Sulphate) – 6.75 mg. Công dụng nổi bật: tăng cường hệ miễn dịch, giúp cơ thể khỏe mạnh hơn; hỗ trợ xương chắc khỏe, giảm nguy cơ loãng xương; tốt cho tóc – da – móng, hỗ trợ chức năng sinh sản; tăng khả năng tập trung & hiệu suất học tập. Đối tượng sử dụng: trẻ em biếng ăn, chậm lớn, cần tăng đề kháng; phụ nữ mang thai & cho con bú; người hấp thu kém hoặc hay ốm vặt. Quy cách: lọ nhỏ giọt 30ml – không hương. Xuất xứ: New Zealand. HSD: 2 năm từ NSX.",
+    "highlights": [
+      "Thành phần chính: Zinc (as Zinc Sulphate) – 6.75 mg",
+      "Tăng cường hệ miễn dịch, giúp cơ thể khỏe mạnh hơn",
+      "Hỗ trợ xương chắc khỏe, giảm nguy cơ loãng xương",
+      "Tốt cho tóc – da – móng, hỗ trợ chức năng sinh sản",
+      "Tăng khả năng tập trung & hiệu suất học tập",
+      "Lọ nhỏ giọt 30ml – không hương, xuất xứ New Zealand, HSD 2 năm từ NSX"
+    ],
+    "usage": "Trẻ 4–13 tuổi: 0.5ml/lần/ngày. Từ 14 tuổi & người lớn: 0.5ml × 2 lần/ngày. Uống cùng bữa ăn hoặc theo hướng dẫn y tế."
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */

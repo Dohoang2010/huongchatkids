@@ -368,6 +368,13 @@
       "variants": {
         "1 thùng Lotte Tăng cao 30 gói + 1 D3K2": true
       }
+    },
+    "zinc-purevitality": {
+      "in": true,
+      "variants": {
+        "1 lọ": true,
+        "2 lọ": true
+      }
     }
   }
 }
