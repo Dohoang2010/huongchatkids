@@ -2213,3 +2213,36 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .blog-item > .post-card__thumb { aspect-ratio: auto; width: 100%; min-width: 0; height: auto; min-height: 100%; position: relative; }
 .blog-item > .post-card__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 767px) { .blog-item > .post-card__thumb { min-height: 96px; } }
+
+/* ---------- Lead "Nhờ chuyên gia tư vấn" trong bài viết ---------- */
+.ltv-dai { display: flex; align-items: center; justify-content: space-between; gap: 10px 14px; flex-wrap: wrap; margin: 0 0 20px; padding: 10px 12px 10px 16px; border-left: 3px solid var(--teal, #17A398); background: #EFFAF8; border-radius: 0 12px 12px 0; }
+.ltv-dai span { font-size: 14px; font-weight: 600; color: var(--ink); }
+.ltv { display: flex; flex-direction: column; gap: 14px; }
+.ltv__dan { margin: 0; font-size: 14px; color: var(--ink-2); }
+.ltv__hai { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ltv fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.ltv legend { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 700; color: var(--ink); }
+.ltv legend span { color: var(--red); }
+/* Phiếu số đo của bé: mép trên là vạch thước đo chiều cao */
+.ltv__be { position: relative; padding: 18px 12px 12px !important; background: #F4FBFA; border-radius: 4px 4px 14px 14px; }
+.ltv__be::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 9px; border-radius: 4px 4px 0 0;
+  background: repeating-linear-gradient(90deg, #17A398 0 1.5px, transparent 1.5px 8px) top / 100% 5px no-repeat, repeating-linear-gradient(90deg, #17A398 0 2px, transparent 2px 40px) top / 100% 9px no-repeat; opacity: .55; }
+.ltv__be legend { float: left; width: 100%; }
+.ltv__so { clear: both; display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 8px; }
+.ltv__o { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ltv__o > span:first-child { font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.ltv__o .input { min-width: 0; width: 100%; }
+.ltv__dv { position: relative; display: block; }
+.ltv__dv .input { padding-right: 34px; font-variant-numeric: tabular-nums; }
+.ltv__dv i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 12.5px; font-weight: 600; color: #17A398; pointer-events: none; }
+.ltv__goc { display: block; margin-top: 8px; font-size: 12px; color: #0F7A70; }
+.ltv__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.ltv__chips .chip[aria-pressed="true"]::before { content: '✓'; font-weight: 700; }
+.ltv__ghi { width: 100%; min-height: 58px; resize: vertical; font: inherit; }
+.ltv__rieng { margin: -4px 0 0; font-size: 12px; color: var(--muted); text-align: center; }
+@media (max-width: 480px) {
+  .ltv__hai { grid-template-columns: 1fr; }
+  .ltv__so { grid-template-columns: 1fr 1fr; }
+  .ltv__so .ltv__o:first-child { grid-column: 1 / -1; }
+  .ltv-dai .btn { width: 100%; justify-content: center; }
+}

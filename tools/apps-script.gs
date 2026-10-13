@@ -880,6 +880,35 @@ function guiMotMailSinhNhat_(email, ten) {
 /* CHẠY TAY khi cần thử: gửi ngay lượt hôm nay (bỏ qua giới hạn 1 lượt / ngày) */
 function thuGuiMailSinhNhat() { Logger.log(JSON.stringify(guiMailSinhNhat_(true))); }
 /* Khách đang đăng nhập tự điền ngày sinh (1 lần) */
+/* ---------------- Lead tư vấn từ bài viết Cẩm nang ----------------
+   Khách điền popup "Nhờ chuyên gia tư vấn" → ghi vào sheet "Lead tư vấn" + báo Zalo / email cho shop gọi lại */
+var SHEET_LEAD = 'Lead tư vấn';
+var H_LEAD = ['Thời gian', 'Họ tên', 'Điện thoại', 'Tuổi của bé', 'Chiều cao (cm)', 'Cân nặng (kg)', 'Tình trạng mong muốn', 'Bài viết', 'Link', 'Trạng thái', 'Ghi chú shop'];
+function oChu_(v, max) { // cắt ngắn + chặn công thức (=, +, -, @) khi ghi vào ô
+  var t = String(v == null ? '' : v).replace(/[\u0000-\u001f]+/g, ' ').trim().slice(0, max || 200);
+  return /^[=+\-@]/.test(t) ? "'" + t : t;
+}
+function soDo_(v, min, max) { var n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isFinite(n) && n >= min && n <= max ? Math.round(n * 10) / 10 : ''; }
+function apiLeadTuVan(p) {
+  var ten = oChu_(p.ten, 60), sdt = chuanSdt(p.sdt), tinhTrang = oChu_(p.tinhTrang, 600);
+  if (!ten) return { ok: false, msg: 'Mẹ nhập họ tên giúp shop nhé' };
+  if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' };
+  if (!tinhTrang) return { ok: false, msg: 'Mẹ chọn hoặc ghi tình trạng mong muốn của bé nhé' };
+  if (!demGioiHan('lead_' + sdt, 5, 3600)) return { ok: false, msg: 'Shop đã nhận thông tin của mẹ rồi, chuyên gia sẽ gọi sớm nhé' };
+  var tuoi = oChu_(p.tuoi, 40), cao = soDo_(p.cao, 30, 220), nang = soDo_(p.nang, 1, 150);
+  var bai = oChu_(p.bai, 200), link = /^https:\/\/[^\s]+$/.test(String(p.link || '')) ? oChu_(p.link, 300) : '';
+  voiKhoa(function () {
+    sheetPhu(SHEET_LEAD, H_LEAD).appendRow([new Date(), ten, "'" + sdt, tuoi, cao, nang, tinhTrang, bai, link, 'Chưa gọi', '']);
+  });
+  var text = '💬 Lead nhờ tư vấn (bài viết)\n'
+    + 'Khách: ' + ten + ' – ' + sdt + '\n'
+    + 'Bé: ' + (tuoi || '?') + (cao !== '' ? ' · ' + cao + ' cm' : '') + (nang !== '' ? ' · ' + nang + ' kg' : '') + '\n'
+    + 'Mong muốn: ' + tinhTrang + '\n'
+    + (bai ? 'Bài: ' + bai : '');
+  try { if (EMAIL) MailApp.sendEmail(EMAIL, '💬 Lead tư vấn – ' + ten + ' ' + sdt, text + (link ? '\n' + link : '')); } catch (e) { Logger.log('Mail lead lỗi: ' + e); }
+  try { zaloBotGuiTin(text); } catch (e2) { Logger.log('Zalo lead lỗi: ' + e2); }
+  return { ok: true };
+}
 function apiSnLuu(p) {
   var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
   var ngay = chuanNgaySinh_(p.ngaySinh); if (!ngay) return { ok: false, msg: 'Ngày sinh chưa đúng (dd/mm/yyyy)' };
@@ -2068,6 +2097,7 @@ function doGet(e) {
     if (action === 'qtGtLich')      return traVe(apiQtGtLich(p), cb);
     if (action === 'ddCauHinh')     return traVe(apiDdCauHinh(), cb);
     if (action === 'snLuu')         return traVe(apiSnLuu(p), cb);
+    if (action === 'leadTuVan')     return traVe(apiLeadTuVan(p), cb);
     if (action === 'qtSnLuu')       return traVe(apiQtSnLuu(p), cb);
     if (action === 'ddTongQuan')    return traVe(apiDdTongQuan(p), cb);
     if (action === 'ddDiemDanh')    return traVe(apiDdDiemDanh(p), cb);
@@ -2496,7 +2526,7 @@ function baoLenh_(data) {
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
 var GIOI_HAN_10P = { guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
-  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200 };
+  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
   canhBao_('tan-suat-' + action, '⚠️ Có hơn ' + t + ' yêu cầu "' + action + '" trong 10 phút – có thể bot đang tấn công. Hệ thống đã tạm chặn lệnh này, tự mở lại sau khi lắng xuống.');
