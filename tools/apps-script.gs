@@ -309,7 +309,9 @@ function docKH(sdt) {
     kh.ten = String(v[1] || ''); kh.tinh = String(v[2] || ''); kh.xa = String(v[3] || '');
     kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || '');
   }
-  kh.ngaySinh = snDoc_(sdt) || (crm && crm.kh ? chuanNgaySinh_(crm.kh.ngaySinh || crm.kh.sinhNhat || '') : '');
+  var sn0 = null; try { sn0 = snTim_(sdt); } catch (e0) { Logger.log(e0); }
+  kh.ngaySinh = (sn0 && sn0.ngay) || (crm && crm.kh ? chuanNgaySinh_(crm.kh.ngaySinh || crm.kh.sinhNhat || '') : '');
+  kh.snKhoaNam = sn0 ? sn0.khoaNam : '';
   /* Sheet chưa có → lấy tên, địa chỉ, email từ CRM (CRM trả thêm tinh / xa / diaChi / email thì tự dùng) */
   if (crm && crm.co && crm.kh) {
     var ck = crm.kh;
@@ -790,7 +792,9 @@ function xuLyDiemGT() {
    Sheet riêng "Sinh nhật" (không đổi cột sheet Khách hàng). Khách tự điền 1 lần sau khi đăng nhập;
    đã có ngày sinh thì chỉ quản trị (customer.update) sửa được – chống đổi ngày để lấy giảm giá. CRM có ngày sinh thì dùng luôn. */
 var SHEET_SN = 'Sinh nhật';
-function sheetSN_() { return sheetPhu(SHEET_SN, ['Điện thoại', 'Ngày sinh', 'Cập nhật lúc', 'Người sửa', 'Nguồn']); }
+var H_SN = ['Điện thoại', 'Ngày sinh', 'Cập nhật lúc', 'Người sửa', 'Nguồn', 'Khoá ưu đãi năm', 'Đã gửi mail năm'];
+var SN_GIAM = 10;   // % giảm tháng sinh nhật – để trong email; giữ đúng với SITE.loyalty.sinhNhat.giam trong js/data.js
+function sheetSN_() { var sh = sheetPhu(SHEET_SN, H_SN); if (sh.getLastColumn() < H_SN.length) sh.getRange(1, 1, 1, H_SN.length).setValues([H_SN]); return sh; }
 /* Nhận dd/mm/yyyy, yyyy-mm-dd hoặc ô ngày của Sheets → 'yyyy-MM-dd' (trống nếu sai / tương lai / quá 120 tuổi) */
 function chuanNgaySinh_(v) {
   if (v instanceof Date && !isNaN(v)) return Utilities.formatDate(v, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
@@ -804,15 +808,77 @@ function chuanNgaySinh_(v) {
 }
 function snTim_(sdt) {
   var sh = sheetSN_(), n = sh.getLastRow(); if (n < 2) return null;
-  var v = sh.getRange(2, 1, n - 1, 2).getValues();
-  for (var i = v.length - 1; i >= 0; i--) if (chuanSdt(v[i][0]) === sdt) return { dong: i + 2, ngay: chuanNgaySinh_(v[i][1]) };
+  var v = sh.getRange(2, 1, n - 1, H_SN.length).getValues();
+  for (var i = v.length - 1; i >= 0; i--) if (chuanSdt(v[i][0]) === sdt) return { dong: i + 2, ngay: chuanNgaySinh_(v[i][1]), khoaNam: String(v[i][5] || ''), mailNam: String(v[i][6] || '') };
   return null;
 }
 function snDoc_(sdt) { try { var r = snTim_(sdt); return r ? r.ngay : ''; } catch (e) { Logger.log(e); return ''; } }
-function snGhi_(sdt, ngay, ai, nguon) {
+function snGhi_(sdt, ngay, ai, nguon, khoaNam) {
   var r = snTim_(sdt), dong = ["'" + sdt, "'" + ngay, new Date(Date.now()), ai, nguon];
-  if (r) sheetSN_().getRange(r.dong, 1, 1, 5).setValues([dong]); else sheetSN_().appendRow(dong);
+  if (r) { sheetSN_().getRange(r.dong, 1, 1, 5).setValues([dong]); if (khoaNam) sheetSN_().getRange(r.dong, 6).setValue("'" + khoaNam); }
+  else sheetSN_().appendRow(dong.concat([khoaNam ? "'" + khoaNam : '', '']));
 }
+/* Ưu đãi sinh nhật chỉ 1 lần / năm: khách đã tới (hoặc đang trong) tháng sinh nhật năm nay mà ngày sinh bị đổi sang tháng khác / bị xoá
+   → khoá ưu đãi năm nay, để không đổi ngày rồi hưởng thêm lần nữa */
+function snCanKhoa_(cu, moi) {
+  if (!cu) return '';
+  var nay = Utilities.formatDate(new Date(Date.now()), 'Asia/Ho_Chi_Minh', 'yyyy-MM');
+  if (cu.slice(5, 7) > nay.slice(5, 7)) return '';           // tháng sinh nhật cũ chưa tới → chưa hưởng
+  if (moi && moi.slice(5, 7) === cu.slice(5, 7)) return '';   // chỉ sửa ngày trong cùng tháng
+  return nay.slice(0, 4);
+}
+/* Đúng ngày sinh: gửi email chúc mừng + ưu đãi (khách có email), mỗi khách 1 lần / năm; báo shop qua Zalo.
+   29/02 → năm không nhuận gửi ngày 28/02. Không gửi nếu ưu đãi năm nay đã bị khoá. */
+function guiMailSinhNhat_(epBuoc) {
+  var bay = Date.now(), ngay = Utilities.formatDate(new Date(bay), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd'), gio = Number(Utilities.formatDate(new Date(bay), 'Asia/Ho_Chi_Minh', 'H'));
+  var props = PropertiesService.getScriptProperties();
+  if (!epBuoc && (gio < 8 || props.getProperty('SN_MAIL_NGAY') === ngay)) return { ok: true, boQua: true };
+  var nam = ngay.slice(0, 4), mmdd = ngay.slice(5), nhuan = (+nam % 4 === 0 && +nam % 100 !== 0) || +nam % 400 === 0;
+  var kq = { ok: true, gui: 0, khongEmail: 0, ds: [] };
+  var kq2 = voiKhoa(function () {
+    var sh = sheetSN_(), n = sh.getLastRow(); if (n < 2) return kq;
+    var v = sh.getRange(2, 1, n - 1, H_SN.length).getValues();
+    var skh = sheetKH(), nk = skh.getLastRow(), kh = {};
+    if (nk > 1) skh.getRange(2, 1, nk - 1, 6).getValues().forEach(function (r) { kh[chuanSdt(r[0])] = { ten: String(r[1] || ''), email: String(r[5] || '').trim() }; });
+    for (var i = 0; i < v.length; i++) {
+      var sdt = chuanSdt(v[i][0]), ns = chuanNgaySinh_(v[i][1]); if (!ns) continue;
+      var md = ns.slice(5); if (md === '02-29' && !nhuan) md = '02-28';
+      if (md !== mmdd || String(v[i][6]) === nam || String(v[i][5]) === nam) continue;
+      var k = kh[sdt] || { ten: '', email: '' };
+      kq.ds.push((k.ten || 'Khách') + ' – ' + sdt + (emailHopLe(k.email) ? '' : ' (chưa có email)'));
+      if (!emailHopLe(k.email)) { kq.khongEmail++; continue; }
+      try { guiMotMailSinhNhat_(k.email, k.ten); sh.getRange(i + 2, 7).setValue("'" + nam); kq.gui++; ghiNhatKy('Sinh nhật', sdt, 'Gửi email chúc mừng sinh nhật ' + nam + ' tới ' + anEmail(k.email)); }
+      catch (e) { Logger.log('Mail sinh nhật lỗi ' + sdt + ': ' + e); }
+    }
+    return kq;
+  });
+  if (kq2 && kq2.ok === false) return kq2;   // máy chủ bận → lần sau chạy lại
+  props.setProperty('SN_MAIL_NGAY', ngay);
+  if (kq.ds.length) { try { zaloBotGuiTin('🎂 Hôm nay sinh nhật ' + kq.ds.length + ' khách:\n' + kq.ds.join('\n') + '\nĐã gửi email chúc mừng: ' + kq.gui); } catch (z) { Logger.log(z); } }
+  return kq;
+}
+function guiMotMailSinhNhat_(email, ten) {
+  var goi = ten ? ten.split(' ').slice(-1)[0] : 'mẹ';
+  var html = '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1F2937">'
+    + '<div style="background:linear-gradient(135deg,#F0537A,#FF8FA8);color:#fff;border-radius:16px 16px 0 0;padding:28px 24px;text-align:center">'
+    + '<div style="font-size:46px;line-height:1">🎂</div>'
+    + '<div style="font-size:24px;font-weight:700;margin-top:10px">Chúc mừng sinh nhật ' + goi + '!</div>'
+    + '<div style="font-size:14px;opacity:.95;margin-top:6px">' + TEN_SHOP + ' – Mẹ nào cũng là siêu nhân</div></div>'
+    + '<div style="border:1px solid #F3D5DE;border-top:0;border-radius:0 0 16px 16px;padding:24px;background:#fff">'
+    + '<p style="margin:0 0 14px;font-size:15px;line-height:1.7">Hôm nay là ngày đặc biệt của ' + (ten || 'mẹ') + '. Cả nhà ' + TEN_SHOP + ' chúc mẹ thật nhiều sức khoẻ, luôn xinh đẹp, rạng rỡ và có những phút giây hạnh phúc bên gia đình nhỏ 💗</p>'
+    + '<div style="margin:18px 0;padding:18px;border:2px dashed #F0537A;border-radius:14px;background:#FFF4F7;text-align:center">'
+    + '<div style="font-size:14px;color:#6B7280">Quà sinh nhật dành riêng cho mẹ</div>'
+    + '<div style="font-size:34px;font-weight:800;color:#F0537A;margin:6px 0">Giảm ' + SN_GIAM + '% mọi đơn</div>'
+    + '<div style="font-size:14px;line-height:1.6">Áp dụng cả tháng sinh nhật – web tự trừ khi mẹ thanh toán<br>(đăng nhập đúng số điện thoại đã lưu ngày sinh)</div>'
+    + '<a href="' + WEB + '" style="display:inline-block;margin-top:14px;background:#F0537A;color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:999px">Mua sắm ngay</a></div>'
+    + '<div style="font-size:13px;color:#6B7280;line-height:1.7"><b style="color:#1F2937">Lưu ý:</b> ưu đãi sinh nhật áp dụng <b>1 lần mỗi năm</b> trong tháng sinh nhật; không dùng kèm voucher, mã giảm giá và quà tặng, điểm thưởng vẫn dùng được.</div>'
+    + '<div style="margin-top:18px;padding-top:14px;border-top:1px solid #ECEFF3;font-size:13px;color:#6B7280;line-height:1.8">'
+    + 'Cần hỗ trợ, mẹ gọi <b style="color:#1F2937">' + HOTLINE + '</b> hoặc nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a>.<br>'
+    + 'Email này được gửi tự động, mẹ không cần trả lời.</div></div></div>';
+  MailApp.sendEmail({ to: email, subject: '🎂 ' + TEN_SHOP + ' chúc mừng sinh nhật ' + (ten || 'mẹ') + ' – quà giảm ' + SN_GIAM + '% cả tháng', htmlBody: html, name: TEN_SHOP, replyTo: EMAIL });
+}
+/* CHẠY TAY khi cần thử: gửi ngay lượt hôm nay (bỏ qua giới hạn 1 lượt / ngày) */
+function thuGuiMailSinhNhat() { Logger.log(JSON.stringify(guiMailSinhNhat_(true))); }
 /* Khách đang đăng nhập tự điền ngày sinh (1 lần) */
 function apiSnLuu(p) {
   var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
@@ -833,10 +899,10 @@ function apiQtSnLuu(p) {
   var xoa = String(p.xoa) === '1', ngay = xoa ? '' : chuanNgaySinh_(p.ngaySinh);
   if (!xoa && !ngay) return { ok: false, msg: 'Ngày sinh chưa đúng' };
   return voiKhoa(function () {
-    var cu = snDoc_(sdt);
-    snGhi_(sdt, ngay, tenQT(p), xoa ? 'Quản trị xoá' : 'Quản trị sửa');
-    ghiNhatKy('Sinh nhật', sdt, (xoa ? 'Xoá' : 'Sửa') + ' ngày sinh: ' + (cu || 'trống') + ' → ' + (ngay || 'trống') + ' – bởi ' + tenQT(p));
-    return { ok: true, ngaySinh: ngay };
+    var cu = snDoc_(sdt), khoa = snCanKhoa_(cu, ngay);
+    snGhi_(sdt, ngay, tenQT(p), xoa ? 'Quản trị xoá' : 'Quản trị sửa', khoa);
+    ghiNhatKy('Sinh nhật', sdt, (xoa ? 'Xoá' : 'Sửa') + ' ngày sinh: ' + (cu || 'trống') + ' → ' + (ngay || 'trống') + (khoa ? ' – khách đã hưởng ưu đãi năm ' + khoa + ', khoá ưu đãi năm nay' : '') + ' – bởi ' + tenQT(p));
+    return { ok: true, ngaySinh: ngay, khoaNam: khoa, msg: khoa ? 'Đã lưu. Khách đã tới tháng sinh nhật năm ' + khoa + ' nên ưu đãi sinh nhật năm nay bị khoá (1 lần / năm).' : 'Đã lưu ngày sinh' };
   });
 }
 
@@ -2696,6 +2762,7 @@ function dongBoCRMTuDong() {
   try { Logger.log(JSON.stringify(dongBoCRMNhieu(150))); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
   try { Logger.log(JSON.stringify(vcHetHanNen())); } catch (e5) { Logger.log('Voucher hết hạn lỗi: ' + e5); }   // voucher điểm danh quá hạn
+  try { Logger.log(JSON.stringify(guiMailSinhNhat_())); } catch (e6) { Logger.log('Mail sinh nhật lỗi: ' + e6); }   // email chúc mừng đúng ngày sinh
   try { Logger.log(JSON.stringify(xuLyAff())); } catch (e3) { Logger.log('Xử lý đối tác lỗi: ' + e3); }   // đối tác: hoa hồng + chốt kỳ ngày 10
   try { Logger.log(JSON.stringify(dongBoChiTieuKHNen())); } catch (e4) { Logger.log('Cập nhật chi tiêu thành viên lỗi: ' + e4); }   // thành viên: chi tiêu + hạng theo CRM
 }

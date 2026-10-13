@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261012i">
+  <link rel="stylesheet" href="css/style.css?v=20261013a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -18,7 +18,7 @@
 <script src="js/data.js?v=20261012f"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261012t"></script>
+<script src="js/app.js?v=20261013a"></script>
 <script src="js/diem-danh-ui.js?v=20261012e"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- 🎂 Ngày sinh: khách điền 1 lần, tháng sinh nhật giảm % mọi đơn (SITE.loyalty.sinhNhat) ---------- */
   const SN = () => (SITE.loyalty || {}).sinhNhat || {};
-  const snHTML = (kh) => kh.ngaySinh ? `${esc(kh.ngaySinh.split('-').reverse().join('/'))}${MC.sinhNhat().dangThang ? ' <span class="badge badge--hot">🎂 Tháng sinh nhật</span>' : ''}`
+  const snHTML = (kh) => kh.ngaySinh ? `${esc(kh.ngaySinh.split('-').reverse().join('/'))}${MC.sinhNhat().dangThang ? ' <span class="badge badge--hot">🎂 Tháng sinh nhật</span>' : ''}<small class="sn-ghi">Ưu đãi sinh nhật 1 lần mỗi năm · ngày sinh không đổi để nhận lại</small>`
     : SN().bat ? `<button type="button" class="text-primary fw-700" data-sn-them>+ Thêm để nhận ưu đãi sinh nhật</button>` : '<span class="text-muted">—</span>';
-  const snBang = () => { const sn = MC.sinhNhat(); return sn.dangThang ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật mẹ!</b> Cả tháng này mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này).</div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
-    : sn.bat && !sn.ngaySinh ? `<div class="sn-bang sn-bang--goi">🎁 <div><b>Thêm ngày sinh để nhận quà sinh nhật:</b> trong tháng sinh nhật mọi đơn được giảm <b>${sn.giam}%</b>.</div><button class="btn btn--outline btn--sm" type="button" data-sn-them>Thêm ngày sinh</button></div>` : ''; };
+  const snBang = () => { const sn = MC.sinhNhat(); return sn.dangThang ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật mẹ!</b> Cả tháng này mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
+    : sn.bat && !sn.ngaySinh ? `<div class="sn-bang sn-bang--goi">🎁 <div><b>Thêm ngày sinh để nhận quà sinh nhật:</b> trong tháng sinh nhật mọi đơn được giảm <b>${sn.giam}%</b>, kèm email chúc mừng đúng ngày sinh. <small>Ngày sinh chỉ lưu 1 lần – ưu đãi 1 lần mỗi năm.</small></div><button class="btn btn--outline btn--sm" type="button" data-sn-them>Thêm ngày sinh</button></div>` : ''; };
   document.addEventListener('click', async (e) => {
     if (!e.target.closest('[data-sn-them]')) return;
     const row = $('#snRow'); if (!row) return;
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id !== 'snLuu') return;
     const v = ($('#snNgay') || {}).value; if (!v) { toast('Mẹ chọn ngày sinh nhé', { type: 'err' }); return; }
     const [y, m, d] = v.split('-');
-    if (!confirm(`Lưu ngày sinh ${d}/${m}/${y}? Sau khi lưu, muốn sửa mẹ cần nhắn shop.`)) return;
+    if (!confirm(`Lưu ngày sinh ${d}/${m}/${y}?\n\n• Ngày sinh chỉ lưu 1 lần, muốn sửa mẹ cần nhắn shop.\n• Ưu đãi sinh nhật áp dụng 1 lần mỗi năm trong tháng sinh nhật – đổi ngày sinh không được nhận thêm lần nữa.\n• Đúng ngày sinh, shop gửi email chúc mừng kèm ưu đãi (nếu mẹ đã có email).`)) return;
     const s = Session.get(); if (!s) return;
     e.target.disabled = true; e.target.textContent = 'Đang lưu…';
     let r; try { r = await loyaltyApi('snLuu', { token: s.token, ngaySinh: v }); } catch (err) { r = { ok: false, msg: err.message }; }

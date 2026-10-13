@@ -1249,7 +1249,8 @@
   function sinhNhat() {
     const c = LOY().sinhNhat || {}, s = Session.get(), ns = s && s.kh && s.kh.ngaySinh ? String(s.kh.ngaySinh) : '';
     const thangNay = new Date(Date.now() + 7 * 3600e3).toISOString().slice(5, 7);
-    return { bat: !!c.bat, giam: Number(c.giam) || 0, ngaySinh: ns, dangThang: !!(c.bat && ns && ns.slice(5, 7) === thangNay) };
+    const nam = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 4), khoa = !!(s && s.kh && String(s.kh.snKhoaNam || '') === nam);
+    return { bat: !!c.bat, giam: Number(c.giam) || 0, ngaySinh: ns, khoa, dangThang: !!(c.bat && ns && !khoa && ns.slice(5, 7) === thangNay) };   // ưu đãi sinh nhật 1 lần / năm
   }
   function hangCho(phone) {
     const s = Session.get();

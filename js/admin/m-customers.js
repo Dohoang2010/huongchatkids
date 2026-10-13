@@ -135,7 +135,7 @@
     const v = prompt('Ngày sinh của khách (dd/mm/yyyy). Để trống rồi bấm OK để xoá ngày sinh:', cu); if (v == null) return;
     b.disabled = true;
     let r; try { r = await A.api('qtSnLuu', v.trim() ? { sdt: b.dataset.snSua, ngaySinh: v.trim() } : { sdt: b.dataset.snSua, xoa: '1' }); } catch (err) { r = { ok: false, msg: err.message }; }
-    A.toast(r.ok ? 'Đã lưu ngày sinh' : (r.msg || 'Chưa lưu được'), r.ok ? 'ok' : 'err'); b.disabled = false;
+    A.toast(r.ok ? (r.msg || 'Đã lưu ngày sinh') : (r.msg || 'Chưa lưu được'), r.ok ? 'ok' : 'err'); b.disabled = false;
     if (r.ok) A.veTrang();
   });
 

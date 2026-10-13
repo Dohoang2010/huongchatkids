@@ -2092,3 +2092,6 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .ddq .ddp-td .fs-12 { display: none; } .ddq .ddp-td__so { margin-bottom: 18px; } .ddq .ddp-td__so small { font-size: 11.5px; }
 @media (max-width: 1100px) { .ddq-qua { flex-wrap: wrap; } .ddq-qua span { flex: none; } }
 .ddq .ddp-lich { order: 0; } .ddq-trai > .ddq-mo { order: 1; } .ddq-qua span { min-width: 0; }
+
+.sn-ghi { display: block; font-size: 11.5px; font-weight: 500; color: var(--muted); margin-top: 2px; text-align: right; }
+.sn-bang small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
