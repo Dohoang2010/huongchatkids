@@ -557,7 +557,7 @@
       <a href="collections.html" data-nav="collections">${I.grid}Danh mục</a>
       <a class="bn-center" href="${SITE.zalo}" target="_blank" rel="noopener"><span class="circle">Zalo</span>Tư vấn</a>
       <button type="button" data-open-cart>${I.cart}Giỏ hàng<span class="hact__count ${cartCount ? '' : 'hide'}" data-cart-count>${cartCount}</span></button>
-      <a href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ngay</a>
+      <a href="account.html" data-nav="account">${I.user}Tài khoản</a>
     </nav>
     <div class="drawer" id="cartDrawer" aria-hidden="true">
       <div class="drawer__backdrop" data-close-cart></div>
