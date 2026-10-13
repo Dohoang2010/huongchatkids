@@ -2246,3 +2246,17 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
   .ltv__so .ltv__o:first-child { grid-column: 1 / -1; }
   .ltv-dai .btn { width: 100%; justify-content: center; }
 }
+
+/* Theo dõi sức khỏe con – Đánh giá chi tiết theo số đo */
+.hk-eval__tong { margin: 0 0 12px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--tone-bg); color: var(--ink); font-size: 15px; font-weight: 600; }
+.hk-eval__ds { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.hk-eval__ds li { display: grid; grid-template-columns: 132px 1fr; gap: 6px 16px; align-items: start; padding: 12px 14px; border-radius: var(--radius-sm); background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--tone-ink); }
+.hk-eval__dau span { display: block; font-size: 13px; font-weight: 600; color: var(--muted); }
+.hk-eval__dau b { display: block; font-size: 19px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.hk-eval__ds p { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+.hk-eval__so { color: var(--ink); font-weight: 600; }
+.hk-eval__da { margin: 12px 0 0; padding: 12px 14px; border-radius: var(--radius-sm); background: #EFFAF8; font-size: 14px; color: var(--ink-2); }
+.hk-eval__da b { color: #0F7A70; }
+.hk-advice__t { display: block; margin-top: 14px; font-size: 14px; color: var(--ink); }
+.hk-advice__t + p { margin-top: 6px; }
+@media (max-width: 560px) { .hk-eval__ds li { grid-template-columns: 1fr; } .hk-eval__dau { display: flex; align-items: baseline; justify-content: space-between; } }

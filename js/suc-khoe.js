@@ -177,7 +177,7 @@
 
   const { $, $$, esc, I, productCard, rankDefault, store, ageRange } = MC;
   const KHOA = 'hck_suckhoe';
-  const VER = '20261013a';
+  const VER = '20261013b';
   const NEED_LABEL = (k) => ((window.NEEDS || []).find((n) => n.key === k) || {}).label || k;
 
   /* ---------------- Tiện ích ---------------- */
@@ -316,6 +316,74 @@
     if (moRong && k) veKetQua(hs, k); else { kq.hidden = true; kq.innerHTML = ''; }
   }
 
+  /* ---------------- Đánh giá chi tiết theo số đo thật ----------------
+     Mỗi chỉ số: chênh so với mức trung bình WHO, thứ hạng trên 100 trẻ cùng tuổi, nhận xét theo z-score
+     (chia mịn hơn ngưỡng WHO để mẹ biết bé đang ở đâu trong vùng chuẩn). */
+  const NX = {
+    hfa: [[-3, 'bad', 'Bé thấp còi nặng so với chuẩn WHO. Mẹ nên đưa bé đi khám dinh dưỡng sớm.'],
+      [-2, 'warn', 'Bé đang thấp còi (dưới mức −2SD). Mẹ cần cải thiện dinh dưỡng, giấc ngủ và nên hỏi ý kiến bác sĩ.'],
+      [-1, 'warn', 'Vẫn trong chuẩn nhưng thuộc nhóm thấp. Mẹ nên ưu tiên cải thiện chiều cao để bé bắt kịp các bạn.'],
+      [-0.5, 'good', 'Trong chuẩn, thấp hơn mức trung bình một chút.'],
+      [0.5, 'good', 'Ngang mức trung bình của trẻ cùng tuổi.'],
+      [1, 'good', 'Trong chuẩn, cao hơn mức trung bình.'],
+      [2, 'good', 'Bé thuộc nhóm cao, chiều cao phát triển rất tốt.'],
+      [3, 'good', 'Bé rất cao so với các bạn cùng tuổi, vẫn trong ngưỡng WHO.'],
+      [99, 'info', 'Bé cao vượt trội (trên +3SD). Thường do di truyền; nếu bố mẹ không cao, mẹ nên hỏi ý kiến bác sĩ.']],
+    wfa: [[-3, 'bad', 'Bé nhẹ cân nặng so với chuẩn WHO. Mẹ nên đưa bé đi khám dinh dưỡng sớm.'],
+      [-2, 'warn', 'Bé đang nhẹ cân so với tuổi. Mẹ cần tăng năng lượng và đạm trong bữa ăn.'],
+      [-1, 'warn', 'Vẫn trong chuẩn nhưng thuộc nhóm nhẹ cân. Mẹ chú ý cho bé ăn đủ bữa, đủ năng lượng.'],
+      [-0.5, 'good', 'Trong chuẩn, nhẹ hơn mức trung bình một chút.'],
+      [0.5, 'good', 'Ngang mức trung bình của trẻ cùng tuổi.'],
+      [1, 'good', 'Trong chuẩn, nặng hơn mức trung bình.'],
+      [2, 'good', 'Trong chuẩn, thuộc nhóm nặng cân. Mẹ xem BMI để biết cân nặng có cân đối với chiều cao không.'],
+      [99, 'info', 'Bé nặng hơn hầu hết các bạn cùng tuổi. Mẹ xem BMI để biết bé có thừa cân không.']],
+  };
+  const NX_BMI = (nho) => [[-3, 'bad', 'Bé gầy còm nặng: cân nặng quá thấp so với chiều cao. Mẹ nên đưa bé đi khám sớm.'],
+    [-2, 'warn', 'Bé đang gầy so với chiều cao. Mẹ cần tăng năng lượng và đạm để bé lên cân.'],
+    [-1, 'good', 'Trong chuẩn nhưng hơi gầy so với chiều cao, mẹ có thể cho bé ăn thêm bữa phụ.'],
+    [1, 'good', 'Cân nặng cân đối với chiều cao.'],
+    ...(nho
+      ? [[2, 'info', 'Bé có nguy cơ thừa cân. Mẹ hạn chế đồ ngọt và cho bé vận động nhiều hơn.'], [3, 'warn', 'Bé đang thừa cân so với chiều cao.'], [99, 'bad', 'Bé béo phì so với chiều cao. Mẹ nên hỏi ý kiến bác sĩ dinh dưỡng.']]
+      : [[2, 'warn', 'Bé đang thừa cân so với chiều cao.'], [99, 'bad', 'Bé béo phì so với chiều cao. Mẹ nên hỏi ý kiến bác sĩ dinh dưỡng.']])];
+  const nhanXetZ = (bang, z) => bang.find(([toi]) => z <= toi) || bang[bang.length - 1];
+
+  function danhGiaChiTiet(hs, k) {
+    const c = k.chiSo, cung = `${gioi(hs.sex)} cùng tuổi`, lan = hs.log[hs.log.length - 1];
+    const hang = (x) => (x.pv < 1 ? 'thấp hơn gần như tất cả' : x.pv > 99 ? 'cao hơn gần như tất cả' : `cao hơn khoảng ${Math.round(x.pv)}/100`);
+    const lech = (x, dv) => { const d = x.x - x.tb, [hon, kem] = dv === 'kg' ? ['Nặng', 'Nhẹ'] : ['Cao', 'Thấp']; return Math.abs(d) < (dv === 'kg' ? 0.05 : 0.1) ? 'Đúng bằng mức trung bình' : `${d > 0 ? hon : kem} hơn mức trung bình ${so(Math.abs(d))} ${dv}`; };
+    const dong = [];
+    if (c.hfa) { const [, tone, txt] = nhanXetZ(NX.hfa, c.hfa.z); dong.push({ ten: 'Chiều cao', tone, so: `${so(c.hfa.x)} cm`, chi: `${lech(c.hfa, 'cm')} (trung bình ${so(c.hfa.tb)} cm), ${hang(c.hfa)} ${cung}.`, txt }); }
+    if (c.wfa) { const [, tone, txt] = nhanXetZ(NX.wfa, c.wfa.z); dong.push({ ten: 'Cân nặng', tone, so: `${so(c.wfa.x)} kg`, chi: `${lech(c.wfa, 'kg')} (trung bình ${so(c.wfa.tb)} kg), ${hang(c.wfa).replace('cao hơn', 'nặng hơn').replace('thấp hơn', 'nhẹ hơn')} ${cung}.`, txt }); }
+    if (c.bfa) { const [, tone, txt] = nhanXetZ(NX_BMI(k.thang < 60), c.bfa.z); dong.push({ ten: 'BMI', tone, so: so(c.bfa.x), chi: `Vùng cân đối với chiều cao: ${so(c.bfa.thap)} đến ${so(c.bfa.cao)}.`, txt }); }
+
+    /* Tổng kết: ghép chiều cao với độ cân đối (BMI) */
+    const zH = c.hfa ? c.hfa.z : 0, zB = c.bfa ? c.bfa.z : 0, ten = tenBe(hs)[0].toUpperCase() + tenBe(hs).slice(1);
+    const canDoi = zB >= -1 && zB <= 1;
+    let tong;
+    if (zH < -2 || zB < -2 || zB > (k.thang < 60 ? 2 : 1) || (c.wfa && c.wfa.z < -2)) tong = `${ten} có chỉ số ngoài chuẩn WHO, mẹ xem lời khuyên bên dưới và nên cho bé đi khám dinh dưỡng.`;
+    else if (zH >= 1 && canDoi) tong = `${ten} phát triển rất tốt: chiều cao nổi trội và cân nặng cân đối với chiều cao.`;
+    else if (zH >= 1) tong = `${ten} cao tốt so với tuổi${zB < -1 ? ' nhưng hơi gầy so với chiều cao, mẹ chú ý thêm năng lượng cho bé' : ', mẹ để ý cân nặng đừng tăng nhanh hơn chiều cao'}.`;
+    else if (zH < -1) tong = `${ten} ${canDoi ? 'cân đối' : 'trong chuẩn'} nhưng chiều cao hơi thấp, đây là chỉ số mẹ nên ưu tiên cải thiện.`;
+    else if (canDoi) tong = `${ten} phát triển cân đối: chiều cao và cân nặng đều quanh mức trung bình của trẻ cùng tuổi.`;
+    else tong = `${ten} có chiều cao bình thường, ${zB < -1 ? 'hơi gầy so với chiều cao' : 'hơi nặng so với chiều cao'}.`;
+
+    /* Đà tăng trưởng so với lần đo trước (từ 3 tuần trở lên mới so được tốc độ) */
+    let da = '';
+    const truoc = hs.log.length > 1 ? hs.log[hs.log.length - 2] : null;
+    if (truoc) {
+      const ngayCach = soNgay(truoc.d, lan.d);
+      const k0 = phanTich({ sex: hs.sex, h: truoc.h, w: truoc.w, ngayTuoi: soNgay(hs.dob, truoc.d) });
+      const khoang = ngayCach < 60 ? `${ngayCach} ngày` : `${so(ngayCach / NGAY_MOI_THANG, 0)} tháng`;
+      const dH = lan.h - truoc.h, dW = lan.w - truoc.w;
+      da = `Sau ${khoang} bé ${dH >= 0 ? 'cao thêm' : 'giảm'} ${so(Math.abs(dH))} cm, ${dW >= 0 ? 'tăng' : 'giảm'} ${so(Math.abs(dW))} kg.`;
+      const toc = (ind, nhanh, cham, deu) => { if (!c[ind] || !k0.chiSo[ind]) return ''; const dz = c[ind].z - k0.chiSo[ind].z; return dz > 0.25 ? nhanh : dz < -0.25 ? cham : deu; };
+      if (ngayCach >= 21) da += ' ' + [toc('hfa', 'Chiều cao tăng nhanh hơn chuẩn, bé đang vượt lên so với các bạn.', 'Chiều cao tăng chậm hơn chuẩn, mẹ nên chú ý dinh dưỡng và giấc ngủ của bé.', 'Chiều cao tăng đều theo chuẩn.'),
+        toc('bfa', 'Cân nặng tăng nhanh hơn chiều cao.', 'Cân nặng tăng chậm hơn chiều cao.', 'Cân nặng tăng cân đối với chiều cao.')].filter(Boolean).join(' ');
+    }
+    const tone = dong.some((d) => d.tone === 'bad') ? 'bad' : dong.some((d) => d.tone === 'warn') ? 'warn' : 'good';
+    return { dong, tong, da, tone };
+  }
+
   function oChiSo(c, hs, k) {
     const pct = (z) => Math.max(0, Math.min(100, (z + 4) / 8 * 100));
     const mau = { good: 'var(--hk-good)', warn: 'var(--hk-warn)', bad: 'var(--hk-bad)', info: 'var(--hk-info)' };
@@ -343,6 +411,7 @@
     const g = goiY(k);
     const sp = (p) => `<div class="hk-pick">${g.lyDo(p).length ? `<span class="hk-pick__why">${I.check}${g.lyDo(p).map(esc).join(', ')}</span>` : ''}${productCard(p)}</div>`;
     const loi = k.tinhTrang.map((t) => `<p>${TINH_TRANG[t].loi}</p>`).join('');
+    const dg = danhGiaChiTiet(hs, k);
     const bd = ['hfa', 'wfa', 'bfa'].filter((i) => c[i]);
     if (!bd.includes(bieuDoDangXem)) bieuDoDangXem = bd[0];
     kq.hidden = false;
@@ -353,6 +422,13 @@
       </div>
       <p class="hk-verdict hk-tone--${canhBao.length ? 'warn' : 'good'}">${nhanXet}${truoc ? ` So với lần đo ${hienNgay(truoc.d)}: ${chenh(lan.h, truoc.h, 1)} cm, ${chenh(lan.w, truoc.w, 1)} kg.` : ''}</p>
       <div class="hk-metrics hk-metrics--${Object.keys(c).length}">${['wfa', 'hfa', 'bfa'].filter((i) => c[i]).map((i) => oChiSo(c[i], hs, k)).join('')}</div>
+      <div class="hk-block hk-eval">
+        <div class="hk-block__head"><h3>Đánh giá chi tiết</h3></div>
+        <p class="hk-eval__tong hk-tone--${dg.tone}">${dg.tong}</p>
+        <ul class="hk-eval__ds">${dg.dong.map((d) => `<li class="hk-tone--${d.tone}"><div class="hk-eval__dau"><span>${d.ten}</span><b>${d.so}</b></div><p><span class="hk-eval__so">${d.chi}</span> ${d.txt}</p></li>`).join('')}</ul>
+        ${dg.da ? `<p class="hk-eval__da"><b>Đà tăng trưởng:</b> ${dg.da}</p>` : ''}
+        <div class="hk-advice"><b class="hk-advice__t">Lời khuyên cho mẹ</b>${loi}</div>
+      </div>
       ${!c.wfa ? '<p class="hk-note">WHO chỉ dùng cân nặng theo tuổi cho trẻ dưới 10 tuổi, trên 10 tuổi mẹ xem chỉ số BMI.</p>' : ''}
 
       <div class="hk-block hk-chart">
@@ -371,7 +447,6 @@
       <div class="hk-block hk-nutri">
         <div class="hk-block__head"><h3>Bé ${esc(tuoi.label)} cần gì mỗi ngày?</h3></div>
         <p class="hk-nutri__focus">${gd.trongTam}</p>
-        <div class="hk-advice">${loi}</div>
         <div class="hk-nutri__grid">${gd.chat.map(([ten, luong, viSao, nguon]) => `<div class="hk-nut"><div class="hk-nut__top"><b>${ten}</b><span>${typeof luong === 'object' ? luong[hs.sex] : luong}</span></div><p>${viSao}</p><small>${nguon}</small></div>`).join('')}</div>
         <p class="hk-src">Lượng khuyến nghị mỗi ngày theo Viện Y học Hoa Kỳ (IOM, NIH); DHA theo Cơ quan An toàn Thực phẩm châu Âu (EFSA).</p>
       </div>
