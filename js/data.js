@@ -233,6 +233,7 @@ window.THEME = {
   },
   "khoi": [
     { "key": "hero", "ten": "Banner lớn đầu trang", "bat": true },
+    { "key": "suc-khoe", "ten": "Theo dõi sức khỏe con", "bat": true },
     { "key": "flash", "ten": "Flash sale", "bat": true },
     { "key": "noi-bat", "ten": "Mẹ tin dùng nhất", "bat": true },
     { "key": "do-tuoi", "ten": "Bé nhà mình mấy tuổi", "bat": true },
