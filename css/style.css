@@ -2209,3 +2209,7 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .hk-help { font-size: 12px; color: var(--muted); }
 .hk-privacy { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 12.5px; color: var(--muted); }
 .hk-privacy svg { width: 16px; height: 16px; color: var(--teal-600); flex: none; }
+/* Danh sách bài viết: ảnh luôn nằm gọn trong cột (không tự giãn theo chiều cao hàng rồi đè lên chữ) */
+.blog-item > .post-card__thumb { aspect-ratio: auto; width: 100%; min-width: 0; height: auto; min-height: 100%; position: relative; }
+.blog-item > .post-card__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 767px) { .blog-item > .post-card__thumb { min-height: 96px; } }
