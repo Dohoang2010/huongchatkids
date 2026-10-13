@@ -1,52 +1,373 @@
 {
-  "updatedAt": "2026-09-25T15:27:32+07:00",
-  "source": "manual",
+  "updatedAt": "2026-10-13T03:58:53.556Z",
+  "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
-    "41002695070": true,
-    "22686115682": true,
-    "42878618667": true,
-    "45462512687": true,
-    "22644617070": true,
-    "26156646705": true,
-    "23660586997": true,
-    "26060839019": true,
-    "49061985399": true,
-    "41353214697": true,
-    "28467224687": true,
-    "26523206270": false,
-    "13899935993": true,
-    "19491505209": false,
-    "19682441455": false,
-    "20992159167": false,
-    "47357633686": false,
-    "48112514210": true,
-    "25632276959": true,
-    "43532388498": true,
-    "57413220644": true,
-    "57903449970": false,
-    "27355720019": true,
-    "51013054442": true,
-    "24767149051": true,
-    "50002678694": true,
-    "24465090622": true,
-    "57556697426": true,
-    "24015142248": true,
-    "24764883120": true,
-    "24015583018": true,
-    "28902157429": true,
-    "26800350417": true,
-    "27734205778": true,
-    "25678530796": true,
-    "29006040615": true,
-    "27809051612": true,
-    "24329101823": true,
-    "26900366084": true,
-    "56857599724": true,
-    "28806784125": true,
-    "suaxanh-lotte": true,
-    "men-sysy": true,
-    "mien-ga-cf": true,
-  "hexacare": true
+    "41002695070": {
+      "in": true,
+      "variants": {
+        "1 gói (500g)": true,
+        "2 gói": true,
+        "3 gói": true
+      }
+    },
+    "22686115682": {
+      "in": true,
+      "variants": {
+        "Tăng cao (Xanh) · 10 gói": true,
+        "Tăng cân (Hồng) · 10 gói": true,
+        "Đề kháng (Cam) · 10 gói": true,
+        "Tăng cao (Xanh) · Thùng 30 gói": true,
+        "Tăng cân (Hồng) · Thùng 30 gói": true,
+        "Đề kháng (Cam) · Thùng 30 gói": true,
+        "Mix vị · Thùng 30 gói": true
+      }
+    },
+    "42878618667": {
+      "in": true,
+      "variants": {
+        "1 lọ": true,
+        "2 lọ": true,
+        "1 lọ d3k2 + 1 hộp váng sữa canxi giảm 5%": true
+      }
+    },
+    "45462512687": {
+      "in": true,
+      "variants": {
+        "1 gói": true,
+        "2 gói": true,
+        "3 gói": true,
+        "4 gói": true,
+        "5 gói": true
+      }
+    },
+    "22644617070": {
+      "in": true,
+      "variants": {
+        "Việt quất – nho · 10 gói": true,
+        "Táo lê · 10 gói": true,
+        "Mix vị · 10 gói": true,
+        "Mix vị · 20 gói (nửa thùng)": true,
+        "Táo lê · 20 gói (nửa thùng)": true,
+        "Việt quất – nho · 20 gói (nửa thùng)": true,
+        "Mix vị · 40 gói (1 thùng)": true,
+        "Việt quất – nho · 40 gói (1 thùng)": true,
+        "Táo lê · 40 gói (1 thùng)": true
+      }
+    },
+    "26156646705": {
+      "in": true,
+      "variants": {
+        "10 gói": true,
+        "20 gói": true,
+        "30 gói": true,
+        "Thùng 40 gói": true
+      }
+    },
+    "23660586997": {
+      "in": true,
+      "variants": {
+        "Hộp 10 gói": true,
+        "Thùng 30 gói (3 hộp)": true
+      }
+    },
+    "26060839019": {
+      "in": true,
+      "variants": {
+        "1 hộp 90 gói": true,
+        "2 hộp 180 gói": true,
+        "1 hộp váng sữa canxi+1 d3k2 giảm 5%": true,
+        "30 gói (không hộp)": true,
+        "3 hộp tặng 2 lọ d3k2": true,
+        "4 hộp tặng 3 lọ d3k2": true
+      }
+    },
+    "49061985399": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "41353214697": {
+      "in": true,
+      "variants": {
+        "Hộp 10 gói": true,
+        "Thùng 30 gói (3 hộp)": true
+      }
+    },
+    "28467224687": {
+      "in": true,
+      "variants": {
+        "1 gói": true,
+        "2 gói": true
+      }
+    },
+    "26523206270": {
+      "in": true,
+      "variants": {
+        "1 thùng": true,
+        "2 thùng": true
+      }
+    },
+    "13899935993": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "19491505209": {
+      "in": true,
+      "variants": {
+        "Số 1 (0–6 tháng)": true,
+        "Số 2 (6–12 tháng)": true,
+        "Số 3 (1–3 tuổi)": true
+      }
+    },
+    "19682441455": {
+      "in": true,
+      "variants": {
+        "Số 1 (0–6 tháng)": true,
+        "Số 2 (6–12 tháng)": true,
+        "Số 3 (từ 12 tháng)": true
+      }
+    },
+    "20992159167": {
+      "in": true,
+      "variants": {
+        "Số 1 (0–6 tháng)": true,
+        "Số 2 (6–12 tháng)": true,
+        "Số 3 (từ 12 tháng)": true
+      }
+    },
+    "47357633686": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "48112514210": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "25632276959": {
+      "in": true,
+      "variants": {
+        "Hộp 10 gói": true,
+        "Thùng 30 gói (3 hộp)": true
+      }
+    },
+    "43532388498": {
+      "in": true,
+      "variants": {
+        "1 gói 200g": true,
+        "2 gói": true
+      }
+    },
+    "57413220644": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "57903449970": true,
+    "27355720019": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "51013054442": {
+      "in": true,
+      "variants": {
+        "1 chai": true,
+        "2 chai": true,
+        "3 chai": true
+      }
+    },
+    "24767149051": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "50002678694": {
+      "in": true,
+      "variants": {
+        "Thảm ngải cứu": true,
+        "Lõi thảm": true
+      }
+    },
+    "24465090622": {
+      "in": true,
+      "variants": {
+        "1 chai": true,
+        "2 chai": true
+      }
+    },
+    "57556697426": {
+      "in": true,
+      "variants": {
+        "1 cây": true,
+        "2 cây": true
+      }
+    },
+    "24015142248": {
+      "in": true,
+      "variants": {
+        "1 chai": true,
+        "2 chai": true
+      }
+    },
+    "24764883120": {
+      "in": true,
+      "variants": {
+        "1 bộ": true,
+        "2 bộ": true
+      }
+    },
+    "24015583018": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "28902157429": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "26800350417": {
+      "in": true,
+      "variants": {
+        "1 hũ": true,
+        "2 hũ": true
+      }
+    },
+    "27734205778": {
+      "in": true,
+      "variants": {
+        "1 tuýp": true,
+        "2 tuýp": true
+      }
+    },
+    "25678530796": {
+      "in": true,
+      "variants": {
+        "1 cặp": true,
+        "2 cặp": true
+      }
+    },
+    "29006040615": {
+      "in": true,
+      "variants": {
+        "Cặp tất bạc (serum + kem)": false,
+        "Serum Meso bạc": true,
+        "Kem dưỡng Meso bạc": true
+      }
+    },
+    "27809051612": {
+      "in": true,
+      "variants": {
+        "1 cặp": true,
+        "2 cặp": true
+      }
+    },
+    "24329101823": {
+      "in": true,
+      "variants": {
+        "Kem chống nắng Meso": false,
+        "Kem Meso Retinol": true,
+        "Sữa rửa mặt Meso": true,
+        "Kem mắt Meso": true,
+        "Combo siêu vi Meso": true,
+        "Serum vàng Meso": true,
+        "Kem vàng siêu vi": true
+      }
+    },
+    "26900366084": {
+      "in": true,
+      "variants": {
+        "Kem dưỡng Hyalu C+": true,
+        "Serum Hyalu C+": true,
+        "Toner Hyalu C+": true,
+        "Bộ dưỡng da Hyalu C+": true
+      }
+    },
+    "56857599724": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "28806784125": {
+      "in": true,
+      "variants": {
+        "Kem Meso Retinol": true,
+        "Kem mắt Meso": true,
+        "Bộ đôi Meso": true
+      }
+    },
+    "suaxanh-lotte": {
+      "in": true,
+      "variants": {
+        "1 thùng 24 hộp": false,
+        "2 thùng 48 hộp": false
+      }
+    },
+    "men-sysy": {
+      "in": true,
+      "variants": {
+        "Men Baby (nâu) · từ 0 tháng": true,
+        "Men Kids (xanh) · từ 24 tháng": true
+      }
+    },
+    "mien-ga-cf": {
+      "in": true,
+      "variants": {
+        "1 hộp": true,
+        "2 hộp": true
+      }
+    },
+    "hexacare": {
+      "in": true,
+      "variants": {
+        "Điều tiết hằng ngày – pH 3.6 · 1 chai": true,
+        "Điều tiết hằng ngày – pH 3.6 · 2 chai": true,
+        "Ngăn ngừa kháng viêm – pH 5.0 · 1 chai": true,
+        "Ngăn ngừa kháng viêm – pH 5.0 · 2 chai": true,
+        "Dịu nhẹ da nhạy cảm – pH 4.5 · 1 chai": true,
+        "Dịu nhẹ da nhạy cảm – pH 4.5 · 2 chai": true,
+        "Lành tính cho bé gái – pH 4.5 · 1 chai": true,
+        "Lành tính cho bé gái – pH 4.5 · 2 chai": true
+      }
+    },
+    "combo-vangsua-d3k2": {
+      "in": true,
+      "variants": {
+        "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%": true,
+        "2 hộp váng sữa 180 gói · TẶNG 1 D3K2": true,
+        "3 hộp váng sữa 270 gói · TẶNG 2 D3K2": true,
+        "4 hộp váng sữa 360 gói · TẶNG 3 D3K2": true
+      }
+    },
+    "combo-lottexanh-d3k2": {
+      "in": true,
+      "variants": {
+        "1 thùng Lotte Tăng cao 30 gói + 1 D3K2": true
+      }
+    }
   }
 }
