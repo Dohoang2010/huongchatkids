@@ -1,0 +1,20 @@
+[Unit]
+Description=Lich lam viec - Sep va Tro ly (quanlylichtrinh.site)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=lichtrinh
+WorkingDirectory=/opt/lichtrinh
+EnvironmentFile=/etc/lichtrinh.env
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=3
+MemoryMax=150M
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

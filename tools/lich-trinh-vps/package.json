@@ -1,0 +1,13 @@
+{
+  "name": "lichtrinh",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Máy chủ app Lịch làm việc (Sếp ↔ Trợ lý) – quanlylichtrinh.site",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "pg": "^8.13.1",
+    "web-push": "^3.6.7"
+  }
+}

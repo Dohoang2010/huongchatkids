@@ -157,6 +157,7 @@
       else $('#mat-mang').hidden = false;
     }
     henPoll(3000);
+    moLuong();
   }
 
   function loiTai(msg, thuLai) {
@@ -182,7 +183,7 @@
 
   function hetPhien() {
     S.token = null; kho.del('token'); kho.del('cache'); kho.del('dkTb');
-    clearTimeout(hPoll); dongSheet();
+    clearTimeout(hPoll); dongLuong(); dongSheet();
     toast('Phiên đăng nhập đã hết, vui lòng đăng nhập lại');
     moDangNhap();
   }
@@ -234,7 +235,8 @@
     $$('#man-chinh .tab').forEach(x => { x.hidden = x.dataset.tab !== t; });
     $$('.tabbar button').forEach(b => b.classList.toggle('dang-chon', b.dataset.den === t));
     if (t === 'saptoi') veSapToi();
-    if (t === 'chat') { veChat(true); danhDauDaDoc(); henPoll(400); }
+    if (t === 'chat') { veChat(true); danhDauDaDoc(); }
+    if (S.token) henPoll(300);
     if (t === 'toi') veToi();
   }
 
@@ -770,9 +772,23 @@
       if (++loiLienTiep >= 2) $('#mat-mang').hidden = false;
     }
     dangPoll = false;
-    henPoll(dangXemChat() ? 3000 : loiLienTiep ? 15000 : 10000);
+    henPoll(luongMo() ? 25000 : dangXemChat() ? 3000 : loiLienTiep ? 15000 : 10000);
   }
+
+  /* Kênh tức thì (máy chủ VPS): có tin nhắn / lịch mới thì máy chủ báo ngay, app tải lại liền */
+  let luong = null;
+  const luongMo = () => !!luong && luong.readyState === 1;
+  function moLuong() {
+    if (DEMO || luong || !S.token || !window.EventSource || !API.startsWith('/') || document.visibilityState !== 'visible') return;
+    luong = new EventSource(API + '/luong?token=' + encodeURIComponent(S.token));
+    luong.onmessage = () => henPoll(0);
+    luong.onopen = () => henPoll(0);
+    luong.onerror = () => { if (luong && luong.readyState === 2) { luong = null; setTimeout(moLuong, 5000); } };
+  }
+  function dongLuong() { if (luong) { luong.close(); luong = null; } }
   document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') dongLuong();
+    else if (S.token) moLuong();
     if (document.visibilityState === 'visible' && S.token) { if (homNay() !== S.homNayCu) { S.homNayCu = homNay(); datLogo(); veThang(); } henPoll(100); }
   });
   window.addEventListener('online', () => henPoll(100));
@@ -921,7 +937,7 @@
     let endpoint = '';
     try { const sub = hoTroTB() && await (await navigator.serviceWorker.ready).pushManager.getSubscription(); if (sub) endpoint = sub.endpoint; } catch (e) { /* bỏ qua */ }
     try { await api('dangXuat', { endpoint }); } catch (e) { /* vẫn đăng xuất trên máy */ }
-    clearTimeout(hPoll);
+    clearTimeout(hPoll); dongLuong();
     S.token = null; S.toi = null; S.tin = []; S.choGui = []; S.lich = []; S.tinCuoi = 0; S.daDoc = { sep: 0, troly: 0 };
     kho.del('token'); kho.del('cache'); kho.del('dkTb');
     try { navigator.clearAppBadge && navigator.clearAppBadge(); } catch (e) { /* bỏ qua */ }
