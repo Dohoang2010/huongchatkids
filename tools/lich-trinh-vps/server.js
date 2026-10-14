@@ -310,6 +310,10 @@ const HANH_DONG = {
     const cu = id ? M.lich.find(x => x.id === id) : null;
     if (id && !cu) return { loi: 'Sự kiện này đã bị xoá' };
     if (!lichHopLe(ev.lich) && !(cu && cu.lich === ev.lich)) return { loi: 'Người được giao lịch không còn trong danh sách' };
+    if (!req.boQuaTrung) {
+      const trung = timTrung(Object.assign({ id }, ev), M.lich);
+      if (trung.length) return { loi: 'Trùng lịch', trung: trung.map(moTaTrung) };
+    }
     const moi = Object.assign({}, cu || {}, ev, {
       id: cu ? id : 'L' + Date.now().toString(36) + crypto.randomBytes(2).toString('hex'),
       taoBoi: cu ? cu.taoBoi : toi.id, suaBoi: toi.id, capNhat: bayGio()
@@ -331,6 +335,11 @@ const HANH_DONG = {
       if (!lichHopLe(ev.lich)) throw new Error(`Dòng ${i + 1}: người được giao lịch không còn trong danh sách`);
       return Object.assign(ev, { id: 'L' + Date.now().toString(36) + crypto.randomBytes(3).toString('hex'), taoBoi: toi.id, suaBoi: toi.id, capNhat: bayGio() });
     });
+    if (!req.boQuaTrung) {
+      const trung = [], da = M.lich.slice();
+      moi.forEach((ev, i) => { for (const t of timTrung(ev, da)) trung.push(`Dòng ${i + 1} trùng với: ${moTaTrung(t)}`); da.push(ev); });
+      if (trung.length) return { loi: 'Trùng lịch', trung };
+    }
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
@@ -549,6 +558,39 @@ function lanDienRa(ev, tu, den, toiDa, loc) {
   return kq;
 }
 const lucNhac = (ev, ymd) => new Date(`${ymd}T${ev.caNgay ? pad(GIO_NHAC_CA_NGAY) + ':00' : ev.bd.slice(11, 16)}:00+07:00`).getTime() - ev.nhac * 60000;
+
+/* ===================== TRÙNG LỊCH ===================== */
+// Trùng = cùng 1 người (hoặc dính lịch chung) có 2 việc chồng giờ nhau.
+// Việc không có giờ "Đến" tính 1 tiếng; việc cả ngày không tính. Việc lặp lại: xét các lần trong 1 năm tới.
+// Giống hệt timTrung() trong lich-trinh/app.js
+const PHUT_KHONG_GIO_DEN = 60;
+const phutTu = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10), +s.slice(11, 13), +s.slice(14, 16)) / 60000;
+function khoangGio(ev, ngay) {
+  const bd = phutTu(`${ngay}T${ev.bd.slice(11, 16)}`), dai = phutTu(ev.kt) - phutTu(ev.bd);
+  return [bd, bd + (dai > 0 ? dai : PHUT_KHONG_GIO_DEN)];
+}
+const lienQuan = (a, b) => a === 'chung' || b === 'chung' || a === b;
+function timTrung(ev, ds) {
+  if (ev.caNgay) return [];
+  const homNay = ymdTuMs(Date.now()), bdNgay = ev.bd.slice(0, 10);
+  const tu = ev.lap ? (bdNgay > homNay ? bdNgay : homNay) : bdNgay, den = ev.lap ? ymdCong(tu, 365) : bdNgay;
+  const khac = ds.filter(x => x.id !== ev.id && !x.caNgay && lienQuan(x.lich, ev.lich));
+  const kq = [], da = new Set();
+  if (!khac.length) return kq;
+  for (const ngay of lanDienRa(ev, tu, den, 120)) {
+    const [a1, a2] = khoangGio(ev, ngay);
+    for (const x of khac) {
+      if (da.has(x.id)) continue;
+      for (const n2 of lanDienRa(x, ymdCong(ngay, -1), ymdCong(ngay, 1), 5)) {
+        const [b1, b2] = khoangGio(x, n2);
+        if (a1 < b2 && b1 < a2) { kq.push({ ev: x, ngay: n2 }); da.add(x.id); break; }
+      }
+      if (kq.length >= 5) return kq;
+    }
+  }
+  return kq;
+}
+const moTaTrung = ({ ev, ngay }) => `${ev.tieuDe} – ${ev.lich === 'chung' ? 'lịch chung' : tenCua(ev.lich)}, ${ev.bd.slice(11, 16)}${ev.kt !== ev.bd ? '–' + ev.kt.slice(11, 16) : ''} ${moTaGio(Object.assign({}, ev, { bd: ngay + ev.bd.slice(10) })).replace(/^\d\d:\d\d /, '')}`;
 
 let dangNhac = false;
 async function kiemTraNhac() {

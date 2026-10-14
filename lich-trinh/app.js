@@ -127,7 +127,7 @@
       const err = new Error('Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); err.mang = true; throw err;
     } finally { clearTimeout(hen); }
     if (r.hetPhien) { hetPhien(); const err = new Error(r.loi); err.hetPhien = true; throw err; }
-    if (r.loi) throw new Error(r.loi);
+    if (r.loi) { const err = new Error(r.loi); err.data = r; throw err; }
     return r;
   }
 
@@ -631,8 +631,52 @@
     };
   }
 
-  async function luuTuForm(ra) {
-    const r = await api('luuLich', { ev: ra });
+  /* ---- Kiểm tra trùng lịch ---- */
+  // Trùng = cùng 1 người (hoặc dính lịch chung) có 2 việc chồng giờ nhau.
+  // Việc không có giờ "Đến" tính 1 tiếng; việc cả ngày không tính. Việc lặp lại: xét các lần trong 1 năm tới.
+  // Giống hệt timTrung() ở máy chủ (tools/lich-trinh-vps/server.js)
+  const PHUT_KHONG_GIO_DEN = 60;
+  const phutTu = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10), +s.slice(11, 13), +s.slice(14, 16)) / 60000;
+  function khoangGio(ev, ngay) {
+    const bd = phutTu(`${ngay}T${ev.bd.slice(11, 16)}`), dai = phutTu(ev.kt) - phutTu(ev.bd);
+    return [bd, bd + (dai > 0 ? dai : PHUT_KHONG_GIO_DEN)];
+  }
+  const lienQuan = (a, b) => a === 'chung' || b === 'chung' || a === b;
+  function timTrung(ev, ds) {
+    if (ev.caNgay) return [];
+    const h = homNay(), bdNgay = ev.bd.slice(0, 10);
+    const tu = ev.lap ? (bdNgay > h ? bdNgay : h) : bdNgay, den = ev.lap ? ymdCong(tu, 365) : bdNgay;
+    const khac = ds.filter(x => x.id !== ev.id && !x.caNgay && lienQuan(x.lich, ev.lich));
+    const kq = [], da = new Set();
+    if (!khac.length) return kq;
+    for (const ngay of lanDienRa(ev, tu, den, 120)) {
+      const [a1, a2] = khoangGio(ev, ngay);
+      for (const x of khac) {
+        if (da.has(x.id)) continue;
+        for (const n2 of lanDienRa(x, ymdCong(ngay, -1), ymdCong(ngay, 1), 5)) {
+          const [b1, b2] = khoangGio(x, n2);
+          if (a1 < b2 && b1 < a2) { kq.push({ ev: x, ngay: n2 }); da.add(x.id); break; }
+        }
+        if (kq.length >= 5) return kq;
+      }
+    }
+    return kq;
+  }
+  const moTaTrung = ({ ev, ngay }) => `${ev.tieuDe} – ${ev.lich === 'chung' ? 'lịch chung' : tenNguoi(ev.lich)}, ${ev.bd.slice(11, 16)}${ev.kt !== ev.bd ? '–' + ev.kt.slice(11, 16) : ''} ${ngayNgan(ngay)}`;
+
+  // Hiện khung báo trùng trong ô lỗi của form. Bấm "Vẫn lưu" → gọi luu(true) để bỏ qua kiểm tra.
+  function baoTrung(oLoi, dsMoTa, luu) {
+    oLoi.innerHTML = `<div class="bao-trung"><b>⚠️ Trùng lịch!</b>
+      <ul>${dsMoTa.map(m => `<li>${esc(m)}</li>`).join('')}</ul>
+      <span>Hãy đổi giờ / ngày, hoặc bấm “Vẫn lưu” nếu cố ý xếp chồng.</span>
+      <div class="bt-nut"><button type="button" class="bt-sua">Sửa giờ</button><button type="button" class="bt-luu">Vẫn lưu</button></div></div>`;
+    $('.bt-sua', oLoi).onclick = () => { oLoi.innerHTML = ''; const f = oLoi.closest('form'); const o = f && (f.elements.gio || f.querySelector('[name=tu]')); if (o) { o.scrollIntoView({ behavior: 'smooth', block: 'center' }); o.focus(); } };
+    $('.bt-luu', oLoi).onclick = () => { oLoi.innerHTML = ''; luu(true); };
+    oLoi.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  async function luuTuForm(ra, boQuaTrung) {
+    const r = await api('luuLich', { ev: ra, boQuaTrung: !!boQuaTrung });
     const i = S.lich.findIndex(x => x.id === r.ev.id);
     if (i >= 0) S.lich[i] = r.ev; else S.lich.push(r.ev);
     S.verLich = r.verLich;
@@ -655,17 +699,26 @@
       const loi = $('.loi', f), nut = $('button[type=submit]', f);
       let ra;
       try { ra = docFormLich(f); } catch (err) { loi.textContent = err.message; return; }
+      luu(ra, false);
+    });
+    f.addEventListener('change', () => { if ($('.bao-trung', f)) $('.loi', f).innerHTML = ''; });
+    async function luu(ra, boQuaTrung) {
+      const loi = $('.loi', f), nut = $('button[type=submit]', f);
+      if (!boQuaTrung) { const t = timTrung(ra, S.lich); if (t.length) return baoTrung(loi, t.map(moTaTrung), () => luu(ra, true)); }
       nut.disabled = true; loi.textContent = '';
       try {
-        const moi = await luuTuForm(ra);
+        const moi = await luuTuForm(ra, boQuaTrung);
         kho.set('lichMacDinh', ra.lich);
         veLai();
         const ngayLuu = moi.bd.slice(0, 10);
         toast(`Đã lưu: ${moi.tieuDe} – ${moi.caNgay ? 'cả ngày' : moi.bd.slice(11)} ${ngayNgan(ngayLuu)}`, 3000);
         veNhap(ngayLuu);   // để trống form, giữ ngày vừa chọn để nhập tiếp
         $('#tab-nhap').scrollTo({ top: 0, behavior: 'smooth' });
-      } catch (err) { loi.textContent = err.message; nut.disabled = false; }
-    });
+      } catch (err) {
+        nut.disabled = false;
+        if (err.data && err.data.trung) baoTrung(loi, err.data.trung, () => luu(ra, true)); else loi.textContent = err.message;
+      }
+    }
   }
 
   // Sửa một sự kiện có sẵn (bảng trượt)
@@ -680,13 +733,22 @@
       const loi = $('.loi', f), nut = $('button[type=submit]', f);
       let ra;
       try { ra = docFormLich(f, ev); } catch (err) { loi.textContent = err.message; return; }
+      luu(ra, false);
+    });
+    f.addEventListener('change', () => { if ($('.bao-trung', f)) $('.loi', f).innerHTML = ''; });
+    async function luu(ra, boQuaTrung) {
+      const loi = $('.loi', f), nut = $('button[type=submit]', f);
+      if (!boQuaTrung) { const t = timTrung(ra, S.lich); if (t.length) return baoTrung(loi, t.map(moTaTrung), () => luu(ra, true)); }
       nut.disabled = true; loi.textContent = '';
       try {
-        await luuTuForm(ra);
+        await luuTuForm(ra, boQuaTrung);
         dongSheet(); chonNgay(ra.bd.slice(0, 10)); veLai();
         toast('Đã lưu thay đổi');
-      } catch (err) { loi.textContent = err.message; nut.disabled = false; }
-    });
+      } catch (err) {
+        nut.disabled = false;
+        if (err.data && err.data.trung) baoTrung(loi, err.data.trung, () => luu(ra, true)); else loi.textContent = err.message;
+      }
+    }
   }
 
   /* ===================== NHẬP NHIỀU LỊCH 1 LẦN ===================== */
@@ -851,7 +913,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       const ra = [];
       let sai = null;
       $$('.dong-nhap', ds).forEach(d => {
-        d.classList.remove('loi-dong');
+        d.classList.remove('loi-dong', 'trung-dong');
         const g = n => $(`[name=${n}]`, d), tieuDe = g('tieuDe').value.trim();
         if (!tieuDe) return;
         const ngay = g('ngay').value, caNgay = g('caNgay').checked || !g('tu').value;
@@ -867,16 +929,33 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       });
       if (sai) { loi.textContent = 'Có dòng chưa chọn ngày (viền đỏ)'; sai.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
       if (!ra.length) { loi.textContent = 'Chưa có dòng nào có tiêu đề'; return; }
+      luu(ra, lichChung, false);
+    });
+    async function luu(ra, lichChung, boQuaTrung) {
       const nut = $('#nn-luu', f);
+      if (!boQuaTrung) {
+        // kiểm tra từng dòng với lịch đã có và với các dòng phía trên nó
+        const trung = [], da = S.lich.slice(), dong = $$('.dong-nhap', ds).filter(d => $('[name=tieuDe]', d).value.trim());
+        ra.forEach((ev, i) => {
+          const t = timTrung(Object.assign({ id: 'moi' + i }, ev), da);
+          if (t.length && dong[i]) dong[i].classList.add('trung-dong');
+          t.forEach(x => trung.push(`Dòng ${i + 1} trùng với: ${moTaTrung(x)}`));
+          da.push(Object.assign({ id: 'moi' + i }, ev));
+        });
+        if (trung.length) return baoTrung(loi, trung, () => luu(ra, lichChung, true));
+      }
       nut.disabled = true;
       try {
-        const r = await api('luuNhieuLich', { ds: ra });
+        const r = await api('luuNhieuLich', { ds: ra, boQuaTrung: !!boQuaTrung });
         S.lich.push(...r.ds); S.verLich = r.verLich;
         kho.set('lichMacDinh', lichChung);
         luuCache(); dongSheet(); veLai();
         toast(`Đã thêm ${r.ds.length} lịch ✓`);
-      } catch (err) { loi.textContent = err.message; nut.disabled = false; }
-    });
+      } catch (err) {
+        nut.disabled = false;
+        if (err.data && err.data.trung) baoTrung(loi, err.data.trung, () => luu(ra, lichChung, true)); else loi.textContent = err.message;
+      }
+    }
   }
 
   /* ===================== TIN NHẮN ===================== */

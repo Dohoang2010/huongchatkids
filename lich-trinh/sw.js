@@ -1,6 +1,6 @@
 /* Service worker: chạy được khi mất mạng + nhận thông báo đẩy */
-const BAN = 'lich-v7';
-const TEP = ['./', 'index.html', 'app.css?v=7', 'app.js?v=7', 'config.js?v=7', 'demo.js?v=7', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'badge-96.png'];
+const BAN = 'lich-v8';
+const TEP = ['./', 'index.html', 'app.css?v=8', 'app.js?v=8', 'config.js?v=8', 'demo.js?v=8', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'badge-96.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(BAN).then(c => c.addAll(TEP)).then(() => self.skipWaiting()));
