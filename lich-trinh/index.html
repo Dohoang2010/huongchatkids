@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Lịch làm việc</title>
+<meta name="description" content="Lịch trình làm việc và tin nhắn giữa Sếp và Trợ lý">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f9f9f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lịch làm việc">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="stylesheet" href="app.css?v=1">
+</head>
+<body>
+<div id="app">
+
+  <!-- Đang tải -->
+  <section id="man-tai" class="man man-giua">
+    <div class="logo-to" aria-hidden="true"><span>THỨ</span><b id="logo-ngay">14</b></div>
+    <p class="mo">Đang tải…</p>
+  </section>
+
+  <!-- Chưa kết nối máy chủ -->
+  <section id="man-ketnoi" class="man man-giua" hidden>
+    <div class="logo-to" aria-hidden="true"><span>LỊCH</span><b>!</b></div>
+    <h1>Chưa kết nối máy chủ</h1>
+    <p class="mo">Ứng dụng cần máy chủ Google Apps Script để lưu lịch và gửi tin nhắn.</p>
+    <ol class="buoc">
+      <li>Tạo Google Sheet mới tên “Lịch làm việc”.</li>
+      <li>Tiện ích mở rộng → Apps Script → dán code từ <code>tools/lich-trinh-apps-script.gs</code>.</li>
+      <li>Triển khai → Ứng dụng web (Thực thi: Tôi · Truy cập: Bất kỳ ai).</li>
+      <li>Dán link <code>/exec</code> vào <code>lich-trinh/config.js</code>.</li>
+    </ol>
+  </section>
+
+  <!-- Thiết lập lần đầu -->
+  <section id="man-caidat" class="man man-form" hidden>
+    <div class="form-dau">
+      <div class="logo-to nho" aria-hidden="true"><span>LỊCH</span><b>+</b></div>
+      <h1>Thiết lập lần đầu</h1>
+      <p class="mo">Đặt tên và mật khẩu cho 2 người dùng. Chỉ làm 1 lần.</p>
+    </div>
+    <form id="form-caidat" autocomplete="off">
+      <p class="nhom-ten"><i class="cham c-sep"></i>Sếp</p>
+      <div class="nhom">
+        <label class="dong"><span>Tên hiển thị</span><input name="ten_sep" placeholder="VD: Anh Hoàng" maxlength="40"></label>
+        <label class="dong"><span>Mật khẩu</span><input name="mk_sep" type="password" placeholder="Ít nhất 4 ký tự" required minlength="4" autocomplete="new-password"></label>
+      </div>
+      <p class="nhom-ten"><i class="cham c-troly"></i>Trợ lý</p>
+      <div class="nhom">
+        <label class="dong"><span>Tên hiển thị</span><input name="ten_troly" placeholder="VD: Chị Lan" maxlength="40"></label>
+        <label class="dong"><span>Mật khẩu</span><input name="mk_troly" type="password" placeholder="Ít nhất 4 ký tự" required minlength="4" autocomplete="new-password"></label>
+      </div>
+      <button class="nut-chinh" type="submit">Bắt đầu sử dụng</button>
+      <p class="loi" role="alert"></p>
+    </form>
+  </section>
+
+  <!-- Đăng nhập -->
+  <section id="man-dangnhap" class="man man-form" hidden>
+    <div class="form-dau">
+      <div class="logo-to nho" aria-hidden="true"><span>THỨ</span><b class="logo-ngay">14</b></div>
+      <h1>Lịch làm việc</h1>
+      <p class="mo">Bạn là ai?</p>
+    </div>
+    <form id="form-dangnhap">
+      <div class="chon-vai" role="radiogroup" aria-label="Vai trò">
+        <label><input type="radio" name="vaiTro" value="sep" required><span class="the-vai"><i class="ava c-sep-bg">S</i><b data-ten="sep">Sếp</b><small>Sếp</small></span></label>
+        <label><input type="radio" name="vaiTro" value="troly" required><span class="the-vai"><i class="ava c-troly-bg">T</i><b data-ten="troly">Trợ lý</b><small>Trợ lý</small></span></label>
+      </div>
+      <div class="nhom">
+        <label class="dong"><span>Mật khẩu</span><input name="matKhau" type="password" required autocomplete="current-password"></label>
+      </div>
+      <button class="nut-chinh" type="submit">Đăng nhập</button>
+      <p class="loi" role="alert"></p>
+    </form>
+  </section>
+
+  <!-- Ứng dụng chính -->
+  <main id="man-chinh" class="man" hidden>
+    <div id="mat-mang" hidden>Không có kết nối mạng · đang thử lại…</div>
+
+    <!-- LỊCH -->
+    <section class="tab" id="tab-lich" data-tab="lich">
+      <header class="nav">
+        <button class="nav-lui" id="nut-ve-nam" type="button"><svg viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg><span id="nhan-nam">2026</span></button>
+        <div class="nav-phai">
+          <button class="nut-chu" id="nut-loc" type="button">Lịch</button>
+          <button class="nut-icon" id="nut-them" type="button" aria-label="Thêm sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button>
+        </div>
+      </header>
+
+      <div id="xem-thang">
+        <div class="tieu-de-thang"><h1 id="ten-thang">Tháng 10</h1>
+          <div class="mui-ten"><button type="button" id="thang-truoc" aria-label="Tháng trước">‹</button><button type="button" id="thang-sau" aria-label="Tháng sau">›</button></div>
+        </div>
+        <div class="hang-thu"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span class="cuoi-tuan">T7</span><span class="cuoi-tuan">CN</span></div>
+        <div id="luoi-thang" class="luoi-thang" role="grid"></div>
+        <div id="ds-ngay" class="ds-ngay"></div>
+      </div>
+
+      <div id="xem-nam" hidden>
+        <div class="tieu-de-thang"><h1 id="ten-nam" class="do">2026</h1>
+          <div class="mui-ten"><button type="button" id="nam-truoc" aria-label="Năm trước">‹</button><button type="button" id="nam-sau" aria-label="Năm sau">›</button></div>
+        </div>
+        <div id="luoi-nam" class="luoi-nam"></div>
+      </div>
+
+      <div id="goi-y-cai" class="goi-y" hidden>
+        <b>Cài lên màn hình chính để nhận thông báo</b>
+        <span>Bấm <svg viewBox="0 0 24 24" aria-label="Chia sẻ"><path d="M12 3v12M7 8l5-5 5 5M5 12v8h14v-8"/></svg> rồi chọn “Thêm vào MH chính”.</span>
+        <button type="button" class="dong-goi-y" aria-label="Đóng">×</button>
+      </div>
+      <button type="button" id="nut-hom-nay" class="nut-hom-nay">Hôm nay</button>
+    </section>
+
+    <!-- SẮP TỚI -->
+    <section class="tab" id="tab-saptoi" data-tab="saptoi" hidden>
+      <header class="nav nav-to"><h1>Sắp tới</h1>
+        <button class="nut-icon" id="nut-them-2" type="button" aria-label="Thêm sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button>
+      </header>
+      <div class="o-tim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="tim" type="search" placeholder="Tìm sự kiện" aria-label="Tìm sự kiện"></div>
+      <div id="ds-saptoi" class="ds-saptoi"></div>
+    </section>
+
+    <!-- TIN NHẮN -->
+    <section class="tab" id="tab-chat" data-tab="chat" hidden>
+      <header class="nav nav-chat">
+        <i class="ava" id="chat-ava">T</i>
+        <div><b id="chat-ten">Trợ lý</b><small id="chat-tt"></small></div>
+      </header>
+      <div id="ds-tin" class="ds-tin" aria-live="polite"></div>
+      <form id="form-tin" class="soan-tin">
+        <button type="button" id="nut-gui-lich" class="nut-tron" aria-label="Gửi một sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+        <textarea id="o-tin" rows="1" placeholder="Tin nhắn" aria-label="Nội dung tin nhắn" enterkeyhint="send"></textarea>
+        <button type="submit" id="nut-gui" class="nut-gui" aria-label="Gửi" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+      </form>
+    </section>
+
+    <!-- TÔI -->
+    <section class="tab" id="tab-toi" data-tab="toi" hidden>
+      <header class="nav nav-to"><h1>Cài đặt</h1></header>
+      <div class="cai-dat">
+        <div class="nhom the-toi"><i class="ava to" id="toi-ava">S</i><div><b id="toi-ten">…</b><small id="toi-vai">…</small></div></div>
+
+        <p class="nhom-ten">Thông báo trên máy này</p>
+        <div class="nhom" id="khung-tb"></div>
+        <p class="chu-thich">Nhận thông báo khi có tin nhắn mới, khi người kia thêm / sửa lịch của bạn và trước giờ hẹn theo mục “Cảnh báo”.</p>
+
+        <p class="nhom-ten">Tài khoản</p>
+        <div class="nhom">
+          <button type="button" class="dong nut-dong" id="nut-doi-ten"><span>Đổi tên hiển thị</span><i class="mui">›</i></button>
+          <button type="button" class="dong nut-dong" id="nut-doi-mk"><span>Đổi mật khẩu</span><i class="mui">›</i></button>
+        </div>
+        <div class="nhom"><button type="button" class="dong nut-dong do" id="nut-dang-xuat"><span>Đăng xuất</span></button></div>
+        <p class="chu-thich giua">Lịch làm việc · phiên bản 1.0</p>
+      </div>
+    </section>
+
+    <nav class="tabbar" aria-label="Chuyển mục">
+      <button type="button" data-den="lich" class="dang-chon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Lịch</span></button>
+      <button type="button" data-den="saptoi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg><span>Sắp tới</span></button>
+      <button type="button" data-den="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4c4.97 0 9 3.36 9 7.5S16.97 19 12 19c-1.1 0-2.15-.16-3.12-.46L4 20l1.4-3.6C3.9 15.07 3 13.36 3 11.5 3 7.36 7.03 4 12 4Z"/></svg><span>Tin nhắn</span><i class="huy-hieu" id="so-chua-doc" hidden>0</i></button>
+      <button type="button" data-den="toi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Cài đặt</span></button>
+    </nav>
+  </main>
+
+  <!-- Bảng trượt từ dưới lên (thêm / xem sự kiện, chọn lịch…) -->
+  <div id="sheet" class="sheet-nen" hidden><div class="sheet" role="dialog" aria-modal="true"></div></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+<script src="config.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
