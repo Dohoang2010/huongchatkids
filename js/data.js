@@ -3306,7 +3306,8 @@ window.PRODUCTS = [
       "img/bo-xuyen-tieu.jpg",
       "img/bo-xuyen-tieu-2.jpg",
       "img/bo-xuyen-tieu-3.jpg",
-      "img/bo-xuyen-tieu-4.jpg"
+      "img/bo-xuyen-tieu-4.jpg",
+      "img/bo-xuyen-tieu-5.jpg"
     ],
     "variants": [
       {
@@ -3362,7 +3363,8 @@ window.PRODUCTS = [
       "img/com-chay-phomai.jpg",
       "img/com-chay-phomai-2.jpg",
       "img/com-chay-phomai-3.jpg",
-      "img/com-chay-phomai-4.jpg"
+      "img/com-chay-phomai-4.jpg",
+      "img/com-chay-phomai-5.jpg"
     ],
     "variants": [
       {
@@ -3421,7 +3423,9 @@ window.PRODUCTS = [
     "images": [
       "img/com-vang-noi-oi.jpg",
       "img/com-vang-noi-oi-2.jpg",
-      "img/com-vang-noi-oi-3.jpg"
+      "img/com-vang-noi-oi-3.jpg",
+      "img/com-vang-noi-oi-4.jpg",
+      "img/com-vang-noi-oi-5.jpg"
     ],
     "variants": [
       {
@@ -3472,7 +3476,9 @@ window.PRODUCTS = [
     "images": [
       "img/lon-den-khoi-mo.jpg",
       "img/lon-den-khoi-mo-2.jpg",
-      "img/lon-den-khoi-mo-3.jpg"
+      "img/lon-den-khoi-mo-3.jpg",
+      "img/lon-den-khoi-mo-4.jpg",
+      "img/lon-den-khoi-mo-5.jpg"
     ],
     "variants": [
       {
@@ -3523,7 +3529,9 @@ window.PRODUCTS = [
     "images": [
       "img/muoi-xuyen-tieu.jpg",
       "img/muoi-xuyen-tieu-2.jpg",
-      "img/muoi-xuyen-tieu-3.jpg"
+      "img/muoi-xuyen-tieu-3.jpg",
+      "img/muoi-xuyen-tieu-4.jpg",
+      "img/muoi-xuyen-tieu-5.jpg"
     ],
     "variants": [
       {
