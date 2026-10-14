@@ -3,7 +3,7 @@
 'use strict';
 (() => {
   if (!/[?&]demo\b/.test(location.search)) return;
-  const KHOA = 'ltd_db2';
+  const KHOA = 'ltd_db3';
   const pad = n => String(n).padStart(2, '0');
   const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const cong = k => { const d = new Date(); d.setDate(d.getDate() + k); return ymd(d); };
@@ -37,10 +37,11 @@
         { id: 3, t: `${cong(-1)}T16:40:00`, tu: 'sep', nd: 'Ok em. Nhớ chuẩn bị hợp đồng nhé', lichId: '', kenh: kenhRieng('sep', 'troly') },
         { id: 4, t: `${h}T07:45:00`, tu: 'sep', nd: 'Chào cả nhà, tuần này mình tập trung chốt đơn sỉ nhé 💪', lichId: '', kenh: 'nhom' },
         { id: 5, t: `${h}T07:50:00`, tu: 'minh', nd: 'Dạ anh, mai em giao lô hàng cho khách sỉ ạ', lichId: '', kenh: 'nhom' },
+        { id: 7, t: `${h}T08:10:00`, tu: 'troly', nd: '', lichId: '', kenh: 'nhom', loai: 'binhchon', dl: { cauHoi: 'Liên hoan cuối tháng ăn gì cả nhà?', luaChon: ['Lẩu', 'Nướng', 'Hải sản'], nhieu: false }, tt: { phieu: { minh: [1], troly: [0] }, cam: { minh: '👍' } } },
         { id: 6, t: `${h}T08:02:00`, tu: 'troly', nd: 'Dạ vâng anh. Vé đi Hà Nội em đặt chuyến 7h sáng được không ạ?', lichId: '', kenh: kenhRieng('sep', 'troly') }
       ],
       daDoc: { [`sep|${kenhRieng('sep', 'troly')}`]: 3, [`troly|${kenhRieng('sep', 'troly')}`]: 6, 'sep|nhom': 4, 'minh|nhom': 5, 'troly|nhom': 5 },
-      tiepId: 10
+      tiepId: 10, verTT: 1
     };
   }
   const doc = () => { try { const s = localStorage.getItem(KHOA); if (s) return JSON.parse(s); } catch (e) { /* bỏ qua */ } return taoMau(); };
@@ -103,12 +104,14 @@
       try {
         switch (action) {
           case 'tongHop':
-            return { ok: true, toi, admin: me.admin, nguoi: db.nguoi.map(congKhai), verNguoi: String(db.verNguoi), vapid: 'demo', verLich: String(db.ver), lich: db.lich, tin: tinCua(0), tinCuoi, daDoc: daDocCho(db, toi), online: online(db) };
+            return { ok: true, toi, admin: me.admin, nguoi: db.nguoi.map(congKhai), verNguoi: String(db.verNguoi), vapid: 'demo', verLich: String(db.ver), lich: db.lich, tin: tinCua(0), tinCuoi, verTT: db.verTT || 0, daDoc: daDocCho(db, toi), online: online(db) };
           case 'poll': {
             const r = { ok: true, verLich: String(db.ver), verNguoi: String(db.verNguoi), tinCuoi, daDoc: daDocCho(db, toi), online: online(db) };
             if (String(d.verLich) !== String(db.ver)) r.lich = db.lich;
             if (String(d.verNguoi) !== String(db.verNguoi)) r.nguoi = db.nguoi.map(congKhai);
             if ((d.tinCuoi || 0) < tinCuoi) r.tin = tinCua(d.tinCuoi || 0);
+            if ((d.verTT || 0) < (db.verTT || 0)) r.capNhat = db.tin.filter(t => (t.verTT || 0) > (d.verTT || 0) && kenhs.includes(t.kenh)).map(t => ({ id: t.id, tt: t.tt || {} }));
+            r.verTT = db.verTT || 0;
             return r;
           }
           case 'luuLich': {
@@ -127,6 +130,21 @@
           case 'xoaLich':
             db.lich = db.lich.filter(x => x.id !== d.id); db.ver++; ghi(db);
             return { ok: true, verLich: String(db.ver) };
+          case 'taoBinhChon': {
+            if (!kenhs.includes(d.kenh)) return { loi: 'Bạn không ở trong cuộc trò chuyện này' };
+            const tin = { id: db.tiepId++, t: bayGio(), tu: toi, nd: '', lichId: '', kenh: d.kenh, loai: 'binhchon', dl: { cauHoi: d.cauHoi, luaChon: d.luaChon, nhieu: !!d.nhieu }, tt: {} };
+            db.tin.push(tin); db.daDoc[`${toi}|${d.kenh}`] = tin.id; ghi(db);
+            return { ok: true, tin };
+          }
+          case 'binhChon': case 'thaCam': {
+            const t = db.tin.find(x => x.id === d.id && kenhs.includes(x.kenh));
+            if (!t) return { loi: 'Không tìm thấy tin nhắn' };
+            const tt = t.tt = t.tt || {}, k = action === 'binhChon' ? 'phieu' : 'cam', o = tt[k] = tt[k] || {};
+            const v = action === 'binhChon' ? (d.chon || []) : d.cam;
+            if (v && v.length) o[toi] = v; else delete o[toi];
+            db.verTT = (db.verTT || 0) + 1; t.verTT = db.verTT; ghi(db);
+            return { ok: true, tt, verTT: db.verTT };
+          }
           case 'guiTin': {
             if (!kenhs.includes(d.kenh)) return { loi: 'Bạn không ở trong cuộc trò chuyện này' };
             const tin = { id: db.tiepId++, t: bayGio(), tu: toi, nd: d.noiDung || '', lichId: d.lichId || '', kenh: d.kenh };
@@ -162,6 +180,18 @@
           default: return { ok: true };
         }
       } catch (e) { return { loi: e.message }; }
+    },
+    // Gửi ảnh / video / tệp trong demo: ảnh nhỏ lưu luôn trên máy, video & tệp chỉ xem được trong lần mở này
+    async taiLen(blob, m) {
+      const db = doc(), toi = uidCua(m.token);
+      if (!kenhCua(db, toi).includes(m.kenh)) throw new Error('Bạn không ở trong cuộc trò chuyện này');
+      await new Promise(r => setTimeout(r, 600));
+      let url = URL.createObjectURL(blob);
+      if (/^image\//.test(m.loai) && blob.size < 400000) url = await new Promise(ok => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(blob); });
+      const tin = { id: db.tiepId++, t: bayGio(), tu: toi, nd: '', lichId: '', kenh: m.kenh, loai: 'tep', tt: {},
+        dl: { id: 'demo', ten: m.ten, loai: m.loai, co: blob.size, k: '', rong: m.rong, cao: m.cao, url } };
+      db.tin.push(tin); db.daDoc[`${toi}|${m.kenh}`] = tin.id; ghi(db);
+      return { ok: true, tin };
     },
     datLai() { try { localStorage.removeItem(KHOA); } catch (e) { /* bỏ qua */ } }
   };

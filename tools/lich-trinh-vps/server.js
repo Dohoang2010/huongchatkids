@@ -2,6 +2,8 @@
  * Lịch làm việc – máy chủ trên VPS quanlylichtrinh.site (nhiều thành viên + 1 tài khoản admin riêng)
  *   POST /api          : mọi yêu cầu của app, dạng {action, token, ...}
  *   GET  /api/luong    : kênh Server-Sent Events báo app tải lại ngay khi có tin nhắn / lịch mới
+ *   POST /api/tai-len  : gửi ảnh / video / tệp vào chat (thân yêu cầu là nội dung tệp). Tệp lưu ở THU_MUC_TEP
+ *   GET  /api?tep=…&k=… : xem / tải tệp (có hỗ trợ Range để tua video)
  * Dữ liệu: PostgreSQL (DATABASE_URL). Thông báo đẩy: Web Push (VAPID_PUBLIC / VAPID_PRIVATE).
  * Nhắc lịch: kiểm tra mỗi 30 giây ngay trong tiến trình này.
  * Tạo / đặt lại mật khẩu admin từ dòng lệnh:  node server.js tao-admin <ten_dang_nhap> <mat_khau>  (xong: systemctl restart lichtrinh)
@@ -11,6 +13,8 @@
 const http = require('node:http');
 const crypto = require('node:crypto');
 const { promisify } = require('node:util');
+const fs = require('node:fs');
+const path = require('node:path');
 const pg = require('pg');
 const webpush = require('web-push');
 
@@ -20,6 +24,9 @@ const PHIEN_NGAY = 180, SAI_MK_TOI_DA = 8, GIO_NHAC_CA_NGAY = 8;
 const THU = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 const MAU = ['#ff9500', '#007aff', '#af52de', '#ff2d55', '#5ac8fa', '#a2845e', '#ffcc00', '#5856d6', '#ff6482', '#30b0c7', '#64c466', '#bf5af2'];
 const RE_TEN_DN = /^[a-z0-9._-]{3,30}$/;
+const THU_MUC_TEP = process.env.THU_MUC_TEP || '/var/lib/lichtrinh/tep';
+const TOI_DA_TEP = 150 * 1024 * 1024;   // 150 MB mỗi tệp
+const CAM_XUC = ['❤️', '👍', '😂', '😮', '😢', '🙏', '👏', '🔥'];
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 4 });
 if (process.env.VAPID_PUBLIC) webpush.setVapidDetails(SITE, process.env.VAPID_PUBLIC, process.env.VAPID_PRIVATE);
@@ -42,6 +49,14 @@ async function taoBang() {
     CREATE TABLE IF NOT EXISTS tin (id serial PRIMARY KEY, t text NOT NULL, tu text NOT NULL, nd text NOT NULL DEFAULT '', lich_id text NOT NULL DEFAULT '');
     ALTER TABLE tin ADD COLUMN IF NOT EXISTS kenh text NOT NULL DEFAULT 'nhom';
     CREATE INDEX IF NOT EXISTS tin_kenh ON tin (kenh, id);
+    ALTER TABLE tin ADD COLUMN IF NOT EXISTS loai text NOT NULL DEFAULT '';
+    ALTER TABLE tin ADD COLUMN IF NOT EXISTS du_lieu jsonb;
+    ALTER TABLE tin ADD COLUMN IF NOT EXISTS tuong_tac jsonb NOT NULL DEFAULT '{}';
+    ALTER TABLE tin ADD COLUMN IF NOT EXISTS ver_tt bigint NOT NULL DEFAULT 0;
+    CREATE INDEX IF NOT EXISTS tin_ver_tt ON tin (ver_tt);
+    CREATE SEQUENCE IF NOT EXISTS tin_tt_seq;
+    CREATE TABLE IF NOT EXISTS tep (id text PRIMARY KEY, ten text NOT NULL, loai text NOT NULL, co bigint NOT NULL, khoa text NOT NULL,
+      nguoi text NOT NULL, kenh text NOT NULL, tao_luc timestamptz DEFAULT now());
     CREATE TABLE IF NOT EXISTS da_doc (nguoi text NOT NULL, kenh text NOT NULL, id integer NOT NULL, PRIMARY KEY (nguoi, kenh));
     CREATE TABLE IF NOT EXISTS thiet_bi (endpoint text PRIMARY KEY, p256dh text NOT NULL, auth text NOT NULL, vai text NOT NULL, ten_may text, ngay_tao timestamptz DEFAULT now());
     CREATE TABLE IF NOT EXISTS bien (k text PRIMARY KEY, v text NOT NULL);
@@ -71,7 +86,7 @@ async function chuyenDoiBanCu() {
 }
 
 // Giữ sẵn trong bộ nhớ (chỉ 1 tiến trình) để mỗi lần app hỏi không phải đọc database
-const M = { tv: new Map(), lich: [], verLich: '0', verNguoi: '0', tinCuoi: 0, daDoc: new Map(), online: {}, phien: new Map(), nhacDaChay: 0 };
+const M = { tv: new Map(), lich: [], verLich: '0', verNguoi: '0', tinCuoi: 0, verTT: 0, daDoc: new Map(), online: {}, phien: new Map(), nhacDaChay: 0 };
 
 async function napBoNho() {
   M.tv.clear();
@@ -81,6 +96,8 @@ async function napBoNho() {
   M.verLich = b.verLich || Date.now().toString(36);
   M.verNguoi = Date.now().toString(36);
   M.tinCuoi = Number((await q('SELECT coalesce(max(id), 0) AS m FROM tin')).rows[0].m);
+  M.verTT = Number((await q('SELECT coalesce(max(ver_tt), 0) AS m FROM tin')).rows[0].m);
+  await fs.promises.mkdir(THU_MUC_TEP, { recursive: true });
   for (const r of (await q('SELECT nguoi, kenh, id FROM da_doc')).rows) M.daDoc.set(`${r.nguoi}|${r.kenh}`, r.id);
   M.nhacDaChay = Math.max(Number(b.nhacDaChay || 0), Date.now() - 10 * 60000);
 }
@@ -292,7 +309,7 @@ const HANH_DONG = {
     ghiDangXem(toi.id, req.kenhMo);
     return {
       ok: true, toi: toi.id, admin: toi.admin, nguoi: dsNguoi(), verNguoi: M.verNguoi, vapid: process.env.VAPID_PUBLIC,
-      verLich: M.verLich, lich: M.lich, tin: await tinSau(toi.id, 0), tinCuoi: M.tinCuoi,
+      verLich: M.verLich, lich: M.lich, tin: await tinSau(toi.id, 0), tinCuoi: M.tinCuoi, verTT: M.verTT,
       daDoc: daDocCho(toi.id), online: trangThaiOnline()
     };
   },
@@ -303,6 +320,11 @@ const HANH_DONG = {
     if (String(req.verLich) !== M.verLich) r.lich = M.lich;
     if (String(req.verNguoi) !== M.verNguoi) r.nguoi = dsNguoi();
     if (Number(req.tinCuoi || 0) < M.tinCuoi) r.tin = await tinSau(toi.id, Number(req.tinCuoi || 0));
+    if (Number(req.verTT || 0) < M.verTT && kenhCua(toi.id).length) {
+      r.capNhat = (await q('SELECT id, tuong_tac FROM tin WHERE ver_tt > $1 AND kenh = ANY($2) ORDER BY ver_tt LIMIT 500', [Number(req.verTT || 0), kenhCua(toi.id)])).rows
+        .map(x => ({ id: x.id, tt: x.tuong_tac }));
+    }
+    r.verTT = M.verTT;
     return r;
   },
 
@@ -379,19 +401,41 @@ const HANH_DONG = {
     if (!kenhCua(toi.id).includes(kenh)) return { loi: 'Bạn không ở trong cuộc trò chuyện này' };
     const nd = String(req.noiDung || '').trim().slice(0, 4000), lichId = String(req.lichId || '').slice(0, 40);
     if (!nd && !lichId) return { loi: 'Tin nhắn trống' };
-    const t = bayGio();
-    const id = (await q('INSERT INTO tin (t, tu, nd, lich_id, kenh) VALUES ($1,$2,$3,$4,$5) RETURNING id', [t, toi.id, nd, lichId, kenh])).rows[0].id;
-    M.tinCuoi = Math.max(M.tinCuoi, id);
-    await ghiDaDoc(toi.id, kenh, id);
-    phatTin('tin');
-    let body = nd;
-    if (lichId) { const ev = M.lich.find(e => e.id === lichId); body = (nd ? nd + '\n' : '') + '📅 ' + (ev ? `${ev.tieuDe} • ${moTaGio(ev)}` : 'Một sự kiện'); }
-    const nhan = nguoiTrongKenh(kenh).filter(uid => uid !== toi.id && !dangXemKenh(uid, kenh));
-    guiThongBao(nhan, {
-      title: kenh === 'nhom' ? `💬 ${tenCua(toi.id)} · Nhóm chung` : `💬 ${tenCua(toi.id)}`,
-      body: body.slice(0, 180), tag: 'chat-' + id, url: './#chat/' + kenh
-    });
-    return { ok: true, tin: { id, t, tu: toi.id, nd, lichId, kenh } };
+    return { ok: true, tin: await taoTin(toi.id, kenh, { nd, lichId }) };
+  },
+
+  // Bình chọn: { kenh, cauHoi, luaChon: [..2–10 lựa chọn], nhieu: cho chọn nhiều }
+  async taoBinhChon(req, toi) {
+    const kenh = String(req.kenh || 'nhom');
+    if (!kenhCua(toi.id).includes(kenh)) return { loi: 'Bạn không ở trong cuộc trò chuyện này' };
+    const cauHoi = String(req.cauHoi || '').trim().slice(0, 300);
+    const luaChon = (Array.isArray(req.luaChon) ? req.luaChon : []).map(x => String(x || '').trim().slice(0, 100)).filter(Boolean).slice(0, 10);
+    if (!cauHoi) return { loi: 'Chưa nhập câu hỏi' };
+    if (luaChon.length < 2) return { loi: 'Cần ít nhất 2 lựa chọn' };
+    return { ok: true, tin: await taoTin(toi.id, kenh, { loai: 'binhchon', dl: { cauHoi, luaChon, nhieu: !!req.nhieu } }) };
+  },
+  async binhChon(req, toi) {
+    const tin = await layTinCua(toi.id, req.id);
+    if (tin.loai !== 'binhchon') return { loi: 'Tin này không phải bình chọn' };
+    const n = tin.du_lieu.luaChon.length;
+    let chon = [...new Set((Array.isArray(req.chon) ? req.chon : []).map(Number).filter(i => Number.isInteger(i) && i >= 0 && i < n))];
+    if (!tin.du_lieu.nhieu) chon = chon.slice(0, 1);
+    const tt = await doiTuongTac(tin.id, 'phieu', toi.id, chon.length ? chon : null);
+    return { ok: true, tt, verTT: M.verTT };
+  },
+  // Thả cảm xúc vào 1 tin nhắn (mỗi người 1 cảm xúc; gửi cam rỗng để bỏ)
+  async thaCam(req, toi) {
+    const tin = await layTinCua(toi.id, req.id), cam = String(req.cam || '');
+    if (cam && !CAM_XUC.includes(cam)) return { loi: 'Biểu tượng không hợp lệ' };
+    const cu = ((tin.tuong_tac || {}).cam || {})[toi.id];
+    const tt = await doiTuongTac(tin.id, 'cam', toi.id, cam || null);
+    if (cam && cam !== cu && tin.tu !== toi.id && laThanhVien(tin.tu) && !dangXemKenh(tin.tu, tin.kenh)) {
+      guiThongBao([tin.tu], {
+        title: `${cam} ${tenCua(toi.id)}`, body: `đã bày tỏ cảm xúc về tin nhắn của bạn: ${tomTatTin(tin.loai, tin.nd, tin.du_lieu)}`.slice(0, 180),
+        tag: 'cam-' + tin.id, url: './#chat/' + tin.kenh
+      });
+    }
+    return { ok: true, tt, verTT: M.verTT };
   },
 
   async daDoc(req, toi) {
@@ -419,11 +463,114 @@ const HANH_DONG = {
 };
 const MO_CONG = new Set(['trangThai', 'caiDat', 'dangNhap']);
 
+const tinRaApp = r => ({ id: r.id, t: r.t, tu: r.tu, nd: r.nd, lichId: r.lich_id, kenh: r.kenh, loai: r.loai || '', dl: r.du_lieu || null, tt: r.tuong_tac || {} });
 async function tinSau(uid, sauId) {
   const kenh = kenhCua(uid);
   if (!kenh.length) return [];
-  return (await q('SELECT id, t, tu, nd, lich_id, kenh FROM tin WHERE id > $1 AND kenh = ANY($2) ORDER BY id DESC LIMIT 600', [sauId, kenh])).rows
-    .reverse().map(r => ({ id: r.id, t: r.t, tu: r.tu, nd: r.nd, lichId: r.lich_id, kenh: r.kenh }));
+  return (await q('SELECT id, t, tu, nd, lich_id, kenh, loai, du_lieu, tuong_tac FROM tin WHERE id > $1 AND kenh = ANY($2) ORDER BY id DESC LIMIT 600', [sauId, kenh])).rows
+    .reverse().map(tinRaApp);
+}
+
+// Tóm tắt 1 tin để hiện trong thông báo
+function tomTatTin(loai, nd, dl) {
+  if (loai === 'binhchon') return '📊 Bình chọn: ' + dl.cauHoi;
+  if (loai === 'tep') return dl.loai.startsWith('image/') ? '📷 Ảnh' : dl.loai.startsWith('video/') ? '🎬 Video' : '📎 ' + dl.ten;
+  return nd || '📅 Một sự kiện';
+}
+
+// Tạo 1 tin nhắn (chữ / sự kiện / tệp / bình chọn), báo kênh tức thì và gửi thông báo cho người không đang xem
+async function taoTin(uid, kenh, { nd = '', lichId = '', loai = '', dl = null }) {
+  const t = bayGio();
+  const r = (await q('INSERT INTO tin (t, tu, nd, lich_id, kenh, loai, du_lieu) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *', [t, uid, nd, lichId, kenh, loai, dl])).rows[0];
+  M.tinCuoi = Math.max(M.tinCuoi, r.id);
+  await ghiDaDoc(uid, kenh, r.id);
+  phatTin('tin');
+  let body = tomTatTin(loai, nd, dl);
+  if (lichId) { const ev = M.lich.find(e => e.id === lichId); body = (nd ? nd + '\n' : '') + '📅 ' + (ev ? `${ev.tieuDe} • ${moTaGio(ev)}` : 'Một sự kiện'); }
+  const nhan = nguoiTrongKenh(kenh).filter(x => x !== uid && !dangXemKenh(x, kenh));
+  guiThongBao(nhan, {
+    title: kenh === 'nhom' ? `💬 ${tenCua(uid)} · Nhóm chung` : `💬 ${tenCua(uid)}`,
+    body: body.slice(0, 180), tag: 'chat-' + r.id, url: './#chat/' + kenh
+  });
+  return tinRaApp(r);
+}
+
+async function layTinCua(uid, id) {
+  const tin = (await q('SELECT * FROM tin WHERE id = $1', [Number(id) || 0])).rows[0];
+  if (!tin || !kenhCua(uid).includes(tin.kenh)) throw new Error('Không tìm thấy tin nhắn');
+  return tin;
+}
+
+// Ghi cảm xúc / phiếu bầu của 1 người vào tin (giaTri null = bỏ), tăng mốc cập nhật để app khác tải lại
+async function doiTuongTac(id, loai, uid, giaTri) {
+  const r = (await q(`UPDATE tin SET
+      tuong_tac = CASE WHEN $4::jsonb IS NULL THEN ('{"cam":{},"phieu":{}}'::jsonb || tuong_tac) #- ARRAY[$2::text, $3::text]
+                  ELSE jsonb_set('{"cam":{},"phieu":{}}'::jsonb || tuong_tac, ARRAY[$2::text, $3::text], $4::jsonb, true) END,
+      ver_tt = nextval('tin_tt_seq') WHERE id = $1 RETURNING tuong_tac, ver_tt`, [id, loai, uid, giaTri == null ? null : JSON.stringify(giaTri)])).rows[0];
+  M.verTT = Math.max(M.verTT, Number(r.ver_tt));
+  phatTin('tt');
+  return r.tuong_tac;
+}
+
+/* ---- Tệp đính kèm (ảnh / video / tệp) ---- */
+const LOAI_XEM_DUOC = /^(image\/(jpeg|png|gif|webp|heic|heif)|video\/(mp4|quicktime|webm|3gpp)|audio\/[a-z0-9.+-]+|application\/pdf)$/;
+async function taiLen(req, res, url) {
+  const toi = await xacThuc(req.headers['x-token']);   // mã đăng nhập gửi qua header, không để lộ trong địa chỉ / nhật ký
+  if (!toi) { req.resume(); return guiJson(res, 200, { loi: 'Phiên đăng nhập đã hết, vui lòng đăng nhập lại', hetPhien: true }); }
+  const kenh = String(url.searchParams.get('kenh') || '');
+  if (!kenhCua(toi.id).includes(kenh)) { req.resume(); return guiJson(res, 200, { loi: 'Bạn không ở trong cuộc trò chuyện này' }); }
+  const khai = Number(req.headers['content-length'] || 0);
+  if (khai > TOI_DA_TEP) { req.resume(); return guiJson(res, 413, { loi: 'Tệp quá lớn (tối đa 150 MB)' }); }
+  const id = 'f' + Date.now().toString(36) + crypto.randomBytes(5).toString('hex'), khoa = crypto.randomBytes(12).toString('hex');
+  const noiLuu = path.join(THU_MUC_TEP, id);
+  let co = 0;
+  try {
+    await new Promise((ok, hong) => {
+      const ghi = fs.createWriteStream(noiLuu, { flags: 'wx' });
+      req.on('data', c => { co += c.length; if (co > TOI_DA_TEP) { req.unpipe(ghi); ghi.destroy(); hong(new Error('Tệp quá lớn (tối đa 150 MB)')); } });
+      req.on('aborted', () => hong(new Error('Gửi tệp bị gián đoạn')));
+      req.on('error', hong); ghi.on('error', hong); ghi.on('finish', ok);
+      req.pipe(ghi);
+    });
+    if (!co) throw new Error('Tệp trống');
+  } catch (e) {
+    await fs.promises.rm(noiLuu, { force: true });
+    return guiJson(res, 200, { loi: e.message });
+  }
+  const ten = String(url.searchParams.get('ten') || 'tep').replace(/[\r\n"\\/]/g, '_').slice(0, 150);
+  let loai = String(url.searchParams.get('loai') || '').toLowerCase().slice(0, 100);
+  if (!/^[a-z]+\/[a-z0-9.+-]+$/.test(loai)) loai = 'application/octet-stream';
+  const so = k => Math.max(0, Math.min(100000, Math.round(Number(url.searchParams.get(k)) || 0)));
+  const dl = { id, ten, loai, co, k: khoa, rong: so('rong'), cao: so('cao'), giay: so('giay') };
+  await q('INSERT INTO tep (id, ten, loai, co, khoa, nguoi, kenh) VALUES ($1,$2,$3,$4,$5,$6,$7)', [id, ten, loai, co, khoa, toi.id, kenh]);
+  const tin = await taoTin(toi.id, kenh, { loai: 'tep', dl, nd: String(url.searchParams.get('nd') || '').trim().slice(0, 1000) });
+  return guiJson(res, 200, { ok: true, tin });
+}
+
+// Phát tệp: cần đúng khoá; hỗ trợ Range (iPhone bắt buộc khi xem video). Chặn chạy mã trong tệp người dùng gửi.
+async function xemTep(req, res, url) {
+  const f = (await q('SELECT * FROM tep WHERE id = $1', [String(url.searchParams.get('tep') || '')])).rows[0];
+  if (!f || url.searchParams.get('k') !== f.khoa) return guiJson(res, 404, { loi: 'Không có tệp' });
+  const noiLuu = path.join(THU_MUC_TEP, f.id);
+  let st;
+  try { st = await fs.promises.stat(noiLuu); } catch (e) { return guiJson(res, 404, { loi: 'Tệp không còn trên máy chủ' }); }
+  const xemDuoc = LOAI_XEM_DUOC.test(f.loai) && !url.searchParams.has('tai');
+  const head = {
+    'Content-Type': xemDuoc ? f.loai : 'application/octet-stream', 'Accept-Ranges': 'bytes',
+    'Content-Disposition': `${xemDuoc ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(f.ten)}`,
+    'Cache-Control': 'private, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': 'sandbox'
+  };
+  const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+  if (m && (m[1] || m[2])) {
+    let dau = m[1] ? Number(m[1]) : Math.max(0, st.size - Number(m[2])), cuoi = m[1] && m[2] ? Math.min(Number(m[2]), st.size - 1) : st.size - 1;
+    if (dau >= st.size || dau > cuoi) { res.writeHead(416, { 'Content-Range': `bytes */${st.size}` }); return res.end(); }
+    res.writeHead(206, Object.assign(head, { 'Content-Range': `bytes ${dau}-${cuoi}/${st.size}`, 'Content-Length': cuoi - dau + 1 }));
+    if (req.method === 'HEAD') return res.end();
+    return fs.createReadStream(noiLuu, { start: dau, end: cuoi }).pipe(res);
+  }
+  res.writeHead(200, Object.assign(head, { 'Content-Length': st.size }));
+  if (req.method === 'HEAD') return res.end();
+  fs.createReadStream(noiLuu).pipe(res);
 }
 function daDocCho(uid) {
   const r = {};
@@ -628,6 +775,8 @@ const mayChu = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   try {
     if (url.pathname === '/api/luong' && req.method === 'GET') return await moLuong(req, res, url);
+    if (url.pathname === '/api/tai-len' && req.method === 'POST') return await taiLen(req, res, url);
+    if (url.pathname === '/api' && (req.method === 'GET' || req.method === 'HEAD') && url.searchParams.has('tep')) return await xemTep(req, res, url);
     if (url.pathname !== '/api') return guiJson(res, 404, { loi: 'Không tìm thấy' });
     if (req.method === 'GET' && url.searchParams.has('anh')) {
       // GET /api?anh=<id>&v=<anh_ver>: chỉ ai biết đúng mã phiên bản (người đã đăng nhập) mới xem được
@@ -649,7 +798,7 @@ const mayChu = http.createServer(async (req, res) => {
     if (!toi) return guiJson(res, 200, { loi: 'Phiên đăng nhập đã hết, vui lòng đăng nhập lại', hetPhien: true });
     return guiJson(res, 200, await fn(body, toi));
   } catch (e) {
-    if (!/^(Chỉ admin|Không tìm thấy thành viên|Không sửa tài khoản|Dòng \d|Chưa nhập|Ngày giờ)/.test(e.message)) console.error(e);
+    if (!/^(Chỉ admin|Không tìm thấy thành viên|Không tìm thấy tin|Không sửa tài khoản|Dòng \d|Chưa nhập|Ngày giờ)/.test(e.message)) console.error(e);
     if (!res.headersSent) guiJson(res, 200, { loi: e.message || 'Lỗi máy chủ' });
   }
 });

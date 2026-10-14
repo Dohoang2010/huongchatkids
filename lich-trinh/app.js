@@ -133,7 +133,7 @@
   }
 
   function luuCache() {
-    kho.set('cache2', { toi: S.toi, admin: S.admin, nguoi: S.nguoi, verNguoi: S.verNguoi, vapid: S.vapid, lich: S.lich, verLich: S.verLich, tin: S.tin.slice(-300), tinCuoi: S.tinCuoi, daDoc: S.daDoc });
+    kho.set('cache2', { verTT: S.verTT, toi: S.toi, admin: S.admin, nguoi: S.nguoi, verNguoi: S.verNguoi, vapid: S.vapid, lich: S.lich, verLich: S.verLich, tin: S.tin.slice(-300), tinCuoi: S.tinCuoi, daDoc: S.daDoc });
   }
 
   /* ===================== MÀN HÌNH ===================== */
@@ -163,7 +163,7 @@
     if (c && c.toi) { Object.assign(S, c); vaoApp(); }
     try {
       const r = await api('tongHop', { kenhMo: '' });
-      Object.assign(S, { toi: r.toi, admin: !!r.admin, nguoi: r.nguoi, verNguoi: r.verNguoi, vapid: r.vapid, lich: r.lich, verLich: r.verLich, tinCuoi: r.tinCuoi, online: r.online || {} });
+      Object.assign(S, { toi: r.toi, admin: !!r.admin, nguoi: r.nguoi, verNguoi: r.verNguoi, vapid: r.vapid, lich: r.lich, verLich: r.verLich, tinCuoi: r.tinCuoi, verTT: r.verTT || 0, online: r.online || {} });
       S.daDoc = gopDaDoc(r.daDoc);
       S.tin = [];
       themTin(r.tin);
@@ -984,16 +984,65 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     const co = new Set(S.tin.map(t => t.id));
     for (const t of ds) {
       if (co.has(t.id)) continue;
-      t.kenh = t.kenh || 'nhom';
+      t.kenh = t.kenh || 'nhom'; t.tt = t.tt || {};
       S.tin.push(t); co.add(t.id);
-      if (t.tu === S.toi) S.choGui = S.choGui.filter(c => !(c.dangGui && c.kenh === t.kenh && c.nd === t.nd && c.lichId === (t.lichId || '')));
+      if (t.tu === S.toi && !t.loai) S.choGui = S.choGui.filter(c => !(c.dangGui && !c.loai && c.kenh === t.kenh && c.nd === t.nd && c.lichId === (t.lichId || '')));
       S.tinCuoi = Math.max(S.tinCuoi, t.id);
     }
     S.tin.sort((a, b) => a.id - b.id);
     if (S.tin.length > 1500) S.tin = S.tin.slice(-1500);
   }
 
+  /* ---- Nội dung từng loại tin: chữ, sự kiện, ảnh / video / tệp, bình chọn ---- */
+  const CAM_XUC = ['❤️', '👍', '😂', '😮', '😢', '🙏', '👏', '🔥'];
+  const TOI_DA_TEP = 150 * 1024 * 1024;
+  const urlTep = dl => dl.url || `${API}?tep=${encodeURIComponent(dl.id)}&k=${encodeURIComponent(dl.k)}`;
+  const coTep = n => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(0) + ' KB' : (n / 1048576).toFixed(1).replace('.0', '') + ' MB';
+  const laAnh = dl => /^image\//.test(dl.loai), laVideo = dl => /^video\//.test(dl.loai);
+  const tyLe = dl => dl.rong && dl.cao ? `aspect-ratio:${dl.rong}/${dl.cao}` : '';
+  // Tin chỉ gồm 1–3 biểu tượng cảm xúc → hiện cỡ to, không có bong bóng
+  function chiEmoji(s) {
+    s = String(s || '').trim();
+    if (!s || s.length > 24 || !/^(?:\p{Extended_Pictographic}|\p{Emoji_Component}|‍|️|\s)+$/u.test(s) || /^[\d#*\s]+$/.test(s)) return false;
+    const n = window.Intl && Intl.Segmenter ? [...new Intl.Segmenter().segment(s.replace(/\s/g, ''))].length : s.replace(/\s/g, '').length / 2;
+    return n <= 3;
+  }
+  function tomTatTin(t) {
+    if (t.loai === 'binhchon') return '📊 ' + t.dl.cauHoi;
+    if (t.loai === 'tep') return laAnh(t.dl) ? '📷 Ảnh' : laVideo(t.dl) ? '🎬 Video' : '📎 ' + t.dl.ten;
+    return t.nd || (t.lichId ? '📅 Đã gửi một sự kiện' : '');
+  }
+  function iconTep(ten) {
+    const d = (String(ten).match(/\.([a-z0-9]{1,5})$/i) || [, ''])[1].toLowerCase();
+    return /pdf/.test(d) ? '📕' : /xlsx?|csv|numbers/.test(d) ? '📗' : /docx?|pages|txt|rtf/.test(d) ? '📘' : /pptx?|key/.test(d) ? '📙' : /zip|rar|7z/.test(d) ? '🗜️' : /mp3|m4a|wav|aac/.test(d) ? '🎵' : '📄';
+  }
+
+  function htmlTep(t) {
+    const dl = t.dl, url = urlTep(dl);
+    const tienDo = t.dangGui ? `<span class="tien-do"><b>${t.tienDo || 0}%</b></span>` : '';
+    if (laAnh(dl)) return `<button type="button" class="anh-tin" data-xem-anh="${esc(url)}" aria-label="Xem ảnh"><img src="${esc(url)}" alt="" loading="lazy" style="${tyLe(dl)}">${tienDo}</button>`;
+    if (laVideo(dl)) return `<span class="video-boc"><video class="video-tin" src="${esc(url)}#t=0.1" ${t.dangGui ? '' : 'controls'} playsinline preload="metadata" style="${tyLe(dl)}"></video>${tienDo}</span>`;
+    return `<a class="tep-tin" ${t.dangGui ? '' : `href="${esc(url)}${dl.url ? '' : '&tai=1'}" download="${esc(dl.ten)}" target="_blank" rel="noopener"`}>
+      <i>${iconTep(dl.ten)}</i><span><b>${esc(dl.ten)}</b><small>${coTep(dl.co || 0)}${t.dangGui ? ` · đang gửi ${t.tienDo || 0}%` : ' · Bấm để tải về'}</small></span></a>`;
+  }
+
+  function htmlBinhChon(t) {
+    const dl = t.dl, phieu = (t.tt && t.tt.phieu) || {}, nguoiBau = Object.keys(phieu).filter(u => (phieu[u] || []).length);
+    const toiChon = phieu[S.toi] || [], tong = nguoiBau.length;
+    return `<div class="binh-chon" data-bc="${t.id}">
+      <b class="bc-hoi">📊 ${esc(dl.cauHoi)}</b>
+      <small class="bc-phu">${dl.nhieu ? 'Được chọn nhiều' : 'Chọn 1'} · ${tong ? tong + ' người đã bình chọn' : 'Chưa ai bình chọn'}</small>
+      ${dl.luaChon.map((lc, i) => {
+        const n = nguoiBau.filter(u => phieu[u].includes(i)).length, pct = tong ? Math.round(n * 100 / tong) : 0, chon = toiChon.includes(i);
+        return `<button type="button" class="bc-lc${chon ? ' chon' : ''}" data-i="${i}" ${t.dangGui ? 'disabled' : ''}><span class="bc-thanh" style="width:${pct}%"></span>
+          <span class="bc-o${dl.nhieu ? ' vuong' : ''}">${chon ? '✓' : ''}</span><span class="bc-chu">${esc(lc)}</span><span class="bc-so">${n ? pct + '%' : ''}</span></button>`;
+      }).join('')}
+      ${tong ? `<button type="button" class="bc-xem" data-bc-xem="${t.id}">Xem ai đã chọn</button>` : ''}</div>`;
+  }
+
   function noiDungTin(t) {
+    if (t.loai === 'binhchon') return htmlBinhChon(t);
+    if (t.loai === 'tep') return htmlTep(t) + (t.nd ? `<span class="chu-kem">${linkHoa(t.nd)}</span>` : '');
     let html = t.nd ? linkHoa(t.nd) : '';
     if (t.lichId) {
       const ev = S.lich.find(x => x.id === t.lichId);
@@ -1003,6 +1052,16 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       html += (html ? '\n' : '') + the;
     }
     return html;
+  }
+
+  // Các cảm xúc đã thả dưới bong bóng: ❤️👍 3
+  function htmlCam(t, cuaToi) {
+    const cam = (t.tt && t.tt.cam) || {}, ds = Object.values(cam);
+    if (!ds.length) return '';
+    const dem = {};
+    ds.forEach(c => { dem[c] = (dem[c] || 0) + 1; });
+    const top = Object.keys(dem).sort((a, b) => dem[b] - dem[a]).slice(0, 3).join('');
+    return `<button type="button" class="cam-chip${cuaToi ? ' phai' : ''}${cam[S.toi] ? ' cua-toi' : ''}" data-ai-tha="${t.id}" aria-label="Xem ai đã thả cảm xúc">${top}${ds.length > 1 ? ` <b>${ds.length}</b>` : ''}</button>`;
   }
 
   function avaKenh(kenh, to) {
@@ -1019,10 +1078,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     if (!ds.length) { $('#chat-ds').innerHTML = '<p class="trong-rong">Chưa có thành viên nào khác. Nhờ admin thêm thành viên.</p>'; return; }
     $('#chat-ds').innerHTML = ds.map(({ k, cuoi, chua }) => {
       let xem = 'Chưa có tin nhắn';
-      if (cuoi) {
-        const nd = cuoi.nd || (cuoi.lichId ? '📅 Đã gửi một sự kiện' : '');
-        xem = (cuoi.tu === S.toi ? 'Bạn: ' : k === 'nhom' ? tenNguoi(cuoi.tu) + ': ' : '') + nd;
-      }
+      if (cuoi) xem = (cuoi.tu === S.toi ? 'Bạn: ' : k === 'nhom' ? tenNguoi(cuoi.tu) + ': ' : '') + tomTatTin(cuoi);
       const u = k === 'nhom' ? null : nguoi(nguoiKia(k));
       const phu = k === 'nhom' ? `${thanhVien().length} thành viên` : u ? [u.chucVu, u.job].filter(Boolean).join(' - ') : '';
       const gio = cuoi ? (cuoi.t.slice(0, 10) === homNay() ? cuoi.t.slice(11, 16) : `${cuoi.t.slice(8, 10)}/${cuoi.t.slice(5, 7)}`) : '';
@@ -1039,10 +1095,12 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     S.kenh = kenh;
     $('#chat-ds-khung').hidden = true; $('#chat-phong').hidden = false;
     veTrangThaiChat(); veChat(true); danhDauDaDoc(); henPoll(300);
+    coGian();
   }
   function dongKenh() {
     S.kenh = null;
     $('#chat-phong').hidden = true; $('#chat-ds-khung').hidden = false;
+    $('#bang-emoji').hidden = true;
     veDsChat(); henPoll(300);
   }
   $('#chat-lui').onclick = dongKenh;
@@ -1062,9 +1120,11 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       const dauNhom = moc || !truoc || truoc.tu !== t.tu;
       const cuoi = !sau || sau.tu !== t.tu || sau.t.slice(0, 10) !== t.t.slice(0, 10) || phutCua(sau.t.slice(0, 16)) - phutCua(t.t.slice(0, 16)) > 30;
       if (kenh === 'nhom' && !cuaToi && dauNhom) html += `<div class="ten-gui" style="color:${mauLich(t.tu)}">${esc(tenDayDu(nguoi(t.tu)))}</div>`;
-      html += `<div class="bong ${cuaToi ? 'cua-toi' : 'cua-ho'}${cuoi ? ' cuoi' : ''}${t.dangGui ? ' dang-gui' : ''}" title="${esc(t.t.slice(11, 16))}">${noiDungTin(t)}</div>`;
+      const kieu = t.loai === 'binhchon' ? ' bong-bc' : t.loai === 'tep' ? (laAnh(t.dl) || laVideo(t.dl) ? ' bong-media' : ' bong-tep') : !t.lichId && chiEmoji(t.nd) ? ' bong-emoji' : '';
+      html += `<div class="bong ${cuaToi ? 'cua-toi' : 'cua-ho'}${kieu}${cuoi ? ' cuoi' : ''}${t.dangGui ? ' dang-gui' : ''}" ${t.id ? `data-id="${t.id}"` : `data-tam="${esc(t.tam)}"`} title="${esc(t.t.slice(11, 16))}">${noiDungTin(t)}</div>`;
+      if (t.id) html += htmlCam(t, cuaToi);
       if (t.loi) html += `<button type="button" class="trang-thai-tin loi-gui" data-thu-lai="${esc(t.tam)}">Không gửi được · Bấm để gửi lại</button>`;
-      else if (t.dangGui && !sau) html += '<div class="trang-thai-tin">Đang gửi…</div>';
+      else if (t.dangGui && !sau) html += `<div class="trang-thai-tin">${t.loai === 'tep' ? `Đang gửi ${t.tienDo || 0}%…` : 'Đang gửi…'}</div>`;
       else if (cuoiCuaToi && t.id === cuoiCuaToi.id) {
         const daXem = Object.keys(S.daDoc[kenh] || {}).filter(u => u !== S.toi && docCua(kenh, u) >= t.id);
         const chu = kenh === 'nhom'
@@ -1076,6 +1136,8 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     });
     box.innerHTML = html;
     if (cuonXuong || gan) box.scrollTop = box.scrollHeight;
+    // ảnh tải xong thì giữ cuộn ở cuối
+    if (cuonXuong || gan) $$('img', box).forEach(im => { if (!im.complete) im.addEventListener('load', () => { if (box.scrollHeight - box.scrollTop - box.clientHeight < 400) box.scrollTop = box.scrollHeight; }, { once: true }); });
   }
 
   function veTrangThaiChat() {
@@ -1114,6 +1176,12 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     api('daDoc', { kenh, id: cuoi }).catch(() => {});
   }
 
+  function daGui(tin) {
+    themTin([tin]);
+    (S.daDoc[tin.kenh] = S.daDoc[tin.kenh] || {})[S.toi] = Math.max(docCua(tin.kenh, S.toi), tin.id);
+    luuCache();
+  }
+
   async function guiTin(nd, lichId, kenh = S.kenh) {
     if (!kenh) return;
     const tam = { tam: 'x' + Date.now() + Math.random(), t: bayGio(), tu: S.toi, nd, lichId: lichId || '', kenh, dangGui: true };
@@ -1122,9 +1190,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     try {
       const r = await api('guiTin', { kenh, noiDung: nd, lichId: lichId || '' });
       S.choGui = S.choGui.filter(c => c !== tam);
-      themTin([r.tin]);
-      (S.daDoc[kenh] = S.daDoc[kenh] || {})[S.toi] = Math.max(docCua(kenh, S.toi), r.tin.id);
-      luuCache();
+      daGui(r.tin);
     } catch (e) {
       if (e.hetPhien) return;
       tam.dangGui = false; tam.loi = true;
@@ -1132,6 +1198,314 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     }
     veChat(true);
   }
+
+  /* ---- Gửi ảnh / video / tệp ---- */
+  // Ảnh chụp điện thoại (vài MB) được thu nhỏ còn cạnh dài 1920px trước khi gửi
+  async function nenAnh(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((ok, loi) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => loi(new Error('Không đọc được ảnh')); i.src = url; });
+      const k = Math.min(1, 1920 / Math.max(img.naturalWidth, img.naturalHeight));
+      const rong = Math.round(img.naturalWidth * k), cao = Math.round(img.naturalHeight * k);
+      const cv = document.createElement('canvas'); cv.width = rong; cv.height = cao;
+      const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, rong, cao); g.drawImage(img, 0, 0, rong, cao);
+      const blob = await new Promise(ok => cv.toBlob(ok, 'image/jpeg', 0.85));
+      return blob && blob.size < file.size * 1.2 ? { blob, rong, cao } : { blob: file, rong: img.naturalWidth, cao: img.naturalHeight, giuNguyen: true };
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function thongTinVideo(file) {
+    return new Promise(ok => {
+      const v = document.createElement('video'), url = URL.createObjectURL(file), xong = r => { clearTimeout(h); URL.revokeObjectURL(url); ok(r); };
+      const h = setTimeout(() => xong({}), 4000);
+      v.preload = 'metadata'; v.muted = true;
+      v.onloadedmetadata = () => xong({ rong: v.videoWidth, cao: v.videoHeight, giay: Math.round(v.duration || 0) });
+      v.onerror = () => xong({});
+      v.src = url;
+    });
+  }
+  async function chuanBiTep(file) {
+    let blob = file, ten = file.name || 'tep', loai = (file.type || '').toLowerCase() || 'application/octet-stream', rong = 0, cao = 0, giay = 0;
+    try {
+      if (/^image\/(jpeg|png|webp|heic|heif)$/.test(loai) || (/\.(heic|heif)$/i.test(ten))) {
+        const n = await nenAnh(file);
+        blob = n.blob; rong = n.rong; cao = n.cao;
+        if (!n.giuNguyen) { loai = 'image/jpeg'; ten = ten.replace(/\.[^.]+$/, '') + '.jpg'; }
+      } else if (/^video\//.test(loai)) ({ rong = 0, cao = 0, giay = 0 } = await thongTinVideo(file));
+    } catch (e) { /* gửi nguyên bản */ }
+    return { blob, ten, loai, rong, cao, giay };
+  }
+  function taiLenXhr(blob, m, kenh, khiTienDo) {
+    if (DEMO) return DEMO.taiLen(blob, Object.assign({ kenh, token: S.token }, m));
+    return new Promise((ok, hong) => {
+      const qs = new URLSearchParams({ kenh, ten: m.ten, loai: m.loai, rong: m.rong || 0, cao: m.cao || 0, giay: m.giay || 0 });
+      const x = new XMLHttpRequest();
+      x.open('POST', `${API}/tai-len?${qs}`);
+      x.setRequestHeader('X-Token', S.token);
+      x.setRequestHeader('Content-Type', 'application/octet-stream');
+      x.upload.onprogress = e => { if (e.lengthComputable) khiTienDo(Math.min(99, Math.round(e.loaded * 100 / e.total))); };
+      x.onload = () => {
+        let r;
+        try { r = JSON.parse(x.responseText); } catch (e) { return hong(new Error(x.status === 413 ? 'Tệp quá lớn (tối đa 150 MB)' : 'Máy chủ trả lỗi ' + x.status)); }
+        if (r.hetPhien) { hetPhien(); return hong(new Error(r.loi)); }
+        r.loi ? hong(new Error(r.loi)) : ok(r);
+      };
+      x.onerror = () => hong(new Error('Mất kết nối khi gửi tệp'));
+      x.send(blob);
+    });
+  }
+  async function guiMotTep(blob, m, kenh) {
+    const tam = { tam: 'x' + Date.now() + Math.random(), t: bayGio(), tu: S.toi, nd: '', lichId: '', kenh, loai: 'tep', dangGui: true, tienDo: 0, blob, m,
+      dl: { ten: m.ten, loai: m.loai, co: blob.size, rong: m.rong, cao: m.cao, url: URL.createObjectURL(blob) } };
+    S.choGui.push(tam);
+    veChat(true);
+    try {
+      const r = await taiLenXhr(blob, m, kenh, p => {
+        tam.tienDo = p;
+        const el = $(`[data-tam="${tam.tam}"] .tien-do b`) || null;
+        if (el) el.textContent = p + '%'; else if (S.kenh === kenh) veChat();
+      });
+      S.choGui = S.choGui.filter(c => c !== tam);
+      URL.revokeObjectURL(tam.dl.url);
+      daGui(r.tin);
+    } catch (e) {
+      if (!e.hetPhien) { tam.dangGui = false; tam.loi = true; toast(e.message, 4000); }
+    }
+    veChat(true);
+  }
+  async function guiCacTep(files) {
+    const kenh = S.kenh;
+    if (!kenh || !files || !files.length) return;
+    for (const f of [...files].slice(0, 20)) {
+      const m = await chuanBiTep(f);
+      if (m.blob.size > TOI_DA_TEP) { toast(`“${m.ten}” quá lớn (tối đa 150 MB)`, 4000); continue; }
+      await guiMotTep(m.blob, m, kenh);
+    }
+  }
+  ['#chon-media', '#chon-chup', '#chon-tep'].forEach(id => $(id).addEventListener('change', e => { const f = [...e.target.files]; e.target.value = ''; guiCacTep(f); }));
+
+  /* ---- Bình chọn ---- */
+  function moTaoBinhChon() {
+    const sh = moSheet(`<form id="form-bc" novalidate><div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Tạo bình chọn</b><button type="submit">Gửi</button></div>
+      <div class="sheet-than">
+        <div class="nhom"><label class="dong cot"><input name="cauHoi" maxlength="300" placeholder="Câu hỏi, VD: Họp tuần này vào ngày nào?" aria-label="Câu hỏi"></label></div>
+        <p class="nhom-ten">Các lựa chọn</p>
+        <div class="nhom" id="bc-ds">${[1, 2].map(i => `<label class="dong cot"><input name="lc" maxlength="100" placeholder="Lựa chọn ${i}"></label>`).join('')}</div>
+        <button type="button" class="nut-them-dong" id="bc-them">+ Thêm lựa chọn</button>
+        <div class="nhom"><label class="dong"><span>Cho phép chọn nhiều</span><span class="cong-tac"><input type="checkbox" name="nhieu"><i></i></span></label></div>
+        <p class="loi" role="alert"></p>
+      </div></form>`);
+    const f = $('#form-bc', sh);
+    setTimeout(() => f.elements.cauHoi.focus(), 320);
+    $('#bc-them', f).onclick = () => {
+      const n = $$('input[name=lc]', f).length;
+      if (n >= 10) return toast('Tối đa 10 lựa chọn');
+      $('#bc-ds', f).insertAdjacentHTML('beforeend', `<label class="dong cot"><input name="lc" maxlength="100" placeholder="Lựa chọn ${n + 1}"></label>`);
+      $$('input[name=lc]', f).pop().focus();
+    };
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      const cauHoi = f.elements.cauHoi.value.trim(), luaChon = $$('input[name=lc]', f).map(i => i.value.trim()).filter(Boolean);
+      if (!cauHoi) return void ($('.loi', f).textContent = 'Chưa nhập câu hỏi');
+      if (luaChon.length < 2) return void ($('.loi', f).textContent = 'Cần ít nhất 2 lựa chọn');
+      const nut = $('button[type=submit]', f); nut.disabled = true;
+      try { const r = await api('taoBinhChon', { kenh: S.kenh, cauHoi, luaChon, nhieu: f.elements.nhieu.checked }); dongSheet(); daGui(r.tin); veChat(true); }
+      catch (err) { $('.loi', f).textContent = err.message; nut.disabled = false; }
+    });
+  }
+  async function bauChon(id, i) {
+    const t = S.tin.find(x => x.id === id);
+    if (!t) return;
+    const tt = t.tt = t.tt || {}, phieu = tt.phieu = tt.phieu || {}, cu = phieu[S.toi] || [];
+    const chon = t.dl.nhieu ? (cu.includes(i) ? cu.filter(x => x !== i) : [...cu, i]) : (cu.includes(i) ? [] : [i]);
+    if (chon.length) phieu[S.toi] = chon; else delete phieu[S.toi];
+    veChat();
+    try { const r = await api('binhChon', { id, chon }); t.tt = r.tt; veChat(); } catch (e) { toast(e.message); henPoll(0); }
+  }
+  function xemAiChon(id) {
+    const t = S.tin.find(x => x.id === id); if (!t) return;
+    const phieu = (t.tt && t.tt.phieu) || {};
+    moSheet(`<div class="sheet-dau"><span></span><b>Kết quả bình chọn</b><button type="button" data-dong>Đóng</button></div>
+      <div class="sheet-than"><p class="ct-tieu-de" style="font-size:19px">${esc(t.dl.cauHoi)}</p>
+      ${t.dl.luaChon.map((lc, i) => { const ai = Object.keys(phieu).filter(u => (phieu[u] || []).includes(i));
+        return `<p class="nhom-ten">${esc(lc)} · ${ai.length}</p><div class="nhom">${ai.length ? ai.map(u => `<div class="dong">${avaHtml(nguoi(u))}<span>${esc(tenNguoi(u))}</span></div>`).join('') : '<div class="dong"><span class="mo">Chưa có ai</span></div>'}</div>`; }).join('')}
+      </div>`);
+  }
+
+  /* ---- Thả cảm xúc ---- */
+  async function thaCam(id, cam) {
+    const t = S.tin.find(x => x.id === id);
+    if (!t) return;
+    const tt = t.tt = t.tt || {}, ds = tt.cam = tt.cam || {};
+    const moi = ds[S.toi] === cam ? '' : cam;
+    if (moi) ds[S.toi] = moi; else delete ds[S.toi];
+    veChat();
+    try { const r = await api('thaCam', { id, cam: moi }); t.tt = r.tt; veChat(); } catch (e) { toast(e.message); henPoll(0); }
+  }
+  function xemAiTha(id) {
+    const t = S.tin.find(x => x.id === id); if (!t) return;
+    const cam = (t.tt && t.tt.cam) || {};
+    const sh = moSheet(`<div class="sheet-dau"><span></span><b>Cảm xúc</b><button type="button" data-dong>Đóng</button></div>
+      <div class="sheet-than"><div class="nhom">${Object.keys(cam).map(u => `<div class="dong">${avaHtml(nguoi(u))}<span>${esc(tenNguoi(u))}</span><span class="gia-tri" style="font-size:24px">${cam[u]}</span></div>`).join('')}</div>
+      ${cam[S.toi] ? '<button type="button" class="nut-chinh" id="bo-cam" style="background:var(--xam-bong);color:var(--chu)">Bỏ cảm xúc của tôi</button>' : ''}</div>`);
+    if ($('#bo-cam', sh)) $('#bo-cam', sh).onclick = () => { dongSheet(); thaCam(id, cam[S.toi]); };
+  }
+
+  // Menu khi nhấn giữ (hoặc bấm chuột phải) 1 tin nhắn: thả cảm xúc, sao chép, tải về
+  function moMenuTin(bong) {
+    const id = Number(bong.dataset.id), t = S.tin.find(x => x.id === id);
+    if (!t) return;
+    if (navigator.vibrate) try { navigator.vibrate(10); } catch (e) { /* bỏ qua */ }
+    const cua = ((t.tt && t.tt.cam) || {})[S.toi];
+    const m = $('#menu-tin');
+    m.innerHTML = `<div class="mt-cam">${CAM_XUC.map(c => `<button type="button" data-cam="${c}" class="${c === cua ? 'dang' : ''}" aria-label="Thả ${c}">${c}</button>`).join('')}</div>
+      <div class="mt-hd">${t.nd ? '<button type="button" data-hd="chep">Sao chép</button>' : ''}
+      ${t.loai === 'tep' ? `<a href="${esc(urlTep(t.dl))}${t.dl.url ? '' : '&tai=1'}" download="${esc(t.dl.ten)}" target="_blank" rel="noopener" data-hd="tai">Tải về</a>` : ''}
+      ${Object.keys((t.tt && t.tt.cam) || {}).length ? '<button type="button" data-hd="ai">Xem ai đã thả</button>' : ''}</div>`;
+    m.dataset.id = id;
+    $('#menu-nen').hidden = false;
+    const r = bong.getBoundingClientRect(), cao = m.offsetHeight || 110;
+    m.style.top = Math.max(10, Math.min(window.innerHeight - cao - 10, r.top - 64)) + 'px';
+    m.classList.toggle('phai', bong.classList.contains('cua-toi'));
+  }
+  function dongMenuTin() { $('#menu-nen').hidden = true; }
+  $('#menu-nen').addEventListener('click', e => {
+    if (e.target.id === 'menu-nen') return dongMenuTin();
+    const id = Number($('#menu-tin').dataset.id), t = S.tin.find(x => x.id === id);
+    const c = e.target.closest('[data-cam]');
+    if (c) { dongMenuTin(); return thaCam(id, c.dataset.cam); }
+    const hd = e.target.closest('[data-hd]');
+    if (!hd) return;
+    if (hd.dataset.hd === 'chep' && t) { navigator.clipboard.writeText(t.nd).then(() => toast('Đã sao chép'), () => toast('Không sao chép được')); }
+    if (hd.dataset.hd === 'ai') xemAiTha(id);
+    setTimeout(dongMenuTin, 50);
+  });
+
+  const dsTin = $('#ds-tin');
+  let giu = null;
+  dsTin.addEventListener('touchstart', e => {
+    const b = e.target.closest('.bong[data-id]');
+    if (!b || e.target.closest('video, .bc-lc')) return;
+    const p = e.touches[0];
+    giu = { b, x: p.clientX, y: p.clientY, h: setTimeout(() => { giu.xong = true; moMenuTin(b); }, 450) };
+  }, { passive: true });
+  dsTin.addEventListener('touchmove', e => { if (giu && Math.hypot(e.touches[0].clientX - giu.x, e.touches[0].clientY - giu.y) > 10) { clearTimeout(giu.h); giu = null; } }, { passive: true });
+  dsTin.addEventListener('touchend', e => { if (giu) { clearTimeout(giu.h); if (giu.xong) e.preventDefault(); giu = null; } });
+  dsTin.addEventListener('contextmenu', e => {
+    const b = e.target.closest('.bong[data-id]');
+    if (!b || e.target.closest('video')) return;
+    e.preventDefault();
+    if ($('#menu-nen').hidden) moMenuTin(b);
+  });
+  let lanCham = { id: 0, t: 0 };
+  dsTin.addEventListener('click', e => {
+    const the = e.target.closest('.the-lich[data-ev]');
+    if (the) { const ev = S.lich.find(x => x.id === the.dataset.ev); if (ev) moChiTiet(ev.id); return; }
+    const anh = e.target.closest('[data-xem-anh]');
+    if (anh) return xemAnh(anh.dataset.xemAnh);
+    const lc = e.target.closest('.bc-lc');
+    if (lc) return bauChon(Number(lc.closest('.binh-chon').dataset.bc), Number(lc.dataset.i));
+    const xbc = e.target.closest('[data-bc-xem]');
+    if (xbc) return xemAiChon(Number(xbc.dataset.bcXem));
+    const chip = e.target.closest('[data-ai-tha]');
+    if (chip) return xemAiTha(Number(chip.dataset.aiTha));
+    const lai = e.target.closest('[data-thu-lai]');
+    if (lai) {
+      const t = S.choGui.find(c => c.tam === lai.dataset.thuLai);
+      if (t) { S.choGui = S.choGui.filter(c => c !== t); t.loai === 'tep' ? guiMotTep(t.blob, t.m, t.kenh) : guiTin(t.nd, t.lichId, t.kenh); }
+      return;
+    }
+    // chạm 2 lần nhanh vào tin nhắn = thả ❤️
+    const b = e.target.closest('.bong[data-id]');
+    if (!b || e.target.closest('a, video')) return;
+    const id = Number(b.dataset.id), now = Date.now();
+    if (lanCham.id === id && now - lanCham.t < 320) { lanCham = { id: 0, t: 0 }; thaCam(id, '❤️'); }
+    else lanCham = { id, t: now };
+  });
+
+  // Xem ảnh toàn màn hình
+  function xemAnh(url) {
+    const k = $('#xem-anh');
+    $('img', k).src = url;
+    $('#xa-tai').href = url + (url.startsWith('blob:') || url.startsWith('data:') ? '' : '&tai=1');
+    k.hidden = false;
+  }
+  $('#xem-anh').addEventListener('click', e => { if (!e.target.closest('#xa-tai')) { $('#xem-anh').hidden = true; $('#xem-anh img').src = ''; } });
+
+  /* ---- Bảng biểu tượng cảm xúc ---- */
+  const BANG_EMOJI = [
+    ['Mặt cười', '😀 😃 😄 😁 😆 😅 🤣 😂 🙂 😉 😊 😇 🥰 😍 🤩 😘 😋 😜 🤪 🤗 🤭 🤫 🤔 😐 😑 😶 🙄 😏 😴 😌 🤤 😷 🤒 🥵 🥶 😵 🤯 🤠 🥳 😎 🤓 🧐 😕 😟 🙁 😮 😲 😳 🥺 😨 😰 😥 😢 😭 😱 😖 😣 😞 😓 😩 😫 🥱 😤 😡 😠 🤬'],
+    ['Cử chỉ', '👍 👎 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐️ 👋 🤝 🙏 👏 🙌 👐 🤲 💪 ✍️ 🫶 🙋 🙆 🙅 🤷 🤦 💁'],
+    ['Trái tim', '❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💞 💓 💗 💖 💘 💝 💯 ✨ ⭐ 🌟 🔥 🎉 🎊'],
+    ['Công việc', '✅ ☑️ ❌ ⭕ ❗ ❓ ⚠️ 📌 📍 📅 📆 🗓️ ⏰ ⏳ ⌛ 📞 📱 💻 🖨️ 📧 📩 📝 📄 📊 📈 📉 💼 📁 🗂️ 🔑 💡 🔔 🎯 🏆 🚀 ✈️ 🚗 🏢 🏠 💰 💵 🧾 🛒 📦 🎁'],
+    ['Ăn uống', '☕ 🍵 🧋 🥤 🍺 🍻 🥂 🍷 🍜 🍲 🍚 🍛 🍣 🍱 🥟 🍕 🍔 🍟 🌭 🥪 🍰 🎂 🍦 🍩 🍪 🍫 🍎 🍉 🍊 🍌 🍇 🥭']
+  ];
+  function veBangEmoji() {
+    const gan = kho.get('emojiGan', []);
+    $('#bang-emoji').innerHTML = (gan.length ? [['Dùng gần đây', gan.join(' ')]] : []).concat(BANG_EMOJI)
+      .map(([ten, ds]) => `<p class="be-ten">${ten}</p><div class="be-luoi">${ds.split(' ').map(e => `<button type="button" data-e="${e}">${e}</button>`).join('')}</div>`).join('');
+  }
+  $('#nut-emoji').onclick = () => {
+    const b = $('#bang-emoji');
+    if (b.hidden) { veBangEmoji(); b.hidden = false; oTin.blur(); } else b.hidden = true;
+    const box = $('#ds-tin'); box.scrollTop = box.scrollHeight;
+  };
+  $('#bang-emoji').addEventListener('click', e => {
+    const b = e.target.closest('[data-e]');
+    if (!b) return;
+    const em = b.dataset.e, s = oTin.selectionStart ?? oTin.value.length, d = oTin.selectionEnd ?? oTin.value.length;
+    oTin.value = oTin.value.slice(0, s) + em + oTin.value.slice(d);
+    oTin.selectionStart = oTin.selectionEnd = s + em.length;
+    coGian();
+    kho.set('emojiGan', [em, ...kho.get('emojiGan', []).filter(x => x !== em)].slice(0, 16));
+  });
+
+  /* ---- Ô soạn tin ---- */
+  const oTin = $('#o-tin');
+  // Ô trống: nút gửi thành 👍 (bấm là gửi nhanh 1 like)
+  const coGian = () => {
+    oTin.style.height = 'auto';
+    const cao = oTin.scrollHeight;   // = 0 khi ô đang ẩn → để trình duyệt tự tính
+    oTin.style.height = cao ? Math.min(cao, 130) + 'px' : '';
+    $('#nut-gui').classList.toggle('like', !oTin.value.trim());
+  };
+  oTin.addEventListener('input', coGian);
+  oTin.addEventListener('focus', () => { $('#bang-emoji').hidden = true; setTimeout(() => { const b = $('#ds-tin'); b.scrollTop = b.scrollHeight; }, 300); });
+  oTin.addEventListener('keydown', e => {
+    // Máy tính: Enter để gửi, Shift+Enter xuống dòng. Điện thoại: phím Enter là xuống dòng.
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(hover: hover) and (pointer: fine)').matches) { e.preventDefault(); $('#form-tin').requestSubmit(); }
+  });
+  $('#form-tin').addEventListener('submit', e => {
+    e.preventDefault();
+    const nd = oTin.value.trim() || '👍';
+    oTin.value = ''; coGian();
+    if ($('#bang-emoji').hidden) oTin.focus();
+    guiTin(nd, '');
+  });
+  coGian();
+
+  // Nút + : ảnh/video, chụp ảnh, tệp, bình chọn, sự kiện
+  $('#nut-dinh-kem').onclick = () => {
+    $('#bang-emoji').hidden = true;
+    const sh = moSheet(`<div class="sheet-dau"><span></span><b>Gửi</b><button type="button" data-dong>Đóng</button></div>
+      <div class="sheet-than"><div class="luoi-gui">
+        <button type="button" data-gui="media"><i style="background:#34c759">🖼️</i>Ảnh / Video</button>
+        <button type="button" data-gui="chup"><i style="background:#8e8e93">📷</i>Chụp ảnh</button>
+        <button type="button" data-gui="tep"><i style="background:#007aff">📎</i>Tệp</button>
+        <button type="button" data-gui="bc"><i style="background:#ff9500">📊</i>Bình chọn</button>
+        <button type="button" data-gui="lich"><i style="background:#ff3b30">📅</i>Sự kiện</button>
+      </div><p class="chu-thich giua">Ảnh, video, tệp tối đa 150 MB mỗi tệp. Ảnh được tự thu nhỏ trước khi gửi.</p></div>`);
+    sh.addEventListener('click', e => {
+      const b = e.target.closest('[data-gui]');
+      if (!b) return;
+      const k = b.dataset.gui;
+      if (k === 'media') $('#chon-media').click();
+      if (k === 'chup') $('#chon-chup').click();
+      if (k === 'tep') $('#chon-tep').click();
+      if (k === 'bc') return moTaoBinhChon();
+      if (k === 'lich') return moGuiSuKien();
+      dongSheet();
+    });
+  };
 
   // Từ chi tiết sự kiện: chọn gửi vào nhóm hay cho ai
   function chonKenhGui(lichId) {
@@ -1143,32 +1517,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       dongSheet(); chuyenTab('chat'); moKenh(b.dataset.kenh); guiTin('', lichId, b.dataset.kenh);
     });
   }
-
-  const oTin = $('#o-tin');
-  const coGian = () => { oTin.style.height = 'auto'; oTin.style.height = Math.min(oTin.scrollHeight, 130) + 'px'; $('#nut-gui').disabled = !oTin.value.trim(); };
-  oTin.addEventListener('input', coGian);
-  oTin.addEventListener('keydown', e => {
-    // Máy tính: Enter để gửi, Shift+Enter xuống dòng. Điện thoại: phím Enter là xuống dòng.
-    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(hover: hover) and (pointer: fine)').matches) { e.preventDefault(); $('#form-tin').requestSubmit(); }
-  });
-  oTin.addEventListener('focus', () => setTimeout(() => { const b = $('#ds-tin'); b.scrollTop = b.scrollHeight; }, 300));
-  $('#form-tin').addEventListener('submit', e => {
-    e.preventDefault();
-    const nd = oTin.value.trim();
-    if (!nd) return;
-    oTin.value = ''; coGian(); oTin.focus();
-    guiTin(nd, '');
-  });
-  $('#ds-tin').addEventListener('click', e => {
-    const the = e.target.closest('.the-lich[data-ev]');
-    if (the) { const ev = S.lich.find(x => x.id === the.dataset.ev); if (ev) moChiTiet(ev.id); return; }
-    const lai = e.target.closest('[data-thu-lai]');
-    if (lai) {
-      const t = S.choGui.find(c => c.tam === lai.dataset.thuLai);
-      if (t) { S.choGui = S.choGui.filter(c => c !== t); guiTin(t.nd, t.lichId, t.kenh); }
-    }
-  });
-  $('#nut-gui-lich').onclick = () => {
+  function moGuiSuKien() {
     const h = homNay(), ds = trongKhoang(ymdCong(h, -1), ymdCong(h, 45), true).sort((a, b) => a.ngay.localeCompare(b.ngay) || thuTu(a, b)).slice(0, 80);
     const sh = moSheet(`<div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Gửi một sự kiện</b><span></span></div>
       <div class="sheet-than"><div class="nhom">${ds.length ? ds.map(o => dongSuKien(o, o.ngay).replace('<span class="nd">', `<span class="nd"><small>${ngayNgan(o.ngay)}</small>`)).join('') : '<p class="trong-rong">Chưa có sự kiện nào sắp tới</p>'}</div></div>`);
@@ -1177,7 +1526,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       if (!b) return;
       dongSheet(); guiTin('', b.dataset.ev);
     });
-  };
+  }
 
   /* ===================== QUẢN LÝ THÀNH VIÊN (ADMIN) ===================== */
   const CHUC_VU_GOI_Y = ['Sếp', 'Trợ lý', 'Thư ký', 'Quản lý', 'Kế toán', 'Nhân viên'];
@@ -1316,11 +1665,13 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     if (dangPoll) return henPoll(800);
     dangPoll = true;
     try {
-      const r = await api('poll', { verLich: S.verLich, verNguoi: S.verNguoi, tinCuoi: S.tinCuoi, kenhMo: dangXemChat() ? S.kenh : '' });
-      let doiLich = false, doiTin = false, doiNguoi = false;
+      const r = await api('poll', { verLich: S.verLich, verNguoi: S.verNguoi, tinCuoi: S.tinCuoi, verTT: S.verTT || 0, kenhMo: dangXemChat() ? S.kenh : '' });
+      let doiLich = false, doiTin = false, doiNguoi = false, doiTT = false;
       if (r.nguoi) { S.nguoi = r.nguoi; S.verNguoi = r.verNguoi; doiNguoi = true; }
       if (r.lich) { S.lich = r.lich; S.verLich = r.verLich; doiLich = true; }
       if (r.tin && r.tin.length) { themTin(r.tin); doiTin = true; }
+      if (r.capNhat && r.capNhat.length) { for (const c of r.capNhat) { const t = S.tin.find(x => x.id === c.id); if (t) t.tt = c.tt; } doiTT = true; }
+      if (r.verTT != null) S.verTT = Math.max(S.verTT || 0, r.verTT);
       const docCu = JSON.stringify(S.daDoc);
       S.daDoc = gopDaDoc(r.daDoc || {});
       S.online = r.online || {};
@@ -1329,7 +1680,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       if (doiNguoi && S.kenh && !dsKenh().includes(S.kenh)) dongKenh();
       if (doiLich || doiNguoi) { veThang(); veDsNgay(); if (S.xem === 'nam') veNam(); }
       if (doiNguoi) { veToi(); if (S.tab === 'thanhvien') veThanhVien(); }
-      if (doiTin || doiLich || doiNguoi || docCu !== JSON.stringify(S.daDoc)) veChat(doiTin && dangXemChat());
+      if (doiTin || doiTT || doiLich || doiNguoi || docCu !== JSON.stringify(S.daDoc)) veChat(doiTin && dangXemChat());
       veTrangThaiChat(); capNhatHuyHieu(); danhDauDaDoc();
       if (doiLich || doiTin || doiNguoi) luuCache();
       loiLienTiep = 0; $('#mat-mang').hidden = true;

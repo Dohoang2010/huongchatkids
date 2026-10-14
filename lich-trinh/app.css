@@ -486,6 +486,76 @@ code { font-size: .85em; background: var(--nen2); padding: 1px 5px; border-radiu
 .chon-nen input:checked ~ span { color: var(--chu); font-weight: 600; }
 .chon-nen input:focus-visible + i { outline: 2px solid var(--xanh); outline-offset: 4px; }
 
+
+/* ===== chat: ảnh, video, tệp, bình chọn, cảm xúc, biểu tượng ===== */
+.bong { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.bong-emoji { background: none !important; font-size: 44px; line-height: 1.15; padding: 0 2px; }
+.ds-tin > * { flex-shrink: 0; }   /* không để bong bóng ảnh / video bị co lại khi khung chat đầy */
+.bong-media { padding: 0 !important; background: none !important; overflow: hidden; border-radius: 16px !important; max-width: 70%; }
+.bong-media .chu-kem { display: block; padding: 6px 10px; background: var(--xam-bong); color: var(--chu); }
+.anh-tin { display: block; position: relative; padding: 0; line-height: 0; }
+.anh-tin img { display: block; max-width: min(260px, 100%); max-height: 340px; min-width: 120px; min-height: 80px; width: auto; height: auto; object-fit: cover; border-radius: 16px; background: var(--xam-bong); }
+.video-boc { display: block; position: relative; line-height: 0; }
+.video-tin { display: block; max-width: min(260px, 100%); max-height: 360px; border-radius: 16px; background: #000; }
+.tien-do { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, .35); border-radius: 16px; }
+.tien-do b { color: #fff; font-size: 16px; line-height: 1; background: rgba(0, 0, 0, .45); padding: 8px 12px; border-radius: 20px; }
+.bong-tep { padding: 6px !important; }
+.tep-tin { display: flex; align-items: center; gap: 10px; min-width: 200px; max-width: 260px; padding: 6px 8px; border-radius: 12px; background: rgba(255, 255, 255, .16); color: inherit; text-decoration: none; }
+.bong.cua-ho .tep-tin { background: var(--the); }
+.tep-tin i { font-style: normal; font-size: 30px; flex: none; }
+.tep-tin span { min-width: 0; display: flex; flex-direction: column; }
+.tep-tin b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tep-tin small { font-size: 12px; opacity: .75; }
+.bong-bc { background: none !important; padding: 0 !important; max-width: 86%; width: 290px; }
+.binh-chon { background: var(--the); color: var(--chu); border: .5px solid var(--vach); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 7px; white-space: normal; }
+.bc-hoi { font-size: 16px; }
+.bc-phu { color: var(--chu2); font-size: 12.5px; margin-top: -4px; }
+.bc-lc { position: relative; display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 10px; border-radius: 10px; background: var(--xam-bong); text-align: left; overflow: hidden; font-size: 15px; -webkit-user-select: none; user-select: none; }
+.bc-thanh { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(0, 122, 255, .18); transition: width .3s; }
+.bc-lc.chon .bc-thanh { background: rgba(0, 122, 255, .32); }
+.bc-o { position: relative; flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--chu3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+.bc-o.vuong { border-radius: 5px; }
+.bc-lc.chon .bc-o { background: var(--xanh); border-color: var(--xanh); }
+.bc-chu { position: relative; flex: 1; min-width: 0; word-break: break-word; }
+.bc-so { position: relative; flex: none; font-size: 13px; font-weight: 600; color: var(--chu2); }
+.bc-xem { color: var(--xanh); font-size: 14px; padding: 4px 0 0; align-self: flex-start; }
+.cam-chip { align-self: flex-start; margin: -6px 0 2px 10px; position: relative; z-index: 1; background: var(--the); border: 1.5px solid var(--nen); border-radius: 14px; padding: 2px 7px; font-size: 14px; box-shadow: 0 1px 3px rgba(0, 0, 0, .15); line-height: 1.3; }
+.cam-chip.phai { align-self: flex-end; margin: -6px 10px 2px 0; }
+.cam-chip b { font-size: 12px; color: var(--chu2); font-weight: 600; }
+.cam-chip.cua-toi { background: #e6f0ff; }
+.menu-nen { position: fixed; inset: 0; z-index: 70; background: rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: hien .15s; }
+.menu-tin { position: absolute; left: 12px; right: 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.menu-tin.phai { align-items: flex-end; }
+.mt-cam { display: flex; gap: 2px; background: var(--the); border-radius: 30px; padding: 6px 8px; box-shadow: var(--bong); }
+.mt-cam button { font-size: 28px; width: 42px; height: 42px; border-radius: 50%; transition: transform .12s; }
+.mt-cam button:active { transform: scale(1.3); }
+.mt-cam button.dang { background: var(--xam-bong); }
+.mt-hd { display: flex; flex-direction: column; min-width: 190px; background: var(--the); border-radius: 14px; overflow: hidden; box-shadow: var(--bong); }
+.mt-hd:empty { display: none; }
+.mt-hd > * { padding: 13px 16px; text-align: left; font-size: 16px; color: var(--chu); text-decoration: none; }
+.mt-hd > * + * { border-top: .5px solid var(--vach); }
+.xem-anh { position: fixed; inset: 0; z-index: 90; background: #000; display: flex; align-items: center; justify-content: center; animation: hien .15s; }
+.xem-anh img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.xa-nut { position: absolute; top: calc(env(safe-area-inset-top) + 10px); right: 12px; display: flex; gap: 8px; }
+.xa-nut > * { background: rgba(255, 255, 255, .18); color: #fff; padding: 8px 14px; border-radius: 18px; font-size: 15px; text-decoration: none; }
+.o-tin-boc { flex: 1; min-width: 0; position: relative; display: flex; }
+.o-tin-boc textarea { flex: 1; padding-right: 40px; }
+.nut-emoji { position: absolute; right: 4px; bottom: 3px; width: 32px; height: 32px; color: var(--chu2); display: flex; align-items: center; justify-content: center; }
+.nut-emoji svg { width: 24px; height: 24px; stroke-width: 1.7; }
+.nut-tron svg { width: 28px; height: 28px; stroke-width: 1.7; color: var(--xanh); }
+.nut-gui .like-icon { display: none; font-size: 22px; line-height: 1; }
+.nut-gui.like { background: none !important; width: 36px; }
+.nut-gui.like svg { display: none; }
+.nut-gui.like .like-icon { display: block; }
+.bang-emoji { max-height: 260px; overflow-y: auto; background: var(--nav); border-top: .5px solid var(--vach); padding: 4px 8px 8px; flex: none; }
+.be-ten { font-size: 12px; color: var(--chu2); margin: 8px 4px 4px; text-transform: uppercase; }
+.be-luoi { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); }
+.be-luoi button { font-size: 26px; height: 42px; border-radius: 8px; }
+.be-luoi button:active { background: var(--xam-bong); }
+.luoi-gui { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 8px; padding: 14px 4px 6px; }
+.luoi-gui button { display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 13px; color: var(--chu); }
+.luoi-gui i { font-style: normal; width: 58px; height: 58px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+
 @media (min-width: 700px) {
   .tab > *:not(.nav):not(.nut-hom-nay):not(.goi-y) { max-width: 720px; margin-left: auto; margin-right: auto; }
   .o-ngay { height: 72px; }

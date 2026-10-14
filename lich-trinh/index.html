@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<link rel="stylesheet" href="app.css?v=9">
+<link rel="stylesheet" href="app.css?v=10">
 <script>
   // Áp chế độ Sáng/Tối và màu nền đã chọn ngay khi mở (trước khi vẽ trang) để không bị nháy màu
   try {
@@ -142,10 +142,14 @@
           <div><b id="chat-ten"></b><small id="chat-tt"></small></div>
         </header>
         <div id="ds-tin" class="ds-tin" aria-live="polite"></div>
+        <div id="bang-emoji" class="bang-emoji" hidden></div>
         <form id="form-tin" class="soan-tin">
-          <button type="button" id="nut-gui-lich" class="nut-tron" aria-label="Gửi một sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-          <textarea id="o-tin" rows="1" placeholder="Tin nhắn" aria-label="Nội dung tin nhắn" enterkeyhint="send"></textarea>
-          <button type="submit" id="nut-gui" class="nut-gui" aria-label="Gửi" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+          <button type="button" id="nut-dinh-kem" class="nut-tron" aria-label="Gửi ảnh, video, tệp, bình chọn"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v9M7.5 12h9"/></svg></button>
+          <div class="o-tin-boc">
+            <textarea id="o-tin" rows="1" placeholder="Tin nhắn" aria-label="Nội dung tin nhắn" enterkeyhint="send"></textarea>
+            <button type="button" id="nut-emoji" class="nut-emoji" aria-label="Biểu tượng cảm xúc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c.9 1.3 2.1 2 3.5 2s2.6-.7 3.5-2"/><circle cx="9" cy="10" r=".6" fill="currentColor"/><circle cx="15" cy="10" r=".6" fill="currentColor"/></svg></button>
+          </div>
+          <button type="submit" id="nut-gui" class="nut-gui like" aria-label="Gửi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg><span class="like-icon" aria-hidden="true">👍</span></button>
         </form>
       </div>
     </section>
@@ -205,9 +209,16 @@
   <div id="sheet" class="sheet-nen" hidden><div class="sheet" role="dialog" aria-modal="true"></div></div>
   <div id="toast" role="status" aria-live="polite"></div>
   <input type="file" id="chon-anh" accept="image/*" hidden>
+  <input type="file" id="chon-media" accept="image/*,video/*" multiple hidden>
+  <input type="file" id="chon-chup" accept="image/*" capture="environment" hidden>
+  <input type="file" id="chon-tep" multiple hidden>
+  <!-- Nhấn giữ 1 tin nhắn: thả cảm xúc / sao chép / tải về -->
+  <div id="menu-nen" class="menu-nen" hidden><div id="menu-tin" class="menu-tin" role="menu"></div></div>
+  <!-- Xem ảnh toàn màn hình -->
+  <div id="xem-anh" class="xem-anh" hidden><img alt="Ảnh"><div class="xa-nut"><a id="xa-tai" download target="_blank" rel="noopener">Tải về</a><button type="button">Đóng</button></div></div>
 </div>
-<script src="config.js?v=9"></script>
-<script src="demo.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<script src="config.js?v=10"></script>
+<script src="demo.js?v=10"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

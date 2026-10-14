@@ -1,6 +1,6 @@
 /* Service worker: chạy được khi mất mạng + nhận thông báo đẩy */
-const BAN = 'lich-v9';
-const TEP = ['./', 'index.html', 'app.css?v=9', 'app.js?v=9', 'config.js?v=9', 'demo.js?v=9', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'badge-96.png'];
+const BAN = 'lich-v10';
+const TEP = ['./', 'index.html', 'app.css?v=10', 'app.js?v=10', 'config.js?v=10', 'demo.js?v=10', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'badge-96.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(BAN).then(c => c.addAll(TEP)).then(() => self.skipWaiting()));
@@ -15,7 +15,8 @@ self.addEventListener('activate', e => {
 // Lấy bản mới từ mạng trước; mất mạng thì dùng bản đã lưu
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
-  if (e.request.method !== 'GET' || u.origin !== location.origin || !u.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
+  // /api (dữ liệu, ảnh, video, tệp chat) luôn lấy thẳng từ máy chủ, không lưu vào bộ nhớ đệm
+  if (e.request.method !== 'GET' || u.origin !== location.origin || u.pathname.startsWith('/api') || !u.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
   e.respondWith(fetch(e.request).then(res => {
     if (res.ok) { const ban = res.clone(); caches.open(BAN).then(c => c.put(e.request, ban)); }
     return res;
