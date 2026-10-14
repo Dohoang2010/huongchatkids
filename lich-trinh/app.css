@@ -331,6 +331,31 @@ code { font-size: .85em; background: var(--nen2); padding: 1px 5px; border-radiu
 .nut-xoa { color: var(--do); justify-content: center; }
 .dau-tich { margin-left: auto; color: var(--do); font-weight: 700; }
 
+/* ===== nhập nhiều lịch ===== */
+.dan-nhanh textarea { width: 100%; min-height: 120px; border: 0; outline: none; background: none; resize: vertical; padding: 12px 16px; font-size: 15px; line-height: 1.45; color: var(--chu); }
+.dan-nhanh textarea::placeholder { color: var(--chu3); }
+.dan-nhanh .nut-dong { border-top: .5px solid var(--vach); }
+.mac-dinh { display: grid; grid-template-columns: 1fr; }
+.dong-nhap { background: var(--the); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; border: 1.5px solid transparent; }
+.dong-nhap.loi-dong { border-color: var(--do); }
+.dong-nhap input, .dong-nhap select { width: 100%; border: 0; outline: none; background: var(--xam-bong); border-radius: 8px; padding: 8px 10px; font-size: 16px; min-width: 0; color: var(--chu); }
+.dong-nhap input::placeholder { color: var(--chu2); }
+.dong-nhap input::-webkit-calendar-picker-indicator { display: none; }
+.dn-hang1 { display: flex; align-items: center; gap: 6px; }
+.dn-hang1 .dn-so { width: 22px; flex: none; font-size: 13px; color: var(--chu2); font-weight: 600; }
+.dn-hang1 input[type="date"] { flex: 1 1 0; }
+.dn-hang3 input[type="time"] { flex: 0 0 78px; width: 78px; text-align: center; padding-left: 4px; padding-right: 4px; }
+.dn-hang1 .gach { color: var(--chu2); }
+.dn-xoa { width: 30px; height: 30px; flex: none; border-radius: 50%; color: var(--chu2); font-size: 22px; line-height: 1; }
+.dn-xoa:active { background: var(--nen2); }
+.dong-nhap input[name="tieuDe"] { font-weight: 600; }
+.dn-hang3 { display: flex; gap: 6px; align-items: center; }
+.dn-hang3 select { flex: 1 1 0; min-width: 0; appearance: none; -webkit-appearance: none; text-align: center; }
+.dn-cn { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--chu2); flex: none; white-space: nowrap; }
+.dn-cn input { width: 18px; height: 18px; flex: none; padding: 0; accent-color: var(--c-chung); }
+.dong-nhap.ca-ngay input[type="time"], .dong-nhap.ca-ngay .gach { display: none; }
+.nut-them-dong { display: block; width: 100%; padding: 13px; border-radius: 12px; border: 1.5px dashed var(--chu3); color: var(--xanh); font-weight: 600; margin-bottom: 14px; }
+
 #toast {
   position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 90px); transform: translate(-50%, 20px); z-index: 80;
   background: rgba(30, 30, 30, .92); color: #fff; padding: 10px 18px; border-radius: 22px; font-size: 15px; max-width: calc(100% - 32px);

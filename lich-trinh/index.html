@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<link rel="stylesheet" href="app.css?v=3">
+<link rel="stylesheet" href="app.css?v=4">
 </head>
 <body>
 <div id="app">
@@ -92,6 +92,7 @@
         <button class="nav-lui" id="nut-ve-nam" type="button"><svg viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg><span id="nhan-nam">2026</span></button>
         <div class="nav-phai">
           <button class="nut-chu" id="nut-loc" type="button">Lịch</button>
+          <button class="nut-icon" id="nut-nhap-nhieu" type="button" aria-label="Nhập nhiều lịch 1 lần" title="Nhập nhiều lịch 1 lần"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h10M4 18h7M18 13v8M14 17h8"/></svg></button>
           <button class="nut-icon" id="nut-them" type="button" aria-label="Thêm sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button>
         </div>
       </header>
@@ -123,7 +124,8 @@
     <!-- SẮP TỚI -->
     <section class="tab" id="tab-saptoi" data-tab="saptoi" hidden>
       <header class="nav nav-to"><h1>Sắp tới</h1>
-        <button class="nut-icon" id="nut-them-2" type="button" aria-label="Thêm sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button>
+        <div class="nav-phai"><button class="nut-chu" id="nut-nhap-nhieu-2" type="button">Nhập nhiều</button>
+        <button class="nut-icon" id="nut-them-2" type="button" aria-label="Thêm sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button></div>
       </header>
       <div class="o-tim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="tim" type="search" placeholder="Tìm sự kiện" aria-label="Tìm sự kiện"></div>
       <div id="ds-saptoi" class="ds-saptoi"></div>
@@ -175,8 +177,8 @@
   <div id="sheet" class="sheet-nen" hidden><div class="sheet" role="dialog" aria-modal="true"></div></div>
   <div id="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="config.js?v=3"></script>
-<script src="demo.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="demo.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

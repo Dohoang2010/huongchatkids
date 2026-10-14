@@ -93,6 +93,11 @@
           db.ver++; ghi(db);
           return { ok: true, ev: i >= 0 ? db.lich[i] : ev, verLich: String(db.ver) };
         }
+        case 'luuNhieuLich': {
+          const ds = (d.ds || []).map((e, i) => Object.assign({}, e, { id: 'D' + Date.now().toString(36) + i, taoBoi: toi, suaBoi: toi, capNhat: bayGio() }));
+          db.lich.push(...ds); db.ver++; ghi(db);
+          return { ok: true, ds, verLich: String(db.ver) };
+        }
         case 'xoaLich':
           db.lich = db.lich.filter(x => x.id !== d.id); db.ver++; ghi(db);
           return { ok: true, verLich: String(db.ver) };

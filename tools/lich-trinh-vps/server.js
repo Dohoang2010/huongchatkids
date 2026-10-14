@@ -164,6 +164,38 @@ const HANH_DONG = {
     return { ok: true, ev: moi, verLich: M.verLich };
   },
 
+  // Lưu nhiều sự kiện 1 lần (màn "Nhập nhiều lịch"): tất cả hoặc không gì cả, chỉ báo người kia 1 thông báo
+  async luuNhieuLich(req, toi) {
+    const ds = Array.isArray(req.ds) ? req.ds.slice(0, 200) : [];
+    if (!ds.length) return { loi: 'Chưa có lịch nào để lưu' };
+    const moi = ds.map((e, i) => {
+      let ev;
+      try { ev = chuanHoaLich(e || {}); } catch (err) { throw new Error(`Dòng ${i + 1}: ${err.message}`); }
+      return Object.assign(ev, {
+        id: 'L' + Date.now().toString(36) + crypto.randomBytes(3).toString('hex'),
+        taoBoi: toi.vaiTro, suaBoi: toi.vaiTro, capNhat: bayGio()
+      });
+    });
+    const c = await pool.connect();
+    try {
+      await c.query('BEGIN');
+      for (const ev of moi) await c.query('INSERT INTO lich (id, data) VALUES ($1, $2)', [ev.id, ev]);
+      await c.query('COMMIT');
+    } catch (e) { await c.query('ROLLBACK'); throw e; } finally { c.release(); }
+    M.lich.push(...moi);
+    await doiVerLich();
+    const khac = toi.vaiTro === 'sep' ? 'troly' : 'sep', lienQuan = moi.filter(e => e.lich === khac || e.lich === 'chung');
+    if (lienQuan.length === 1) baoDoiLich(toi.vaiTro, lienQuan[0], 'thêm');
+    else if (lienQuan.length) {
+      guiThongBao([khac], {
+        title: `${tenNguoi()[toi.vaiTro]} đã thêm ${lienQuan.length} lịch`,
+        body: lienQuan.slice(0, 4).map(e => `• ${e.tieuDe} – ${moTaGio(e)}`).join('\n') + (lienQuan.length > 4 ? `\n… và ${lienQuan.length - 4} lịch khác` : ''),
+        tag: 'lich-nhieu-' + Date.now(), url: './#sap-toi'
+      });
+    }
+    return { ok: true, ds: moi, verLich: M.verLich };
+  },
+
   async xoaLich(req, toi) {
     const cu = M.lich.find(x => x.id === String(req.id || ''));
     if (!cu) return { ok: true, verLich: M.verLich };

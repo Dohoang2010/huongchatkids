@@ -250,6 +250,8 @@
     if (!p[0]) return;
     if (p[0] === 'chat') chuyenTab('chat');
     else if (p[0] === 'toi') chuyenTab('toi');
+    else if (p[0] === 'sap-toi') chuyenTab('saptoi');
+    else if (p[0] === 'nhap-nhieu') { chuyenTab('lich'); moNhapNhieu(); }
     else if (p[0] === 'lich' && /^\d{4}-\d{2}-\d{2}$/.test(p[1] || '')) { chuyenTab('lich'); chonNgay(p[1], true); }
     else if (p[0] === 'su-kien' && p[1]) {
       const ev = S.lich.find(x => x.id === p[1]);
@@ -601,6 +603,193 @@
       } catch (err) { loi.textContent = err.message; nut.disabled = false; }
     });
   }
+
+  /* ===================== NHẬP NHIỀU LỊCH 1 LẦN ===================== */
+  const LICH_CHU = { sep: 'Sếp', troly: 'Trợ lý', chung: 'Chung' };
+
+  // Tách danh sách dán vào (mỗi dòng 1 lịch, hoặc copy từ Excel) thành các dòng lịch.
+  // Hiểu: 16/10, 16/10/2026, hôm nay, mai, mốt, thứ 2…CN · 9:00, 9h, 9h30, 2h chiều, 9:00-10:30, cả ngày · "@ địa điểm" · [Sếp]/[Trợ lý]/[Chung]
+  function tachDanhSach(chu, ngayDau) {
+    const kq = [];
+    let ngayTruoc = ngayDau;
+    for (let dong of String(chu).split(/\r?\n/)) {
+      dong = dong.replace(/^\s*(?:[-•*+]|\d+[.)])\s+/, '').trim();
+      if (!dong) continue;
+      const o = { ngay: '', tu: '', den: '', caNgay: false, tieuDe: '', diaDiem: '', lich: '' };
+      const o1 = dong.split('\t').map(x => x.trim()).filter(Boolean);
+      let con = o1.length > 1 ? o1.slice() : [dong];
+      const lay = (re, fn) => { con = con.map(c => c.replace(re, (...m) => { fn(m); return ' '; })); };
+      lay(/\[(sếp|sep|trợ lý|tro ly|tl|chung)\]/i, m => { const k = boDau(m[1]); o.lich = k.startsWith('se') ? 'sep' : k === 'chung' ? 'chung' : 'troly'; });
+      lay(/(?:^|\s)(?:cả ngày|ca ngay)(?=\s|$|[,.;:])/i, () => { o.caNgay = true; });
+      lay(/(?:^|\s)(?:ngày\s*)?(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?(?=\s|$|,)/, m => {
+        const h = homNay();
+        let y = m[3] ? +m[3] : +h.slice(0, 4);
+        if (y < 100) y += 2000;
+        let ymd = `${y}-${pad(+m[2])}-${pad(+m[1])}`;
+        if (!m[3] && ymd < ymdCong(h, -60)) ymd = `${y + 1}${ymd.slice(4)}`;
+        if (+m[2] >= 1 && +m[2] <= 12 && +m[1] >= 1 && +m[1] <= 31) o.ngay = ymd;
+      });
+      if (!o.ngay) lay(/(?:^|\s)(hôm nay|hom nay|ngày mai|ngay mai|mai|ngày mốt|mốt|mot)(?=\s|$|[,.;:])/i, m => {
+        const k = boDau(m[1]); o.ngay = ymdCong(homNay(), k.includes('nay') ? 0 : k.includes('mai') ? 1 : 2);
+      });
+      if (!o.ngay) lay(/(?:^|\s)(?:thứ\s*(2|3|4|5|6|7|hai|ba|tư|năm|sáu|bảy)|t([2-7])|(cn|chủ nhật))(?=\s|$|[,.;:])/i, m => {
+        const ten = { hai: 2, ba: 3, 'tư': 4, 'năm': 5, 'sáu': 6, 'bảy': 7 };
+        const so = m[3] ? 8 : +(m[2] || ten[String(m[1]).toLowerCase()] || m[1]);
+        const thu = so === 8 ? 0 : so - 1, h = homNay();
+        o.ngay = ymdCong(h, (thu - thuCua(h) + 7) % 7);
+      });
+      const gio = (h, p, buoi) => {
+        h = +h; if (/chiều|tối/i.test(buoi || '') && h < 12) h += 12;
+        return h <= 23 && (+p || 0) <= 59 ? `${pad(h)}:${pad(+p || 0)}` : '';
+      };
+      lay(/(?:^|\s)(\d{1,2})(?:\s*giờ|[:hg](?![a-zà-ỹ]))\s*(\d{2})?\s*(sáng|chiều|tối)?(?:\s*(?:-|–|đến|tới)\s*(\d{1,2})(?:\s*giờ|[:hg](?![a-zà-ỹ]))?\s*(\d{2})?\s*(sáng|chiều|tối)?)?(?=\s|$|[,.;:])/i, m => {
+        if (o.tu && !o.den && !m[4]) { o.den = gio(m[1], m[2], m[3]); return; }   // Excel: ô giờ thứ 2 là giờ kết thúc
+        o.tu = gio(m[1], m[2], m[3] || m[6]);
+        if (m[4]) o.den = gio(m[4], m[5], m[6] || m[3]);
+      });
+      if (o1.length > 1) {
+        const chu2 = con.map(c => c.replace(/\s+/g, ' ').trim()).filter(Boolean);
+        o.tieuDe = chu2[0] || ''; o.diaDiem = chu2.slice(1).join(', ');
+      } else {
+        let t = con.join(' ');
+        const at = t.search(/\s@|@\s|\stại\s/i);
+        if (at >= 0) { o.diaDiem = t.slice(at).replace(/^\s*(?:@|tại)\s*/i, '').trim(); t = t.slice(0, at); }
+        o.tieuDe = t.replace(/\s+/g, ' ').replace(/^[\s,:;–-]+|[\s,:;–-]+$/g, '');
+      }
+      if (!o.tieuDe) continue;
+      o.ngay = o.ngay || ngayTruoc;
+      ngayTruoc = o.ngay;
+      if (!o.tu && !o.caNgay) o.caNgay = true;
+      if (o.tu && !o.den) o.den = chuoiTuPhut(phutCua(`${o.ngay}T${o.tu}`) + 60).slice(11);
+      if (o.den && o.den < o.tu) o.den = '23:59';
+      kq.push(o);
+    }
+    return kq;
+  }
+
+  function dongNhap(o, i) {
+    return `<div class="dong-nhap${o.caNgay ? ' ca-ngay' : ''}">
+      <div class="dn-hang1"><span class="dn-so">${i + 1}</span>
+        <input type="date" name="ngay" value="${esc(o.ngay)}" aria-label="Ngày">
+        <label class="dn-cn"><input type="checkbox" name="caNgay"${o.caNgay ? ' checked' : ''}>Cả ngày</label>
+        <button type="button" class="dn-xoa" aria-label="Bỏ dòng này">×</button></div>
+      <div class="dn-hang3"><input type="time" name="tu" value="${esc(o.tu)}" aria-label="Giờ bắt đầu"><span class="gach">–</span><input type="time" name="den" value="${esc(o.den)}" aria-label="Giờ kết thúc">
+        <select name="lich" aria-label="Lịch của"><option value="">Lịch: mặc định</option>${LICH.map(l => `<option value="${l}"${o.lich === l ? ' selected' : ''}>Lịch: ${LICH_CHU[l]}</option>`).join('')}</select></div>
+      <input name="tieuDe" placeholder="Tiêu đề" maxlength="200" value="${esc(o.tieuDe)}" aria-label="Tiêu đề">
+      <input name="diaDiem" placeholder="Địa điểm (không bắt buộc)" maxlength="200" value="${esc(o.diaDiem)}" aria-label="Địa điểm">
+    </div>`;
+  }
+
+  function moNhapNhieu() {
+    const ngay0 = S.chon || homNay(), trong = () => ({ ngay: ngay0, tu: '', den: '', caNgay: false, tieuDe: '', diaDiem: '', lich: '' });
+    const macDinh = kho.get('lichMacDinh', S.toi);
+    const sh = moSheet(`<form id="form-nhieu" novalidate>
+      <div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Nhập nhiều lịch</b><button type="submit" id="nn-luu">Lưu</button></div>
+      <div class="sheet-than">
+        <p class="nhom-ten">Cách 1 · Dán cả danh sách</p>
+        <div class="nhom dan-nhanh">
+          <textarea id="nn-dan" aria-label="Dán danh sách lịch" placeholder="Mỗi dòng 1 lịch, ví dụ:
+16/10 9:00-10:30 Họp đối tác @ Văn phòng
+17/10 14h Gặp kế toán [Trợ lý]
+mai 8h30 Khám sức khoẻ
+thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
+          <button type="button" class="dong nut-dong xanh" id="nn-tach">Tách thành các dòng bên dưới ↓</button>
+        </div>
+        <p class="chu-thich">Hiểu được: ngày (16/10, mai, thứ 2…), giờ (9h, 9:30, 2h chiều, 9h-11h), “cả ngày”, “@ địa điểm”, [Sếp] / [Trợ lý] / [Chung]. Dán từ Excel cũng được.</p>
+
+        <p class="nhom-ten">Áp dụng cho tất cả</p>
+        <div class="nhom chon-lich" role="radiogroup" aria-label="Lịch của (mặc định)">
+          ${LICH.map(l => `<label><input type="radio" name="lichChung" value="${l}"${l === macDinh ? ' checked' : ''}><span style="color:var(--c-${l})"><i class="cham c-${l}"></i><b style="color:var(--chu);font-weight:inherit">${LICH_CHU[l]}</b></span></label>`).join('')}
+        </div>
+        <div class="nhom"><label class="dong"><span>Cảnh báo</span><select name="nhacChung">${luaChonNhac(false, 15)}</select></label></div>
+
+        <p class="nhom-ten">Cách 2 · Điền từng dòng <span id="nn-dem"></span></p>
+        <div id="nn-ds"></div>
+        <button type="button" class="nut-them-dong" id="nn-them">+ Thêm dòng</button>
+        <p class="loi" role="alert"></p>
+      </div></form>`);
+    const f = $('#form-nhieu', sh), ds = $('#nn-ds', f), loi = $('.loi', f);
+    const danhSo = () => {
+      const n = $$('.dong-nhap', ds).length, co = $$('.dong-nhap', ds).filter(d => $('[name=tieuDe]', d).value.trim()).length;
+      $$('.dn-so', ds).forEach((s, i) => { s.textContent = i + 1; });
+      $('#nn-dem', f).textContent = n ? `(${co}/${n} dòng có tiêu đề)` : '';
+      $('#nn-luu', f).textContent = co ? `Lưu ${co}` : 'Lưu';
+    };
+    const them = (ds2, thay) => {
+      if (thay) ds.innerHTML = '';
+      ds.insertAdjacentHTML('beforeend', ds2.map((o, i) => dongNhap(o, i)).join(''));
+      danhSo();
+    };
+    them([trong(), trong(), trong()]);
+
+    $('#nn-tach', f).onclick = () => {
+      const kq = tachDanhSach($('#nn-dan', f).value, ngay0);
+      if (!kq.length) { toast('Chưa đọc được dòng nào. Mỗi dòng cần có tiêu đề.'); return; }
+      const coSan = $$('.dong-nhap', ds).filter(d => $('[name=tieuDe]', d).value.trim()).length;
+      them(kq, !coSan);
+      $('#nn-dan', f).value = '';
+      toast(`Đã tách được ${kq.length} lịch. Kiểm tra lại rồi bấm Lưu.`, 3500);
+      ds.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    $('#nn-them', f).onclick = () => {
+      const cuoi = $$('.dong-nhap', ds).pop();
+      them([Object.assign(trong(), cuoi ? { ngay: $('[name=ngay]', cuoi).value || ngay0 } : {})]);
+      const moi = $$('.dong-nhap', ds).pop();
+      $('[name=tieuDe]', moi).focus();
+    };
+    ds.addEventListener('click', e => {
+      const x = e.target.closest('.dn-xoa');
+      if (x) { x.closest('.dong-nhap').remove(); danhSo(); }
+      const i = e.target.closest('input[type=date], input[type=time]');
+      if (i) { try { i.showPicker(); } catch (err) { /* trình duyệt tự mở */ } }
+    });
+    ds.addEventListener('input', e => { if (e.target.name === 'tieuDe') { e.target.closest('.dong-nhap').classList.remove('loi-dong'); danhSo(); } });
+    ds.addEventListener('change', e => {
+      const d = e.target.closest('.dong-nhap');
+      if (e.target.name === 'caNgay') d.classList.toggle('ca-ngay', e.target.checked);
+      if (e.target.name === 'tu' && e.target.value) {
+        const den = $('[name=den]', d);
+        if (!den.value || den.value <= e.target.value) den.value = chuoiTuPhut(phutCua(`2000-01-01T${e.target.value}`) + 60).slice(11);
+        $('[name=caNgay]', d).checked = false; d.classList.remove('ca-ngay');
+      }
+    });
+
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      loi.textContent = '';
+      const lichChung = (f.querySelector('input[name=lichChung]:checked') || {}).value || S.toi, nhac = Number(f.elements.nhacChung.value);
+      const ra = [];
+      let sai = null;
+      $$('.dong-nhap', ds).forEach(d => {
+        d.classList.remove('loi-dong');
+        const g = n => $(`[name=${n}]`, d), tieuDe = g('tieuDe').value.trim();
+        if (!tieuDe) return;
+        const ngay = g('ngay').value, caNgay = g('caNgay').checked || !g('tu').value;
+        let tu = g('tu').value, den = g('den').value;
+        if (!caNgay && (!den || den < tu)) den = tu;
+        if (!ngay) { d.classList.add('loi-dong'); sai = sai || d; return; }
+        ra.push({
+          tieuDe, diaDiem: g('diaDiem').value.trim(), caNgay, lap: '', lapDen: '', ghiChu: '',
+          bd: `${ngay}T${caNgay ? '00:00' : tu}`, kt: `${ngay}T${caNgay ? '23:59' : den}`,
+          lich: g('lich').value || lichChung,
+          nhac: caNgay ? (nhac < 0 ? -1 : 0) : nhac
+        });
+      });
+      if (sai) { loi.textContent = 'Có dòng chưa chọn ngày (viền đỏ)'; sai.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+      if (!ra.length) { loi.textContent = 'Chưa có dòng nào có tiêu đề'; return; }
+      const nut = $('#nn-luu', f);
+      nut.disabled = true;
+      try {
+        const r = await api('luuNhieuLich', { ds: ra });
+        S.lich.push(...r.ds); S.verLich = r.verLich;
+        kho.set('lichMacDinh', lichChung);
+        luuCache(); dongSheet(); veLai();
+        toast(`Đã thêm ${r.ds.length} lịch ✓`);
+      } catch (err) { loi.textContent = err.message; nut.disabled = false; }
+    });
+  }
+  $('#nut-nhap-nhieu').onclick = moNhapNhieu;
+  $('#nut-nhap-nhieu-2').onclick = moNhapNhieu;
 
   /* ===================== TIN NHẮN ===================== */
   const khac = () => (S.toi === 'sep' ? 'troly' : 'sep');
