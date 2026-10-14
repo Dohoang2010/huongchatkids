@@ -34,6 +34,8 @@ async function taoBang() {
       id text PRIMARY KEY, ten_dang_nhap text UNIQUE NOT NULL, ten text NOT NULL, chuc_vu text NOT NULL DEFAULT '',
       mau text NOT NULL DEFAULT '#8e8e93', la_admin boolean NOT NULL DEFAULT false, khoa boolean NOT NULL DEFAULT false,
       da_xoa boolean NOT NULL DEFAULT false, salt text NOT NULL, hash text NOT NULL, thu_tu serial, tao_luc timestamptz DEFAULT now());
+    ALTER TABLE thanh_vien ADD COLUMN IF NOT EXISTS anh bytea;
+    ALTER TABLE thanh_vien ADD COLUMN IF NOT EXISTS anh_ver text NOT NULL DEFAULT '';
     CREATE TABLE IF NOT EXISTS phien (token_hash text PRIMARY KEY, vai text NOT NULL, het timestamptz NOT NULL, may text);
     CREATE TABLE IF NOT EXISTS lich (id text PRIMARY KEY, data jsonb NOT NULL);
     CREATE TABLE IF NOT EXISTS tin (id serial PRIMARY KEY, t text NOT NULL, tu text NOT NULL, nd text NOT NULL DEFAULT '', lich_id text NOT NULL DEFAULT '');
@@ -88,7 +90,7 @@ const bayGio = () => new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 1
 const theoThuTu = (a, b) => a.thu_tu - b.thu_tu;
 const thanhVien = () => [...M.tv.values()].filter(u => !u.la_admin && !u.da_xoa).sort(theoThuTu);   // người có lịch & chat
 const dangHoatDong = () => thanhVien().filter(u => !u.khoa);
-const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chuc_vu, mau: u.mau, admin: u.la_admin, khoa: u.khoa, daXoa: u.da_xoa });
+const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chuc_vu, mau: u.mau, anh: u.anh_ver || '', admin: u.la_admin, khoa: u.khoa, daXoa: u.da_xoa });
 const dsNguoi = () => [...M.tv.values()].sort(theoThuTu).map(congKhai);
 const tenCua = id => (M.tv.get(id) || {}).ten || 'Ai đó';
 const laThanhVien = id => { const u = M.tv.get(id); return !!u && !u.la_admin && !u.da_xoa; };
@@ -196,6 +198,25 @@ const HANH_DONG = {
     if (!ten) return { loi: 'Tên không được để trống' };
     await q('UPDATE thanh_vien SET ten = $1 WHERE id = $2', [ten, toi.id]);
     M.tv.get(toi.id).ten = ten;
+    await doiNguoi();
+    return { ok: true, nguoi: dsNguoi(), verNguoi: M.verNguoi };
+  },
+
+  // Ảnh đại diện: app gửi ảnh JPEG đã thu nhỏ (dạng data URL). anh = '' để xoá ảnh. Admin đổi được ảnh của thành viên (id).
+  async doiAnh(req, toi) {
+    let id = toi.id;
+    if (req.id && req.id !== toi.id) { chiAdmin(toi); id = layThanhVien(req.id).id; }
+    let buf = null, ver = '';
+    if (req.anh) {
+      const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(req.anh));
+      if (!m) return { loi: 'Ảnh không hợp lệ' };
+      buf = Buffer.from(m[1], 'base64');
+      if (buf.length > 150000) return { loi: 'Ảnh quá lớn' };
+      if (buf[0] !== 0xff || buf[1] !== 0xd8) return { loi: 'Ảnh không hợp lệ' };
+      ver = crypto.randomBytes(8).toString('hex');   // vừa làm "phiên bản" vừa làm khoá xem ảnh
+    }
+    await q('UPDATE thanh_vien SET anh = $1, anh_ver = $2 WHERE id = $3', [buf, ver, id]);
+    Object.assign(M.tv.get(id), { anh: buf, anh_ver: ver });
     await doiNguoi();
     return { ok: true, nguoi: dsNguoi(), verNguoi: M.verNguoi };
   },
@@ -564,6 +585,13 @@ const mayChu = http.createServer(async (req, res) => {
   try {
     if (url.pathname === '/api/luong' && req.method === 'GET') return await moLuong(req, res, url);
     if (url.pathname !== '/api') return guiJson(res, 404, { loi: 'Không tìm thấy' });
+    if (req.method === 'GET' && url.searchParams.has('anh')) {
+      // GET /api?anh=<id>&v=<anh_ver>: chỉ ai biết đúng mã phiên bản (người đã đăng nhập) mới xem được
+      const u = M.tv.get(url.searchParams.get('anh'));
+      if (!u || !u.anh || !u.anh_ver || url.searchParams.get('v') !== u.anh_ver) return guiJson(res, 404, { loi: 'Không có ảnh' });
+      res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Content-Length': u.anh.length, 'Cache-Control': 'private, max-age=31536000, immutable' });
+      return res.end(u.anh);
+    }
     if (req.method === 'GET') return guiJson(res, 200, { ok: true, ten: 'Lịch làm việc', daCaiDat: M.tv.size > 0 });
     if (req.method !== 'POST') return guiJson(res, 405, { loi: 'Sai phương thức' });
     let than = '';

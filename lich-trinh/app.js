@@ -32,6 +32,12 @@
   const nguoi = id => S.nguoi.find(u => u.id === id);
   const tenNguoi = id => (nguoi(id) || {}).ten || 'Người đã rời nhóm';
   const chuCai = s => String(s || '?').trim().charAt(0).toUpperCase();
+  // Ảnh đại diện: có ảnh thì hiện ảnh, không thì chữ cái đầu trên nền màu của người đó
+  const anhCua = u => !u ? '' : u.anhUrl || (u.anh ? `${API}?anh=${encodeURIComponent(u.id)}&v=${encodeURIComponent(u.anh)}` : '');
+  const avaHtml = (u, cls = '', id = '') => {
+    const a = anhCua(u);
+    return `<i${id ? ` id="${id}"` : ''} class="ava ${cls}" style="background:${u && !u.admin ? u.mau : '#636366'}" aria-hidden="true">${a ? `<img src="${esc(a)}" alt="" loading="lazy">` : esc(chuCai(u && u.ten))}</i>`;
+  };
   const thanhVien = () => S.nguoi.filter(u => !u.admin && !u.daXoa);
   const dsLich = conHoatDong => [...thanhVien().filter(u => !conHoatDong || !u.khoa).map(u => u.id), 'chung'];
   const mauLich = l => l === 'chung' ? MAU_CHUNG : (nguoi(l) || {}).mau || '#8e8e93';
@@ -921,8 +927,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
 
   function avaKenh(kenh, to) {
     if (kenh === 'nhom') return `<i class="ava ava-nhom${to ? ' to' : ''}" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.6c2.6-.3 4.8 1.4 5.6 4.4"/></svg></i>`;
-    const u = nguoi(nguoiKia(kenh)) || {};
-    return `<i class="ava${to ? ' to' : ''}" style="background:${u.mau || '#8e8e93'}" aria-hidden="true">${esc(chuCai(u.ten))}</i>`;
+    return avaHtml(nguoi(nguoiKia(kenh)), to ? 'to' : '');
   }
 
   // Danh sách cuộc trò chuyện (giống Zalo / Tin nhắn iPhone)
@@ -1115,7 +1120,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     const ds = S.dsTv;
     k.innerHTML = `<p class="chu-thich" style="margin:4px 16px 10px">${ds.length ? `${ds.length} thành viên. Bấm vào một người để sửa, đặt lại mật khẩu, khoá hoặc xoá.` : 'Chưa có thành viên nào. Bấm “Thêm thành viên” để tạo tài khoản đầu tiên.'}</p>
       ${ds.length ? `<div class="nhom">${ds.map(u => `<button type="button" class="dong nut-dong the-tv" data-tv="${esc(u.id)}">
-        <i class="ava" style="background:${u.mau}">${esc(chuCai(u.ten))}</i>
+        ${avaHtml(u)}
         <span class="tv-nd"><b>${esc(u.ten)}</b><small>${esc(u.chucVu || 'Thành viên')} · ${esc(u.tenDangNhap)}${u.khoa ? ' · <em class="do">Đã khoá</em>' : ''}</small></span>
         <i class="mui">›</i></button>`).join('')}</div>` : ''}
       <button type="button" class="nut-chinh" id="tv-them">+ Thêm thành viên</button>`;
@@ -1147,6 +1152,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
         <p class="nhom-ten">Màu lịch</p>
         <div class="nhom chon-mau" role="radiogroup" aria-label="Màu lịch">${MAU_TV.map(m => `<label><input type="radio" name="mau" value="${m}"${m === mau ? ' checked' : ''}><i style="background:${m}"></i></label>`).join('')}</div>
         ${moi ? '' : `<div class="nhom">
+          <button type="button" class="dong nut-dong xanh" id="tv-doi-anh">Đổi ảnh đại diện</button>
           <button type="button" class="dong nut-dong xanh" id="tv-dat-mk">Đặt lại mật khẩu</button>
           <button type="button" class="dong nut-dong xanh" id="tv-khoa">${u.khoa ? 'Mở khoá tài khoản' : 'Khoá tài khoản'}</button>
           <button type="button" class="dong nut-dong nut-xoa" id="tv-xoa">Xoá thành viên</button>
@@ -1162,6 +1168,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       $('#tv-tao-mk', f).onclick = () => { f.elements.matKhau.value = taoMatKhau(); };
       setTimeout(() => f.elements.ten.focus(), 320);
     } else {
+      $('#tv-doi-anh', f).onclick = () => moDoiAnh(u, () => veThanhVien());
       $('#tv-dat-mk', f).onclick = async () => {
         const mk = taoMatKhau();
         if (!confirm(`Đặt lại mật khẩu cho ${u.ten}?\nMật khẩu mới: ${mk}\n(${u.ten} sẽ bị đăng xuất khỏi mọi máy)`)) return;
@@ -1299,9 +1306,9 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     const u = nguoi(S.toi) || {};
     $('#toi-ten').textContent = u.ten || '';
     $('#toi-vai').textContent = S.admin ? 'Admin – quản lý thành viên' : (u.chucVu || 'Thành viên');
-    $('#toi-ava').textContent = chuCai(u.ten);
-    $('#toi-ava').className = 'ava to';
-    $('#toi-ava').style.background = S.admin ? '#636366' : (u.mau || '#8e8e93');
+    $('#toi-ava').outerHTML = avaHtml(u, 'to', 'toi-ava');
+    $('#nut-doi-anh-2').textContent = u.anh || u.anhUrl ? 'Đổi ảnh đại diện' : 'Thêm ảnh đại diện';
+    veGiaoDien();
     veThongBao();
   }
 
@@ -1384,6 +1391,93 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       kho.set('dkTb', { t: Date.now(), v: S.toi });
     } catch (e) { /* thử lại lần sau */ }
   }
+
+  /* ---- Ảnh đại diện ---- */
+  // Cắt vuông ở giữa, thu nhỏ còn 320×320 JPEG (~30 KB) ngay trên máy rồi mới gửi lên
+  async function thuNhoAnh(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((ok, loi) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => loi(new Error('Không đọc được ảnh này, hãy chọn ảnh khác')); i.src = url; });
+      const c = Math.min(img.naturalWidth, img.naturalHeight), N = 320, cv = document.createElement('canvas');
+      cv.width = cv.height = N;
+      const g = cv.getContext('2d');
+      g.fillStyle = '#fff'; g.fillRect(0, 0, N, N);
+      g.drawImage(img, (img.naturalWidth - c) / 2, (img.naturalHeight - c) / 2, c, c, 0, 0, N, N);
+      return cv.toDataURL('image/jpeg', 0.85);
+    } finally { URL.revokeObjectURL(url); }
+  }
+
+  // u: người cần đổi ảnh (chính mình, hoặc thành viên nếu là admin); xong gọi sauKhi()
+  function moDoiAnh(u, sauKhi) {
+    u = u || nguoi(S.toi) || {};
+    const laToi = u.id === S.toi, coAnh = !!anhCua(u);
+    const sh = moSheet(`<div class="sheet-dau"><button type="button" data-dong>Đóng</button><b>Ảnh đại diện</b><span></span></div>
+      <div class="sheet-than">
+        <div id="anh-xem">${avaHtml(u, 'rat-to')}</div>
+        <div class="nhom">
+          <button type="button" class="dong nut-dong xanh" id="anh-chon">${coAnh ? 'Chọn ảnh khác' : 'Chọn ảnh hoặc chụp ảnh'}</button>
+          ${coAnh ? '<button type="button" class="dong nut-dong nut-xoa" id="anh-xoa">Xoá ảnh, dùng chữ cái đầu</button>' : ''}
+        </div>
+        <p class="chu-thich">${laToi ? 'Ảnh hiện với mọi người trong tin nhắn và danh sách thành viên.' : `Đổi ảnh đại diện của ${esc(u.ten)}.`} Ảnh sẽ được cắt vuông ở giữa.</p>
+        <p class="loi" role="alert"></p>
+      </div>`);
+    const loi = $('.loi', sh), oChon = $('#chon-anh');
+    const gui = async anh => {
+      loi.textContent = '';
+      try {
+        const r = await api('doiAnh', { id: u.id, anh });
+        S.nguoi = r.nguoi; S.verNguoi = r.verNguoi; luuCache();
+        dongSheet(); veLai(); if (sauKhi) sauKhi();
+        toast(anh ? 'Đã đổi ảnh đại diện' : 'Đã xoá ảnh đại diện');
+      } catch (err) { loi.textContent = err.message; }
+    };
+    $('#anh-chon', sh).onclick = () => {
+      oChon.value = '';
+      oChon.onchange = async () => {
+        const f = oChon.files && oChon.files[0];
+        if (!f) return;
+        try {
+          const anh = await thuNhoAnh(f);
+          $('#anh-xem', sh).innerHTML = `<i class="ava rat-to"><img src="${anh}" alt=""></i>`;
+          $('#anh-chon', sh).disabled = true; $('#anh-chon', sh).textContent = 'Đang lưu…';
+          await gui(anh);
+        } catch (err) { loi.textContent = err.message; }
+      };
+      oChon.click();
+    };
+    if ($('#anh-xoa', sh)) $('#anh-xoa', sh).onclick = () => gui('');
+  }
+  $('#nut-doi-anh').onclick = () => moDoiAnh();
+  $('#nut-doi-anh-2').onclick = () => moDoiAnh();
+
+  /* ---- Giao diện: sáng / tối + màu nền (lưu trên máy này) ---- */
+  const MAU_NEN = [['', 'Mặc định', '#ffffff'], ['kem', 'Kem', '#f7eedb'], ['xanh', 'Xanh dương', '#dfeafa'], ['la', 'Xanh lá', '#dcf1e3'],
+    ['hong', 'Hồng', '#f9e0e8'], ['tim', 'Tím', '#e7e0f8'], ['xam', 'Xám', '#e3e3e8']];
+  function apDungGiaoDien() {
+    const g = kho.get('giaoDien', {}), r = document.documentElement;
+    g.che ? r.setAttribute('data-theme', g.che) : r.removeAttribute('data-theme');
+    g.nen ? r.setAttribute('data-nen', g.nen) : r.removeAttribute('data-nen');
+    // thanh trạng thái điện thoại cùng màu với nền
+    const mau = getComputedStyle(r).getPropertyValue('--nen').trim();
+    $$('meta[name="theme-color"]').forEach(m => {
+      if (!m.dataset.goc) m.dataset.goc = m.getAttribute('content');
+      m.setAttribute('content', g.che || g.nen ? mau : m.dataset.goc);
+    });
+  }
+  function veGiaoDien() {
+    const g = kho.get('giaoDien', {});
+    const che = document.querySelector(`input[name=cheDo][value="${g.che || ''}"]`);
+    if (che) che.checked = true;
+    $('#chon-nen').innerHTML = MAU_NEN.map(([k, ten, mau]) => `<label><input type="radio" name="mauNen" value="${k}"${(g.nen || '') === k ? ' checked' : ''}><i style="background:${mau}"></i><span>${ten}</span></label>`).join('');
+  }
+  $('#tab-toi').addEventListener('change', e => {
+    if (e.target.name !== 'cheDo' && e.target.name !== 'mauNen') return;
+    const g = kho.get('giaoDien', {});
+    if (e.target.name === 'cheDo') g.che = e.target.value; else g.nen = e.target.value;
+    kho.set('giaoDien', g);
+    apDungGiaoDien();
+  });
+  apDungGiaoDien();
 
   $('#nut-doi-ten').onclick = () => {
     const sh = moSheet(`<form><div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Đổi tên hiển thị</b><button type="submit">Lưu</button></div>

@@ -48,7 +48,7 @@
 
   const TRA_LOI = ['Dạ vâng, em ghi nhận ạ 👍', 'Ok, để mình sắp xếp nhé', 'Cảm ơn nhé!', 'Dạ được ạ. Có gì em báo lại', 'Nhớ nhắc mình trước giờ họp nhé'];
   let soTraLoi = 0;
-  const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chucVu, mau: u.mau, admin: u.admin, khoa: u.khoa, daXoa: u.daXoa });
+  const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chucVu, mau: u.mau, anh: u.anhUrl ? 'demo' : '', anhUrl: u.anhUrl || '', admin: u.admin, khoa: u.khoa, daXoa: u.daXoa });
   const tv = db => db.nguoi.filter(u => !u.admin && !u.daXoa);
   const kenhCua = (db, uid) => { const u = db.nguoi.find(x => x.id === uid); if (!u || u.admin) return []; return ['nhom', ...tv(db).filter(x => x.id !== uid).map(x => kenhRieng(uid, x.id))]; };
   const nguoiKenh = (db, k) => k === 'nhom' ? tv(db).map(u => u.id) : k.slice(3).split(':');
@@ -135,6 +135,11 @@
             return { ok: true, tin };
           }
           case 'daDoc': db.daDoc[`${toi}|${d.kenh}`] = Math.max(db.daDoc[`${toi}|${d.kenh}`] || 0, d.id); ghi(db); return { ok: true };
+          case 'doiAnh': {
+            const u = d.id && d.id !== toi ? (quyenAdmin(), db.nguoi.find(x => x.id === d.id)) : me;
+            u.anhUrl = d.anh || ''; doiNguoi(); ghi(db);
+            return { ok: true, nguoi: db.nguoi.map(congKhai), verNguoi: String(db.verNguoi) };
+          }
           case 'doiTen': me.ten = String(d.ten || '').trim() || me.ten; doiNguoi(); ghi(db); return { ok: true, nguoi: db.nguoi.map(congKhai), verNguoi: String(db.verNguoi) };
           case 'thuThongBao':
             await baoTaiCho('🔔 Thông báo đã hoạt động', 'Máy này sẽ nhận nhắc lịch và tin nhắn.');

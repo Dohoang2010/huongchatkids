@@ -15,7 +15,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<link rel="stylesheet" href="app.css?v=6">
+<link rel="stylesheet" href="app.css?v=7">
+<script>
+  // Áp chế độ Sáng/Tối và màu nền đã chọn ngay khi mở (trước khi vẽ trang) để không bị nháy màu
+  try {
+    var gd = JSON.parse(localStorage.getItem((/[?&]demo\b/.test(location.search) ? 'ltd_' : 'lt_') + 'giaoDien') || '{}');
+    if (gd.che) document.documentElement.setAttribute('data-theme', gd.che);
+    if (gd.nen) document.documentElement.setAttribute('data-nen', gd.nen);
+  } catch (e) { /* bỏ qua */ }
+</script>
 </head>
 <body>
 <div id="app">
@@ -153,7 +161,22 @@
     <section class="tab" id="tab-toi" data-tab="toi" hidden>
       <header class="nav nav-to"><h1>Cài đặt</h1></header>
       <div class="cai-dat">
-        <div class="nhom the-toi"><i class="ava to" id="toi-ava">S</i><div><b id="toi-ten">…</b><small id="toi-vai">…</small></div></div>
+        <div class="nhom the-toi">
+          <button type="button" class="nut-ava" id="nut-doi-anh" aria-label="Đổi ảnh đại diện"><i class="ava to" id="toi-ava">S</i><span class="huy-hieu-anh" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></button>
+          <div><b id="toi-ten">…</b><small id="toi-vai">…</small><button type="button" class="nut-chu-nho" id="nut-doi-anh-2">Đổi ảnh đại diện</button></div>
+        </div>
+
+        <p class="nhom-ten">Giao diện</p>
+        <div class="nhom">
+          <div class="dong"><span>Chế độ</span>
+            <span class="phan-doan" role="radiogroup" aria-label="Chế độ sáng tối">
+              <label><input type="radio" name="cheDo" value=""><span>Tự động</span></label>
+              <label><input type="radio" name="cheDo" value="light"><span>Sáng</span></label>
+              <label><input type="radio" name="cheDo" value="dark"><span>Tối</span></label>
+            </span></div>
+          <div class="dong cot"><span>Màu nền</span><div class="chon-nen" id="chon-nen" role="radiogroup" aria-label="Màu nền"></div></div>
+        </div>
+        <p class="chu-thich">“Tự động” đổi sáng / tối theo cài đặt của điện thoại. Giao diện chỉ áp dụng trên máy này.</p>
 
         <p class="nhom-ten">Thông báo trên máy này</p>
         <div class="nhom" id="khung-tb"></div>
@@ -181,9 +204,10 @@
   <!-- Bảng trượt từ dưới lên (thêm / xem sự kiện, chọn lịch…) -->
   <div id="sheet" class="sheet-nen" hidden><div class="sheet" role="dialog" aria-modal="true"></div></div>
   <div id="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="chon-anh" accept="image/*" hidden>
 </div>
-<script src="config.js?v=6"></script>
-<script src="demo.js?v=6"></script>
-<script src="app.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="demo.js?v=7"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>

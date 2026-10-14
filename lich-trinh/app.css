@@ -428,6 +428,50 @@ code { font-size: .85em; background: var(--nen2); padding: 1px 5px; border-radiu
 }
 #toast.hien { opacity: 1; transform: translate(-50%, 0); }
 
+
+/* ===== màu nền giao diện (Cài đặt → Giao diện) ===== */
+:root[data-nen="kem"] { --nen: #fdf8ee; --nen2: #f4ecdb; --xam-bong: #ede3cf; --nav: rgba(253, 248, 238, 0.94); }
+:root[data-nen="xanh"] { --nen: #f3f8fe; --nen2: #e4edf9; --xam-bong: #dce6f3; --nav: rgba(243, 248, 254, 0.94); }
+:root[data-nen="la"] { --nen: #f2fbf5; --nen2: #e1f1e7; --xam-bong: #d7e9dd; --nav: rgba(242, 251, 245, 0.94); }
+:root[data-nen="hong"] { --nen: #fef4f7; --nen2: #f8e4eb; --xam-bong: #f0d9e1; --nav: rgba(254, 244, 247, 0.94); }
+:root[data-nen="tim"] { --nen: #f7f4fe; --nen2: #ebe5f8; --xam-bong: #e1daf2; --nav: rgba(247, 244, 254, 0.94); }
+:root[data-nen="xam"] { --nen: #f6f6f8; --nen2: #e6e6eb; --xam-bong: #dcdce2; --nav: rgba(246, 246, 248, 0.94); }
+@media (prefers-color-scheme: dark) { :root[data-nen="kem"]:not([data-theme="light"]) { --nen: #110e08; --nen2: #110e08; --the: #221d14; --xam-bong: #2c2619; --nav: rgba(34, 29, 20, 0.94); } }
+:root[data-nen="kem"][data-theme="dark"] { --nen: #110e08; --nen2: #110e08; --the: #221d14; --xam-bong: #2c2619; --nav: rgba(34, 29, 20, 0.94); }
+@media (prefers-color-scheme: dark) { :root[data-nen="xanh"]:not([data-theme="light"]) { --nen: #080d14; --nen2: #080d14; --the: #151d29; --xam-bong: #1d2735; --nav: rgba(21, 29, 41, 0.94); } }
+:root[data-nen="xanh"][data-theme="dark"] { --nen: #080d14; --nen2: #080d14; --the: #151d29; --xam-bong: #1d2735; --nav: rgba(21, 29, 41, 0.94); }
+@media (prefers-color-scheme: dark) { :root[data-nen="la"]:not([data-theme="light"]) { --nen: #08110b; --nen2: #08110b; --the: #14211a; --xam-bong: #1b2c22; --nav: rgba(20, 33, 26, 0.94); } }
+:root[data-nen="la"][data-theme="dark"] { --nen: #08110b; --nen2: #08110b; --the: #14211a; --xam-bong: #1b2c22; --nav: rgba(20, 33, 26, 0.94); }
+@media (prefers-color-scheme: dark) { :root[data-nen="hong"]:not([data-theme="light"]) { --nen: #13090d; --nen2: #13090d; --the: #24151c; --xam-bong: #301c25; --nav: rgba(36, 21, 28, 0.94); } }
+:root[data-nen="hong"][data-theme="dark"] { --nen: #13090d; --nen2: #13090d; --the: #24151c; --xam-bong: #301c25; --nav: rgba(36, 21, 28, 0.94); }
+@media (prefers-color-scheme: dark) { :root[data-nen="tim"]:not([data-theme="light"]) { --nen: #0d0915; --nen2: #0d0915; --the: #1d1729; --xam-bong: #271f36; --nav: rgba(29, 23, 41, 0.94); } }
+:root[data-nen="tim"][data-theme="dark"] { --nen: #0d0915; --nen2: #0d0915; --the: #1d1729; --xam-bong: #271f36; --nav: rgba(29, 23, 41, 0.94); }
+@media (prefers-color-scheme: dark) { :root[data-nen="xam"]:not([data-theme="light"]) { --nen: #0e0e10; --nen2: #0e0e10; --the: #1f1f22; --xam-bong: #2a2a2e; --nav: rgba(31, 31, 34, 0.94); } }
+:root[data-nen="xam"][data-theme="dark"] { --nen: #0e0e10; --nen2: #0e0e10; --the: #1f1f22; --xam-bong: #2a2a2e; --nav: rgba(31, 31, 34, 0.94); }
+
+/* ===== ảnh đại diện ===== */
+.ava { overflow: hidden; position: relative; }
+.ava img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.nut-ava { position: relative; flex: none; border-radius: 50%; }
+.huy-hieu-anh { position: absolute; right: -2px; bottom: -2px; width: 24px; height: 24px; border-radius: 50%; background: var(--xanh); color: #fff; display: flex; align-items: center; justify-content: center; border: 2px solid var(--the); }
+.huy-hieu-anh svg { width: 13px; height: 13px; stroke-width: 2.2; }
+.nut-chu-nho { display: block; color: var(--xanh); font-size: 14px; margin-top: 4px; padding: 2px 0; }
+.ava.rat-to { width: 120px; height: 120px; font-size: 48px; margin: 10px auto 18px; display: flex; }
+
+/* ===== chọn chế độ & màu nền ===== */
+.phan-doan { display: inline-flex; margin-left: auto; background: var(--xam-bong); border-radius: 9px; padding: 2px; }
+.phan-doan input { position: absolute; opacity: 0; pointer-events: none; }
+.phan-doan span { display: block; padding: 6px 12px; font-size: 14px; border-radius: 7px; cursor: pointer; }
+.phan-doan input:checked + span { background: var(--the); font-weight: 600; box-shadow: 0 1px 4px rgba(0, 0, 0, .15); }
+.phan-doan input:focus-visible + span { outline: 2px solid var(--xanh); }
+.chon-nen { display: flex; flex-wrap: wrap; gap: 12px 10px; padding: 6px 0 4px; }
+.chon-nen label { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 58px; cursor: pointer; font-size: 12px; color: var(--chu2); text-align: center; }
+.chon-nen input { position: absolute; opacity: 0; pointer-events: none; }
+.chon-nen i { display: block; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--vach); box-shadow: inset 0 -12px 0 rgba(0, 0, 0, .05); }
+.chon-nen input:checked + i { box-shadow: 0 0 0 2.5px var(--the), 0 0 0 4.5px var(--xanh); }
+.chon-nen input:checked ~ span { color: var(--chu); font-weight: 600; }
+.chon-nen input:focus-visible + i { outline: 2px solid var(--xanh); outline-offset: 4px; }
+
 @media (min-width: 700px) {
   .tab > *:not(.nav):not(.nut-hom-nay):not(.goi-y) { max-width: 720px; margin-left: auto; margin-right: auto; }
   .o-ngay { height: 72px; }
