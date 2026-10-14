@@ -1249,16 +1249,20 @@
   };
   /* Tháng sinh nhật của khách đang đăng nhập (ngày sinh do máy chủ trả trong hồ sơ) */
   function sinhNhat() {
-    const c = LOY().sinhNhat || {}, s = Session.get(), ns = s && s.kh && s.kh.ngaySinh ? String(s.kh.ngaySinh) : '';
+    const c = LOY().sinhNhat || {}, s = Session.get(), kh = (s && s.kh) || {}, ns = kh.ngaySinh ? String(kh.ngaySinh) : '';
     const thangNay = new Date(Date.now() + 7 * 3600e3).toISOString().slice(5, 7);
-    const nam = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 4), khoa = !!(s && s.kh && String(s.kh.snKhoaNam || '') === nam);
-    return { bat: !!c.bat, giam: Number(c.giam) || 0, ngaySinh: ns, khoa, dangThang: !!(c.bat && ns && !khoa && ns.slice(5, 7) === thangNay) };   // ưu đãi sinh nhật 1 lần / năm
+    const nam = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 4), khoa = String(kh.snKhoaNam || '') === nam;
+    const dangMe = !!(c.bat && ns && !khoa && ns.slice(5, 7) === thangNay);   // ưu đãi sinh nhật 1 lần / năm
+    /* Sinh nhật bé: cùng mức giảm, khoá 1 lần / năm riêng; mẹ và bé khác tháng thì được cả hai, trùng tháng vẫn chỉ giảm 1 lần */
+    const nsBe = kh.ngaySinhBe ? String(kh.ngaySinhBe) : '', khoaBe = String(kh.snbKhoaNam || '') === nam;
+    const dangBe = !!(c.bat && c.be !== false && nsBe && !khoaBe && nsBe.slice(5, 7) === thangNay);
+    return { bat: !!c.bat, giam: Number(c.giam) || 0, ngaySinh: ns, khoa, dangMe, be: { bat: !!(c.bat && c.be !== false), ten: String(kh.tenBe || ''), ngaySinh: nsBe, khoa: khoaBe, dangThang: dangBe }, dangThang: dangMe || dangBe };
   }
   function hangCho(phone) {
     const s = Session.get();
     if (s && phone && phoneKey(phone) === phoneKey(s.sdt)) {
       const t = tierOf(Session.spent()), sn = sinhNhat();
-      return sn.dangThang && sn.giam > (t.discount || 0) ? { ...t, key: 'sinh-nhat', label: 'Sinh nhật 🎂', discount: sn.giam, laSinhNhat: true } : t;
+      return sn.dangThang && sn.giam > (t.discount || 0) ? { ...t, key: 'sinh-nhat', label: sn.dangMe ? 'Sinh nhật 🎂' : 'Sinh nhật bé 🎂', discount: sn.giam, laSinhNhat: true } : t;
     }
     const v = HangSdt.get(phone); return v && v.co ? tierByKey(v.hang) : null;
   }

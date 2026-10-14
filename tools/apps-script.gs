@@ -312,6 +312,8 @@ function docKH(sdt) {
   var sn0 = null; try { sn0 = snTim_(sdt); } catch (e0) { Logger.log(e0); }
   kh.ngaySinh = (sn0 && sn0.ngay) || (crm && crm.kh ? chuanNgaySinh_(crm.kh.ngaySinh || crm.kh.sinhNhat || '') : '');
   kh.snKhoaNam = sn0 ? sn0.khoaNam : '';
+  var snb0 = null; try { snb0 = snbTim_(sdt); } catch (e1) { Logger.log(e1); }
+  kh.tenBe = snb0 ? snb0.ten : ''; kh.ngaySinhBe = snb0 ? snb0.ngay : ''; kh.snbKhoaNam = snb0 ? snb0.khoaNam : '';
   /* Sheet chưa có → lấy tên, địa chỉ, email từ CRM (CRM trả thêm tinh / xa / diaChi / email thì tự dùng) */
   if (crm && crm.co && crm.kh) {
     var ck = crm.kh;
@@ -827,6 +829,58 @@ function snCanKhoa_(cu, moi) {
   if (moi && moi.slice(5, 7) === cu.slice(5, 7)) return '';   // chỉ sửa ngày trong cùng tháng
   return nay.slice(0, 4);
 }
+/* ---------- Sinh nhật bé: tháng sinh nhật bé cũng giảm SN_GIAM% mọi đơn, 1 lần / năm, giống sinh nhật mẹ (cả 2 dịp đều được) ---------- */
+var SHEET_SNB = 'Sinh nhật bé';
+var H_SNB = ['Điện thoại', 'Tên bé', 'Ngày sinh bé', 'Cập nhật lúc', 'Người sửa', 'Nguồn', 'Khoá ưu đãi năm', 'Đã gửi mail năm'];
+function tenBe_(v) { return String(v == null ? '' : v).replace(/[\u0000-\u001f]+/g, ' ').trim().slice(0, 30); }   // tên bé nguyên văn; ghi ô thì qua oChu_ chặn công thức
+function sheetSNB_() { return sheetPhu(SHEET_SNB, H_SNB); }
+function snbTim_(sdt) {
+  var sh = sheetSNB_(), n = sh.getLastRow(); if (n < 2) return null;
+  var v = sh.getRange(2, 1, n - 1, H_SNB.length).getValues();
+  for (var i = v.length - 1; i >= 0; i--) if (chuanSdt(v[i][0]) === sdt) return { dong: i + 2, ten: String(v[i][1] || ''), ngay: chuanNgaySinh_(v[i][2]), khoaNam: String(v[i][6] || ''), mailNam: String(v[i][7] || '') };
+  return null;
+}
+function snbGhi_(sdt, ten, ngay, ai, nguon, khoaNam) {
+  var r = snbTim_(sdt), dong = ["'" + sdt, oChu_(ten, 30), ngay ? "'" + ngay : '', new Date(Date.now()), ai, nguon];
+  if (r) { sheetSNB_().getRange(r.dong, 1, 1, 6).setValues([dong]); if (khoaNam) sheetSNB_().getRange(r.dong, 7).setValue("'" + khoaNam); }
+  else sheetSNB_().appendRow(dong.concat([khoaNam ? "'" + khoaNam : '', '']));
+}
+/* Ngày sinh của bé: hợp lệ và bé dưới 19 tuổi */
+function chuanNgaySinhBe_(v) {
+  var ngay = chuanNgaySinh_(v); if (!ngay) return '';
+  var nam = +Utilities.formatDate(new Date(Date.now()), 'Asia/Ho_Chi_Minh', 'yyyy');
+  return +ngay.slice(0, 4) >= nam - 19 ? ngay : '';
+}
+/* Khách đang đăng nhập lưu tên bé (sửa lúc nào cũng được) và ngày sinh bé (không bắt buộc; đã lưu thì muốn sửa phải nhắn shop) */
+function apiSnbLuu(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ten = tenBe_(p.tenBe), tho = String(p.ngaySinh || '').trim(), ngay = tho ? chuanNgaySinhBe_(tho) : '';
+  if (tho && !ngay) return { ok: false, msg: 'Ngày sinh của bé chưa đúng (bé từ 0 đến 19 tuổi)' };
+  if (!demGioiHan('snb_' + ph.sdt, 15, 3600)) return { ok: false, msg: 'Mẹ thử lại sau ít phút nhé' };
+  return voiKhoa(function () {
+    var cu = snbTim_(ph.sdt), cuNgay = cu ? cu.ngay : '';
+    if (cuNgay && ngay && ngay !== cuNgay) return { ok: false, daCo: true, tenBe: cu.ten, ngaySinhBe: cuNgay, msg: 'Ngày sinh của bé đã lưu, muốn sửa mẹ nhắn shop qua Zalo / hotline ' + HOTLINE + ' nhé.' };
+    var ngayMoi = cuNgay || ngay;
+    if (cu && cu.ten === ten && cuNgay === ngayMoi) return { ok: true, tenBe: ten, ngaySinhBe: ngayMoi };
+    snbGhi_(ph.sdt, ten, ngayMoi, 'khách', 'Khách tự điền');
+    ghiNhatKy('Sinh nhật bé', ph.sdt, 'Khách lưu thông tin bé: ' + (ten || '(không tên)') + (ngayMoi ? ', sinh ' + ngayMoi : ''));
+    return { ok: true, tenBe: ten, ngaySinhBe: ngayMoi };
+  });
+}
+/* Quản trị sửa / xoá thông tin bé (customer.update): đổi tháng sau khi đã tới tháng sinh nhật bé năm nay → khoá ưu đãi năm nay */
+function apiQtSnbLuu(p) {
+  if (!coQuyen(p, 'customer.update')) return { ok: false, msg: 'Không có quyền sửa thông tin khách' };
+  var sdt = chuanSdt(p.sdt); if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var xoa = String(p.xoa) === '1', tho = String(p.ngaySinh || '').trim(), ngay = xoa || !tho ? '' : chuanNgaySinhBe_(tho);
+  if (!xoa && tho && !ngay) return { ok: false, msg: 'Ngày sinh của bé chưa đúng' };
+  return voiKhoa(function () {
+    var cu = snbTim_(sdt), cuNgay = cu ? cu.ngay : '', ten = xoa ? '' : (p.tenBe != null ? tenBe_(p.tenBe) : (cu ? cu.ten : ''));
+    var khoa = snCanKhoa_(cuNgay, ngay);
+    snbGhi_(sdt, ten, ngay, tenQT(p), xoa ? 'Quản trị xoá' : 'Quản trị sửa', khoa);
+    ghiNhatKy('Sinh nhật bé', sdt, (xoa ? 'Xoá' : 'Sửa') + ' ngày sinh bé: ' + (cuNgay || 'trống') + ' → ' + (ngay || 'trống') + (khoa ? ' – đã hưởng ưu đãi năm ' + khoa + ', khoá ưu đãi năm nay' : '') + ' – bởi ' + tenQT(p));
+    return { ok: true, tenBe: ten, ngaySinhBe: ngay, khoaNam: khoa, msg: khoa ? 'Đã lưu. Khách đã tới tháng sinh nhật bé năm ' + khoa + ' nên ưu đãi sinh nhật bé năm nay bị khoá (1 lần / năm).' : 'Đã lưu ngày sinh bé' };
+  });
+}
 /* Đúng ngày sinh: gửi email chúc mừng + ưu đãi (khách có email), mỗi khách 1 lần / năm; báo shop qua Zalo.
    29/02 → năm không nhuận gửi ngày 28/02. Không gửi nếu ưu đãi năm nay đã bị khoá. */
 function guiMailSinhNhat_(epBuoc) {
@@ -850,6 +904,19 @@ function guiMailSinhNhat_(epBuoc) {
       try { guiMotMailSinhNhat_(k.email, k.ten); sh.getRange(i + 2, 7).setValue("'" + nam); kq.gui++; ghiNhatKy('Sinh nhật', sdt, 'Gửi email chúc mừng sinh nhật ' + nam + ' tới ' + anEmail(k.email)); }
       catch (e) { Logger.log('Mail sinh nhật lỗi ' + sdt + ': ' + e); }
     }
+    /* Sinh nhật bé */
+    var shb = sheetSNB_(), nb = shb.getLastRow();
+    var vb = nb > 1 ? shb.getRange(2, 1, nb - 1, H_SNB.length).getValues() : [];
+    for (var j = 0; j < vb.length; j++) {
+      var sdtB = chuanSdt(vb[j][0]), nsB = chuanNgaySinh_(vb[j][2]); if (!nsB) continue;
+      var mdB = nsB.slice(5); if (mdB === '02-29' && !nhuan) mdB = '02-28';
+      if (mdB !== mmdd || String(vb[j][7]) === nam || String(vb[j][6]) === nam) continue;
+      var kB = kh[sdtB] || { ten: '', email: '' }, tenBe = String(vb[j][1] || '');
+      kq.ds.push('👶 Bé ' + (tenBe || '') + ' – mẹ ' + (kB.ten || 'Khách') + ' – ' + sdtB + (emailHopLe(kB.email) ? '' : ' (chưa có email)'));
+      if (!emailHopLe(kB.email)) { kq.khongEmail++; continue; }
+      try { guiMotMailSinhNhat_(kB.email, kB.ten, { ten: tenBe }); shb.getRange(j + 2, 8).setValue("'" + nam); kq.gui++; ghiNhatKy('Sinh nhật bé', sdtB, 'Gửi email chúc mừng sinh nhật bé ' + nam + ' tới ' + anEmail(kB.email)); }
+      catch (eb) { Logger.log('Mail sinh nhật bé lỗi ' + sdtB + ': ' + eb); }
+    }
     return kq;
   });
   if (kq2 && kq2.ok === false) return kq2;   // máy chủ bận → lần sau chạy lại
@@ -857,25 +924,26 @@ function guiMailSinhNhat_(epBuoc) {
   if (kq.ds.length) { try { zaloBotGuiTin('🎂 Hôm nay sinh nhật ' + kq.ds.length + ' khách:\n' + kq.ds.join('\n') + '\nĐã gửi email chúc mừng: ' + kq.gui); } catch (z) { Logger.log(z); } }
   return kq;
 }
-function guiMotMailSinhNhat_(email, ten) {
-  var goi = ten ? ten.split(' ').slice(-1)[0] : 'mẹ';
+function guiMotMailSinhNhat_(email, ten, be) {
+  var goi = be ? 'bé' + (be.ten ? ' ' + be.ten : '') : (ten ? ten.split(' ').slice(-1)[0] : 'mẹ');
   var html = '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1F2937">'
     + '<div style="background:linear-gradient(135deg,#F0537A,#FF8FA8);color:#fff;border-radius:16px 16px 0 0;padding:28px 24px;text-align:center">'
     + '<div style="font-size:46px;line-height:1">🎂</div>'
     + '<div style="font-size:24px;font-weight:700;margin-top:10px">Chúc mừng sinh nhật ' + goi + '!</div>'
     + '<div style="font-size:14px;opacity:.95;margin-top:6px">' + TEN_SHOP + ' – Mẹ nào cũng là siêu nhân</div></div>'
     + '<div style="border:1px solid #F3D5DE;border-top:0;border-radius:0 0 16px 16px;padding:24px;background:#fff">'
-    + '<p style="margin:0 0 14px;font-size:15px;line-height:1.7">Hôm nay là ngày đặc biệt của ' + (ten || 'mẹ') + '. Cả nhà ' + TEN_SHOP + ' chúc mẹ thật nhiều sức khoẻ, luôn xinh đẹp, rạng rỡ và có những phút giây hạnh phúc bên gia đình nhỏ 💗</p>'
+    + (be ? '<p style="margin:0 0 14px;font-size:15px;line-height:1.7">Hôm nay là sinh nhật của ' + goi + '. Cả nhà ' + TEN_SHOP + ' chúc ' + goi + ' luôn khoẻ mạnh, ăn ngon, ngủ ngoan, mau lớn và có thật nhiều niềm vui bên bố mẹ 💗</p>'
+      : '<p style="margin:0 0 14px;font-size:15px;line-height:1.7">Hôm nay là ngày đặc biệt của ' + (ten || 'mẹ') + '. Cả nhà ' + TEN_SHOP + ' chúc mẹ thật nhiều sức khoẻ, luôn xinh đẹp, rạng rỡ và có những phút giây hạnh phúc bên gia đình nhỏ 💗</p>')
     + '<div style="margin:18px 0;padding:18px;border:2px dashed #F0537A;border-radius:14px;background:#FFF4F7;text-align:center">'
-    + '<div style="font-size:14px;color:#6B7280">Quà sinh nhật dành riêng cho mẹ</div>'
+    + '<div style="font-size:14px;color:#6B7280">Quà sinh nhật dành riêng cho ' + (be ? goi : 'mẹ') + '</div>'
     + '<div style="font-size:34px;font-weight:800;color:#F0537A;margin:6px 0">Giảm ' + SN_GIAM + '% mọi đơn</div>'
-    + '<div style="font-size:14px;line-height:1.6">Áp dụng cả tháng sinh nhật – web tự trừ khi mẹ thanh toán<br>(đăng nhập đúng số điện thoại đã lưu ngày sinh)</div>'
+    + '<div style="font-size:14px;line-height:1.6">Áp dụng cả tháng sinh nhật' + (be ? ' của bé' : '') + ' – web tự trừ khi mẹ thanh toán<br>(đăng nhập đúng số điện thoại đã lưu ngày sinh)</div>'
     + '<a href="' + WEB + '" style="display:inline-block;margin-top:14px;background:#F0537A;color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:999px">Mua sắm ngay</a></div>'
     + '<div style="font-size:13px;color:#6B7280;line-height:1.7"><b style="color:#1F2937">Lưu ý:</b> ưu đãi sinh nhật áp dụng <b>1 lần mỗi năm</b> trong tháng sinh nhật; không dùng kèm voucher, mã giảm giá và quà tặng, điểm thưởng vẫn dùng được.</div>'
     + '<div style="margin-top:18px;padding-top:14px;border-top:1px solid #ECEFF3;font-size:13px;color:#6B7280;line-height:1.8">'
     + 'Cần hỗ trợ, mẹ gọi <b style="color:#1F2937">' + HOTLINE + '</b> hoặc nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a>.<br>'
     + 'Email này được gửi tự động, mẹ không cần trả lời.</div></div></div>';
-  MailApp.sendEmail({ to: email, subject: '🎂 ' + TEN_SHOP + ' chúc mừng sinh nhật ' + (ten || 'mẹ') + ' – quà giảm ' + SN_GIAM + '% cả tháng', htmlBody: html, name: TEN_SHOP, replyTo: EMAIL });
+  MailApp.sendEmail({ to: email, subject: '🎂 ' + TEN_SHOP + ' chúc mừng sinh nhật ' + (be ? goi : (ten || 'mẹ')) + ' – quà giảm ' + SN_GIAM + '% cả tháng', htmlBody: html, name: TEN_SHOP, replyTo: EMAIL });
 }
 /* CHẠY TAY khi cần thử: gửi ngay lượt hôm nay (bỏ qua giới hạn 1 lượt / ngày) */
 function thuGuiMailSinhNhat() { Logger.log(JSON.stringify(guiMailSinhNhat_(true))); }
@@ -2097,8 +2165,10 @@ function doGet(e) {
     if (action === 'qtGtLich')      return traVe(apiQtGtLich(p), cb);
     if (action === 'ddCauHinh')     return traVe(apiDdCauHinh(), cb);
     if (action === 'snLuu')         return traVe(apiSnLuu(p), cb);
+    if (action === 'snbLuu')        return traVe(apiSnbLuu(p), cb);
     if (action === 'leadTuVan')     return traVe(apiLeadTuVan(p), cb);
     if (action === 'qtSnLuu')       return traVe(apiQtSnLuu(p), cb);
+    if (action === 'qtSnbLuu')      return traVe(apiQtSnbLuu(p), cb);
     if (action === 'ddTongQuan')    return traVe(apiDdTongQuan(p), cb);
     if (action === 'ddDiemDanh')    return traVe(apiDdDiemDanh(p), cb);
     if (action === 'vcCuaToi')      return traVe(apiVcCuaToi(p), cb);
@@ -2526,7 +2596,7 @@ function baoLenh_(data) {
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
 var GIOI_HAN_10P = { guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
-  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, leadTuVan: 120 };
+  qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, snbLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
   canhBao_('tan-suat-' + action, '⚠️ Có hơn ' + t + ' yêu cầu "' + action + '" trong 10 phút – có thể bot đang tấn công. Hệ thống đã tạm chặn lệnh này, tự mở lại sau khi lắng xuống.');

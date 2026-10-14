@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261014a">
+  <link rel="stylesheet" href="css/style.css?v=20261014b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -18,7 +18,7 @@
 <script src="js/data.js?v=20261013c"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261014a"></script>
+<script src="js/app.js?v=20261014b"></script>
 <script src="js/diem-danh-ui.js?v=20261012e"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,30 +33,61 @@ document.addEventListener('DOMContentLoaded', () => {
   const beTuoi = (dob) => { const [y, m, n] = dob.split('-').map(Number), nay = new Date(); let t = (nay.getFullYear() - y) * 12 + nay.getMonth() - (m - 1); if (nay.getDate() < n) t--; return t < 1 ? 'dưới 1 tháng' : t < 24 ? t + ' tháng' : Math.floor(t / 12) + ' tuổi' + (t % 12 ? ' ' + (t % 12) + ' tháng' : ''); };
   const beNgay = (iso) => iso.split('-').reverse().join('/');
   const beSo = (x) => String(x).replace('.', ',');
-  const beHTML = () => {
+  /* Tên + ngày sinh bé lưu vào tài khoản (máy chủ) để nhận ưu đãi sinh nhật bé; ngày sinh không bắt buộc, gợi ý từ lần đo chỉ số */
+  const beTK = () => { const s = Session.get(); return s && s.kh ? s.kh : {}; };
+  const beTkHTML = () => {
+    const kh = beTK(), sn = MC.sinhNhat(), b = beDoc(), goiY = !kh.ngaySinhBe && b && b.dob ? b.dob : '';
+    if (!sn.be.bat && !kh.tenBe && !kh.ngaySinhBe) return '';
+    const homNay = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+    const hien = kh.ngaySinhBe ? `<div class="kh-row"><span>Sinh nhật bé</span><b>${beNgay(kh.ngaySinhBe)}${sn.be.dangThang ? ' <span class="badge badge--hot">🎂 Tháng sinh nhật bé</span>' : ''}<small class="sn-ghi">Giảm ${sn.giam}% mọi đơn trong tháng sinh nhật bé · 1 lần mỗi năm · ngày sinh không đổi để nhận lại</small></b></div>` : '';
+    return `<form class="be-tk" id="beTk" novalidate>
+      ${hien}
+      <div class="field"><label for="beTen">Tên bé</label><input class="input" id="beTen" name="tenBe" maxlength="30" value="${esc(kh.tenBe || (b && b.name) || '')}" placeholder="VD: Na, Bin…"></div>
+      ${kh.ngaySinhBe ? '' : `<div class="field mt-8"><label for="beNgay">Ngày sinh bé <small class="text-muted">(không bắt buộc)</small></label><input class="input" id="beNgay" name="ngaySinh" type="date" max="${homNay}" value="${esc(goiY)}">
+        <small class="be-goi">${goiY ? `Gợi ý từ lần đo chỉ số: ${beNgay(goiY)}. Mẹ sửa nếu chưa đúng.` : ''}${sn.be.bat ? ` Thêm ngày sinh để tháng sinh nhật bé mọi đơn được giảm ${sn.giam}%.` : ''}</small></div>`}
+      <button class="btn btn--primary btn--block btn--sm mt-8" type="submit">Lưu thông tin bé</button>
+    </form>`;
+  };
+  document.addEventListener('submit', async (e) => {
+    if (e.target.id !== 'beTk') return;
+    e.preventDefault();
+    const f = e.target, s = Session.get(); if (!s) return;
+    const tenBe = f.tenBe.value.trim(), ngay = f.ngaySinh ? f.ngaySinh.value : '';
+    if (ngay) { const [y, m, d] = ngay.split('-'); if (!confirm(`Lưu ngày sinh bé ${d}/${m}/${y}?\n\n• Ngày sinh bé chỉ lưu 1 lần, muốn sửa mẹ cần nhắn shop.\n• Tháng sinh nhật bé mọi đơn được giảm, 1 lần mỗi năm – đổi ngày sinh không được nhận thêm lần nữa.`)) return; }
+    const nut = f.querySelector('[type=submit]'); nut.disabled = true; nut.textContent = 'Đang lưu…';
+    let r; try { r = await loyaltyApi('snbLuu', { token: s.token, tenBe, ngaySinh: ngay }); } catch (err) { r = { ok: false, msg: err.message }; }
+    if (r && r.loi === 'token') { Session.clear(); render(); return; }
+    nut.disabled = false; nut.textContent = 'Lưu thông tin bé';
+    if (!r || !r.ok) { toast((r && r.msg) || 'Chưa lưu được', { type: 'err' }); return; }
+    Session.patch({ kh: { ...(Session.get().kh || {}), tenBe: r.tenBe, ngaySinhBe: r.ngaySinhBe } });
+    toast(r.ngaySinhBe && !ngay ? 'Đã lưu tên bé' : r.ngaySinhBe ? 'Đã lưu thông tin bé 🎂' : 'Đã lưu tên bé', { type: 'ok' });
+    const box = $('#beAcc'); if (box) box.innerHTML = beHTML();
+  });
+  const beHTML = () => beTkHTML() + beDoHTML();
+  const beDoHTML = () => {
     const b = beDoc();
-    if (!b) return `<p class="fs-14 text-muted">Chưa lưu thông tin bé. Đo chiều cao, cân nặng để so với chuẩn WHO và tích <b>Lưu thông tin bé</b> để theo dõi lần sau.</p><a class="btn btn--teal btn--block mt-8" href="index.html#sucKhoe">📏 Đo chỉ số con miễn phí</a>`;
+    if (!b) return `<p class="fs-14 text-muted mt-12">Chưa có số đo của bé trên máy này. Đo chiều cao, cân nặng để so với chuẩn WHO và tích <b>Lưu thông tin bé</b> để theo dõi lần sau.</p><a class="btn btn--teal btn--block mt-8" href="index.html#sucKhoe">📏 Đo chỉ số con miễn phí</a>`;
     const lan = b.log[b.log.length - 1];
-    return `<div class="kh-view">
-      <div class="kh-row"><span>Tên bé</span><b>${esc(b.name || '—')}</b></div>
+    return `<div class="kh-view be-do"><p class="be-do__t">Số đo gần nhất (trên máy này)</p>
       <div class="kh-row"><span>Giới tính</span><b>${b.sex === 1 ? 'Bé trai' : 'Bé gái'}</b></div>
       <div class="kh-row"><span>Ngày sinh</span><b>${beNgay(b.dob)} (${beTuoi(b.dob)})</b></div>
       <div class="kh-row"><span>Lần đo gần nhất</span><b>${beSo(lan.h)} cm · ${beSo(lan.w)} kg<br><small class="text-muted">ngày ${beNgay(lan.d)}</small></b></div>
       <div class="kh-row"><span>Số lần đã đo</span><b>${b.log.length}</b></div>
       <a class="btn btn--outline btn--block mt-12" href="index.html#sucKhoe">📏 Xem kết quả / đo lần mới</a>
-      <button class="btn btn--ghost btn--block btn--sm mt-8" type="button" data-be-xoa>Xoá thông tin bé</button>
-      <p class="fs-13 text-muted mt-8">Thông tin bé chỉ lưu trên máy này, không gửi lên máy chủ.</p></div>`;
+      <button class="btn btn--ghost btn--block btn--sm mt-8" type="button" data-be-xoa>Xoá số đo trên máy này</button>
+      <p class="fs-13 text-muted mt-8">Số đo chiều cao, cân nặng chỉ lưu trên máy này, không gửi lên máy chủ.</p></div>`;
   };
   document.addEventListener('click', (e) => {
     if (!e.target.closest('[data-be-xoa]')) return;
-    if (!confirm('Xoá thông tin và các lần đo của bé trên máy này?')) return;
+    if (!confirm('Xoá các lần đo của bé trên máy này? (Tên và ngày sinh bé trong tài khoản vẫn giữ)')) return;
     MC.store.set('hck_suckhoe', null); const box = $('#beAcc'); if (box) box.innerHTML = beHTML(); MC.toast('Đã xoá thông tin bé', { type: 'ok' });
   });
   /* ---------- 🎂 Ngày sinh: khách điền 1 lần, tháng sinh nhật giảm % mọi đơn (SITE.loyalty.sinhNhat) ---------- */
   const SN = () => (SITE.loyalty || {}).sinhNhat || {};
   const snHTML = (kh) => kh.ngaySinh ? `${esc(kh.ngaySinh.split('-').reverse().join('/'))}${MC.sinhNhat().dangThang ? ' <span class="badge badge--hot">🎂 Tháng sinh nhật</span>' : ''}<small class="sn-ghi">Ưu đãi sinh nhật 1 lần mỗi năm · ngày sinh không đổi để nhận lại</small>`
     : SN().bat ? `<button type="button" class="text-primary fw-700" data-sn-them>+ Thêm để nhận ưu đãi sinh nhật</button>` : '<span class="text-muted">—</span>';
-  const snBang = () => { const sn = MC.sinhNhat(); return sn.dangThang ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật mẹ!</b> Cả tháng này mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
+  const snBang = () => { const sn = MC.sinhNhat(); return sn.be.dangThang && !sn.dangMe ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật ${esc(sn.be.ten ? 'bé ' + sn.be.ten : 'bé')}!</b> Cả tháng sinh nhật bé, mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật bé áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
+    : sn.dangMe ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật mẹ!</b> Cả tháng này mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
     : sn.bat && !sn.ngaySinh ? `<div class="sn-bang sn-bang--goi">🎁 <div><b>Thêm ngày sinh để nhận quà sinh nhật:</b> trong tháng sinh nhật mọi đơn được giảm <b>${sn.giam}%</b>, kèm email chúc mừng đúng ngày sinh. <small>Ngày sinh chỉ lưu 1 lần – ưu đãi 1 lần mỗi năm.</small></div><button class="btn btn--outline btn--sm" type="button" data-sn-them>Thêm ngày sinh</button></div>` : ''; };
   document.addEventListener('click', async (e) => {
     if (!e.target.closest('[data-sn-them]')) return;
