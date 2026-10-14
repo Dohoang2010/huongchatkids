@@ -2298,3 +2298,13 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .hk-vd__luu { margin: 12px 0 0; font-size: 14px; color: var(--ink-2); }
 .hk-vd__luu::before { content: '💡 '; }
 @media (max-width: 640px) { .hk-vd__ds { grid-template-columns: 1fr; } }
+/* Đo chỉ số con – Chế độ ăn theo độ tuổi */
+.hk-an__t { margin: 18px 0 0; font-size: 15px; }
+.hk-an__td { list-style: none; margin: 10px 0 0 6px; padding: 0; border-left: 2px solid #CDEDE7; }
+.hk-an__td li { position: relative; display: grid; grid-template-columns: 76px 1fr; gap: 10px; padding: 6px 0 6px 16px; }
+.hk-an__td li::before { content: ''; position: absolute; left: -6px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: #3DBDB1; border: 2px solid #fff; }
+.hk-an__td span { font-size: 13px; font-weight: 700; color: #0F7A70; padding-top: 1px; }
+.hk-an__td p { margin: 0; font-size: 14px; color: var(--ink); }
+.hk-an__tranh { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+.hk-an__tranh li { padding: 6px 12px; border-radius: 999px; background: #FDE8E7; color: #B3261E; font-size: 13px; font-weight: 600; }
+.hk-an__tranh li::before { content: '✕ '; }

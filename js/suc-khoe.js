@@ -165,6 +165,83 @@
       ],
     },
   };
+  /* ---------------- Chế độ ăn theo giai đoạn ----------------
+     Tham khảo khuyến nghị nuôi dưỡng trẻ nhỏ của WHO/UNICEF và tháp dinh dưỡng của Viện Dinh dưỡng Quốc gia; lượng chỉ là mức trung bình. */
+  const CHE_DO_AN = {
+    '0-6m': {
+      bua: [['Bữa', 'Bú mẹ theo nhu cầu, 8-12 cữ/ngày'], ['Nước', 'Không cần uống thêm'], ['Ăn dặm', 'Chưa ăn, đợi đủ 6 tháng']],
+      nhom: [['🤱', 'Sữa mẹ', 'Là thức ăn duy nhất và đầy đủ nhất cho bé 6 tháng đầu, kể cả trời nóng.'],
+        ['👀', 'Dấu hiệu bé bú đủ', 'Khoảng 6 tã ướt mỗi ngày, bé tăng cân đều, ngủ ngon sau bú.'],
+        ['🥗', 'Mẹ ăn gì', 'Mẹ ăn đủ 3 bữa, thêm bữa phụ, uống đủ nước; ăn cá 2-3 bữa mỗi tuần.']],
+      thucDon: [],
+      tranh: ['Nước lọc, nước cháo, nước hoa quả', 'Mật ong', 'Ăn dặm trước 6 tháng'],
+      ghi: 'Không bú mẹ được, mẹ hỏi nhân viên y tế để được hướng dẫn cách nuôi phù hợp.',
+    },
+    '6-12m': {
+      bua: [['6-8 tháng', '2-3 bữa ăn dặm + bú mẹ'], ['9-12 tháng', '3-4 bữa ăn dặm + 1-2 bữa phụ + bú mẹ'], ['Độ thô', 'Bột/cháo nghiền → cháo hạt, thức ăn băm nhỏ']],
+      nhom: [['🍚', 'Tinh bột', 'Bột/cháo gạo, khoai; bắt đầu 2-3 thìa, tăng dần tới khoảng 2/3 bát mỗi bữa.'],
+        ['🥩', 'Đạm', 'Thịt, cá, trứng, tôm, đậu phụ băm nhuyễn – mỗi bữa 1-2 thìa canh, gan 1 lần/tuần.'],
+        ['🥬', 'Rau củ', 'Bí đỏ, cà rốt, rau ngót, cải… nấu chín, nghiền vào cháo.'],
+        ['🫒', 'Dầu, mỡ', 'Mỗi bữa thêm 1 thìa cà phê dầu ăn hoặc mỡ để đủ năng lượng.'],
+        ['🍌', 'Trái cây', 'Chuối, đu đủ, xoài nạo hoặc nghiền làm bữa phụ.']],
+      thucDon: [['Sáng', 'Bú mẹ'], ['9h', 'Cháo thịt bò bí đỏ + dầu ăn'], ['11h', 'Bú mẹ'], ['14h', 'Chuối nghiền / sữa chua'], ['17h', 'Cháo cá rau ngót + dầu ăn'], ['Tối', 'Bú mẹ']],
+      tranh: ['Muối, nước mắm, đường cho vào đồ ăn của bé', 'Mật ong (trước 12 tháng)', 'Sữa tươi thay cho sữa mẹ', 'Hạt, đồ cứng dễ hóc'],
+      ghi: 'Mỗi lần cho bé thử 1 món mới và theo dõi 2-3 ngày để biết bé có dị ứng không.',
+    },
+    '1-3y': {
+      bua: [['Bữa', '3 bữa chính + 2 bữa phụ'], ['Sữa', 'Khoảng 500 ml/ngày (sữa mẹ hoặc sữa, sữa chua)'], ['Nước', 'Khoảng 1 lít/ngày gồm cả sữa, canh']],
+      nhom: [['🍚', 'Tinh bột', 'Cơm nát, cháo, mì, khoai – khoảng 1-2 bát con mỗi ngày.'],
+        ['🥩', 'Đạm', 'Thịt, cá, trứng, tôm, đậu – mỗi bữa chính 1 phần, xoay vòng các loại.'],
+        ['🥛', 'Sữa và chế phẩm', 'Khoảng 2 cốc sữa cùng sữa chua, phô mai.'],
+        ['🥬', 'Rau xanh', 'Mỗi bữa chính có rau, thái nhỏ, nấu mềm.'],
+        ['🍊', 'Trái cây', '1-2 phần mỗi ngày làm bữa phụ.']],
+      thucDon: [['7h', 'Cháo / phở thịt bò + 1 hộp sữa chua'], ['9h30', 'Sữa + 1 quả chuối'], ['11h', 'Cơm nát, cá kho, canh rau ngót'], ['15h', 'Sữa + bánh flan / hoa quả'], ['18h', 'Cơm nát, trứng hấp thịt, rau luộc'], ['21h', 'Sữa trước khi ngủ']],
+      tranh: ['Nước ngọt, bánh kẹo, đồ chiên rán', 'Ép ăn, cho xem màn hình khi ăn', 'Nho, hạt, thạch nguyên miếng (dễ hóc)'],
+      ghi: 'Bé biếng ăn: mỗi bữa không quá 30 phút, không cho ăn vặt sát bữa, cho bé tự xúc.',
+    },
+    '3-6y': {
+      bua: [['Bữa', '3 bữa chính + 1-2 bữa phụ'], ['Sữa', '2-3 cốc/ngày (khoảng 500 ml)'], ['Nước', '1-1,5 lít/ngày']],
+      nhom: [['🍚', 'Tinh bột', 'Cơm, bún, phở, khoai – khoảng 2-3 bát con mỗi ngày.'],
+        ['🥩', 'Đạm', 'Thịt, cá, trứng, tôm, đậu phụ – mỗi bữa chính 1 phần; cá 2-3 bữa mỗi tuần.'],
+        ['🥛', 'Sữa và chế phẩm', 'Sữa, sữa chua, phô mai giúp đủ canxi cho xương, răng.'],
+        ['🥬', 'Rau xanh', 'Khoảng 1-2 bát con rau mỗi ngày, nhiều màu.'],
+        ['🍊', 'Trái cây', '2 phần mỗi ngày (VD: 1 quả cam, 1 quả chuối).']],
+      thucDon: [['6h30', 'Bánh mì trứng + 1 cốc sữa'], ['Trưa', 'Cơm, thịt rim, canh bí, rau cải luộc'], ['15h', 'Sữa chua + hoa quả'], ['18h', 'Cơm, cá sốt cà chua, canh rau ngót'], ['20h30', '1 cốc sữa']],
+      tranh: ['Nước ngọt, trà sữa, bánh kẹo', 'Đồ ăn nhanh, xúc xích, đồ chiên rán nhiều', 'Bỏ bữa sáng'],
+      ghi: 'Cho bé ăn cùng cả nhà và tự chọn món trong các món lành mạnh, bé sẽ ăn hợp tác hơn.',
+    },
+    '6-12y': {
+      bua: [['Bữa', '3 bữa chính + 1 bữa phụ'], ['Sữa', '3 phần/ngày (sữa, sữa chua, phô mai)'], ['Nước', '1,5-2 lít/ngày']],
+      nhom: [['🍚', 'Tinh bột', 'Cơm, bún, mì, ngô, khoai – ưu tiên ngũ cốc nguyên hạt, khoảng 3-4 bát con mỗi ngày.'],
+        ['🥩', 'Đạm', 'Thịt nạc, cá, trứng, tôm, đậu – mỗi bữa chính có đạm; cá béo 2 bữa mỗi tuần.'],
+        ['🥛', 'Sữa và chế phẩm', '3 phần mỗi ngày để tích luỹ canxi trước dậy thì.'],
+        ['🥬', 'Rau xanh', 'Khoảng 2 bát con mỗi ngày.'],
+        ['🍊', 'Trái cây', '2-3 phần mỗi ngày.']],
+      thucDon: [['6h30', 'Xôi / phở / bánh mì kẹp trứng + 1 cốc sữa'], ['Trưa', 'Cơm, thịt gà, canh rau, đậu phụ sốt cà'], ['16h', 'Sữa chua + hoa quả hoặc 1 nắm hạt'], ['Tối', 'Cơm, cá kho, rau xào, canh'], ['21h', '1 cốc sữa']],
+      tranh: ['Trà sữa, nước ngọt có ga', 'Đồ ăn nhanh, mì gói thay bữa', 'Bỏ bữa sáng trước khi đi học'],
+      ghi: 'Bữa sáng đủ tinh bột, đạm và sữa giúp bé tập trung học buổi sáng.',
+    },
+    '12-18y': {
+      bua: [['Bữa', '3 bữa chính + 1-2 bữa phụ'], ['Sữa', '3-4 phần/ngày'], ['Nước', '2-2,5 lít/ngày, thêm khi chơi thể thao']],
+      nhom: [['🍚', 'Tinh bột', 'Nhu cầu năng lượng cao nhất trong đời: cơm, bún, khoai, ngũ cốc nguyên hạt đủ mỗi bữa.'],
+        ['🥩', 'Đạm', 'Thịt nạc, cá, trứng, đậu – mỗi bữa chính; thịt bò, gan giúp đủ sắt (bé gái có kinh nguyệt cần nhiều hơn).'],
+        ['🥛', 'Sữa và chế phẩm', '3-4 phần mỗi ngày – gần một nửa khối xương trưởng thành hình thành ở tuổi này.'],
+        ['🥬', 'Rau xanh', 'Khoảng 2-3 bát con mỗi ngày.'],
+        ['🍊', 'Trái cây', '2-3 phần mỗi ngày, ưu tiên quả giàu vitamin C (cam, ổi, kiwi).']],
+      thucDon: [['6h30', 'Bánh mì trứng / phở bò + 1 cốc sữa'], ['Trưa', 'Cơm, thịt bò xào rau, canh, đậu phụ'], ['16h', 'Sữa chua, hoa quả, 1 nắm hạt'], ['Tối', 'Cơm, cá hồi / cá thu, rau luộc, canh'], ['Tối muộn', '1 cốc sữa nếu học khuya']],
+      tranh: ['Ăn kiêng, nhịn ăn để giảm cân', 'Nước tăng lực, trà sữa, đồ ăn nhanh thường xuyên', 'Bỏ bữa sáng'],
+      ghi: 'Tuổi dậy thì dễ ăn kiêng sai cách: muốn giảm cân, con nên tăng vận động và giảm đồ ngọt thay vì bỏ bữa.',
+    },
+  };
+  /* Điều chỉnh bữa ăn theo tình trạng (từ 6 tháng) */
+  const AN_TINH_TRANG = {
+    thapCoi: 'Chiều cao thấp hơn chuẩn: mỗi bữa chính đều có đạm (thịt, cá, trứng), đủ sữa mỗi ngày, thêm thực phẩm giàu kẽm, canxi (tôm, cua, hàu, sữa chua, phô mai).',
+    hoiThap: 'Để hỗ trợ chiều cao: đủ đạm mỗi bữa, đủ 2-3 phần sữa mỗi ngày và thêm thực phẩm giàu canxi, kẽm.',
+    gay: 'Bé nhẹ cân: chia nhỏ thành 5-6 bữa, thêm dầu ăn, bơ, phô mai, sữa vào món ăn để tăng năng lượng mà không cần ăn nhiều hơn.',
+    thuaCan: 'Bé thừa cân: không bỏ bữa, giữ đủ đạm và rau; giảm nước ngọt, bánh kẹo, đồ chiên; thay sữa có đường bằng sữa không đường; ăn chậm, nhai kỹ.',
+    nguyCo: 'Bé có nguy cơ thừa cân: hạn chế đồ ngọt, nước ngọt và đồ ăn vặt, tăng rau xanh trong bữa chính.',
+  };
+
   /* ---------------- Vận động theo giai đoạn ----------------
      Thời lượng theo khuyến nghị của WHO (trẻ dưới 5 tuổi: 2019; 5-17 tuổi: 2020); giấc ngủ theo Viện Hàn lâm Y học Giấc ngủ Hoa Kỳ (AASM). */
   const VAN_DONG = {
@@ -242,7 +319,7 @@
 
   const { $, $$, esc, I, productCard, rankDefault, store, ageRange } = MC;
   const KHOA = 'hck_suckhoe';
-  const VER = '20261014c';
+  const VER = '20261014d';
   const NEED_LABEL = (k) => ((window.NEEDS || []).find((n) => n.key === k) || {}).label || k;
 
   /* ---------------- Tiện ích ---------------- */
@@ -480,6 +557,7 @@
     const sp = (p) => `<div class="hk-pick">${g.lyDo(p).length ? `<span class="hk-pick__why">${I.check}${g.lyDo(p).map(esc).join(', ')}</span>` : ''}${productCard(p)}</div>`;
     const loi = k.tinhTrang.map((t) => `<p>${TINH_TRANG[t].loi}</p>`).join('');
     const dg = danhGiaChiTiet(hs, k);
+    const an = CHE_DO_AN[k.giaiDoan], anThem = k.thang >= 6 ? k.tinhTrang.map((t) => AN_TINH_TRANG[t]).filter(Boolean) : [];
     const vd = VAN_DONG[k.giaiDoan], vdThem = k.thang >= 12 ? k.tinhTrang.map((t) => VD_TINH_TRANG[t]).filter(Boolean) : [];
     const bd = ['hfa', 'wfa', 'bfa'].filter((i) => c[i]);
     if (!bd.includes(bieuDoDangXem)) bieuDoDangXem = bd[0];
@@ -519,6 +597,19 @@
         <div class="hk-nutri__grid">${gd.chat.map(([ten, luong, viSao, nguon]) => `<div class="hk-nut"><div class="hk-nut__top"><b>${ten}</b><span>${typeof luong === 'object' ? luong[hs.sex] : luong}</span></div><p>${viSao}</p><small>${nguon}</small></div>`).join('')}</div>
         <p class="hk-src">Lượng khuyến nghị mỗi ngày theo Viện Y học Hoa Kỳ (IOM, NIH); DHA theo Cơ quan An toàn Thực phẩm châu Âu (EFSA).</p>
       </div>
+
+      ${an ? `<div class="hk-block hk-an">
+        <div class="hk-block__head"><h3>Chế độ ăn cho bé ${esc(tuoi.label)}</h3><p>Lượng tham khảo trung bình, mẹ điều chỉnh theo sức ăn của bé</p></div>
+        <div class="hk-vd__chi">${an.bua.map(([ten, gt]) => `<div><small>${ten}</small><b>${gt}</b></div>`).join('')}</div>
+        ${anThem.length ? `<div class="hk-vd__them">${anThem.map((t) => `<p>${t}</p>`).join('')}</div>` : ''}
+        <h4 class="hk-an__t">${k.thang < 6 ? 'Mẹ cần biết' : 'Mỗi ngày nên có'}</h4>
+        <div class="hk-vd__ds">${an.nhom.map(([ic, ten, mo]) => `<div class="hk-vd__o"><span class="hk-vd__ic" aria-hidden="true">${ic}</span><div><b>${ten}</b><p>${mo}</p></div></div>`).join('')}</div>
+        ${an.thucDon.length ? `<h4 class="hk-an__t">Thực đơn gợi ý 1 ngày</h4><ol class="hk-an__td">${an.thucDon.map(([gio, mon]) => `<li><span>${gio}</span><p>${mon}</p></li>`).join('')}</ol>` : ''}
+        <h4 class="hk-an__t">Nên hạn chế</h4>
+        <ul class="hk-an__tranh">${an.tranh.map((t) => `<li>${t}</li>`).join('')}</ul>
+        <p class="hk-vd__luu">${an.ghi}</p>
+        <p class="hk-src">Tham khảo khuyến nghị nuôi dưỡng trẻ nhỏ của WHO/UNICEF và tháp dinh dưỡng của Viện Dinh dưỡng Quốc gia. Bé dị ứng hoặc có bệnh lý, mẹ hỏi bác sĩ dinh dưỡng.</p>
+      </div>` : ''}
 
       ${vd ? `<div class="hk-block hk-vd">
         <div class="hk-block__head"><h3>Vận động cho bé ${esc(tuoi.label)}</h3></div>
