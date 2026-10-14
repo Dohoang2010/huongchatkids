@@ -1,14 +1,16 @@
 /* Lịch làm việc – Sếp ↔ Trợ lý. Máy chủ: tools/lich-trinh-apps-script.gs */
 'use strict';
 (() => {
-  const API = String(window.LICH_API || '').trim();
+  const DEMO = window.LICH_DEMO || null;   // ?demo: máy chủ giả trong demo.js
+  const API = DEMO ? 'demo' : String(window.LICH_API || '').trim();
+  const TIEN_TO = DEMO ? 'ltd_' : 'lt_';
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const kho = {
-    get(k, d) { try { const v = localStorage.getItem('lt_' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem('lt_' + k, JSON.stringify(v)); } catch (e) { /* bỏ qua */ } },
-    del(k) { try { localStorage.removeItem('lt_' + k); } catch (e) { /* bỏ qua */ } }
+    get(k, d) { try { const v = localStorage.getItem(TIEN_TO + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(TIEN_TO + k, JSON.stringify(v)); } catch (e) { /* bỏ qua */ } },
+    del(k) { try { localStorage.removeItem(TIEN_TO + k); } catch (e) { /* bỏ qua */ } }
   };
 
   const VAI = { sep: 'Sếp', troly: 'Trợ lý' };
@@ -96,7 +98,8 @@
   async function api(action, data = {}) {
     const ctl = new AbortController(), hen = setTimeout(() => ctl.abort(), 25000);
     let r;
-    try {
+    if (DEMO) r = await DEMO.api(action, Object.assign({ token: S.token }, data));
+    else try {
       const res = await fetch(API, {
         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(Object.assign({ action, token: S.token }, data)), signal: ctl.signal
@@ -783,7 +786,7 @@
   }
   const b64u = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); const b = atob(s + '='.repeat((4 - s.length % 4) % 4)); return Uint8Array.from(b, c => c.charCodeAt(0)); };
   const u8b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  const hoTroTB = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const hoTroTB = () => 'serviceWorker' in navigator && (DEMO || 'PushManager' in window) && 'Notification' in window;
 
   let suKienCai = null;
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); suKienCai = e; if (S.tab === 'toi') veThongBao(); });
@@ -820,7 +823,8 @@
       return;
     }
     let sub = null;
-    try { sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription(); } catch (e) { /* bỏ qua */ }
+    if (DEMO) sub = kho.get('demoTb', false);
+    else try { sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription(); } catch (e) { /* bỏ qua */ }
     if (sub && Notification.permission === 'granted') {
       k.innerHTML = `<div class="dong"><span>Trạng thái</span><span class="gia-tri" style="color:var(--c-chung)">● Đã bật</span></div>
         <button type="button" class="dong nut-dong xanh" id="tb-thu">Gửi thử thông báo</button>
@@ -844,6 +848,7 @@
     }
     if (b.id === 'tb-tat') {
       b.disabled = true;
+      if (DEMO) { kho.del('demoTb'); toast('Đã tắt thông báo trên máy này'); return veThongBao(); }
       try {
         const sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription();
         if (sub) { await api('huyThongBao', { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); }
@@ -858,6 +863,7 @@
     try {
       const quyen = await Notification.requestPermission();   // iPhone bắt buộc gọi ngay khi bấm nút
       if (quyen !== 'granted') throw new Error('Bạn chưa cho phép thông báo');
+      if (DEMO) { kho.set('demoTb', true); toast('Đã bật thông báo ✓'); return veThongBao(); }
       if (!S.vapid) throw new Error('Máy chủ chưa có khoá thông báo');
       const reg = await navigator.serviceWorker.ready;
       let sub = await reg.pushManager.getSubscription();
@@ -872,7 +878,7 @@
 
   // Gửi lại đăng ký vài ngày 1 lần (phòng khi máy chủ đã xoá hoặc đổi người dùng trên máy này)
   async function kiemTraDangKyTB() {
-    if (!hoTroTB() || Notification.permission !== 'granted') return;
+    if (DEMO || !hoTroTB() || Notification.permission !== 'granted') return;
     const dk = kho.get('dkTb', null);
     if (dk && dk.v === S.toi && Date.now() - dk.t < 3 * 864e5) return;
     try {
@@ -934,6 +940,31 @@
   if (vv) { vv.addEventListener('resize', theoBanPhim); vv.addEventListener('scroll', theoBanPhim); }
   window.addEventListener('resize', theoBanPhim);
   theoBanPhim();
+
+  /* ===================== BẢN DEMO ===================== */
+  if (DEMO) {
+    const goiY = document.createElement('p');
+    goiY.className = 'chu-thich giua';
+    goiY.textContent = 'Bản demo: chọn Sếp hoặc Trợ lý, mật khẩu gõ gì cũng được.';
+    $('#form-dangnhap').append(goiY);
+    const thanh = document.createElement('div');
+    thanh.className = 'thanh-demo';
+    thanh.innerHTML = '<span>Bản demo · đang xem với vai <b id="demo-vai"></b></span><button type="button" id="demo-doi">Đổi vai ⇄</button><button type="button" id="demo-lai">Làm lại</button>';
+    $('#man-chinh').insertBefore(thanh, $('.tabbar'));
+    const capNhatVai = () => { $('#demo-vai').textContent = VAI[S.toi] || ''; };
+    new MutationObserver(capNhatVai).observe($('#toi-vai'), { childList: true });
+    $('#demo-doi').onclick = async () => {
+      const moi = S.toi === 'sep' ? 'troly' : 'sep';
+      S.token = 'demo-' + moi; kho.set('token', S.token); kho.del('cache');
+      S.tin = []; S.choGui = []; S.tinCuoi = 0; S.daDoc = { sep: 0, troly: 0 };
+      await khoiDong(); capNhatVai();
+      toast('Đang xem với vai ' + VAI[moi]);
+    };
+    $('#demo-lai').onclick = () => {
+      if (!confirm('Xoá dữ liệu demo và bắt đầu lại?')) return;
+      DEMO.datLai(); kho.del('cache'); location.reload();
+    };
+  }
 
   S.homNayCu = homNay();
   khoiDong();
