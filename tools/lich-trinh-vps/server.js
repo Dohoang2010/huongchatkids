@@ -35,6 +35,7 @@ async function taoBang() {
       mau text NOT NULL DEFAULT '#8e8e93', la_admin boolean NOT NULL DEFAULT false, khoa boolean NOT NULL DEFAULT false,
       da_xoa boolean NOT NULL DEFAULT false, salt text NOT NULL, hash text NOT NULL, thu_tu serial, tao_luc timestamptz DEFAULT now());
     ALTER TABLE thanh_vien ADD COLUMN IF NOT EXISTS anh bytea;
+    ALTER TABLE thanh_vien ADD COLUMN IF NOT EXISTS cong_viec text NOT NULL DEFAULT '';
     ALTER TABLE thanh_vien ADD COLUMN IF NOT EXISTS anh_ver text NOT NULL DEFAULT '';
     CREATE TABLE IF NOT EXISTS phien (token_hash text PRIMARY KEY, vai text NOT NULL, het timestamptz NOT NULL, may text);
     CREATE TABLE IF NOT EXISTS lich (id text PRIMARY KEY, data jsonb NOT NULL);
@@ -90,7 +91,7 @@ const bayGio = () => new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 1
 const theoThuTu = (a, b) => a.thu_tu - b.thu_tu;
 const thanhVien = () => [...M.tv.values()].filter(u => !u.la_admin && !u.da_xoa).sort(theoThuTu);   // người có lịch & chat
 const dangHoatDong = () => thanhVien().filter(u => !u.khoa);
-const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chuc_vu, mau: u.mau, anh: u.anh_ver || '', admin: u.la_admin, khoa: u.khoa, daXoa: u.da_xoa });
+const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chuc_vu, job: u.cong_viec || '', mau: u.mau, anh: u.anh_ver || '', admin: u.la_admin, khoa: u.khoa, daXoa: u.da_xoa });
 const dsNguoi = () => [...M.tv.values()].sort(theoThuTu).map(congKhai);
 const tenCua = id => (M.tv.get(id) || {}).ten || 'Ai đó';
 const laThanhVien = id => { const u = M.tv.get(id); return !!u && !u.la_admin && !u.da_xoa; };
@@ -135,13 +136,13 @@ function kiemTraTaiKhoan(tenDN, mk, mkToiThieu = 6) {
   return '';
 }
 
-async function themNguoi({ tenDN, mk, ten, chucVu = '', mau, admin = false }) {
+async function themNguoi({ tenDN, mk, ten, chucVu = '', job = '', mau, admin = false }) {
   const id = (admin ? 'a' : 'u') + crypto.randomBytes(4).toString('hex');
   const dangDung = new Set(thanhVien().map(u => u.mau));
   mau = /^#[0-9a-f]{6}$/i.test(mau || '') ? mau : (MAU.find(m => !dangDung.has(m)) || MAU[thanhVien().length % MAU.length]);
   const { salt, hash } = await taoMk(mk);
-  const r = (await q(`INSERT INTO thanh_vien (id, ten_dang_nhap, ten, chuc_vu, mau, la_admin, salt, hash)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`, [id, tenDN, ten, chucVu, mau, admin, salt, hash])).rows[0];
+  const r = (await q(`INSERT INTO thanh_vien (id, ten_dang_nhap, ten, chuc_vu, cong_viec, mau, la_admin, salt, hash)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`, [id, tenDN, ten, chucVu, job, mau, admin, salt, hash])).rows[0];
   M.tv.set(id, r);
   await doiNguoi();
   return r;
@@ -242,7 +243,7 @@ const HANH_DONG = {
     if (!ten) return { loi: 'Chưa nhập họ tên' };
     const loi = kiemTraTaiKhoan(tenDN, req.matKhau);
     if (loi) return { loi };
-    const u = await themNguoi({ tenDN, mk: String(req.matKhau), ten, chucVu: String(req.chucVu || '').trim().slice(0, 30), mau: req.mau });
+    const u = await themNguoi({ tenDN, mk: String(req.matKhau), ten, chucVu: String(req.chucVu || '').trim().slice(0, 30), job: String(req.job || '').trim().slice(0, 60), mau: req.mau });
     return { ok: true, tv: congKhai(u) };
   },
   async suaThanhVien(req, toi) {
@@ -250,8 +251,9 @@ const HANH_DONG = {
     const u = layThanhVien(req.id), ten = String(req.ten || '').trim().slice(0, 40);
     if (!ten) return { loi: 'Chưa nhập họ tên' };
     const mau = /^#[0-9a-f]{6}$/i.test(req.mau || '') ? req.mau : u.mau, chucVu = String(req.chucVu || '').trim().slice(0, 30);
-    await q('UPDATE thanh_vien SET ten = $1, chuc_vu = $2, mau = $3 WHERE id = $4', [ten, chucVu, mau, u.id]);
-    Object.assign(u, { ten, chuc_vu: chucVu, mau });
+    const job = String(req.job || '').trim().slice(0, 60);
+    await q('UPDATE thanh_vien SET ten = $1, chuc_vu = $2, cong_viec = $3, mau = $4 WHERE id = $5', [ten, chucVu, job, mau, u.id]);
+    Object.assign(u, { ten, chuc_vu: chucVu, cong_viec: job, mau });
     await doiNguoi();
     return { ok: true };
   },

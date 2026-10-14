@@ -42,6 +42,7 @@
   const dsLich = conHoatDong => [...thanhVien().filter(u => !conHoatDong || !u.khoa).map(u => u.id), 'chung'];
   const mauLich = l => l === 'chung' ? MAU_CHUNG : (nguoi(l) || {}).mau || '#8e8e93';
   const tenLich = l => { if (l === 'chung') return 'Lịch chung'; const u = nguoi(l); return u ? u.ten + (u.chucVu ? ` (${u.chucVu})` : '') : 'Người đã rời nhóm'; };
+  const tenDayDu = u => u ? [u.ten, u.chucVu, u.job].map(x => String(x || '').trim()).filter(Boolean).join(' - ') : 'Người đã rời nhóm';
   const tenLichNgan = l => l === 'chung' ? 'Lịch chung' : 'Lịch ' + tenNguoi(l);
   const hienLich = l => S.loc[l] !== false;
   const lichMacDinh = () => { const l = kho.get('lichMacDinh', ''); return dsLich(true).includes(l) ? l : dsLich(true).includes(S.toi) ? S.toi : 'chung'; };
@@ -1023,7 +1024,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
         xem = (cuoi.tu === S.toi ? 'Bạn: ' : k === 'nhom' ? tenNguoi(cuoi.tu) + ': ' : '') + nd;
       }
       const u = k === 'nhom' ? null : nguoi(nguoiKia(k));
-      const phu = k === 'nhom' ? `${thanhVien().length} thành viên` : (u && u.chucVu) || '';
+      const phu = k === 'nhom' ? `${thanhVien().length} thành viên` : u ? [u.chucVu, u.job].filter(Boolean).join(' - ') : '';
       const gio = cuoi ? (cuoi.t.slice(0, 10) === homNay() ? cuoi.t.slice(11, 16) : `${cuoi.t.slice(8, 10)}/${cuoi.t.slice(5, 7)}`) : '';
       return `<button type="button" class="dong-chat${chua ? ' chua-doc' : ''}" data-kenh="${esc(k)}">${avaKenh(k)}
         <span class="dc-nd"><span class="dc-hang"><b>${esc(tenKenh(k))}</b><small>${esc(gio)}</small></span>
@@ -1060,7 +1061,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
       const sau = ds[i + 1], cuaToi = t.tu === S.toi;
       const dauNhom = moc || !truoc || truoc.tu !== t.tu;
       const cuoi = !sau || sau.tu !== t.tu || sau.t.slice(0, 10) !== t.t.slice(0, 10) || phutCua(sau.t.slice(0, 16)) - phutCua(t.t.slice(0, 16)) > 30;
-      if (kenh === 'nhom' && !cuaToi && dauNhom) html += `<div class="ten-gui" style="color:${mauLich(t.tu)}">${esc(tenNguoi(t.tu))}</div>`;
+      if (kenh === 'nhom' && !cuaToi && dauNhom) html += `<div class="ten-gui" style="color:${mauLich(t.tu)}">${esc(tenDayDu(nguoi(t.tu)))}</div>`;
       html += `<div class="bong ${cuaToi ? 'cua-toi' : 'cua-ho'}${cuoi ? ' cuoi' : ''}${t.dangGui ? ' dang-gui' : ''}" title="${esc(t.t.slice(11, 16))}">${noiDungTin(t)}</div>`;
       if (t.loi) html += `<button type="button" class="trang-thai-tin loi-gui" data-thu-lai="${esc(t.tam)}">Không gửi được · Bấm để gửi lại</button>`;
       else if (t.dangGui && !sau) html += '<div class="trang-thai-tin">Đang gửi…</div>';
@@ -1092,7 +1093,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     const id = nguoiKia(k), o = S.online[id], u = nguoi(id) || {};
     if (o && Date.now() - o.t < 30000) { tt.textContent = 'Đang hoạt động'; tt.className = 'on'; }
     else if (o) { tt.textContent = 'Hoạt động ' + tuongDoi(o.t); tt.className = ''; }
-    else { tt.textContent = u.chucVu || ''; tt.className = ''; }
+    else { tt.textContent = [u.chucVu, u.job].filter(Boolean).join(' - '); tt.className = ''; }
   }
   function tuongDoi(ms) {
     const p = Math.max(1, Math.round((Date.now() - ms) / 6e4));
@@ -1200,7 +1201,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     k.innerHTML = `<p class="chu-thich" style="margin:4px 16px 10px">${ds.length ? `${ds.length} thành viên. Bấm vào một người để sửa, đặt lại mật khẩu, khoá hoặc xoá.` : 'Chưa có thành viên nào. Bấm “Thêm thành viên” để tạo tài khoản đầu tiên.'}</p>
       ${ds.length ? `<div class="nhom">${ds.map(u => `<button type="button" class="dong nut-dong the-tv" data-tv="${esc(u.id)}">
         ${avaHtml(u)}
-        <span class="tv-nd"><b>${esc(u.ten)}</b><small>${esc(u.chucVu || 'Thành viên')} · ${esc(u.tenDangNhap)}${u.khoa ? ' · <em class="do">Đã khoá</em>' : ''}</small></span>
+        <span class="tv-nd"><b>${esc(u.ten)}</b><small>${esc([u.chucVu || 'Thành viên', u.job].filter(Boolean).join(' - '))} · ${esc(u.tenDangNhap)}${u.khoa ? ' · <em class="do">Đã khoá</em>' : ''}</small></span>
         <i class="mui">›</i></button>`).join('')}</div>` : ''}
       <button type="button" class="nut-chinh" id="tv-them">+ Thêm thành viên</button>`;
     $('#tv-them').onclick = () => moFormTv(null);
@@ -1218,6 +1219,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
         <div class="nhom">
           <label class="dong"><span>Họ tên</span><input name="ten" maxlength="40" value="${esc(u ? u.ten : '')}" placeholder="VD: Nguyễn Văn An" required></label>
           <label class="dong"><span>Chức vụ</span><input name="chucVu" maxlength="30" value="${esc(u ? u.chucVu : '')}" placeholder="VD: Trợ lý" list="goi-y-chuc-vu"></label>
+          <label class="dong"><span>Job</span><input name="job" maxlength="60" value="${esc(u ? u.job || '' : '')}" placeholder="VD: Phụ trách đơn online"></label>
         </div>
         <datalist id="goi-y-chuc-vu">${CHUC_VU_GOI_Y.map(c => `<option value="${c}">`).join('')}</datalist>
         ${moi ? `<p class="nhom-ten">Thông tin đăng nhập</p>
@@ -1268,7 +1270,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     f.addEventListener('submit', async e => {
       e.preventDefault();
       const g = n => (f.elements[n] ? f.elements[n].value.trim() : '');
-      const d = { ten: g('ten'), chucVu: g('chucVu'), mau: (f.querySelector('input[name=mau]:checked') || {}).value };
+      const d = { ten: g('ten'), chucVu: g('chucVu'), job: g('job'), mau: (f.querySelector('input[name=mau]:checked') || {}).value };
       if (!d.ten) { loi.textContent = 'Chưa nhập họ tên'; return; }
       const nut = $('button[type=submit]', f);
       nut.disabled = true; loi.textContent = '';
@@ -1384,7 +1386,7 @@ thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
     if (!S.toi) return;
     const u = nguoi(S.toi) || {};
     $('#toi-ten').textContent = u.ten || '';
-    $('#toi-vai').textContent = S.admin ? 'Admin – quản lý thành viên' : (u.chucVu || 'Thành viên');
+    $('#toi-vai').textContent = S.admin ? 'Admin – quản lý thành viên' : ([u.chucVu, u.job].filter(Boolean).join(' - ') || 'Thành viên');
     $('#toi-ava').outerHTML = avaHtml(u, 'to', 'toi-ava');
     $('#nut-doi-anh-2').textContent = u.anh || u.anhUrl ? 'Đổi ảnh đại diện' : 'Thêm ảnh đại diện';
     veGiaoDien();

@@ -16,9 +16,9 @@
     return {
       nguoi: [
         { id: 'admin', tenDN: 'admin', ten: 'Quản trị viên', chucVu: 'Admin', mau: '#8e8e93', admin: true, khoa: false, daXoa: false },
-        { id: 'sep', tenDN: 'sep', ten: 'Anh Hoàng', chucVu: 'Sếp', mau: '#ff9500', admin: false, khoa: false, daXoa: false },
-        { id: 'troly', tenDN: 'troly', ten: 'Chị Lan', chucVu: 'Trợ lý', mau: '#007aff', admin: false, khoa: false, daXoa: false },
-        { id: 'minh', tenDN: 'minh', ten: 'Minh', chucVu: 'Nhân viên', mau: '#af52de', admin: false, khoa: false, daXoa: false }
+        { id: 'sep', tenDN: 'sep', ten: 'Anh Hoàng', chucVu: 'Sếp', job: 'Điều hành chung', mau: '#ff9500', admin: false, khoa: false, daXoa: false },
+        { id: 'troly', tenDN: 'troly', ten: 'Chị Lan', chucVu: 'Trợ lý', job: 'Lịch hẹn & giấy tờ', mau: '#007aff', admin: false, khoa: false, daXoa: false },
+        { id: 'minh', tenDN: 'minh', ten: 'Minh', chucVu: 'Nhân viên', job: 'Kho & giao hàng', mau: '#af52de', admin: false, khoa: false, daXoa: false }
       ],
       ver: 1, verNguoi: 1,
       lich: [
@@ -48,7 +48,7 @@
 
   const TRA_LOI = ['Dạ vâng, em ghi nhận ạ 👍', 'Ok, để mình sắp xếp nhé', 'Cảm ơn nhé!', 'Dạ được ạ. Có gì em báo lại', 'Nhớ nhắc mình trước giờ họp nhé'];
   let soTraLoi = 0;
-  const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chucVu, mau: u.mau, anh: u.anhUrl ? 'demo' : '', anhUrl: u.anhUrl || '', admin: u.admin, khoa: u.khoa, daXoa: u.daXoa });
+  const congKhai = u => ({ id: u.id, ten: u.ten, chucVu: u.chucVu, job: u.job || '', mau: u.mau, anh: u.anhUrl ? 'demo' : '', anhUrl: u.anhUrl || '', admin: u.admin, khoa: u.khoa, daXoa: u.daXoa });
   const tv = db => db.nguoi.filter(u => !u.admin && !u.daXoa);
   const kenhCua = (db, uid) => { const u = db.nguoi.find(x => x.id === uid); if (!u || u.admin) return []; return ['nhom', ...tv(db).filter(x => x.id !== uid).map(x => kenhRieng(uid, x.id))]; };
   const nguoiKenh = (db, k) => k === 'nhom' ? tv(db).map(u => u.id) : k.slice(3).split(':');
@@ -152,10 +152,10 @@
             if (!/^[a-z0-9._-]{3,30}$/.test(tenDN)) return { loi: 'Tên đăng nhập 3–30 ký tự, chỉ gồm chữ không dấu, số, dấu chấm, gạch dưới' };
             if (String(d.matKhau || '').length < 6) return { loi: 'Mật khẩu cần ít nhất 6 ký tự' };
             if (db.nguoi.some(u => u.tenDN === tenDN)) return { loi: 'Tên đăng nhập này đã có người dùng' };
-            db.nguoi.push({ id: 'u' + Date.now().toString(36), tenDN, ten: d.ten, chucVu: d.chucVu || '', mau: d.mau || '#5ac8fa', admin: false, khoa: false, daXoa: false });
+            db.nguoi.push({ id: 'u' + Date.now().toString(36), tenDN, ten: d.ten, chucVu: d.chucVu || '', job: d.job || '', mau: d.mau || '#5ac8fa', admin: false, khoa: false, daXoa: false });
             doiNguoi(); ghi(db); return { ok: true };
           }
-          case 'suaThanhVien': { quyenAdmin(); const u = db.nguoi.find(x => x.id === d.id); Object.assign(u, { ten: d.ten, chucVu: d.chucVu, mau: d.mau || u.mau }); doiNguoi(); ghi(db); return { ok: true }; }
+          case 'suaThanhVien': { quyenAdmin(); const u = db.nguoi.find(x => x.id === d.id); Object.assign(u, { ten: d.ten, chucVu: d.chucVu, job: d.job || '', mau: d.mau || u.mau }); doiNguoi(); ghi(db); return { ok: true }; }
           case 'datLaiMatKhau': quyenAdmin(); return { ok: true };
           case 'khoaThanhVien': { quyenAdmin(); db.nguoi.find(x => x.id === d.id).khoa = !!d.khoa; doiNguoi(); ghi(db); return { ok: true }; }
           case 'xoaThanhVien': { quyenAdmin(); const u = db.nguoi.find(x => x.id === d.id); Object.assign(u, { daXoa: true, khoa: true, tenDN: u.tenDN + '#xoa' }); doiNguoi(); ghi(db); return { ok: true }; }
