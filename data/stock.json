@@ -375,6 +375,42 @@
         "1 lọ": true,
         "2 lọ": true
       }
+    },
+    "bo-xuyen-tieu": {
+      "in": true,
+      "variants": {
+        "1 gói 200g": true,
+        "2 gói": true
+      }
+    },
+    "com-chay-phomai": {
+      "in": true,
+      "variants": {
+        "1 túi 200g": true,
+        "2 túi": true,
+        "3 túi": true
+      }
+    },
+    "com-vang-noi-oi": {
+      "in": true,
+      "variants": {
+        "1 túi 300g": true,
+        "2 túi": true
+      }
+    },
+    "lon-den-khoi-mo": {
+      "in": true,
+      "variants": {
+        "1 gói 200g": true,
+        "2 gói": true
+      }
+    },
+    "muoi-xuyen-tieu": {
+      "in": true,
+      "variants": {
+        "1 hũ 100g": true,
+        "3 hũ": true
+      }
     }
   }
 }

@@ -48,7 +48,7 @@ window.SITE = {
     },
     dongGoi: 100,                                          // gram thùng/hộp đóng gói cộng thêm mỗi đơn
     /* Cân nặng ước tính (gram) cho 1 đơn vị = phân loại đầu tiên. Phân loại khác quy đổi theo tỉ lệ giá (2 hộp ≈ 2 lần). */
-    gramTheoDanhMuc: { 'nuoc-ep': 1100, 'sua': 1000, 'hong-sam': 450, 'vitamin': 200, 'tang-can': 400, 'rong-bien': 500, 'thuc-pham': 600, 'cho-me': 350 },
+    gramTheoDanhMuc: { 'nuoc-ep': 1100, 'sua': 1000, 'hong-sam': 450, 'vitamin': 200, 'tang-can': 400, 'rong-bien': 500, 'thuc-pham': 600, 'do-an': 400, 'cho-me': 350 },
     gramTheoSP: {
       '26523206270': 12500,  // sữa tươi Norco – 1 thùng 12 hộp 1L
       '26060839019': 700,    // váng sữa Calciumore 30 gói
@@ -110,6 +110,7 @@ window.CATEGORIES = [
   { key: 'tang-can',  label: 'Ăn ngon, tăng cân & tiêu hoá', icon: '🍯', color: '#EEF8E6', desc: 'Gạc hươu Sumo, men vi sinh Biostime', tpcn: true, image: 'img/thumb/26156646705.jpg' },
   { key: 'rong-bien', label: 'Rong biển & ăn dặm',        icon: '🍙', color: '#FFF8E1', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
   { key: 'thuc-pham', label: 'Thực phẩm gia đình',        icon: '🍎', color: '#FFEBEE', desc: 'Táo đỏ Hotan, granola Nhật Bản', tpcn: false, image: 'img/thumb/28467224687.jpg' },
+  { key: 'do-an',     label: 'Đồ ăn & ăn vặt',            icon: '🍱', color: '#FFF1E0', desc: 'Bò xuyên tiêu, cơm cháy, lợn đen gác bếp', tpcn: false, image: 'img/thumb/bo-xuyen-tieu.jpg' },
   { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Chống nắng, serum, collagen, chăm sóc mẹ', tpcn: true, image: 'img/thumb/49061985399.jpg' },
 ];
 
@@ -163,6 +164,7 @@ window.BRANDS = [
   { key: 'arganicare', label: 'Arganicare', origin: 'Ma-rốc', color: '#8D6E63' },
   { key: 'akiko', label: 'Akiko', origin: 'Nhật Bản', color: '#26A69A' },
   { key: 'chef-to-factory', label: 'CF – Chef To Factory', origin: 'Việt Nam', color: '#8A2A2A' },
+  { key: 'vua-dinh-vi', label: 'Vua Đỉnh Vị', origin: 'Việt Nam', color: '#B71C1C' },
   { key: 'hexacare', label: 'Hexacare', origin: 'Pháp', color: '#C2185B' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' },
 ];
@@ -185,7 +187,7 @@ window.NAV = [
   { label: 'Vitamin & canxi', short: 'Vitamin & canxi', tiny: 'Vitamin', link: 'collections.html?cat=vitamin', columns: [
     { title: 'Sản phẩm', links: [['Vitamin D3K2 Pure Vitality 30ml', 'product.html?id=42878618667'], ['Canxi hữu cơ Calciumore (dạng váng sữa)', 'product.html?id=26060839019']] },
     { title: 'Theo nhu cầu', needs: ['d3k2', 'canxi', 'tieu-hoa', 'tang-chieu-cao'] },
-    { title: 'Danh mục khác', links: [['Rong biển & ăn dặm', 'collections.html?cat=rong-bien'], ['Thực phẩm gia đình', 'collections.html?cat=thuc-pham'], ['Dành cho mẹ', 'collections.html?cat=cho-me']] } ] },
+    { title: 'Danh mục khác', links: [['Rong biển & ăn dặm', 'collections.html?cat=rong-bien'], ['Thực phẩm gia đình', 'collections.html?cat=thuc-pham'], ['Đồ ăn & ăn vặt', 'collections.html?cat=do-an'], ['Dành cho mẹ', 'collections.html?cat=cho-me']] } ] },
   { label: 'Dành cho mẹ', short: 'Dành cho mẹ', tiny: 'Cho mẹ', link: 'collections.html?cat=cho-me', columns: [
     { title: 'Chăm sóc da', links: [['Kem chống nắng Hiskin 5in1 SPF50+', 'product.html?id=27734205778'], ['Serum RVB LAB Hyalu C+ 30ml', 'product.html?id=24015142248'], ['Kem dưỡng RVB LAB Hyalu C+ 30ml', 'product.html?id=26800350417'], ['Mặt nạ trẻ hoá NMN Kousa', 'product.html?id=24015583018'], ['Mặt nạ thạch lô hội Cure', 'product.html?id=57413220644']] },
     { title: 'Bộ chăm sóc chuyên sâu', links: [['Combo dưỡng da Hyalu C+', 'product.html?id=26900366084'], ['Cặp Meso bạc RVB LAB', 'product.html?id=29006040615'], ['Bộ đôi Meso Retinol siêu vi', 'product.html?id=28806784125'], ['Combo Meso vàng siêu vi', 'product.html?id=24329101823'], ['Cặp tái tạo phục hồi da Dermo Ioniq', 'product.html?id=25678530796']] },
@@ -3276,6 +3278,275 @@ window.PRODUCTS = [
       "Lọ nhỏ giọt 30ml – không hương, xuất xứ New Zealand, HSD 2 năm từ NSX"
     ],
     "usage": "Trẻ 4–13 tuổi: 0.5ml/lần/ngày. Từ 14 tuổi & người lớn: 0.5ml × 2 lần/ngày. Uống cùng bữa ăn hoặc theo hướng dẫn y tế."
+  },
+  {
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "origin": "Việt Nam",
+    "family": true,
+    "tags": [
+      "Mới"
+    ],
+    "cat": "do-an",
+    "needs": [],
+    "id": "bo-xuyen-tieu",
+    "name": "Bò Xuyên Tiêu Chef Hải – Bò Sấy Dẻo Vị Xuyên Tiêu Công Thức Masterchef Phạm Tuấn Hải – Gói 200g",
+    "short": "Bò xuyên tiêu Chef Hải 200g",
+    "brand": "chef-to-factory",
+    "ages": [],
+    "price": 339000,
+    "oldPrice": 339000,
+    "shape": "box",
+    "color": "#8A2A2A",
+    "weight": "Gói 200g",
+    "images": [
+      "img/bo-xuyen-tieu.jpg",
+      "img/bo-xuyen-tieu-2.jpg",
+      "img/bo-xuyen-tieu-3.jpg",
+      "img/bo-xuyen-tieu-4.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 gói 200g",
+        "price": 339000,
+        "oldPrice": 339000
+      },
+      {
+        "label": "2 gói",
+        "price": 678000,
+        "oldPrice": 678000
+      }
+    ],
+    "desc": "Bò xuyên tiêu làm theo công thức của Masterchef Phạm Tuấn Hải: thịt bò mông tươi được chọn kỹ, tẩm ướp đậm đà rồi sấy dẻo nên miếng thịt vẫn mềm, dai, không khô cứng. Vị xuyên tiêu thơm nồng, tê nhẹ rất cuốn – xé ra nhâm nhi, ăn kèm cơm nóng, xôi, bánh mì hay làm món mặn trong bữa cơm gia đình đều hợp. Sản phẩm đạt tiêu chuẩn an toàn thực phẩm ISO 22000.",
+    "highlights": [
+      "Thịt bò mông tươi, công thức Masterchef Phạm Tuấn Hải",
+      "Sấy dẻo: thịt mềm, dai, không khô cứng",
+      "Vị xuyên tiêu thơm nồng, tê nhẹ đặc trưng",
+      "Đạt tiêu chuẩn an toàn thực phẩm ISO 22000"
+    ],
+    "usage": "Ăn liền, hoặc hâm nóng vài phút cho thơm hơn. Ăn kèm cơm nóng, xôi, bánh mì hoặc nhâm nhi. Bảo quản nơi khô ráo, thoáng mát; đã mở thì buộc kín và dùng sớm.",
+    "image": "img/bo-xuyen-tieu.jpg",
+    "thumb": "img/thumb/bo-xuyen-tieu.jpg"
+  },
+  {
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "origin": "Việt Nam",
+    "family": true,
+    "tags": [
+      "Mới"
+    ],
+    "cat": "do-an",
+    "needs": [],
+    "id": "com-chay-phomai",
+    "name": "Cơm Cháy Nướng Cháy Cạnh Vị Phô Mai Vua Đỉnh Vị – Nướng Không Chiên, Giòn Không Ngấy – Túi Zip 200g",
+    "short": "Cơm cháy nướng vị phô mai 200g",
+    "brand": "vua-dinh-vi",
+    "ages": [
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "price": 115000,
+    "oldPrice": 115000,
+    "shape": "box",
+    "color": "#E8A317",
+    "weight": "Túi zip 200g",
+    "images": [
+      "img/com-chay-phomai.jpg",
+      "img/com-chay-phomai-2.jpg",
+      "img/com-chay-phomai-3.jpg",
+      "img/com-chay-phomai-4.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 túi 200g",
+        "price": 115000,
+        "oldPrice": 115000
+      },
+      {
+        "label": "2 túi",
+        "price": 230000,
+        "oldPrice": 230000
+      },
+      {
+        "label": "3 túi",
+        "price": 345000,
+        "oldPrice": 345000
+      }
+    ],
+    "desc": "Cơm cháy Vua Đỉnh Vị được nướng thay vì chiên nên miếng cơm vàng giòn, cạnh cháy thơm mà không cứng, không ngấy dầu. Lớp phô mai phủ đều, vị béo, mặn ngọt hài hoà – bé thích, người lớn cũng mê. Túi zip dày giúp cơm giữ độ giòn sau khi mở. Món ăn vặt tiện mang đi học, đi làm, dã ngoại hay xem phim cùng cả nhà. Thành phần: gạo, dầu thực vật, đường, muối, ớt, chiết xuất nấm men, bột phô mai.",
+    "highlights": [
+      "Nướng không chiên: vàng giòn, không cứng, không ngấy",
+      "Phủ phô mai béo, vị mặn ngọt hài hoà",
+      "Túi zip giữ cơm giòn sau khi mở",
+      "Ăn vặt tiện lợi cho cả nhà"
+    ],
+    "usage": "Ăn liền. Sau khi mở, kéo kín khoá zip để cơm giữ độ giòn. Bảo quản nơi khô ráo, tránh ánh nắng.",
+    "image": "img/com-chay-phomai.jpg",
+    "thumb": "img/thumb/com-chay-phomai.jpg"
+  },
+  {
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "origin": "Việt Nam",
+    "family": true,
+    "tags": [
+      "Mới"
+    ],
+    "cat": "do-an",
+    "needs": [],
+    "id": "com-vang-noi-oi",
+    "name": "Cơm Cháy Chà Bông Cơm Vàng Nội Ơi Vua Đỉnh Vị – Cơm Cháy Nướng Phủ Chà Bông, Sốt Mắm Hành – Túi 300g",
+    "short": "Cơm cháy chà bông Nội Ơi 300g",
+    "brand": "vua-dinh-vi",
+    "ages": [
+      "6-12y",
+      "12-18y"
+    ],
+    "price": 445000,
+    "oldPrice": 445000,
+    "shape": "box",
+    "color": "#D9822B",
+    "weight": "Túi 300g",
+    "images": [
+      "img/com-vang-noi-oi.jpg",
+      "img/com-vang-noi-oi-2.jpg",
+      "img/com-vang-noi-oi-3.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 túi 300g",
+        "price": 445000,
+        "oldPrice": 445000
+      },
+      {
+        "label": "2 túi",
+        "price": 890000,
+        "oldPrice": 890000
+      }
+    ],
+    "desc": "Cơm Vàng Nội Ơi mang vị cơm cháy truyền thống: lớp cơm mỏng ép rồi nướng vàng giòn, phủ đều chà bông (ruốc) mặn ngọt vừa phải, rưới sốt mắm, ớt, hành thơm lừng. Món ăn vặt đậm vị quê nhà, hợp để cả nhà quây quần thưởng thức hay làm quà biếu. Thành phần: gạo, ruốc, dầu thực vật, đường, mạch nha, mắm, ớt, tỏi, muối, chiết xuất nấm men.",
+    "highlights": [
+      "Cơm cháy nướng mỏng, vàng giòn",
+      "Phủ chà bông đều mặt, vị mặn ngọt hài hoà",
+      "Sốt mắm, ớt, hành thơm đậm đà",
+      "Hộp đẹp, hợp làm quà biếu"
+    ],
+    "usage": "Ăn liền, ngon nhất ngay sau khi mở túi. Đã mở thì buộc kín hoặc cho vào hộp kín để giữ giòn. Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng; không dùng nếu bao bì rách hoặc sản phẩm có dấu hiệu lạ.",
+    "image": "img/com-vang-noi-oi.jpg",
+    "thumb": "img/thumb/com-vang-noi-oi.jpg"
+  },
+  {
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "origin": "Việt Nam",
+    "family": true,
+    "tags": [
+      "Mới"
+    ],
+    "cat": "do-an",
+    "needs": [],
+    "id": "lon-den-khoi-mo",
+    "name": "Lợn Đen Khói Mơ Tây Bắc Vua Đỉnh Vị – Thịt Lợn Đen Gác Bếp Ướp Mắc Khén, Hạt Dổi – Gói 200g",
+    "short": "Lợn đen khói mơ Tây Bắc 200g",
+    "brand": "vua-dinh-vi",
+    "ages": [],
+    "price": 265000,
+    "oldPrice": 265000,
+    "shape": "box",
+    "color": "#5D1F14",
+    "weight": "Gói 200g",
+    "images": [
+      "img/lon-den-khoi-mo.jpg",
+      "img/lon-den-khoi-mo-2.jpg",
+      "img/lon-den-khoi-mo-3.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 gói 200g",
+        "price": 265000,
+        "oldPrice": 265000
+      },
+      {
+        "label": "2 gói",
+        "price": 530000,
+        "oldPrice": 530000
+      }
+    ],
+    "desc": "Đặc sản lợn đen Tây Bắc làm từ thịt lợn đen tươi (99%), ướp kỹ với mắc khén, hạt dổi, thảo quả, tỏi, ớt, tiêu rồi hun khói, cho miếng thịt thơm mùi khói, đậm đà, càng nhai càng ngọt. Không chất bảo quản. Món nhâm nhi ở nhà hay đãi bạn bè đều ngon.",
+    "highlights": [
+      "99% thịt lợn đen tươi, không chất bảo quản",
+      "Ướp mắc khén, hạt dổi, thảo quả – đúng vị Tây Bắc",
+      "Hun khói thơm, đậm đà",
+      "Ăn liền hoặc hấp nóng đều ngon"
+    ],
+    "usage": "Xé sợi ăn liền, hoặc hấp 3–5 phút cho thơm mềm; chấm chẩm chéo hoặc tương ớt. Bảo quản: chưa mở để nhiệt độ thường 5–7 ngày, ngăn mát tới 2 tháng; đã mở gói kín và để ngăn đá (tới 6 tháng). Không dùng nếu có dấu hiệu mốc hoặc bao bì rách.",
+    "image": "img/lon-den-khoi-mo.jpg",
+    "thumb": "img/thumb/lon-den-khoi-mo.jpg"
+  },
+  {
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "origin": "Việt Nam",
+    "family": true,
+    "tags": [
+      "Mới"
+    ],
+    "cat": "do-an",
+    "needs": [],
+    "id": "muoi-xuyen-tieu",
+    "name": "Muối Xuyên Tiêu Chef Hải – Muối Chấm Mắc Khén, Tiêu Xanh Cay Tê Thơm Nồng – Hũ 100g",
+    "short": "Muối xuyên tiêu Chef Hải 100g",
+    "brand": "chef-to-factory",
+    "ages": [],
+    "price": 48000,
+    "oldPrice": 48000,
+    "shape": "jar",
+    "color": "#C62828",
+    "weight": "Hũ 100g",
+    "images": [
+      "img/muoi-xuyen-tieu.jpg",
+      "img/muoi-xuyen-tieu-2.jpg",
+      "img/muoi-xuyen-tieu-3.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 hũ 100g",
+        "price": 48000,
+        "oldPrice": 48000
+      },
+      {
+        "label": "3 hũ",
+        "price": 144000,
+        "oldPrice": 144000
+      }
+    ],
+    "desc": "Muối chấm và rắc xuyên tiêu của Chef Hải: vị cay nồng, tê nhẹ, mặn vừa và thơm mùi tiêu rang, chấm đâu cũng \"bắt vị\" mà không gắt. Hoà quyện nhiều loại tiêu và thảo mộc: muối, mắc khén, tiêu xanh, ớt bột sấy. Chấm hoa quả chua (xoài, cóc, ổi), thịt luộc, đồ nướng, hải sản hay rắc vào món xào đều ngon.",
+    "highlights": [
+      "Cay nồng, tê nhẹ, thơm mùi tiêu rang",
+      "Kết hợp mắc khén, tiêu xanh, ớt sấy",
+      "Chấm hoa quả chua, thịt luộc, hải sản, đồ nướng",
+      "Rắc món xào, chiên thêm đậm vị"
+    ],
+    "usage": "Mở nắp, lấy lượng vừa dùng rồi đậy kín. Bảo quản nơi khô ráo, thoáng mát. Không dùng khi quá hạn hoặc sản phẩm có mùi lạ, chảy nước, đổi màu.",
+    "image": "img/muoi-xuyen-tieu.jpg",
+    "thumb": "img/thumb/muoi-xuyen-tieu.jpg"
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */
@@ -3944,6 +4215,12 @@ window.MUA_KEM = {
       ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà'],
       ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
       ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
+    ],
+    'do-an': [
+      ['com-chay-phomai', 'Ăn vặt giòn rụm cho cả nhà'],
+      ['muoi-xuyen-tieu', 'Muối chấm hoa quả, thịt luộc'],
+      ['bo-xuyen-tieu', 'Bò sấy dẻo nhâm nhi'],
+      ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà'],
     ],
     'cho-me': [
       ['27734205778', 'Chống nắng mỗi ngày – bước dưỡng không thể thiếu'],
