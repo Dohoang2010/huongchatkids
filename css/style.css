@@ -2284,3 +2284,17 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .hk-tv__xong b { display: block; font-size: 16px; }
 .hk-tv__xong p { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
 @media (max-width: 720px) { .hk-tv__o { grid-template-columns: 1fr; } .hk-tv__o .btn { width: 100%; justify-content: center; } }
+/* Đo chỉ số con – Vận động theo độ tuổi */
+.hk-vd__chi { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-top: 12px; }
+.hk-vd__chi div { padding: 12px 14px; border-radius: var(--radius-sm); background: #EFFAF8; }
+.hk-vd__chi small { display: block; font-size: 12.5px; font-weight: 600; color: #0F7A70; }
+.hk-vd__chi b { display: block; margin-top: 2px; font-size: 14.5px; color: var(--ink); line-height: 1.35; }
+.hk-vd__them p { margin: 10px 0 0; padding: 12px 14px; border-radius: var(--radius-sm); background: #FFF6E5; color: var(--ink-2); font-size: 14px; border-left: 4px solid #FF9F43; }
+.hk-vd__ds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.hk-vd__o { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: var(--radius); background: var(--bg-gray); }
+.hk-vd__ic { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: #fff; font-size: 24px; }
+.hk-vd__o b { display: block; font-size: 15px; }
+.hk-vd__o p { margin: 3px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.hk-vd__luu { margin: 12px 0 0; font-size: 14px; color: var(--ink-2); }
+.hk-vd__luu::before { content: '💡 '; }
+@media (max-width: 640px) { .hk-vd__ds { grid-template-columns: 1fr; } }

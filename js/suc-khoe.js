@@ -165,6 +165,71 @@
       ],
     },
   };
+  /* ---------------- Vận động theo giai đoạn ----------------
+     Thời lượng theo khuyến nghị của WHO (trẻ dưới 5 tuổi: 2019; 5-17 tuổi: 2020); giấc ngủ theo Viện Hàn lâm Y học Giấc ngủ Hoa Kỳ (AASM). */
+  const VAN_DONG = {
+    '0-6m': {
+      trongTam: 'Bé chưa cần "tập thể dục". Mẹ cho bé nằm sấp chơi và cử động tự do nhiều lần trong ngày để cổ, lưng và tay chân khoẻ dần.',
+      chiTieu: [['Vận động', 'Nhiều lần/ngày, nằm sấp tổng 30 phút'], ['Màn hình', 'Không xem'], ['Giấc ngủ', '14-17 giờ (gồm giấc ngày)']],
+      goiY: [['🤸', 'Nằm sấp chơi (tummy time)', 'Bắt đầu 3-5 phút mỗi lần khi bé tỉnh, tăng dần. Đặt đồ chơi trước mặt để bé ngẩng đầu.'],
+        ['🦶', 'Đạp chân, với tay', 'Treo đồ chơi để bé với, đạp; cho bé nằm trên thảm thay vì nằm nôi, ghế rung quá lâu.'],
+        ['🛁', 'Chơi khi tắm, massage', 'Massage tay chân nhẹ nhàng sau tắm giúp bé thư giãn, ngủ ngon.']],
+      luuY: 'Không để bé ngồi ghế ăn, xe đẩy, địu quá 1 giờ liền.',
+    },
+    '6-12m': {
+      trongTam: 'Bé tập lẫy, bò, ngồi, đứng vịn. Mẹ tạo không gian an toàn trên sàn để bé tự di chuyển nhiều nhất có thể.',
+      chiTieu: [['Vận động', 'Nhiều lần/ngày, chơi trên sàn'], ['Màn hình', 'Không xem'], ['Giấc ngủ', '12-16 giờ (gồm giấc ngày)']],
+      goiY: [['🐾', 'Tập bò, trườn', 'Đặt đồ chơi xa một chút để bé bò tới lấy; bò giúp phối hợp tay chân và chắc vai.'],
+        ['🧸', 'Đứng vịn, men theo ghế', 'Kê sofa, bàn thấp chắc chắn để bé vịn đứng và tập bước.'],
+        ['🎶', 'Chơi cùng bố mẹ', 'Lăn bóng, vỗ tay theo nhạc, ú oà – vận động kèm tương tác giúp bé phát triển ngôn ngữ.']],
+      luuY: 'Không dùng xe tập đi (dễ ngã, không giúp bé đi sớm hơn). Không để bé ngồi ghế, xe đẩy quá 1 giờ liền.',
+    },
+    '1-3y': {
+      trongTam: 'Bé tập đi vững, chạy, leo trèo. Cần ít nhất 3 giờ vận động mỗi ngày, rải đều, càng nhiều kiểu càng tốt.',
+      chiTieu: [['Vận động', 'Ít nhất 180 phút/ngày'], ['Màn hình', 'Dưới 2 tuổi: không; 2 tuổi: tối đa 1 giờ'], ['Giấc ngủ', '11-14 giờ (gồm giấc ngày)']],
+      goiY: [['🏃', 'Chạy nhảy, leo trèo', 'Chơi ở công viên, sân chơi; leo cầu trượt thấp, bò qua đường hầm.'],
+        ['⚽', 'Đá bóng, ném bóng', 'Bóng to, mềm giúp bé phối hợp tay - mắt - chân.'],
+        ['💃', 'Nhảy theo nhạc', 'Nhún nhảy, giậm chân, xoay vòng theo bài hát thiếu nhi.'],
+        ['🚲', 'Xe chòi chân', 'Giúp bé giữ thăng bằng, khoẻ chân, làm quen trước khi đạp xe.']],
+      luuY: 'Không để bé ngồi yên quá 1 giờ liền. Khi bé ngồi, đọc truyện, chơi xếp hình tốt hơn xem màn hình.',
+    },
+    '3-6y': {
+      trongTam: 'Tuổi mẫu giáo: ít nhất 3 giờ vận động mỗi ngày, trong đó có 1 giờ vận động mạnh làm bé thở nhanh, ra mồ hôi.',
+      chiTieu: [['Vận động', '180 phút/ngày, trong đó 60 phút mạnh'], ['Màn hình', 'Tối đa 1 giờ/ngày'], ['Giấc ngủ', '10-13 giờ (gồm giấc trưa)']],
+      goiY: [['🏊', 'Bơi', 'Vận động toàn thân, tốt cho tim phổi; cho bé học bơi để an toàn dưới nước.'],
+        ['🪢', 'Nhảy dây, bật nhảy', 'Lò cò, nhảy ô, bật xa – các bài có bật nhảy giúp xương chắc khoẻ.'],
+        ['🚴', 'Đạp xe', 'Xe có bánh phụ hoặc xe thăng bằng, đội mũ bảo hiểm.'],
+        ['🤾', 'Trò chơi vận động', 'Đuổi bắt, kéo co, ném bóng, múa, võ thiếu nhi – bé vui là bé chịu vận động.']],
+      luuY: 'Vận động ngoài trời buổi sáng vừa có nắng cho vitamin D vừa giúp bé ngủ ngon hơn.',
+    },
+    '6-12y': {
+      trongTam: 'Tuổi tiểu học: trung bình ít nhất 60 phút vận động vừa đến mạnh mỗi ngày, chủ yếu là vận động sức bền.',
+      chiTieu: [['Vận động', '60 phút/ngày vừa đến mạnh'], ['Tập mạnh, chắc xương', 'Ít nhất 3 buổi/tuần'], ['Màn hình giải trí', 'Càng ít càng tốt, nên dưới 2 giờ'], ['Giấc ngủ', '9-12 giờ']],
+      goiY: [['🏊', 'Bơi lội', 'Môn toàn thân, ít chấn thương, phù hợp hầu hết các bé.'],
+        ['🏀', 'Bóng rổ, cầu lông, bóng chuyền', 'Nhiều động tác bật nhảy, vươn người giúp xương chắc khoẻ.'],
+        ['⚽', 'Bóng đá, chạy bộ, đạp xe', 'Tăng sức bền tim phổi, giúp bé tập trung học tốt hơn.'],
+        ['🥋', 'Võ, nhảy dây, leo trèo', 'Tăng sức mạnh cơ và xương – thay cho tạ, bé chưa cần tập tạ nặng.']],
+      luuY: 'Mỗi 1 giờ ngồi học, cho bé đứng dậy đi lại, vươn vai vài phút.',
+    },
+    '12-18y': {
+      trongTam: 'Tuổi dậy thì: trung bình ít nhất 60 phút vận động vừa đến mạnh mỗi ngày. Đây là giai đoạn xương tích luỹ nhanh nhất.',
+      chiTieu: [['Vận động', '60 phút/ngày vừa đến mạnh'], ['Tập mạnh, chắc xương', 'Ít nhất 3 buổi/tuần'], ['Màn hình giải trí', 'Càng ít càng tốt'], ['Giấc ngủ', '8-10 giờ']],
+      goiY: [['🏀', 'Bóng rổ, bóng chuyền, cầu lông', 'Môn có bật nhảy giúp xương chắc khoẻ trong giai đoạn lớn nhanh.'],
+        ['🏊', 'Bơi, chạy bộ, đạp xe', 'Rèn sức bền, giảm căng thẳng học tập.'],
+        ['💪', 'Tập sức mạnh', 'Hít đất, plank, squat, kéo xà – tập đúng kỹ thuật, tăng dần, có người hướng dẫn nếu dùng tạ.'],
+        ['🧘', 'Giãn cơ, yoga', 'Giúp dáng thẳng, giảm đau mỏi khi ngồi học lâu.']],
+      luuY: 'Ngủ đủ giấc, ngủ trước 23 giờ: hormone tăng trưởng tiết nhiều khi ngủ sâu.',
+    },
+  };
+  /* Gợi ý thêm theo tình trạng (chỉ áp dụng từ 1 tuổi) */
+  const VD_TINH_TRANG = {
+    thapCoi: 'Chiều cao của bé đang thấp hơn chuẩn: ưu tiên các môn vận động toàn thân, bật nhảy như bơi, bóng rổ, nhảy dây, cầu lông; cho bé ngủ trước 22 giờ và chơi ngoài trời buổi sáng.',
+    hoiThap: 'Để hỗ trợ chiều cao: thêm các môn có bật nhảy, vươn người (nhảy dây, bóng rổ, bơi, cầu lông) và giữ giấc ngủ đủ, ngủ sớm.',
+    thuaCan: 'Bé đang thừa cân: tăng dần thời gian vận động vừa đến mạnh (đạp xe, bơi, đi bộ nhanh, chơi bóng), giảm thời gian ngồi xem màn hình, cả nhà cùng vận động để bé có động lực. Không bắt bé nhịn ăn.',
+    nguyCo: 'Bé có nguy cơ thừa cân: mỗi ngày thêm vận động ngoài trời, hạn chế màn hình và đồ ăn vặt khi ngồi xem.',
+    gay: 'Bé đang nhẹ cân: vận động vừa sức, vui chơi là chính, không ép tập nặng; cho bé ăn bữa phụ sau khi vận động để bù năng lượng.',
+  };
+
   /* Lời khuyên và nhu cầu sản phẩm theo tình trạng (khớp với NEEDS trong data.js) */
   const TINH_TRANG = {
     thapCoi: { needs: ['tang-chieu-cao', 'canxi', 'd3k2'], loi: 'Chiều cao của bé đang thấp hơn chuẩn WHO. Mẹ ưu tiên đủ đạm (thịt, cá, trứng, sữa), canxi, vitamin D và kẽm, cho bé ngủ trước 22 giờ và vận động ngoài trời mỗi ngày. Mẹ nên đưa bé đi khám dinh dưỡng để tìm nguyên nhân.' },
@@ -177,7 +242,7 @@
 
   const { $, $$, esc, I, productCard, rankDefault, store, ageRange } = MC;
   const KHOA = 'hck_suckhoe';
-  const VER = '20261014b';
+  const VER = '20261014c';
   const NEED_LABEL = (k) => ((window.NEEDS || []).find((n) => n.key === k) || {}).label || k;
 
   /* ---------------- Tiện ích ---------------- */
@@ -415,6 +480,7 @@
     const sp = (p) => `<div class="hk-pick">${g.lyDo(p).length ? `<span class="hk-pick__why">${I.check}${g.lyDo(p).map(esc).join(', ')}</span>` : ''}${productCard(p)}</div>`;
     const loi = k.tinhTrang.map((t) => `<p>${TINH_TRANG[t].loi}</p>`).join('');
     const dg = danhGiaChiTiet(hs, k);
+    const vd = VAN_DONG[k.giaiDoan], vdThem = k.thang >= 12 ? k.tinhTrang.map((t) => VD_TINH_TRANG[t]).filter(Boolean) : [];
     const bd = ['hfa', 'wfa', 'bfa'].filter((i) => c[i]);
     if (!bd.includes(bieuDoDangXem)) bieuDoDangXem = bd[0];
     kq.hidden = false;
@@ -453,6 +519,16 @@
         <div class="hk-nutri__grid">${gd.chat.map(([ten, luong, viSao, nguon]) => `<div class="hk-nut"><div class="hk-nut__top"><b>${ten}</b><span>${typeof luong === 'object' ? luong[hs.sex] : luong}</span></div><p>${viSao}</p><small>${nguon}</small></div>`).join('')}</div>
         <p class="hk-src">Lượng khuyến nghị mỗi ngày theo Viện Y học Hoa Kỳ (IOM, NIH); DHA theo Cơ quan An toàn Thực phẩm châu Âu (EFSA).</p>
       </div>
+
+      ${vd ? `<div class="hk-block hk-vd">
+        <div class="hk-block__head"><h3>Vận động cho bé ${esc(tuoi.label)}</h3></div>
+        <p class="hk-nutri__focus">${vd.trongTam}</p>
+        <div class="hk-vd__chi">${vd.chiTieu.map(([ten, gt]) => `<div><small>${ten}</small><b>${gt}</b></div>`).join('')}</div>
+        ${vdThem.length ? `<div class="hk-vd__them">${vdThem.map((t) => `<p>${t}</p>`).join('')}</div>` : ''}
+        <div class="hk-vd__ds">${vd.goiY.map(([ic, ten, mo]) => `<div class="hk-vd__o"><span class="hk-vd__ic" aria-hidden="true">${ic}</span><div><b>${ten}</b><p>${mo}</p></div></div>`).join('')}</div>
+        <p class="hk-vd__luu">${vd.luuY}</p>
+        <p class="hk-src">Thời lượng vận động theo khuyến nghị của Tổ chức Y tế Thế giới (WHO); giấc ngủ theo Viện Hàn lâm Y học Giấc ngủ Hoa Kỳ (AASM). Bé có bệnh lý, mẹ hỏi bác sĩ trước khi cho bé tập môn mới.</p>
+      </div>` : ''}
 
       ${k.thang < 24 ? '<p class="hk-milk">Sữa mẹ là thức ăn tốt nhất cho sự phát triển của trẻ. Các sản phẩm bên dưới không thay thế sữa mẹ.</p>' : ''}
 
