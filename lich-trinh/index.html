@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<link rel="stylesheet" href="app.css?v=5">
+<link rel="stylesheet" href="app.css?v=6">
 </head>
 <body>
 <div id="app">
@@ -39,25 +39,20 @@
     </ol>
   </section>
 
-  <!-- Thiết lập lần đầu -->
+  <!-- Thiết lập lần đầu: tạo tài khoản admin -->
   <section id="man-caidat" class="man man-form" hidden>
     <div class="form-dau">
       <div class="logo-to nho" aria-hidden="true"><span>LỊCH</span><b>+</b></div>
       <h1>Thiết lập lần đầu</h1>
-      <p class="mo">Đặt tên và mật khẩu cho 2 người dùng. Chỉ làm 1 lần.</p>
+      <p class="mo">Tạo tài khoản admin. Admin dùng để tạo tài khoản cho các thành viên.</p>
     </div>
     <form id="form-caidat" autocomplete="off">
-      <p class="nhom-ten"><i class="cham c-sep"></i>Sếp</p>
       <div class="nhom">
-        <label class="dong"><span>Tên hiển thị</span><input name="ten_sep" placeholder="VD: Anh Hoàng" maxlength="40"></label>
-        <label class="dong"><span>Mật khẩu</span><input name="mk_sep" type="password" placeholder="Ít nhất 4 ký tự" required minlength="4" autocomplete="new-password"></label>
+        <label class="dong"><span>Tên đăng nhập</span><input name="tenDangNhap" placeholder="VD: admin" required autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+        <label class="dong"><span>Mật khẩu</span><input name="matKhau" type="password" placeholder="Ít nhất 6 ký tự" required minlength="6" autocomplete="new-password"></label>
+        <label class="dong"><span>Nhập lại</span><input name="matKhau2" type="password" required autocomplete="new-password"></label>
       </div>
-      <p class="nhom-ten"><i class="cham c-troly"></i>Trợ lý</p>
-      <div class="nhom">
-        <label class="dong"><span>Tên hiển thị</span><input name="ten_troly" placeholder="VD: Chị Lan" maxlength="40"></label>
-        <label class="dong"><span>Mật khẩu</span><input name="mk_troly" type="password" placeholder="Ít nhất 4 ký tự" required minlength="4" autocomplete="new-password"></label>
-      </div>
-      <button class="nut-chinh" type="submit">Bắt đầu sử dụng</button>
+      <button class="nut-chinh" type="submit">Tạo admin</button>
       <p class="loi" role="alert"></p>
     </form>
   </section>
@@ -67,18 +62,16 @@
     <div class="form-dau">
       <div class="logo-to nho" aria-hidden="true"><span>THỨ</span><b class="logo-ngay">14</b></div>
       <h1>Lịch làm việc</h1>
-      <p class="mo">Bạn là ai?</p>
+      <p class="mo">Đăng nhập để xem lịch và nhắn tin</p>
     </div>
     <form id="form-dangnhap">
-      <div class="chon-vai" role="radiogroup" aria-label="Vai trò">
-        <label><input type="radio" name="vaiTro" value="sep" required><span class="the-vai"><i class="ava c-sep-bg">S</i><b data-ten="sep">Sếp</b><small>Sếp</small></span></label>
-        <label><input type="radio" name="vaiTro" value="troly" required><span class="the-vai"><i class="ava c-troly-bg">T</i><b data-ten="troly">Trợ lý</b><small>Trợ lý</small></span></label>
-      </div>
       <div class="nhom">
+        <label class="dong"><span>Tên đăng nhập</span><input name="tenDangNhap" required autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
         <label class="dong"><span>Mật khẩu</span><input name="matKhau" type="password" required autocomplete="current-password"></label>
       </div>
       <button class="nut-chinh" type="submit">Đăng nhập</button>
       <p class="loi" role="alert"></p>
+      <p class="chu-thich giua">Chưa có tài khoản? Nhờ admin tạo cho bạn.</p>
     </form>
   </section>
 
@@ -130,16 +123,30 @@
 
     <!-- TIN NHẮN -->
     <section class="tab" id="tab-chat" data-tab="chat" hidden>
-      <header class="nav nav-chat">
-        <i class="ava" id="chat-ava">T</i>
-        <div><b id="chat-ten">Trợ lý</b><small id="chat-tt"></small></div>
-      </header>
-      <div id="ds-tin" class="ds-tin" aria-live="polite"></div>
-      <form id="form-tin" class="soan-tin">
-        <button type="button" id="nut-gui-lich" class="nut-tron" aria-label="Gửi một sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-        <textarea id="o-tin" rows="1" placeholder="Tin nhắn" aria-label="Nội dung tin nhắn" enterkeyhint="send"></textarea>
-        <button type="submit" id="nut-gui" class="nut-gui" aria-label="Gửi" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-      </form>
+      <div id="chat-ds-khung" class="chat-ds-khung">
+        <header class="nav nav-to"><h1>Tin nhắn</h1></header>
+        <div id="chat-ds" class="chat-ds"></div>
+      </div>
+      <div id="chat-phong" class="chat-phong" hidden>
+        <header class="nav nav-chat">
+          <button class="nav-lui" id="chat-lui" type="button" aria-label="Quay lại danh sách"><svg viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg></button>
+          <i class="ava" id="chat-ava">?</i>
+          <div><b id="chat-ten"></b><small id="chat-tt"></small></div>
+        </header>
+        <div id="ds-tin" class="ds-tin" aria-live="polite"></div>
+        <form id="form-tin" class="soan-tin">
+          <button type="button" id="nut-gui-lich" class="nut-tron" aria-label="Gửi một sự kiện"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+          <textarea id="o-tin" rows="1" placeholder="Tin nhắn" aria-label="Nội dung tin nhắn" enterkeyhint="send"></textarea>
+          <button type="submit" id="nut-gui" class="nut-gui" aria-label="Gửi" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        </form>
+      </div>
+    </section>
+
+    <!-- THÀNH VIÊN (chỉ admin) -->
+    <section class="tab" id="tab-thanhvien" data-tab="thanhvien" hidden>
+      <header class="nav nav-to"><h1>Thành viên</h1>
+        <button class="nut-icon" id="nut-them-tv" type="button" aria-label="Thêm thành viên"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg></button></header>
+      <div class="cai-dat" id="khung-tv"></div>
     </section>
 
     <!-- TÔI -->
@@ -166,6 +173,7 @@
       <button type="button" data-den="lich" class="dang-chon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Lịch</span></button>
       <button type="button" data-den="nhap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5"/><path d="M17.5 2.5a2.1 2.1 0 0 1 3 3L12 14l-4 1 1-4Z"/></svg><span>Nhập lịch</span></button>
       <button type="button" data-den="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4c4.97 0 9 3.36 9 7.5S16.97 19 12 19c-1.1 0-2.15-.16-3.12-.46L4 20l1.4-3.6C3.9 15.07 3 13.36 3 11.5 3 7.36 7.03 4 12 4Z"/></svg><span>Tin nhắn</span><i class="huy-hieu" id="so-chua-doc" hidden>0</i></button>
+      <button type="button" data-den="thanhvien" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.6c2.6-.3 4.8 1.4 5.6 4.4"/></svg><span>Thành viên</span></button>
       <button type="button" data-den="toi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Cài đặt</span></button>
     </nav>
   </main>
@@ -174,8 +182,8 @@
   <div id="sheet" class="sheet-nen" hidden><div class="sheet" role="dialog" aria-modal="true"></div></div>
   <div id="toast" role="status" aria-live="polite"></div>
 </div>
-<script src="config.js?v=5"></script>
-<script src="demo.js?v=5"></script>
-<script src="app.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="demo.js?v=6"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

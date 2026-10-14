@@ -247,6 +247,45 @@ code { font-size: .85em; background: var(--nen2); padding: 1px 5px; border-radiu
 .nut-gui:disabled { background: var(--chu3); }
 .nut-gui svg { width: 20px; height: 20px; stroke-width: 2.6; }
 
+/* ===== danh sách cuộc trò chuyện ===== */
+.chat-ds-khung { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.chat-phong { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.chat-ds { padding-bottom: 20px; }
+.dong-chat { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 16px; position: relative; }
+.dong-chat + .dong-chat::before { content: ""; position: absolute; top: 0; left: 76px; right: 0; border-top: .5px solid var(--vach); }
+.dong-chat:active { background: var(--nen2); }
+.dong-chat .ava { width: 48px; height: 48px; font-size: 20px; }
+.ava-nhom { background: linear-gradient(#5ac8fa, #007aff) !important; }
+.ava-nhom svg { width: 60%; height: 60%; color: #fff; stroke-width: 1.8; }
+.nav-chat .ava { width: 36px; height: 36px; font-size: 16px; }
+.dc-nd { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.dc-hang { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.dc-hang b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; }
+.dc-hang small { color: var(--chu2); font-size: 13px; flex: none; }
+.dc-xem { flex: 1; min-width: 0; color: var(--chu2); font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dong-chat.chua-doc .dc-xem { color: var(--chu); font-weight: 600; }
+.dc-phu { color: var(--chu2); font-size: 13px; }
+.huy-hieu-nho { flex: none; min-width: 20px; height: 20px; border-radius: 10px; background: var(--xanh); color: #fff; font-style: normal; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
+.ten-gui { font-size: 12px; font-weight: 600; margin: 8px 0 1px 12px; }
+.nav-chat .nav-lui { margin-left: -8px; }
+
+/* ===== quản lý thành viên ===== */
+#tab-thanhvien { background: var(--nen2); }
+#tab-thanhvien .nav-to { background: var(--nav); }
+.the-tv { gap: 12px; }
+.the-tv .ava { width: 40px; height: 40px; font-size: 17px; }
+.tv-nd { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.tv-nd b { font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tv-nd small { color: var(--chu2); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tv-nd em { font-style: normal; }
+.chon-mau { display: flex; flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+.chon-mau label { position: relative; cursor: pointer; }
+.chon-mau input { position: absolute; opacity: 0; }
+.chon-mau i { display: block; width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--the); box-shadow: 0 0 0 1px var(--vach); }
+.chon-mau input:checked + i { box-shadow: 0 0 0 2.5px var(--chu); }
+.chon-mau input:focus-visible + i { outline: 2px solid var(--xanh); outline-offset: 3px; }
+.chu-ma { font-family: ui-monospace, Menlo, monospace; color: var(--chu) !important; font-size: 17px; user-select: all; }
+
 /* ===== cài đặt ===== */
 #tab-toi { background: var(--nen2); }
 #tab-toi .nav-to { background: var(--nav); }
@@ -314,9 +353,10 @@ code { font-size: .85em; background: var(--nen2); padding: 1px 5px; border-radiu
 .dong input[type="date"], .dong input[type="time"] { cursor: pointer; }
 .dong select { appearance: none; -webkit-appearance: none; flex: 0 1 auto; margin-left: auto; max-width: 66%; text-align: right; color: var(--chu2); padding-right: 2px; }
 
-.chon-lich { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 8px; }
+.chon-lich { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; padding: 8px; }
 .chon-lich input { position: absolute; opacity: 0; pointer-events: none; }
-.chon-lich span { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 4px; border-radius: 9px; font-size: 15px; border: 1.5px solid transparent; cursor: pointer; }
+.chon-lich span { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 6px; border-radius: 9px; font-size: 15px; border: 1.5px solid transparent; cursor: pointer; min-width: 0; }
+.chon-lich span b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chon-lich input:checked + span { border-color: currentColor; font-weight: 600; background: var(--nen2); }
 .chon-lich input:focus-visible + span { outline: 2px solid var(--xanh); }
 .chon-lich .cham { margin: 0; }

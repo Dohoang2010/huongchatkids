@@ -1,4 +1,4 @@
-/* Lịch làm việc – Sếp ↔ Trợ lý. Máy chủ: tools/lich-trinh-apps-script.gs */
+/* Lịch làm việc – nhiều thành viên + admin. Máy chủ: tools/lich-trinh-vps/server.js */
 'use strict';
 (() => {
   const DEMO = window.LICH_DEMO || null;   // ?demo: máy chủ giả trong demo.js
@@ -13,8 +13,8 @@
     del(k) { try { localStorage.removeItem(TIEN_TO + k); } catch (e) { /* bỏ qua */ } }
   };
 
-  const VAI = { sep: 'Sếp', troly: 'Trợ lý' };
-  const LICH = ['sep', 'troly', 'chung'];
+  const MAU_CHUNG = '#34c759';
+  const MAU_TV = ['#ff9500', '#007aff', '#af52de', '#ff2d55', '#5ac8fa', '#a2845e', '#ffcc00', '#5856d6', '#ff6482', '#30b0c7', '#64c466', '#bf5af2'];
   const THU = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
   const LAP = { '': 'Không bao giờ', ngay: 'Hằng ngày', tuan: 'Hằng tuần', thang: 'Hằng tháng', nam: 'Hằng năm' };
   const NHAC_GIO = [[-1, 'Không'], [0, 'Lúc diễn ra'], [5, '5 phút trước'], [10, '10 phút trước'], [15, '15 phút trước'], [30, '30 phút trước'],
@@ -22,11 +22,23 @@
   const NHAC_NGAY = [[-1, 'Không'], [0, 'Ngày diễn ra (8:00)'], [1440, '1 ngày trước (8:00)'], [2880, '2 ngày trước (8:00)'], [10080, '1 tuần trước (8:00)']];
 
   const S = {
-    token: null, toi: null, ten: { sep: 'Sếp', troly: 'Trợ lý' }, vapid: '',
-    lich: [], verLich: '', tin: [], choGui: [], tinCuoi: 0, daDoc: { sep: 0, troly: 0 }, online: {},
+    token: null, toi: null, admin: false, nguoi: [], verNguoi: '', vapid: '',
+    lich: [], verLich: '', tin: [], choGui: [], tinCuoi: 0, daDoc: {}, online: {}, kenh: null,
     thang: null, chon: null, xem: 'thang', namXem: 0, tab: 'lich',
-    loc: kho.get('loc', { sep: true, troly: true, chung: true })
+    loc: kho.get('loc2', {})
   };
+
+  /* ===================== THÀNH VIÊN & LỊCH CỦA AI ===================== */
+  const nguoi = id => S.nguoi.find(u => u.id === id);
+  const tenNguoi = id => (nguoi(id) || {}).ten || 'Người đã rời nhóm';
+  const chuCai = s => String(s || '?').trim().charAt(0).toUpperCase();
+  const thanhVien = () => S.nguoi.filter(u => !u.admin && !u.daXoa);
+  const dsLich = conHoatDong => [...thanhVien().filter(u => !conHoatDong || !u.khoa).map(u => u.id), 'chung'];
+  const mauLich = l => l === 'chung' ? MAU_CHUNG : (nguoi(l) || {}).mau || '#8e8e93';
+  const tenLich = l => { if (l === 'chung') return 'Lịch chung'; const u = nguoi(l); return u ? u.ten + (u.chucVu ? ` (${u.chucVu})` : '') : 'Người đã rời nhóm'; };
+  const tenLichNgan = l => l === 'chung' ? 'Lịch chung' : 'Lịch ' + tenNguoi(l);
+  const hienLich = l => S.loc[l] !== false;
+  const lichMacDinh = () => { const l = kho.get('lichMacDinh', ''); return dsLich(true).includes(l) ? l : dsLich(true).includes(S.toi) ? S.toi : 'chung'; };
 
   /* ===================== NGÀY GIỜ ===================== */
   const pad = n => String(n).padStart(2, '0');
@@ -86,7 +98,7 @@
   function trongKhoang(tu, den, tatCa) {
     const out = [];
     for (const ev of S.lich) {
-      if (!tatCa && !S.loc[ev.lich]) continue;
+      if (!tatCa && !hienLich(ev.lich)) continue;
       const dai = soNgay(ev.kt.slice(0, 10)) - soNgay(ev.bd.slice(0, 10));
       for (const ngay of lanDienRa(ev, tu, den, 800)) out.push({ ev, ngay, ket: ymdCong(ngay, dai) });
     }
@@ -114,7 +126,7 @@
   }
 
   function luuCache() {
-    kho.set('cache', { toi: S.toi, ten: S.ten, vapid: S.vapid, lich: S.lich, verLich: S.verLich, tin: S.tin.slice(-200), tinCuoi: S.tinCuoi, daDoc: S.daDoc });
+    kho.set('cache2', { toi: S.toi, admin: S.admin, nguoi: S.nguoi, verNguoi: S.verNguoi, vapid: S.vapid, lich: S.lich, verLich: S.verLich, tin: S.tin.slice(-300), tinCuoi: S.tinCuoi, daDoc: S.daDoc });
   }
 
   /* ===================== MÀN HÌNH ===================== */
@@ -140,11 +152,11 @@
     if (!API) return hienMan('ketnoi');
     S.token = kho.get('token', null);
     if (!S.token) return moDangNhap();
-    const c = kho.get('cache', null);
+    const c = kho.get('cache2', null);
     if (c && c.toi) { Object.assign(S, c); vaoApp(); }
     try {
-      const r = await api('tongHop', { chat: false });
-      Object.assign(S, { toi: r.toi, ten: r.ten, vapid: r.vapid, lich: r.lich, verLich: r.verLich, tinCuoi: r.tinCuoi, online: r.online });
+      const r = await api('tongHop', { kenhMo: '' });
+      Object.assign(S, { toi: r.toi, admin: !!r.admin, nguoi: r.nguoi, verNguoi: r.verNguoi, vapid: r.vapid, lich: r.lich, verLich: r.verLich, tinCuoi: r.tinCuoi, online: r.online || {} });
       S.daDoc = gopDaDoc(r.daDoc);
       S.tin = [];
       themTin(r.tin);
@@ -172,17 +184,14 @@
     try {
       const r = await api('trangThai');
       if (!r.daCaiDat) return hienMan('caidat');
-      S.ten = r.ten;
-      $$('#form-dangnhap [data-ten]').forEach(b => { b.textContent = r.ten[b.dataset.ten]; });
-      $$('#form-dangnhap .the-vai i').forEach((i, k) => { i.textContent = (r.ten[k ? 'troly' : 'sep'] || '?').trim().charAt(0).toUpperCase(); });
-      const cu = kho.get('vaiCu', '');
-      if (cu) { const ip = $(`#form-dangnhap input[value="${cu}"]`); if (ip) ip.checked = true; }
+      const f = $('#form-dangnhap');
+      if (!f.elements.tenDangNhap.value) f.elements.tenDangNhap.value = kho.get('tenCu', '');
       hienMan('dangnhap');
     } catch (e) { loiTai(e.message, moDangNhap); }
   }
 
   function hetPhien() {
-    S.token = null; kho.del('token'); kho.del('cache'); kho.del('dkTb');
+    S.token = null; kho.del('token'); kho.del('cache2'); kho.del('dkTb');
     clearTimeout(hPoll); dongLuong(); dongSheet();
     toast('Phiên đăng nhập đã hết, vui lòng đăng nhập lại');
     moDangNhap();
@@ -191,8 +200,13 @@
   $('#form-caidat').addEventListener('submit', async e => {
     e.preventDefault();
     const f = e.target, nut = $('button[type=submit]', f), data = Object.fromEntries(new FormData(f));
+    if (data.matKhau !== data.matKhau2) { $('.loi', f).textContent = 'Hai lần nhập mật khẩu chưa khớp'; return; }
     nut.disabled = true; $('.loi', f).textContent = '';
-    try { await api('caiDat', data); toast('Đã thiết lập xong. Mời đăng nhập.'); moDangNhap(); }
+    try {
+      await api('caiDat', { tenDangNhap: data.tenDangNhap, matKhau: data.matKhau });
+      kho.set('tenCu', data.tenDangNhap.trim().toLowerCase());
+      toast('Đã tạo admin. Mời đăng nhập.'); moDangNhap();
+    }
     catch (err) { $('.loi', f).textContent = err.message; }
     finally { nut.disabled = false; }
   });
@@ -200,12 +214,12 @@
   $('#form-dangnhap').addEventListener('submit', async e => {
     e.preventDefault();
     const f = e.target, nut = $('button[type=submit]', f), data = Object.fromEntries(new FormData(f));
-    if (!data.vaiTro) { $('.loi', f).textContent = 'Chọn Sếp hoặc Trợ lý'; return; }
+    data.tenDangNhap = String(data.tenDangNhap || '').trim().toLowerCase();
     nut.disabled = true; $('.loi', f).textContent = '';
     try {
       const r = await api('dangNhap', Object.assign(data, { tenMay: tenMay() }));
-      S.token = r.token; kho.set('token', r.token); kho.set('vaiCu', r.vaiTro);
-      f.reset();
+      S.token = r.token; kho.set('token', r.token); kho.set('tenCu', data.tenDangNhap);
+      f.elements.matKhau.value = '';
       await khoiDong();
     } catch (err) { $('.loi', f).textContent = err.message; }
     finally { nut.disabled = false; }
@@ -213,6 +227,10 @@
 
   function vaoApp() {
     hienMan('chinh');
+    // Admin: không có tin nhắn, có tab Thành viên
+    $('.tabbar [data-den=chat]').hidden = S.admin;
+    $('.tabbar [data-den=thanhvien]').hidden = !S.admin;
+    if (S.admin && S.tab === 'chat') chuyenTab('lich');
     if (!S.chon) S.chon = homNay();
     S.thang = thangCua(S.chon);
     veLai();
@@ -224,7 +242,7 @@
   function veLai() {
     veThang(); veDsNgay();
     if (S.xem === 'nam') veNam();
-    veChat(); veTrangThaiChat(); capNhatHuyHieu();
+    veChat(); capNhatHuyHieu();
     veToi();
   }
 
@@ -235,19 +253,21 @@
     $$('.tabbar button').forEach(b => b.classList.toggle('dang-chon', b.dataset.den === t));
     if (t === 'nhap' && !$('#form-nhap')) veNhap();
     if (t === 'chat') { veChat(true); danhDauDaDoc(); }
+    if (t === 'thanhvien') veThanhVien();
     if (S.token) henPoll(300);
     if (t === 'toi') veToi();
   }
 
   $$('.tabbar button').forEach(b => b.addEventListener('click', () => {
     if (b.dataset.den === 'lich' && S.tab === 'lich') return veHomNay();
+    if (b.dataset.den === 'chat' && S.tab === 'chat' && S.kenh) return dongKenh();
     chuyenTab(b.dataset.den);
   }));
 
   function moDuongDan(hash) {
     const p = String(hash || '').replace(/^#/, '').split('/');
     if (!p[0]) return;
-    if (p[0] === 'chat') chuyenTab('chat');
+    if (p[0] === 'chat') { chuyenTab('chat'); if (p[1]) moKenh(decodeURIComponent(p[1])); }
     else if (p[0] === 'toi') chuyenTab('toi');
     else if (p[0] === 'sap-toi') chuyenTab('lich');
     else if (p[0] === 'nhap') chuyenTab('nhap');
@@ -279,7 +299,7 @@
     for (let d = 1; d <= n; d++) {
       const ymd = `${y}-${pad(m)}-${pad(d)}`, cot = (lech + d - 1) % 7, c = mau[ymd];
       const cls = ['o-ngay', cot >= 5 && 'cuoi-tuan', ymd === h && 'hom-nay', ymd === S.chon && 'dang-chon'].filter(Boolean).join(' ');
-      const cham = c ? LICH.filter(l => c.has(l)).map(l => `<i class="c-${l}"></i>`).join('') : '';
+      const cham = c ? [...dsLich(), ...[...c].filter(l => !dsLich().includes(l))].filter(l => c.has(l)).slice(0, 4).map(l => `<i style="background:${mauLich(l)}"></i>`).join('') : '';
       html += `<button type="button" class="${cls}" data-ngay="${ymd}" role="gridcell" aria-selected="${ymd === S.chon}" aria-label="${ngayDai(ymd)}${c ? ', có lịch' : ''}"><span class="so">${d}</span><span class="cham-ngay">${cham}</span></button>`;
     }
     $('#luoi-thang').innerHTML = html;
@@ -317,8 +337,8 @@
     else if (o.ngay === ngay && o.ket === ngay) gio = ev.bd.slice(11) + (ev.kt !== ev.bd ? `<small>${ev.kt.slice(11)}</small>` : '');
     else if (o.ngay === ngay) gio = `${ev.bd.slice(11)}<small>bắt đầu</small>`;
     else gio = `${ev.kt.slice(11)}<small>kết thúc</small>`;
-    const phu = [ev.diaDiem, ev.lich === 'chung' ? 'Lịch chung' : 'Lịch ' + VAI[ev.lich]].filter(Boolean).join(' · ');
-    return `<button type="button" class="su-kien" data-ev="${esc(ev.id)}" data-ngay="${o.ngay}"><span class="gio">${gio}</span><i class="vach-mau c-${ev.lich}"></i><span class="nd"><b>${esc(ev.tieuDe)}</b><small>${esc(phu)}</small></span></button>`;
+    const phu = [ev.diaDiem, tenLichNgan(ev.lich)].filter(Boolean).join(' · ');
+    return `<button type="button" class="su-kien" data-ev="${esc(ev.id)}" data-ngay="${o.ngay}"><span class="gio">${gio}</span><i class="vach-mau" style="background:${mauLich(ev.lich)}"></i><span class="nd"><b>${esc(ev.tieuDe)}</b><small>${esc(phu)}</small></span></button>`;
   }
 
   function chonNgay(ymd, doiThangNeuCan) {
@@ -449,22 +469,20 @@
   /* ---- Chọn lịch hiển thị ---- */
   function moLoc() {
     const sh = moSheet(`<div class="sheet-dau"><span></span><b>Lịch hiển thị</b><button type="button" data-dong>Xong</button></div>
-      <div class="sheet-than"><div class="nhom">${LICH.map(l => `<button type="button" class="dong" data-loc="${l}"><i class="cham c-${l}"></i><span>${tenLich(l)}</span><span class="dau-tich">${S.loc[l] ? '✓' : ''}</span></button>`).join('')}</div>
-      <p class="chu-thich">Bỏ chọn để tạm ẩn lịch đó khỏi trang Lịch và Sắp tới.</p></div>`);
+      <div class="sheet-than"><div class="nhom">${dsLich().map(l => `<button type="button" class="dong" data-loc="${esc(l)}"><i class="cham" style="background:${mauLich(l)}"></i><span>${esc(tenLich(l))}</span><span class="dau-tich">${hienLich(l) ? '✓' : ''}</span></button>`).join('')}</div>
+      <p class="chu-thich">Bỏ chọn để tạm ẩn lịch của người đó khỏi trang Lịch.</p></div>`);
     sh.addEventListener('click', e => {
       const b = e.target.closest('[data-loc]');
       if (!b) return;
-      S.loc[b.dataset.loc] = !S.loc[b.dataset.loc];
-      kho.set('loc', S.loc);
-      $('.dau-tich', b).textContent = S.loc[b.dataset.loc] ? '✓' : '';
+      S.loc[b.dataset.loc] = !hienLich(b.dataset.loc);
+      kho.set('loc2', S.loc);
+      $('.dau-tich', b).textContent = hienLich(b.dataset.loc) ? '✓' : '';
       veThang(); veDsNgay(); if (S.xem === 'nam') veNam();
     });
   }
-  const tenLich = l => l === 'chung' ? 'Lịch chung' : `${VAI[l]} · ${S.ten[l] || VAI[l]}`;
 
   /* ---- Xem chi tiết sự kiện ---- */
   const linkHoa = s => esc(s).replace(/https?:\/\/[^\s<]+/g, u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
-  const tenNguoi = v => S.ten[v] || VAI[v] || '';
   const tenNhac = ev => ((ev.caNgay ? NHAC_NGAY : NHAC_GIO).find(x => x[0] === ev.nhac) || [0, `${ev.nhac} phút trước`])[1];
 
   function moChiTiet(id, ngay) {
@@ -484,18 +502,18 @@
         ${ev.diaDiem ? `<div class="ct-dong dia-diem">${linkHoa(ev.diaDiem)}</div>` : ''}
         <div class="ct-dong" style="margin-bottom:18px">${gio}</div>
         <div class="nhom">
-          <div class="dong"><span>Lịch</span><span class="gia-tri"><i class="cham c-${ev.lich}"></i>${esc(tenLich(ev.lich))}</span></div>
+          <div class="dong"><span>Lịch của</span><span class="gia-tri"><i class="cham" style="background:${mauLich(ev.lich)}"></i>${esc(tenLich(ev.lich))}</span></div>
           <div class="dong"><span>Cảnh báo</span><span class="gia-tri">${esc(tenNhac(ev))}</span></div>
         </div>
         ${ev.ghiChu ? `<div class="nhom"><div class="ct-chu">${linkHoa(ev.ghiChu)}</div></div>` : ''}
         <div class="nhom">
-          <button type="button" class="dong nut-dong xanh" id="ct-gui">Gửi vào tin nhắn</button>
+          ${S.admin ? '' : '<button type="button" class="dong nut-dong xanh" id="ct-gui">Gửi vào tin nhắn</button>'}
           <button type="button" class="dong nut-dong nut-xoa" id="ct-xoa">Xoá sự kiện</button>
         </div>
         <p class="ct-meta">Tạo bởi ${esc(tenNguoi(ev.taoBoi))}${sua}</p>
       </div>`);
     $('#ct-sua', sh).onclick = () => moSoan(ev);
-    $('#ct-gui', sh).onclick = () => { dongSheet(); chuyenTab('chat'); guiTin('', ev.id); };
+    if ($('#ct-gui', sh)) $('#ct-gui', sh).onclick = () => chonKenhGui(ev.id);
     $('#ct-xoa', sh).onclick = async e => {
       if (!confirm(ev.lap ? 'Xoá sự kiện này và mọi lần lặp lại của nó?' : 'Xoá sự kiện này?')) return;
       e.target.disabled = true;
@@ -522,7 +540,14 @@
 
   function evMoi(ngay) {
     const gio = Math.min(new Date().getHours() + 1, 23), bd = `${ngay}T${pad(gio)}:00`;
-    return { tieuDe: '', caNgay: false, bd, kt: bd, diaDiem: '', lich: kho.get('lichMacDinh', S.toi) || S.toi || 'chung', lap: '', lapDen: '', nhac: 15, ghiChu: '' };
+    return { tieuDe: '', caNgay: false, bd, kt: bd, diaDiem: '', lich: lichMacDinh(), lap: '', lapDen: '', nhac: 15, ghiChu: '' };
+  }
+
+  // Các ô chọn "Lịch của": mỗi thành viên + Chung
+  function chipLich(ten, gt) {
+    const ds = dsLich(true);
+    if (gt && !ds.includes(gt)) ds.unshift(gt);
+    return ds.map(l => `<label><input type="radio" name="${ten}" value="${esc(l)}"${l === gt ? ' checked' : ''}><span style="color:${mauLich(l)}"><i class="cham" style="background:${mauLich(l)}"></i><b style="color:var(--chu);font-weight:inherit">${esc(l === 'chung' ? 'Chung' : tenNguoi(l))}</b></span></label>`).join('');
   }
 
   function htmlFormLich(ev) {
@@ -548,9 +573,7 @@
       <p class="nhom-ten">Nội dung công việc</p>
       <div class="nhom"><label class="dong cot"><textarea name="noiDung" placeholder="VD: Họp với đối tác về hợp đồng quý 4. Mang theo bản in hợp đồng." maxlength="3200" aria-label="Nội dung công việc">${esc(noiDung)}</textarea></label></div>
       <p class="nhom-ten">Lịch của</p>
-      <div class="nhom chon-lich" role="radiogroup" aria-label="Lịch của">
-        ${LICH.map(l => `<label><input type="radio" name="lich" value="${l}"${l === ev.lich ? ' checked' : ''}><span style="color:var(--c-${l})"><i class="cham c-${l}"></i><b style="color:var(--chu);font-weight:inherit">${l === 'chung' ? 'Chung' : VAI[l]}</b></span></label>`).join('')}
-      </div>
+      <div class="nhom chon-lich" role="radiogroup" aria-label="Lịch của">${chipLich('lich', ev.lich)}</div>
       <div class="nhom"><label class="dong"><span>Nhắc trước</span><select name="nhac">${luaChonNhac(ev.caNgay, ev.nhac)}</select></label></div>
       <details class="nhom tuy-chon"${ev.lap || !motNgay ? ' open' : ''}><summary class="dong">Tuỳ chọn thêm: lặp lại, kéo dài nhiều ngày</summary>
         <label class="dong"><span>Lặp lại</span><select name="lap">${Object.entries(LAP).map(([k, t]) => `<option value="${k}"${k === ev.lap ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
@@ -597,7 +620,7 @@
     if (lapDen && lapDen < ngay) throw new Error('Ngày “Lặp đến” phải sau ngày bắt đầu');
     return {
       id: ev && ev.id, tieuDe, ghiChu, diaDiem: el('diaDiem').value.trim(), caNgay, bd, kt,
-      lap: el('lap').value, lapDen, lich: (f.querySelector('input[name=lich]:checked') || {}).value || S.toi,
+      lap: el('lap').value, lapDen, lich: (f.querySelector('input[name=lich]:checked') || {}).value || lichMacDinh(),
       nhac: Number(el('nhac').value)
     };
   }
@@ -661,7 +684,14 @@
   }
 
   /* ===================== NHẬP NHIỀU LỊCH 1 LẦN ===================== */
-  const LICH_CHU = { sep: 'Sếp', troly: 'Trợ lý', chung: 'Chung' };
+  // [Tên] trong dòng dán vào → lịch của thành viên có tên / chức vụ khớp; [Chung] → lịch chung
+  function timLichTheoTen(chu) {
+    const k = boDau(chu).trim();
+    if (k === 'chung') return 'chung';
+    const ds = thanhVien().filter(u => !u.khoa);
+    const u = ds.find(x => boDau(x.ten) === k) || ds.find(x => boDau(x.chucVu) === k) || ds.find(x => boDau(x.ten).includes(k) || (k.length > 2 && boDau(x.chucVu).includes(k)));
+    return u ? u.id : '';
+  }
 
   // Tách danh sách dán vào (mỗi dòng 1 lịch, hoặc copy từ Excel) thành các dòng lịch.
   // Hiểu: 16/10, 16/10/2026, hôm nay, mai, mốt, thứ 2…CN · 9:00, 9h, 9h30, 2h chiều, 9:00-10:30, cả ngày · "@ địa điểm" · [Sếp]/[Trợ lý]/[Chung]
@@ -675,7 +705,7 @@
       const o1 = dong.split('\t').map(x => x.trim()).filter(Boolean);
       let con = o1.length > 1 ? o1.slice() : [dong];
       const lay = (re, fn) => { con = con.map(c => c.replace(re, (...m) => { fn(m); return ' '; })); };
-      lay(/\[(sếp|sep|trợ lý|tro ly|tl|chung)\]/i, m => { const k = boDau(m[1]); o.lich = k.startsWith('se') ? 'sep' : k === 'chung' ? 'chung' : 'troly'; });
+      lay(/\[([^\]]{1,40})\]/, m => { o.lich = timLichTheoTen(m[1]); });
       lay(/(?:^|\s)(?:cả ngày|ca ngay)(?=\s|$|[,.;:])/i, () => { o.caNgay = true; });
       lay(/(?:^|\s)(?:ngày\s*)?(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?(?=\s|$|,)/, m => {
         const h = homNay();
@@ -730,7 +760,7 @@
         <label class="dn-cn"><input type="checkbox" name="caNgay"${o.caNgay ? ' checked' : ''}>Cả ngày</label>
         <button type="button" class="dn-xoa" aria-label="Bỏ dòng này">×</button></div>
       <div class="dn-hang3"><input type="time" name="tu" value="${esc(o.tu)}" aria-label="Giờ bắt đầu"><span class="gach">–</span><input type="time" name="den" value="${esc(o.den)}" aria-label="Giờ kết thúc">
-        <select name="lich" aria-label="Lịch của"><option value="">Lịch: mặc định</option>${LICH.map(l => `<option value="${l}"${o.lich === l ? ' selected' : ''}>Lịch: ${LICH_CHU[l]}</option>`).join('')}</select></div>
+        <select name="lich" aria-label="Lịch của"><option value="">Lịch: mặc định</option>${dsLich(true).map(l => `<option value="${esc(l)}"${o.lich === l ? ' selected' : ''}>${esc(tenLichNgan(l))}</option>`).join('')}</select></div>
       <input name="tieuDe" placeholder="Tiêu đề" maxlength="200" value="${esc(o.tieuDe)}" aria-label="Tiêu đề">
       <input name="diaDiem" placeholder="Địa điểm (không bắt buộc)" maxlength="200" value="${esc(o.diaDiem)}" aria-label="Địa điểm">
     </div>`;
@@ -738,7 +768,7 @@
 
   function moNhapNhieu() {
     const ngay0 = S.chon || homNay(), trong = () => ({ ngay: ngay0, tu: '', den: '', caNgay: false, tieuDe: '', diaDiem: '', lich: '' });
-    const macDinh = kho.get('lichMacDinh', S.toi);
+    const macDinh = lichMacDinh();
     const sh = moSheet(`<form id="form-nhieu" novalidate>
       <div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Nhập nhiều lịch</b><button type="submit" id="nn-luu">Lưu</button></div>
       <div class="sheet-than">
@@ -746,17 +776,15 @@
         <div class="nhom dan-nhanh">
           <textarea id="nn-dan" aria-label="Dán danh sách lịch" placeholder="Mỗi dòng 1 lịch, ví dụ:
 16/10 9:00-10:30 Họp đối tác @ Văn phòng
-17/10 14h Gặp kế toán [Trợ lý]
+17/10 14h Gặp kế toán [tên người]
 mai 8h30 Khám sức khoẻ
-thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
+thứ 2 cả ngày Công tác Hà Nội [Chung]"></textarea>
           <button type="button" class="dong nut-dong xanh" id="nn-tach">Tách thành các dòng bên dưới ↓</button>
         </div>
-        <p class="chu-thich">Hiểu được: ngày (16/10, mai, thứ 2…), giờ (9h, 9:30, 2h chiều, 9h-11h), “cả ngày”, “@ địa điểm”, [Sếp] / [Trợ lý] / [Chung]. Dán từ Excel cũng được.</p>
+        <p class="chu-thich">Hiểu được: ngày (16/10, mai, thứ 2…), giờ (9h, 9:30, 2h chiều, 9h-11h), “cả ngày”, “@ địa điểm”, [tên hoặc chức vụ người nhận] / [Chung]. Dán từ Excel cũng được.</p>
 
         <p class="nhom-ten">Áp dụng cho tất cả</p>
-        <div class="nhom chon-lich" role="radiogroup" aria-label="Lịch của (mặc định)">
-          ${LICH.map(l => `<label><input type="radio" name="lichChung" value="${l}"${l === macDinh ? ' checked' : ''}><span style="color:var(--c-${l})"><i class="cham c-${l}"></i><b style="color:var(--chu);font-weight:inherit">${LICH_CHU[l]}</b></span></label>`).join('')}
-        </div>
+        <div class="nhom chon-lich" role="radiogroup" aria-label="Lịch của (mặc định)">${chipLich('lichChung', macDinh)}</div>
         <div class="nhom"><label class="dong"><span>Cảnh báo</span><select name="nhacChung">${luaChonNhac(false, 15)}</select></label></div>
 
         <p class="nhom-ten">Cách 2 · Điền từng dòng <span id="nn-dem"></span></p>
@@ -813,7 +841,7 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     f.addEventListener('submit', async e => {
       e.preventDefault();
       loi.textContent = '';
-      const lichChung = (f.querySelector('input[name=lichChung]:checked') || {}).value || S.toi, nhac = Number(f.elements.nhacChung.value);
+      const lichChung = (f.querySelector('input[name=lichChung]:checked') || {}).value || lichMacDinh(), nhac = Number(f.elements.nhacChung.value);
       const ra = [];
       let sai = null;
       $$('.dong-nhap', ds).forEach(d => {
@@ -846,13 +874,22 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
   }
 
   /* ===================== TIN NHẮN ===================== */
-  const khac = () => (S.toi === 'sep' ? 'troly' : 'sep');
-  const dangXemChat = () => S.tab === 'chat' && document.visibilityState === 'visible' && !$('#man-chinh').hidden;
-  const soChuaDoc = () => S.tin.filter(t => t.tu !== S.toi && t.id > (S.daDoc[S.toi] || 0)).length;
+  // Kênh: 'nhom' (nhóm chung) hoặc 'dm:<id1>:<id2>' (nhắn riêng, 2 id xếp theo thứ tự)
+  const kenhRieng = (a, b) => 'dm:' + [a, b].sort().join(':');
+  const nguoiKia = kenh => kenh.slice(3).split(':').find(x => x !== S.toi);
+  const tenKenh = kenh => kenh === 'nhom' ? 'Nhóm chung' : tenNguoi(nguoiKia(kenh));
+  const dsKenh = () => S.admin || !nguoi(S.toi) ? [] : ['nhom', ...thanhVien().filter(u => u.id !== S.toi).map(u => kenhRieng(S.toi, u.id))];
+  const dangXemChat = () => S.tab === 'chat' && !!S.kenh && document.visibilityState === 'visible' && !$('#man-chinh').hidden;
+  const docCua = (kenh, uid) => ((S.daDoc[kenh] || {})[uid]) || 0;
+  const soChuaDocKenh = kenh => S.tin.filter(t => t.kenh === kenh && t.tu !== S.toi && t.id > docCua(kenh, S.toi)).length;
+  const soChuaDoc = () => dsKenh().reduce((n, k) => n + soChuaDocKenh(k), 0);
 
   function gopDaDoc(moi) {
-    const r = Object.assign({}, S.daDoc);
-    for (const k in moi) r[k] = Math.max(Number(moi[k]) || 0, Number(r[k]) || 0);
+    const r = JSON.parse(JSON.stringify(S.daDoc || {}));
+    for (const k in moi || {}) {
+      r[k] = r[k] || {};
+      for (const u in moi[k]) r[k][u] = Math.max(Number(moi[k][u]) || 0, Number(r[k][u]) || 0);
+    }
     return r;
   }
 
@@ -861,12 +898,13 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     const co = new Set(S.tin.map(t => t.id));
     for (const t of ds) {
       if (co.has(t.id)) continue;
+      t.kenh = t.kenh || 'nhom';
       S.tin.push(t); co.add(t.id);
-      if (t.tu === S.toi) S.choGui = S.choGui.filter(c => !(c.dangGui && c.nd === t.nd && c.lichId === (t.lichId || '')));
+      if (t.tu === S.toi) S.choGui = S.choGui.filter(c => !(c.dangGui && c.kenh === t.kenh && c.nd === t.nd && c.lichId === (t.lichId || '')));
       S.tinCuoi = Math.max(S.tinCuoi, t.id);
     }
     S.tin.sort((a, b) => a.id - b.id);
-    if (S.tin.length > 500) S.tin = S.tin.slice(-500);
+    if (S.tin.length > 1500) S.tin = S.tin.slice(-1500);
   }
 
   function noiDungTin(t) {
@@ -874,34 +912,81 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     if (t.lichId) {
       const ev = S.lich.find(x => x.id === t.lichId);
       const the = ev
-        ? `<button type="button" class="the-lich" data-ev="${esc(ev.id)}"><i class="vach-mau c-${ev.lich}"></i><span><b>${esc(ev.tieuDe)}</b><small>${ev.caNgay ? 'Cả ngày' : ev.bd.slice(11)} · ${ngayNgan(ev.bd.slice(0, 10))}${ev.lap ? ' · ' + LAP[ev.lap].toLowerCase() : ''}</small></span></button>`
+        ? `<button type="button" class="the-lich" data-ev="${esc(ev.id)}"><i class="vach-mau" style="background:${mauLich(ev.lich)}"></i><span><b>${esc(ev.tieuDe)}</b><small>${ev.caNgay ? 'Cả ngày' : ev.bd.slice(11)} · ${ngayNgan(ev.bd.slice(0, 10))}${ev.lap ? ' · ' + LAP[ev.lap].toLowerCase() : ''}</small></span></button>`
         : '<span class="the-lich"><span><b>📅 Sự kiện đã bị xoá</b></span></span>';
       html += (html ? '\n' : '') + the;
     }
     return html;
   }
 
+  function avaKenh(kenh, to) {
+    if (kenh === 'nhom') return `<i class="ava ava-nhom${to ? ' to' : ''}" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.6-5.5 6.5-5.5s5.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.6c2.6-.3 4.8 1.4 5.6 4.4"/></svg></i>`;
+    const u = nguoi(nguoiKia(kenh)) || {};
+    return `<i class="ava${to ? ' to' : ''}" style="background:${u.mau || '#8e8e93'}" aria-hidden="true">${esc(chuCai(u.ten))}</i>`;
+  }
+
+  // Danh sách cuộc trò chuyện (giống Zalo / Tin nhắn iPhone)
+  function veDsChat() {
+    const ds = dsKenh().map(k => {
+      const cuoi = [...S.tin].reverse().find(t => t.kenh === k);
+      return { k, cuoi, chua: soChuaDocKenh(k) };
+    }).sort((a, b) => (b.cuoi ? b.cuoi.id : -1) - (a.cuoi ? a.cuoi.id : -1) || (a.k === 'nhom' ? -1 : b.k === 'nhom' ? 1 : 0));
+    if (!ds.length) { $('#chat-ds').innerHTML = '<p class="trong-rong">Chưa có thành viên nào khác. Nhờ admin thêm thành viên.</p>'; return; }
+    $('#chat-ds').innerHTML = ds.map(({ k, cuoi, chua }) => {
+      let xem = 'Chưa có tin nhắn';
+      if (cuoi) {
+        const nd = cuoi.nd || (cuoi.lichId ? '📅 Đã gửi một sự kiện' : '');
+        xem = (cuoi.tu === S.toi ? 'Bạn: ' : k === 'nhom' ? tenNguoi(cuoi.tu) + ': ' : '') + nd;
+      }
+      const u = k === 'nhom' ? null : nguoi(nguoiKia(k));
+      const phu = k === 'nhom' ? `${thanhVien().length} thành viên` : (u && u.chucVu) || '';
+      const gio = cuoi ? (cuoi.t.slice(0, 10) === homNay() ? cuoi.t.slice(11, 16) : `${cuoi.t.slice(8, 10)}/${cuoi.t.slice(5, 7)}`) : '';
+      return `<button type="button" class="dong-chat${chua ? ' chua-doc' : ''}" data-kenh="${esc(k)}">${avaKenh(k)}
+        <span class="dc-nd"><span class="dc-hang"><b>${esc(tenKenh(k))}</b><small>${esc(gio)}</small></span>
+        <span class="dc-hang"><span class="dc-xem">${esc(xem)}</span>${chua ? `<i class="huy-hieu-nho">${chua}</i>` : ''}</span>
+        ${!cuoi && phu ? `<small class="dc-phu">${esc(phu)}</small>` : ''}</span></button>`;
+    }).join('');
+  }
+  $('#chat-ds').addEventListener('click', e => { const b = e.target.closest('[data-kenh]'); if (b) moKenh(b.dataset.kenh); });
+
+  function moKenh(kenh) {
+    if (!dsKenh().includes(kenh)) return;
+    S.kenh = kenh;
+    $('#chat-ds-khung').hidden = true; $('#chat-phong').hidden = false;
+    veTrangThaiChat(); veChat(true); danhDauDaDoc(); henPoll(300);
+  }
+  function dongKenh() {
+    S.kenh = null;
+    $('#chat-phong').hidden = true; $('#chat-ds-khung').hidden = false;
+    veDsChat(); henPoll(300);
+  }
+  $('#chat-lui').onclick = dongKenh;
+
   function veChat(cuonXuong) {
-    const box = $('#ds-tin');
+    if (!S.kenh) { veDsChat(); return; }
+    const box = $('#ds-tin'), kenh = S.kenh;
     const gan = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
-    const ds = S.tin.concat(S.choGui);
-    if (!ds.length) { box.innerHTML = '<p class="trong-rong">Chưa có tin nhắn nào.<br>Gửi lời chào nhé 👋</p>'; return; }
-    const cuoiCuaToi = [...S.tin].reverse().find(t => t.tu === S.toi);
-    const doc = S.daDoc[khac()] || 0;
+    const ds = S.tin.filter(t => t.kenh === kenh).concat(S.choGui.filter(c => c.kenh === kenh));
+    if (!ds.length) { box.innerHTML = `<p class="trong-rong">Chưa có tin nhắn nào.<br>Gửi lời chào ${kenh === 'nhom' ? 'cả nhóm' : esc(tenKenh(kenh))} nhé 👋</p>`; return; }
+    const cuoiCuaToi = [...ds].reverse().find(t => t.tu === S.toi && t.id);
     let html = '', truoc = null;
     ds.forEach((t, i) => {
       const moc = !truoc || t.t.slice(0, 10) !== truoc.t.slice(0, 10) || phutCua(t.t.slice(0, 16)) - phutCua(truoc.t.slice(0, 16)) > 30;
-      if (moc) {
-        const ngay = t.t.slice(0, 10);
-        html += `<div class="moc-gio"><b>${tenNgayGan(ngay) || ngayNgan(ngay)}</b> ${t.t.slice(11, 16)}</div>`;
-      }
-      const sau = ds[i + 1];
+      if (moc) html += `<div class="moc-gio"><b>${tenNgayGan(t.t.slice(0, 10)) || ngayNgan(t.t.slice(0, 10))}</b> ${t.t.slice(11, 16)}</div>`;
+      const sau = ds[i + 1], cuaToi = t.tu === S.toi;
+      const dauNhom = moc || !truoc || truoc.tu !== t.tu;
       const cuoi = !sau || sau.tu !== t.tu || sau.t.slice(0, 10) !== t.t.slice(0, 10) || phutCua(sau.t.slice(0, 16)) - phutCua(t.t.slice(0, 16)) > 30;
-      const cua = t.tu === S.toi ? 'cua-toi' : 'cua-ho';
-      html += `<div class="bong ${cua}${cuoi ? ' cuoi' : ''}${t.dangGui ? ' dang-gui' : ''}" title="${esc(t.t.slice(11, 16))}">${noiDungTin(t)}</div>`;
+      if (kenh === 'nhom' && !cuaToi && dauNhom) html += `<div class="ten-gui" style="color:${mauLich(t.tu)}">${esc(tenNguoi(t.tu))}</div>`;
+      html += `<div class="bong ${cuaToi ? 'cua-toi' : 'cua-ho'}${cuoi ? ' cuoi' : ''}${t.dangGui ? ' dang-gui' : ''}" title="${esc(t.t.slice(11, 16))}">${noiDungTin(t)}</div>`;
       if (t.loi) html += `<button type="button" class="trang-thai-tin loi-gui" data-thu-lai="${esc(t.tam)}">Không gửi được · Bấm để gửi lại</button>`;
       else if (t.dangGui && !sau) html += '<div class="trang-thai-tin">Đang gửi…</div>';
-      else if (cuoiCuaToi && t.id === cuoiCuaToi.id && !S.choGui.length) html += `<div class="trang-thai-tin">${doc >= t.id ? 'Đã xem' : 'Đã gửi'}</div>`;
+      else if (cuoiCuaToi && t.id === cuoiCuaToi.id) {
+        const daXem = Object.keys(S.daDoc[kenh] || {}).filter(u => u !== S.toi && docCua(kenh, u) >= t.id);
+        const chu = kenh === 'nhom'
+          ? (daXem.length ? (daXem.length >= thanhVien().length - 1 ? 'Mọi người đã xem' : 'Đã xem: ' + daXem.map(tenNguoi).join(', ')) : 'Đã gửi')
+          : (daXem.length ? 'Đã xem' : 'Đã gửi');
+        html += `<div class="trang-thai-tin">${esc(chu)}</div>`;
+      }
       truoc = t;
     });
     box.innerHTML = html;
@@ -909,14 +994,21 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
   }
 
   function veTrangThaiChat() {
-    const k = khac(), ten = tenNguoi(k), o = S.online[k];
-    $('#chat-ten').textContent = ten;
-    $('#chat-ava').textContent = ten.trim().charAt(0).toUpperCase();
-    $('#chat-ava').className = 'ava c-' + k + '-bg';
+    if (!S.kenh) return;
+    const k = S.kenh;
+    $('#chat-ten').textContent = tenKenh(k);
+    $('#chat-ava').outerHTML = avaKenh(k).replace('<i class="ava', '<i id="chat-ava" class="ava');
     const tt = $('#chat-tt');
+    if (k === 'nhom') {
+      const on = thanhVien().filter(u => u.id !== S.toi && S.online[u.id] && Date.now() - S.online[u.id].t < 30000);
+      tt.textContent = `${thanhVien().length} thành viên${on.length ? ` · ${on.length} đang hoạt động` : ''}`;
+      tt.className = on.length ? 'on' : '';
+      return;
+    }
+    const id = nguoiKia(k), o = S.online[id], u = nguoi(id) || {};
     if (o && Date.now() - o.t < 30000) { tt.textContent = 'Đang hoạt động'; tt.className = 'on'; }
     else if (o) { tt.textContent = 'Hoạt động ' + tuongDoi(o.t); tt.className = ''; }
-    else { tt.textContent = VAI[k]; tt.className = ''; }
+    else { tt.textContent = u.chucVu || ''; tt.className = ''; }
   }
   function tuongDoi(ms) {
     const p = Math.max(1, Math.round((Date.now() - ms) / 6e4));
@@ -930,27 +1022,41 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
   }
 
   function danhDauDaDoc() {
-    if (!dangXemChat() || !soChuaDoc()) return;
-    S.daDoc[S.toi] = S.tinCuoi;
+    if (!dangXemChat() || !soChuaDocKenh(S.kenh)) return;
+    const kenh = S.kenh, cuoi = Math.max(...S.tin.filter(t => t.kenh === kenh).map(t => t.id));
+    (S.daDoc[kenh] = S.daDoc[kenh] || {})[S.toi] = cuoi;
     capNhatHuyHieu();
-    api('daDoc', { id: S.tinCuoi }).catch(() => {});
+    api('daDoc', { kenh, id: cuoi }).catch(() => {});
   }
 
-  async function guiTin(nd, lichId) {
-    const tam = { tam: 'x' + Date.now() + Math.random(), t: bayGio(), tu: S.toi, nd, lichId: lichId || '', dangGui: true };
+  async function guiTin(nd, lichId, kenh = S.kenh) {
+    if (!kenh) return;
+    const tam = { tam: 'x' + Date.now() + Math.random(), t: bayGio(), tu: S.toi, nd, lichId: lichId || '', kenh, dangGui: true };
     S.choGui.push(tam);
     veChat(true);
     try {
-      const r = await api('guiTin', { noiDung: nd, lichId: lichId || '' });
+      const r = await api('guiTin', { kenh, noiDung: nd, lichId: lichId || '' });
       S.choGui = S.choGui.filter(c => c !== tam);
       themTin([r.tin]);
-      S.daDoc[S.toi] = Math.max(S.daDoc[S.toi] || 0, r.tin.id);
+      (S.daDoc[kenh] = S.daDoc[kenh] || {})[S.toi] = Math.max(docCua(kenh, S.toi), r.tin.id);
       luuCache();
     } catch (e) {
       if (e.hetPhien) return;
       tam.dangGui = false; tam.loi = true;
+      toast(e.message);
     }
     veChat(true);
+  }
+
+  // Từ chi tiết sự kiện: chọn gửi vào nhóm hay cho ai
+  function chonKenhGui(lichId) {
+    const sh = moSheet(`<div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Gửi sự kiện cho</b><span></span></div>
+      <div class="sheet-than"><div class="nhom">${dsKenh().map(k => `<button type="button" class="dong-chat" data-kenh="${esc(k)}">${avaKenh(k)}<span class="dc-nd"><b>${esc(tenKenh(k))}</b></span></button>`).join('')}</div></div>`);
+    sh.addEventListener('click', e => {
+      const b = e.target.closest('[data-kenh]');
+      if (!b) return;
+      dongSheet(); chuyenTab('chat'); moKenh(b.dataset.kenh); guiTin('', lichId, b.dataset.kenh);
+    });
   }
 
   const oTin = $('#o-tin');
@@ -974,7 +1080,7 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     const lai = e.target.closest('[data-thu-lai]');
     if (lai) {
       const t = S.choGui.find(c => c.tam === lai.dataset.thuLai);
-      if (t) { S.choGui = S.choGui.filter(c => c !== t); guiTin(t.nd, t.lichId); }
+      if (t) { S.choGui = S.choGui.filter(c => c !== t); guiTin(t.nd, t.lichId, t.kenh); }
     }
   });
   $('#nut-gui-lich').onclick = () => {
@@ -988,6 +1094,132 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     });
   };
 
+  /* ===================== QUẢN LÝ THÀNH VIÊN (ADMIN) ===================== */
+  const CHUC_VU_GOI_Y = ['Sếp', 'Trợ lý', 'Thư ký', 'Quản lý', 'Kế toán', 'Nhân viên'];
+  function taoMatKhau() {
+    const chu = 'abcdefghjkmnpqrstuvwxyz23456789', b = new Uint8Array(8);
+    (window.crypto || {}).getRandomValues ? crypto.getRandomValues(b) : b.forEach((_, i) => { b[i] = Math.random() * 256; });
+    return [...b].map(x => chu[x % chu.length]).join('');
+  }
+  function goiYTenDN(ten) {
+    const tu = boDau(ten).replace(/[^a-z0-9 ]/g, ' ').trim().split(/\s+/).filter(Boolean);
+    if (!tu.length) return '';
+    return (tu[tu.length - 1] + (tu.length > 1 ? '.' + tu.slice(0, -1).map(x => x[0]).join('') : '')).slice(0, 30);
+  }
+
+  async function veThanhVien() {
+    if (!S.admin) return;
+    const k = $('#khung-tv');
+    if (!S.dsTv) k.innerHTML = '<p class="trong-rong">Đang tải…</p>';
+    try { S.dsTv = (await api('dsThanhVien')).ds; } catch (e) { k.innerHTML = `<p class="trong-rong">${esc(e.message)}</p>`; return; }
+    const ds = S.dsTv;
+    k.innerHTML = `<p class="chu-thich" style="margin:4px 16px 10px">${ds.length ? `${ds.length} thành viên. Bấm vào một người để sửa, đặt lại mật khẩu, khoá hoặc xoá.` : 'Chưa có thành viên nào. Bấm “Thêm thành viên” để tạo tài khoản đầu tiên.'}</p>
+      ${ds.length ? `<div class="nhom">${ds.map(u => `<button type="button" class="dong nut-dong the-tv" data-tv="${esc(u.id)}">
+        <i class="ava" style="background:${u.mau}">${esc(chuCai(u.ten))}</i>
+        <span class="tv-nd"><b>${esc(u.ten)}</b><small>${esc(u.chucVu || 'Thành viên')} · ${esc(u.tenDangNhap)}${u.khoa ? ' · <em class="do">Đã khoá</em>' : ''}</small></span>
+        <i class="mui">›</i></button>`).join('')}</div>` : ''}
+      <button type="button" class="nut-chinh" id="tv-them">+ Thêm thành viên</button>`;
+    $('#tv-them').onclick = () => moFormTv(null);
+  }
+  $('#khung-tv').addEventListener('click', e => { const b = e.target.closest('[data-tv]'); if (b) moFormTv((S.dsTv || []).find(u => u.id === b.dataset.tv)); });
+  $('#nut-them-tv').onclick = () => moFormTv(null);
+
+  function moFormTv(u) {
+    const moi = !u;
+    const mauDung = new Set((S.dsTv || []).map(x => x.mau));
+    const mau = u ? u.mau : (MAU_TV.find(m => !mauDung.has(m)) || MAU_TV[0]);
+    const sh = moSheet(`<form id="form-tv" novalidate autocomplete="off">
+      <div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>${moi ? 'Thêm thành viên' : 'Sửa thành viên'}</b><button type="submit">${moi ? 'Tạo' : 'Lưu'}</button></div>
+      <div class="sheet-than">
+        <div class="nhom">
+          <label class="dong"><span>Họ tên</span><input name="ten" maxlength="40" value="${esc(u ? u.ten : '')}" placeholder="VD: Nguyễn Văn An" required></label>
+          <label class="dong"><span>Chức vụ</span><input name="chucVu" maxlength="30" value="${esc(u ? u.chucVu : '')}" placeholder="VD: Trợ lý" list="goi-y-chuc-vu"></label>
+        </div>
+        <datalist id="goi-y-chuc-vu">${CHUC_VU_GOI_Y.map(c => `<option value="${c}">`).join('')}</datalist>
+        ${moi ? `<p class="nhom-ten">Thông tin đăng nhập</p>
+        <div class="nhom">
+          <label class="dong"><span>Tên đăng nhập</span><input name="tenDangNhap" maxlength="30" placeholder="VD: an.nv" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
+          <label class="dong"><span>Mật khẩu</span><input name="matKhau" value="${taoMatKhau()}" minlength="6" required autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+          <button type="button" class="dong nut-dong xanh" id="tv-tao-mk">Tạo mật khẩu khác</button>
+        </div>
+        <p class="chu-thich">Tên đăng nhập: chữ không dấu, số, dấu chấm. Mật khẩu ít nhất 6 ký tự – thành viên có thể tự đổi sau.</p>`
+        : `<div class="nhom"><div class="dong"><span>Tên đăng nhập</span><span class="gia-tri">${esc(u.tenDangNhap)}</span></div></div>`}
+        <p class="nhom-ten">Màu lịch</p>
+        <div class="nhom chon-mau" role="radiogroup" aria-label="Màu lịch">${MAU_TV.map(m => `<label><input type="radio" name="mau" value="${m}"${m === mau ? ' checked' : ''}><i style="background:${m}"></i></label>`).join('')}</div>
+        ${moi ? '' : `<div class="nhom">
+          <button type="button" class="dong nut-dong xanh" id="tv-dat-mk">Đặt lại mật khẩu</button>
+          <button type="button" class="dong nut-dong xanh" id="tv-khoa">${u.khoa ? 'Mở khoá tài khoản' : 'Khoá tài khoản'}</button>
+          <button type="button" class="dong nut-dong nut-xoa" id="tv-xoa">Xoá thành viên</button>
+        </div>
+        <p class="chu-thich">Khoá: người này không đăng nhập được nữa (mở khoá lại được). Xoá: tài khoản bị gỡ hẳn, lịch đã giao cho họ vẫn được giữ.</p>`}
+        <p class="loi" role="alert"></p>
+      </div></form>`);
+    const f = $('#form-tv', sh), loi = $('.loi', f);
+    if (moi) {
+      let tuSua = false;
+      f.elements.tenDangNhap.addEventListener('input', () => { tuSua = true; });
+      f.elements.ten.addEventListener('input', () => { if (!tuSua) f.elements.tenDangNhap.value = goiYTenDN(f.elements.ten.value); });
+      $('#tv-tao-mk', f).onclick = () => { f.elements.matKhau.value = taoMatKhau(); };
+      setTimeout(() => f.elements.ten.focus(), 320);
+    } else {
+      $('#tv-dat-mk', f).onclick = async () => {
+        const mk = taoMatKhau();
+        if (!confirm(`Đặt lại mật khẩu cho ${u.ten}?\nMật khẩu mới: ${mk}\n(${u.ten} sẽ bị đăng xuất khỏi mọi máy)`)) return;
+        try { await api('datLaiMatKhau', { id: u.id, matKhau: mk }); moThongTinTk(u.ten, u.tenDangNhap, mk, 'Đã đặt lại mật khẩu'); }
+        catch (err) { loi.textContent = err.message; }
+      };
+      $('#tv-khoa', f).onclick = async () => {
+        if (!u.khoa && !confirm(`Khoá tài khoản của ${u.ten}? Người này sẽ bị đăng xuất và không đăng nhập được nữa.`)) return;
+        try { await api('khoaThanhVien', { id: u.id, khoa: !u.khoa }); dongSheet(); toast(u.khoa ? 'Đã mở khoá' : 'Đã khoá tài khoản'); veThanhVien(); henPoll(0); }
+        catch (err) { loi.textContent = err.message; }
+      };
+      $('#tv-xoa', f).onclick = async () => {
+        if (!confirm(`Xoá thành viên ${u.ten}? Không hoàn tác được.\nLịch đã giao cho ${u.ten} vẫn được giữ lại.`)) return;
+        try { await api('xoaThanhVien', { id: u.id }); dongSheet(); toast('Đã xoá thành viên'); veThanhVien(); henPoll(0); }
+        catch (err) { loi.textContent = err.message; }
+      };
+    }
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      const g = n => (f.elements[n] ? f.elements[n].value.trim() : '');
+      const d = { ten: g('ten'), chucVu: g('chucVu'), mau: (f.querySelector('input[name=mau]:checked') || {}).value };
+      if (!d.ten) { loi.textContent = 'Chưa nhập họ tên'; return; }
+      const nut = $('button[type=submit]', f);
+      nut.disabled = true; loi.textContent = '';
+      try {
+        if (moi) {
+          d.tenDangNhap = g('tenDangNhap').toLowerCase(); d.matKhau = g('matKhau');
+          await api('taoThanhVien', d);
+          moThongTinTk(d.ten, d.tenDangNhap, d.matKhau, 'Đã tạo tài khoản');
+        } else {
+          await api('suaThanhVien', Object.assign(d, { id: u.id }));
+          dongSheet(); toast('Đã lưu');
+        }
+        veThanhVien(); henPoll(0);
+      } catch (err) { loi.textContent = err.message; nut.disabled = false; }
+    });
+  }
+
+  // Sau khi tạo / đặt lại mật khẩu: hiện thông tin để admin gửi cho thành viên (Zalo, tin nhắn…)
+  function moThongTinTk(ten, tenDN, mk, tieuDe) {
+    const link = location.origin + '/';
+    const chu = `Tài khoản Lịch làm việc của ${ten}\nĐăng nhập: ${link}\nTên đăng nhập: ${tenDN}\nMật khẩu: ${mk}\n(Vào Cài đặt để đổi mật khẩu sau khi đăng nhập)`;
+    const sh = moSheet(`<div class="sheet-dau"><span></span><b>${esc(tieuDe)}</b><button type="button" data-dong>Xong</button></div>
+      <div class="sheet-than">
+        <p class="chu-thich" style="margin:6px 4px 12px">Gửi thông tin này cho ${esc(ten)} (qua Zalo hoặc nhắn riêng):</p>
+        <div class="nhom">
+          <div class="dong"><span>Trang đăng nhập</span><span class="gia-tri">${esc(link.replace(/^https?:\/\//, ''))}</span></div>
+          <div class="dong"><span>Tên đăng nhập</span><b class="gia-tri chu-ma">${esc(tenDN)}</b></div>
+          <div class="dong"><span>Mật khẩu</span><b class="gia-tri chu-ma">${esc(mk)}</b></div>
+        </div>
+        <button type="button" class="nut-chinh" id="tk-chep">Sao chép để gửi</button>
+      </div>`);
+    $('#tk-chep', sh).onclick = async () => {
+      try { await navigator.clipboard.writeText(chu); toast('Đã sao chép. Dán vào Zalo để gửi.'); }
+      catch (e) { prompt('Sao chép nội dung này:', chu); }
+    };
+  }
+
   /* ===================== ĐỒNG BỘ ĐỊNH KỲ ===================== */
   let hPoll = 0, dangPoll = false, loiLienTiep = 0;
   function henPoll(ms) { clearTimeout(hPoll); hPoll = setTimeout(poll, ms); }
@@ -996,19 +1228,22 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     if (dangPoll) return henPoll(800);
     dangPoll = true;
     try {
-      const r = await api('poll', { verLich: S.verLich, tinCuoi: S.tinCuoi, chat: dangXemChat(), canTen: !S.daCoTen });
-      S.daCoTen = true;
-      let doiLich = false, doiTin = false;
+      const r = await api('poll', { verLich: S.verLich, verNguoi: S.verNguoi, tinCuoi: S.tinCuoi, kenhMo: dangXemChat() ? S.kenh : '' });
+      let doiLich = false, doiTin = false, doiNguoi = false;
+      if (r.nguoi) { S.nguoi = r.nguoi; S.verNguoi = r.verNguoi; doiNguoi = true; }
       if (r.lich) { S.lich = r.lich; S.verLich = r.verLich; doiLich = true; }
       if (r.tin && r.tin.length) { themTin(r.tin); doiTin = true; }
-      if (r.ten) S.ten = r.ten;
-      const docCu = S.daDoc[khac()];
+      const docCu = JSON.stringify(S.daDoc);
       S.daDoc = gopDaDoc(r.daDoc || {});
       S.online = r.online || {};
-      if (doiLich) { veThang(); veDsNgay(); if (S.xem === 'nam') veNam(); }
-      if (doiTin || doiLich || docCu !== S.daDoc[khac()]) veChat(doiTin && dangXemChat());
+      const me = nguoi(S.toi);
+      if (doiNguoi && !S.admin && (!me || me.khoa || me.daXoa)) { dangPoll = false; return hetPhien(); }
+      if (doiNguoi && S.kenh && !dsKenh().includes(S.kenh)) dongKenh();
+      if (doiLich || doiNguoi) { veThang(); veDsNgay(); if (S.xem === 'nam') veNam(); }
+      if (doiNguoi) { veToi(); if (S.tab === 'thanhvien') veThanhVien(); }
+      if (doiTin || doiLich || doiNguoi || docCu !== JSON.stringify(S.daDoc)) veChat(doiTin && dangXemChat());
       veTrangThaiChat(); capNhatHuyHieu(); danhDauDaDoc();
-      if (doiLich || doiTin) luuCache();
+      if (doiLich || doiTin || doiNguoi) luuCache();
       loiLienTiep = 0; $('#mat-mang').hidden = true;
     } catch (e) {
       if (e.hetPhien) { dangPoll = false; return; }
@@ -1061,10 +1296,12 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
 
   function veToi() {
     if (!S.toi) return;
-    $('#toi-ten').textContent = tenNguoi(S.toi);
-    $('#toi-vai').textContent = VAI[S.toi];
-    $('#toi-ava').textContent = tenNguoi(S.toi).trim().charAt(0).toUpperCase();
-    $('#toi-ava').className = 'ava to c-' + S.toi + '-bg';
+    const u = nguoi(S.toi) || {};
+    $('#toi-ten').textContent = u.ten || '';
+    $('#toi-vai').textContent = S.admin ? 'Admin – quản lý thành viên' : (u.chucVu || 'Thành viên');
+    $('#toi-ava').textContent = chuCai(u.ten);
+    $('#toi-ava').className = 'ava to';
+    $('#toi-ava').style.background = S.admin ? '#636366' : (u.mau || '#8e8e93');
     veThongBao();
   }
 
@@ -1151,10 +1388,10 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
   $('#nut-doi-ten').onclick = () => {
     const sh = moSheet(`<form><div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Đổi tên hiển thị</b><button type="submit">Lưu</button></div>
       <div class="sheet-than"><div class="nhom"><label class="dong cot"><input name="ten" maxlength="40" value="${esc(tenNguoi(S.toi))}" aria-label="Tên hiển thị" required></label></div>
-      <p class="chu-thich">Tên này hiện với ${esc(tenNguoi(khac()))} trong tin nhắn và thông báo.</p><p class="loi" role="alert"></p></div></form>`);
+      <p class="chu-thich">Tên này hiện với mọi người trong lịch, tin nhắn và thông báo.</p><p class="loi" role="alert"></p></div></form>`);
     $('form', sh).addEventListener('submit', async e => {
       e.preventDefault();
-      try { const r = await api('doiTen', { ten: e.target.elements.ten.value }); S.ten = r.ten; luuCache(); veLai(); dongSheet(); toast('Đã đổi tên'); }
+      try { const r = await api('doiTen', { ten: e.target.elements.ten.value }); S.nguoi = r.nguoi; S.verNguoi = r.verNguoi; luuCache(); veLai(); dongSheet(); toast('Đã đổi tên'); }
       catch (err) { $('.loi', sh).textContent = err.message; }
     });
   };
@@ -1163,7 +1400,7 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     const sh = moSheet(`<form><div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Đổi mật khẩu</b><button type="submit">Lưu</button></div>
       <div class="sheet-than"><div class="nhom">
         <label class="dong"><span>Hiện tại</span><input name="cu" type="password" autocomplete="current-password" required></label>
-        <label class="dong"><span>Mới</span><input name="moi" type="password" autocomplete="new-password" minlength="4" required placeholder="Ít nhất 4 ký tự"></label>
+        <label class="dong"><span>Mới</span><input name="moi" type="password" autocomplete="new-password" minlength="6" required placeholder="Ít nhất 6 ký tự"></label>
         <label class="dong"><span>Nhập lại</span><input name="moi2" type="password" autocomplete="new-password" required></label>
       </div><p class="loi" role="alert"></p></div></form>`);
     $('form', sh).addEventListener('submit', async e => {
@@ -1181,8 +1418,10 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
     try { const sub = hoTroTB() && await (await navigator.serviceWorker.ready).pushManager.getSubscription(); if (sub) endpoint = sub.endpoint; } catch (e) { /* bỏ qua */ }
     try { await api('dangXuat', { endpoint }); } catch (e) { /* vẫn đăng xuất trên máy */ }
     clearTimeout(hPoll); dongLuong();
-    S.token = null; S.toi = null; S.tin = []; S.choGui = []; S.lich = []; S.tinCuoi = 0; S.daDoc = { sep: 0, troly: 0 };
-    kho.del('token'); kho.del('cache'); kho.del('dkTb');
+    S.token = null; S.toi = null; S.admin = false; S.nguoi = []; S.dsTv = null; S.kenh = null;
+    S.tin = []; S.choGui = []; S.lich = []; S.tinCuoi = 0; S.daDoc = {};
+    kho.del('token'); kho.del('cache2'); kho.del('dkTb');
+    $('#chat-phong').hidden = true; $('#chat-ds-khung').hidden = false;
     try { navigator.clearAppBadge && navigator.clearAppBadge(); } catch (e) { /* bỏ qua */ }
     chuyenTab('lich');
     moDangNhap();
@@ -1204,24 +1443,25 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
   if (DEMO) {
     const goiY = document.createElement('p');
     goiY.className = 'chu-thich giua';
-    goiY.textContent = 'Bản demo: chọn Sếp hoặc Trợ lý, mật khẩu gõ gì cũng được.';
+    goiY.innerHTML = 'Bản demo – tên đăng nhập: <b>sep</b>, <b>troly</b>, <b>minh</b> hoặc <b>admin</b>; mật khẩu gõ gì cũng được.';
     $('#form-dangnhap').append(goiY);
     const thanh = document.createElement('div');
     thanh.className = 'thanh-demo';
-    thanh.innerHTML = '<span>Bản demo · đang xem với vai <b id="demo-vai"></b></span><button type="button" id="demo-doi">Đổi vai ⇄</button><button type="button" id="demo-lai">Làm lại</button>';
+    thanh.innerHTML = '<span>Bản demo · đang xem: <b id="demo-vai"></b></span><button type="button" id="demo-doi">Đổi người ⇄</button><button type="button" id="demo-lai">Làm lại</button>';
     $('#man-chinh').insertBefore(thanh, $('.tabbar'));
-    const capNhatVai = () => { $('#demo-vai').textContent = VAI[S.toi] || ''; };
+    const capNhatVai = () => { $('#demo-vai').textContent = S.admin ? 'Admin' : tenNguoi(S.toi); };
     new MutationObserver(capNhatVai).observe($('#toi-vai'), { childList: true });
     $('#demo-doi').onclick = async () => {
-      const moi = S.toi === 'sep' ? 'troly' : 'sep';
-      S.token = 'demo-' + moi; kho.set('token', S.token); kho.del('cache');
-      S.tin = []; S.choGui = []; S.tinCuoi = 0; S.daDoc = { sep: 0, troly: 0 };
-      await khoiDong(); capNhatVai();
-      toast('Đang xem với vai ' + VAI[moi]);
+      const ds = DEMO.dsDangNhap(), i = ds.indexOf(DEMO.tenDangNhapCua(S.toi)), tenDN = ds[(i + 1) % ds.length];
+      S.token = DEMO.tokenCua(tenDN); kho.set('token', S.token); kho.del('cache2');
+      Object.assign(S, { tin: [], choGui: [], tinCuoi: 0, daDoc: {}, kenh: null, dsTv: null, tab: 'lich' });
+      $('#chat-phong').hidden = true; $('#chat-ds-khung').hidden = false;
+      await khoiDong(); chuyenTab('lich'); capNhatVai();
+      toast('Đang xem với: ' + (S.admin ? 'Admin' : tenNguoi(S.toi)));
     };
     $('#demo-lai').onclick = () => {
       if (!confirm('Xoá dữ liệu demo và bắt đầu lại?')) return;
-      DEMO.datLai(); kho.del('cache'); location.reload();
+      DEMO.datLai(); kho.del('cache2'); location.reload();
     };
   }
 

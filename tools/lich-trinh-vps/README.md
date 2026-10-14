@@ -14,6 +14,9 @@ App chính: **https://quanlylichtrinh.site** · Demo: https://quanlylichtrinh.si
 SSH: thêm vào `~/.ssh/config` alias `quanlylichtrinh` (HostName 103.216.116.57, Port 24700, User root, IdentityFile khoá riêng).
 
 - **Cập nhật** sau khi sửa code: `sh tools/lich-trinh-vps/deploy.sh`
+- **Tài khoản:** 1 admin (chỉ quản lý thành viên, không chat) + các thành viên do admin tạo trong app (tab Thành viên). Quên mật khẩu admin:
+  `ssh quanlylichtrinh 'cd /opt/lichtrinh && set -a && . /etc/lichtrinh.env && set +a && sudo -E -u lichtrinh node server.js tao-admin admin MATKHAUMOI && systemctl restart lichtrinh'`
+- **Sao lưu trước khi đổi cấu trúc dữ liệu:** bản sao lưu nằm ở `/root/sao-luu/` trên VPS.
 - **Cài lần đầu trên VPS mới**: `ssh quanlylichtrinh 'bash -s' < tools/lich-trinh-vps/cai-dat-vps.sh`, chép `nginx.conf` vào sites-available, `certbot --nginx -d quanlylichtrinh.site -d www.quanlylichtrinh.site`, rồi chạy `deploy.sh`.
 - **Xem nhật ký**: `ssh quanlylichtrinh journalctl -u lichtrinh -n 100`
 - **Sao lưu dữ liệu**: `ssh quanlylichtrinh 'sudo -u postgres pg_dump lichtrinh' > lichtrinh-$(date +%F).sql`

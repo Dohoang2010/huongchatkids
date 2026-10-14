@@ -1,4 +1,8 @@
 /**
+ * ⚠️ BẢN CŨ – KHÔNG CÒN DÙNG. App đã chuyển sang máy chủ VPS (tools/lich-trinh-vps/) và hỗ trợ nhiều thành viên;
+ * file này chỉ dành cho phiên bản 2 người (Sếp ↔ Trợ lý) đầu tiên, giữ lại để tham khảo.
+ */
+/**
  * LỊCH LÀM VIỆC (Sếp ↔ Trợ lý) – máy chủ chạy miễn phí trên Google Apps Script.
  * App nằm ở https://huongchatkids.vn/lich-trinh/ . File này lo:
  *   1) Lưu lịch trình (sheet "Lịch")      2) Tin nhắn giữa 2 người (sheet "Tin nhắn")

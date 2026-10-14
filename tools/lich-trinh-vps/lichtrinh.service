@@ -1,5 +1,5 @@
 [Unit]
-Description=Lich lam viec - Sep va Tro ly (quanlylichtrinh.site)
+Description=Lich lam viec - nhieu thanh vien (quanlylichtrinh.site)
 After=network.target postgresql.service
 
 [Service]
