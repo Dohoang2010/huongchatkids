@@ -2260,3 +2260,9 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .hk-advice__t { display: block; margin-top: 14px; font-size: 14px; color: var(--ink); }
 .hk-advice__t + p { margin-top: 6px; }
 @media (max-width: 560px) { .hk-eval__ds li { grid-template-columns: 1fr; } .hk-eval__dau { display: flex; align-items: baseline; justify-content: space-between; } }
+/* Đo chỉ số con – ô tích lưu thông tin bé, nhãn kết quả chưa lưu */
+.hk-luu { display: flex; gap: 10px; align-items: flex-start; margin-top: 4px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--teal-50, #F1FAF8); border: 1px solid var(--teal-200, #B9E3DC); cursor: pointer; }
+.hk-luu input { flex: none; width: 20px; height: 20px; margin-top: 1px; accent-color: var(--teal-600, #0F7A70); }
+.hk-luu b { display: block; font-size: 14.5px; color: var(--ink); }
+.hk-luu small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--muted); }
+.hk-tam { display: inline-block; margin-left: 4px; padding: 1px 8px; border-radius: 999px; background: #FFF1D9; color: #8A5A00; font-size: 12px; font-weight: 700; vertical-align: 1px; }

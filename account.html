@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261013e">
+  <link rel="stylesheet" href="css/style.css?v=20261014a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -28,6 +28,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const DANG_TAI = '<p class="text-muted fs-14">Đang tải…</p>';
   const LOAI_DIEM = { EARN: 'Thưởng giới thiệu', SPEND: 'Dùng điểm mua hàng', REVERSE: 'Thu hồi điểm thưởng', REFUND: 'Hoàn điểm', ADJUSTMENT: 'Shop điều chỉnh', EXPIRE: 'Điểm hết hạn' };
 
+  /* ---------- 👶 Thông tin bé: hồ sơ mẹ đã tích "Lưu thông tin bé" ở Đo chỉ số con (localStorage hck_suckhoe, chỉ trên máy này) ---------- */
+  const beDoc = () => { const d = MC.store.get('hck_suckhoe'); return d && d.dob && d.sex && Array.isArray(d.log) && d.log.length ? d : null; };
+  const beTuoi = (dob) => { const [y, m, n] = dob.split('-').map(Number), nay = new Date(); let t = (nay.getFullYear() - y) * 12 + nay.getMonth() - (m - 1); if (nay.getDate() < n) t--; return t < 1 ? 'dưới 1 tháng' : t < 24 ? t + ' tháng' : Math.floor(t / 12) + ' tuổi' + (t % 12 ? ' ' + (t % 12) + ' tháng' : ''); };
+  const beNgay = (iso) => iso.split('-').reverse().join('/');
+  const beSo = (x) => String(x).replace('.', ',');
+  const beHTML = () => {
+    const b = beDoc();
+    if (!b) return `<p class="fs-14 text-muted">Chưa lưu thông tin bé. Đo chiều cao, cân nặng để so với chuẩn WHO và tích <b>Lưu thông tin bé</b> để theo dõi lần sau.</p><a class="btn btn--teal btn--block mt-8" href="index.html#sucKhoe">📏 Đo chỉ số con miễn phí</a>`;
+    const lan = b.log[b.log.length - 1];
+    return `<div class="kh-view">
+      <div class="kh-row"><span>Tên bé</span><b>${esc(b.name || '—')}</b></div>
+      <div class="kh-row"><span>Giới tính</span><b>${b.sex === 1 ? 'Bé trai' : 'Bé gái'}</b></div>
+      <div class="kh-row"><span>Ngày sinh</span><b>${beNgay(b.dob)} (${beTuoi(b.dob)})</b></div>
+      <div class="kh-row"><span>Lần đo gần nhất</span><b>${beSo(lan.h)} cm · ${beSo(lan.w)} kg<br><small class="text-muted">ngày ${beNgay(lan.d)}</small></b></div>
+      <div class="kh-row"><span>Số lần đã đo</span><b>${b.log.length}</b></div>
+      <a class="btn btn--outline btn--block mt-12" href="index.html#sucKhoe">📏 Xem kết quả / đo lần mới</a>
+      <button class="btn btn--ghost btn--block btn--sm mt-8" type="button" data-be-xoa>Xoá thông tin bé</button>
+      <p class="fs-13 text-muted mt-8">Thông tin bé chỉ lưu trên máy này, không gửi lên máy chủ.</p></div>`;
+  };
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('[data-be-xoa]')) return;
+    if (!confirm('Xoá thông tin và các lần đo của bé trên máy này?')) return;
+    MC.store.set('hck_suckhoe', null); const box = $('#beAcc'); if (box) box.innerHTML = beHTML(); MC.toast('Đã xoá thông tin bé', { type: 'ok' });
+  });
   /* ---------- 🎂 Ngày sinh: khách điền 1 lần, tháng sinh nhật giảm % mọi đơn (SITE.loyalty.sinhNhat) ---------- */
   const SN = () => (SITE.loyalty || {}).sinhNhat || {};
   const snHTML = (kh) => kh.ngaySinh ? `${esc(kh.ngaySinh.split('-').reverse().join('/'))}${MC.sinhNhat().dangThang ? ' <span class="badge badge--hot">🎂 Tháng sinh nhật</span>' : ''}<small class="sn-ghi">Ưu đãi sinh nhật 1 lần mỗi năm · ngày sinh không đổi để nhận lại</small>`
@@ -271,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="kh-row"><span>Số đơn đã mua</span><b>${Number(kh.soDon) || don.length || 0}</b></div>
             <button class="btn btn--outline btn--block mt-12" type="button" id="btnEdit">✏️ Sửa thông tin / địa chỉ</button>
           </div>
+          <div class="divider"></div><h3>👶 Thông tin bé</h3><div id="beAcc">${beHTML()}</div>
           <div class="divider"></div><h3>🔐 Bảo mật</h3>
           <div class="bm-row"><span>Email</span><b>${kh.email ? `${esc(MC.anEmail(kh.email))} <span class="badge badge--teal">Dùng lấy lại mật khẩu</span>` : '<span class="text-muted">Chưa có</span>'}</b></div>
           <div class="bm-row"><span>Số điện thoại</span><b>${esc(maskPhone(kh.sdt || ''))} <span class="badge badge--teal">✓ Đã xác minh</span></b></div>

@@ -177,7 +177,7 @@
 
   const { $, $$, esc, I, productCard, rankDefault, store, ageRange } = MC;
   const KHOA = 'hck_suckhoe';
-  const VER = '20261013b';
+  const VER = '20261014a';
   const NEED_LABEL = (k) => ((window.NEEDS || []).find((n) => n.key === k) || {}).label || k;
 
   /* ---------------- Tiện ích ---------------- */
@@ -282,9 +282,10 @@
   if (!root) return;
   const the = $('#hkCard', root), kq = $('#hkResult', root);
   let moRong = false, bieuDoDangXem = 'hfa', hienTai = null, rongBieuDo = 0;
+  let tam = null; // kết quả tra cứu không lưu (mẹ bỏ tích "Lưu thông tin bé"): chỉ hiện, không ghi vào máy
 
   function veThe() {
-    const hs = doc();
+    const hs = tam || doc();
     if (!hs) {
       the.innerHTML = `<div class="hk-card">
         <div class="hk-card__ic" aria-hidden="true">📏</div>
@@ -304,13 +305,15 @@
     the.innerHTML = `<div class="hk-card hk-card--saved">
       <div class="hk-card__ic" aria-hidden="true">📏</div>
       <div class="hk-card__txt">
-        <h2>Theo dõi sức khỏe con</h2>
-        <p>Lần đo gần nhất của <b>${tenBe(hs)}</b> (${tuoiChu(hs.dob, lan.d)}) ngày ${hienNgay(lan.d)}: ${so(lan.h)} cm, ${so(lan.w)} kg.</p>
+        <h2>${tam ? 'Kết quả tra cứu' : 'Theo dõi sức khỏe con'}</h2>
+        <p>${tam ? 'Số đo' : 'Lần đo gần nhất'} của <b>${tenBe(hs)}</b> (${tuoiChu(hs.dob, lan.d)}) ngày ${hienNgay(lan.d)}: ${so(lan.h)} cm, ${so(lan.w)} kg.${tam ? ' <span class="hk-tam">Chưa lưu</span>' : ''}</p>
         ${k ? `<div class="hk-pills">${['wfa', 'hfa', 'bfa'].filter((i) => k.chiSo[i]).map((i) => `<span class="hk-pill hk-tone--${k.chiSo[i].tone}">${IND[i].replace(' theo tuổi', '')}: ${k.chiSo[i].label}</span>`).join('')}</div>` : ''}
       </div>
       <div class="hk-card__acts">
         <button class="btn btn--primary" type="button" data-hk-xem aria-expanded="${moRong}" aria-controls="hkResult">${moRong ? 'Thu gọn kết quả' : 'Xem kết quả'}</button>
-        <button class="btn btn--outline" type="button" data-hk-mo>Đo lần mới</button>
+        ${tam ? '<button class="btn btn--teal" type="button" data-hk-luu>Lưu thông tin bé</button>' : ''}
+        <button class="btn btn--outline" type="button" data-hk-mo>${tam ? 'Tra cứu bé khác' : 'Đo lần mới'}</button>
+        ${tam && doc() ? '<button class="btn btn--ghost" type="button" data-hk-ve>Về bé đã lưu</button>' : ''}
       </div>
     </div>`;
     if (moRong && k) veKetQua(hs, k); else { kq.hidden = true; kq.innerHTML = ''; }
@@ -491,7 +494,7 @@
   /* ---------------- Form nhập thông tin (modal dùng chung #callbackModal) ---------------- */
   function moForm() {
     taiWho().catch(() => {});
-    const hs = doc() || {};
+    const daLuu = doc(), hs = daLuu || {};
     const homNay = isoNgay(new Date());
     $('#callbackContent').innerHTML = `<div class="modal__head"><h3>📏 Thông tin của bé</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
       <form class="modal__body hk-form" id="hkForm" novalidate>
@@ -508,7 +511,8 @@
           <div class="field"><label for="hkH">Chiều cao (cm) <span>*</span></label><input class="input" id="hkH" name="h" inputmode="decimal" autocomplete="off" placeholder="VD: 82,5" required><small class="hk-help">Bé dưới 2 tuổi đo nằm</small><small class="form-error" data-err="h"></small></div>
           <div class="field"><label for="hkW">Cân nặng (kg) <span>*</span></label><input class="input" id="hkW" name="w" inputmode="decimal" autocomplete="off" placeholder="VD: 11,2" required><small class="form-error" data-err="w"></small></div>
         </div>
-        <p class="hk-privacy">${I.shield}Số đo chỉ lưu trên máy của mẹ, không gửi đi đâu.</p>
+        <label class="hk-luu"><input type="checkbox" name="luu" value="1" ${daLuu ? 'checked' : ''}><span><b>Lưu thông tin bé để theo dõi lần sau</b><small>Không tích: chỉ xem kết quả (tra hộ người thân, bạn bè), không lưu lại.</small></span></label>
+        <p class="hk-privacy">${I.shield}Số đo chỉ lưu trên máy của mẹ khi mẹ tích chọn, không gửi đi đâu.</p>
         <button class="btn btn--primary btn--block btn--lg" type="submit">Xem kết quả</button>
       </form>`;
     MC.openModal('#callbackModal');
@@ -539,10 +543,10 @@
     $$('[data-err]', f).forEach((el) => { el.textContent = loi[el.dataset.err] || ''; });
     $$('.input', f).forEach((el) => { el.classList.toggle('is-invalid', !!loi[el.name]); el.setAttribute('aria-invalid', loi[el.name] ? 'true' : 'false'); });
     if (Object.keys(loi).length) { const o = f.querySelector('.is-invalid') || f.querySelector('input[name="sex"]'); if (o) o.focus(); return; }
-    ghi(hs);
+    if (d.luu) { ghi(hs); tam = doc() ? null : hs; } // ẩn danh không lưu được thì vẫn hiện kết quả như tra cứu
+    else tam = hs;
     MC.closeModal('#callbackModal');
     moRong = true; veThe();
-    if (!doc()) veKetQua(hs, danhGia(hs, hs.log[hs.log.length - 1])); // không lưu được (ẩn danh) thì vẫn hiện kết quả
     setTimeout(toiMuc, 60);
   }
 
@@ -564,6 +568,15 @@
   root.addEventListener('click', (e) => {
     if (e.target.closest('[data-hk-mo]')) { moForm(); return; }
     if (e.target.closest('[data-hk-xem]')) { moRong = !moRong; veThe(); return; }
+    if (e.target.closest('[data-hk-ve]')) { tam = null; veThe(); return; }
+    if (e.target.closest('[data-hk-luu]') && tam) {
+      const cu = doc();
+      if (cu && !(cu.sex === tam.sex && cu.dob === tam.dob) && !confirm(`Máy này đang lưu thông tin ${cu.name ? 'bé ' + cu.name : 'một bé khác'}. Thay bằng bé này?`)) return;
+      ghi(tam);
+      if (doc()) { tam = null; MC.toast('Đã lưu thông tin bé. Lần sau mẹ đo tiếp, web sẽ tự so với lần này.', { type: 'ok' }); veThe(); }
+      else MC.toast('Trình duyệt đang chặn lưu (chế độ ẩn danh), mẹ mở trình duyệt thường để lưu nhé', { type: 'error' });
+      return;
+    }
     const b = e.target.closest('[data-hk-bd]');
     if (b) {
       bieuDoDangXem = b.dataset.hkBd;
