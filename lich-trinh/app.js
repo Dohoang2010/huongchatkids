@@ -224,7 +224,6 @@
   function veLai() {
     veThang(); veDsNgay();
     if (S.xem === 'nam') veNam();
-    if (S.tab === 'saptoi') veSapToi();
     veChat(); veTrangThaiChat(); capNhatHuyHieu();
     veToi();
   }
@@ -234,7 +233,7 @@
     S.tab = t;
     $$('#man-chinh .tab').forEach(x => { x.hidden = x.dataset.tab !== t; });
     $$('.tabbar button').forEach(b => b.classList.toggle('dang-chon', b.dataset.den === t));
-    if (t === 'saptoi') veSapToi();
+    if (t === 'nhap' && !$('#form-nhap')) veNhap();
     if (t === 'chat') { veChat(true); danhDauDaDoc(); }
     if (S.token) henPoll(300);
     if (t === 'toi') veToi();
@@ -250,7 +249,8 @@
     if (!p[0]) return;
     if (p[0] === 'chat') chuyenTab('chat');
     else if (p[0] === 'toi') chuyenTab('toi');
-    else if (p[0] === 'sap-toi') chuyenTab('saptoi');
+    else if (p[0] === 'sap-toi') chuyenTab('lich');
+    else if (p[0] === 'nhap') chuyenTab('nhap');
     else if (p[0] === 'nhap-nhieu') { chuyenTab('lich'); moNhapNhieu(); }
     else if (p[0] === 'lich' && /^\d{4}-\d{2}-\d{2}$/.test(p[1] || '')) { chuyenTab('lich'); chonNgay(p[1], true); }
     else if (p[0] === 'su-kien' && p[1]) {
@@ -285,10 +285,28 @@
     $('#luoi-thang').innerHTML = html;
   }
 
+  // Dưới lịch tháng: các sự kiện sắp tới, bắt đầu từ ngày đang chọn (mặc định hôm nay), 60 ngày
   function veDsNgay() {
-    const d = S.chon, ds = trongKhoang(d, d).sort(thuTu), gan = tenNgayGan(d);
-    let html = `<div class="ngay-dau">${gan ? gan + ' <small>· ' + ngayDai(d) + '</small>' : ngayDai(d)}</div>`;
-    html += ds.length ? ds.map(o => dongSuKien(o, d)).join('') : '<p class="trong-rong">Không có sự kiện</p>';
+    const q = boDau($('#tim').value.trim()), h = homNay(), chon = S.chon || h;
+    const tu = q ? ymdCong(h, -365) : chon, den = q ? ymdCong(h, 365) : ymdCong(chon, 60);
+    let ds = trongKhoang(tu, den, !!q);
+    if (q) ds = ds.filter(o => boDau(`${o.ev.tieuDe} ${o.ev.diaDiem} ${o.ev.ghiChu}`).includes(q));
+    ds.forEach(o => { o.hien = o.ngay < tu ? tu : o.ngay; });
+    ds.sort((a, b) => a.hien.localeCompare(b.hien) || thuTu(a, b));
+    ds = ds.slice(0, 300);
+    const dau = d => {
+      const gan = tenNgayGan(d);
+      return `<div class="ngay-dau${d === h ? ' hn' : ''}">${gan ? gan + ' <small>· ' + ngayDai(d) + '</small>' : ngayDai(d)}</div>`;
+    };
+    let html = `<div class="tieu-de-ds"><h2>${q ? 'Kết quả tìm kiếm' : 'Sự kiện sắp tới'}</h2>${!q && chon !== h ? '<button type="button" class="nut-chu" id="ds-tu-hom-nay">Từ hôm nay</button>' : ''}</div>`;
+    if (q && !ds.length) html += '<p class="trong-rong">Không tìm thấy sự kiện nào</p>';
+    if (!q && !ds.some(o => o.hien === chon)) html += dau(chon) + '<p class="trong-rong nho">Không có sự kiện</p>';
+    let truoc = '';
+    for (const o of ds) {
+      if (o.hien !== truoc) { html += dau(o.hien); truoc = o.hien; }
+      html += dongSuKien(o, o.hien);
+    }
+    if (!q && !ds.length) html += '<p class="trong-rong nho">Không có lịch nào trong 60 ngày tới. Bấm “Nhập lịch” để thêm.</p>';
     $('#ds-ngay').innerHTML = html;
   }
 
@@ -296,7 +314,7 @@
     const ev = o.ev;
     let gio;
     if (ev.caNgay || (o.ngay !== ngay && o.ket !== ngay)) gio = 'cả ngày';
-    else if (o.ngay === ngay && o.ket === ngay) gio = `${ev.bd.slice(11)}<small>${ev.kt.slice(11)}</small>`;
+    else if (o.ngay === ngay && o.ket === ngay) gio = ev.bd.slice(11) + (ev.kt !== ev.bd ? `<small>${ev.kt.slice(11)}</small>` : '');
     else if (o.ngay === ngay) gio = `${ev.bd.slice(11)}<small>bắt đầu</small>`;
     else gio = `${ev.kt.slice(11)}<small>kết thúc</small>`;
     const phu = [ev.diaDiem, ev.lich === 'chung' ? 'Lịch chung' : 'Lịch ' + VAI[ev.lich]].filter(Boolean).join(' · ');
@@ -342,15 +360,24 @@
     if (o) chonNgay(o.dataset.ngay);
   });
   $('#ds-ngay').addEventListener('click', e => {
+    if (e.target.id === 'ds-tu-hom-nay') return veHomNay();
     const o = e.target.closest('.su-kien');
     if (o) moChiTiet(o.dataset.ev, o.dataset.ngay);
   });
+  $('#tim').addEventListener('input', veDsNgay);
+  $('#nut-tim').onclick = () => {
+    const k = $('#khung-tim');
+    k.hidden = !k.hidden;
+    if (k.hidden) { $('#tim').value = ''; veDsNgay(); } else { $('#tim').focus(); k.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  };
   $('#thang-truoc').onclick = () => doiThang(-1);
   $('#thang-sau').onclick = () => doiThang(1);
   $('#nut-hom-nay').onclick = veHomNay;
   $('#nut-ve-nam').onclick = () => { S.namXem = S.thang.y; hienXem('nam'); };
-  $('#nut-them').onclick = () => moSoan(null);
-  $('#nut-them-2').onclick = () => moSoan(null, homNay());
+  $('#nut-them').onclick = () => {
+    chuyenTab('nhap');
+    if (!$('#form-nhap [name=noiDung]').value.trim()) veNhap(S.chon);
+  };
   $('#nut-loc').onclick = moLoc;
   $('.dong-goi-y').onclick = () => { $('#goi-y-cai').hidden = true; kho.set('anGoiY', true); };
   vuot($('#xem-thang'), k => doiThang(k));
@@ -397,36 +424,6 @@
   });
   $('#nam-truoc').onclick = () => { S.namXem--; veNam(); };
   $('#nam-sau').onclick = () => { S.namXem++; veNam(); };
-
-  /* ===================== SẮP TỚI ===================== */
-  function veSapToi() {
-    const q = boDau($('#tim').value.trim()), h = homNay();
-    const tu = q ? ymdCong(h, -365) : h, den = ymdCong(h, q ? 365 : 60);
-    let ds = trongKhoang(tu, den, !!q);
-    if (q) ds = ds.filter(o => boDau(`${o.ev.tieuDe} ${o.ev.diaDiem} ${o.ev.ghiChu}`).includes(q));
-    ds.forEach(o => { o.hien = o.ngay < tu ? tu : o.ngay; });
-    ds.sort((a, b) => a.hien.localeCompare(b.hien) || thuTu(a, b));
-    ds = ds.slice(0, 300);
-    if (!ds.length) {
-      $('#ds-saptoi').innerHTML = `<p class="trong-rong">${q ? 'Không tìm thấy sự kiện nào' : 'Không có lịch nào trong 60 ngày tới'}</p>`;
-      return;
-    }
-    let html = '', truoc = '';
-    for (const o of ds) {
-      if (o.hien !== truoc) {
-        const gan = tenNgayGan(o.hien);
-        html += `<div class="ngay-dau${o.hien === h ? ' hn' : ''}">${gan ? gan + ' <small>· ' + ngayNgan(o.hien) + '</small>' : ngayDai(o.hien)}</div>`;
-        truoc = o.hien;
-      }
-      html += dongSuKien(o, o.hien);
-    }
-    $('#ds-saptoi').innerHTML = html;
-  }
-  $('#tim').addEventListener('input', veSapToi);
-  $('#ds-saptoi').addEventListener('click', e => {
-    const o = e.target.closest('.su-kien');
-    if (o) moChiTiet(o.dataset.ev, o.dataset.ngay);
-  });
 
   /* ===================== BẢNG TRƯỢT ===================== */
   let hDong = 0;
@@ -517,89 +514,148 @@
     return ds.map(([v, t]) => `<option value="${v}"${v === gt ? ' selected' : ''}>${t}</option>`).join('');
   }
 
-  function moSoan(ev, ngayMacDinh) {
-    const moi = !ev;
-    if (moi) {
-      const ngay = ngayMacDinh || S.chon || homNay(), gio = Math.min(new Date().getHours() + 1, 22);
-      ev = { tieuDe: '', caNgay: false, bd: `${ngay}T${pad(gio)}:00`, kt: `${ngay}T${pad(gio + 1)}:00`, diaDiem: '', lich: kho.get('lichMacDinh', S.toi), lap: '', lapDen: '', nhac: 15, ghiChu: '' };
-    }
-    const sh = moSheet(`<form id="form-sk" novalidate>
-      <div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>${moi ? 'Sự kiện mới' : 'Sửa sự kiện'}</b><button type="submit">${moi ? 'Thêm' : 'Xong'}</button></div>
-      <div class="sheet-than">
-        <div class="nhom">
-          <label class="dong cot"><input name="tieuDe" placeholder="Tiêu đề" maxlength="200" value="${esc(ev.tieuDe)}" aria-label="Tiêu đề" required></label>
-          <label class="dong cot"><input name="diaDiem" placeholder="Địa điểm hoặc link họp" maxlength="200" value="${esc(ev.diaDiem)}" aria-label="Địa điểm"></label>
-        </div>
-        <div class="nhom">
-          <label class="dong"><span>Cả ngày</span><span class="cong-tac"><input type="checkbox" name="caNgay"${ev.caNgay ? ' checked' : ''}><i></i></span></label>
-          <div class="dong"><span>Bắt đầu</span><span class="ngay-gio"><input type="date" name="bdNgay" value="${ev.bd.slice(0, 10)}" aria-label="Ngày bắt đầu" required><input type="time" name="bdGio" value="${ev.bd.slice(11)}" aria-label="Giờ bắt đầu"></span></div>
-          <div class="dong"><span>Kết thúc</span><span class="ngay-gio"><input type="date" name="ktNgay" value="${ev.kt.slice(0, 10)}" aria-label="Ngày kết thúc" required><input type="time" name="ktGio" value="${ev.kt.slice(11)}" aria-label="Giờ kết thúc"></span></div>
-        </div>
-        <div class="nhom">
-          <label class="dong"><span>Lặp lại</span><select name="lap">${Object.entries(LAP).map(([k, t]) => `<option value="${k}"${k === ev.lap ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
-          <label class="dong" id="dong-lap-den"${ev.lap ? '' : ' hidden'}><span>Kết thúc lặp</span><input type="date" name="lapDen" value="${esc(ev.lapDen)}" aria-label="Ngày kết thúc lặp"></label>
-        </div>
-        <p class="nhom-ten">Lịch của</p>
-        <div class="nhom chon-lich" role="radiogroup" aria-label="Lịch của">
-          ${LICH.map(l => `<label><input type="radio" name="lich" value="${l}"${l === ev.lich ? ' checked' : ''}><span style="color:var(--c-${l})"><i class="cham c-${l}"></i><b style="color:var(--chu);font-weight:inherit">${l === 'chung' ? 'Chung' : VAI[l]}</b></span></label>`).join('')}
-        </div>
-        <div class="nhom">
-          <label class="dong"><span>Cảnh báo</span><select name="nhac">${luaChonNhac(ev.caNgay, ev.nhac)}</select></label>
-        </div>
-        <div class="nhom"><label class="dong cot"><textarea name="ghiChu" placeholder="Ghi chú" maxlength="3000" aria-label="Ghi chú">${esc(ev.ghiChu)}</textarea></label></div>
-        <p class="loi" role="alert"></p>
-      </div></form>`);
-    const f = $('#form-sk', sh), el = n => f.elements[n];
-    const capNhatCaNgay = () => {
-      const c = el('caNgay').checked;
-      el('bdGio').hidden = c; el('ktGio').hidden = c;
-      el('nhac').innerHTML = luaChonNhac(c, Number(el('nhac').value));
-    };
-    el('bdGio').hidden = ev.caNgay; el('ktGio').hidden = ev.caNgay;
-    $$('input[type=date], input[type=time]', f).forEach(i => i.addEventListener('click', () => { try { i.showPicker(); } catch (e) { /* trình duyệt tự mở */ } }));
-    el('caNgay').addEventListener('change', capNhatCaNgay);
-    el('lap').addEventListener('change', () => { $('#dong-lap-den', f).hidden = !el('lap').value; });
-    // Đổi giờ bắt đầu thì dời giờ kết thúc theo, giữ nguyên độ dài
-    let bdCu = `${el('bdNgay').value}T${el('bdGio').value || '00:00'}`;
-    const doiBd = () => {
-      if (!el('bdNgay').value) return;
-      const bdMoi = `${el('bdNgay').value}T${el('bdGio').value || '00:00'}`;
-      const kt = `${el('ktNgay').value || el('bdNgay').value}T${el('ktGio').value || '00:00'}`;
-      const ktMoi = chuoiTuPhut(phutCua(kt) + phutCua(bdMoi) - phutCua(bdCu));
-      el('ktNgay').value = ktMoi.slice(0, 10); el('ktGio').value = ktMoi.slice(11);
-      bdCu = bdMoi;
-    };
-    el('bdNgay').addEventListener('change', doiBd);
-    el('bdGio').addEventListener('change', doiBd);
-    if (moi) setTimeout(() => el('tieuDe').focus(), 320);
+  // Form lịch trình: chọn giờ, phút, ngày, tháng, năm bằng ô chọn + địa điểm + nội dung công việc.
+  // Dùng cho trang "Nhập lịch trình" và khi bấm Sửa một sự kiện.
+  const soOpt = (tu, den, gt, nhan = pad) => { let h = ''; for (let i = tu; i <= den; i++) h += `<option value="${i}"${i === gt ? ' selected' : ''}>${nhan(i)}</option>`; return h; };
+  const phutOpt = gt => [...new Set([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, gt])].sort((a, b) => a - b)
+    .map(p => `<option value="${p}"${p === gt ? ' selected' : ''}>${pad(p)} phút</option>`).join('');
 
+  function evMoi(ngay) {
+    const gio = Math.min(new Date().getHours() + 1, 23), bd = `${ngay}T${pad(gio)}:00`;
+    return { tieuDe: '', caNgay: false, bd, kt: bd, diaDiem: '', lich: kho.get('lichMacDinh', S.toi) || S.toi || 'chung', lap: '', lapDen: '', nhac: 15, ghiChu: '' };
+  }
+
+  function htmlFormLich(ev) {
+    const y = +ev.bd.slice(0, 4), m = +ev.bd.slice(5, 7), d = +ev.bd.slice(8, 10), namNay = +homNay().slice(0, 4);
+    const coDen = !ev.caNgay && ev.kt !== ev.bd, motNgay = ev.kt.slice(0, 10) === ev.bd.slice(0, 10);
+    const noiDung = ev.tieuDe + (ev.ghiChu ? '\n' + ev.ghiChu : '');
+    return `
+      <p class="nhom-ten">Thời gian</p>
+      <div class="nhom">
+        <div class="dong"><span>Ngày</span><span class="chon-so">
+          <select name="ngay" aria-label="Ngày">${soOpt(1, soNgayThang(y, m), d)}</select>
+          <select name="thang" aria-label="Tháng">${soOpt(1, 12, m, i => 'Tháng ' + i)}</select>
+          <select name="nam" aria-label="Năm">${soOpt(Math.min(y, namNay - 1), Math.max(y, namNay + 4), y, String)}</select></span></div>
+        <div class="dong"><span>Giờ</span><span class="chon-so">
+          <select name="gio" aria-label="Giờ"><option value="ca"${ev.caNgay ? ' selected' : ''}>Cả ngày</option>${soOpt(0, 23, ev.caNgay ? -1 : +ev.bd.slice(11, 13), i => pad(i) + ' giờ')}</select>
+          <select name="phut" aria-label="Phút"${ev.caNgay ? ' hidden' : ''}>${phutOpt(+ev.bd.slice(14, 16))}</select></span></div>
+        <div class="dong dong-den"${ev.caNgay ? ' hidden' : ''}><span>Đến</span><span class="chon-so">
+          <select name="denGio" aria-label="Đến giờ"><option value="">— không —</option>${soOpt(0, 23, coDen ? +ev.kt.slice(11, 13) : -1, i => pad(i) + ' giờ')}</select>
+          <select name="denPhut" aria-label="Đến phút"${coDen ? '' : ' hidden'}>${phutOpt(coDen ? +ev.kt.slice(14, 16) : 0)}</select></span></div>
+      </div>
+      <p class="nhom-ten">Địa điểm</p>
+      <div class="nhom"><label class="dong cot"><input name="diaDiem" placeholder="VD: Văn phòng công ty, quán cà phê, link họp…" maxlength="200" value="${esc(ev.diaDiem)}" aria-label="Địa điểm"></label></div>
+      <p class="nhom-ten">Nội dung công việc</p>
+      <div class="nhom"><label class="dong cot"><textarea name="noiDung" placeholder="VD: Họp với đối tác về hợp đồng quý 4. Mang theo bản in hợp đồng." maxlength="3200" aria-label="Nội dung công việc">${esc(noiDung)}</textarea></label></div>
+      <p class="nhom-ten">Lịch của</p>
+      <div class="nhom chon-lich" role="radiogroup" aria-label="Lịch của">
+        ${LICH.map(l => `<label><input type="radio" name="lich" value="${l}"${l === ev.lich ? ' checked' : ''}><span style="color:var(--c-${l})"><i class="cham c-${l}"></i><b style="color:var(--chu);font-weight:inherit">${l === 'chung' ? 'Chung' : VAI[l]}</b></span></label>`).join('')}
+      </div>
+      <div class="nhom"><label class="dong"><span>Nhắc trước</span><select name="nhac">${luaChonNhac(ev.caNgay, ev.nhac)}</select></label></div>
+      <details class="nhom tuy-chon"${ev.lap || !motNgay ? ' open' : ''}><summary class="dong">Tuỳ chọn thêm: lặp lại, kéo dài nhiều ngày</summary>
+        <label class="dong"><span>Lặp lại</span><select name="lap">${Object.entries(LAP).map(([k, t]) => `<option value="${k}"${k === ev.lap ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
+        <label class="dong dong-lap-den"${ev.lap ? '' : ' hidden'}><span>Lặp đến ngày</span><input type="date" name="lapDen" value="${esc(ev.lapDen)}" aria-label="Lặp đến ngày"></label>
+        <label class="dong"><span>Kéo dài đến ngày</span><input type="date" name="ktNgay" value="${motNgay ? '' : ev.kt.slice(0, 10)}" aria-label="Kéo dài đến ngày"></label>
+      </details>`;
+  }
+
+  function ganFormLich(f) {
+    const el = n => f.elements[n];
+    const doiThangNam = () => {
+      const n = soNgayThang(+el('nam').value, +el('thang').value), d = Math.min(+el('ngay').value, n);
+      el('ngay').innerHTML = soOpt(1, n, d);
+    };
+    el('thang').addEventListener('change', doiThangNam);
+    el('nam').addEventListener('change', doiThangNam);
+    el('gio').addEventListener('change', () => {
+      const ca = el('gio').value === 'ca';
+      el('phut').hidden = ca;
+      $('.dong-den', f).hidden = ca;
+      el('nhac').innerHTML = luaChonNhac(ca, Number(el('nhac').value));
+      if (!ca && el('denGio').value && +el('denGio').value < +el('gio').value) { el('denGio').value = ''; el('denPhut').hidden = true; }
+    });
+    el('denGio').addEventListener('change', () => { el('denPhut').hidden = !el('denGio').value; });
+    el('lap').addEventListener('change', () => { $('.dong-lap-den', f).hidden = !el('lap').value; });
+    $$('input[type=date]', f).forEach(i => i.addEventListener('click', () => { try { i.showPicker(); } catch (e) { /* trình duyệt tự mở */ } }));
+  }
+
+  function docFormLich(f, ev) {
+    const el = n => f.elements[n];
+    const ngay = `${el('nam').value}-${pad(+el('thang').value)}-${pad(+el('ngay').value)}`, caNgay = el('gio').value === 'ca';
+    const noiDung = el('noiDung').value.trim();
+    if (!noiDung) throw new Error('Chưa nhập nội dung công việc');
+    const dong = noiDung.split('\n'), dau = dong[0].trim();
+    const tieuDe = dau.slice(0, 200), ghiChu = ((dau.length > 200 ? dau.slice(200) + '\n' : '') + dong.slice(1).join('\n')).trim();
+    const ktNgay = el('ktNgay').value > ngay ? el('ktNgay').value : ngay;
+    const bd = caNgay ? `${ngay}T00:00` : `${ngay}T${pad(+el('gio').value)}:${pad(+el('phut').value)}`;
+    let kt;
+    if (caNgay) kt = `${ktNgay}T23:59`;
+    else if (el('denGio').value) kt = `${ktNgay}T${pad(+el('denGio').value)}:${pad(+el('denPhut').value)}`;
+    else kt = ktNgay > ngay ? `${ktNgay}T23:59` : bd;
+    if (kt < bd) throw new Error('Giờ “Đến” phải sau giờ bắt đầu');
+    const lapDen = el('lap').value ? el('lapDen').value : '';
+    if (lapDen && lapDen < ngay) throw new Error('Ngày “Lặp đến” phải sau ngày bắt đầu');
+    return {
+      id: ev && ev.id, tieuDe, ghiChu, diaDiem: el('diaDiem').value.trim(), caNgay, bd, kt,
+      lap: el('lap').value, lapDen, lich: (f.querySelector('input[name=lich]:checked') || {}).value || S.toi,
+      nhac: Number(el('nhac').value)
+    };
+  }
+
+  async function luuTuForm(ra) {
+    const r = await api('luuLich', { ev: ra });
+    const i = S.lich.findIndex(x => x.id === r.ev.id);
+    if (i >= 0) S.lich[i] = r.ev; else S.lich.push(r.ev);
+    S.verLich = r.verLich;
+    luuCache();
+    return r.ev;
+  }
+
+  // Trang "Nhập lịch trình"
+  function veNhap(ngay) {
+    const ev = evMoi(ngay || S.chon || homNay());
+    $('#khung-nhap').innerHTML = `<form id="form-nhap" novalidate>${htmlFormLich(ev)}
+      <button class="nut-chinh" type="submit">Lưu lịch trình</button>
+      <p class="loi" role="alert"></p>
+      <button type="button" class="nut-phu" id="nut-mo-nhieu">Nhập nhiều lịch cùng lúc →</button></form>`;
+    const f = $('#form-nhap');
+    ganFormLich(f);
+    $('#nut-mo-nhieu').onclick = moNhapNhieu;
     f.addEventListener('submit', async e => {
       e.preventDefault();
       const loi = $('.loi', f), nut = $('button[type=submit]', f);
-      const caNgay = el('caNgay').checked;
-      const ra = {
-        id: ev.id, tieuDe: el('tieuDe').value.trim(), diaDiem: el('diaDiem').value.trim(), caNgay,
-        bd: `${el('bdNgay').value}T${caNgay ? '00:00' : el('bdGio').value || '00:00'}`,
-        kt: `${el('ktNgay').value || el('bdNgay').value}T${caNgay ? '23:59' : el('ktGio').value || '00:00'}`,
-        lap: el('lap').value, lapDen: el('lap').value ? el('lapDen').value : '',
-        lich: (f.querySelector('input[name=lich]:checked') || {}).value || S.toi,
-        nhac: Number(el('nhac').value), ghiChu: el('ghiChu').value.trim()
-      };
-      if (!ra.tieuDe) { loi.textContent = 'Chưa nhập tiêu đề'; el('tieuDe').focus(); return; }
-      if (!el('bdNgay').value) { loi.textContent = 'Chưa chọn ngày bắt đầu'; return; }
-      if (ra.kt < ra.bd) { loi.textContent = 'Giờ kết thúc phải sau giờ bắt đầu'; return; }
-      if (ra.lapDen && ra.lapDen < ra.bd.slice(0, 10)) { loi.textContent = 'Ngày kết thúc lặp phải sau ngày bắt đầu'; return; }
+      let ra;
+      try { ra = docFormLich(f); } catch (err) { loi.textContent = err.message; return; }
       nut.disabled = true; loi.textContent = '';
       try {
-        const r = await api('luuLich', { ev: ra });
-        const i = S.lich.findIndex(x => x.id === r.ev.id);
-        if (i >= 0) S.lich[i] = r.ev; else S.lich.push(r.ev);
-        S.verLich = r.verLich;
-        if (moi) kho.set('lichMacDinh', ra.lich);
-        luuCache(); dongSheet();
-        if (S.tab === 'lich') chonNgay(ra.bd.slice(0, 10));
+        const moi = await luuTuForm(ra);
+        kho.set('lichMacDinh', ra.lich);
         veLai();
-        toast(moi ? 'Đã thêm sự kiện' : 'Đã lưu thay đổi');
+        const ngayLuu = moi.bd.slice(0, 10);
+        toast(`Đã lưu: ${moi.tieuDe} – ${moi.caNgay ? 'cả ngày' : moi.bd.slice(11)} ${ngayNgan(ngayLuu)}`, 3000);
+        veNhap(ngayLuu);   // để trống form, giữ ngày vừa chọn để nhập tiếp
+        $('#tab-nhap').scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) { loi.textContent = err.message; nut.disabled = false; }
+    });
+  }
+
+  // Sửa một sự kiện có sẵn (bảng trượt)
+  function moSoan(ev) {
+    const sh = moSheet(`<form id="form-sk" novalidate>
+      <div class="sheet-dau"><button type="button" data-dong>Huỷ</button><b>Sửa lịch trình</b><button type="submit">Lưu</button></div>
+      <div class="sheet-than">${htmlFormLich(ev)}<p class="loi" role="alert"></p></div></form>`);
+    const f = $('#form-sk', sh);
+    ganFormLich(f);
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      const loi = $('.loi', f), nut = $('button[type=submit]', f);
+      let ra;
+      try { ra = docFormLich(f, ev); } catch (err) { loi.textContent = err.message; return; }
+      nut.disabled = true; loi.textContent = '';
+      try {
+        await luuTuForm(ra);
+        dongSheet(); chonNgay(ra.bd.slice(0, 10)); veLai();
+        toast('Đã lưu thay đổi');
       } catch (err) { loi.textContent = err.message; nut.disabled = false; }
     });
   }
@@ -788,8 +844,6 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
       } catch (err) { loi.textContent = err.message; nut.disabled = false; }
     });
   }
-  $('#nut-nhap-nhieu').onclick = moNhapNhieu;
-  $('#nut-nhap-nhieu-2').onclick = moNhapNhieu;
 
   /* ===================== TIN NHẮN ===================== */
   const khac = () => (S.toi === 'sep' ? 'troly' : 'sep');
@@ -951,7 +1005,7 @@ thứ 2 cả ngày Công tác Hà Nội [Sếp]"></textarea>
       const docCu = S.daDoc[khac()];
       S.daDoc = gopDaDoc(r.daDoc || {});
       S.online = r.online || {};
-      if (doiLich) { veThang(); veDsNgay(); if (S.xem === 'nam') veNam(); if (S.tab === 'saptoi') veSapToi(); }
+      if (doiLich) { veThang(); veDsNgay(); if (S.xem === 'nam') veNam(); }
       if (doiTin || doiLich || docCu !== S.daDoc[khac()]) veChat(doiTin && dangXemChat());
       veTrangThaiChat(); capNhatHuyHieu(); danhDauDaDoc();
       if (doiLich || doiTin) luuCache();
