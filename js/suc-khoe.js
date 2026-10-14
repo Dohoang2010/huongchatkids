@@ -298,6 +298,45 @@
       luuY: 'Ngủ đủ giấc, ngủ trước 23 giờ: hormone tăng trưởng tiết nhiều khi ngủ sâu.',
     },
   };
+  /* Gợi ý môn theo giới tính (từ 3 tuổi): 1 bé trai, 2 bé gái – thay cho danh sách chung */
+  const VD_GIOI = {
+    '3-6y': {
+      1: { goiY: [['🏊', 'Bơi', 'Vận động toàn thân, tốt cho tim phổi; học bơi sớm để an toàn dưới nước.'],
+        ['⚽', 'Đá bóng mini, chạy đuổi', 'Bé trai tuổi này thích chạy nhảy, tranh bóng – giúp khoẻ chân, nhanh nhẹn.'],
+        ['🥋', 'Võ thiếu nhi', 'Vovinam, taekwondo: khoẻ cơ, rèn tính kỷ luật và tự tin.'],
+        ['🚴', 'Xe thăng bằng, đạp xe', 'Rèn thăng bằng, sức bền chân; nhớ đội mũ bảo hiểm.']],
+        ghi: 'Bé trai thường hiếu động: cho bé xả năng lượng ngoài trời mỗi ngày, bé sẽ ngủ ngon và ít quấy hơn.' },
+      2: { goiY: [['🏊', 'Bơi', 'Vận động toàn thân, tốt cho tim phổi; học bơi sớm để an toàn dưới nước.'],
+        ['💃', 'Múa, ballet thiếu nhi', 'Giúp bé dẻo dai, giữ dáng thẳng, cảm thụ âm nhạc.'],
+        ['🪢', 'Nhảy dây, lò cò, nhảy ô', 'Các trò bật nhảy giúp xương chắc khoẻ, chân khoẻ.'],
+        ['🤸', 'Thể dục nhịp điệu, leo trèo sân chơi', 'Tăng sự khéo léo, thăng bằng và sức mạnh tay.']],
+        ghi: 'Bé gái cũng cần vận động mạnh 60 phút mỗi ngày như bé trai: khuyến khích bé chạy nhảy, đừng chỉ chơi tĩnh.' },
+    },
+    '6-12y': {
+      1: { goiY: [['⚽', 'Bóng đá', 'Tăng sức bền, phối hợp đồng đội; chơi 2-3 buổi mỗi tuần.'],
+        ['🏀', 'Bóng rổ', 'Nhiều động tác bật nhảy, vươn người giúp xương chắc khoẻ.'],
+        ['🏊', 'Bơi lội', 'Môn toàn thân, ít chấn thương.'],
+        ['🥋', 'Võ: karate, taekwondo, vovinam', 'Tăng sức mạnh cơ, phản xạ và tính kỷ luật.']],
+        ghi: 'Bé trai thường dậy thì khoảng 9-14 tuổi, muộn hơn bé gái: duy trì môn có bật nhảy và ngủ đủ để chuẩn bị cho giai đoạn cao vọt.' },
+      2: { goiY: [['🏸', 'Cầu lông', 'Vươn người, bật nhảy liên tục; dễ tập cùng bố mẹ, bạn bè.'],
+        ['💃', 'Múa, aerobic, nhảy hiện đại', 'Rèn sức bền, sự dẻo dai và dáng đẹp, bé gái thường rất thích.'],
+        ['🏊', 'Bơi lội', 'Môn toàn thân, ít chấn thương.'],
+        ['🏐', 'Nhảy dây, bóng chuyền mini', 'Bật nhảy nhiều giúp xương chắc khoẻ trước tuổi dậy thì.']],
+        ghi: 'Bé gái thường dậy thì sớm hơn, khoảng 8-13 tuổi – đây là lúc chiều cao tăng nhanh, mẹ giữ cho bé vận động đều và ngủ đủ.' },
+    },
+    '12-18y': {
+      1: { goiY: [['🏀', 'Bóng rổ, bóng chuyền', 'Bật nhảy nhiều, hỗ trợ xương chắc khoẻ trong giai đoạn cao vọt.'],
+        ['💪', 'Tập sức mạnh', 'Hít đất, kéo xà, squat, plank; tập tạ nhẹ khi có người hướng dẫn đúng kỹ thuật.'],
+        ['⚽', 'Bóng đá, chạy bộ', 'Rèn sức bền tim phổi, giải toả căng thẳng học tập.'],
+        ['🏊', 'Bơi', 'Toàn thân, giúp vai lưng phát triển cân đối.']],
+        ghi: 'Tập sức mạnh đúng cách không làm con thấp đi; chỉ tránh tạ nặng khi chưa có người hướng dẫn.' },
+      2: { goiY: [['🏸', 'Cầu lông, bóng chuyền', 'Vận động vừa sức, nhiều bật nhảy, dễ chơi cùng bạn.'],
+        ['💃', 'Nhảy, aerobic, zumba', 'Tăng sức bền, vui và dễ duy trì lâu dài.'],
+        ['🧘', 'Yoga, pilates', 'Dẻo dai, giữ dáng thẳng, giảm đau mỏi khi ngồi học lâu.'],
+        ['🏊', 'Bơi, đạp xe', 'Rèn sức bền, tốt cho tim phổi.']],
+        ghi: 'Tuổi dậy thì nhiều bé gái giảm vận động: mẹ khuyến khích con chọn môn mình thích, tập cùng bạn. Những ngày có kinh vẫn vận động nhẹ được.' },
+    },
+  };
   /* Gợi ý thêm theo tình trạng (chỉ áp dụng từ 1 tuổi) */
   const VD_TINH_TRANG = {
     thapCoi: 'Chiều cao của bé đang thấp hơn chuẩn: ưu tiên các môn vận động toàn thân, bật nhảy như bơi, bóng rổ, nhảy dây, cầu lông; cho bé ngủ trước 22 giờ và chơi ngoài trời buổi sáng.',
@@ -319,7 +358,7 @@
 
   const { $, $$, esc, I, productCard, rankDefault, store, ageRange } = MC;
   const KHOA = 'hck_suckhoe';
-  const VER = '20261014d';
+  const VER = '20261014e';
   const NEED_LABEL = (k) => ((window.NEEDS || []).find((n) => n.key === k) || {}).label || k;
 
   /* ---------------- Tiện ích ---------------- */
@@ -367,17 +406,20 @@
   }
 
   /* ---------------- Gợi ý sản phẩm ---------------- */
+  /* Sản phẩm shop muốn ưu tiên đứng đầu "Gợi ý cho bé" (khi hợp tuổi, còn hàng): váng sữa canxi hữu cơ Calciumore */
+  const SP_UU_TIEN = ['26060839019'];
   function goiY(k) {
     const needs = []; let tranh = null;
     k.tinhTrang.forEach((t) => { TINH_TRANG[t].needs.forEach((n) => { if (!needs.includes(n)) needs.push(n); }); if (TINH_TRANG[t].tranh) tranh = TINH_TRANG[t].tranh; });
     const hopTuoi = (window.PRODUCTS || []).filter((p) => p.cat !== 'cho-me' && p.stock !== 0 && (p.ages || []).includes(k.giaiDoan) && !(tranh && (p.needs || []).includes(tranh)));
     const diem = (p) => needs.reduce((s, n, i) => s + ((p.needs || []).includes(n) ? needs.length - i : 0), 0);
-    const chon = hopTuoi.filter((p) => diem(p) > 0).sort((a, b) => diem(b) - diem(a) || rankDefault(a, b)).slice(0, 4);
+    const uuTien = SP_UU_TIEN.map((id) => hopTuoi.find((p) => p.id === id)).filter(Boolean);
+    const chon = [...uuTien, ...hopTuoi.filter((p) => diem(p) > 0 && !uuTien.includes(p)).sort((a, b) => diem(b) - diem(a) || rankDefault(a, b))].slice(0, 4);
     const daCo = new Set(chon.map((p) => p.id));
     const banChay = hopTuoi.filter((p) => !daCo.has(p.id) && p.sold > 0).sort((a, b) => b.sold - a.sold).slice(0, 8);
     banChay.forEach((p) => daCo.add(p.id));
     const them = hopTuoi.filter((p) => !daCo.has(p.id)).sort(rankDefault).slice(0, 10);
-    const lyDo = (p) => needs.filter((n) => (p.needs || []).includes(n)).slice(0, 2).map(NEED_LABEL);
+    const lyDo = (p) => { const l = needs.filter((n) => (p.needs || []).includes(n)).slice(0, 2).map(NEED_LABEL); return l.length || !uuTien.includes(p) ? l : (p.needs || []).filter((n) => n !== 'cho-me' && n !== 'organic').slice(0, 2).map(NEED_LABEL); };
     return { chon, banChay, them, lyDo };
   }
 
@@ -558,6 +600,7 @@
     const loi = k.tinhTrang.map((t) => `<p>${TINH_TRANG[t].loi}</p>`).join('');
     const dg = danhGiaChiTiet(hs, k);
     const an = CHE_DO_AN[k.giaiDoan], anThem = k.thang >= 6 ? k.tinhTrang.map((t) => AN_TINH_TRANG[t]).filter(Boolean) : [];
+    const vdGioi = (VD_GIOI[k.giaiDoan] || {})[hs.sex] || null;
     const vd = VAN_DONG[k.giaiDoan], vdThem = k.thang >= 12 ? k.tinhTrang.map((t) => VD_TINH_TRANG[t]).filter(Boolean) : [];
     const bd = ['hfa', 'wfa', 'bfa'].filter((i) => c[i]);
     if (!bd.includes(bieuDoDangXem)) bieuDoDangXem = bd[0];
@@ -616,7 +659,9 @@
         <p class="hk-nutri__focus">${vd.trongTam}</p>
         <div class="hk-vd__chi">${vd.chiTieu.map(([ten, gt]) => `<div><small>${ten}</small><b>${gt}</b></div>`).join('')}</div>
         ${vdThem.length ? `<div class="hk-vd__them">${vdThem.map((t) => `<p>${t}</p>`).join('')}</div>` : ''}
-        <div class="hk-vd__ds">${vd.goiY.map(([ic, ten, mo]) => `<div class="hk-vd__o"><span class="hk-vd__ic" aria-hidden="true">${ic}</span><div><b>${ten}</b><p>${mo}</p></div></div>`).join('')}</div>
+        <h4 class="hk-an__t">${vdGioi ? `Môn phù hợp cho ${gioi(hs.sex)}` : 'Gợi ý vận động'}</h4>
+        <div class="hk-vd__ds">${(vdGioi ? vdGioi.goiY : vd.goiY).map(([ic, ten, mo]) => `<div class="hk-vd__o"><span class="hk-vd__ic" aria-hidden="true">${ic}</span><div><b>${ten}</b><p>${mo}</p></div></div>`).join('')}</div>
+        ${vdGioi ? `<p class="hk-vd__luu">${vdGioi.ghi}</p>` : ''}
         <p class="hk-vd__luu">${vd.luuY}</p>
         <p class="hk-src">Thời lượng vận động theo khuyến nghị của Tổ chức Y tế Thế giới (WHO); giấc ngủ theo Viện Hàn lâm Y học Giấc ngủ Hoa Kỳ (AASM). Bé có bệnh lý, mẹ hỏi bác sĩ trước khi cho bé tập môn mới.</p>
       </div>` : ''}
