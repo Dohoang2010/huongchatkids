@@ -2271,3 +2271,16 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .be-goi { display: block; margin-top: 4px; font-size: 12.5px; color: #0F7A70; line-height: 1.45; }
 .be-do { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
 .be-do__t { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+/* Đo chỉ số con – để lại SĐT nhờ tư vấn (gửi kèm chỉ số bé) */
+.hk-tv { margin-top: 24px; padding: 18px 20px; border-radius: var(--radius); background: linear-gradient(135deg, #FFF1F5, #EFFAF8); border: 1px solid #F6D3DE; }
+.hk-tv__txt h3 { margin: 0; font-size: 18px; line-height: 1.35; }
+.hk-tv__txt p { margin: 6px 0 0; font-size: 14px; color: var(--ink-2); }
+.hk-tv__o { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-top: 14px; }
+.hk-tv__o .input { min-width: 0; background: #fff; }
+.hk-tv .form-error { display: block; margin-top: 6px; }
+.hk-tv__luu { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.hk-tv__xong { display: flex; gap: 12px; align-items: flex-start; }
+.hk-tv__xong > svg { flex: none; width: 28px; height: 28px; color: var(--teal-600, #0F7A70); }
+.hk-tv__xong b { display: block; font-size: 16px; }
+.hk-tv__xong p { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+@media (max-width: 720px) { .hk-tv__o { grid-template-columns: 1fr; } .hk-tv__o .btn { width: 100%; justify-content: center; } }

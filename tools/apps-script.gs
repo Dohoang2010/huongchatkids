@@ -951,29 +951,41 @@ function thuGuiMailSinhNhat() { Logger.log(JSON.stringify(guiMailSinhNhat_(true)
 /* ---------------- Lead tư vấn từ bài viết Cẩm nang ----------------
    Khách điền popup "Nhờ chuyên gia tư vấn" → ghi vào sheet "Lead tư vấn" + báo Zalo / email cho shop gọi lại */
 var SHEET_LEAD = 'Lead tư vấn';
-var H_LEAD = ['Thời gian', 'Họ tên', 'Điện thoại', 'Tuổi của bé', 'Chiều cao (cm)', 'Cân nặng (kg)', 'Tình trạng mong muốn', 'Bài viết', 'Link', 'Trạng thái', 'Ghi chú shop'];
+var H_LEAD = ['Thời gian', 'Họ tên', 'Điện thoại', 'Tuổi của bé', 'Chiều cao (cm)', 'Cân nặng (kg)', 'Tình trạng mong muốn', 'Bài viết', 'Link', 'Trạng thái', 'Ghi chú shop', 'Nguồn', 'Tên bé', 'Ngày sinh bé', 'Giới tính', 'Đánh giá tổng quát'];
+function sheetLead_() { var sh = sheetPhu(SHEET_LEAD, H_LEAD); if (sh.getLastColumn() < H_LEAD.length) sh.getRange(1, 1, 1, H_LEAD.length).setValues([H_LEAD]).setFontWeight('bold'); return sh; }
 function oChu_(v, max) { // cắt ngắn + chặn công thức (=, +, -, @) khi ghi vào ô
   var t = String(v == null ? '' : v).replace(/[\u0000-\u001f]+/g, ' ').trim().slice(0, max || 200);
   return /^[=+\-@]/.test(t) ? "'" + t : t;
 }
 function soDo_(v, min, max) { var n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isFinite(n) && n >= min && n <= max ? Math.round(n * 10) / 10 : ''; }
+/* nguon = 'suc-khoe': mẹ để lại SĐT sau khi xem kết quả Đo chỉ số con → kèm tên bé, ngày sinh, số đo, đánh giá tổng quát (tên mẹ, tình trạng không bắt buộc) */
 function apiLeadTuVan(p) {
+  var sk = String(p.nguon || '') === 'suc-khoe';
   var ten = oChu_(p.ten, 60), sdt = chuanSdt(p.sdt), tinhTrang = oChu_(p.tinhTrang, 600);
-  if (!ten) return { ok: false, msg: 'Mẹ nhập họ tên giúp shop nhé' };
+  if (!ten && !sk) return { ok: false, msg: 'Mẹ nhập họ tên giúp shop nhé' };
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' };
-  if (!tinhTrang) return { ok: false, msg: 'Mẹ chọn hoặc ghi tình trạng mong muốn của bé nhé' };
+  if (!tinhTrang && !sk) return { ok: false, msg: 'Mẹ chọn hoặc ghi tình trạng mong muốn của bé nhé' };
+  var tenBe = sk ? oChu_(p.tenBe, 30) : '', nsBe = sk ? chuanNgaySinhBe_(p.ngaySinh) : '', gt = sk ? ({ 1: 'Bé trai', 2: 'Bé gái' }[String(p.gioiTinh)] || '') : '';
+  var danhGia = sk ? oChu_(p.danhGia, 1500) : '';
   if (!demGioiHan('lead_' + sdt, 5, 3600)) return { ok: false, msg: 'Shop đã nhận thông tin của mẹ rồi, chuyên gia sẽ gọi sớm nhé' };
   var tuoi = oChu_(p.tuoi, 40), cao = soDo_(p.cao, 30, 220), nang = soDo_(p.nang, 1, 150);
   var bai = oChu_(p.bai, 200), link = /^https:\/\/[^\s]+$/.test(String(p.link || '')) ? oChu_(p.link, 300) : '';
   voiKhoa(function () {
-    sheetPhu(SHEET_LEAD, H_LEAD).appendRow([new Date(), ten, "'" + sdt, tuoi, cao, nang, tinhTrang, bai, link, 'Chưa gọi', '']);
+    sheetLead_().appendRow([new Date(), ten, "'" + sdt, tuoi, cao, nang, tinhTrang, bai, link, 'Chưa gọi', '', sk ? 'Đo chỉ số con' : 'Bài viết', tenBe, nsBe ? "'" + nsBe.split('-').reverse().join('/') : '', gt, danhGia]);
   });
-  var text = '💬 Lead nhờ tư vấn (bài viết)\n'
-    + 'Khách: ' + ten + ' – ' + sdt + '\n'
-    + 'Bé: ' + (tuoi || '?') + (cao !== '' ? ' · ' + cao + ' cm' : '') + (nang !== '' ? ' · ' + nang + ' kg' : '') + '\n'
-    + 'Mong muốn: ' + tinhTrang + '\n'
-    + (bai ? 'Bài: ' + bai : '');
-  try { if (EMAIL) MailApp.sendEmail(EMAIL, '💬 Lead tư vấn – ' + ten + ' ' + sdt, text + (link ? '\n' + link : '')); } catch (e) { Logger.log('Mail lead lỗi: ' + e); }
+  var text = sk
+    ? '📏 Mẹ nhờ tư vấn sau khi đo chỉ số con\n'
+      + 'Mẹ: ' + (ten || '(chưa có tên)') + ' – ' + sdt + '\n'
+      + 'Bé: ' + (tenBe || '(chưa đặt tên)') + (gt ? ' · ' + gt : '') + '\n'
+      + 'Ngày sinh: ' + (nsBe ? nsBe.split('-').reverse().join('/') : '?') + (tuoi ? ' (' + tuoi + ')' : '') + '\n'
+      + 'Chiều cao: ' + (cao !== '' ? cao + ' cm' : '?') + ' · Cân nặng: ' + (nang !== '' ? nang + ' kg' : '?') + '\n'
+      + 'Đánh giá tổng quát: ' + (danhGia || '?') + (tinhTrang ? '\nCần chú ý: ' + tinhTrang : '')
+    : '💬 Lead nhờ tư vấn (bài viết)\n'
+      + 'Khách: ' + ten + ' – ' + sdt + '\n'
+      + 'Bé: ' + (tuoi || '?') + (cao !== '' ? ' · ' + cao + ' cm' : '') + (nang !== '' ? ' · ' + nang + ' kg' : '') + '\n'
+      + 'Mong muốn: ' + tinhTrang + '\n'
+      + (bai ? 'Bài: ' + bai : '');
+  try { if (EMAIL) MailApp.sendEmail(EMAIL, (sk ? '📏 Tư vấn chỉ số con – ' : '💬 Lead tư vấn – ') + (ten || tenBe || '') + ' ' + sdt, text + (link ? '\n' + link : '')); } catch (e) { Logger.log('Mail lead lỗi: ' + e); }
   try { zaloBotGuiTin(text); } catch (e2) { Logger.log('Zalo lead lỗi: ' + e2); }
   return { ok: true };
 }

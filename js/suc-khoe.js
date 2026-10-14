@@ -177,7 +177,7 @@
 
   const { $, $$, esc, I, productCard, rankDefault, store, ageRange } = MC;
   const KHOA = 'hck_suckhoe';
-  const VER = '20261014a';
+  const VER = '20261014b';
   const NEED_LABEL = (k) => ((window.NEEDS || []).find((n) => n.key === k) || {}).label || k;
 
   /* ---------------- Tiện ích ---------------- */
@@ -461,6 +461,20 @@
         <div class="grid grid--4">${g.chon.map(sp).join('')}</div>
       </div>` : ''}
 
+      <form class="hk-tv" id="hkTv" novalidate>
+        <div class="hk-tv__txt">
+          <h3>Mẹ để lại số điện thoại để Hương Chất Kids tư vấn cho mẹ</h3>
+          <p>Chuyên gia dinh dưỡng xem chỉ số của ${tenBe(hs)} rồi gọi tư vấn miễn phí: nên bổ sung gì, dùng sản phẩm nào, liều ra sao.</p>
+        </div>
+        <div class="hk-tv__o">
+          <label class="sr-only" for="hkTvTen">Tên của mẹ</label><input class="input" id="hkTvTen" name="ten" maxlength="60" autocomplete="name" placeholder="Tên của mẹ (không bắt buộc)" value="${esc(((MC.Customer && MC.Customer.get()) || {}).name || '')}">
+          <label class="sr-only" for="hkTvSdt">Số điện thoại</label><input class="input" id="hkTvSdt" name="sdt" type="tel" inputmode="numeric" autocomplete="tel" maxlength="15" placeholder="Số điện thoại của mẹ" value="${esc(((MC.Customer && MC.Customer.get()) || {}).phone || '')}" required>
+          <button class="btn btn--primary" type="submit">${I.headset}Nhờ tư vấn cho bé</button>
+        </div>
+        <small class="form-error" id="hkTvLoi" role="alert"></small>
+        <p class="hk-tv__luu">Khi gửi, tên bé, ngày sinh, chiều cao, cân nặng và đánh giá ở trên được gửi kèm để chuyên gia tư vấn đúng cho bé.</p>
+      </form>
+
       ${g.banChay.length ? `<div class="hk-block">
         <div class="hk-block__head"><h3>Các bạn cùng tuổi đang dùng</h3><p>Sản phẩm cho bé ${esc(tuoi.label)} bán chạy nhất tại shop, xếp theo số đã bán trên Shopee</p></div>
         <div class="row-scroll">${g.banChay.map((p) => productCard(p)).join('')}</div>
@@ -479,7 +493,7 @@
           <button class="btn btn--outline" type="button" data-callback>${I.headset}Gọi lại cho tôi</button>
         </div>
       </div>`;
-    hienTai = { hs, k };
+    hienTai = { hs, k, dg };
     veBieuDo();
   }
   function veBieuDo() {
@@ -585,6 +599,27 @@
     }
   });
   document.addEventListener('submit', (e) => { if (e.target.id === 'hkForm') { e.preventDefault(); guiForm(e.target); } });
+  root.addEventListener('submit', async (e) => {
+    if (e.target.id !== 'hkTv' || !hienTai) return;
+    e.preventDefault();
+    const f = e.target, loi = $('#hkTvLoi', root), ten = f.ten.value.trim(), sdt = f.sdt.value.trim();
+    if (!MC.phoneOk(sdt)) { loi.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; f.sdt.focus(); return; }
+    loi.textContent = '';
+    const { hs, k, dg } = hienTai, lan = hs.log[hs.log.length - 1], c = k.chiSo;
+    const pv = (x) => (x.pv < 1 ? 'dưới 1' : x.pv > 99 ? 'trên 99' : Math.round(x.pv)) + '/100';
+    const chiTiet = [c.hfa && `Chiều cao ${so(c.hfa.x)} cm: ${c.hfa.label} (mức ${pv(c.hfa)})`, c.wfa && `Cân nặng ${so(c.wfa.x)} kg: ${c.wfa.label} (mức ${pv(c.wfa)})`, c.bfa && `BMI ${so(c.bfa.x)}: ${c.bfa.label}`].filter(Boolean).join('; ');
+    const canChu = Object.values(c).filter((x) => x.tone === 'warn' || x.tone === 'bad').map((x) => IND[x.ind] + ': ' + x.label).join(', ');
+    if (MC.Customer) MC.Customer.set({ ...(MC.Customer.get() || {}), ...(ten ? { name: ten } : {}), phone: sdt });
+    const nut = f.querySelector('[type=submit]'); nut.disabled = true; nut.textContent = 'Đang gửi…';
+    try {
+      const r = await MC.loyaltyApi('leadTuVan', { nguon: 'suc-khoe', ten, sdt, tenBe: hs.name || '', ngaySinh: hs.dob, gioiTinh: hs.sex, tuoi: tuoiChu(hs.dob, lan.d), cao: lan.h, nang: lan.w,
+        danhGia: [dg.tong, chiTiet && chiTiet + '.', dg.da].filter(Boolean).join(' '), tinhTrang: canChu, link: location.href.split('#')[0] });
+      if (!r || !r.ok) throw new Error((r && r.msg) || 'Chưa gửi được, mẹ thử lại nhé');
+      f.innerHTML = `<div class="hk-tv__xong">${I.check}<div><b>Đã gửi chỉ số của ${tenBe(hs)} cho chuyên gia</b><p>Hương Chất Kids sẽ gọi số <b>${esc(sdt)}</b> ${MC.hoursNote ? MC.hoursNote() : 'sớm'} để tư vấn cho mẹ. Mẹ để ý điện thoại nhé 💗</p></div></div>`;
+    } catch (err) {
+      nut.disabled = false; nut.innerHTML = `${I.headset}Nhờ tư vấn cho bé`; loi.textContent = err.message;
+    }
+  });
   document.addEventListener('input', (e) => { if (e.target.closest('#hkForm')) delete e.target.closest('#hkForm').dataset.daCanhBao; });
 
   veThe();
