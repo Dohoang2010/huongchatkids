@@ -684,3 +684,8 @@ td.nowrap{white-space:nowrap}
 
 /* Banner dạng ảnh (Quản trị › Banner) */
 .bn-anh{display:flex;gap:12px;margin:8px 0 12px}.bn-anh figure{margin:0}.bn-anh img{height:120px;border-radius:10px;border:1px solid var(--line);display:block}.bn-anh figcaption{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Sửa đơn hàng (Quản trị › Đơn hàng › Sửa đơn) */
+.vrow.dh-sp{grid-template-columns:minmax(0,2.2fr) minmax(0,1.3fr) 76px 140px auto;align-items:start;padding-bottom:10px;border-bottom:1px dashed var(--line-2)}
+.vrow.dh-sp .icobtn{margin-top:24px}
+@media (max-width:760px){.vrow.dh-sp{grid-template-columns:1fr 1fr}.vrow.dh-sp label:first-child{grid-column:1/-1}.vrow.dh-sp .icobtn{margin-top:0;justify-self:end;grid-column:2}}

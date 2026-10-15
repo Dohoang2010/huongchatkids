@@ -1,7 +1,7 @@
 /* ===== ĐƠN HÀNG – danh sách, lọc, chi tiết, dòng thời gian, đổi trạng thái ===== */
 (() => {
   'use strict';
-  const A = window.ADMIN, { $, $$, esc, fmt, ngayISO } = A;
+  const A = window.ADMIN, { $, $$, esc, fmt, ngayISO, khongDau } = A;
 
   const LUONG = ['Chờ xác nhận', 'Đã xác nhận', 'Đang chuẩn bị', 'Đang giao', 'Đã giao'];
   const MAU = { 'Chờ xác nhận': 'tag--wait', 'Đã xác nhận': 'tag--ok', 'Đang chuẩn bị': 'tag--ok', 'Đang giao': 'tag--ok', 'Đã giao': 'tag--ok', 'Đã huỷ': 'tag--no', 'Yêu cầu hoàn hàng': 'tag--wait', 'Đã hoàn hàng': 'tag--no' };
@@ -84,10 +84,12 @@
       const d = await A.api('donChiTiet', { key: A.adminKey(), dong });
       if (!d || !d.ok) { el.innerHTML = d && d.msg ? A.loiTai(d.msg) : chuaCo(); return; }
       const o = d.don;
-      $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/don-hang">← Danh sách</a>
-        <button class="btn btn--ghost" id="dhIn">🖨 In đơn</button>`;
       const buoc = LUONG.indexOf(o.trangThai);
       const huy = /huỷ|hoàn/i.test(o.trangThai);
+      const suaDuoc = A.co('order.update') && !/^Đã (huỷ|hoàn hàng)$/.test(o.trangThai);
+      $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/don-hang">← Danh sách</a>
+        ${suaDuoc ? `<a class="btn btn--primary" href="#/don-hang/${o.dong}/sua" title="Sửa khi khách đổi ý, đổi sản phẩm, đổi địa chỉ…">✏️ Sửa đơn</a>` : ''}
+        <button class="btn btn--ghost" id="dhIn">🖨 In đơn</button>`;
       el.innerHTML = `
         <div class="card">
           <div class="dh__top"><div><h3>Đơn ${esc(o.ma)}</h3><p class="muted">${esc(o.ngay)} · ${esc(o.loai)}</p></div>
@@ -127,6 +129,141 @@
           ${o.ghiChu ? `<div class="box-note">📝 <b>Ghi chú của khách:</b> ${esc(o.ghiChu)}</div>` : ''}</div>`;
     } catch (e) { el.innerHTML = A.loiTai(e.message); }
   }
+
+  /* ---------------- Sửa đơn (khách đổi ý, đổi sản phẩm, đổi địa chỉ…) ----------------
+     Sản phẩm trong đơn lưu dạng chữ "Tên – phân loại × SL"; đơn giá tự lấy theo sản phẩm hiện tại trên web. */
+  let E = null;
+  const SP = () => (window.PRODUCTS || []).filter((p) => !p.an);
+  const tenSP = (p) => p.short || p.name;
+  const timSP = (ten) => { const t = khongDau(ten).trim(); return t ? (window.PRODUCTS || []).find((p) => khongDau(tenSP(p)) === t || khongDau(p.name) === t) : null; };
+  const giaSP = (p, bien) => { if (!p) return 0; const v = (p.variants || []).find((x) => x.label === bien); return Number(v ? v.price : p.price) || 0; };
+  function tachDong(s) {
+    const m = String(s).match(/^(.*?)\s*×\s*(\d+)\s*$/);
+    let ten = m ? m[1] : String(s), bien = '';
+    const sl = m ? Number(m[2]) : 1;
+    const i = ten.lastIndexOf(' – ');
+    if (i > 0) { bien = ten.slice(i + 3).trim(); ten = ten.slice(0, i).trim(); }
+    const p = timSP(ten);
+    return { ten, bien, sl, gia: giaSP(p, bien) };
+  }
+  const chuDong = (r) => `${r.ten.trim()}${r.bien.trim() ? ' – ' + r.bien.trim() : ''} × ${Math.max(1, Number(r.sl) || 1)}`;
+  const tongDong = () => E.rows.reduce((s, r) => s + (Number(r.sl) || 0) * (Number(r.gia) || 0), 0);
+
+  async function veSua(el, dong) {
+    el.innerHTML = A.dangTai('đơn hàng');
+    try {
+      const d = await A.api('donChiTiet', { key: A.adminKey(), dong });
+      if (!d || !d.ok) { el.innerHTML = d && d.msg ? A.loiTai(d.msg) : chuaCo(); return; }
+      const o = d.don;
+      $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/don-hang/${o.dong}">← Quay lại đơn</a>`;
+      if (!A.co('order.update')) { el.innerHTML = A.loiTai('Tài khoản của bạn không có quyền sửa đơn'); return; }
+      if (/^Đã (huỷ|hoàn hàng)$/.test(o.trangThai)) { el.innerHTML = `<div class="card err-box"><h3>Đơn ${esc(o.trangThai.toLowerCase())}</h3><p>Đơn đã huỷ / hoàn hàng thì không sửa được.</p></div>`; return; }
+      E = { dong: o.dong, ma: o.ma, trangThai: o.trangThai, rows: o.sanPham.map(tachDong), khach: o.khach, sdt: o.sdt, diaChi: o.diaChi, email: o.email,
+        thanhToan: o.thanhToan, qua: o.qua, ghiChu: o.ghiChu, tamTinh: o.tamTinh, giam: o.giam, giamHang: o.giamHang, ship: o.ship, tong: o.tong, lyDo: '' };
+      if (!E.rows.length) E.rows.push({ ten: '', bien: '', sl: 1, gia: 0 });
+      const so = (id, nhan, v, goiY = '') => `<label>${nhan}<input id="${id}" type="number" min="0" step="1000" inputmode="numeric" value="${Number(v) || 0}">${goiY ? `<span class="hint">${goiY}</span>` : ''}</label>`;
+      el.innerHTML = `
+        <div id="dhSua">
+        <div class="card"><div class="dh__top"><div><h3>✏️ Sửa đơn ${esc(o.ma)}</h3><p class="muted">${esc(o.ngay)} · ${esc(o.loai)}</p></div>
+          <span class="grow"></span>${A.badge(o.trangThai, MAU[o.trangThai] || '')}</div>
+          ${/Đang giao|Đã giao|hoàn/.test(o.trangThai) ? `<div class="box-note">⚠️ Đơn đang ở bước <b>${esc(o.trangThai)}</b> – nhớ báo bên giao hàng nếu đổi sản phẩm / địa chỉ / tiền thu.</div>` : ''}
+          <div class="box-note">💡 Sửa xong bấm <b>Lưu thay đổi</b>. Tổng chi tiêu và hạng của khách tự tính lại; mọi thay đổi được ghi vào Nhật ký. Nếu đơn đã lên CRM thì sửa cả bên CRM.</div></div>
+
+        <div class="card"><h3>📦 Sản phẩm</h3>
+          <datalist id="dhSpDs">${SP().map((p) => `<option value="${esc(tenSP(p))}"></option>`).join('')}</datalist>
+          <div id="dhSuaSP"></div>
+          <div class="dh__act" style="margin-top:6px;padding-top:10px"><button class="btn btn--ghost btn--sm" data-sua="them">＋ Thêm sản phẩm</button>
+            <span class="grow"></span><span class="muted">Cộng theo đơn giá: <b id="dhTongDong"></b></span></div></div>
+
+        <div class="grid-2">
+          <div class="card"><h3>👤 Khách hàng & giao hàng</h3>
+            <label>Họ tên<input id="sKhach" value="${esc(E.khach)}" maxlength="80"></label>
+            <label>Điện thoại <i>*</i><input id="sSdt" value="${esc(E.sdt)}" inputmode="tel" maxlength="12"></label>
+            <label>Địa chỉ giao<textarea id="sDiaChi" rows="2" maxlength="300">${esc(E.diaChi)}</textarea></label>
+            <label>Email<input id="sEmail" value="${esc(E.email)}" maxlength="120"></label>
+            <label>Ghi chú của khách<textarea id="sGhiChu" rows="2" maxlength="500">${esc(E.ghiChu)}</textarea></label></div>
+
+          <div class="card"><h3>💰 Thanh toán</h3>
+            <label>Hình thức<select id="sTT">${['COD', 'Chuyển khoản'].concat(['COD', 'Chuyển khoản'].includes(E.thanhToan) || !E.thanhToan ? [] : [E.thanhToan]).map((t) => `<option ${t === E.thanhToan ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
+            <div class="row row-2">${so('sTamTinh', 'Tiền hàng', E.tamTinh, 'tự cộng lại khi đổi sản phẩm')}${so('sShip', 'Phí vận chuyển', E.ship)}</div>
+            <div class="row row-2">${so('sGiam', `Giảm giá${o.ma_gg ? ' (' + esc(o.ma_gg) + ')' : ''}`, E.giam)}${so('sGiamHang', `Ưu đãi hạng${o.hang ? ' ' + esc(o.hang) : ''}`, E.giamHang)}</div>
+            <label>Tổng cộng (tiền thu khách)<input id="sTong" type="number" min="0" step="1000" inputmode="numeric" value="${Number(E.tong) || 0}" style="font-weight:700;color:var(--pink);font-size:16px">
+              <span class="hint">= Tiền hàng − giảm giá − ưu đãi hạng + phí ship (tự tính, sửa tay được)</span></label>
+            <label>Quà tặng kèm<input id="sQua" value="${esc(E.qua)}" maxlength="300"></label></div>
+        </div>
+
+        <div class="card"><label>Lý do sửa <span class="muted">(ghi vào nhật ký)</span><input id="sLyDo" maxlength="200" placeholder="VD: khách đổi sang vị dâu, thêm 1 hộp…"></label>
+          <div class="dh__act" style="border:0;margin-top:0;padding-top:0"><span class="grow"></span>
+            <a class="btn btn--ghost" href="#/don-hang/${o.dong}">Huỷ</a><button class="btn btn--primary" data-sua="luu">💾 Lưu thay đổi</button></div></div>
+        </div>`;
+      veDongSP();
+    } catch (e) { el.innerHTML = A.loiTai(e.message); }
+  }
+
+  function veDongSP() {
+    const box = $('#dhSuaSP'); if (!box) return;
+    box.innerHTML = E.rows.map((r, i) => {
+      const p = timSP(r.ten), vs = (p && p.variants) || [];
+      const bien = vs.length && (!r.bien || vs.some((v) => v.label === r.bien))
+        ? `<select data-r="${i}" data-f="bien">${r.bien ? '' : '<option value="">— chọn —</option>'}${vs.map((v) => `<option ${v.label === r.bien ? 'selected' : ''}>${esc(v.label)}</option>`).join('')}</select>`
+        : `<input data-r="${i}" data-f="bien" value="${esc(r.bien)}" placeholder="(không có)">`;
+      return `<div class="vrow dh-sp">
+        <label>Sản phẩm<input data-r="${i}" data-f="ten" list="dhSpDs" value="${esc(r.ten)}" placeholder="Gõ để tìm sản phẩm…">${r.ten && !p ? '<span class="hint">⚠ không khớp sản phẩm trên web – nhập đơn giá tay</span>' : ''}</label>
+        <label>Phân loại${bien}</label>
+        <label>SL<input data-r="${i}" data-f="sl" type="number" min="1" value="${Number(r.sl) || 1}"></label>
+        <label>Đơn giá<input data-r="${i}" data-f="gia" type="number" min="0" step="1000" value="${Number(r.gia) || 0}"><span class="hint" data-tien="${i}">= ${fmt((Number(r.sl) || 0) * (Number(r.gia) || 0))}</span></label>
+        <button class="icobtn" data-sua="xoa" data-i="${i}" title="Bỏ sản phẩm này" ${E.rows.length < 2 ? 'disabled' : ''}>✕</button></div>`;
+    }).join('');
+    $('#dhTongDong').textContent = fmt(tongDong());
+  }
+  /* Đổi sản phẩm → cộng lại tiền hàng (nếu đủ đơn giá); đổi tiền → tính lại tổng */
+  function tinhLai(theoSP) {
+    const v = (id) => Math.max(0, Number(($('#' + id) || {}).value) || 0);
+    if (theoSP) {
+      $('#dhTongDong').textContent = fmt(tongDong());
+      E.rows.forEach((r, i) => { const h = $(`[data-tien="${i}"]`); if (h) h.textContent = '= ' + fmt((Number(r.sl) || 0) * (Number(r.gia) || 0)); });
+      if (E.rows.every((r) => !r.ten.trim() || Number(r.gia) > 0)) $('#sTamTinh').value = tongDong();
+    }
+    $('#sTong').value = Math.max(0, v('sTamTinh') - v('sGiam') - v('sGiamHang') + v('sShip'));
+  }
+  async function luuSua(nut) {
+    const val = (id) => ($('#' + id) || {}).value || '';
+    const rows = E.rows.filter((r) => r.ten.trim());
+    if (!rows.length) return A.toast('Đơn phải có ít nhất 1 sản phẩm', 'err');
+    const don = { sanPham: rows.map(chuDong), khach: val('sKhach').trim(), sdt: val('sSdt').trim(), diaChi: val('sDiaChi').trim(), email: val('sEmail').trim(),
+      ghiChu: val('sGhiChu').trim(), thanhToan: val('sTT'), qua: val('sQua').trim(), lyDo: val('sLyDo').trim(),
+      tamTinh: Number(val('sTamTinh')) || 0, giam: Number(val('sGiam')) || 0, giamHang: Number(val('sGiamHang')) || 0, ship: Number(val('sShip')) || 0, tong: Number(val('sTong')) || 0 };
+    if (!/^0(3|5|7|8|9)\d{8}$/.test(don.sdt.replace(/\D/g, '').replace(/^84/, '0'))) return A.toast('Số điện thoại chưa đúng', 'err');
+    const ok = await A.hoi({ tieuDe: `Lưu đơn ${E.ma}?`, noiDung: `<span style="display:block;text-align:left">${don.sanPham.map((x) => '• ' + esc(x)).join('<br>')}<br><b>Tổng: ${fmt(don.tong)}</b>${don.tong !== E.tong ? ` <span class="muted">(trước: ${fmt(E.tong)})</span>` : ''}</span>`, nutOk: 'Lưu' });
+    if (!ok) return;
+    nut.disabled = true; nut.textContent = 'Đang lưu…';
+    try {
+      const r = await A.api('suaDon', { key: A.adminKey(), dong: E.dong, ma: E.ma, don: JSON.stringify(don) });
+      if (!r || !r.ok) { A.toast((r && r.msg) || 'Không lưu được', 'err'); nut.disabled = false; nut.textContent = '💾 Lưu thay đổi'; return; }
+      A.toast(r.doi ? `Đã lưu đơn ${E.ma} (${r.doi} thay đổi)` : 'Không có gì thay đổi', 'ok');
+      location.hash = '#/don-hang/' + E.dong;
+    } catch (err) { A.toast(err.message, 'err'); nut.disabled = false; nut.textContent = '💾 Lưu thay đổi'; }
+  }
+  document.addEventListener('input', (e) => {
+    if (!E || !e.target.closest('#dhSua')) return;
+    const f = e.target.dataset.f, i = Number(e.target.dataset.r);
+    if (f && E.rows[i]) {
+      const r = E.rows[i];
+      if (f === 'ten') {
+        r.ten = e.target.value; const p = timSP(r.ten);
+        if (p) { const vs = p.variants || []; if (vs.length && !vs.some((v) => v.label === r.bien)) r.bien = (vs.find((v) => !v.oos) || vs[0]).label; if (!vs.length) r.bien = ''; r.gia = giaSP(p, r.bien); veDongSP(); const o = $(`[data-r="${i}"][data-f="sl"]`); o && o.focus(); }
+      } else if (f === 'bien') { r.bien = e.target.value; const p = timSP(r.ten); if (p && (p.variants || []).length) { r.gia = giaSP(p, r.bien); const g = $(`[data-r="${i}"][data-f="gia"]`); if (g) g.value = r.gia; } }
+      else r[f] = Number(e.target.value) || 0;
+      return tinhLai(true);
+    }
+    if (['sTamTinh', 'sGiam', 'sGiamHang', 'sShip'].includes(e.target.id)) tinhLai(false);
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('#dhSua [data-sua]'); if (!b || !E) return;
+    if (b.dataset.sua === 'them') { E.rows.push({ ten: '', bien: '', sl: 1, gia: 0 }); veDongSP(); const o = $(`[data-r="${E.rows.length - 1}"][data-f="ten"]`); o && o.focus(); return; }
+    if (b.dataset.sua === 'xoa') { E.rows.splice(Number(b.dataset.i), 1); veDongSP(); return tinhLai(true); }
+    if (b.dataset.sua === 'luu') return luuSua(b);
+  });
 
   /* ---------------- Sự kiện ---------------- */
   const timTre = A.tre(() => { S.trang = 1; A.veTrang(); }, 420);
@@ -176,5 +313,5 @@
 
   A.dangKy({ route: '/don-hang', ten: 'Đơn hàng', icon: '🧾', nhom: 'ban-hang', quyen: 'order.view',
     mo: 'Đơn khách đặt trên website',
-    ve(el, { sub }) { return sub ? veChiTiet(el, sub) : veDS(el); } });
+    ve(el, { sub }) { const [dong, viec] = String(sub || '').split('/'); return !dong ? veDS(el) : viec === 'sua' ? veSua(el, dong) : veChiTiet(el, dong); } });
 })();

@@ -2120,6 +2120,7 @@ function doGet(e) {
     if (action === 'doiTrangThai') return traVe(apiDoiTrangThai(p), cb);
     if (action === 'dongBoCRM')    return traVe(apiDongBoCRM(p), cb);
     if (action === 'xoaDon')       return traVe(apiXoaDon(p), cb);
+    if (action === 'suaDon')       return traVe(apiSuaDon(p), cb);
     if (action === 'truyCap')      return traVe(apiTruyCap(p), cb);
     if (action === 'khachHang')    return traVe(apiKhachHang(p), cb);
     if (action === 'khachChiTiet') return traVe(apiKhachChiTiet(p), cb);
@@ -2478,7 +2479,7 @@ var VAI_TRO_QT = {
 /* Danh mục quyền – trang quản trị dựa vào đây để hiện ô tích chọn */
 var DANH_MUC_QUYEN = [
   { nhom: 'Tổng quan', ds: [['dashboard.view', 'Xem số liệu kinh doanh']] },
-  { nhom: 'Đơn hàng',  ds: [['order.view', 'Xem đơn hàng'], ['order.update', 'Đổi trạng thái đơn']] },
+  { nhom: 'Đơn hàng',  ds: [['order.view', 'Xem đơn hàng'], ['order.update', 'Đổi trạng thái / sửa đơn']] },
   { nhom: 'Sản phẩm',  ds: [['product.view', 'Xem sản phẩm'], ['product.update', 'Thêm / sửa sản phẩm'], ['product.delete', 'Xoá sản phẩm']] },
   { nhom: 'Khách hàng',ds: [['customer.view', 'Xem khách hàng'], ['customer.update', 'Khoá / mở tài khoản khách']] },
   { nhom: 'Đối tác (affiliate)', ds: [['affiliate.view', 'Xem đối tác, đơn, kỳ thanh toán'], ['affiliate.update', 'Duyệt / khoá đối tác, gán tay đơn'], ['affiliate.pay', 'Chốt kỳ & xác nhận đã trả hoa hồng'], ['affiliate.settings', 'Sửa mức hoa hồng, thuế, hạn tính']] },
@@ -2590,7 +2591,7 @@ function canhBao_(khoa, noiDung) {
   try { ghiNhatKy('Bảo mật', 'Cảnh báo', String(noiDung).slice(0, 300)); } catch (e3) { Logger.log(e3); }
 }
 /* Thao tác quản trị đụng tới tiền / quyền → báo cho chủ shop (gộp theo người làm, 10 phút / lần) */
-var LENH_BAO = { xoaDon: 'xoá đơn hàng', qtSnLuu: 'sửa ngày sinh của khách', qtVcThuHoi: 'thu hồi voucher của khách', qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
+var LENH_BAO = { xoaDon: 'xoá đơn hàng', suaDon: 'sửa đơn hàng', qtSnLuu: 'sửa ngày sinh của khách', qtVcThuHoi: 'thu hồi voucher của khách', qtAffSpLuu: 'đổi % hoa hồng sản phẩm', qtAffCdLuu: 'lưu chiến dịch hoa hồng riêng', qtAffCdDung: 'dừng / chạy lại chiến dịch hoa hồng', qtAffCdXoa: 'xoá chiến dịch hoa hồng',
   qtAffCauHinh: 'đổi cấu hình chương trình đối tác', qtAffChotKy: 'chốt kỳ thanh toán đối tác', qtAffTra: 'đánh dấu đã trả tiền đối tác', qtAffGanTay: 'gán tay đơn cho đối tác',
   qtDiemDieuChinh: 'điều chỉnh điểm của khách', qtLuu: 'tạo / sửa tài khoản quản trị', qtXoa: 'xoá tài khoản quản trị', qtBiMat: 'đổi cài đặt bảo mật' };
 var HD_ = null;   // lệnh đang xử lý (gán ở doGet) để traVe biết mà cảnh báo
@@ -2961,6 +2962,49 @@ function apiDoiTrangThai(p) {
   }
   try { zaloBotGuiTin('🔄 Đơn ' + ma + ': ' + cu + ' → ' + moi); } catch (e) { Logger.log(e); }
   return { ok: true, trangThai: moi, tiep: LUONG[moi] || [] };
+}
+
+/* Sửa đơn khi khách đổi ý / đổi sản phẩm: thông tin khách, danh sách sản phẩm, tiền, thanh toán, quà, ghi chú.
+   Không đổi thời gian, mã đơn, loại đơn, trạng thái. Kiểm tra đúng mã đơn ở dòng đó. Đơn đã huỷ / hoàn thì không sửa. */
+function apiSuaDon(p) {
+  if (!coQuyen(p, 'order.update')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var s = sheetDon(); var dong = Number(p.dong || 0);
+  if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
+  var v = s.getRange(dong, 1, 1, HEADERS.length).getValues()[0];
+  var ma = String(v[1] || '');
+  if (String(p.ma || '') !== ma) return { ok: false, msg: 'Danh sách đơn vừa thay đổi – tải lại trang rồi sửa lại' };
+  var tt = chuanTT(v[18]); if (TT_CUOI.indexOf(tt) > -1) return { ok: false, msg: 'Đơn ' + tt.toLowerCase() + ' – không sửa được' };
+  var d; try { d = JSON.parse(String(p.don || '')); } catch (e) { return { ok: false, msg: 'Dữ liệu sửa không hợp lệ' }; }
+  var chu = function (x, n) { return String(x == null ? '' : x).replace(/[\r\n]+/g, ' ').trim().slice(0, n); };
+  var so = function (x) { var n = Math.round(Number(x) || 0); return n < 0 ? 0 : Math.min(n, 1e9); };
+  var sp = (d.sanPham || []).map(function (x) { return chu(x, 200); }).filter(String).slice(0, 50);
+  if (!sp.length) return { ok: false, msg: 'Đơn phải có ít nhất 1 sản phẩm' };
+  var sdt = chuanSdt(d.sdt); if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
+  var tt2 = ['COD', 'Chuyển khoản', ''].indexOf(String(d.thanhToan || '')) > -1 ? String(d.thanhToan || '') : String(v[11] || '');
+  // Cột D (4) → R (18); Mã giảm giá và Hạng KH giữ nguyên
+  var moi = [chu(d.khach, 80), "'" + sdt, chu(d.diaChi, 300), sp.join('\n'), so(d.tamTinh), so(d.giam), so(d.ship), so(d.tong),
+             tt2, String(v[12] || ''), chu(d.ghiChu, 500), chu(d.email, 120), String(v[15] || ''), so(d.giamHang), chu(d.qua, 300)];
+  var TEN = ['Khách', 'Điện thoại', 'Địa chỉ', 'Sản phẩm', 'Tiền hàng', 'Giảm', 'Ship', 'Tổng', 'Thanh toán', '', 'Ghi chú', 'Email', '', 'Giảm theo hạng', 'Quà tặng'];
+  var doi = [];
+  for (var i = 0; i < moi.length; i++) {
+    if (!TEN[i]) continue;
+    var a = i === 1 ? chuanSdt(v[3 + i]) : String(v[3 + i] == null ? '' : v[3 + i]), b = i === 1 ? sdt : String(moi[i]);
+    if (i >= 4 && i <= 7 || i === 13) { if ((Number(a) || 0) === (Number(b) || 0)) continue; doi.push(TEN[i] + ': ' + tien(a) + ' → ' + tien(b)); continue; }
+    if (a === b) continue;
+    if (i === 3) doi.push('Sản phẩm: ' + a.replace(/\n/g, '; ') + ' → ' + b.replace(/\n/g, '; '));
+    else doi.push(TEN[i] + ': ' + (a || '—') + ' → ' + (b || '—'));
+  }
+  if (!doi.length) return { ok: true, ma: ma, doi: 0 };
+  s.getRange(dong, 4, 1, moi.length).setValues([moi]);
+  var lyDo = chu(d.lyDo, 200);
+  ghiNhatKy('Đơn hàng', ma, 'Sửa đơn (' + tenQT(p) + ')' + (lyDo ? ' – ' + lyDo : '') + ': ' + doi.join(' | ').slice(0, 45000));
+  // Tổng chi tiêu / hạng của khách tính lại theo đơn mới (cả số cũ nếu đổi số điện thoại)
+  var sdtCu = chuanSdt(v[4]);
+  [sdtCu, sdt].filter(function (x, k, arr) { return x && sdtHopLe(x) && arr.indexOf(x) === k; }).forEach(function (x) {
+    try { capNhatKhachHang(x, { name: '', phone: x }, {}); } catch (e) { Logger.log(e); }
+  });
+  try { zaloBotGuiTin('✏️ Đã sửa đơn ' + ma + (lyDo ? ' (' + lyDo + ')' : '') + '\n' + sp.join('\n') + '\nTổng: ' + tien(moi[7])); } catch (e) { Logger.log(e); }
+  return { ok: true, ma: ma, doi: doi.length };
 }
 
 /* ===================== QUẢN TRỊ: KHÁCH HÀNG ===================== */
