@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-13T03:58:53.556Z",
+  "updatedAt": "2026-10-15T02:10:15.721Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -330,8 +330,9 @@
     "men-sysy": {
       "in": true,
       "variants": {
-        "Men Baby (nâu) · từ 0 tháng": true,
-        "Men Kids (xanh) · từ 24 tháng": true
+        "Men Baby (nâu) · từ 0 tháng": false,
+        "Men Kids (xanh) · từ 24 tháng": false,
+        "20 gói nhỏ": true
       }
     },
     "mien-ga-cf": {
