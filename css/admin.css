@@ -689,3 +689,7 @@ td.nowrap{white-space:nowrap}
 .vrow.dh-sp{grid-template-columns:minmax(0,2.2fr) minmax(0,1.3fr) 76px 140px auto;align-items:start;padding-bottom:10px;border-bottom:1px dashed var(--line-2)}
 .vrow.dh-sp .icobtn{margin-top:24px}
 @media (max-width:760px){.vrow.dh-sp{grid-template-columns:1fr 1fr}.vrow.dh-sp label:first-child{grid-column:1/-1}.vrow.dh-sp .icobtn{margin-top:0;justify-self:end;grid-column:2}}
+.dh-nut{display:flex;gap:6px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+.dh-nut .btn{white-space:nowrap}
+.dh-tt{width:auto;padding:5px 8px;font-size:12.5px;font-weight:600;border-radius:8px;cursor:pointer;color:var(--pink-d);border-color:var(--pink-100);background:var(--pink-50)}
+@media (max-width:760px){.dh-nut{justify-content:flex-start}}

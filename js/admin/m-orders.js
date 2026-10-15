@@ -34,6 +34,7 @@
     S.trang = Math.min(S.trang, Math.max(1, Math.ceil(tong / S.moiTrang)));
     const slice = d.ds.slice((S.trang - 1) * S.moiTrang, S.trang * S.moiTrang);
     const tien = d.ds.reduce((s, o) => s + (/huỷ|hoàn/i.test(o.trangThai) ? 0 : o.tong), 0);
+    const capNhat = A.co('order.update');
     $('#pageAct').innerHTML = `<button class="btn btn--ghost" id="dhCRM" title="Lấy trạng thái mới nhất của các đơn chưa xong từ CRM">🔄 Đồng bộ CRM</button><button class="btn btn--ghost" id="dhXuat">⭳ Xuất Excel</button>`;
 
     el.innerHTML = `
@@ -64,7 +65,12 @@
             <td class="num"><b>${fmt(o.tong)}</b>${o.giamHang ? `<br><small class="muted">hạng ${esc(o.hang)}</small>` : ''}</td>
             <td data-nhan="Thanh toán">${esc(o.thanhToan)}</td>
             <td>${A.badge(o.trangThai, MAU[o.trangThai] || '')}</td>
-            <td class="num"><a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a></td>
+            <td class="num"><div class="dh-nut">
+              <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a>
+              ${capNhat && !/^Đã (huỷ|hoàn hàng)$/.test(o.trangThai) ? `<a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/sua" title="Sửa đơn">✏️ Sửa</a>` : ''}
+              <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/in" title="In đơn">🖨 In</a>
+              ${capNhat && o.tiep.length ? `<select class="dh-tt" data-dong-tt="${o.dong}" title="Chuyển trạng thái đơn"><option value="">⇄ Trạng thái</option>${o.tiep.map((t) => `<option value="${esc(t)}">→ ${esc(t)}</option>`).join('')}</select>` : ''}
+            </div></td>
           </tr>`).join('')}</tbody></table></div>
           ${A.phanTrang(tong, S.trang, S.moiTrang, 'dh-pg')}`
           : A.trong('Không có đơn nào', 'Thử bỏ bớt bộ lọc hoặc chọn khoảng thời gian rộng hơn.', '🧾')}
@@ -271,7 +277,26 @@
   document.addEventListener('change', (e) => {
     if (e.target.id === 'dhTT') { S.tt = e.target.value; S.trang = 1; return A.veTrang(); }
     if (e.target.id === 'dhNgay') { S.ngay = e.target.value; khoang(); S.trang = 1; return A.veTrang(); }
+    if (e.target.matches('.dh-tt') && e.target.value) { const moi = e.target.value; e.target.value = ''; return doiTT(e.target.dataset.dongTt, moi, e.target); }
   });
+  /* Đổi trạng thái – dùng chung cho nút ở trang chi tiết và ô chọn ngoài danh sách (cùng ghi vào máy chủ nên 2 nơi luôn khớp nhau) */
+  async function doiTT(dong, moi, nut) {
+    const ok = await A.hoi({ tieuDe: 'Đổi trạng thái đơn?', noiDung: `Chuyển sang <b>${esc(moi)}</b>?${/huỷ|hoàn/i.test(moi) ? '<br><span class="muted">Đơn huỷ/hoàn sẽ bị trừ khỏi doanh thu và tổng chi tiêu của khách.</span>' : ''}`, nutOk: 'Đổi', nguyHiem: /huỷ|hoàn/i.test(moi) });
+    if (!ok) return;
+    nut.disabled = true; if (nut.tagName === 'BUTTON') nut.textContent = 'Đang lưu…';
+    try {
+      const r = await A.api('doiTrangThai', { key: A.adminKey(), dong, trangThai: moi });
+      if (!r || !r.ok) { A.toast((r && r.msg) || 'Không đổi được', 'err'); A.veTrang(); return; }
+      A.toast('Đã chuyển sang “' + moi + '”', 'ok');
+      const o = data && data.ds.find((x) => String(x.dong) === String(dong));
+      if (o && $('#dhQ')) {   // đang ở danh sách: cập nhật ngay dòng đó, không tải lại cả bảng
+        data.demTT[o.trangThai] = Math.max(0, (data.demTT[o.trangThai] || 1) - 1); data.demTT[r.trangThai] = (data.demTT[r.trangThai] || 0) + 1;
+        o.trangThai = r.trangThai; o.tiep = r.tiep || [];
+        return veBang($('#body'), data);
+      }
+      A.veTrang();
+    } catch (err) { A.toast(err.message, 'err'); A.veTrang(); }
+  }
   document.addEventListener('click', async (e) => {
     const pg = e.target.closest('[data-dh-pg]'); if (pg) { S.trang = Number(pg.dataset.dhPg); return A.veTrang(); }
     if (e.target.id === 'dhIn') { window.print(); return; }
@@ -287,17 +312,7 @@
       b.disabled = false; b.textContent = '🔄 Đồng bộ CRM'; return;
     }
     const tt = e.target.closest('[data-tt]');
-    if (tt) {
-      const moi = tt.dataset.tt, dong = tt.dataset.dong;
-      const ok = await A.hoi({ tieuDe: 'Đổi trạng thái đơn?', noiDung: `Chuyển sang <b>${esc(moi)}</b>?${/huỷ|hoàn/i.test(moi) ? '<br><span class="muted">Đơn huỷ/hoàn sẽ bị trừ khỏi doanh thu và tổng chi tiêu của khách.</span>' : ''}`, nutOk: 'Đổi', nguyHiem: /huỷ|hoàn/i.test(moi) });
-      if (!ok) return;
-      tt.disabled = true; tt.textContent = 'Đang lưu…';
-      try {
-        const r = await A.api('doiTrangThai', { key: A.adminKey(), dong, trangThai: moi });
-        if (!r || !r.ok) { A.toast((r && r.msg) || 'Không đổi được', 'err'); A.veTrang(); return; }
-        A.toast('Đã chuyển sang “' + moi + '”', 'ok'); A.veTrang();
-      } catch (err) { A.toast(err.message, 'err'); A.veTrang(); }
-    }
+    if (tt) doiTT(tt.dataset.dong, tt.dataset.tt, tt);
   });
 
   function xuat() {
@@ -313,5 +328,5 @@
 
   A.dangKy({ route: '/don-hang', ten: 'Đơn hàng', icon: '🧾', nhom: 'ban-hang', quyen: 'order.view',
     mo: 'Đơn khách đặt trên website',
-    ve(el, { sub }) { const [dong, viec] = String(sub || '').split('/'); return !dong ? veDS(el) : viec === 'sua' ? veSua(el, dong) : veChiTiet(el, dong); } });
+    ve(el, { sub }) { const [dong, viec] = String(sub || '').split('/'); return !dong ? veDS(el) : viec === 'sua' ? veSua(el, dong) : viec === 'in' ? veChiTiet(el, dong).then(() => { history.replaceState(null, '', '#/don-hang/' + dong); setTimeout(() => window.print(), 300); }) : veChiTiet(el, dong); } });
 })();
