@@ -2788,20 +2788,54 @@ function timDonCRM(crm, ma, tong, ngay) {
   return hop.length === 1 ? hop[0] : null;
 }
 var TT_CUOI = ['Đã huỷ', 'Đã hoàn hàng'];
-/* Đồng bộ 1 dòng đơn; trả { crm: {...} | null, trangThai, doi } */
+/* Cột T (20) "Lịch sử trạng thái": mỗi dòng "yyyy-MM-dd HH:mm|Trạng thái|Nguồn" (CRM / tên người quản trị).
+   Cột U (21) "Trạng thái CRM": trạng thái CRM lần đồng bộ trước – CRM đổi thì web đổi theo,
+   CRM chưa đổi mà quản trị tự chuyển tay thì giữ nguyên lựa chọn của quản trị. */
+var COT_LS = 20, COT_CRM = 21;
+function cotTT_(s) {
+  if (s.getMaxColumns() < COT_CRM) s.insertColumnsAfter(s.getMaxColumns(), COT_CRM - s.getMaxColumns());
+  var h = s.getRange(1, COT_LS, 1, 2).getValues()[0];
+  if (!h[0] || !h[1]) s.getRange(1, COT_LS, 1, 2).setValues([['Lịch sử trạng thái', 'Trạng thái CRM']]);
+}
+function ghiLichSuTT_(s, dong, tt, nguon, luc) {
+  var c = s.getRange(dong, COT_LS), cu = String(c.getValue() || '');
+  var d = luc ? new Date(luc) : new Date(); if (isNaN(d.getTime())) d = new Date();
+  c.setValue((cu ? cu + '\n' : '') + Utilities.formatDate(d, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm') + '|' + tt + '|' + String(nguon || '').slice(0, 40));
+}
+function docLichSuTT_(txt) {
+  return String(txt || '').split('\n').filter(String).map(function (l) { var x = l.split('|'); return { luc: x[0] || '', tt: x[1] || '', nguon: x[2] || '' }; });
+}
+/* Lịch sử trạng thái trong đơn CRM (nếu CRM có gửi): tìm mảng [{trạng thái, thời gian}] bất kể tên trường */
+function lichSuCRM_(d) {
+  var kq = [];
+  Object.keys(d || {}).forEach(function (k) {
+    var a = d[k]; if (kq.length || !Array.isArray(a) || !a.length || typeof a[0] !== 'object') return;
+    a.forEach(function (it) {
+      if (!it) return;
+      var raw = it.trangThai || it.status || it.tt || it.ten || it.name || it.label || '';
+      var luc = it.luc || it.thoiGian || it.time || it.at || it.ngay || it.createdAt || it.ts || it.date || '';
+      if (raw && luc) kq.push({ raw: String(raw), tt: ttTuCRM(raw) || String(raw), luc: String(luc) });
+    });
+  });
+  return kq.slice(0, 20);
+}
+/* Đồng bộ 1 dòng đơn theo CRM; trả { crm: {...} | null, trangThai, doi }. v cần đủ 21 cột (thiếu thì tự đọc). */
 function dongBoDongCRM(s, dong, v, crmSan) {
   var cu = chuanTT(v[18]), sdt = chuanSdt(v[4]), ma = String(v[1] || '');
   var crm = crmSan !== undefined ? crmSan : crmKhachCache(sdt); if (!crm || !crm.ok) return { crm: null, trangThai: cu, doi: false };
   var d = timDonCRM(crm, ma, v[10], v[0]); if (!d) return { crm: { coDon: false }, trangThai: cu, doi: false };
-  var raw = String(d.trangThai || ''), moi = ttTuCRM(raw);
-  var info = { coDon: true, ma: String(d.ma || ''), trangThai: raw, quyDoi: moi };
-  if (!moi || moi === cu || TT_CUOI.indexOf(cu) > -1) return { crm: info, trangThai: cu, doi: false };
-  var thuTu = ['Chờ xác nhận', 'Đã xác nhận', 'Đang chuẩn bị', 'Đang giao', 'Đã giao'];
-  var tien = /huỷ|hoàn/i.test(moi) || (thuTu.indexOf(moi) > thuTu.indexOf(cu) && thuTu.indexOf(cu) > -1);
-  if (!tien) return { crm: info, trangThai: cu, doi: false };
+  var raw = String(d.trangThai || ''), moi = ttTuCRM(raw), ls = lichSuCRM_(d);
+  var info = { coDon: true, ma: String(d.ma || ''), trangThai: raw, quyDoi: moi, lichSu: ls, truong: Object.keys(d).slice(0, 40) };
+  if (!moi) return { crm: info, trangThai: cu, doi: false };
+  var truoc = v.length > COT_CRM - 1 ? String(v[COT_CRM - 1] || '') : String(s.getRange(dong, COT_CRM).getValue() || '');
+  if (raw === truoc) return { crm: info, trangThai: cu, doi: false };   // CRM chưa đổi → giữ trạng thái quản trị đang đặt
+  s.getRange(dong, COT_CRM).setValue(raw);
+  if (moi === cu) return { crm: info, trangThai: cu, doi: false };
   s.getRange(dong, 19).setValue(moi);
+  var lucCRM = ''; ls.forEach(function (x) { if (x.tt === moi) lucCRM = x.luc; });
+  ghiLichSuTT_(s, dong, moi, 'CRM', lucCRM || null);
   ghiNhatKy('Đơn hàng', ma, 'Tự cập nhật từ CRM: ' + cu + ' → ' + moi + ' (CRM: ' + raw + ')');
-  if (/huỷ|hoàn/i.test(moi)) { try { capNhatKhachHang(sdt, { name: '', phone: sdt }, {}); } catch (e) { Logger.log(e); } }
+  if (/huỷ|hoàn/i.test(moi) || /huỷ|hoàn/i.test(cu)) { try { capNhatKhachHang(sdt, { name: '', phone: sdt }, {}); } catch (e) { Logger.log(e); } }
   try { zaloBotGuiTin('🔄 Đơn ' + ma + ' (CRM): ' + cu + ' → ' + moi); } catch (e) { Logger.log(e); }
   return { crm: info, trangThai: moi, doi: true };
 }
@@ -2813,12 +2847,12 @@ function dongBoCRMNhieu(giayToiDa) {
   var key = PropertiesService.getScriptProperties().getProperty('CRM_KEY');
   if (!key) { kq.msg = 'Chưa có CRM_KEY trong Thuộc tính tập lệnh'; return kq; }
   if (n < 2) return kq;
-  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues(); var tu = Date.now() - 60 * 864e5;
+  cotTT_(s);
+  var v = s.getRange(2, 1, n - 1, COT_CRM).getValues(); var tu = Date.now() - 60 * 864e5;
   var theoKhach = {}, thuTu = [];
   for (var i = v.length - 1; i >= 0; i--) {
     if (!v[i][0] || new Date(v[i][0]).getTime() < tu) continue;
     if (String(v[i][2] || '').indexOf('gọi lại') > -1) continue;
-    var cu = chuanTT(v[i][18]); if (TT_CUOI.indexOf(cu) > -1) continue;
     var sdt = chuanSdt(v[i][4]); if (!sdtHopLe(sdt)) continue;
     if (!theoKhach[sdt]) { theoKhach[sdt] = []; thuTu.push(sdt); }
     theoKhach[sdt].push(i);
@@ -2926,7 +2960,8 @@ function apiDonChiTiet(p) {
   if (!coQuyen(p, 'order.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var s = sheetDon(); var dong = Number(p.dong || 0);
   if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
-  var v = s.getRange(dong, 1, 1, HEADERS.length).getValues()[0];
+  cotTT_(s);
+  var v = s.getRange(dong, 1, 1, COT_CRM).getValues()[0];
   var dbCRM = { crm: null }; try { dbCRM = dongBoDongCRM(s, dong, v); if (dbCRM.doi) v[18] = dbCRM.trangThai; } catch (e) { Logger.log('CRM: ' + e); }
   var trang = chuanTT(v[18]);
   var sdt = chuanSdt(v[4]);
@@ -2939,7 +2974,8 @@ function apiDonChiTiet(p) {
     thanhToan: String(v[11] || ''), ma_gg: String(v[12] || ''), ghiChu: String(v[13] || ''),
     hang: String(v[15] || ''), giamHang: Number(v[16]) || 0, qua: String(v[17] || ''),
     trangThai: trang, tiep: LUONG[trang] || [], luong: TRANG_THAI,
-    crm: dbCRM.crm, crmVuaCapNhat: !!dbCRM.doi
+    crm: dbCRM.crm, crmVuaCapNhat: !!dbCRM.doi,
+    lichSu: docLichSuTT_(dbCRM.doi ? s.getRange(dong, COT_LS).getValue() : v[COT_LS - 1])
   }, khach: { soDon: ct.soDon, tongChiTieu: ct.tong, hang: hangTheoTien(ct.tong).label } };
 }
 
@@ -2956,6 +2992,7 @@ function apiDoiTrangThai(p) {
   var ma = String(s.getRange(dong, 2).getValue() || '');
   var sdt = chuanSdt(s.getRange(dong, 5).getValue());
   ghiNhatKy('Đơn hàng', ma, 'Trạng thái: ' + cu + ' → ' + moi);
+  try { cotTT_(s); ghiLichSuTT_(s, dong, moi, tenQT(p)); } catch (e) { Logger.log(e); }
   // Huỷ / hoàn hàng thì tổng chi tiêu và hạng của khách phải tính lại
   if (/huỷ|hoàn/i.test(moi) || /huỷ|hoàn/i.test(cu)) {
     try { capNhatKhachHang(sdt, { name: '', phone: sdt }, {}); } catch (e) { Logger.log(e); }

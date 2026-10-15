@@ -704,3 +704,10 @@ td.nowrap{white-space:nowrap}
 .dh-tt.tt-6{background:#FFF0E6;color:#C2570C;border-color:#F7C9A6}option.tt-6{color:#C2570C}
 .dh-tt.tt-7{background:#F1F1F3;color:#5B5B66;border-color:#D4D4DA}option.tt-7{color:#5B5B66}
 @media (max-width:760px){.dh-nut{justify-content:flex-start}}
+
+/* Lịch sử trạng thái đơn (chi tiết đơn) */
+.ls-tt{margin-top:14px;padding:10px 12px;border:1px solid var(--line-2);border-radius:12px;background:#FBFCFD;max-width:520px}
+.ls-tt__h{font-size:13px;font-weight:700;margin-bottom:6px}.ls-tt__h .muted{font-weight:400;font-size:12px}
+.ls-tt__i{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13.5px}
+.ls-tt__i span:first-child{font-weight:500}.ls-tt__i.is-now span:first-child{font-weight:800}
+.ls-tt__i time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12.5px;letter-spacing:.3px}

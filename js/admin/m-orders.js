@@ -96,6 +96,25 @@
     if (!c.coDon) return '<p class="muted mt-8">🔗 CRM: chưa thấy đơn này trong CRM (đơn mới có thể mất vài phút để CRM ghi nhận).</p>';
     return `<div class="box-note mt-8">🔗 Trạng thái trên CRM: <b>${esc(c.trangThai || '—')}</b>${c.ma ? ` · mã CRM ${esc(c.ma)}` : ''}${c.quyDoi ? ` → ${esc(c.quyDoi)}` : ' (chưa quy đổi được – cập nhật tay nếu cần)'}${o.crmVuaCapNhat ? ' · <b>vừa tự cập nhật trạng thái đơn</b>' : ''}</div>`;
   };
+  /* Dòng thời gian trạng thái: lấy theo CRM nếu CRM có gửi mốc giờ, không thì theo các lần web ghi nhận (CRM / quản trị đổi) */
+  const MAU_CHU = ['#A86400', '#1D5FD1', '#6B3FC8', '#0B7B6E', '#1E7B34', '#C62828', '#C2570C', '#5B5B66'];
+  const gioNgay = (x) => {
+    const m = String(x).match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})$/);
+    if (m) return `${m[4]}:${m[5]} ${m[3]}-${m[2]}`;
+    const d = new Date(x); if (isNaN(d)) return String(x);
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} ${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  };
+  function lichSuTT(o) {
+    const crm = (o.crm && o.crm.lichSu) || [];
+    const ds = crm.length ? crm.map((x) => ({ tt: x.tt, luc: gioNgay(x.luc), nguon: 'CRM' }))
+      : [{ tt: 'Chờ xác nhận', luc: o.ngay.replace(/^(\d{2})\/(\d{2})\/\d{4} (\d{2}:\d{2})$/, '$3 $1-$2'), nguon: 'đặt hàng' }]
+        .concat((o.lichSu || []).map((x) => ({ tt: x.tt, luc: gioNgay(x.luc), nguon: x.nguon })));
+    return `<div class="ls-tt"><div class="ls-tt__h">🕘 Lịch sử trạng thái <span class="muted">${crm.length ? '(theo CRM)' : '(web ghi nhận – CRM đổi trạng thái là web tự đổi theo)'}</span></div>
+      ${ds.map((x, i) => { const k = Object.keys(MAU).indexOf(x.tt); return `<div class="ls-tt__i ${i === ds.length - 1 ? 'is-now' : ''}">
+        <span style="color:${MAU_CHU[k] || 'var(--muted)'}">${ICON[x.tt] || '•'} ${esc(x.tt)}</span>
+        <small class="muted">${esc(x.nguon || '')}</small><span class="grow"></span><time>${esc(x.luc)}</time></div>`; }).join('')}
+      ${o.crm && o.crm.truong ? `<details class="muted" style="font-size:11.5px;margin-top:6px"><summary>Dữ liệu CRM gửi về</summary>${esc(o.crm.truong.join(', '))}</details>` : ''}</div>`;
+  }
   async function veChiTiet(el, dong) {
     el.innerHTML = A.dangTai('chi tiết đơn');
     try {
@@ -117,6 +136,7 @@
             : `<ol class="tline">${LUONG.map((t, i) => `<li class="${i <= buoc ? 'is-done' : ''} ${i === buoc ? 'is-now' : ''}"><i>${i <= buoc ? '✓' : i + 1}</i><span>${esc(t)}</span></li>`).join('')}</ol>`}
 
           ${crmDong(o)}
+          ${lichSuTT(o)}
           ${o.tiep.length ? `<div class="dh__act"><span class="muted">Chuyển trạng thái:</span>
             ${o.tiep.map((t) => `<button class="btn ${/huỷ|hoàn/i.test(t) ? 'btn--red' : 'btn--primary'} btn--sm" data-tt="${esc(t)}" data-dong="${o.dong}">${esc(t)}</button>`).join('')}</div>`
             : '<p class="muted mt-8">Đơn đã ở trạng thái cuối, không chuyển tiếp được.</p>'}
