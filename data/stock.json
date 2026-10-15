@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-15T02:14:11.669Z",
+  "updatedAt": "2026-10-15T15:14:04.420Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -332,7 +332,8 @@
       "variants": {
         "Men Baby (nâu) · từ 0 tháng": false,
         "Men Kids (xanh) · từ 24 tháng": false,
-        "30 gói nhỏ": true
+        "30 gói nhỏ Men Kids (xanh) · từ 24 tháng": true,
+        "30 gói nhỏ Men Baby (nâu) · từ 0 tháng": true
       }
     },
     "mien-ga-cf": {
@@ -402,8 +403,8 @@
     "lon-den-khoi-mo": {
       "in": true,
       "variants": {
-        "1 gói 200g": true,
-        "2 gói": true
+        "1 gói 200g": false,
+        "2 gói": false
       }
     },
     "muoi-xuyen-tieu": {
