@@ -3062,7 +3062,11 @@ window.PRODUCTS = [
         "oos": true
       },
       {
-        "label": "20 gói nhỏ",
+        "label": "30 gói nhỏ Men Kids (xanh) · từ 24 tháng",
+        "price": 399000
+      },
+      {
+        "label": "30 gói nhỏ Men Baby (nâu) · từ 0 tháng",
         "price": 399000
       }
     ],
