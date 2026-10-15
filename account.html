@@ -18,7 +18,7 @@
 <script src="js/data.js?v=20261015d"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261014b"></script>
+<script src="js/app.js?v=20261015a"></script>
 <script src="js/diem-danh-ui.js?v=20261012e"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -308,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="card card--pad"><h3>🎟️ Mã giảm giá mẹ đang dùng được</h3>
             ${cur.discount ? `<div class="voucher voucher--tier"><div class="voucher__l">${cur.icon}<b>Ưu đãi hạng ${esc(cur.label)}</b></div><div class="voucher__r"><b>−${cur.discount}%</b><small>Tự động áp dụng, không cần nhập mã</small></div></div>` : ''}
             ${ma.length ? ma.map((c2) => `<div class="voucher"><div class="voucher__l">🎟️<b>${esc(c2.ma)}</b></div><div class="voucher__r"><b>${esc(c2.desc)}</b><small>${c2.min ? 'Đơn từ ' + fmt(c2.min) : 'Mọi đơn hàng'}${c2.donDau ? ' · chỉ cho đơn đầu tiên' : ''}</small></div><button class="btn btn--outline btn--sm" type="button" data-copy-coupon="${esc(c2.ma)}">Chép mã</button></div>`).join('') : '<p class="text-muted fs-14">Hiện chưa có mã nào phù hợp.</p>'}
-            ${!loy.combineWithCoupon && cur.discount ? '<p class="fs-13 text-muted mt-8">Ưu đãi hạng và mã giảm giá không cộng dồn – web tự chọn mức có lợi nhất cho mẹ.</p>' : ''}
           </div>
           ${wishHTML()}
         </div>

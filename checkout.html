@@ -21,7 +21,7 @@
 <script src="js/data.js?v=20261015d"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261014b"></script>
+<script src="js/app.js?v=20261015a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const diemToiDa = vi && vi.dungDuoc ? Math.max(0, Math.min(vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd), Math.floor(base * ptDiem / 100 / gtd))) : 0;
     const diemDung = Math.max(0, Math.min(diemMuon, diemToiDa)); const giamDiem = diemDung * gtd;
     /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
-    let ship = r && r.ok && r.freeship && !boMa && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
+    let ship = ((r && r.ok && r.freeship && !boMa) || MC.maShipTuDong(base, lines)) && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
     if (!city && ship && shipMethod !== 'express') ship = null;
     return { laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
@@ -158,9 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const fe = $('#stdFee'); fe.innerHTML = shipText(std); fe.classList.toggle('text-teal', std === 0);
     $('#coTotal').textContent = fmt(k.total); $('#stickyTotal').textContent = fmt(k.total);
     const bandMa = !loy.combineWithCoupon && k.couponAmt > 0 && !k.dungMa;
-    $('#couponHint').innerHTML = k.laSN ? `<span class="text-teal fw-600">🎂 Tháng sinh nhật: đơn được giảm ${k.pct}% – không dùng kèm mã giảm giá, voucher, giảm giá giới thiệu và quà tặng. Điểm thưởng vẫn dùng được.</span>`
-      : k.boMa ? `<span class="text-muted">Mã ${esc(k.r.code)} không cộng dồn với giảm giá giới thiệu – web đang dùng mức có lợi hơn cho mẹ.</span>`
-      : bandMa ?`<span class="text-muted">Mã ${esc(k.r.code)} giảm ${fmt(k.couponAmt)} – ít hơn ${k.hang.laSinhNhat ? 'ưu đãi sinh nhật' : 'ưu đãi hạng ' + esc(k.hang.label)} nên web đang áp dụng mức có lợi hơn cho mẹ.</span>`
+    $('#couponHint').innerHTML = k.laSN ? `<span class="text-teal fw-600">🎂 Tháng sinh nhật: đơn được giảm ${k.pct}%</span>`
+      : k.boMa || bandMa ? `<span class="text-teal fw-600">✓ Đơn đang được áp dụng ưu đãi tốt nhất cho mẹ</span>`
       : k.r && k.r.ok ? `<span class="text-teal fw-600">✓ ${k.r.desc}</span>`
       : k.r ? `<span class="text-red">${k.r.msg}</span>`
       : `<span class="text-muted">Có mã giảm giá của shop thì mẹ nhập vào đây nhé.</span>`;
@@ -176,12 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const s = Session.get(), cuaSo = s && phoneKey(s.sdt) === phoneNow();
     if (!cuaSo) { box.innerHTML = s ? '' : '<p class="fs-13 text-muted mt-8">🎟️ Có voucher điểm danh? <button type="button" class="text-primary fw-700" data-vc-login>Đăng nhập</button> để dùng.</p>'; return; }
     const ds = (vcVi && vcVi.ds) || []; if (!ds.length) { box.innerHTML = ''; return; }
-    if (k.laSN) { box.innerHTML = `<p class="fs-13 text-muted mt-8">🎟️ Mẹ có ${ds.length} voucher – tháng sinh nhật đơn đã giảm ${k.pct}% nên chưa dùng kèm voucher; voucher vẫn giữ trong ví.</p>`; return; }
+    if (k.laSN) { box.innerHTML = ''; return; }
     const base = sub - multi;
     box.innerHTML = `<div class="co-vc"><h4>🎟️ Voucher của mẹ (${ds.length})</h4>${!vcVi.dungDuoc ? '<p class="fs-13 text-muted mb-8">🔐 Để dùng voucher, mẹ <button type="button" class="text-primary fw-700" data-vc-otp>xác thực mã OTP</button> (bảo vệ voucher của mẹ).</p>' : ''}
       <div class="co-vc__ds">${ds.map((v) => { const g = MC.DD.giam(v, base, lines), on = v.ma === vcChon;
         return `<button type="button" class="co-vc__it ${on ? 'is-on' : ''} ${g.ok && vcVi.dungDuoc ? '' : 'is-off'}" data-vc="${esc(v.ma)}" ${g.ok && vcVi.dungDuoc ? '' : 'aria-disabled="true"'}><b>−${fmt(v.giaTri)}</b><span>${esc(v.ten)}<small>${g.ok ? (v.donToiThieu ? 'Đơn từ ' + fmt(v.donToiThieu) + ' · ' : '') + 'HSD ' + new Date(v.hetHan).toLocaleDateString('vi-VN') : esc(g.msg)}</small></span><i class="co-vc__chon" aria-hidden="true"></i></button>`; }).join('')}</div>
-      ${k.vc && !k.dungVc && k.vcAmt ? `<p class="fs-13 text-muted mt-8">Voucher không cộng dồn với ${k.dungGT ? 'giảm giá giới thiệu' : 'ưu đãi hạng'} – web đang dùng mức có lợi hơn cho mẹ.</p>` : ''}</div>`;
+      </div>`;
   };
 
   /* ---- 🤝 Mã giới thiệu: dựng khung 1 lần, sau đó chỉ cập nhật chữ (không làm mất con trỏ khi đang gõ) ---- */
@@ -189,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const box = $('#gtBox'); if (!box) return;
     if (!gtCfg.bat) { box.innerHTML = ''; return; }
     if (!$('#gtInput')) box.innerHTML = `<div class="gt-co"><h4>🤝 Mã giới thiệu</h4><div class="coupon"><input class="input" id="gtInput" type="tel" inputmode="numeric" placeholder="SĐT người giới thiệu" aria-label="Mã giới thiệu (số điện thoại người giới thiệu)" value="${esc(gt.ma)}"><button class="btn btn--dark" type="button" id="gtApply">Áp dụng</button></div><div class="coupon-hint" id="gtHint" aria-live="polite"></div></div>`;
-    const lyDo = !k.dungGT && gt.ok ? ((sub - multi) < (Number(gtCfg.donToiThieu) || 0) ? `đơn từ ${fmt(gtCfg.donToiThieu)} mới được giảm` : 'ưu đãi khác của đơn đang có lợi hơn nên web dùng ưu đãi đó (không cộng dồn)') : '';
+    const lyDo = !k.dungGT && gt.ok ? ((sub - multi) < (Number(gtCfg.donToiThieu) || 0) ? `đơn từ ${fmt(gtCfg.donToiThieu)} mới được giảm` : 'đơn đang được áp dụng ưu đãi tốt nhất') : '';
     $('#gtHint').innerHTML = gt.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
       : gt.ok && k.dungGT ? `<span class="text-teal fw-600">✓ Mã giới thiệu hợp lệ${gt.tenAn ? ` (${esc(gt.tenAn)})` : ''}. Mẹ được giảm ${gtCfg.giam}% cho đơn hàng đầu tiên.</span>`
       : gt.ok ? `<span class="text-muted">✓ Mã hợp lệ, nhưng ${lyDo}.</span>`
