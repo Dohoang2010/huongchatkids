@@ -2723,7 +2723,7 @@ function apiQtXoa(p) {
 
 /* ===================== QUẢN TRỊ: ĐƠN HÀNG ===================== */
 var TRANG_THAI = ['Chờ xác nhận', 'Đã xác nhận', 'Đang chuẩn bị', 'Đang giao', 'Đã giao', 'Đã huỷ', 'Yêu cầu hoàn hàng', 'Đã hoàn hàng'];
-/* Chỉ cho chuyển sang trạng thái hợp lệ, tránh bấm nhầm Đã giao khi chưa giao */
+/* Bước tiếp theo gợi ý cho từng trạng thái (nút ở trang chi tiết); ô chọn ngoài danh sách cho chọn mọi trạng thái */
 var LUONG = {
   'Chờ xác nhận':      ['Đã xác nhận', 'Đã huỷ'],
   'Đã xác nhận':       ['Đang chuẩn bị', 'Đã huỷ'],
@@ -2951,7 +2951,7 @@ function apiDoiTrangThai(p) {
   if (dong < 2 || dong > s.getLastRow()) return { ok: false, msg: 'Không tìm thấy đơn' };
   var cu = chuanTT(s.getRange(dong, 19).getValue());
   if (cu === moi) return { ok: true, trangThai: moi, tiep: LUONG[moi] || [] };
-  if ((LUONG[cu] || []).indexOf(moi) < 0) return { ok: false, msg: 'Không chuyển từ "' + cu + '" sang "' + moi + '" được' };
+  // Quản trị chọn được mọi trạng thái (sửa khi bấm nhầm); LUONG chỉ để gợi ý bước tiếp theo
   s.getRange(dong, 19).setValue(moi);
   var ma = String(s.getRange(dong, 2).getValue() || '');
   var sdt = chuanSdt(s.getRange(dong, 5).getValue());

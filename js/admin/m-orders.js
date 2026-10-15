@@ -29,6 +29,15 @@
     <b>Deploy → Manage deployments → ✏️ → New version → Deploy</b>. Sau đó bấm Thử lại.</p>
     <button class="btn btn--primary" data-act="tai-lai">Thử lại</button></div>`;
 
+  /* Ô chọn trạng thái ngoài danh sách: đủ mọi trạng thái – bước tiếp theo xếp trên, trạng thái hiện tại không chọn được */
+  const chonTT = (o) => {
+    const khac = Object.keys(MAU).filter((t) => t !== o.trangThai && !o.tiep.includes(t));
+    const opt = (t) => `<option value="${esc(t)}">→ ${esc(t)}</option>`;
+    return `<select class="dh-tt" data-dong-tt="${o.dong}" title="Chuyển trạng thái đơn"><option value="">⇄ Trạng thái</option>
+      <option disabled>✓ Đang: ${esc(o.trangThai)}</option>
+      ${o.tiep.length ? `<optgroup label="Bước tiếp theo">${o.tiep.map(opt).join('')}</optgroup>` : ''}
+      ${khac.length ? `<optgroup label="Trạng thái khác">${khac.map(opt).join('')}</optgroup>` : ''}</select>`;
+  };
   function veBang(el, d) {
     const tong = d.ds.length;
     S.trang = Math.min(S.trang, Math.max(1, Math.ceil(tong / S.moiTrang)));
@@ -69,7 +78,7 @@
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a>
               ${capNhat ? `<a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/sua" title="Sửa đơn">✏️ Sửa</a>` : ''}
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/in" title="In đơn">🖨 In</a>
-              ${capNhat && o.tiep.length ? `<select class="dh-tt" data-dong-tt="${o.dong}" title="Chuyển trạng thái đơn"><option value="">⇄ Trạng thái</option>${o.tiep.map((t) => `<option value="${esc(t)}">→ ${esc(t)}</option>`).join('')}</select>` : ''}
+              ${capNhat ? chonTT(o) : ''}
             </div></td>
           </tr>`).join('')}</tbody></table></div>
           ${A.phanTrang(tong, S.trang, S.moiTrang, 'dh-pg')}`
