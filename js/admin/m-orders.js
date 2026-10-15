@@ -29,12 +29,12 @@
     <b>Deploy → Manage deployments → ✏️ → New version → Deploy</b>. Sau đó bấm Thử lại.</p>
     <button class="btn btn--primary" data-act="tai-lai">Thử lại</button></div>`;
 
-  /* Ô chọn trạng thái ngoài danh sách: đủ mọi trạng thái – bước tiếp theo xếp trên, trạng thái hiện tại không chọn được */
+  /* Cột Chuyển trạng thái: ô hiện trạng thái hiện tại (cùng màu nhãn), mở ra có đủ mọi trạng thái – bước tiếp theo xếp trên */
   const chonTT = (o) => {
     const khac = Object.keys(MAU).filter((t) => t !== o.trangThai && !o.tiep.includes(t));
     const opt = (t) => `<option value="${esc(t)}">→ ${esc(t)}</option>`;
-    return `<select class="dh-tt" data-dong-tt="${o.dong}" title="Chuyển trạng thái đơn"><option value="">⇄ Trạng thái</option>
-      <option disabled>✓ Đang: ${esc(o.trangThai)}</option>
+    return `<select class="dh-tt ${MAU[o.trangThai] || ''}" data-dong-tt="${o.dong}" data-cu="${esc(o.trangThai)}" title="Chọn để chuyển trạng thái đơn">
+      <option value="${esc(o.trangThai)}" selected>● ${esc(o.trangThai)}</option>
       ${o.tiep.length ? `<optgroup label="Bước tiếp theo">${o.tiep.map(opt).join('')}</optgroup>` : ''}
       ${khac.length ? `<optgroup label="Trạng thái khác">${khac.map(opt).join('')}</optgroup>` : ''}</select>`;
   };
@@ -65,7 +65,7 @@
             ${[['7', '7 ngày'], ['30', '30 ngày'], ['90', '3 tháng'], ['365', '1 năm'], ['all', 'Tất cả']].map(([v, t]) => `<option value="${v}" ${S.ngay === v ? 'selected' : ''}>${t}</option>`).join('')}</select>
         </div>
         ${tong ? `<div class="tbl-wrap"><table>
-          <thead><tr><th>Mã đơn</th><th>Thời gian</th><th>Khách hàng</th><th class="num">SP</th><th class="num">Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th><th></th></tr></thead>
+          <thead><tr><th>Mã đơn</th><th>Thời gian</th><th>Khách hàng</th><th class="num">SP</th><th class="num">Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th><th class="num">Thao tác</th><th>Chuyển trạng thái</th></tr></thead>
           <tbody>${slice.map((o) => `<tr>
             <td><a href="#/don-hang/${o.dong}"><b>${esc(o.ma)}</b></a>${o.qua ? '<br><small class="muted">🎁 có quà</small>' : ''}</td>
             <td data-nhan="Thời gian">${esc(o.ngay)}<br><small class="muted">${esc(o.loai)}</small></td>
@@ -78,8 +78,8 @@
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a>
               ${capNhat ? `<a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/sua" title="Sửa đơn">✏️ Sửa</a>` : ''}
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/in" title="In đơn">🖨 In</a>
-              ${capNhat ? chonTT(o) : ''}
             </div></td>
+            <td data-nhan="Chuyển trạng thái">${capNhat ? chonTT(o) : ''}</td>
           </tr>`).join('')}</tbody></table></div>
           ${A.phanTrang(tong, S.trang, S.moiTrang, 'dh-pg')}`
           : A.trong('Không có đơn nào', 'Thử bỏ bớt bộ lọc hoặc chọn khoảng thời gian rộng hơn.', '🧾')}
@@ -286,7 +286,7 @@
   document.addEventListener('change', (e) => {
     if (e.target.id === 'dhTT') { S.tt = e.target.value; S.trang = 1; return A.veTrang(); }
     if (e.target.id === 'dhNgay') { S.ngay = e.target.value; khoang(); S.trang = 1; return A.veTrang(); }
-    if (e.target.matches('.dh-tt') && e.target.value) { const moi = e.target.value; e.target.value = ''; return doiTT(e.target.dataset.dongTt, moi, e.target); }
+    if (e.target.matches('.dh-tt')) { const moi = e.target.value, cu = e.target.dataset.cu; e.target.value = cu; if (moi && moi !== cu) return doiTT(e.target.dataset.dongTt, moi, e.target); return; }
   });
   /* Đổi trạng thái – dùng chung cho nút ở trang chi tiết và ô chọn ngoài danh sách (cùng ghi vào máy chủ nên 2 nơi luôn khớp nhau) */
   async function doiTT(dong, moi, nut) {
