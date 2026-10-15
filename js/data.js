@@ -3494,12 +3494,14 @@ window.PRODUCTS = [
       {
         "label": "1 gói 200g",
         "price": 265000,
-        "oldPrice": 265000
+        "oldPrice": 265000,
+        "oos": true
       },
       {
         "label": "2 gói",
         "price": 530000,
-        "oldPrice": 530000
+        "oldPrice": 530000,
+        "oos": true
       }
     ],
     "desc": "Đặc sản lợn đen Tây Bắc làm từ thịt lợn đen tươi (99%), ướp kỹ với mắc khén, hạt dổi, thảo quả, tỏi, ớt, tiêu rồi hun khói, cho miếng thịt thơm mùi khói, đậm đà, càng nhai càng ngọt. Không chất bảo quản. Món nhâm nhi ở nhà hay đãi bạn bè đều ngon.",
