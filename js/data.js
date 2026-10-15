@@ -4282,6 +4282,14 @@ window.COUPONS = {
     "desc": "Giảm 5% cho đơn hàng đầu tiên",
     "batDau": "2026-10-05T11:22",
     "hetHan": "2026-10-31T23:59"
+  },
+  "BMWCCV": {
+    "ten": "thành viên BMWCCV",
+    "loai": "riengtu",
+    "type": "percent",
+    "value": 20,
+    "min": 0,
+    "desc": "Giảm 20% cho thành viên BMWCCV"
   }
 };
 /* ===/ADMIN:COUPONS=== */
