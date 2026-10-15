@@ -3021,9 +3021,9 @@ window.PRODUCTS = [
       "12-18y"
     ],
     "needs": [
-      "tieu-hoa",
+      "de-khang",
       "tang-can",
-      "de-khang"
+      "tieu-hoa"
     ],
     "price": 986000,
     "oldPrice": 1282000,
@@ -3052,12 +3052,18 @@ window.PRODUCTS = [
       {
         "label": "Men Baby (nâu) · từ 0 tháng",
         "price": 986000,
-        "oldPrice": 1282000
+        "oldPrice": 1282000,
+        "oos": true
       },
       {
         "label": "Men Kids (xanh) · từ 24 tháng",
         "price": 986000,
-        "oldPrice": 1282000
+        "oldPrice": 1282000,
+        "oos": true
+      },
+      {
+        "label": "20 gói nhỏ",
+        "price": 399000
       }
     ],
     "desc": "Men vi sinh Sysy (Pasteur 아이생각 생유산균) – hàng nội địa Hàn Quốc của Pasteur thuộc tập đoàn Lotte. Men Baby (hộp nâu, cho bé từ 0 tháng): 15,1 tỉ lợi khuẩn, 8 chủng. Men Kids (hộp xanh, cho bé từ 24 tháng): 16,1 tỉ lợi khuẩn, 7 chủng, bổ sung kẽm 2,55mg và vitamin D 400 IU. Đạt GMP, công nghệ Probiocap bao bọc lợi khuẩn và Synbiotic (lợi khuẩn kết hợp chất xơ nuôi lợi khuẩn); nhà sản xuất cam kết ít nhất 2 tỉ lợi khuẩn sống. Theo nhà sản xuất: hỗ trợ tiêu hoá, ăn ngon, hấp thu tốt; hỗ trợ giảm táo bón, tiêu chảy và tác dụng phụ khi dùng kháng sinh; hỗ trợ cải thiện biếng ăn, chậm tăng cân, giảm trớ sữa ở trẻ nhỏ.",
