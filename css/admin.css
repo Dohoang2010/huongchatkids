@@ -691,7 +691,16 @@ td.nowrap{white-space:nowrap}
 @media (max-width:760px){.vrow.dh-sp{grid-template-columns:1fr 1fr}.vrow.dh-sp label:first-child{grid-column:1/-1}.vrow.dh-sp .icobtn{margin-top:0;justify-self:end;grid-column:2}}
 .dh-nut{display:flex;gap:6px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
 .dh-nut .btn{white-space:nowrap}
-.dh-tt{width:170px;padding:6px 8px;font-size:12.5px;font-weight:700;border-radius:999px;cursor:pointer;border:1px solid transparent}
-.dh-tt.tag--ok{border-color:#BFE9E2}.dh-tt.tag--wait{border-color:#F4E3BC}.dh-tt.tag--no{border-color:#FBD5D5}
-.dh-tt option,.dh-tt optgroup{color:var(--ink);background:#fff;font-weight:500}
+.dh-tt{width:180px;padding:6px 8px;font-size:12.5px;font-weight:700;border-radius:999px;cursor:pointer;border:1px solid;font-family:inherit}
+.dh-tt optgroup{color:var(--muted);background:#fff;font-weight:600;font-style:normal;font-size:11.5px}
+.dh-tt option{font-weight:700;font-size:13px;padding:6px 8px;background:#fff}
+/* màu từng trạng thái – ô và từng dòng chọn */
+.dh-tt.tt-0{background:#FFF6E0;color:#A86400;border-color:#F4D48A}option.tt-0{color:#A86400}
+.dh-tt.tt-1{background:#E8F1FF;color:#1D5FD1;border-color:#B9D1FA}option.tt-1{color:#1D5FD1}
+.dh-tt.tt-2{background:#F3ECFF;color:#6B3FC8;border-color:#D5C4F5}option.tt-2{color:#6B3FC8}
+.dh-tt.tt-3{background:#E3F7F5;color:#0B7B6E;border-color:#A9E3DA}option.tt-3{color:#0B7B6E}
+.dh-tt.tt-4{background:#E6F6EA;color:#1E7B34;border-color:#AEDFB9}option.tt-4{color:#1E7B34}
+.dh-tt.tt-5{background:#FDECEC;color:#C62828;border-color:#F5BABA}option.tt-5{color:#C62828}
+.dh-tt.tt-6{background:#FFF0E6;color:#C2570C;border-color:#F7C9A6}option.tt-6{color:#C2570C}
+.dh-tt.tt-7{background:#F1F1F3;color:#5B5B66;border-color:#D4D4DA}option.tt-7{color:#5B5B66}
 @media (max-width:760px){.dh-nut{justify-content:flex-start}}

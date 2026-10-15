@@ -29,12 +29,15 @@
     <b>Deploy → Manage deployments → ✏️ → New version → Deploy</b>. Sau đó bấm Thử lại.</p>
     <button class="btn btn--primary" data-act="tai-lai">Thử lại</button></div>`;
 
-  /* Cột Chuyển trạng thái: ô hiện trạng thái hiện tại (cùng màu nhãn), mở ra có đủ mọi trạng thái – bước tiếp theo xếp trên */
+  /* Cột Chuyển trạng thái: ô hiện trạng thái hiện tại, mở ra có đủ mọi trạng thái – bước tiếp theo xếp trên.
+     Mỗi trạng thái 1 màu + biểu tượng riêng (CSS .tt-0 … .tt-7 theo thứ tự trong MAU) cho dễ chọn */
+  const ICON = { 'Chờ xác nhận': '🕒', 'Đã xác nhận': '✅', 'Đang chuẩn bị': '📦', 'Đang giao': '🚚', 'Đã giao': '🎉', 'Đã huỷ': '❌', 'Yêu cầu hoàn hàng': '↩️', 'Đã hoàn hàng': '🔙' };
+  const lopTT = (t) => 'tt-' + Object.keys(MAU).indexOf(t);
   const chonTT = (o) => {
     const khac = Object.keys(MAU).filter((t) => t !== o.trangThai && !o.tiep.includes(t));
-    const opt = (t) => `<option value="${esc(t)}">→ ${esc(t)}</option>`;
-    return `<select class="dh-tt ${MAU[o.trangThai] || ''}" data-dong-tt="${o.dong}" data-cu="${esc(o.trangThai)}" title="Chọn để chuyển trạng thái đơn">
-      <option value="${esc(o.trangThai)}" selected>● ${esc(o.trangThai)}</option>
+    const opt = (t) => `<option class="${lopTT(t)}" value="${esc(t)}">${ICON[t] || '→'} ${esc(t)}</option>`;
+    return `<select class="dh-tt ${lopTT(o.trangThai)}" data-dong-tt="${o.dong}" data-cu="${esc(o.trangThai)}" title="Chọn để chuyển trạng thái đơn">
+      <option class="${lopTT(o.trangThai)}" value="${esc(o.trangThai)}" selected>${ICON[o.trangThai] || '●'} ${esc(o.trangThai)}</option>
       ${o.tiep.length ? `<optgroup label="Bước tiếp theo">${o.tiep.map(opt).join('')}</optgroup>` : ''}
       ${khac.length ? `<optgroup label="Trạng thái khác">${khac.map(opt).join('')}</optgroup>` : ''}</select>`;
   };
