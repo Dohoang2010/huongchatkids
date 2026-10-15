@@ -3062,7 +3062,7 @@ window.PRODUCTS = [
         "oos": true
       },
       {
-        "label": "30 gói nhỏ",
+        "label": "20 gói nhỏ",
         "price": 399000
       }
     ],
