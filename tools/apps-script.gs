@@ -2731,8 +2731,8 @@ var LUONG = {
   'Đang giao':         ['Đã giao', 'Yêu cầu hoàn hàng'],
   'Đã giao':           ['Yêu cầu hoàn hàng'],
   'Yêu cầu hoàn hàng': ['Đã hoàn hàng', 'Đã giao'],
-  'Đã huỷ':            [],
-  'Đã hoàn hàng':      []
+  'Đã huỷ':            ['Chờ xác nhận'],   // khôi phục đơn huỷ nhầm
+  'Đã hoàn hàng':      ['Đã giao']         // khôi phục khi đánh dấu hoàn nhầm
 };
 function chuanTT(v) { var t = String(v || '').trim(); return t || 'Chờ xác nhận'; }
 
@@ -2965,7 +2965,7 @@ function apiDoiTrangThai(p) {
 }
 
 /* Sửa đơn khi khách đổi ý / đổi sản phẩm: thông tin khách, danh sách sản phẩm, tiền, thanh toán, quà, ghi chú.
-   Không đổi thời gian, mã đơn, loại đơn, trạng thái. Kiểm tra đúng mã đơn ở dòng đó. Đơn đã huỷ / hoàn thì không sửa. */
+   Không đổi thời gian, mã đơn, loại đơn, trạng thái. Kiểm tra đúng mã đơn ở dòng đó. */
 function apiSuaDon(p) {
   if (!coQuyen(p, 'order.update')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var s = sheetDon(); var dong = Number(p.dong || 0);
@@ -2973,7 +2973,7 @@ function apiSuaDon(p) {
   var v = s.getRange(dong, 1, 1, HEADERS.length).getValues()[0];
   var ma = String(v[1] || '');
   if (String(p.ma || '') !== ma) return { ok: false, msg: 'Danh sách đơn vừa thay đổi – tải lại trang rồi sửa lại' };
-  var tt = chuanTT(v[18]); if (TT_CUOI.indexOf(tt) > -1) return { ok: false, msg: 'Đơn ' + tt.toLowerCase() + ' – không sửa được' };
+  // Đơn huỷ / hoàn vẫn sửa được (nhân viên bấm nhầm, nhận thông tin nhầm)
   var d; try { d = JSON.parse(String(p.don || '')); } catch (e) { return { ok: false, msg: 'Dữ liệu sửa không hợp lệ' }; }
   var chu = function (x, n) { return String(x == null ? '' : x).replace(/[\r\n]+/g, ' ').trim().slice(0, n); };
   var so = function (x) { var n = Math.round(Number(x) || 0); return n < 0 ? 0 : Math.min(n, 1e9); };

@@ -67,7 +67,7 @@
             <td>${A.badge(o.trangThai, MAU[o.trangThai] || '')}</td>
             <td class="num"><div class="dh-nut">
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a>
-              ${capNhat && !/^Đã (huỷ|hoàn hàng)$/.test(o.trangThai) ? `<a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/sua" title="Sửa đơn">✏️ Sửa</a>` : ''}
+              ${capNhat ? `<a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/sua" title="Sửa đơn">✏️ Sửa</a>` : ''}
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/in" title="In đơn">🖨 In</a>
               ${capNhat && o.tiep.length ? `<select class="dh-tt" data-dong-tt="${o.dong}" title="Chuyển trạng thái đơn"><option value="">⇄ Trạng thái</option>${o.tiep.map((t) => `<option value="${esc(t)}">→ ${esc(t)}</option>`).join('')}</select>` : ''}
             </div></td>
@@ -92,7 +92,7 @@
       const o = d.don;
       const buoc = LUONG.indexOf(o.trangThai);
       const huy = /huỷ|hoàn/i.test(o.trangThai);
-      const suaDuoc = A.co('order.update') && !/^Đã (huỷ|hoàn hàng)$/.test(o.trangThai);
+      const suaDuoc = A.co('order.update');
       $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/don-hang">← Danh sách</a>
         ${suaDuoc ? `<a class="btn btn--primary" href="#/don-hang/${o.dong}/sua" title="Sửa khi khách đổi ý, đổi sản phẩm, đổi địa chỉ…">✏️ Sửa đơn</a>` : ''}
         <button class="btn btn--ghost" id="dhIn">🖨 In đơn</button>`;
@@ -163,7 +163,7 @@
       const o = d.don;
       $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/don-hang/${o.dong}">← Quay lại đơn</a>`;
       if (!A.co('order.update')) { el.innerHTML = A.loiTai('Tài khoản của bạn không có quyền sửa đơn'); return; }
-      if (/^Đã (huỷ|hoàn hàng)$/.test(o.trangThai)) { el.innerHTML = `<div class="card err-box"><h3>Đơn ${esc(o.trangThai.toLowerCase())}</h3><p>Đơn đã huỷ / hoàn hàng thì không sửa được.</p></div>`; return; }
+      if (/^Đã (huỷ|hoàn hàng)$/.test(o.trangThai)) o.canhBao = `Đơn đang ở trạng thái <b>${esc(o.trangThai)}</b>. Sửa thông tin vẫn giữ trạng thái này – nếu huỷ / hoàn nhầm thì sau khi lưu, ở trang chi tiết bấm <b>${o.tiep.map(esc).join(' / ') || 'chuyển trạng thái'}</b> để khôi phục đơn.`;
       E = { dong: o.dong, ma: o.ma, trangThai: o.trangThai, rows: o.sanPham.map(tachDong), khach: o.khach, sdt: o.sdt, diaChi: o.diaChi, email: o.email,
         thanhToan: o.thanhToan, qua: o.qua, ghiChu: o.ghiChu, tamTinh: o.tamTinh, giam: o.giam, giamHang: o.giamHang, ship: o.ship, tong: o.tong, lyDo: '' };
       if (!E.rows.length) E.rows.push({ ten: '', bien: '', sl: 1, gia: 0 });
@@ -172,7 +172,7 @@
         <div id="dhSua">
         <div class="card"><div class="dh__top"><div><h3>✏️ Sửa đơn ${esc(o.ma)}</h3><p class="muted">${esc(o.ngay)} · ${esc(o.loai)}</p></div>
           <span class="grow"></span>${A.badge(o.trangThai, MAU[o.trangThai] || '')}</div>
-          ${/Đang giao|Đã giao|hoàn/.test(o.trangThai) ? `<div class="box-note">⚠️ Đơn đang ở bước <b>${esc(o.trangThai)}</b> – nhớ báo bên giao hàng nếu đổi sản phẩm / địa chỉ / tiền thu.</div>` : ''}
+          ${o.canhBao ? `<div class="box-note box-note--red">⚠️ ${o.canhBao}</div>` : /Đang giao|Đã giao|hoàn/.test(o.trangThai) ? `<div class="box-note">⚠️ Đơn đang ở bước <b>${esc(o.trangThai)}</b> – nhớ báo bên giao hàng nếu đổi sản phẩm / địa chỉ / tiền thu.</div>` : ''}
           <div class="box-note">💡 Sửa xong bấm <b>Lưu thay đổi</b>. Tổng chi tiêu và hạng của khách tự tính lại; mọi thay đổi được ghi vào Nhật ký. Nếu đơn đã lên CRM thì sửa cả bên CRM.</div></div>
 
         <div class="card"><h3>📦 Sản phẩm</h3>
