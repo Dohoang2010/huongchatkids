@@ -5279,6 +5279,632 @@ window.QUA_TANG = {
                         mọi chương trình cũ tạm dừng (không cộng dồn, mỗi đơn 1 chương trình có lợi nhất)
    - sau ketThuc      : mọi thứ tự biến mất, web về như ngày thường
    ===================================================================== */
+/* =====================================================================
+   GIAO DIỆN NGÀY LỄ – js/le-hoi.js đọc khối này (trang quản trị › Website › Giao diện ngày lễ).
+   Chỉ là lớp trang trí: dải chào mừng, màu trang trí, hiệu ứng nhẹ. Không ảnh hưởng giá, giỏ hàng, voucher, điểm.
+   ===================================================================== */
+/* ===ADMIN:LE_HOI=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
+window.LE_HOI = {
+  "bat": true,
+  "hieuUng": true,
+  "chiDungNgayDoiChieu": false,
+  "ds": [
+    {
+      "id": "tet-duong-lich",
+      "ten": "Tết Dương lịch",
+      "lich": {
+        "loai": "duong",
+        "ngay": "01-01"
+      },
+      "bat": true,
+      "uuTien": 20,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "nam-moi",
+      "hieuUng": null,
+      "dai": "🎆 Hương Chất Kids chúc mẹ và bé năm mới an khang – mạnh khoẻ – nhiều niềm vui!",
+      "nut": "",
+      "link": "",
+      "moTa": "Năm mới, pháo hoa, lời chúc",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "tet-nguyen-dan",
+      "ten": "Tết Nguyên Đán",
+      "lich": {
+        "loai": "am",
+        "thang": 1,
+        "ngay": 1
+      },
+      "bat": true,
+      "uuTien": 100,
+      "truoc": 3,
+      "soNgay": 3,
+      "chuDe": "tet",
+      "hieuUng": null,
+      "dai": "🧧 Chúc Mừng Năm Mới – Hương Chất Kids chúc cả nhà an khang thịnh vượng, bé ăn ngoan chóng lớn!",
+      "nut": "",
+      "link": "",
+      "moTa": "Mùng 1–3 Tết âm lịch: hoa đào, hoa mai, lì xì",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "valentine",
+      "ten": "Valentine",
+      "lich": {
+        "loai": "duong",
+        "ngay": "02-14"
+      },
+      "bat": true,
+      "uuTien": 10,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "tinh-yeu",
+      "hieuUng": null,
+      "dai": "💝 Valentine ngọt ngào – yêu thương bắt đầu từ những điều chọn lọc cho cả nhà",
+      "nut": "",
+      "link": "",
+      "moTa": "Trái tim, quà tặng, hoa",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "quoc-te-phu-nu",
+      "ten": "Ngày Quốc tế Phụ nữ 8/3",
+      "lich": {
+        "loai": "duong",
+        "ngay": "03-08"
+      },
+      "bat": true,
+      "uuTien": 30,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "hoa-tim",
+      "hieuUng": null,
+      "dai": "💐 Chúc mừng ngày Quốc tế Phụ nữ 8/3 – chúc mẹ luôn xinh đẹp, hạnh phúc và được yêu thương",
+      "nut": "",
+      "link": "",
+      "moTa": "Hoa, quà tặng, lời chúc phụ nữ",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "gio-to",
+      "ten": "Giỗ Tổ Hùng Vương",
+      "lich": {
+        "loai": "am",
+        "thang": 3,
+        "ngay": 10
+      },
+      "bat": true,
+      "uuTien": 40,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "trang-trong",
+      "hieuUng": null,
+      "dai": "🇻🇳 Dù ai đi ngược về xuôi, nhớ ngày Giỗ Tổ mùng mười tháng ba",
+      "nut": "",
+      "link": "",
+      "moTa": "Trang trọng, văn hoá Việt – không hiệu ứng",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "30-4-1-5",
+      "ten": "Giải phóng miền Nam & Quốc tế Lao động",
+      "lich": {
+        "loai": "duong",
+        "ngay": "04-30"
+      },
+      "bat": true,
+      "uuTien": 40,
+      "truoc": 3,
+      "soNgay": 2,
+      "chuDe": "trang-trong",
+      "hieuUng": null,
+      "dai": "🇻🇳 Chào mừng 30/4 – 1/5 · Chúc cả nhà kỳ nghỉ lễ vui vẻ, an toàn",
+      "nut": "",
+      "link": "",
+      "moTa": "30/4 và 1/5 – trang trọng, hiện đại",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "ngay-cua-me",
+      "ten": "Ngày của Mẹ",
+      "lich": {
+        "loai": "quytac",
+        "ma": "ngay-cua-me"
+      },
+      "bat": true,
+      "uuTien": 30,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "gia-dinh",
+      "hieuUng": null,
+      "dai": "💐 Ngày của Mẹ – cảm ơn mẹ vì tất cả. Hương Chất Kids chúc mẹ luôn khoẻ và hạnh phúc",
+      "nut": "",
+      "link": "",
+      "moTa": "Chủ nhật thứ 2 của tháng 5",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "thieu-nhi",
+      "ten": "Quốc tế Thiếu nhi 1/6",
+      "lich": {
+        "loai": "duong",
+        "ngay": "06-01"
+      },
+      "bat": true,
+      "uuTien": 30,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "thieu-nhi",
+      "hieuUng": null,
+      "dai": "🎈 Chúc mừng ngày Quốc tế Thiếu nhi 1/6 – chúc các bé luôn vui khoẻ, mau lớn!",
+      "nut": "",
+      "link": "",
+      "moTa": "Bóng bay, màu sắc vui tươi",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "ngay-cua-cha",
+      "ten": "Ngày của Cha",
+      "lich": {
+        "loai": "quytac",
+        "ma": "ngay-cua-cha"
+      },
+      "bat": true,
+      "uuTien": 30,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "am-ap",
+      "hieuUng": null,
+      "dai": "👔 Ngày của Cha – gửi lời cảm ơn tới những người bố tuyệt vời",
+      "nut": "",
+      "link": "",
+      "moTa": "Chủ nhật thứ 3 của tháng 6",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "tuu-truong",
+      "ten": "Back to School – Mùa tựu trường",
+      "lich": {
+        "loai": "duong",
+        "ngay": "08-01"
+      },
+      "bat": true,
+      "uuTien": 5,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "tuu-truong",
+      "hieuUng": null,
+      "dai": "🎒 Mùa tựu trường – chuẩn bị dinh dưỡng cho bé tự tin vào năm học mới",
+      "nut": "",
+      "link": "",
+      "moTa": "Từ 01/8 đến 10/9 (sửa được)",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {},
+      "denNgay": "09-10"
+    },
+    {
+      "id": "quoc-khanh",
+      "ten": "Quốc khánh 2/9",
+      "lich": {
+        "loai": "duong",
+        "ngay": "09-02"
+      },
+      "bat": true,
+      "uuTien": 50,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "trang-trong",
+      "hieuUng": null,
+      "dai": "🇻🇳 Chào mừng Quốc khánh 2/9 – chúc cả nhà kỳ nghỉ lễ vui vẻ, bình an",
+      "nut": "",
+      "link": "",
+      "moTa": "Đỏ, vàng, trang trọng",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "trung-thu",
+      "ten": "Tết Trung Thu",
+      "lich": {
+        "loai": "am",
+        "thang": 8,
+        "ngay": 15
+      },
+      "bat": true,
+      "uuTien": 60,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "trung-thu",
+      "hieuUng": null,
+      "dai": "🏮 Trung Thu đoàn viên – chúc các bé một mùa trăng thật vui, cả nhà sum vầy",
+      "nut": "",
+      "link": "",
+      "moTa": "Rằm tháng 8 âm lịch: trăng, đèn lồng, thỏ",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "phu-nu-viet-nam",
+      "ten": "Ngày Phụ nữ Việt Nam 20/10",
+      "lich": {
+        "loai": "duong",
+        "ngay": "10-20"
+      },
+      "bat": true,
+      "uuTien": 60,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "hoa-hong",
+      "hieuUng": null,
+      "dai": "🌷 Chào mừng ngày Phụ nữ Việt Nam 20/10 – đăng nhập ngày 20/10 nhận 20.100 điểm, điểm danh 50.000 điểm",
+      "nut": "Nhận quà",
+      "link": "index.html?tab=2010",
+      "moTa": "Hoa, quà tặng, lời chúc",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "halloween",
+      "ten": "Halloween",
+      "lich": {
+        "loai": "duong",
+        "ngay": "10-31"
+      },
+      "bat": true,
+      "uuTien": 20,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "halloween",
+      "hieuUng": null,
+      "dai": "🎃 Happy Halloween – bé vui hết nấc, mẹ yên tâm với đồ ăn vặt chọn lọc",
+      "nut": "",
+      "link": "",
+      "moTa": "Bí ngô, dơi, ma vui nhộn",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "sale-11-11",
+      "ten": "Siêu sale 11.11",
+      "lich": {
+        "loai": "duong",
+        "ngay": "11-11"
+      },
+      "bat": true,
+      "uuTien": 30,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "sale",
+      "hieuUng": null,
+      "dai": "🛍️ Mùa săn deal 11.11 – xem các ưu đãi đang có trên web",
+      "nut": "Xem ưu đãi",
+      "link": "collections.html",
+      "moTa": "Mua sắm, ưu đãi",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "nha-giao",
+      "ten": "Ngày Nhà giáo Việt Nam 20/11",
+      "lich": {
+        "loai": "duong",
+        "ngay": "11-20"
+      },
+      "bat": true,
+      "uuTien": 40,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "tri-an",
+      "hieuUng": null,
+      "dai": "📚 Tri ân thầy cô nhân ngày Nhà giáo Việt Nam 20/11",
+      "nut": "",
+      "link": "",
+      "moTa": "Hoa, sách, lời tri ân",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "black-friday",
+      "ten": "Black Friday & Cyber Monday",
+      "lich": {
+        "loai": "quytac",
+        "ma": "black-friday"
+      },
+      "bat": true,
+      "uuTien": 35,
+      "truoc": 3,
+      "soNgay": 4,
+      "chuDe": "sale-den",
+      "hieuUng": null,
+      "dai": "🏷️ Black Friday – Cyber Monday: săn ưu đãi cuối tháng 11",
+      "nut": "Xem ưu đãi",
+      "link": "collections.html",
+      "moTa": "Thứ Sáu sau Lễ Tạ ơn → Cyber Monday",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "sale-12-12",
+      "ten": "Siêu sale 12.12",
+      "lich": {
+        "loai": "duong",
+        "ngay": "12-12"
+      },
+      "bat": true,
+      "uuTien": 30,
+      "truoc": 3,
+      "soNgay": 1,
+      "chuDe": "sale",
+      "hieuUng": null,
+      "dai": "🛍️ Siêu sale 12.12 – deal cuối năm cho mẹ và bé",
+      "nut": "Xem ưu đãi",
+      "link": "collections.html",
+      "moTa": "Ngày đôi cuối năm",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    },
+    {
+      "id": "giang-sinh",
+      "ten": "Giáng sinh",
+      "lich": {
+        "loai": "duong",
+        "ngay": "12-24"
+      },
+      "bat": true,
+      "uuTien": 50,
+      "truoc": 3,
+      "soNgay": 2,
+      "chuDe": "giang-sinh",
+      "hieuUng": null,
+      "dai": "🎄 Merry Christmas – Hương Chất Kids chúc cả nhà Giáng sinh an lành, ấm áp",
+      "nut": "",
+      "link": "",
+      "moTa": "24–25/12: cây thông, tuyết nhẹ, quà",
+      "trang": [
+        "*"
+      ],
+      "truTrang": [
+        "checkout.html"
+      ],
+      "hieuUngTrang": [
+        "index.html",
+        "collections.html",
+        "product.html",
+        "blog.html",
+        "diem-danh.html"
+      ],
+      "ghiDe": {}
+    }
+  ]
+};
+/* ===/ADMIN:LE_HOI=== */
+
 window.SU_KIEN = {
   id: '2010', nhan: '20.10', icon: '🌷', ten: 'Ngày Phụ nữ Việt Nam 20.10', khau: 'Mẹ xứng đáng được yêu thương',
   hienTu: '2026-10-16T00:00:00+07:00', batDau: '2026-10-20T00:00:00+07:00', ketThuc: '2026-10-21T00:00:00+07:00',
@@ -5286,7 +5912,6 @@ window.SU_KIEN = {
   poster: 'img/su-kien/2010-poster.jpg',
   loiChuc: 'Cảm ơn mẹ đã luôn chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Ngày 20/10 này, Hương Chất Kids gửi mẹ những món quà nhỏ – chúc mẹ luôn khoẻ, xinh và thật nhiều yêu thương 💗',
   luat: ['Quà 20.100 điểm: mỗi tài khoản nhận 1 lần khi đăng nhập hoặc tạo tài khoản trong ngày 20/10.', 'Điểm danh ngày 20/10 được 50.000 điểm (ngày thường 1.000 điểm). 1 điểm = 1đ, trừ thẳng vào đơn hàng.', 'Quà tặng, mã giảm giá và giờ vàng ngày thường vẫn áp dụng như bình thường.'],
-  trangTri: { hoa: ['🌸', '🌷', '🌺', '💮'], dai: '🌷 Chào mừng ngày Phụ nữ Việt Nam 20/10 – đăng nhập ngày 20/10 nhận ngay 20.100 điểm, điểm danh 50.000 điểm', daiHomNay: '🌷 Chúc mừng 20/10! Đăng nhập nhận 20.100 điểm + điểm danh 50.000 điểm – chỉ hôm nay', nut: 'Nhận quà' },
   banners: [
     { pc: 'img/su-kien/2010-b1pc.jpg', mb: 'img/su-kien/2010-b1mb.jpg', link: 'index.html?tab=2010', alt: 'Chúc mừng ngày Phụ nữ Việt Nam 20.10 – đăng nhập tặng 20.100 điểm, điểm danh 50.000 điểm' },
     { pc: 'img/su-kien/2010-b2pc.jpg', mb: 'img/su-kien/2010-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' },

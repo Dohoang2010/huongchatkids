@@ -2317,19 +2317,25 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .gt-chon input:checked + span { border-color: var(--primary, #F0537A); background: #FFF0F4; color: var(--primary, #F0537A); }
 .gt-chon input:focus-visible + span { outline: 2px solid var(--primary, #F0537A); outline-offset: 2px; }
 
-/* ===== Ngày lễ 20/10 – dải chào mừng, hoa rơi, tab sự kiện tông hồng ===== */
-.le-dai { position: relative; z-index: 60; background: linear-gradient(90deg, #E8436E, #FF7FA0 50%, #E8436E); background-size: 200% 100%; animation: leDai 6s linear infinite; color: #fff; }
-.le-dai a { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 40px; color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.35; }
-.le-dai b { white-space: nowrap; background: #fff; color: #C2245A; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; }
-.le-dai__hoa { font-size: 18px; animation: leLac 2.4s ease-in-out infinite; display: inline-block; }
-.le-dai button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.25); border: 0; color: #fff; width: 26px; height: 26px; border-radius: 50%; font-size: 18px; line-height: 1; cursor: pointer; }
-@media (max-width: 600px) { .le-dai a { font-size: 12.5px; padding: 7px 36px 7px 10px; flex-wrap: wrap; gap: 4px 8px; } }
+/* ===== Giao diện ngày lễ (js/le-hoi.js) – chỉ là lớp trang trí, màu lấy từ --le-1 / --le-2 / --le-chu của chủ đề ===== */
+.le-dai { position: relative; z-index: 60; color: var(--le-chu, #fff); background: linear-gradient(90deg, var(--le-1, #E8436E), var(--le-2, #FF8FA8) 50%, var(--le-1, #E8436E)); background-size: 200% 100%; animation: leDai 8s linear infinite; }
+.le-dai__in { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 44px; color: inherit; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.35; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.le-dai__in b { white-space: nowrap; background: #fff; color: var(--le-1, #C2245A); padding: 3px 10px; border-radius: 999px; font-size: 12.5px; text-shadow: none; }
+.le-dai__st { font-size: 18px; display: inline-block; animation: leLac 2.4s ease-in-out infinite; }
+.le-dai button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.25); border: 0; color: inherit; width: 26px; height: 26px; border-radius: 50%; font-size: 18px; line-height: 1; cursor: pointer; }
+@media (max-width: 600px) { .le-dai__in { font-size: 12.5px; padding: 7px 38px 7px 10px; flex-wrap: wrap; gap: 4px 8px; } }
 @keyframes leDai { to { background-position: -200% 0; } }
 @keyframes leLac { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg) scale(1.1); } }
-.le-hoa { position: fixed; inset: 0; pointer-events: none; z-index: 55; overflow: hidden; }
+.le-on .site-header, .le-on header.header { box-shadow: inset 0 -3px 0 var(--le-2, transparent); }
+.le-hoa { position: fixed; inset: 0; pointer-events: none; z-index: 55; overflow: hidden; contain: strict; }
 .le-hoa i { position: absolute; top: -40px; font-style: normal; opacity: .85; animation-name: leRoi, leDua; animation-timing-function: linear, ease-in-out; will-change: transform; }
+.le-hoa.is-dung i { animation-play-state: paused; }
+.le-hoa--tuyet i { color: #fff; text-shadow: 0 0 3px rgba(80,120,160,.6); opacity: .9; }
+.le-hoa--bong-bay i, .le-hoa--den-long i { animation-name: leBay, leDua; top: auto; bottom: -50px; }
 @keyframes leRoi { 0% { transform: translateY(-40px) rotate(0); } 100% { transform: translateY(110vh) rotate(540deg); } }
+@keyframes leBay { 0% { transform: translateY(0); } 100% { transform: translateY(-115vh); } }
 @keyframes leDua { 0%, 100% { margin-left: -14px; } 50% { margin-left: 14px; } }
+@media (prefers-reduced-motion: reduce) { .le-dai, .le-dai__st { animation: none; } .le-hoa { display: none; } }
 .navbar__link--sk { color: #E8436E !important; font-weight: 800; }
 .sk-tabs--2010 .sk-tabs__sk b { background: linear-gradient(90deg, #E8436E, #FF8FA8); color: #fff; }
 .sk-tabs--2010 .sk-tabs__sk small { color: #C2245A; }

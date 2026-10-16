@@ -151,10 +151,10 @@ window.ADMIN = (() => {
 
   /* ---------------- Bản nháp dữ liệu website ----------------
      GOC = bản đang chạy thật, D = bản đang sửa. Sửa xong 3 giây là tự ghi lên web (henTuXuat). */
-  const KHOI = ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS', 'THEME', 'CAUHINH'];
+  const KHOI = ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS', 'THEME', 'CAUHINH', 'LE_HOI'];
   let GOC = {}, D = {}, daSua = false;
   function napNhap() {
-    GOC = {}; KHOI.forEach((k) => { GOC[k] = sao(window[k] || (k === 'QUA_TANG' || k === 'THEME' || k === 'CAUHINH' ? {} : [])); });
+    GOC = {}; KHOI.forEach((k) => { GOC[k] = sao(window[k] || (k === 'QUA_TANG' || k === 'THEME' || k === 'CAUHINH' || k === 'LE_HOI' ? {} : [])); });
     let nhap = null;
     try { nhap = JSON.parse(sessionStorage.getItem('hck_admin_nhap') || 'null'); } catch { nhap = null; }
     D = nhap || sao(GOC);

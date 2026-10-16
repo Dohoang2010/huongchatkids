@@ -21,3 +21,10 @@ Chủ shop không rành kỹ thuật: luôn trả lời **tiếng Việt**, ng�
 - Sản phẩm là thực phẩm bổ sung / mỹ phẩm: không viết công dụng chữa bệnh, luôn "theo nhà sản xuất".
 - Vào VPS cần khoá SSH riêng của máy đã được gắn (hiện chỉ máy Windows của shop có `~/.ssh/id_ed25519_hck_vps`).
   Máy / tài khoản khác muốn vào VPS: tạo khoá mới và nhờ chủ shop gắn – không dùng mật khẩu root.
+
+## Giao diện ngày lễ (16/10/2026)
+- Engine: `js/le-hoi.js` (nạp defer trên mọi trang bán hàng, không nạp ở quan-ly-ton-kho; admin chỉ dùng phần tính lịch). Cấu hình: khối `ADMIN:LE_HOI` trong js/data.js, sửa ở Quản trị › Website › Giao diện ngày lễ (`js/admin/m-le-hoi.js`).
+- Chỉ là lớp trang trí (dải chào mừng `.le-dai`, hiệu ứng `.le-hoa`, biến màu `--le-1/--le-2/--le-chu`) – không đụng giá, giỏ, voucher, điểm. Mặc định không hiện ở checkout.
+- Âm lịch Việt Nam tính thiên văn (UTC+7) + bảng đối chiếu `DOI_CHIEU`; thêm năm mới vào bảng khi có lịch công bố.
+- Kiểm thử: `node --test tools/kiem-thu/le-hoi.test.js` (đồng hồ giả, 19 bài).
+- SU_KIEN (tab sự kiện, quà điểm) vẫn tách riêng; `giuCT: true` = không tạm dừng quà tặng/giờ vàng ngày thường.

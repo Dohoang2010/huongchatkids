@@ -1068,7 +1068,7 @@
     try {
       if (!/[?&]preview=1/.test(location.search)) return;
       const d = JSON.parse(sessionStorage.getItem('hck_preview') || 'null'); if (!d) return;
-      ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS'].forEach((k) => { if (d[k]) window[k] = d[k]; });
+      ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'LE_HOI'].forEach((k) => { if (d[k]) window[k] = d[k]; });
       if (d.SITE) Object.assign(window.SITE, d.SITE);
       document.documentElement.classList.add('is-preview');
     } catch { /* bản nháp hỏng thì cứ hiện bản thật */ }
@@ -1190,32 +1190,11 @@
     window.parent.postMessage({ type: 'hck-san-sang' }, '*');
   })();
 
-  /* ===== Trang trí ngày lễ (SU_KIEN.trangTri, vd 20/10): dải chào mừng đầu trang + hoa rơi, tự bật từ hienTu → ketThuc.
-     Trong ngày lễ (batDau → ketThuc) khách đã đăng nhập sẵn mở web cũng nhận quà ngày lễ (máy chủ: mỗi khách 1 lần). */
-  function trangTriLe() {
-    const sk = suKienHien(), t = sk && sk.trangTri; if (!t) return;
-    document.body.classList.add('le-on', 'le-' + sk.id);
-    const n = Date.now(), dangChay = n >= Date.parse(sk.batDau), KD = 'mc_le_dai_' + sk.id;
-    let an = false; try { an = sessionStorage.getItem(KD) === '1'; } catch { /* riêng tư */ }
-    const chu = dangChay ? (t.daiHomNay || t.dai) : t.dai;
-    if (chu && !an) {
-      const d = document.createElement('div'); d.className = 'le-dai';
-      d.innerHTML = `<a href="index.html?tab=${esc(sk.id)}"><span class="le-dai__hoa" aria-hidden="true">🌷</span><span>${esc(chu)}</span><b>${esc(t.nut || 'Xem quà')} →</b></a><button type="button" aria-label="Đóng">×</button>`;
-      d.querySelector('button').addEventListener('click', () => { d.remove(); try { sessionStorage.setItem(KD, '1'); } catch { /* bỏ qua */ } });
-      document.body.prepend(d);
-    }
-    if (t.hoa && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
-      const trangChu = /(^|\/)(index\.html)?$/.test(location.pathname), w = document.createElement('div'); w.className = 'le-hoa'; w.setAttribute('aria-hidden', 'true');
-      const ds = t.hoa, so = trangChu ? 16 : 9;
-      for (let i = 0; i < so; i++) {
-        const c = document.createElement('i'); c.textContent = ds[i % ds.length];
-        c.style.cssText = `left:${Math.random() * 100}%;font-size:${14 + Math.random() * 16}px;animation-duration:${7 + Math.random() * 7}s,${2.5 + Math.random() * 2}s;animation-delay:${-Math.random() * 12}s,0s;animation-iteration-count:${trangChu ? 'infinite' : '2'},infinite`;
-        w.appendChild(c);
-      }
-      document.body.appendChild(w);
-      if (!trangChu) setTimeout(() => w.remove(), 26000);
-    }
-    if (dangChay && Session.get()) {
+  /* Ngày sự kiện (SU_KIEN, vd 20/10): khách đã đăng nhập sẵn mở web cũng nhận quà ngày lễ (máy chủ tự kiểm tra ngày, mỗi khách 1 lần).
+     Phần trang trí ngày lễ nằm ở js/le-hoi.js. */
+  function quaLeTuDong() {
+    const sk = suKienHien(); if (!sk || Date.now() < Date.parse(sk.batDau)) return;
+    if (Session.get()) {
       const KQ = 'mc_qua_le_' + sk.id + '_' + Session.phone();
       if (!store.get(KQ, null)) loyaltyApi('quaLe', { token: Session.get().token }).then((r) => { if (r && r.ok) store.set(KQ, 1); }).catch(() => {});
     }
@@ -1225,7 +1204,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     if (AFF.moLinkGon()) return;   // link rút gọn ?r=MÃ.sp → chuyển tới sản phẩm (kèm ?aff=MÃ)
     renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk(); GT.batRef(); AFF.batLink();
-    try { trangTriLe(); } catch (e) { /* trang trí ngày lễ lỗi không ảnh hưởng web */ }
+    try { quaLeTuDong(); } catch (e) { /* không ảnh hưởng web */ }
     syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });

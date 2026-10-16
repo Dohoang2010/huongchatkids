@@ -737,3 +737,16 @@ a.d1-dong:hover{background:var(--line-2);border-radius:6px}
 .d1-so{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:4px}
 .d1-so span{background:var(--line-2);border-radius:8px;padding:4px 6px;font-size:11px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .d1-so b{display:block;font-family:Quicksand,sans-serif;font-size:13.5px;color:var(--ink)}
+
+/* Giao diện ngày lễ (m-le-hoi.js) */
+.lh-dau{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.lh-dau__tt{font-size:14px;line-height:1.6}
+.lh-dau__sw{display:flex;flex-wrap:wrap;gap:6px 18px}.lh-dau__sw .sw{margin:0}
+.lh-nam{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 10px}.lh-nam b{font-size:16px}
+.lh-tbl td{vertical-align:middle}.lh-tbl tr.is-off{opacity:.5}.lh-tbl tr.is-now{background:var(--teal-50)}
+.lh-tbl small{display:block}.lh-mo{font-size:12px}
+.lh-cham{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;margin-right:8px;font-size:16px;vertical-align:middle;float:left}
+.lh-uu{width:64px}
+.lh-mau{display:flex;align-items:center;gap:8px}.lh-mau input[type=color]{width:46px;height:34px;padding:2px}
+.lh-sua h4{margin:18px 0 8px}.lh-sua details{margin:10px 0}.lh-sua summary{cursor:pointer;font-weight:600}
+.box-note--warn{background:#FFF6E0;border-color:#F0A500;color:#7a4b00}
