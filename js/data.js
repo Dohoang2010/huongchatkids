@@ -3633,15 +3633,164 @@ window.FEEDBACKS = [
 /* Banner đầu trang chủ. Ảnh minh hoạ bên phải: image (1 ảnh) · images + sticker (nhiều ảnh xếp chồng + nhãn dán) · tiers: true (bảng hạng khách hàng lấy từ TIERS) */
 /* ===ADMIN:BANNERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.BANNERS = [
-  { title: 'Canxi Calciumore\nmua 2 tặng D3K2', sub: '✅ 1 hộp canxi + 1 lọ D3K2 giảm 5% còn <b>2.726.000₫</b><br>✅ Mua 2 hộp tặng <b>1 lọ D3K2</b> · 3 hộp tặng <b>2 lọ</b> · 4 hộp tặng <b>3 lọ</b>', cta: 'Mua ngay', link: 'product.html?id=26060839019', theme: 'sky', badge: '🎁 Tiết kiệm đến 1.170.000₫', images: ['img/thumb/26060839019.jpg', 'img/thumb/42878618667.jpg'], imageLabels: ['📦 Canxi hộp 90 gói', '💧 D3K2 30ml'], sticker: 'MUA 2\nTẶNG D3K2', fx: 'canxi' },
-  { anh: { pc: 'img/banner/diem-danh-pc.jpg', mb: 'img/banner/diem-danh-mb.jpg' }, nen: '#FBB3C7', link: 'index.html#ddMini', alt: 'Điểm danh mỗi ngày nhận 1.000 điểm – ngày đôi tặng voucher 30K, chuỗi 10/20/30 ngày tặng voucher 10K/20K/30K' },
-  { anh: { pc: 'img/banner/do-chi-so-pc.jpg', mb: 'img/banner/do-chi-so-mb.jpg' }, nen: '#BFE9E1', link: 'index.html#sucKhoe', alt: 'Đo chỉ số con miễn phí theo chuẩn WHO – chiều cao, cân nặng, BMI, chế độ ăn và vận động theo tuổi' },
-  { title: 'Khách mới\ngiảm ngay 5%', sub: 'Nhập mã <b>HCK5</b> khi thanh toán – giảm 5% cho đơn hàng đầu tiên, áp dụng mọi sản phẩm. Bấm <b>Lưu mã</b>, web tự áp khi mẹ đặt hàng.', cta: 'Lưu mã HCK5', luuMa: 'HCK5', link: 'collections.html', theme: 'pink', badge: '🎟️ Mã giảm giá khách mới', voucher: 'HCK5', fx: 'voucher' },
-  { title: 'Mua hàng tặng\nnước ép Lotte', sub: 'Đơn từ <b>1.000.000₫</b> tặng 5 gói · mua thùng nước ép Lotte tặng đến <b>20 gói</b>. Mẹ chọn vị Hồng hoặc Cam.', cta: 'Săn quà ngay', link: 'collections.html?sort=best', theme: 'gift', badge: '🎁 Chương trình mới', images: ['img/thumb/25632276959.jpg', 'img/thumb/23660586997.jpg'], imageLabels: ['💗 Vị Hồng', '🧡 Vị Cam'], sticker: 'TẶNG\nđến 20 gói', fx: 'gift' },
-  { title: 'Khách thân thiết\ngiảm đến 12%', sub: 'Tích luỹ chi tiêu tự động theo số điện thoại, không cần đăng ký. Xác thực OTP khi đặt hàng để nhận ưu đãi mọi đơn.', cta: 'Xem hạng của tôi', link: 'account.html', theme: 'grape', badge: '👑 Mới ra mắt', tiers: true },
-  { title: 'Freeship toàn quốc\ncho đơn từ 3 triệu', sub: 'Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Chính hãng 100%, kiểm tra hàng trước khi thanh toán.', cta: 'Mua ngay', link: 'collections.html?sort=best', theme: 'pink', badge: 'Ưu đãi tháng 9', image: 'img/thumb/26156646705.jpg' },
-  { title: 'Dinh dưỡng Hàn Quốc\nchính hãng cho bé', sub: 'Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.', cta: 'Xem sản phẩm', link: 'collections.html', theme: 'teal', badge: 'Chính hãng 100%', image: 'img/thumb/22644617070.jpg' },
-  { title: 'Nước ép Lotte Organic\ncho bé ăn ngon', sub: 'Rau củ & hoa quả hữu cơ Hàn Quốc, không chất bảo quản, gói nhỏ tiện mang theo.', cta: 'Mua ngay', link: 'collections.html?cat=nuoc-ep', theme: 'juice', badge: '🌱 Organic Hàn Quốc', image: 'img/22686115682.jpg', art: 'juice', prices: [['Hộp 10 gói', '448.000₫'], ['Thùng 30 gói', '1.317.000₫']], flavors: ['🍇 Mận, nho & táo', '🍐 Lê & cát cánh', '🍎 Táo & củ dền'], sticker: 'Chỉ từ\n43.900₫\n/gói' },
+  {
+    "title": "Canxi Calciumore\nmua 2 tặng D3K2",
+    "sub": "✅ 1 hộp canxi + 1 lọ D3K2 giảm 5% còn <b>2.726.000₫</b><br>✅ Mua 2 hộp tặng <b>1 lọ D3K2</b> · 3 hộp tặng <b>2 lọ</b> · 4 hộp tặng <b>3 lọ</b>",
+    "cta": "Mua ngay",
+    "link": "product.html?id=26060839019",
+    "theme": "sky",
+    "badge": "🎁 Tiết kiệm đến 1.170.000₫",
+    "images": [
+      "img/thumb/26060839019.jpg",
+      "img/thumb/42878618667.jpg"
+    ],
+    "imageLabels": [
+      "📦 Canxi hộp 90 gói",
+      "💧 D3K2 30ml"
+    ],
+    "sticker": "MUA 2\nTẶNG D3K2",
+    "fx": "canxi"
+  },
+  {
+    "anh": {
+      "pc": "img/banner/diem-danh-pc.jpg",
+      "mb": "img/banner/diem-danh-mb.jpg"
+    },
+    "nen": "#FBB3C7",
+    "link": "index.html#ddMini",
+    "alt": "Điểm danh mỗi ngày nhận 1.000 điểm – ngày đôi tặng voucher 30K, chuỗi 10/20/30 ngày tặng voucher 10K/20K/30K"
+  },
+  {
+    "anh": {
+      "pc": "img/banner/do-chi-so-pc.jpg",
+      "mb": "img/banner/do-chi-so-mb.jpg"
+    },
+    "nen": "#BFE9E1",
+    "link": "index.html#sucKhoe",
+    "alt": "Đo chỉ số con miễn phí theo chuẩn WHO – chiều cao, cân nặng, BMI, chế độ ăn và vận động theo tuổi"
+  },
+  {
+    "anh": {
+      "pc": "img/banner/huong-lam-dep-pc.jpg",
+      "mb": "img/banner/huong-lam-dep-mb.jpg"
+    },
+    "nen": "#FFC9D8",
+    "link": "collections.html?cat=cho-me",
+    "alt": "Hương Chất Cosmetics – Đẹp từ những điều chọn lọc: mỹ phẩm Hàn Quốc chính hãng cho mẹ, chính hãng 100%, tư vấn miễn phí, freeship đơn từ 3 triệu",
+    "sub": ""
+  },
+  {
+    "anh": {
+      "pc": "img/banner/huong-dinh-duong-pc.jpg",
+      "mb": "img/banner/huong-dinh-duong-mb.jpg"
+    },
+    "nen": "#CDEFE6",
+    "link": "collections.html",
+    "alt": "Mẹ chọn chất – con lớn khoẻ: dinh dưỡng Hàn Quốc chính hãng cho bé 0–18 tuổi, lọc theo tuổi, đo chỉ số miễn phí, chuyên gia tư vấn",
+    "sub": ""
+  },
+  {
+    "anh": {
+      "pc": "img/banner/huong-doi-tac-pc.jpg",
+      "mb": "img/banner/huong-doi-tac-mb.jpg"
+    },
+    "nen": "#FFE6A6",
+    "link": "doi-tac.html",
+    "alt": "Mẹ Chất Kiếm Chất – làm Đối tác cùng Hương Chất: chia sẻ link sản phẩm, nhận hoa hồng mỗi đơn giao thành công, không phí, không ôm hàng",
+    "sub": ""
+  },
+  {
+    "anh": {
+      "pc": "img/banner/huong-song-chat-pc.jpg",
+      "mb": "img/banner/huong-song-chat-mb.jpg"
+    },
+    "nen": "#FFE0CF",
+    "link": "collections.html?cat=do-an",
+    "alt": "Ăn chất mỗi ngày, sống chất mỗi giây – đặc sản, đồ ăn ngon và thực phẩm chọn lọc cho cả gia đình",
+    "sub": ""
+  },
+  {
+    "title": "Khách mới\ngiảm ngay 5%",
+    "sub": "Nhập mã <b>HCK5</b> khi thanh toán – giảm 5% cho đơn hàng đầu tiên, áp dụng mọi sản phẩm. Bấm <b>Lưu mã</b>, web tự áp khi mẹ đặt hàng.",
+    "cta": "Lưu mã HCK5",
+    "luuMa": "HCK5",
+    "link": "collections.html",
+    "theme": "pink",
+    "badge": "🎟️ Mã giảm giá khách mới",
+    "voucher": "HCK5",
+    "fx": "voucher"
+  },
+  {
+    "title": "Mua hàng tặng\nnước ép Lotte",
+    "sub": "Đơn từ <b>1.000.000₫</b> tặng 5 gói · mua thùng nước ép Lotte tặng đến <b>20 gói</b>. Mẹ chọn vị Hồng hoặc Cam.",
+    "cta": "Săn quà ngay",
+    "link": "collections.html?sort=best",
+    "theme": "gift",
+    "badge": "🎁 Chương trình mới",
+    "images": [
+      "img/thumb/25632276959.jpg",
+      "img/thumb/23660586997.jpg"
+    ],
+    "imageLabels": [
+      "💗 Vị Hồng",
+      "🧡 Vị Cam"
+    ],
+    "sticker": "TẶNG\nđến 20 gói",
+    "fx": "gift"
+  },
+  {
+    "title": "Khách thân thiết\ngiảm đến 12%",
+    "sub": "Tích luỹ chi tiêu tự động theo số điện thoại, không cần đăng ký. Xác thực OTP khi đặt hàng để nhận ưu đãi mọi đơn.",
+    "cta": "Xem hạng của tôi",
+    "link": "account.html",
+    "theme": "grape",
+    "badge": "👑 Mới ra mắt",
+    "tiers": true
+  },
+  {
+    "title": "Freeship toàn quốc\ncho đơn từ 3 triệu",
+    "sub": "Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Chính hãng 100%, kiểm tra hàng trước khi thanh toán.",
+    "cta": "Mua ngay",
+    "link": "collections.html?sort=best",
+    "theme": "pink",
+    "badge": "Ưu đãi tháng 9",
+    "image": "img/thumb/26156646705.jpg"
+  },
+  {
+    "title": "Dinh dưỡng Hàn Quốc\nchính hãng cho bé",
+    "sub": "Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.",
+    "cta": "Xem sản phẩm",
+    "link": "collections.html",
+    "theme": "teal",
+    "badge": "Chính hãng 100%",
+    "image": "img/thumb/22644617070.jpg"
+  },
+  {
+    "title": "Nước ép Lotte Organic\ncho bé ăn ngon",
+    "sub": "Rau củ & hoa quả hữu cơ Hàn Quốc, không chất bảo quản, gói nhỏ tiện mang theo.",
+    "cta": "Mua ngay",
+    "link": "collections.html?cat=nuoc-ep",
+    "theme": "juice",
+    "badge": "🌱 Organic Hàn Quốc",
+    "image": "img/22686115682.jpg",
+    "art": "juice",
+    "prices": [
+      [
+        "Hộp 10 gói",
+        "448.000₫"
+      ],
+      [
+        "Thùng 30 gói",
+        "1.317.000₫"
+      ]
+    ],
+    "flavors": [
+      "🍇 Mận, nho & táo",
+      "🍐 Lê & cát cánh",
+      "🍎 Táo & củ dền"
+    ],
+    "sticker": "Chỉ từ\n43.900₫\n/gói"
+  }
 ];
 /* ===/ADMIN:BANNERS=== */
 
