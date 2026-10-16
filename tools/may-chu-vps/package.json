@@ -1,0 +1,16 @@
+{
+  "name": "hck-api-vps",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Máy chủ API Hương Chất Kids trên VPS – chạy mã Apps Script của shop trên Node + PostgreSQL",
+  "main": "src/may-chu.js",
+  "scripts": {
+    "start": "node src/may-chu.js",
+    "test": "node --test kiem-thu/kiem-thu.js"
+  },
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "nodemailer": "6.10.1",
+    "pg": "8.16.3"
+  }
+}

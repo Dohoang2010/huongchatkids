@@ -117,6 +117,8 @@ function ngayVN(d) { return Utilities.formatDate(new Date(d), 'Asia/Ho_Chi_Minh'
 function doPost(e) {
   try {
     var order = JSON.parse(e.postData.contents);
+    if (order && order.type === 'vpsNhap') return ContentService.createTextOutput(JSON.stringify(apiVpsNhap_(order))).setMimeType(ContentService.MimeType.JSON);
+    var vpsCtP = vpsChuyenTiep_(e, true); if (vpsCtP) return vpsCtP;
 
     // Lượt truy cập web gửi lên (không phải đơn hàng)
     if (order && order.type === 'track') { if (demGioiHan('gh_track', 3000, 600)) ghiTruyCap(order); return ContentService.createTextOutput('ok'); }
@@ -2093,6 +2095,91 @@ function apiQtAffCauHinh(p) {
 }
 function apiQtAffXuLy(p) { if (!coQuyen(p, 'affiliate.update')) return { ok: false, msg: 'Không có quyền' }; return xuLyAff(); }
 
+/* ===================== CHUYỂN SANG VPS (xuất / nhập dữ liệu, chuyển tiếp, gửi mail hộ) =====================
+   Chỉ máy chủ VPS của shop gọi được: khoá gửi kèm phải có mã băm SHA-256 trùng VPS_KHOA_BAM (khoá thật chỉ nằm trên VPS).
+   - GET  ?action=vpsXuat&key=…&viec=meta|trang|bam      → VPS chép dữ liệu về (chạy song song, đối chiếu)
+   - POST {type:'vpsNhap', key, viec:'trang'|'thuocTinh'|'chuyen'|'mail'} → quay lại Apps Script (chép ngược), bật bảo trì /
+     chuyển tiếp mọi lệnh sang VPS (Script Property VPS_CHUYEN), gửi mail hộ VPS khi VPS chưa có SMTP.
+   Trên VPS (biến __VPS__) các hàm này tự tắt. */
+var VPS_KHOA_BAM = '';
+function vpsLaVps_() { return typeof __VPS__ !== 'undefined'; }
+function vpsKhoaDung_(k) {
+  if (!VPS_KHOA_BAM || !k || vpsLaVps_()) return false;
+  var h = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(k), Utilities.Charset.UTF_8)
+    .map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+  return h === VPS_KHOA_BAM;
+}
+function vpsMaHoa_(v) { return v instanceof Date ? { d: v.getTime() } : v; }
+function vpsDong_(r) { var a = r.map(vpsMaHoa_), n = a.length; while (n && (a[n - 1] === '' || a[n - 1] === null)) n--; a.length = n; return a; }
+function vpsCotChu_(s) {
+  var c = {}, cot = s.getLastColumn(), n = s.getLastRow(); if (!cot || n < 2) return c;
+  [2, n].forEach(function (h) { s.getRange(h, 1, 1, cot).getNumberFormats()[0].forEach(function (f, j) { if (f === '@') c[j + 1] = true; }); });
+  return c;
+}
+function apiVpsXuat_(p) {
+  if (!vpsKhoaDung_(p.key)) return { ok: false, msg: 'Sai khoá' };
+  var b = ss();
+  if (p.viec === 'meta') {
+    var lich = []; try { lich = ScriptApp.getProjectTriggers().map(function (t) { return t.getHandlerFunction() + ':' + String(t.getEventType()); }); } catch (e) { lich = ['?' + e]; }
+    return { ok: true, luc: Date.now(), muiGio: b.getSpreadsheetTimeZone(), ngonNgu: b.getSpreadsheetLocale(), lich: lich,
+      thuocTinh: PropertiesService.getScriptProperties().getProperties(),
+      trang: b.getSheets().map(function (s) { return { ten: s.getName(), soDong: s.getLastRow(), soCot: s.getLastColumn(), soCotToiDa: s.getMaxColumns(), dongCoDinh: s.getFrozenRows(), cotChu: vpsCotChu_(s) }; }) };
+  }
+  if (p.viec === 'trang') {
+    var s = b.getSheetByName(String(p.ten || '')); if (!s) return { ok: false, msg: 'Không có trang ' + p.ten };
+    var n = s.getLastRow(), cot = s.getLastColumn(), tu = Math.max(1, Number(p.tu) || 1), so = Math.min(Math.max(1, Number(p.so) || 2000), 5000);
+    if (!n || !cot || tu > n) return { ok: true, giaTri: [], soDong: n };
+    so = Math.min(so, n - tu + 1);
+    return { ok: true, soDong: n, giaTri: s.getRange(tu, 1, so, cot).getValues().map(vpsDong_) };
+  }
+  if (p.viec === 'bam') {   // mã băm từng trang để đối chiếu với VPS
+    return { ok: true, luc: Date.now(), trang: b.getSheets().map(function (s) {
+      var n = s.getLastRow(), cot = s.getLastColumn(), v = n && cot ? s.getRange(1, 1, n, cot).getValues().map(vpsDong_) : [];
+      var h = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, JSON.stringify(v), Utilities.Charset.UTF_8).map(function (x) { return ('0' + (x & 255).toString(16)).slice(-2); }).join('');
+      return { ten: s.getName(), soDong: n, bam: h };
+    }) };
+  }
+  return { ok: false, msg: 'Thiếu viec' };
+}
+function vpsGiaiMa_(v) { if (v && typeof v === 'object' && typeof v.d === 'number') return new Date(v.d); if (typeof v === 'string' && v !== '') return "'" + v; return v == null ? '' : v; }
+function apiVpsNhap_(d) {
+  if (!vpsKhoaDung_(d.key)) return { ok: false, msg: 'Sai khoá' };
+  var pr = PropertiesService.getScriptProperties();
+  if (d.viec === 'chuyen') { if (d.giaTri) pr.setProperty('VPS_CHUYEN', String(d.giaTri)); else pr.deleteProperty('VPS_CHUYEN'); return { ok: true, chuyen: pr.getProperty('VPS_CHUYEN') || '' }; }
+  if (d.viec === 'mail') { MailApp.sendEmail(d.thu); return { ok: true }; }
+  if (d.viec === 'thuocTinh') { var o = d.giaTri || {}; Object.keys(o).forEach(function (k) { if (!/^VPS_/.test(k)) pr.setProperty(k, String(o[k])); }); return { ok: true, so: Object.keys(o).length }; }
+  if (d.viec === 'trang') {
+    var lock = LockService.getScriptLock(); lock.waitLock(30000);
+    try {
+      var b = ss(), s = b.getSheetByName(String(d.ten || '')) || b.insertSheet(String(d.ten || 'Trang mới'));
+      if (d.xoaTruoc && s.getLastRow() > 0) s.getRange(1, 1, s.getLastRow(), Math.max(1, s.getLastColumn())).clearContent();
+      var v = d.giaTri || [], cot = 0; v.forEach(function (r) { cot = Math.max(cot, r.length); });
+      if (v.length && cot) {
+        if (s.getMaxColumns() < cot) s.insertColumnsAfter(s.getMaxColumns(), cot - s.getMaxColumns());
+        s.getRange(Math.max(1, Number(d.tu) || 1), 1, v.length, cot).setValues(v.map(function (r) { var a = r.map(vpsGiaiMa_); while (a.length < cot) a.push(''); return a; }));
+      }
+      SpreadsheetApp.flush();
+      return { ok: true, soDong: s.getLastRow() };
+    } finally { lock.releaseLock(); }
+  }
+  return { ok: false, msg: 'Thiếu viec' };
+}
+/* Ngày đổi sang VPS: VPS_CHUYEN = 'bao-tri' (tạm khoá vài phút khi chép dữ liệu lần cuối) hoặc địa chỉ VPS (chuyển tiếp mọi lệnh,
+   để máy khách còn giữ trang cũ vẫn chạy). Xoá thuộc tính = Apps Script chạy như cũ. */
+function vpsChuyenTiep_(e, laPost) {
+  if (vpsLaVps_()) return null;
+  var ch = PropertiesService.getScriptProperties().getProperty('VPS_CHUYEN'); if (!ch) return null;
+  var p = (e && e.parameter) || {}, cb = p.callback || '';
+  if (ch === 'bao-tri') return traVe({ ok: false, code: 'BAO_TRI', msg: 'Hệ thống đang nâng cấp trong vài phút, mẹ thử lại sau ít phút nhé' }, cb);
+  try {
+    var r = UrlFetchApp.fetch(ch + '?' + (e.queryString || ''), laPost
+      ? { method: 'post', payload: e.postData.contents, contentType: e.postData.type || 'text/plain', muteHttpExceptions: true, followRedirects: true }
+      : { muteHttpExceptions: true, followRedirects: true });
+    var loai = /^[A-Za-z_$][\w$]*\(/.test(r.getContentText()) ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
+    return ContentService.createTextOutput(r.getContentText()).setMimeType(loai);
+  } catch (err) { return traVe({ ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau ít phút nhé' }, cb); }
+}
+
 /* ===================== API CHO WEBSITE (JSONP) ===================== */
 function traVe(data, callback) {
   try { baoLenh_(data); } catch (e) { Logger.log('Cảnh báo lỗi: ' + e); }
@@ -2108,6 +2195,8 @@ function doGet(e) {
   var cb = p.callback || '';
   var action = p.action || '';
   HD_ = { a: action, p: p };
+  if (action === 'vpsXuat') return traVe(apiVpsXuat_(p), cb);
+  var vpsCt = vpsChuyenTiep_(e, false); if (vpsCt) return vpsCt;
   var chan = chanTanSuat_(action); if (chan) return traVe(chan, cb);
   try {
     if (action === 'kiemTra')  return traVe(apiKiemTra(p), cb);

@@ -1,0 +1,22 @@
+[Unit]
+Description=API Huong Chat Kids (thay Google Apps Script)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+User=hckapi
+Group=hckapi
+WorkingDirectory=/opt/hck-api
+EnvironmentFile=/etc/hck-api/env
+Environment=TZ=Asia/Ho_Chi_Minh NODE_ENV=production PGHOST=/run/postgresql PGUSER=hckapi PGDATABASE=hck GS_FILE=/var/www/huongchatkids/tools/apps-script.gs
+ExecStart=/usr/bin/node src/may-chu.js
+Restart=always
+RestartSec=3
+MemoryMax=1500M
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
