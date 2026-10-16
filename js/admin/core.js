@@ -182,7 +182,8 @@ window.ADMIN = (() => {
 
   function veThanhLuu() {
     const b = $('#bar'); if (!b) return;
-    if (!daSua) { b.classList.add('hide'); b.innerHTML = ''; return; }
+    /* Tự lưu: không hiện thanh trên cùng khi đang chờ / đang lưu – chỉ báo 'Đã lưu' ở dưới (thanh chỉ hiện khi có lỗi) */
+    if (!daSua || !b.classList.contains('bar--err')) { b.classList.add('hide'); b.innerHTML = ''; return; }
     b.classList.remove('hide'); b.className = 'bar';
     b.innerHTML = `<span class="cham"></span><b>Đang chờ tự lưu…</b>
       <span class="muted">Sửa xong 3 giây là tự lưu lên website.</span>
@@ -199,7 +200,7 @@ window.ADMIN = (() => {
     const doi = daDoiGi();
     if (!doi.length) { daSua = false; veThanhLuu(); if (!tuDong) toast('Không có gì thay đổi'); return; }
     const ten = { PRODUCTS: 'sản phẩm', BANNERS: 'banner', QUA_TANG: 'quà tặng', TIERS: 'hạng khách', COUPONS: 'mã giảm giá', NAV: 'menu', POSTS: 'bài viết', THEME: 'giao diện', CAUHINH: 'cấu hình website' };
-    const b = $('#bar'); b.classList.remove('hide'); b.className = 'bar bar--wait'; b.innerHTML = '⏳ Đang lưu lên website…';
+    const b = $('#bar');
     dangXuat = true;
     const banGui = sao(D);   // chụp dữ liệu lúc bắt đầu lưu – sửa thêm trong lúc lưu sẽ được lưu ở lượt sau
     try {
@@ -214,10 +215,9 @@ window.ADMIN = (() => {
       daSua = daDoiGi().length > 0;   // có sửa thêm trong lúc đang lưu thì lưu tiếp
       if (!daSua) sessionStorage.removeItem('hck_admin_nhap');
       veThanhLuu();
-      if (!daSua) { b.classList.remove('hide'); b.className = 'bar bar--ok'; b.innerHTML = '✅ Đã lưu lên website – khách thấy ngay sau vài giây.'; setTimeout(() => { if (!daSua) b.classList.add('hide'); }, 5000); }
-      if (!tuDong) toast('Đã lưu lên website 🎉', 'ok');
+      if (!daSua) { b.className = 'bar hide'; b.innerHTML = ''; toast('✓ Đã lưu', 'ok'); }
     } catch (e) {
-      b.className = 'bar bar--err'; b.innerHTML = '❌ Chưa lưu được: ' + esc(e.message) + ' <button class="btn btn--ghost btn--sm" data-act="xuat-ban">Thử lại</button>';
+      b.classList.remove('hide'); b.className = 'bar bar--err'; b.innerHTML = '❌ Chưa lưu được: ' + esc(e.message) + ' <button class="btn btn--ghost btn--sm" data-act="xuat-ban">Thử lại</button>';
       toast('Chưa lưu lên website được', 'err');
     } finally {
       dangXuat = false;

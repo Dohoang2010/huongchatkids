@@ -220,7 +220,7 @@
     const bo = t.closest('[data-vc-bo]'); if (bo) { thu(); nhap.sanPham = nhap.sanPham.filter((x) => x !== bo.dataset.vcBo); A.veTrang(); return; }
     if (t.id === 'vcXacNhan') {
       thu(); const loi = kiemTra(); if (loi) { A.toast(loi, 'err'); return; }
-      luu(); nhap = null; A.doiDuLieu(); A.toast('Đã lưu mã – web tự cập nhật sau vài giây', 'ok'); A.di('#/ma-giam-gia');
+      luu(); nhap = null; A.doiDuLieu(); A.toast('Đang lưu…'); A.di('#/ma-giam-gia');
     }
   });
   document.addEventListener('change', (e) => {
