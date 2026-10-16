@@ -3721,24 +3721,6 @@ window.BANNERS = [
     "fx": "voucher"
   },
   {
-    "title": "Mua hàng tặng\nnước ép Lotte",
-    "sub": "Đơn từ <b>1.000.000₫</b> tặng 5 gói · mua thùng nước ép Lotte tặng đến <b>20 gói</b>. Mẹ chọn vị Hồng hoặc Cam.",
-    "cta": "Săn quà ngay",
-    "link": "collections.html?sort=best",
-    "theme": "gift",
-    "badge": "🎁 Chương trình mới",
-    "images": [
-      "img/thumb/25632276959.jpg",
-      "img/thumb/23660586997.jpg"
-    ],
-    "imageLabels": [
-      "💗 Vị Hồng",
-      "🧡 Vị Cam"
-    ],
-    "sticker": "TẶNG\nđến 20 gói",
-    "fx": "gift"
-  },
-  {
     "title": "Khách thân thiết\ngiảm đến 12%",
     "sub": "Tích luỹ chi tiêu tự động theo số điện thoại, không cần đăng ký. Xác thực OTP khi đặt hàng để nhận ưu đãi mọi đơn.",
     "cta": "Xem hạng của tôi",
@@ -3746,50 +3728,6 @@ window.BANNERS = [
     "theme": "grape",
     "badge": "👑 Mới ra mắt",
     "tiers": true
-  },
-  {
-    "title": "Freeship toàn quốc\ncho đơn từ 3 triệu",
-    "sub": "Giao nhanh trong ngày nội thành Hà Nội, toàn quốc 1–3 ngày. Chính hãng 100%, kiểm tra hàng trước khi thanh toán.",
-    "cta": "Mua ngay",
-    "link": "collections.html?sort=best",
-    "theme": "pink",
-    "badge": "Ưu đãi tháng 9",
-    "image": "img/thumb/26156646705.jpg"
-  },
-  {
-    "title": "Dinh dưỡng Hàn Quốc\nchính hãng cho bé",
-    "sub": "Lotte, ChuChu, Calciumore, Sumo… nhập khẩu chính ngạch, tem phụ tiếng Việt, hoá đơn VAT.",
-    "cta": "Xem sản phẩm",
-    "link": "collections.html",
-    "theme": "teal",
-    "badge": "Chính hãng 100%",
-    "image": "img/thumb/22644617070.jpg"
-  },
-  {
-    "title": "Nước ép Lotte Organic\ncho bé ăn ngon",
-    "sub": "Rau củ & hoa quả hữu cơ Hàn Quốc, không chất bảo quản, gói nhỏ tiện mang theo.",
-    "cta": "Mua ngay",
-    "link": "collections.html?cat=nuoc-ep",
-    "theme": "juice",
-    "badge": "🌱 Organic Hàn Quốc",
-    "image": "img/22686115682.jpg",
-    "art": "juice",
-    "prices": [
-      [
-        "Hộp 10 gói",
-        "448.000₫"
-      ],
-      [
-        "Thùng 30 gói",
-        "1.317.000₫"
-      ]
-    ],
-    "flavors": [
-      "🍇 Mận, nho & táo",
-      "🍐 Lê & cát cánh",
-      "🍎 Táo & củ dền"
-    ],
-    "sticker": "Chỉ từ\n43.900₫\n/gói"
   }
 ];
 /* ===/ADMIN:BANNERS=== */
