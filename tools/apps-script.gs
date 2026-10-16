@@ -2282,6 +2282,8 @@ function doGet(e) {
     if (action === 'qtQmkCauHinh')  return traVe(apiQtQmkCauHinh(p), cb);
     if (action === 'gtCauHinh')     return traVe(apiGtCauHinh(), cb);
     if (action === 'gtKiemTra')     return traVe(apiGtKiemTra(p), cb);
+    if (action === 'maKiemTra')     return traVe(apiMaKiemTra(p), cb);
+    if (action === 'qtMaBaoCao')    return traVe(apiQtMaBaoCao(p), cb);
     if (action === 'gtGiuCho')      return traVe(apiGtGiuCho(p), cb);
     if (action === 'diemCuaToi')    return traVe(apiDiemCuaToi(p), cb);
     if (action === 'gtCuaToi')      return traVe(apiGtCuaToi(p), cb);
@@ -2726,7 +2728,7 @@ function baoLenh_(data) {
 }
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
-var GIOI_HAN_10P = { taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
+var GIOI_HAN_10P = { maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
   qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, snbLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
@@ -3161,6 +3163,38 @@ function apiSuaDon(p) {
   });
   try { zaloBotGuiTin('✏️ Đã sửa đơn ' + ma + (lyDo ? ' (' + lyDo + ')' : '') + '\n' + sp.join('\n') + '\nTổng: ' + tien(moi[7])); } catch (e) { Logger.log(e); }
   return { ok: true, ma: ma, doi: doi.length };
+}
+
+/* ===================== MÃ GIẢM GIÁ: LƯỢT DÙNG & DOANH SỐ =====================
+   Đếm theo sheet Đơn hàng (cột Mã giảm giá), bỏ đơn huỷ / hoàn và yêu cầu gọi lại.
+   Giới hạn (tổng số lượng, 1 lần/khách) nằm trong js/data.js (COUPONS.soLuong / motLan) – web hỏi số lượt rồi tự chặn. */
+function maChuan_(x) { return String(x || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 20); }
+function maThongKe_(chiMa) {
+  var s = sheetDon(), n = s.getLastRow(), kq = {};
+  if (n < 2) return kq;
+  var v = s.getRange(2, 1, n - 1, HEADERS.length).getValues();
+  for (var i = 0; i < v.length; i++) {
+    var ma = maChuan_(v[i][12]); if (!ma || String(v[i][12]).indexOf('VC:') === 0) continue;
+    if (chiMa && ma !== chiMa) continue;
+    if (String(v[i][2] || '').indexOf('gọi lại') > -1) continue;
+    if (/huỷ|huy|hoàn|hoan/i.test(String(v[i][18] || ''))) continue;
+    var sdt = chuanSdt(v[i][4]), x = kq[ma] || (kq[ma] = { dung: 0, doanhSo: 0, khach: {} });
+    x.dung++; x.doanhSo += Number(v[i][10]) || 0; if (sdt) x.khach[sdt] = (x.khach[sdt] || 0) + 1;
+  }
+  return kq;
+}
+/* Web hỏi trước khi áp mã có giới hạn: tổng lượt đã dùng + số lần số điện thoại này đã dùng */
+function apiMaKiemTra(p) {
+  var ma = maChuan_(p.ma); if (!ma) return { ok: false, msg: 'Mã không hợp lệ' };
+  var sdt = chuanSdt(p.sdt), x = maThongKe_(ma)[ma] || { dung: 0, khach: {} };
+  return { ok: true, ma: ma, dung: x.dung, khach: sdt && sdtHopLe(sdt) ? (x.khach[sdt] || 0) : 0 };
+}
+/* Trang quản trị › Mã giảm giá: báo cáo mọi mã */
+function apiQtMaBaoCao(p) {
+  if (!coQuyen(p, 'product.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var tk = maThongKe_(''), ds = {};
+  Object.keys(tk).forEach(function (m) { ds[m] = { dung: tk[m].dung, doanhSo: tk[m].doanhSo, soKhach: Object.keys(tk[m].khach).length }; });
+  return { ok: true, ds: ds };
 }
 
 /* ===================== QUẢN TRỊ: KHÁCH HÀNG ===================== */

@@ -18,10 +18,10 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261016b"></script>
+<script src="js/data.js?v=20261016c"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261016b"></script>
+<script src="js/app.js?v=20261016c"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       : `<span class="text-muted">Có mã giảm giá của shop thì mẹ nhập vào đây nhé.</span>`;
     renderGT(k); renderDiem(k); renderVc(k);
   };
+  window.addEventListener('mc:ma-gh', () => renderSummary());   // máy chủ trả số lượt dùng của mã có giới hạn
   const taiVc = () => {
     const s = Session.get();
     if (!s || phoneKey(s.sdt) !== phoneNow()) { if (vcVi) { vcVi = null; renderSummary(); } return; }

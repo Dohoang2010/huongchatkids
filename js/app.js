@@ -281,6 +281,21 @@
   const shortName = (p) => p.short || p.name;
   const hoursNote = () => `trong giờ làm việc ${SITE.workingHours}; ngoài giờ sẽ gọi vào sáng hôm sau`;
   /* lines (tuỳ chọn) để tính Voucher sản phẩm: chỉ giảm trên tiền các sản phẩm áp dụng */
+  /* Mã có giới hạn (COUPONS.soLuong = tổng lượt, motLan = 1 lần / số điện thoại): hỏi máy chủ số lượt đã dùng (nhớ 60 giây).
+     Chưa có số liệu thì cho áp tạm và hỏi ngay – có kết quả thì báo 'mc:ma-gh' để trang tính lại */
+  const MaGH = { c: {}, dang: {},
+    k: (ma, sdt) => ma + '|' + (sdt || ''),
+    get(ma, sdt) { const x = this.c[this.k(ma, sdt)]; return x && Date.now() - x.luc < 6e4 ? x : null; },
+    xet(ma, sdt) { const k = this.k(ma, sdt); if (this.dang[k]) return; this.dang[k] = 1;
+      loyaltyApi('maKiemTra', { ma, sdt: sdt || '' }).then((r) => { if (r && r.ok) { this.c[k] = { ...r, luc: Date.now() }; window.dispatchEvent(new CustomEvent('mc:ma-gh')); } })
+        .catch(() => {}).finally(() => { delete this.dang[k]; }); } };
+  function maGioiHan(ma, c) {
+    if (!(Number(c.soLuong) > 0 || c.motLan)) return null;
+    const sdt = c.motLan ? sdtDangDung() : '', g = MaGH.get(ma, sdt); if (!g) { MaGH.xet(ma, sdt); return null; }
+    if (Number(c.soLuong) > 0 && g.dung >= Number(c.soLuong)) return 'Mã đã hết lượt sử dụng';
+    if (c.motLan && g.khach > 0) return 'Mã chỉ dùng 1 lần cho mỗi khách – số điện thoại này đã dùng mã rồi';
+    return null;
+  }
   function maHetHan(c, now = Date.now()) { return !!(c && ((c.batDau && now < Date.parse(c.batDau)) || (c.hetHan && now >= Date.parse(c.hetHan)))); }
   /* Mỗi đơn chỉ 1 mã giảm giá; riêng mã miễn phí vận chuyển (type 'ship', không riêng tư) tự áp kèm khi đơn đủ điều kiện */
   function maShipTuDong(base, lines) {
@@ -293,6 +308,7 @@
     if (c.batDau && Date.now() < Date.parse(c.batDau)) return { ok: false, msg: 'Mã chưa đến thời gian sử dụng' };
     if (c.hetHan && Date.now() >= Date.parse(c.hetHan)) return { ok: false, msg: 'Mã đã hết hạn' };
     if (c.donDau && daMuaTruoc(sdtDangDung())) return { ok: false, msg: 'Mã chỉ dành cho khách mua lần đầu' };
+    const ghMsg = maGioiHan((code || '').trim().toUpperCase(), c); if (ghMsg) return { ok: false, msg: ghMsg };
     let base = subtotal;
     if (c.loai === 'sanpham') {
       const ls = lines || [], ids = new Set(c.sanPham || []);
@@ -790,6 +806,7 @@
     qbTaiVi(); if (QB.gt.ma && QB.gtCfg.bat && QB.gt.sdt !== sdt) qbGtXet(QB.gt.ma);
     traHang(sdt).then((v) => { if (phoneKey($('#qbForm')?.elements.phone.value || '') !== sdt) return; if (v && v.co) { qbDienTuTraCuu(v, false); if ($('#qbLookupMsg')) qbGreet(sdt); else qbRefresh(); } else qbRefresh(); });
   }
+  window.addEventListener('mc:ma-gh', () => { if (QB.id && document.getElementById('qbForm')) qbRefresh(); });
   function qbRefresh() {
     const { price, old } = qbPrice(); const k = qbCalc();
     $('#qbPrice').innerHTML = `<b>${fmt(price)}</b>${listPrice(old, price) ? `<s>${fmt(old)}</s>` : ''}`;

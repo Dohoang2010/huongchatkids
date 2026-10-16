@@ -5264,6 +5264,32 @@ window.COUPONS = {
     "value": 20,
     "min": 0,
     "desc": "Giảm 20% cho thành viên BMWCCV"
+  },
+  "KHSP": {
+    "ten": "Khách Shopee chuyển sang web – váng sữa canxi",
+    "loai": "sanpham",
+    "type": "percent",
+    "value": 5,
+    "min": 0,
+    "desc": "Giảm 5% váng sữa canxi Calciumore – mỗi khách 1 lần",
+    "motLan": true,
+    "sanPham": [
+      "26060839019",
+      "combo-vangsua-d3k2"
+    ]
+  },
+  "KHTT": {
+    "ten": "Khách TikTok Shop chuyển sang web – váng sữa canxi",
+    "loai": "sanpham",
+    "type": "percent",
+    "value": 5,
+    "min": 0,
+    "desc": "Giảm 5% váng sữa canxi Calciumore – mỗi khách 1 lần",
+    "motLan": true,
+    "sanPham": [
+      "26060839019",
+      "combo-vangsua-d3k2"
+    ]
   }
 };
 /* ===/ADMIN:COUPONS=== */

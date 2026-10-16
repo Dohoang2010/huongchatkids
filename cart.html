@@ -19,12 +19,13 @@
   <h1 class="page-title">Giỏ hàng của mẹ</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20261016b"></script>
+<script src="js/data.js?v=20261016c"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261016b"></script>
+<script src="js/app.js?v=20261016c"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, listPrice, productThumb, shortName, productCard, Cart, esc, shipFee, shipText, applyCoupon, store, toast, giftFor, giftBox } = MC;
+  window.addEventListener('mc:ma-gh', () => render());   // máy chủ trả số lượt dùng của mã có giới hạn
   const render = () => {
     const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', '') || MC.maTotNhat(sub - multi, lines); const c = coupon ? applyCoupon(coupon, sub - multi, lines) : null;
     const discount = c && c.ok ? c.discount : 0; const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + (ship || 0);

@@ -1,7 +1,8 @@
 /* ===== MÃ GIẢM GIÁ – Voucher kiểu Shopee =====
    Lưu ở window.COUPONS (khối ADMIN:COUPONS), khoá = mã khách nhập:
    { ten, loai: 'shop' | 'sanpham' | 'riengtu', batDau, hetHan ('YYYY-MM-DDTHH:mm'), luuTruoc,
-     type: 'percent' | 'fixed' | 'ship', value, max, min, donDau, sanPham: [id], desc }
+     type: 'percent' | 'fixed' | 'ship', value, max, min, donDau, sanPham: [id], desc,
+     soLuong (tổng lượt dùng, không có = không giới hạn), motLan (true = mỗi khách / số điện thoại dùng 1 lần) }
    Mã cũ không có loai/thời gian vẫn chạy như trước (toàn shop, không thời hạn).
    Web (js/app.js → applyCoupon / couponsFor) kiểm tra thời gian, sản phẩm áp dụng và ẩn mã riêng tư. */
 (() => {
@@ -28,8 +29,14 @@
 
   /* ================= TRANG CHÍNH: TẠO VOUCHER + DANH SÁCH ================= */
   let tab = 'tat', tim = { theo: 'ten', q: '' };
+  /* Báo cáo lượt dùng + doanh số theo mã (đơn web, bỏ đơn huỷ / hoàn) – tải 1 lần mỗi khi mở danh sách */
+  let baoCao = null, dangTaiBC = false;
+  function taiBaoCao() { if (dangTaiBC) return; dangTaiBC = true;
+    A.api('qtMaBaoCao', {}).then((r) => { dangTaiBC = false; if (r && r.ok) { baoCao = r.ds || {}; if (/^#\/ma-giam-gia\/?$/.test(location.hash)) A.veTrang(); } })
+      .catch(() => { dangTaiBC = false; }); }
   function veDanhSach(el) {
-    $('#pageAct').innerHTML = '';
+    $('#pageAct').innerHTML = '<button class="btn btn--ghost" id="vcBC" title="Tải lại số lượt dùng và doanh số">🔄 Cập nhật báo cáo</button>';
+    if (!baoCao) taiBaoCao();
     const the = (k) => `<div class="vc-o"><b>${LOAI[k].ic} ${LOAI[k].ten}</b><p>${LOAI[k].mo}</p><a class="btn btn--outline btn--sm" href="#/ma-giam-gia/moi-${k}">Tạo</a></div>`;
     const all = Object.keys(C()).map((ma) => ({ ma, c: C()[ma] }));
     const dem = { tat: all.length, dang: 0, sap: 0, het: 0 }; all.forEach((x) => { dem[trangThai(x.c)[2]]++; });
@@ -48,7 +55,7 @@
           <label>&nbsp;<input id="vcQ" value="${esc(tim.q)}" placeholder="Nhập để tìm"></label>
           <button class="btn btn--outline btn--sm" id="vcTim">Tìm</button>
         </div>
-        ${list.length ? `<div class="tbl-wrap"><table class="ct-tbl"><thead><tr><th>Tên Voucher | Mã voucher</th><th>Loại mã</th><th>Sản phẩm áp dụng</th><th>Người mua mục tiêu</th><th>Giảm giá</th><th class="num">Đơn tối thiểu</th><th>Thời gian lưu Mã giảm giá</th><th>Thao tác</th></tr></thead><tbody>
+        ${list.length ? `<div class="tbl-wrap"><table class="ct-tbl"><thead><tr><th>Tên Voucher | Mã voucher</th><th>Loại mã</th><th>Sản phẩm áp dụng</th><th>Người mua mục tiêu</th><th>Giảm giá</th><th class="num">Đơn tối thiểu</th><th>Thời gian lưu Mã giảm giá</th><th class="num">Đã dùng</th><th class="num">Doanh số</th><th>Thao tác</th></tr></thead><tbody>
           ${list.map(({ ma, c }) => { const [tt, cls, k] = trangThai(c); const l = loaiCua(c); return `<tr>
             <td data-nhan="Voucher"><div class="ct-sp"><span class="vc-ic ${c.type === 'fixed' ? 'vc-ic--tien' : ''}">${c.type === 'fixed' ? '₫' : c.type === 'ship' ? '🚚' : '%'}</span><span>${A.badge(tt, cls)}<a class="ct-ten" href="#/ma-giam-gia/${encodeURIComponent(ma)}">${esc(c.ten || ma)}</a><small class="muted">Mã voucher: <b>${esc(ma)}</b></small></span></div></td>
             <td data-nhan="Loại mã">${LOAI[l].ten}</td>
@@ -57,6 +64,8 @@
             <td data-nhan="Giảm giá">${giamText(c)}</td>
             <td class="num" data-nhan="Đơn tối thiểu">${c.min ? fmt(c.min) : '—'}</td>
             <td data-nhan="Thời gian">${c.batDau || c.hetHan ? `${hienNgay(c.batDau) || 'Ngay'} –<br>${hienNgay(c.hetHan) || 'Không thời hạn'}` : 'Không thời hạn'}</td>
+            <td class="num" data-nhan="Đã dùng"><span data-bc-dung="${esc(ma)}">${baoCao ? (baoCao[ma] ? baoCao[ma].dung : 0) : '…'}</span><small class="muted" style="display:block">${Number(c.soLuong) > 0 ? '/ ' + Number(c.soLuong) + ' lượt' : 'không giới hạn'}${c.motLan ? ' · 1 lần/khách' : ''}</small></td>
+            <td class="num" data-nhan="Doanh số"><b data-bc-ds="${esc(ma)}">${baoCao ? fmt(baoCao[ma] ? baoCao[ma].doanhSo : 0) : '…'}</b>${baoCao && baoCao[ma] ? `<small class="muted" style="display:block">${baoCao[ma].soKhach} khách</small>` : ''}</td>
             <td data-nhan="Thao tác"><div class="ct-act">
               <a href="#/ma-giam-gia/${encodeURIComponent(ma)}">${k === 'het' ? 'Chi tiết' : 'Chỉnh sửa'}</a>
               <button data-vc-sao="${esc(ma)}">Sao chép</button>
@@ -116,6 +125,13 @@
         </div>
         <div class="row row-2">
           <label>Giá trị đơn hàng tối thiểu (đ)<input type="number" id="vcMin" min="0" value="${Number(c.min) || 0}" ${dis}><small class="hint">${c.loai === 'sanpham' ? 'Tính trên tiền các sản phẩm áp dụng trong giỏ.' : 'Tính trên tạm tính của đơn.'}</small></label>
+          <label>Tổng lượt sử dụng tối đa<div class="vc-giam"><select id="vcSLKieu" ${dis}><option value="0" ${Number(c.soLuong) > 0 ? '' : 'selected'}>Không giới hạn</option><option value="1" ${Number(c.soLuong) > 0 ? 'selected' : ''}>Giới hạn</option></select>
+            ${Number(c.soLuong) > 0 ? `<input type="number" id="vcSL" min="1" value="${Number(c.soLuong)}" placeholder="Số lượt" ${dis}>` : '<input disabled value="∞ Không giới hạn">'}</div>
+            <small class="hint">Tổng số đơn được dùng mã này (đơn huỷ / hoàn được trả lại lượt). Hết lượt thì khách không áp được mã.</small></label>
+          <label>Lượt sử dụng / người mua<select id="vcMot" ${dis}><option value="" ${c.motLan ? '' : 'selected'}>Dùng nhiều lần</option><option value="1" ${c.motLan ? 'selected' : ''}>Chỉ 1 lần / khách</option></select>
+            <small class="hint">“1 lần / khách” tính theo số điện thoại đặt hàng.</small></label>
+        </div>
+        <div class="row row-2">
           <label>Người mua mục tiêu<select id="vcDoi" ${dis}><option value="" ${c.donDau ? '' : 'selected'}>Tất cả Người mua</option><option value="dau" ${c.donDau ? 'selected' : ''}>Khách mua lần đầu</option></select></label>
         </div>
       </div>
@@ -140,6 +156,7 @@
     nhap.type = v('#vcType') || nhap.type; if ($('#vcVal')) nhap.value = Math.max(0, Number(v('#vcVal')) || 0);
     if ($('#vcMax')) nhap.max = Math.max(0, Number(v('#vcMax')) || 0);
     nhap.min = Math.max(0, Number(v('#vcMin')) || 0); nhap.donDau = v('#vcDoi') === 'dau';
+    nhap.soLuong = v('#vcSLKieu') === '1' ? Math.max(1, Math.round(Number(v('#vcSL')) || Number(nhap.soLuong) || 100)) : 0; nhap.motLan = v('#vcMot') === '1';
   }
   function kiemTra() {
     const c = nhap, goc = maGoc ? C()[maGoc] : null;
@@ -162,6 +179,7 @@
     if (c.batDau) o.batDau = c.batDau; if (c.hetHan) o.hetHan = c.hetHan;
     if (c.type === 'percent' && c.max) o.max = c.max;
     if (c.donDau) o.donDau = true; if (c.luuTruoc && c.loai !== 'riengtu') o.luuTruoc = true;
+    if (Number(c.soLuong) > 0) o.soLuong = Number(c.soLuong); if (c.motLan) o.motLan = true;
     if (c.loai === 'sanpham') o.sanPham = c.sanPham.filter(sp);
     const goc = maGoc ? C()[maGoc] : null; if (goc && goc.hang) o.hang = goc.hang;
     const moiC = {};   // giữ thứ tự, đổi tên khoá nếu sửa mã
@@ -176,6 +194,7 @@
     if (!o()) return;
     const t = e.target;
     if (t.closest('[data-vc-huy]')) { nhap = null; return; }
+    if (t.id === 'vcBC') { baoCao = null; t.disabled = true; t.textContent = 'Đang tải…'; taiBaoCao(); return; }
     const tb = t.closest('[data-vc-tab]'); if (tb) { tab = tb.dataset.vcTab; return A.veTrang(); }
     if (t.id === 'vcTim') { tim = { theo: $('#vcTheo').value, q: $('#vcQ').value.trim() }; return A.veTrang(); }
     const sa = t.closest('[data-vc-sao]'); if (sa) {
@@ -205,6 +224,7 @@
   });
   document.addEventListener('change', (e) => {
     if (!o() || !nhap) return;
+    if (e.target.id === 'vcSLKieu') { thu(); if (e.target.value === '1' && !(nhap.soLuong > 0)) nhap.soLuong = 100; A.veTrang(); return; }
     if (e.target.id === 'vcType') { thu(); if (nhap.type === 'percent' && nhap.value > 100) nhap.value = 10; A.veTrang(); return; }
     if (/^vc/.test(e.target.id)) thu();
   });
