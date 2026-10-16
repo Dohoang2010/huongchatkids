@@ -23,7 +23,7 @@ class BoChay {
     this.nhatKy = [];                           // 300 dòng nhật ký gần nhất (xem ở /api/_tinh-trang)
     this.hang = new HangCho();
     this.thongKe = { lanChay: 0, chayLai: 0, loi: 0, tongMs: 0 };
-    this.dichVu = taoDichVu({ kho: this.kho, gd: () => this.kho.gd, cauHinh: this.cauHinh, ghiNhatKy: (s) => this.ghi(s) });
+    this.dichVu = taoDichVu({ kho: this.kho, gd: () => this.kho.gd, cauHinh: this.cauHinh, ghiNhatKy: (s) => (this.kho.gd ? this.kho.gd.nhatKy.push(s) : this.ghi(s)) });   // nhật ký lượt nháp (bị chạy lại) bỏ đi
     this.script = null;
   }
   ghi(s) {
@@ -49,7 +49,7 @@ class BoChay {
     for (let lan = 0; ; lan++) {
       const tra = await this.hang.lay();
       const gd = new GiaoDich(this.kho);
-      gd.daLay = daLay; gd.thieu = []; gd.hieuUng = []; gd.lanCuoi = lan >= SO_LAN_CHAY_LAI; gd.ten = ten;
+      gd.daLay = daLay; gd.thieu = []; gd.hieuUng = []; gd.lanCuoi = lan >= SO_LAN_CHAY_LAI; gd.ten = ten; gd.nhatKy = [];
       this.kho.gd = gd;
       let kq, loi;
       try {
@@ -71,6 +71,7 @@ class BoChay {
         throw e;
       }
       tra();
+      gd.nhatKy.forEach((x) => this.ghi(x));
       this.thongKe.lanChay++; this.thongKe.tongMs += Date.now() - t0;
       if (gd.hieuUng.length && this.guiDi) { try { this.guiDi(gd.hieuUng, ten); } catch (e) { this.ghi('Lỗi xếp hàng gửi: ' + e.message); } }
       if (loi) { this.thongKe.loi++; this.ghi('Lỗi chạy ' + ten + ': ' + anKhoa(String(loi && loi.stack || loi)).slice(0, 600)); throw loi; }
