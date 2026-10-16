@@ -5252,10 +5252,11 @@ window.COUPONS = {
     "type": "percent",
     "value": 5,
     "min": 0,
-    "donDau": true,
     "desc": "Giảm 5% cho đơn hàng đầu tiên",
     "batDau": "2026-10-05T11:22",
-    "hetHan": "2026-10-31T23:59"
+    "hetHan": "2026-10-31T23:59",
+    "donDau": true,
+    "motLan": true
   },
   "BMWCCV": {
     "ten": "thành viên BMWCCV",
