@@ -1161,7 +1161,7 @@ var NGAY_LE = [
         'Hương cũng cảm ơn mẹ đã tin tưởng chọn sản phẩm tại shop. Nhân ngày đặc biệt này, Hương gửi mẹ vài món quà nhỏ dưới đây.'
       ],
       khuyenMai: [
-        { icon: '🎁', tieu: 'Tặng 20.100 điểm thưởng', mo: 'Đăng nhập (hoặc tạo tài khoản) trên web trong ngày 20/10 – điểm tự cộng vào ví, 1 điểm = 1đ trừ thẳng vào đơn.' },
+        { icon: '🎁', tieu: 'Tặng 20.100 điểm thưởng', mo: 'Đăng nhập (hoặc tạo tài khoản) trên web trong ngày 20/10 – điểm tự cộng vào ví, 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.' },
         { icon: '📅', tieu: 'Điểm danh nhận 50.000 điểm', mo: 'Riêng ngày 20/10, mỗi lần điểm danh được 50.000 điểm thay vì 1.000 điểm như ngày thường.' },
         { icon: '🚚', tieu: 'Freeship đơn từ 3 triệu', mo: 'Mã FREESHIP tự áp khi đơn đủ điều kiện, dùng kèm được với mã giảm giá khác.' }
       ],
