@@ -5,7 +5,8 @@ Chủ shop không rành kỹ thuật: luôn trả lời **tiếng Việt**, ng�
 ## Web chạy ở đâu (từ 16/10/2026)
 - Toàn bộ web chạy trên **VPS 103.77.242.192** (nginx, Cloudflare proxy, SSL Full strict). GitHub Pages chỉ còn là đường lùi.
 - **Code nằm trên GitHub** (repo công khai `Dohoang2010/huongchatkids`, nhánh `main`). VPS tự `git pull` mỗi phút
-  → sửa web = commit + push lên `main`, khoảng 1 phút sau là lên web thật. Trước khi sửa luôn `git pull` (chủ shop sửa ở nhiều máy / nhiều phiên).
+  → sửa web = commit + push lên `main`, khoảng 1 phút sau là lên web thật (gọi `https://huongchatkids.vn/api/keo-web` để VPS kéo ngay).
+  Trang quản trị **tự lưu** (sửa xong 3 giây tự ghi js/data.js lên GitHub rồi gọi keo-web) – không còn nút Xuất bản bắt buộc. Trước khi sửa luôn `git pull` (chủ shop sửa ở nhiều máy / nhiều phiên).
 - **Máy chủ (API) cũng chạy trên VPS**: dịch vụ `hck-api` chạy chính file `tools/apps-script.gs` (VPS tự nạp lại sau mỗi lần pull)
   qua lớp giả lập trong `tools/may-chu-vps/` – xem `tools/may-chu-vps/README.md`. Dữ liệu nằm trong PostgreSQL trên VPS.
   - Sửa chức năng máy chủ = sửa `tools/apps-script.gs` rồi push → **lên thật ngay**, nên kiểm tra kỹ (`node -e "new Function(require('fs').readFileSync('tools/apps-script.gs','utf8'))"`).
