@@ -72,7 +72,7 @@
     const gt = (k, md) => { const o = C(); return o[k] !== undefined ? o[k] : (md !== undefined ? md : SITE[k]); };
 
     if (tab === 'chung') b.innerHTML = `
-      <h3>Thông tin shop</h3><p class="muted">Sửa xong bấm <b>Xuất bản</b> ở thanh trên để khách nhìn thấy.</p>
+      <h3>Thông tin shop</h3><p class="muted">Sửa xong 3 giây là tự lưu lên website.</p>
       <div class="row row-2">
         <label>Tên website<input data-ch="name" value="${esc(gt('name'))}"></label>
         <label>Khẩu hiệu<input data-ch="slogan" value="${esc(gt('slogan'))}"></label>

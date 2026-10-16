@@ -1,0 +1,6 @@
+[Unit]
+Description=Huong Chat Kids - keo ban moi tu GitHub
+[Service]
+Type=oneshot
+WorkingDirectory=/var/www/huongchatkids
+ExecStart=/usr/bin/git pull -q --ff-only

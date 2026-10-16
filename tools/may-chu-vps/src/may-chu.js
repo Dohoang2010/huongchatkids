@@ -121,6 +121,17 @@ const mayChu = http.createServer(async (req, res) => {
       }
       return traJson(res, 405, { ok: false });
     }
+    /* Trang quản trị vừa lưu lên GitHub → báo VPS kéo bản mới NGAY (systemd path hck-keo-web-ngay theo dõi file này).
+       Không cần khoá: chỉ khiến VPS git pull sớm hơn lịch 1 phút; tối đa 1 lần / 3 giây. Kéo thêm lần nữa sau 8 giây phòng GitHub chậm. */
+    if (duongDan === '/api/keo-web') {
+      const bay = Date.now();
+      if (bay - (trangThai.keoWebLuc || 0) > 3000) {
+        trangThai.keoWebLuc = bay;
+        const bao = () => { try { fs.writeFileSync('/run/hck-api/keo-web', String(Date.now())); } catch (e) { ghi('keo-web: ' + e.message); } };
+        bao(); setTimeout(bao, 8000).unref();
+      }
+      return traJson(res, 200, { ok: true }, cors);
+    }
     if (duongDan === '/api/suc-khoe') return traJson(res, 200, { ok: true, cheDo: cauHinh.cheDo, luc: Date.now(), lanNhap: trangThai.lanNhap ? trangThai.lanNhap.luc : null });
     /* ---- nội bộ (cần khoá NOI_BO_KHOA; nginx không cho ra ngoài) ---- */
     if (duongDan.startsWith('/noi-bo/')) {

@@ -188,13 +188,13 @@
     const c = ds.find((x) => x.sha === sha);
     const ok = await A.hoi({ tieuDe: 'Khôi phục phiên bản này?',
       noiDung: `Nội dung của phiên bản <b>${new Date(c.commit.author.date).toLocaleString('vi-VN')}</b> sẽ được đưa về <b>bản nháp</b>.<br>
-        <span class="muted">Website thật chưa đổi — xem lại rồi bấm Xuất bản mới có hiệu lực.</span>`, nutOk: 'Khôi phục' });
+        <span class="muted">Sau khi khôi phục, web tự lưu bản này lên website sau vài giây.</span>`, nutOk: 'Khôi phục' });
     if (!ok) return;
     try {
       const cu = await docPhienBan(sha);
       KHOI.forEach((k) => { if (cu[k]) A.D[k] = A.sao(cu[k]); });
       A.doiDuLieu();
-      A.toast('Đã đưa phiên bản cũ về bản nháp – kiểm tra rồi bấm Xuất bản', 'ok');
+      A.toast('Đã khôi phục phiên bản cũ – web tự lưu sau vài giây', 'ok');
       A.veTrang();
     } catch (e) { A.toast(e.message, 'err'); }
   }

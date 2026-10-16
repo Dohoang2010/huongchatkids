@@ -258,7 +258,7 @@
   document.addEventListener('change', (e) => {
     const m = { khHangMa: 'hangMa', khQuaMa: 'quaMa', khQuaHang: 'quaHang', khQuaShip: 'quaShip' }[e.target.id]; if (!m) return;
     QT().ketHop = { ...ketHop(), [m]: e.target.checked }; A.doiDuLieu();
-    A.toast('Đã đổi quy tắc – bấm Xuất bản để áp dụng', 'ok');
+    A.toast('Đã đổi quy tắc – web tự cập nhật sau vài giây', 'ok');
   });
 
   /* ================= SỰ KIỆN ================= */
@@ -328,7 +328,7 @@
       const ct = A.sao(nhap); delete ct.moi;
       const list = QT().chuongTrinh; const i = list.findIndex((x) => x.id === ct.id);
       if (i >= 0) list[i] = ct; else list.push(ct);
-      nhap = null; goc = null; A.doiDuLieu(); A.toast('Đã lưu chương trình vào bản nháp – bấm Xuất bản để khách thấy', 'ok'); A.di('#/qua-tang');
+      nhap = null; goc = null; A.doiDuLieu(); A.toast('Đã lưu chương trình – web tự cập nhật sau vài giây', 'ok'); A.di('#/qua-tang');
     }
   });
   document.addEventListener('change', (e) => {

@@ -1,0 +1,7 @@
+[Unit]
+Description=Keo web ngay khi trang quan tri vua luu (file /run/hck-api/keo-web doi)
+[Path]
+PathModified=/run/hck-api/keo-web
+Unit=hck-keo-web.service
+[Install]
+WantedBy=multi-user.target

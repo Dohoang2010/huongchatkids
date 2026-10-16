@@ -150,7 +150,7 @@ window.ADMIN = (() => {
   }
 
   /* ---------------- Bản nháp dữ liệu website ----------------
-     GOC = bản đang chạy thật, D = bản đang sửa. Chỉ ghi lên web khi bấm Xuất bản. */
+     GOC = bản đang chạy thật, D = bản đang sửa. Sửa xong 3 giây là tự ghi lên web (henTuXuat). */
   const KHOI = ['PRODUCTS', 'BANNERS', 'QUA_TANG', 'TIERS', 'COUPONS', 'NAV', 'POSTS', 'THEME', 'CAUHINH'];
   let GOC = {}, D = {}, daSua = false;
   function napNhap() {
@@ -161,13 +161,19 @@ window.ADMIN = (() => {
     daSua = !!nhap;
     veThanhLuu();
   }
+  /* Tự lưu: mỗi lần sửa, chờ 3 giây không sửa thêm thì tự xuất bản (không cần bấm nút) */
+  let tgHenXuat = 0, dangXuat = false, xuatLai = false;
+  function henTuXuat() { clearTimeout(tgHenXuat); tgHenXuat = setTimeout(() => { if (dangXuat) { xuatLai = true; return; } xuatBan(true); }, 3000); }
   function doiDuLieu() {
     daSua = true;
     sessionStorage.setItem('hck_admin_nhap', JSON.stringify(D));
     sessionStorage.setItem('hck_preview', JSON.stringify(D));
     veThanhLuu();
     PREVIEW && PREVIEW.capNhat(D);
+    henTuXuat();
   }
+  /* Báo VPS kéo bản mới ngay (không phải chờ lịch 1 phút) */
+  function keoVPS() { try { const u = ((SITE.loyalty && SITE.loyalty.endpoint) || '').replace(/\/api\/?$/, '/api/keo-web'); if (/\/api\/keo-web$/.test(u)) fetch(u, { mode: 'no-cors', cache: 'no-store' }).catch(() => {}); } catch { /* bỏ qua */ } }
   function boNhap() {
     sessionStorage.removeItem('hck_admin_nhap'); sessionStorage.removeItem('hck_preview');
     D = sao(GOC); daSua = false; veThanhLuu(); PREVIEW && PREVIEW.capNhat(D); veTrang();
@@ -178,41 +184,44 @@ window.ADMIN = (() => {
     const b = $('#bar'); if (!b) return;
     if (!daSua) { b.classList.add('hide'); b.innerHTML = ''; return; }
     b.classList.remove('hide'); b.className = 'bar';
-    b.innerHTML = `<span class="cham"></span><b>Chưa xuất bản</b>
-      <span class="muted">Thay đổi đang ở bản nháp, khách chưa nhìn thấy.</span>
+    b.innerHTML = `<span class="cham"></span><b>Đang chờ tự lưu…</b>
+      <span class="muted">Sửa xong 3 giây là tự lưu lên website.</span>
       <span class="grow"></span>
       <button class="btn btn--ghost btn--sm" data-act="bo-nhap">Huỷ thay đổi</button>
-      <a class="btn btn--ghost btn--sm" href="#/phien-ban">🔗 Link xem thử</a>
-      <button class="btn btn--primary btn--sm" data-act="xuat-ban">Xuất bản</button>`;
+      <button class="btn btn--primary btn--sm" data-act="xuat-ban">Lưu ngay</button>`;
   }
 
   /* Ghi bản nháp lên website thật (commit vào js/data.js + data/stock.json) */
-  async function xuatBan() {
-    if (!ghToken()) { toast('Chưa có mã GitHub – vào ⚙️ Cấu hình để dán mã', 'err'); di('#/cau-hinh/github'); return; }
+  async function xuatBan(tuDong) {
+    if (tuDong === true) clearTimeout(tgHenXuat); else { clearTimeout(tgHenXuat); tuDong = false; }
+    if (!ghToken()) { const b0 = $('#bar'); if (b0) { b0.className = 'bar bar--err'; b0.innerHTML = '❌ Chưa có mã GitHub nên chưa tự lưu được – vào ⚙️ Cấu hình › GitHub để dán mã.'; } if (!tuDong) { toast('Chưa có mã GitHub – vào ⚙️ Cấu hình để dán mã', 'err'); di('#/cau-hinh/github'); } return; }
+    if (dangXuat) { xuatLai = true; return; }
     const doi = daDoiGi();
-    if (!doi.length) { toast('Không có gì thay đổi'); return; }
+    if (!doi.length) { daSua = false; veThanhLuu(); if (!tuDong) toast('Không có gì thay đổi'); return; }
     const ten = { PRODUCTS: 'sản phẩm', BANNERS: 'banner', QUA_TANG: 'quà tặng', TIERS: 'hạng khách', COUPONS: 'mã giảm giá', NAV: 'menu', POSTS: 'bài viết', THEME: 'giao diện', CAUHINH: 'cấu hình website' };
-    const ok = await hoi({ tieuDe: 'Xuất bản thay đổi?',
-      noiDung: `Các phần sẽ cập nhật lên website thật: <b>${doi.map((k) => esc(ten[k])).join(', ')}</b>.<br>Khách sẽ nhìn thấy sau khoảng 1 phút.`,
-      nutOk: 'Xuất bản' });
-    if (!ok) return;
-    const b = $('#bar'); b.className = 'bar bar--wait'; b.innerHTML = '⏳ Đang xuất bản…';
+    const b = $('#bar'); b.classList.remove('hide'); b.className = 'bar bar--wait'; b.innerHTML = '⏳ Đang lưu lên website…';
+    dangXuat = true;
+    const banGui = sao(D);   // chụp dữ liệu lúc bắt đầu lưu – sửa thêm trong lúc lưu sẽ được lưu ở lượt sau
     try {
       const f = await ghDoc('js/data.js');
       let src = unb64(f.content);
-      doi.forEach((k) => { src = thayKhoi(src, k, D[k]); });
+      doi.forEach((k) => { src = thayKhoi(src, k, banGui[k]); });
       new Function(src);   // kiểm tra cú pháp trước khi đẩy, tránh làm hỏng web
       await ghGhi('js/data.js', b64(src), f.sha, 'Quản trị: cập nhật ' + doi.map((k) => ten[k]).join(', '));
       await dongBoTonKho();
-      sessionStorage.removeItem('hck_admin_nhap');
-      GOC = sao(D); daSua = false; veThanhLuu();
-      b.classList.remove('hide'); b.className = 'bar bar--ok';
-      b.innerHTML = '✅ Đã xuất bản lên website. GitHub Pages cần khoảng 1 phút để cập nhật.';
-      setTimeout(() => { if (!daSua) b.classList.add('hide'); }, 9000);
-      toast('Đã xuất bản 🎉', 'ok');
+      keoVPS();
+      GOC = banGui;
+      daSua = daDoiGi().length > 0;   // có sửa thêm trong lúc đang lưu thì lưu tiếp
+      if (!daSua) sessionStorage.removeItem('hck_admin_nhap');
+      veThanhLuu();
+      if (!daSua) { b.classList.remove('hide'); b.className = 'bar bar--ok'; b.innerHTML = '✅ Đã lưu lên website – khách thấy ngay sau vài giây.'; setTimeout(() => { if (!daSua) b.classList.add('hide'); }, 5000); }
+      if (!tuDong) toast('Đã lưu lên website 🎉', 'ok');
     } catch (e) {
-      b.className = 'bar bar--err'; b.innerHTML = '❌ ' + esc(e.message) + ' <button class="btn btn--ghost btn--sm" data-act="xuat-ban">Thử lại</button>';
-      toast('Chưa xuất bản được', 'err');
+      b.className = 'bar bar--err'; b.innerHTML = '❌ Chưa lưu được: ' + esc(e.message) + ' <button class="btn btn--ghost btn--sm" data-act="xuat-ban">Thử lại</button>';
+      toast('Chưa lưu lên website được', 'err');
+    } finally {
+      dangXuat = false;
+      if (xuatLai || daSua) { xuatLai = false; if (daDoiGi().length) henTuXuat(); }
     }
   }
   function thayKhoi(src, key, giaTri) {
@@ -249,6 +258,7 @@ window.ADMIN = (() => {
     const duong = 'img/' + tenFile;
     let sha; try { sha = (await ghDoc(duong)).sha; } catch { sha = undefined; }
     await ghGhi(duong, btoa(bin), sha, 'Quản trị: tải ảnh ' + tenFile);
+    keoVPS();
     return duong;
   }
 
@@ -385,8 +395,8 @@ window.ADMIN = (() => {
     const het = (D.PRODUCTS || []).filter((p) => (p.stock ?? 0) <= 0 && !p.an);
     if (het.length) TB.push({ icon: '⛔', ten: `${het.length} sản phẩm đang hết hàng`, mo: het.slice(0, 3).map((p) => p.short || p.name).join(', '), di: '#/san-pham' });
     if (sapHet.length) TB.push({ icon: '📉', ten: `${sapHet.length} sản phẩm sắp hết`, mo: sapHet.slice(0, 3).map((p) => p.short || p.name).join(', '), di: '#/san-pham' });
-    if (!ghToken()) TB.push({ icon: '🔑', ten: 'Chưa kết nối GitHub', mo: 'Chưa dán mã nên không xuất bản được thay đổi.', di: '#/cau-hinh/github' });
-    if (daSua) TB.push({ icon: '📝', ten: 'Có thay đổi chưa xuất bản', mo: 'Bản nháp đang chờ xuất bản lên website.', di: duong() });
+    if (!ghToken()) TB.push({ icon: '🔑', ten: 'Chưa kết nối GitHub', mo: 'Chưa dán mã nên chưa tự lưu được thay đổi lên website.', di: '#/cau-hinh/github' });
+    if (daSua) TB.push({ icon: '📝', ten: 'Đang chờ tự lưu', mo: 'Thay đổi sẽ tự lưu lên website sau vài giây.', di: duong() });
     const n = $('#bellN'); if (n) { n.textContent = TB.length; n.classList.toggle('hide', !TB.length); }
     const pop = $('#bellPop'); if (!pop) return;
     pop.innerHTML = `<div class="pop__h"><b>Thông báo</b><small>${TB.length} mục cần chú ý</small></div>`

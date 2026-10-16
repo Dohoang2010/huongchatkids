@@ -10,6 +10,9 @@ WorkingDirectory=/opt/hck-api
 EnvironmentFile=/etc/hck-api/env
 Environment=TZ=Asia/Ho_Chi_Minh NODE_ENV=production PGHOST=/run/postgresql PGUSER=hckapi PGDATABASE=hck GS_FILE=/var/www/huongchatkids/tools/apps-script.gs
 ExecStart=/usr/bin/node src/may-chu.js
+RuntimeDirectory=hck-api
+RuntimeDirectoryMode=0755
+RuntimeDirectoryPreserve=yes
 Restart=always
 RestartSec=3
 MemoryMax=1500M

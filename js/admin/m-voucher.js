@@ -67,7 +67,7 @@
             <td class="num" data-nhan="Đã dùng"><span data-bc-dung="${esc(ma)}">${baoCao ? (baoCao[ma] ? baoCao[ma].dung : 0) : '…'}</span><small class="muted" style="display:block">${Number(c.soLuong) > 0 ? '/ ' + Number(c.soLuong) + ' lượt' : 'không giới hạn'}${c.motLan ? ' · 1 lần/khách' : ''}</small></td>
             <td class="num" data-nhan="Doanh số"><b data-bc-ds="${esc(ma)}">${baoCao ? fmt(baoCao[ma] ? baoCao[ma].doanhSo : 0) : '…'}</b>${baoCao && baoCao[ma] ? `<small class="muted" style="display:block">${baoCao[ma].soKhach} khách</small>` : ''}</td>
             <td data-nhan="Thao tác"><div class="ct-act">
-              <a href="#/ma-giam-gia/${encodeURIComponent(ma)}">${k === 'het' ? 'Chi tiết' : 'Chỉnh sửa'}</a>
+              <a href="#/ma-giam-gia/${encodeURIComponent(ma)}">Chỉnh sửa</a>
               <button data-vc-sao="${esc(ma)}">Sao chép</button>
               ${k === 'dang' ? `<button data-vc-ket="${esc(ma)}">Kết thúc</button>` : ''}
               <button class="red" data-vc-xoa="${esc(ma)}">Xoá</button></div></td></tr>`; }).join('')}
@@ -96,23 +96,23 @@
     }
     const c = nhap, goc = maGoc ? C()[maGoc] : null;
     const [tt, cls, k] = goc ? trangThai(goc) : ['Mới', 'tag--wait', 'moi'];
-    const chiXem = k === 'het', dis = chiXem ? 'disabled' : '';
+    const chiXem = false, dis = '';   // mọi mã (kể cả đang chạy / đã kết thúc) đều sửa được mọi thông tin
     $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/ma-giam-gia" data-vc-huy>← Danh sách</a>`;
     el.innerHTML = `
       <div class="card"><h3>Thông tin cơ bản ${A.badge(tt, cls)}</h3>
         <div class="row row-2">
-          <label>Loại mã<div class="ct-loai"><span>${LOAI[c.loai].ic} ${LOAI[c.loai].ten}</span></div><small class="hint">${LOAI[c.loai].mo}</small></label>
+          <label>Loại mã<select id="vcLoai">${Object.keys(LOAI).map((l) => `<option value="${l}" ${l === c.loai ? 'selected' : ''}>${LOAI[l].ic} ${LOAI[l].ten}</option>`).join('')}</select><small class="hint">${LOAI[c.loai].mo}</small></label>
           <label>Tên chương trình giảm giá<input id="vcTen" maxlength="100" value="${esc(c.ten || '')}" placeholder="VD: Giảm 10% tháng 10" ${dis}><small class="hint">Tên Voucher sẽ không được hiển thị cho Người mua.</small></label>
         </div>
         <div class="row row-2">
-          <label>Mã voucher<div class="vc-ma"><input id="vcMa" maxlength="20" value="${esc(c.ma)}" placeholder="VD: HCK10" ${dis || (goc && k === 'dang' ? 'disabled' : '')}></div><small class="hint">Chỉ chữ cái (A-Z) và số (0-9), tối đa 20 kí tự. Khách nhập mã này khi thanh toán.</small></label>
+          <label>Mã voucher<div class="vc-ma"><input id="vcMa" maxlength="20" value="${esc(c.ma)}" placeholder="VD: HCK10" ${dis}></div><small class="hint">Chỉ chữ cái (A-Z) và số (0-9), tối đa 20 kí tự. Khách nhập mã này khi thanh toán.</small></label>
           <label>Mô tả hiện cho khách<input id="vcDesc" maxlength="120" value="${esc(c.desc || '')}" placeholder="Tự tạo nếu để trống" ${dis}></label>
         </div>
         <div class="row row-2">
-          <label>Thời gian bắt đầu<input type="datetime-local" id="vcBD" value="${esc(c.batDau || '')}" ${dis || (goc && k === 'dang' ? 'disabled' : '')}></label>
+          <label>Thời gian bắt đầu<input type="datetime-local" id="vcBD" value="${esc(c.batDau || '')}" ${dis}></label>
           <label>Thời gian kết thúc<input type="datetime-local" id="vcKT" value="${esc(c.hetHan || '')}" ${dis}><small class="hint">Để trống = không thời hạn. Kết thúc phải sau bắt đầu tối thiểu 1 tiếng.</small></label>
         </div>
-        ${c.loai === 'riengtu' ? '' : `<label class="ck"><input type="checkbox" id="vcLuu" ${c.luuTruoc ? 'checked' : ''} ${dis}> Cho phép lưu mã trước Thời gian sử dụng (hiện ở trang tài khoản khách trước khi bắt đầu)</label>`}
+        ${c.loai === 'riengtu' ? '' : `<label class="ck" style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="vcLuu" style="width:18px;height:18px;flex:none;margin:0" ${c.luuTruoc ? 'checked' : ''} ${dis}> Cho phép lưu mã trước Thời gian sử dụng (hiện ở trang tài khoản khách trước khi bắt đầu)</label>`}
       </div>
 
       <div class="card"><h3>Thiết lập mã giảm giá</h3>
@@ -152,6 +152,7 @@
     if (!nhap || !$('#vcTen') || $('#vcTen').disabled) return;
     const v = (id) => ($(id) ? $(id).value : '');
     nhap.ten = v('#vcTen').trim(); nhap.ma = v('#vcMa').toUpperCase().replace(/[^A-Z0-9]/g, ''); nhap.desc = v('#vcDesc').trim();
+    if ($('#vcLoai')) nhap.loai = v('#vcLoai') || nhap.loai;
     nhap.batDau = v('#vcBD'); nhap.hetHan = v('#vcKT'); nhap.luuTruoc = !!($('#vcLuu') && $('#vcLuu').checked);
     nhap.type = v('#vcType') || nhap.type; if ($('#vcVal')) nhap.value = Math.max(0, Number(v('#vcVal')) || 0);
     if ($('#vcMax')) nhap.max = Math.max(0, Number(v('#vcMax')) || 0);
@@ -219,11 +220,12 @@
     const bo = t.closest('[data-vc-bo]'); if (bo) { thu(); nhap.sanPham = nhap.sanPham.filter((x) => x !== bo.dataset.vcBo); A.veTrang(); return; }
     if (t.id === 'vcXacNhan') {
       thu(); const loi = kiemTra(); if (loi) { A.toast(loi, 'err'); return; }
-      luu(); nhap = null; A.doiDuLieu(); A.toast('Đã lưu mã vào bản nháp – bấm Xuất bản để khách dùng được', 'ok'); A.di('#/ma-giam-gia');
+      luu(); nhap = null; A.doiDuLieu(); A.toast('Đã lưu mã – web tự cập nhật sau vài giây', 'ok'); A.di('#/ma-giam-gia');
     }
   });
   document.addEventListener('change', (e) => {
     if (!o() || !nhap) return;
+    if (e.target.id === 'vcLoai') { thu(); if (nhap.loai === 'sanpham' && !Array.isArray(nhap.sanPham)) nhap.sanPham = []; A.veTrang(); return; }
     if (e.target.id === 'vcSLKieu') { thu(); if (e.target.value === '1' && !(nhap.soLuong > 0)) nhap.soLuong = 100; A.veTrang(); return; }
     if (e.target.id === 'vcType') { thu(); if (nhap.type === 'percent' && nhap.value > 100) nhap.value = 10; A.veTrang(); return; }
     if (/^vc/.test(e.target.id)) thu();

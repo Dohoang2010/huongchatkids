@@ -1,0 +1,7 @@
+[Unit]
+Description=Keo web moi 1 phut/lan (du phong)
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=60
+[Install]
+WantedBy=timers.target

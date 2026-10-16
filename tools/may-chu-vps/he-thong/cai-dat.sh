@@ -19,8 +19,12 @@ them LICH_30P dongBoCRMTuDong
 chmod 600 $ENV
 # Dịch vụ
 cp he-thong/hck-api.service /etc/systemd/system/hck-api.service
+cp he-thong/hck-keo-web.service he-thong/hck-keo-web.timer he-thong/hck-keo-web-ngay.path /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable hck-api >/dev/null 2>&1
+systemctl enable --now hck-keo-web.timer >/dev/null 2>&1
+mkdir -p /run/hck-api && chown hckapi:hckapi /run/hck-api && touch /run/hck-api/keo-web && chown hckapi:hckapi /run/hck-api/keo-web
+systemctl enable --now hck-keo-web-ngay.path >/dev/null 2>&1
 # nginx
 mkdir -p /var/www/acme /etc/nginx/hck
 cp he-thong/nginx-gioi-han.conf /etc/nginx/conf.d/00-hck-gioi-han.conf
