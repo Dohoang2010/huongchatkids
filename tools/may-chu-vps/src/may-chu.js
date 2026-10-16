@@ -24,6 +24,7 @@ const cauHinh = {
   nguon: (E.NGUON_CHO_PHEP || 'https://huongchatkids.vn,https://www.huongchatkids.vn').split(',').map((s) => s.trim()),
   diaChiCongKhai: E.DIA_CHI_CONG_KHAI || '',
   emailChu: E.EMAIL_CHU || 'huongchatkids@gmail.com',
+  mailThu: (E.MAIL_THU || 'huongchatkids@gmail.com').toLowerCase().split(',').map((s) => s.trim()).filter(Boolean),   // chạy thử: chỉ gửi thật tới các địa chỉ này
   smtp: E.SMTP_HOST ? { host: E.SMTP_HOST, port: Number(E.SMTP_PORT || 465), user: E.SMTP_USER, pass: E.SMTP_PASS, from: E.SMTP_FROM } : null
 };
 

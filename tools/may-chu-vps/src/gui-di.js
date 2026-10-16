@@ -34,7 +34,10 @@ function taoGuiDi(o) {
     return 'apps-script';
   };
   const mot = async (h, nguon) => {
-    if (cauHinh.cheDo !== 'chinh') { await luu(h, 'bo-qua-song-song'); ghi('(chạy thử, không gửi) ' + h.loai + ': ' + h.tomTat + ' ← ' + nguon); return; }
+    /* Chạy thử: mail gửi tới chính shop (mã đăng nhập quản trị 2 lớp…) vẫn gửi thật, tiêu đề gắn [VPS thử] */
+    const choThu = cauHinh.cheDo !== 'chinh' && h.loai === 'mail' && String(h.thu.to).split(/\s*,\s*/).every((x) => (cauHinh.mailThu || []).includes(x.toLowerCase()));
+    if (choThu) h = Object.assign({}, h, { thu: Object.assign({}, h.thu, { subject: '[VPS thử] ' + h.thu.subject }) });
+    if (cauHinh.cheDo !== 'chinh' && !choThu) { await luu(h, 'bo-qua-song-song'); ghi('(chạy thử, không gửi) ' + h.loai + ': ' + h.tomTat + ' ← ' + nguon); return; }
     try {
       if (h.loai === 'mail') { const qua = await guiMail(h.thu); await luu(h, 'da-gui', qua); }
       else { const kq = await goiMot(h.yc); if (kq.loi || kq.ma >= 400) throw new Error(kq.loi || ('HTTP ' + kq.ma + ' ' + String(kq.noiDung).slice(0, 200))); await luu(h, 'da-gui'); }
