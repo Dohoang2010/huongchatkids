@@ -62,7 +62,7 @@ var HEADERS = ['Thời gian', 'Mã đơn', 'Loại', 'Khách', 'Điện thoại'
                'Tiền hàng', 'Giảm', 'Ship', 'Tổng', 'Thanh toán', 'Mã giảm giá', 'Ghi chú', 'Email',
                'Hạng KH', 'Giảm theo hạng', 'Quà tặng', 'Trạng thái'];
 var H_KH = ['Điện thoại', 'Họ tên', 'Tỉnh/Thành', 'Xã/Phường', 'Địa chỉ cụ thể', 'Email',
-            'Tổng chi tiêu', 'Số đơn', 'Hạng', 'Đơn gần nhất', 'Tạo lúc', 'Ghi chú'];
+            'Tổng chi tiêu', 'Số đơn', 'Hạng', 'Đơn gần nhất', 'Tạo lúc', 'Ghi chú', 'Giới tính'];
 
 /* ===================== TIỆN ÍCH CHUNG ===================== */
 function ss() { return SpreadsheetApp.getActiveSpreadsheet(); }
@@ -85,7 +85,9 @@ function sheetPhu(ten, headers) {
   if (!s) { s = ss().insertSheet(ten); s.appendRow(headers); s.getRange(1, 1, 1, headers.length).setFontWeight('bold'); s.setFrozenRows(1); }
   return s;
 }
-function sheetKH()    { return sheetPhu(SHEET_KH, H_KH); }
+function sheetKH()    { var s = sheetPhu(SHEET_KH, H_KH); if (s.getLastColumn() < H_KH.length) s.getRange(1, H_KH.length).setValue(H_KH[H_KH.length - 1]); return s; }   // sheet cũ: tự thêm tiêu đề cột Giới tính
+var GIOI_TINH = ['Nữ', 'Nam', 'Khác'];
+function chuanGioiTinh_(v) { v = String(v || '').trim(); return GIOI_TINH.indexOf(v) > -1 ? v : ''; }
 function sheetOtp()   { return sheetPhu(SHEET_OTP, ['Điện thoại', 'Mã', 'Hết hạn', 'Số lần sai', 'Gửi lúc', 'Kênh']); }
 function sheetPhien() { return sheetPhu(SHEET_PHIEN, ['Token', 'Điện thoại', 'Hết hạn', 'Tạo lúc', 'Kiểu']); }
 
@@ -307,12 +309,12 @@ function docKH(sdt) {
     if (ct.don.length) ct.ganNhat = ct.don[0].ngay;
   }
   var h = hangTheoTien(ct.tong);
-  var kh = { sdt: sdt, ten: '', tinh: '', xa: '', diaChi: '', email: '',
+  var kh = { sdt: sdt, ten: '', tinh: '', xa: '', diaChi: '', email: '', gioiTinh: '',
              tongChiTieu: ct.tong, soDon: ct.soDon, hang: h.key, hangLabel: h.label, giam: h.giam, donGanNhat: ct.ganNhat };
   if (dong) {
     var v = s.getRange(dong, 1, 1, H_KH.length).getValues()[0];
     kh.ten = String(v[1] || ''); kh.tinh = String(v[2] || ''); kh.xa = String(v[3] || '');
-    kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || '');
+    kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || ''); kh.gioiTinh = chuanGioiTinh_(v[12]);
   }
   var sn0 = null; try { sn0 = snTim_(sdt); } catch (e0) { Logger.log(e0); }
   kh.ngaySinh = (sn0 && sn0.ngay) || (crm && crm.kh ? chuanNgaySinh_(crm.kh.ngaySinh || crm.kh.sinhNhat || '') : '');
@@ -340,13 +342,13 @@ function capNhatKhachHang(sdt, c, order) {
     else chiTiet = String(c.address).trim();
   }
   if (dong) {
-    var cu = s.getRange(dong, 1, 1, H_KH.length).getValues()[0];
-    s.getRange(dong, 1, 1, H_KH.length).setValues([[
+    var cu = s.getRange(dong, 1, 1, 12).getValues()[0];
+    s.getRange(dong, 1, 1, 12).setValues([[
       "'" + sdt, c.name || cu[1], tinh || cu[2], xa || cu[3], chiTiet || cu[4], c.email || cu[5],
       ct.tong, ct.soDon, h.label, ct.ganNhat, cu[10] || new Date(), cu[11] || ''
     ]]);
   } else {
-    s.appendRow(["'" + sdt, c.name || '', tinh, xa, chiTiet, c.email || '', ct.tong, ct.soDon, h.label, ct.ganNhat, new Date(), '']);
+    s.appendRow(["'" + sdt, c.name || '', tinh, xa, chiTiet, c.email || '', ct.tong, ct.soDon, h.label, ct.ganNhat, new Date(), '', chuanGioiTinh_(c.gioiTinh)]);
   }
 }
 
@@ -1122,8 +1124,8 @@ function diemDanh_(sdt, nguon) {
       daDD[ngay] = true;
     } else chuoi = chuoiDen_(daDD, ngay);
     /* Phần thưởng: luôn chạy theo khoá → lần đầu cấp, lần sau (retry) chỉ cấp bù phần còn thiếu */
-    var diem = Math.max(0, soNguyen(cfg.diemNgay)), gd = { ok: true };
-    if (diem) gd = ghiDiem(sdt, 'EARN', diem, 'CHECKIN', "'" + ngay, 'Điểm danh ngày ' + ngay.split('-').reverse().join('/'), 'hệ thống', 'CHECKIN:' + sdt + ':' + ngay);
+    var le = leHomNay_(ngay), diem = Math.max(0, soNguyen(le && le.diemDanh ? le.diemDanh : cfg.diemNgay)), gd = { ok: true };
+    if (diem) gd = ghiDiem(sdt, 'EARN', diem, 'CHECKIN', "'" + ngay, (le && le.diemDanh ? '🌷 Điểm danh ' + le.ten + ' ' : 'Điểm danh ngày ') + ngay.split('-').reverse().join('/'), 'hệ thống', 'CHECKIN:' + sdt + ':' + ngay);
     var vcs = docVC_(), nhan = [];
     var cap = function (src, ky) { var r = capVoucher_(sdt, src, ky, cfg, vcs); if (r.ma && !r.trung) nhan.push(r); return r; };
     if (laNgayDoi_(ngay)) cap('DOUBLE_DATE', ngay);
@@ -1139,8 +1141,89 @@ function diemDanh_(sdt, nguon) {
 }
 /* Gọi sau khi đăng nhập thành công (mật khẩu / OTP). Lỗi điểm danh KHÔNG làm hỏng đăng nhập. */
 function ddSauDangNhap_(sdt) {
-  try { var cfg = ddCauHinh(); if (!cfg.bat || !cfg.tuDong) return null; return diemDanh_(sdt, 'dang-nhap'); }
-  catch (e) { Logger.log('Điểm danh khi đăng nhập lỗi: ' + e); return null; }
+  var r = null;
+  try { var cfg = ddCauHinh(); if (cfg.bat && cfg.tuDong) r = diemDanh_(sdt, 'dang-nhap'); }
+  catch (e) { Logger.log('Điểm danh khi đăng nhập lỗi: ' + e); }
+  var q = thuongLe_(sdt); if (q) { r = r || { ok: false }; r.quaLe = q; }
+  return r;
+}
+
+/* ===================== NGÀY LỄ (20/10 …) =====================
+   Mỗi ngày lễ: quà điểm khi đăng ký / đăng nhập trong ngày (1 lần / khách), điểm danh ngày đó được số điểm riêng,
+   và email chúc mừng gửi tự động đúng giờ tới mọi khách đã mua hàng có email (1 lượt duy nhất).
+   khuyenMai: các dòng ưu đãi in trong email – thêm chương trình mới cho ngày lễ thì thêm dòng vào đây. */
+var NGAY_LE = [
+  { id: '2010', ngay: '2026-10-20', ten: '20/10', thuongDangNhap: 20100, diemDanh: 50000,
+    mail: { gio: 8, tieuDe: '🌷 Hương Chất Kids chúc mừng ngày Phụ nữ Việt Nam 20/10 – quà 20.100 điểm đang chờ mẹ',
+      loiChuc: [
+        'Nhân ngày Phụ nữ Việt Nam 20/10, cả nhà Hương Chất Kids xin gửi tới {ten} lời chúc chân thành nhất: chúc mẹ luôn khoẻ mạnh, xinh đẹp, rạng rỡ và thật nhiều bình yên.',
+        'Cảm ơn mẹ đã luôn là người chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Hôm nay, mẹ hãy dành một chút thời gian cho riêng mình – vì mẹ xứng đáng được yêu thương và chiều chuộng nhất 💗',
+        'Hương cũng cảm ơn mẹ đã tin tưởng chọn sản phẩm tại shop. Nhân ngày đặc biệt này, Hương gửi mẹ vài món quà nhỏ dưới đây.'
+      ],
+      khuyenMai: [
+        { icon: '🎁', tieu: 'Tặng 20.100 điểm thưởng', mo: 'Đăng nhập (hoặc tạo tài khoản) trên web trong ngày 20/10 – điểm tự cộng vào ví, 1 điểm = 1đ trừ thẳng vào đơn.' },
+        { icon: '📅', tieu: 'Điểm danh nhận 50.000 điểm', mo: 'Riêng ngày 20/10, mỗi lần điểm danh được 50.000 điểm thay vì 1.000 điểm như ngày thường.' },
+        { icon: '🚚', tieu: 'Freeship đơn từ 3 triệu', mo: 'Mã FREESHIP tự áp khi đơn đủ điều kiện, dùng kèm được với mã giảm giá khác.' }
+      ],
+      link: 'https://huongchatkids.vn/?utm_source=email&utm_medium=email&utm_campaign=2010', nut: 'Nhận quà 20/10 ngay' } }
+];
+function leHomNay_(ngay) { ngay = ngay || ngayDD_(); for (var i = 0; i < NGAY_LE.length; i++) if (NGAY_LE[i].ngay === ngay) return NGAY_LE[i]; return null; }
+/* Quà điểm ngày lễ khi khách đăng ký / đăng nhập (khoá LE<id>:<sdt> → mỗi khách 1 lần). Trả null nếu không có quà mới. */
+function thuongLe_(sdt) {
+  try {
+    var le = leHomNay_(); if (!le || !le.thuongDangNhap || !sdtHopLe(sdt) || khachBiKhoa(sdt)) return null;
+    var r = voiKhoa(function () { return ghiDiem(sdt, 'EARN', le.thuongDangNhap, 'EVENT', "'" + le.ngay, '🌷 Quà ' + le.ten + ' – đăng nhập trong ngày lễ', 'hệ thống', 'LE' + le.id + ':' + sdt); });
+    if (!r || !r.ok || r.trung || r.khongDoi) return null;
+    ghiNhatKy('Quà ngày lễ', sdt, 'Tặng ' + le.thuongDangNhap + ' điểm quà ' + le.ten);
+    return { ten: le.ten, diem: le.thuongDangNhap, soDu: r.soDu, thongBao: '🌷 Quà ' + le.ten + ': Hương tặng mẹ ' + le.thuongDangNhap.toLocaleString('vi-VN') + ' điểm thưởng!' };
+  } catch (e) { Logger.log('Quà ngày lễ lỗi: ' + e); return null; }
+}
+/* Danh sách email khách đã mua hàng: email trong đơn hàng + email hồ sơ của khách có đơn (không trùng) */
+function emailKhachDaMua_() {
+  var ds = {}, them = function (mail, ten) { mail = String(mail || '').trim(); var k = mail.toLowerCase(); if (emailHopLe(mail) && !ds[k]) ds[k] = { email: mail, ten: String(ten || '').trim() }; };
+  var sd = sheetDon(), n = sd.getLastRow();
+  if (n > 1) sd.getRange(2, 1, n - 1, 15).getValues().forEach(function (r) { if (String(r[2]) !== 'lead') them(r[14], r[3]); });
+  var sk = sheetKH(), m = sk.getLastRow();
+  if (m > 1) sk.getRange(2, 1, m - 1, 12).getValues().forEach(function (r) { if (Number(r[7]) > 0 && String(r[11]).indexOf('KHOA') < 0) them(r[5], r[1]); });
+  return Object.keys(ds).map(function (k) { return ds[k]; });
+}
+function htmlMailLe_(le, ten) {
+  var m = le.mail, goi = ten ? 'chị ' + ten.split(' ').slice(-1)[0] : 'mẹ';
+  return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:580px;margin:0 auto;color:#1F2937">'
+    + '<div style="background:linear-gradient(135deg,#E8436E,#FF8FA8 60%,#FFC0D0);color:#fff;border-radius:18px 18px 0 0;padding:30px 24px;text-align:center">'
+    + '<div style="font-size:44px;line-height:1">🌷💐🌸</div>'
+    + '<div style="font-size:15px;letter-spacing:2px;margin-top:10px;opacity:.95">NGÀY PHỤ NỮ VIỆT NAM</div>'
+    + '<div style="font-size:42px;font-weight:800;line-height:1.1;margin-top:4px">' + le.ten + '</div>'
+    + '<div style="font-size:15px;margin-top:8px;opacity:.95">' + TEN_SHOP + ' – Mẹ chọn chất, con lớn khoẻ</div></div>'
+    + '<div style="border:1px solid #F3D5DE;border-top:0;border-radius:0 0 18px 18px;padding:26px 24px;background:#fff">'
+    + '<p style="margin:0 0 12px;font-size:16px;font-weight:700">Gửi ' + goi + ' thân yêu,</p>'
+    + m.loiChuc.map(function (x) { return '<p style="margin:0 0 12px;font-size:15px;line-height:1.75">' + x.replace('{ten}', goi) + '</p>'; }).join('')
+    + '<div style="margin:20px 0 6px;font-size:13px;font-weight:700;color:#E8436E;letter-spacing:1px">🎀 QUÀ ' + le.ten + ' DÀNH CHO MẸ</div>'
+    + m.khuyenMai.map(function (k) { return '<div style="display:flex;gap:12px;margin:10px 0;padding:14px 16px;border-radius:14px;background:#FFF4F7;border:1px solid #FAD3DE">'
+      + '<div style="font-size:28px;line-height:1">' + k.icon + '</div><div><div style="font-size:16px;font-weight:700;color:#C2245A">' + k.tieu + '</div>'
+      + '<div style="font-size:14px;line-height:1.6;color:#4B5563;margin-top:3px">' + k.mo + '</div></div></div>'; }).join('')
+    + '<div style="text-align:center;margin:22px 0 8px"><a href="' + m.link + '" style="display:inline-block;background:#E8436E;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 30px;border-radius:999px">' + m.nut + ' →</a>'
+    + '<div style="font-size:13px;color:#6B7280;margin-top:8px"><a href="' + m.link + '" style="color:#E8436E">huongchatkids.vn</a> · quà điểm chỉ có trong ngày ' + le.ten + '</div></div>'
+    + '<p style="margin:18px 0 0;font-size:15px;line-height:1.7">Chúc ' + goi + ' một ngày 20/10 thật trọn vẹn!<br><b>Hương và cả nhà ' + TEN_SHOP + '</b> 💗</p>'
+    + '<div style="margin-top:18px;padding-top:14px;border-top:1px solid #ECEFF3;font-size:13px;color:#6B7280;line-height:1.8">'
+    + 'Cần hỗ trợ, mẹ nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a> hoặc gọi hotline trên web.<br>'
+    + 'Mẹ nhận email này vì đã mua hàng tại ' + TEN_SHOP + '. Email gửi tự động, mẹ không cần trả lời.</div></div></div>';
+}
+/* Chạy theo lịch (VPS: đúng 08:00 + lịch 30 phút dự phòng): tới giờ của ngày lễ thì gửi 1 lượt duy nhất */
+function guiMailLe_() {
+  var le = leHomNay_(); if (!le || !le.mail) return { ok: true, bo: 'không phải ngày lễ' };
+  var gio = Number(Utilities.formatDate(new Date(), TZ_DD, 'H')); if (gio < (le.mail.gio || 8)) return { ok: true, bo: 'chưa tới giờ' };
+  var props = PropertiesService.getScriptProperties(), khoa = 'MAIL_LE_' + le.id;
+  if (props.getProperty(khoa)) return { ok: true, bo: 'đã gửi' };
+  props.setProperty(khoa, String(Date.now()));   // đặt trước → không bao giờ gửi 2 lượt
+  var ds = emailKhachDaMua_(), gui = 0, loi = 0;
+  ds.forEach(function (k) {
+    try { MailApp.sendEmail({ to: k.email, subject: le.mail.tieuDe, htmlBody: htmlMailLe_(le, k.ten), name: TEN_SHOP, replyTo: EMAIL }); gui++; }
+    catch (e) { loi++; Logger.log('Mail ' + le.ten + ' lỗi ' + k.email + ': ' + e); }
+  });
+  ghiNhatKy('Email ngày lễ', '', 'Gửi email chúc mừng ' + le.ten + ' tới ' + gui + ' khách' + (loi ? ', lỗi ' + loi : ''));
+  try { zaloBotGuiTin('🌷 Đã gửi email chúc mừng ' + le.ten + ' tới ' + gui + ' khách đã mua hàng' + (loi ? ' (lỗi ' + loi + ')' : '')); } catch (z) { Logger.log(z); }
+  return { ok: true, gui: gui, loi: loi };
 }
 
 /* Trạng thái voucher hiển thị (hết hạn tính theo giờ hiện tại, kể cả khi nền chưa kịp ghi EXPIRED) */
@@ -1182,9 +1265,16 @@ function apiDdTongQuan(p) {
 function apiDdDiemDanh(p) {
   var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
   if (!demGioiHan('dd_' + ph.sdt, 20, 600)) return { ok: false, code: 'RATE_LIMIT', msg: 'Mẹ thao tác nhanh quá, thử lại sau ít phút nhé' };
-  return diemDanh_(ph.sdt, 'nut');
+  var r = diemDanh_(ph.sdt, 'nut'), q = thuongLe_(ph.sdt); if (q && r) r.quaLe = q;
+  return r;
 }
 /* Ví voucher của khách đang đăng nhập (chỉ voucher của chính mình) */
+/* Khách đã đăng nhập sẵn từ trước mở web trong ngày lễ → nhận quà ngày lễ (1 lần / khách) */
+function apiQuaLe(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token' };
+  if (!leHomNay_()) return { ok: true, quaLe: null };
+  return { ok: true, quaLe: thuongLe_(ph.sdt) };
+}
 /* Điểm danh tự động sau đăng nhập (web gọi ngay sau khi đã có token – đăng nhập khỏi chờ phần này) */
 function apiDdSauDangNhap(p) {
   var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn' };
@@ -2305,6 +2395,7 @@ function doGet(e) {
     if (action === 'vcCuaToi')      return traVe(apiVcCuaToi(p), cb);
     if (action === 'taiKhoan')      return traVe(apiTaiKhoan(p), cb);
     if (action === 'ddSauDangNhap') return traVe(apiDdSauDangNhap(p), cb);
+    if (action === 'quaLe')         return traVe(apiQuaLe(p), cb);
     if (action === 'qtDdTongQuan')  return traVe(apiQtDdTongQuan(p), cb);
     if (action === 'qtDdCauHinh')   return traVe(apiQtDdCauHinh(p), cb);
     if (action === 'qtDdLichSu')    return traVe(apiQtDdLichSu(p), cb);
@@ -2400,15 +2491,15 @@ function apiDangKyGoc(p) {
     var cat = function (v, n) { return String(v || '').trim().slice(0, n); };
     capNhatKhachHang(sdt, {
       name: cat(ten, 80), phone: sdt, tinh: cat(p.tinh, 60), xa: cat(p.xa, 80),
-      diaChi: cat(p.diaChi, 200), email: emailHopLe(p.email) ? cat(p.email, 100) : ''
+      diaChi: cat(p.diaChi, 200), email: emailHopLe(p.email) ? cat(p.email, 100) : '', gioiTinh: p.gioiTinh
     }, {});
     var kq = docKH(sdt);
     var bao = '🆕 Khách mới đăng ký trên web\n' + cat(ten, 80) + ' – ' + sdt
       + (p.diaChi || p.xa || p.tinh ? '\nĐịa chỉ: ' + [cat(p.diaChi, 200), cat(p.xa, 80), cat(p.tinh, 60)].filter(String).join(', ') : '')
-      + (emailHopLe(p.email) ? '\nEmail: ' + cat(p.email, 100) : '');
+      + (emailHopLe(p.email) ? '\nEmail: ' + cat(p.email, 100) : '') + (chuanGioiTinh_(p.gioiTinh) ? '\nGiới tính: ' + chuanGioiTinh_(p.gioiTinh) : '');
     try { zaloBotGuiTin(bao); } catch (e1) { Logger.log(e1); }
     if (EMAIL) { try { MailApp.sendEmail(EMAIL, '🆕 Khách mới đăng ký: ' + cat(ten, 80), bao); } catch (e2) { Logger.log(e2); } }
-    return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH };
+    return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH, quaLe: thuongLe_(sdt) };
   } finally { lock.releaseLock(); }
 }
 
@@ -2728,7 +2819,7 @@ function baoLenh_(data) {
 }
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
-var GIOI_HAN_10P = { maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
+var GIOI_HAN_10P = { quaLe: 600, maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
   qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, snbLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
@@ -3031,6 +3122,7 @@ function dongBoCRMTuDong() {
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
   try { Logger.log(JSON.stringify(vcHetHanNen())); } catch (e5) { Logger.log('Voucher hết hạn lỗi: ' + e5); }   // voucher điểm danh quá hạn
   try { Logger.log(JSON.stringify(guiMailSinhNhat_())); } catch (e6) { Logger.log('Mail sinh nhật lỗi: ' + e6); }   // email chúc mừng đúng ngày sinh
+  try { Logger.log(JSON.stringify(guiMailLe_())); } catch (e7) { Logger.log('Mail ngày lễ lỗi: ' + e7); }   // email chúc mừng ngày lễ (dự phòng lịch 08:00)
   try { Logger.log(JSON.stringify(xuLyAff())); } catch (e3) { Logger.log('Xử lý đối tác lỗi: ' + e3); }   // đối tác: hoa hồng + chốt kỳ ngày 10
   try { Logger.log(JSON.stringify(dongBoChiTieuKHNen())); } catch (e4) { Logger.log('Cập nhật chi tiêu thành viên lỗi: ' + e4); }   // thành viên: chi tiêu + hạng theo CRM
 }
@@ -3217,7 +3309,7 @@ function apiKhachHang(p) {
     kq.ds.push({ dong: i + 2, sdt: sdt, ten: String(v[i][1] || ''), tinh: String(v[i][2] || ''), xa: String(v[i][3] || ''),
       diaChi: String(v[i][4] || ''), email: String(v[i][5] || ''), tongChiTieu: tien, soDon: Number(v[i][7]) || 0,
       hang: h.key, hangLabel: h.label, donGanNhat: String(v[i][9] || ''), tao: v[i][10] ? ngayVN(v[i][10]) : '',
-      khoa: String(v[i][11] || '').indexOf('KHOA') > -1 });
+      khoa: String(v[i][11] || '').indexOf('KHOA') > -1, gioiTinh: chuanGioiTinh_(v[i][12]) });
   }
   kq.ds.sort(function (a, b) { return b.tongChiTieu - a.tongChiTieu; });
   return kq;
@@ -3372,7 +3464,7 @@ function apiHoSo(p) {
   var sdt = sdtTheoToken(p.token);
   if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };
   var d = docKH(sdt);
-  return { ok: true, kh: d.kh, donHang: d.don };
+  return { ok: true, kh: d.kh, donHang: d.don, quaLe: thuongLe_(sdt) };
 }
 
 function apiCapNhat(p) {
@@ -3385,6 +3477,7 @@ function apiCapNhat(p) {
   s.getRange(dong, 2, 1, 5).setValues([[
     cat(p.ten || cu[1], 80), cat(p.tinh || '', 60), cat(p.xa || '', 80), cat(p.diaChi || '', 200), cat(p.email || '', 100)
   ]]);
+  if (p.gioiTinh != null) s.getRange(dong, 13).setValue(chuanGioiTinh_(p.gioiTinh));
   var d = docKH(sdt);
   return { ok: true, kh: d.kh, donHang: d.don };
 }

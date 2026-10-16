@@ -510,7 +510,7 @@
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>
           <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
         <li class="navbar__item"><a class="navbar__link navbar__link--about" href="gioi-thieu.html">Giới thiệu</a></li>
-        ${(() => { const sk = suKienHien(); return sk ? `<li class="navbar__item"><a class="navbar__link navbar__link--sk" href="index.html?tab=${sk.id}">${esc(sk.nhan)}</a></li>` : ''; })()}
+        ${(() => { const sk = suKienHien(); return sk ? `<li class="navbar__item"><a class="navbar__link navbar__link--sk" href="index.html?tab=${sk.id}">${sk.icon ? sk.icon + ' ' : ''}${esc(sk.nhan)}</a></li>` : ''; })()}
         <li class="navbar__item"><a class="navbar__link navbar__link--km" href="collections.html?km=1">Khuyến mãi</a></li>
         ${NAV.map(navItem).join('')}
       </ul></div></nav>
@@ -522,7 +522,7 @@
         <div class="mmenu__ages">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label}</a>`).join('')}</div>
         <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với chuyên gia dinh dưỡng</a></div>
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
-        ${(() => { const sk = suKienHien(); return sk ? `<a class="mmenu__link mmenu__link--sk" href="index.html?tab=${sk.id}">⚡ ${esc(sk.ten)}</a>` : ''; })()}
+        ${(() => { const sk = suKienHien(); return sk ? `<a class="mmenu__link mmenu__link--sk" href="index.html?tab=${sk.id}">${sk.icon || '⚡'} ${esc(sk.ten)}</a>` : ''; })()}
         <a class="mmenu__link mmenu__link--sk" href="collections.html?km=1">🏷️ Sản phẩm đang khuyến mãi</a>
         <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
@@ -1190,10 +1190,42 @@
     window.parent.postMessage({ type: 'hck-san-sang' }, '*');
   })();
 
+  /* ===== Trang trí ngày lễ (SU_KIEN.trangTri, vd 20/10): dải chào mừng đầu trang + hoa rơi, tự bật từ hienTu → ketThuc.
+     Trong ngày lễ (batDau → ketThuc) khách đã đăng nhập sẵn mở web cũng nhận quà ngày lễ (máy chủ: mỗi khách 1 lần). */
+  function trangTriLe() {
+    const sk = suKienHien(), t = sk && sk.trangTri; if (!t) return;
+    document.body.classList.add('le-on', 'le-' + sk.id);
+    const n = Date.now(), dangChay = n >= Date.parse(sk.batDau), KD = 'mc_le_dai_' + sk.id;
+    let an = false; try { an = sessionStorage.getItem(KD) === '1'; } catch { /* riêng tư */ }
+    const chu = dangChay ? (t.daiHomNay || t.dai) : t.dai;
+    if (chu && !an) {
+      const d = document.createElement('div'); d.className = 'le-dai';
+      d.innerHTML = `<a href="index.html?tab=${esc(sk.id)}"><span class="le-dai__hoa" aria-hidden="true">🌷</span><span>${esc(chu)}</span><b>${esc(t.nut || 'Xem quà')} →</b></a><button type="button" aria-label="Đóng">×</button>`;
+      d.querySelector('button').addEventListener('click', () => { d.remove(); try { sessionStorage.setItem(KD, '1'); } catch { /* bỏ qua */ } });
+      document.body.prepend(d);
+    }
+    if (t.hoa && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      const trangChu = /(^|\/)(index\.html)?$/.test(location.pathname), w = document.createElement('div'); w.className = 'le-hoa'; w.setAttribute('aria-hidden', 'true');
+      const ds = t.hoa, so = trangChu ? 16 : 9;
+      for (let i = 0; i < so; i++) {
+        const c = document.createElement('i'); c.textContent = ds[i % ds.length];
+        c.style.cssText = `left:${Math.random() * 100}%;font-size:${14 + Math.random() * 16}px;animation-duration:${7 + Math.random() * 7}s,${2.5 + Math.random() * 2}s;animation-delay:${-Math.random() * 12}s,0s;animation-iteration-count:${trangChu ? 'infinite' : '2'},infinite`;
+        w.appendChild(c);
+      }
+      document.body.appendChild(w);
+      if (!trangChu) setTimeout(() => w.remove(), 26000);
+    }
+    if (dangChay && Session.get()) {
+      const KQ = 'mc_qua_le_' + sk.id + '_' + Session.phone();
+      if (!store.get(KQ, null)) loyaltyApi('quaLe', { token: Session.get().token }).then((r) => { if (r && r.ok) store.set(KQ, 1); }).catch(() => {});
+    }
+  }
+
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
     if (AFF.moLinkGon()) return;   // link rút gọn ?r=MÃ.sp → chuyển tới sản phẩm (kèm ?aff=MÃ)
     renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk(); GT.batRef(); AFF.batLink();
+    try { trangTriLe(); } catch (e) { /* trang trí ngày lễ lỗi không ảnh hưởng web */ }
     syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });
@@ -1226,6 +1258,11 @@
 
   /* Gọi Apps Script bằng JSONP – Apps Script không gắn được header CORS cho fetch đọc kết quả. */
   let jsonpSeq = 0;
+  /* Quà ngày lễ (20/10…): máy chủ trả quaLe khi vừa cộng điểm → hiện lời chúc + số điểm */
+  function baoQuaLe(q) {
+    setTimeout(() => toast(q.thongBao || ('🌷 Quà ' + q.ten + ': +' + Number(q.diem || 0).toLocaleString('vi-VN') + ' điểm'), { type: 'ok', duration: 9000, action: { label: 'Xem ví điểm', onClick: () => { location.href = 'account.html#diem'; } } }), 1400);
+    try { document.dispatchEvent(new CustomEvent('mc:qua-le', { detail: q })); } catch {}
+  }
   function loyaltyApi(action, params = {}, timeout = 20000) {
     const url = LOY().endpoint || SITE.orderEndpoint || '';
     if (!url) return Promise.reject(new Error('Shop chưa cấu hình nơi lưu thông tin khách hàng'));
@@ -1235,7 +1272,7 @@
       let tid = 0;
       const done = (fn, arg) => { clearTimeout(tid); try { delete window[cb]; } catch { window[cb] = undefined; } sc.remove(); fn(arg); };
       tid = setTimeout(() => done(reject, new Error('Máy chủ không phản hồi, mẹ thử lại sau ít phút nhé')), timeout);
-      window[cb] = (data) => done(resolve, data || {});
+      window[cb] = (data) => { done(resolve, data || {}); try { const q = data && (data.quaLe || (data.diemDanh && data.diemDanh.quaLe)); if (q) baoQuaLe(q); } catch {} };
       sc.onerror = () => done(reject, new Error('Không kết nối được máy chủ của shop'));
       const q = new URLSearchParams({ ...params, action, callback: cb });
       sc.src = url + (url.includes('?') ? '&' : '?') + q.toString();
@@ -1618,7 +1655,7 @@
   /* Sự kiện (SU_KIEN, vd 10.10): trong khung giờ sự kiện CHỈ chạy các chương trình gắn suKien = id sự kiện,
      mọi chương trình cũ (kể cả quà đơn từ 1 triệu / mua thùng Lotte) tạm dừng; hết giờ thì tự quay lại như cũ. */
   function suKienDangChay() {
-    const s = window.SU_KIEN; if (!s || !s.batDau || !s.ketThuc) return null;
+    const s = window.SU_KIEN; if (!s || !s.batDau || !s.ketThuc || s.giuCT) return null;   // giuCT: sự kiện không thay chương trình thường
     const n = Date.now(); return n >= Date.parse(s.batDau) && n < Date.parse(s.ketThuc) ? s : null;
   }
   /* Thời gian hiện tab / banner sự kiện (từ hienTu, sớm hơn ngày chạy để khách biết trước) */

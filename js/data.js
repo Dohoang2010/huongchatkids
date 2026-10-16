@@ -5280,17 +5280,22 @@ window.QUA_TANG = {
    - sau ketThuc      : mọi thứ tự biến mất, web về như ngày thường
    ===================================================================== */
 window.SU_KIEN = {
-  id: '1010', nhan: '10.10', ten: 'Siêu sale 10.10', khau: 'Chốt đơn rinh quà',
-  hienTu: '2026-10-08T00:00:00+07:00', batDau: '2026-10-10T00:00:00+07:00', ketThuc: '2026-10-11T00:00:00+07:00',
-  poster: 'img/su-kien/1010-poster.jpg',
+  id: '2010', nhan: '20.10', icon: '🌷', ten: 'Ngày Phụ nữ Việt Nam 20.10', khau: 'Mẹ xứng đáng được yêu thương',
+  hienTu: '2026-10-16T00:00:00+07:00', batDau: '2026-10-20T00:00:00+07:00', ketThuc: '2026-10-21T00:00:00+07:00',
+  giuCT: true,   // không tạm dừng quà tặng / giờ vàng ngày thường
+  poster: 'img/su-kien/2010-poster.jpg',
+  loiChuc: 'Cảm ơn mẹ đã luôn chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Ngày 20/10 này, Hương Chất Kids gửi mẹ những món quà nhỏ – chúc mẹ luôn khoẻ, xinh và thật nhiều yêu thương 💗',
+  luat: ['Quà 20.100 điểm: mỗi tài khoản nhận 1 lần khi đăng nhập hoặc tạo tài khoản trong ngày 20/10.', 'Điểm danh ngày 20/10 được 50.000 điểm (ngày thường 1.000 điểm). 1 điểm = 1đ, trừ thẳng vào đơn hàng.', 'Quà tặng, mã giảm giá và giờ vàng ngày thường vẫn áp dụng như bình thường.'],
+  trangTri: { hoa: ['🌸', '🌷', '🌺', '💮'], dai: '🌷 Chào mừng ngày Phụ nữ Việt Nam 20/10 – đăng nhập ngày 20/10 nhận ngay 20.100 điểm, điểm danh 50.000 điểm', daiHomNay: '🌷 Chúc mừng 20/10! Đăng nhập nhận 20.100 điểm + điểm danh 50.000 điểm – chỉ hôm nay', nut: 'Nhận quà' },
   banners: [
-    { pc: 'img/su-kien/1010-b1pc.jpg', mb: 'img/su-kien/1010-b1mb.jpg', link: 'index.html?tab=1010', alt: 'Siêu sale 10.10 – Lotte mua thùng tặng đến 10 gói, hồng sâm ChuChu 3 thùng tặng quà, canxi mua 2 hộp tặng D3K2' },
-    { pc: 'img/su-kien/1010-b2pc.jpg', mb: 'img/su-kien/1010-b2mb.jpg', link: 'product.html?id=22644617070', alt: 'Duy nhất ngày 10.10 – Hồng sâm ChuChu 1.160.000đ/thùng 40 gói, mua 3 thùng tặng 1 hộp GP Kid hoặc 20 gói ChuChu' },
+    { pc: 'img/su-kien/2010-b1pc.jpg', mb: 'img/su-kien/2010-b1mb.jpg', link: 'index.html?tab=2010', alt: 'Chúc mừng ngày Phụ nữ Việt Nam 20.10 – đăng nhập tặng 20.100 điểm, điểm danh 50.000 điểm' },
+    { pc: 'img/su-kien/2010-b2pc.jpg', mb: 'img/su-kien/2010-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' },
   ],
   khoi: [
-    { nhan: 'Lotte 3 màu', tieuDe: 'Nước ép Lotte Organic', dong: ['Mua 1 thùng tặng 5 gói', 'Mua 2 thùng tặng 10 gói'], ghiChu: 'Mẹ chọn vị quà Hồng hoặc Cam khi thanh toán.', sp: ['22686115682', '41353214697', '25632276959', '23660586997'] },
-    { nhan: 'Hồng sâm ChuChu', tieuDe: 'Hồng sâm ChuChu Hàn Quốc', noiBat: '1.160.000đ / thùng 40 gói', huyHieu: 'Duy nhất ngày 10.10', dong: ['Mua 3 thùng tặng 20 gói hồng sâm ChuChu', 'Mua 6 thùng tặng 40 gói hồng sâm ChuChu'], ghiChu: 'Mẹ chọn vị quà khi thanh toán. 2 phần 20 gói (nửa thùng) tính bằng 1 thùng.', sp: ['22644617070'] },
-    { nhan: 'Canxi váng sữa', tieuDe: 'Canxi hữu cơ Calciumore', huyHieu: 'Daily deals', dong: ['Mua 2 hộp tặng 1 lọ D3K2', 'Mua 3 hộp tặng 2 lọ D3K2', 'Mua 4 hộp tặng 3 lọ D3K2'], sp: ['26060839019', 'combo-vangsua-d3k2', '42878618667'] },
+    { nhan: 'Quà 20/10', tieuDe: 'Đăng nhập nhận 20.100 điểm', noiBat: 'Tặng 20.100 điểm = 20.100đ', huyHieu: 'Chỉ ngày 20/10', dong: ['Đăng nhập hoặc tạo tài khoản trong ngày 20/10', 'Điểm tự cộng vào ví – mỗi tài khoản 1 lần', 'Dùng trừ thẳng vào đơn hàng, không giới hạn sản phẩm'], nut: { chu: 'Đăng nhập nhận quà', link: 'account.html' } },
+    { nhan: 'Điểm danh', tieuDe: 'Điểm danh nhận 50.000 điểm', noiBat: 'Gấp 50 lần ngày thường', huyHieu: 'Chỉ ngày 20/10', dong: ['Ngày thường: 1.000 điểm', 'Riêng 20/10: 50.000 điểm', 'Cộng quà đăng nhập: tổng 70.100 điểm'], nut: { chu: 'Điểm danh ngay', link: 'diem-danh.html' } },
+    { nhan: 'Làm đẹp cho mẹ', tieuDe: 'Mẹ đẹp từ những điều chọn lọc', dong: ['Mỹ phẩm Hàn Quốc chính hãng 100%', 'Dùng điểm 20/10 trừ thẳng vào đơn'], ghiChu: 'Tự thưởng cho mình một món quà nhỏ nhé mẹ 💗', sp: ['26900366084', '27734205778', '57903449970', '24015583018'] },
+    { nhan: 'Mẹ khoẻ con khoẻ', tieuDe: 'Dinh dưỡng Hàn Quốc cho bé', dong: ['Chọn theo đúng tuổi của con', 'Đo chỉ số chiều cao – cân nặng miễn phí'], sp: ['22686115682', '26060839019', '42878618667', '22644617070'] },
   ],
 };
 

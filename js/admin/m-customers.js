@@ -99,6 +99,7 @@
           <div class="card"><h3>👤 Thông tin</h3>
             <div class="kh-row"><span>Họ tên</span><b>${esc(k.ten || '(chưa có)')}</b></div>
             <div class="kh-row"><span>Điện thoại</span><b>${esc(k.sdt)}</b></div>
+            <div class="kh-row"><span>Giới tính</span><b>${esc(k.gioiTinh || '—')}</b></div>
             <div class="kh-row"><span>Email</span><b>${esc(k.email || '—')}</b></div>
             <div class="kh-row"><span>Ngày sinh</span><b>${esc(k.ngaySinh ? k.ngaySinh.split('-').reverse().join('/') : '—')}${k.ngaySinh && k.ngaySinh.slice(5, 7) === new Date(Date.now() + 7 * 3600e3).toISOString().slice(5, 7) ? ' ' + A.badge('🎂 Tháng sinh nhật', 'tag--hot') : ''}${A.co('customer.update') ? ` <button class="btn btn--ghost btn--sm" data-sn-sua="${esc(k.sdt)}" data-sn="${esc(k.ngaySinh || '')}">Sửa</button>` : ''}</b></div>
             <div class="kh-row"><span>Bé</span><b>${esc(k.tenBe || '—')}${k.ngaySinhBe ? ' · sinh ' + esc(k.ngaySinhBe.split('-').reverse().join('/')) : ''}${k.ngaySinhBe && k.ngaySinhBe.slice(5, 7) === new Date(Date.now() + 7 * 3600e3).toISOString().slice(5, 7) ? ' ' + A.badge('🎂 Tháng sinh nhật bé', 'tag--hot') : ''}${A.co('customer.update') ? ` <button class="btn btn--ghost btn--sm" data-snb-sua="${esc(k.sdt)}" data-ten="${esc(k.tenBe || '')}" data-sn="${esc(k.ngaySinhBe || '')}">Sửa</button>` : ''}</b></div>
@@ -201,8 +202,8 @@
 
   function xuat() {
     if (!data) return;
-    const cot = ['Điện thoại', 'Họ tên', 'Tỉnh/Thành', 'Xã/Phường', 'Địa chỉ', 'Email', 'Số đơn', 'Tổng chi tiêu', 'Hạng', 'Đơn gần nhất'];
-    const dong = data.ds.map((x) => [x.sdt, x.ten, x.tinh, x.xa, x.diaChi, x.email, x.soDon, x.tongChiTieu, x.hangLabel, x.donGanNhat]);
+    const cot = ['Điện thoại', 'Họ tên', 'Giới tính', 'Tỉnh/Thành', 'Xã/Phường', 'Địa chỉ', 'Email', 'Số đơn', 'Tổng chi tiêu', 'Hạng', 'Đơn gần nhất'];
+    const dong = data.ds.map((x) => [x.sdt, x.ten, x.gioiTinh || '', x.tinh, x.xa, x.diaChi, x.email, x.soDon, x.tongChiTieu, x.hangLabel, x.donGanNhat]);
     const csv = '﻿' + [cot, ...dong].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));

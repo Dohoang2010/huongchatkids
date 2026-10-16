@@ -2308,3 +2308,46 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .hk-an__tranh { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
 .hk-an__tranh li { padding: 6px 12px; border-radius: 999px; background: #FDE8E7; color: #B3261E; font-size: 13px; font-weight: 600; }
 .hk-an__tranh li::before { content: '✕ '; }
+
+/* Giới tính (trang tài khoản) */
+.gt-chon { display: flex; gap: 8px; flex-wrap: wrap; }
+.gt-chon label { cursor: pointer; }
+.gt-chon input { position: absolute; opacity: 0; pointer-events: none; }
+.gt-chon span { display: inline-block; padding: 8px 16px; border: 1.5px solid var(--line, #E5E7EB); border-radius: 999px; font-weight: 600; font-size: 14px; background: #fff; }
+.gt-chon input:checked + span { border-color: var(--primary, #F0537A); background: #FFF0F4; color: var(--primary, #F0537A); }
+.gt-chon input:focus-visible + span { outline: 2px solid var(--primary, #F0537A); outline-offset: 2px; }
+
+/* ===== Ngày lễ 20/10 – dải chào mừng, hoa rơi, tab sự kiện tông hồng ===== */
+.le-dai { position: relative; z-index: 60; background: linear-gradient(90deg, #E8436E, #FF7FA0 50%, #E8436E); background-size: 200% 100%; animation: leDai 6s linear infinite; color: #fff; }
+.le-dai a { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 40px; color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.35; }
+.le-dai b { white-space: nowrap; background: #fff; color: #C2245A; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; }
+.le-dai__hoa { font-size: 18px; animation: leLac 2.4s ease-in-out infinite; display: inline-block; }
+.le-dai button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.25); border: 0; color: #fff; width: 26px; height: 26px; border-radius: 50%; font-size: 18px; line-height: 1; cursor: pointer; }
+@media (max-width: 600px) { .le-dai a { font-size: 12.5px; padding: 7px 36px 7px 10px; flex-wrap: wrap; gap: 4px 8px; } }
+@keyframes leDai { to { background-position: -200% 0; } }
+@keyframes leLac { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg) scale(1.1); } }
+.le-hoa { position: fixed; inset: 0; pointer-events: none; z-index: 55; overflow: hidden; }
+.le-hoa i { position: absolute; top: -40px; font-style: normal; opacity: .85; animation-name: leRoi, leDua; animation-timing-function: linear, ease-in-out; will-change: transform; }
+@keyframes leRoi { 0% { transform: translateY(-40px) rotate(0); } 100% { transform: translateY(110vh) rotate(540deg); } }
+@keyframes leDua { 0%, 100% { margin-left: -14px; } 50% { margin-left: 14px; } }
+.navbar__link--sk { color: #E8436E !important; font-weight: 800; }
+.sk-tabs--2010 .sk-tabs__sk b { background: linear-gradient(90deg, #E8436E, #FF8FA8); color: #fff; }
+.sk-tabs--2010 .sk-tabs__sk small { color: #C2245A; }
+.sk--2010 { background: radial-gradient(60% 300px at 15% 0, #FFE1EA, transparent), radial-gradient(60% 300px at 90% 10%, #FFF0D9, transparent), linear-gradient(180deg, #FFF0F4, #FFF8FA 700px); }
+.sk--2010 .sk-head { background: radial-gradient(120% 90% at 85% 20%, #FF9BB5 0%, #F0537A 38%, #C2245A 75%, #9C1A48 100%); position: relative; overflow: hidden; }
+.sk--2010 .sk-head::after { content: '🌷 🌸 💐 🌷 🌸'; position: absolute; right: -10px; bottom: -6px; font-size: 44px; opacity: .22; letter-spacing: 8px; pointer-events: none; }
+.sk--2010 .sk-head__poster img { box-shadow: 0 18px 40px rgba(120, 10, 50, .4); }
+.sk--2010 .sk-head__trang { background: #fff; color: #C2245A; border-color: #FFD3DF; }
+.sk--2010 .sk-head h1 { background: linear-gradient(180deg, #fff 0%, #FFF3C4 45%, #FFD36B 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.sk--2010 .sk-dem__so span { color: #9C1A48; box-shadow: 0 6px 14px rgba(120, 10, 50, .25); }
+.sk-head__chuc { margin: 0 0 12px; font-size: 15px; line-height: 1.65; background: rgba(255,255,255,.14); border-left: 3px solid #FFD36B; padding: 10px 14px; border-radius: 0 12px 12px 0; }
+.sk--2010 .sk-khoi { border-top-color: #F0537A; box-shadow: 0 8px 24px rgba(194, 36, 90, .08); }
+.sk--2010 .sk-khoi--1 { border-top-color: #FF9F43; } .sk--2010 .sk-khoi--2 { border-top-color: #12B5A0; }
+.sk--2010 .sk-khoi__nhan span { background: #F0537A; }
+.sk--2010 .sk-khoi__nhan em { background: #FFB020; color: #5A3600; }
+.sk--2010 .sk-khoi h2, .sk--2010 .sk-goiy h2, .sk--2010 .sk-khoi__dong li { color: #7E1C45; }
+.sk--2010 .sk-khoi__noibat { color: #E8436E; }
+.sk--2010 .sk-khoi__dong li::before { background: #F0537A; content: "🌷"; background: none; font-size: 15px; }
+.sk-khoi--chu { background: linear-gradient(135deg, #FFF4F7, #fff); }
+@media (min-width: 992px) { .sk-khoi.sk-khoi--chu { display: block; } }
+.sk-khoi__nut { margin-top: 10px; }

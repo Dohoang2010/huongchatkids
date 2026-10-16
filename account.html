@@ -10,15 +10,15 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261014e">
+  <link rel="stylesheet" href="css/style.css?v=20261016t">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261016g"></script>
+<script src="js/data.js?v=20261016t"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261016c"></script>
+<script src="js/app.js?v=20261016t"></script>
 <script src="js/chon-ngay.js?v=20261016b"></script>
 <script src="js/diem-danh-ui.js?v=20261016b"></script>
 <script>
@@ -260,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="field mt-8"><label>Tỉnh / Thành phố</label><select class="input" name="tinh"><option value="">Chọn tỉnh/thành</option>${DIA.map((x) => `<option>${esc(x.t)}</option>`).join('')}</select></div>
             <div class="field mt-8"><label>Xã / Phường</label><select class="input" name="xa" id="dkXa"><option value="">Chọn tỉnh/thành trước</option></select></div>
             <div class="field mt-8"><label>Địa chỉ cụ thể</label><input class="input" name="diaChi" placeholder="Số nhà, tên đường, thôn/xóm…"></div>
+            <div class="field mt-8"><label>Giới tính</label><div class="gt-chon">${['Nữ', 'Nam', 'Khác'].map((g) => `<label><input type="radio" name="gioiTinh" value="${g}" ${'' === g ? 'checked' : ''}><span>${g === 'Nữ' ? '👩 ' : g === 'Nam' ? '👨 ' : ''}${g}</span></label>`).join('')}</div></div>
             <div class="field mt-8"><label>Email</label><input class="input" name="email" type="email" placeholder="Không bắt buộc"><small class="field__hint">Có email thì shop gửi xác nhận đơn hàng vào đây.</small></div>
             <div class="field mt-8"><label>Mã giới thiệu</label><input class="input" name="ref" type="tel" inputmode="numeric" placeholder="SĐT người giới thiệu (nếu có)" value="${esc(GT.ref())}"><small class="field__hint">🤝 Có mã giới thiệu của bạn bè: được giảm giá cho đơn hàng đầu tiên.</small></div>
             <div class="form-error hide mt-8" id="dkErr" role="alert"></div>
@@ -323,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="kh-row"><span>Họ tên</span><b>${esc(kh.ten || '—')}</b></div>
             <div class="kh-row"><span>Số điện thoại</span><b>${esc(kh.sdt || '')}</b></div>
             <div class="kh-row"><span>Địa chỉ</span><b>${esc(addrFull(dc) || '—')}</b></div>
+            <div class="kh-row"><span>Giới tính</span><b>${esc(kh.gioiTinh || '—')}</b></div>
             <div class="kh-row"><span>Email</span><b>${esc(kh.email || '—')}</b></div>
             <div class="kh-row" id="snRow"><span>Ngày sinh</span><b>${snHTML(kh)}</b></div>
             <div class="kh-row"><span>Hạng</span><b>${tierBadge(cur)}</b></div>
@@ -342,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="field mt-8"><label>Tỉnh / Thành phố</label><select class="input" name="tinh"><option value="">Chọn tỉnh/thành</option>${DIA.map((x) => `<option ${x.t === dc.tinh ? 'selected' : ''}>${esc(x.t)}</option>`).join('')}</select></div>
             <div class="field mt-8"><label>Xã / Phường</label><select class="input" name="xa" id="khXa"></select></div>
             <div class="field mt-8"><label>Địa chỉ cụ thể</label><input class="input" name="diaChi" value="${esc(dc.chiTiet)}"></div>
+            <div class="field mt-8"><label>Giới tính</label><div class="gt-chon">${['Nữ', 'Nam', 'Khác'].map((g) => `<label><input type="radio" name="gioiTinh" value="${g}" ${kh.gioiTinh === g ? 'checked' : ''}><span>${g === 'Nữ' ? '👩 ' : g === 'Nam' ? '👨 ' : ''}${g}</span></label>`).join('')}</div></div>
             <div class="field mt-8"><label>Email</label><input class="input" name="email" type="email" value="${esc(kh.email || '')}"></div>
             <div class="form-error hide mt-8" id="khErr" role="alert"></div>
             <div class="flex gap-8 mt-12"><button class="btn btn--primary btn--block" type="submit">Lưu lại</button><button class="btn btn--ghost" type="button" id="btnCancel">Huỷ</button></div>
@@ -356,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#khForm').addEventListener('submit', (e) => {
       e.preventDefault(); const f = e.target; const err = $('#khErr'); err.classList.add('hide');
       const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Đang lưu…';
-      loyaltyApi('capNhat', { token: s.token, ten: f.ten.value.trim(), tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email: f.email.value.trim() })
+      loyaltyApi('capNhat', { token: s.token, ten: f.ten.value.trim(), tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email: f.email.value.trim(), gioiTinh: (f.querySelector('[name=gioiTinh]:checked') || {}).value || '' })
         .then((res) => {
           if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, mẹ thử lại nhé'; err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Lưu lại'; if (res && res.loi === 'token') { Session.clear(); renderKhach(); } return; }
           Session.patch({ kh: res.kh });
@@ -379,7 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const ref = phoneKey(f.ref.value || '');
       if (ref && !phoneOk(ref)) { err.textContent = 'Mã giới thiệu là số điện thoại 10 số của người giới thiệu'; err.classList.remove('hide'); f.ref.focus(); return; }
       if (ref && ref === sdt) { err.textContent = 'Mẹ không thể dùng mã giới thiệu của chính mình'; err.classList.remove('hide'); f.ref.focus(); return; }
-      const hoSo = { sdt, ten, tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email, ...(ref ? { ref } : {}) };
+      const gt = f.querySelector('[name=gioiTinh]:checked');
+      const hoSo = { sdt, ten, tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email, ...(gt ? { gioiTinh: gt.value } : {}), ...(ref ? { ref } : {}) };
       const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Đang tạo tài khoản…';
       const loi = (msg, daCo) => {
         err.innerHTML = esc(msg) + (daCo ? ' <button type="button" class="text-primary fw-700" id="dkDangNhap">Đăng nhập</button> · <button type="button" class="text-primary fw-700" id="dkOtp">Nhận mã OTP</button>' : '');

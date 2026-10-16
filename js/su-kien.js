@@ -39,15 +39,16 @@
     const dangChay = Date.now() >= bd;
     const khoi = (sk.khoi || []).map((k, i) => {
       const sp = (k.sp || []).map(byId).filter((p) => p && !p.an);
-      return `<section class="sk-khoi sk-khoi--${i % 3}">
+      return `<section class="sk-khoi sk-khoi--${i % 3}${sp.length ? '' : ' sk-khoi--chu'}">
         <div class="sk-khoi__dau">
           <div class="sk-khoi__nhan"><span>${esc(k.nhan)}</span>${k.huyHieu ? `<em>${esc(k.huyHieu)}</em>` : ''}</div>
           <h2>${esc(k.tieuDe)}</h2>
           ${k.noiBat ? `<div class="sk-khoi__noibat">${esc(k.noiBat)}</div>` : ''}
           <ul class="sk-khoi__dong">${(k.dong || []).map((d) => `<li>${esc(d)}</li>`).join('')}</ul>
           ${k.ghiChu ? `<small class="sk-khoi__ghichu">${esc(k.ghiChu)}</small>` : ''}
+          ${k.nut ? `<a class="btn btn--primary btn--sm sk-khoi__nut" href="${esc(k.nut.link)}">${esc(k.nut.chu)}</a>` : ''}
         </div>
-        <div class="row-scroll sk-khoi__sp">${sp.map((p) => productCard(p)).join('')}</div>
+        ${sp.length ? `<div class="row-scroll sk-khoi__sp">${sp.map((p) => productCard(p)).join('')}</div>` : ''}
       </section>`;
     }).join('');
     const ma = MC.maCongKhai().filter((c) => !(c.donDau && MC.daMuaTruoc((MC.Customer.get() || {}).phone)));
@@ -56,14 +57,14 @@
       <div class="sk-head">
         <a class="sk-head__poster" href="${esc(sk.poster)}" target="_blank" rel="noopener"><img src="${esc(sk.poster)}" alt="${esc(sk.ten)} – ${esc(sk.khau)}" width="1080" height="1350"></a>
         <div class="sk-head__chu">
-          <span class="sk-head__trang">${dangChay ? '🔥 Đang diễn ra' : '⏰ Sắp diễn ra'}</span>
+          <span class="sk-head__trang">${dangChay ? (sk.icon || '🔥') + ' Đang diễn ra' : '⏰ Sắp diễn ra'}</span>
           <h1><small>${esc(sk.ten.replace(sk.nhan, '').trim() || 'Siêu sale')}</small>${esc(sk.nhan)}</h1>
           <p class="sk-head__khau">${esc(sk.khau)}</p>
           <div class="sk-dem"><span class="sk-dem__nhan"></span><div class="sk-dem__so" id="skDem"></div></div>
+          ${sk.loiChuc ? `<p class="sk-head__chuc">${esc(sk.loiChuc)}</p>` : ''}
           <ul class="sk-head__luat">
             <li>Ưu đãi áp dụng từ 0h đến 24h ngày ${new Date(bd + 7 * 36e5).getUTCDate()}/${new Date(bd + 7 * 36e5).getUTCMonth() + 1}.</li>
-            <li>Các chương trình không cộng dồn – mỗi đơn hàng tự nhận ưu đãi của 1 chương trình có lợi nhất.</li>
-            <li>Trong ngày sự kiện, các chương trình quà tặng ngày thường tạm dừng.</li>
+            ${(sk.luat || ['Các chương trình không cộng dồn – mỗi đơn hàng tự nhận ưu đãi của 1 chương trình có lợi nhất.', 'Trong ngày sự kiện, các chương trình quà tặng ngày thường tạm dừng.']).map((x) => `<li>${esc(x)}</li>`).join('')}
           </ul>
         </div>
       </div>
@@ -77,9 +78,10 @@
     const app = document.getElementById('app'); if (!app) return;
     app.insertAdjacentHTML('afterbegin', `<div class="sk-tabs"><div class="container sk-tabs__in" role="tablist">
         <button type="button" role="tab" data-sk-tab="home">🏠 Trang chủ</button>
-        <button type="button" role="tab" data-sk-tab="${esc(sk.id)}" class="sk-tabs__sk"><b>⚡ ${esc(sk.nhan)}</b><small>${esc(sk.ten.replace(sk.nhan, '').trim() || 'Sale')}</small></button>
+        <button type="button" role="tab" data-sk-tab="${esc(sk.id)}" class="sk-tabs__sk"><b>${sk.icon || '⚡'} ${esc(sk.nhan)}</b><small>${esc(sk.ten.replace(sk.nhan, '').trim() || 'Sale')}</small></button>
       </div></div>
-      <div class="sk" id="skTab" hidden></div>`);
+      <div class="sk sk--${esc(sk.id)}" id="skTab" hidden></div>`);
+    app.querySelector('.sk-tabs').classList.add('sk-tabs--' + sk.id);
     const tab = document.getElementById('skTab'); let daVe = false;
     const dat = (t, cuon) => {
       const la = t === sk.id;
