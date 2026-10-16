@@ -18,12 +18,12 @@
 <script src="js/data.js?v=20261016a"></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261015a"></script>
-<script src="js/diem-danh-ui.js?v=20261012e"></script>
+<script src="js/app.js?v=20261016b"></script>
+<script src="js/diem-danh-ui.js?v=20261016b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
-          Session, tierOf, tierNext, tierBadge, tiers, loyaltyApi, openOtp, refreshProfile, couponsFor, addrParse, addrStore, addrFull, GT } = MC;
+          Session, tierOf, tierNext, tierBadge, tiers, loyaltyApi, goiNhanh, taiKhoanNap, openOtp, refreshProfile, couponsFor, addrParse, addrStore, addrFull, GT } = MC;
   const n0 = (x) => Number(x || 0).toLocaleString('vi-VN');
   const DANG_TAI = '<p class="text-muted fs-14">Đang tải…</p>';
   const LOAI_DIEM = { EARN: 'Thưởng giới thiệu', SPEND: 'Dùng điểm mua hàng', REVERSE: 'Thu hồi điểm thưởng', REFUND: 'Hoàn điểm', ADJUSTMENT: 'Shop điều chỉnh', EXPIRE: 'Điểm hết hạn' };
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function taiVcAcc() {
     const box = $('#vcCard'); if (!box) return;
     const tok = (Session.get() || {}).token;
-    MC.DD.vi().then((r) => {
+    const ve = (r) => {
       if (!$('#vcCard') || (Session.get() || {}).token !== tok) return;   // đã đổi tài khoản / thoát: bỏ kết quả cũ
       if (!r || !r.ok) { box.innerHTML = vcLoi((r && r.msg) || 'Chưa tải được ví voucher'); return; }
       const con = r.ds.filter((v) => v.trangThai === 'AVAILABLE');
@@ -125,7 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
           : '<p class="text-muted fs-14">Chưa có voucher còn hiệu lực. Điểm danh ngày đôi và đủ chuỗi 10 / 20 / 30 ngày liên tiếp để nhận voucher.</p>'}
         ${!r.dungDuoc && con.length ? '<p class="fs-13 text-muted">🔐 Để dùng voucher khi thanh toán, mẹ xác thực OTP hoặc đặt mật khẩu riêng.</p>' : ''}
         <div class="acc-vc__cuoi flex gap-8 wrap"><a class="btn btn--outline btn--sm" href="vi-voucher.html">Xem tất cả voucher</a>${con.length ? '<a class="btn btn--primary btn--sm" href="checkout.html">Dùng khi thanh toán</a>' : ''}</div>`;
-    }).catch((e) => { if ($('#vcCard')) box.innerHTML = vcLoi(e.message); });
+    };
+    const cu = MC.DD.viCu(); if (cu) ve(cu);   // hiện ngay bản lần trước, máy chủ trả lời thì vẽ lại
+    MC.DD.vi().then(ve).catch((e) => { if ($('#vcCard') && !cu) box.innerHTML = vcLoi(e.message); });
   }
   function ganDiemDanh() {
     taiVcAcc();
@@ -157,14 +159,16 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   function taiDiemGT() {
     if (!$('#diemCard')) return;
-    Promise.all([GT.vi().catch((e) => ({ ok: false, msg: e.message })), GT.cuaToi().catch((e) => ({ ok: false, msg: e.message }))]).then(([v, g]) => {
+    const ve = ([v, g]) => {
       const dc = $('#diemCard'), gc = $('#gtCard'); if (!dc || !gc) return;
       if ((v && v.loi === 'token') || (g && g.loi === 'token')) { Session.clear(); render(); return; }
       dc.innerHTML = v && v.ok ? diemHTML(v) : `<p class="text-muted fs-14">${esc((v && v.msg) || 'Chưa tải được ví điểm, mẹ tải lại trang sau ít phút nhé.')}</p>`;
       gtDaTai = g && g.ok ? g : null;
       gc.innerHTML = gtDaTai ? gtHTML(gtDaTai) : `<p class="text-muted fs-14">${esc((g && g.msg) || 'Chưa tải được thông tin giới thiệu.')}</p>`;
       const h = location.hash.slice(1); if (h === 'diem' || h === 'gioi-thieu') document.getElementById(h)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    };
+    const cuV = GT.viCu(), cuG = GT.cuaToiCu(); if (cuV && cuG) ve([cuV, cuG]);   // hiện ngay bản lần trước
+    Promise.all([GT.vi().catch((e) => ({ ok: false, msg: e.message })), GT.cuaToi().catch((e) => ({ ok: false, msg: e.message }))]).then(ve);
   }
   const loy = SITE.loyalty || {};
   const DIA = window.DIA_CHI || [];
@@ -401,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Đã là đối tác → nút vào thẳng trang đối tác (máy chủ cấp phiên đối tác từ phiên khách, khỏi đăng nhập lại) */
   function taiDoiTac() {
     const s = Session.get(); if (!s || !$('#dtNut')) return;
-    loyaltyApi('affTuKhach', { token: s.token }).then((r) => {
+    goiNhanh('affTuKhach').then((r) => {
       if (!r || !r.ok || !r.la || !$('#dtNut')) return;
       const the = $('#dtMoi');
       if (r.tt === 'Đã duyệt') { $('#dtNut').innerHTML = `<button class="btn btn--primary btn--sm" type="button" id="btnDT" data-vao="${r.duocVao ? 1 : ''}">💼 Trang đối tác</button>`; the?.remove(); return; }
@@ -409,12 +413,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }).catch(() => {});
   }
   const render = () => { if (Session.get()) { renderHoSo(); taiDiemGT(); taiDoiTac(); ganDiemDanh(); } else renderKhach(); ganFormDangKy(); };
+  if (Session.get()) taiKhoanNap();   // 1 lần gọi thay cho 5–6 lần: hồ sơ, điểm, giới thiệu, điểm danh, voucher, đối tác
   render();
   /* Vào từ link giới thiệu (account.html?ref=SĐT) mà chưa đăng nhập → mở sẵn form đăng ký, mã đã điền */
   if (!Session.get() && GT.ref() && MC.param('ref')) setTimeout(() => $('#btnDangKy')?.click(), 50);
   /* Vừa đặt lại mật khẩu (account.html?dangnhap=1) → mở sẵn cửa sổ đăng nhập */
   if (!Session.get() && MC.param('dangnhap')) setTimeout(() => $('#btnLogin')?.click(), 50);
-  if (Session.get()) refreshProfile().then(() => render());
+  if (Session.get()) {
+    /* Chỉ vẽ lại cả trang khi hồ sơ/đơn thật sự đổi (hoặc phiên hết hạn) – khỏi tải lại các khung điểm, voucher, điểm danh lần nữa */
+    const dau = (x) => JSON.stringify([x && x.kh, x && x.donHang]);
+    const truoc = dau(Session.get());
+    refreshProfile().then((s2) => { if (!Session.get() || dau(s2) !== truoc) render(); });
+  }
 
   $('#acc').addEventListener('click', (e) => {
     const r = e.target.closest('[data-reorder-code]');

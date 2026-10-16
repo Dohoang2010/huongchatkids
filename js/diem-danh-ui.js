@@ -194,6 +194,7 @@
       if (!s) { st.d = null; st.token = ''; st.cfg = await DD.cauHinh(); ve(); return; }
       if (st.token && st.token !== s.token) { st.d = null; st.bao = null; }   // đổi tài khoản: không hiện dữ liệu người trước
       const tok = s.token; st.token = tok;
+      if (!st.d) { const cu = DD.tongQuanCu(st.thang); if (cu) { st.d = cu; st.cfg = cu.cauHinh || st.cfg; } }   // hiện ngay bản lần trước
       if (!st.cfg) st.cfg = await DD.cauHinh();
       if (!st.d) ve();
       try {

@@ -16,8 +16,8 @@
 <main id="app"><div class="container ddp" id="ddp"></div></main>
 <script src="js/data.js?v=20261016a"></script>
 <script src="js/diachi.js?v=20261008b"></script>
-<script src="js/app.js?v=20261015a"></script>
-<script src="js/diem-danh-ui.js?v=20261012e"></script>
+<script src="js/app.js?v=20261016b"></script>
+<script src="js/diem-danh-ui.js?v=20261016b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, esc, toast, Session, openLogin, DD } = MC; const UI = window.DDUI;
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function tai() {
     if (!Session.get()) { goc.innerHTML = UI.dangTai(); DD.cauHinh().then(veChuaDangNhap); return; }
-    if (!duLieu) goc.innerHTML = UI.dangTai();
+    if (!duLieu) { const cu = DD.tongQuanCu(thang); if (cu) { duLieu = cu; goc.innerHTML = UI.trang(cu, cu.cauHinh, {}); } else goc.innerHTML = UI.dangTai(); }
     DD.tongQuan(thang).then((r) => {
       if (r && r.loi === 'token') { Session.clear(); return DD.cauHinh().then(veChuaDangNhap); }
       if (!r || !r.ok) { goc.innerHTML = UI.loi((r && r.msg) || 'Chưa tải được dữ liệu điểm danh'); return; }

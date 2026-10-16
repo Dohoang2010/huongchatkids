@@ -1232,7 +1232,7 @@
     get() { const s = store.get(this.key, null); if (!s || !s.token) return null; if (s.hetHan && Date.now() > s.hetHan) { this.clear(); return null; } return s; },
     set(s) { store.set(this.key, s); },
     patch(v) { const s = this.get(); if (s) this.set({ ...s, ...v }); },
-    clear() { store.set(this.key, null); },
+    clear() { store.set(this.key, null); swrXoa(); },
     phone() { const s = this.get(); return s ? phoneKey(s.sdt) : ''; },
     kh() { const s = this.get(); return s ? s.kh || null : null; },
     spent() { const k = this.kh(); return k ? Number(k.tongChiTieu) || 0 : 0; },
@@ -1305,10 +1305,43 @@
     if (k && k.sdt) Customer.set({ ...(Customer.get() || {}), name: k.ten || '', phone: phoneKey(k.sdt), email: k.email || '', address: addrStore({ tinh: k.tinh, xa: k.xa, chiTiet: k.diaChi }) });
     return s;
   }
+  /* ---- Tải nhanh trang tài khoản ----
+     • docNhanh: đọc bản dữ liệu đã lưu lần trước (để hiện ngay, máy chủ trả lời sau thì vẽ lại)
+     • taiKhoanNap: gộp hồ sơ + điểm + giới thiệu + điểm danh + voucher + đối tác vào 1 lần gọi 'taiKhoan'
+     • goiNhanh: gọi 1 lệnh; nếu bản gộp đang có sẵn thì lấy kết quả từ đó (máy chủ cũ chưa có 'taiKhoan' → tự gọi riêng như trước) */
+  const TK = { p: null, luc: 0, token: '', dung: {} };
+  const SWR_BO = { hoSo: 1, affTuKhach: 1 };   // không lưu bản nhớ: hồ sơ đã nằm trong Session, đối tác chỉ là nút
+  const homNayVN = () => new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 10);
+  const swrKey = (action, params) => { const s = Session.get(); return s && !SWR_BO[action] ? 'mc_swr_' + action + '_' + phoneKey(s.sdt) + (params && params.thang ? '_' + params.thang : '') : ''; };
+  function swrXoa() { try { Object.keys(localStorage).filter((k) => k.startsWith('mc_swr_')).forEach((k) => localStorage.removeItem(k)); } catch { /* private mode */ } }
+  function docNhanh(action, params = {}) {
+    const k = swrKey(action, params); if (!k) return null;
+    const c = store.get(k, null);
+    if (!c || !c.d || Date.now() - c.t > 3 * 864e5) return null;
+    if (c.d.homNay && c.d.homNay !== homNayVN()) return null;   // lịch điểm danh của ngày hôm qua: bỏ
+    return c.d;
+  }
+  function taiKhoanNap() {
+    const s = Session.get(); if (!s) return;
+    TK.token = s.token; TK.luc = Date.now(); TK.dung = {};
+    TK.p = loyaltyApi('taiKhoan', { token: s.token }, 30000).catch(() => null);
+  }
+  function goiNhanh(action, params = {}) {
+    const s = Session.get(); if (!s) return Promise.resolve(null);
+    const k = swrKey(action, params);
+    const luu = (r) => { if (r && r.ok && k) store.set(k, { t: Date.now(), d: r }); return r; };
+    const rieng = () => loyaltyApi(action, { token: s.token, ...params }).then(luu);
+    if (TK.p && TK.token === s.token && Date.now() - TK.luc < 30000 && !params.thang && !TK.dung[action]) {
+      TK.dung[action] = 1;
+      return TK.p.then((g) => (g && g.ok && g.kq && g.kq[action] ? luu(g.kq[action]) : rieng()));
+    }
+    return rieng();
+  }
+
   /* Tải lại hồ sơ từ máy chủ bằng token đã có */
   function refreshProfile() {
     const s = Session.get(); if (!s) return Promise.resolve(null);
-    return loyaltyApi('hoSo', { token: s.token }).then((res) => (res && res.ok ? saveSession({ ...res, token: s.token }) : (res && res.loi === 'token' ? (Session.clear(), null) : s))).catch(() => s);
+    return goiNhanh('hoSo').then((res) => (res && res.ok ? saveSession({ ...res, token: s.token }) : (res && res.loi === 'token' ? (Session.clear(), null) : s))).catch(() => s);
   }
 
   /* Mã giảm giá khách đang dùng được (lọc theo đơn đầu tiên / hạng) */
@@ -1420,7 +1453,7 @@
           e.preventDefault(); const ma = String(e.target.ma.value || '').replace(/\D/g, '');
           if (ma.length !== 6) { const er = $('#otpErr2'); er.textContent = 'Mã OTP gồm 6 chữ số'; er.classList.remove('hide'); return; }
           const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang kiểm tra…';
-          loyaltyApi('xacThuc', { sdt, ma }).then((res) => {
+          loyaltyApi('xacThuc', { sdt, ma, ddSau: 1 }).then((res) => {
             if (!res || !res.ok) { buocMa(info, (res && res.msg) || 'Mã OTP không đúng hoặc đã hết hạn'); return; }
             const s = saveSession(res); clearInterval(timer); DD.baoSauDangNhap(res);
             box.innerHTML = `${head}<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Xác thực thành công</h3><p>Chào ${esc((s.kh && s.kh.ten) || 'mẹ')} 👋 ${s.kh && Number(s.kh.tongChiTieu) ? `Hạng hiện tại: <b>${esc(tierOf(Number(s.kh.tongChiTieu)).label)}</b>` : 'Cảm ơn mẹ đã tin tưởng shop.'}</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Tiếp tục</button></div></div></div>`;
@@ -1466,7 +1499,7 @@
         if (!phoneOk(sdt)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); return; }
         if (!mk) { err.textContent = `Mẹ nhập mật khẩu nhé (mặc định là ${MK_MAC_DINH})`; err.classList.remove('hide'); $('#loginPass').focus(); return; }
         const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang đăng nhập…';
-        loyaltyApi('dangNhap', { sdt, mk }).then((res) => {
+        loyaltyApi('dangNhap', { sdt, mk, ddSau: 1 }).then((res) => {
           btn.disabled = false; btn.textContent = 'Đăng nhập';
           if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa đăng nhập được, mẹ thử lại nhé'; err.classList.remove('hide'); return; }
           const s = saveSession(res); if (s) Session.patch({ macDinh: !!res.macDinh }); DD.baoSauDangNhap(res);
@@ -1776,8 +1809,10 @@
     },
     kiemTra(ref, sdt) { return loyaltyApi('gtKiemTra', { ref: phoneKey(ref), sdt: phoneKey(sdt || '') }); },
     giuCho(o) { return loyaltyApi('gtGiuCho', o, 45000); },
-    vi() { const s = Session.get(); return s ? loyaltyApi('diemCuaToi', { token: s.token }) : Promise.resolve(null); },
-    cuaToi() { const s = Session.get(); return s ? loyaltyApi('gtCuaToi', { token: s.token }) : Promise.resolve(null); },
+    vi() { return goiNhanh('diemCuaToi'); },
+    viCu() { return docNhanh('diemCuaToi'); },
+    cuaToi() { return goiNhanh('gtCuaToi'); },
+    cuaToiCu() { return docNhanh('gtCuaToi'); },
     link(sdt) { return `${location.origin}${location.pathname.replace(/[^/]*$/, '')}account.html?ref=${phoneKey(sdt)}`; },
     noiDung(cfg, sdt) { return String((cfg && cfg.noiDungChiaSe) || 'Dùng mã giới thiệu của mình: {ma} {link}').replace('{giam}', (cfg && cfg.giam) || 5).replace('{ma}', phoneKey(sdt)).replace('{link}', this.link(sdt)).trim(); },
   };
@@ -1790,16 +1825,21 @@
       if (c && Date.now() - c.luc < 10 * 60e3) return (this._cfg = Promise.resolve(c));
       return (this._cfg = loyaltyApi('ddCauHinh').then((r) => { if (r && r.ok) { const v = { ...r.cauHinh, luc: Date.now() }; store.set('mc_dd_cfg', v); return v; } return c || { bat: false }; }).catch(() => c || { bat: false }));
     },
-    tongQuan(thang) { const s = Session.get(); return s ? loyaltyApi('ddTongQuan', { token: s.token, ...(thang ? { thang } : {}) }) : Promise.resolve(null); },
+    tongQuan(thang) { return goiNhanh('ddTongQuan', thang ? { thang } : {}); },
+    tongQuanCu(thang) { return docNhanh('ddTongQuan', thang ? { thang } : {}); },
     diemDanh() { const s = Session.get(); return s ? loyaltyApi('ddDiemDanh', { token: s.token }, 30000) : Promise.resolve(null); },
-    vi() { const s = Session.get(); return s ? loyaltyApi('vcCuaToi', { token: s.token }) : Promise.resolve(null); },
+    vi() { return goiNhanh('vcCuaToi'); },
+    viCu() { return docNhanh('vcCuaToi'); },
     /* Câu báo sau khi điểm danh (mẫu do shop cấu hình: {diem}, {voucher}) */
     thongBao(d) {
       if (!d || !d.ok || !d.moi) return '';
       const vc = (d.voucher || []).map((v) => v.ten).join(', ');
       return String(d.thongBao || 'Điểm danh thành công! +{diem} điểm{voucher}').replace('{diem}', Number(d.diem || 0).toLocaleString('vi-VN')).replace('{voucher}', vc ? ' · Nhận ' + vc : '');
     },
-    baoSauDangNhap(res) { const t = this.thongBao(res && res.diemDanh); if (t) setTimeout(() => toast('📅 ' + t, { type: 'ok', action: { label: 'Xem', onClick: () => { location.href = 'diem-danh.html'; } } }), 900); },
+    baoSauDangNhap(res) {
+      /* Máy chủ mới trả token trước (ddSau) rồi mới điểm danh tự động bằng lệnh riêng → đăng nhập nhanh hơn */
+      if (res && res.ddSau && res.token) { loyaltyApi('ddSauDangNhap', { token: res.token }, 30000).then((r) => this.baoSauDangNhap({ diemDanh: r })).catch(() => {}); return; }
+      const t = this.thongBao(res && res.diemDanh); if (t) setTimeout(() => toast('📅 ' + t, { type: 'ok', action: { label: 'Xem', onClick: () => { location.href = 'diem-danh.html'; } } }), 900); },
     /* Số tiền voucher giảm cho giỏ (giống cách máy chủ kiểm tra): base = tiền hàng sau giảm; phạm vi danh mục / sản phẩm tính trên tiền sản phẩm áp dụng */
     giam(v, base, lines) {
       if (!v || v.trangThai !== 'AVAILABLE') return { ok: false, msg: 'Voucher không còn dùng được' };
@@ -1869,6 +1909,6 @@
   };
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
-    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, Session, saveSession, refreshProfile, couponsFor, openOtp,
+    tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
     giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

@@ -16,7 +16,7 @@
 <main id="app"><div class="container vvp" id="vvp"></div></main>
 <script src="js/data.js?v=20261016a"></script>
 <script src="js/diachi.js?v=20261008b"></script>
-<script src="js/app.js?v=20261015a"></script>
+<script src="js/app.js?v=20261016b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, esc, fmt, toast, Session, openLogin, DD, store, byId, CATEGORIES } = { ...MC, CATEGORIES: window.CATEGORIES };
@@ -59,7 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
       goc.innerHTML = `<div class="card card--pad text-center vvp-trong"><div class="vvp-trong__ic">🔐</div><h3>Đăng nhập để xem ví voucher</h3><p class="text-muted fs-14">Voucher gắn với tài khoản (số điện thoại) của mẹ.</p><button class="btn btn--primary btn--lg" type="button" id="vvLogin">Đăng nhập</button></div>`;
       $('#vvLogin').addEventListener('click', () => openLogin().then((s) => { if (s) tai(); })); return;
     }
-    goc.innerHTML = '<div class="ddp-skel"><div></div><div></div></div><p class="text-muted fs-14 text-center">Đang tải ví voucher…</p>';
+    const cu = DD.viCu();
+    if (cu) { duLieu = cu; if (!cu.dem.AVAILABLE && cu.dem.RESERVED) tab = 'RESERVED'; ve(); }
+    else goc.innerHTML = '<div class="ddp-skel"><div></div><div></div></div><p class="text-muted fs-14 text-center">Đang tải ví voucher…</p>';
     DD.vi().then((r) => {
       if (r && r.loi === 'token') { Session.clear(); return tai(); }
       if (!r || !r.ok) { goc.innerHTML = `<div class="card card--pad text-center"><h3>Chưa tải được ví voucher</h3><p class="text-muted">${esc((r && r.msg) || '')}</p><button class="btn btn--primary" type="button" data-thu-lai>Thử lại</button></div>`; return; }
