@@ -147,3 +147,11 @@ test('JSONP: tên callback lạ bị bỏ qua', async () => {
   const b = await bc.doGet(new URLSearchParams('action=gtCauHinh&callback=alert(1)//'));
   assert.ok(b.noiDung.startsWith('{')); assert.strictEqual(b.kieu, 'application/json');
 });
+
+test('POST rác (máy quét) không tạo đơn rỗng', async () => {
+  const { kho, bc, daGui } = taoMay();
+  const r = await bc.doPost(new URLSearchParams(), JSON.stringify({ query: '{__schema{types{name}}}' }));
+  assert.strictEqual(JSON.parse(r.noiDung).ok, false);
+  assert.strictEqual(kho.bang.getSheets()[0].getLastRow(), 0);
+  assert.strictEqual(daGui.length, 0);
+});

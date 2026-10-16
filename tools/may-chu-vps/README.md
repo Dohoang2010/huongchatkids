@@ -33,11 +33,12 @@ ssh -i ~/.ssh/id_ed25519_hck_vps root@103.77.242.192 journalctl -u hck-api -f   
 Công cụ trên VPS (`/opt/hck-api/cong-cu/`): `doi-chieu.sh` (so 45 lệnh đọc), `apps-script.sh chuyen|quay-lai|thu-quay-lai`, `tinh-trang.sh`, `doi-chieu-bam.sh` (so mã băm từng trang tính Sheets ↔ VPS).
 Thử web thật trên VPS trước ngày đổi: mở `http://103.77.242.192` (web tự gọi `/api` của VPS – dữ liệu là bản chép, bị làm mới mỗi 15 phút).
 
-## NGÀY ĐỔI (chỉ làm khi chủ shop đồng ý; chọn giờ vắng khách, ~10 phút)
+## NGÀY ĐỔI (chỉ khi chủ shop ra lệnh "chuyển sang vps"; ~10 phút)
+Bước 1–4 gói sẵn trong 1 lệnh trên VPS: `sh /opt/hck-api/cong-cu/chuyen-sang-vps.sh` (dữ liệu lệch thì tự dừng và trả Apps Script về như cũ).
 1. Trên VPS: `sh /opt/hck-api/cong-cu/apps-script.sh chuyen bao-tri` → Apps Script tạm trả "đang nâng cấp", không ai ghi thêm vào Sheets.
 2. Chép lần cuối + đối chiếu: `curl -X POST -H "x-noi-bo: $NOI_BO_KHOA" 127.0.0.1:3100/noi-bo/nhap` rồi `sh /opt/hck-api/cong-cu/doi-chieu-bam.sh` → phải **khớp 100%**.
 3. Đổi `CHE_DO=chinh` trong `/etc/hck-api/env`, `systemctl restart hck-api`.
-4. `sh /opt/hck-api/cong-cu/apps-script.sh chuyen https://huongchatkids.vn/api` → máy khách còn giữ trang cũ (gọi Apps Script) được chuyển tiếp sang VPS; lịch nền của Apps Script tự dừng.
+4. `sh /opt/hck-api/cong-cu/apps-script.sh chuyen https://103-77-242-192.sslip.io/api` → máy khách còn giữ trang cũ (gọi Apps Script) được chuyển tiếp sang VPS; lịch nền của Apps Script tự dừng.
 5. Web: sửa `js/data.js` `SITE.loyalty.endpoint: 'https://huongchatkids.vn/api'`, tăng `?v=` → commit, push.
 6. Cloudflare (chủ shop làm hoặc cấp quyền): DNS `@` và `www` từ CNAME `dohoang2010.github.io` → bản ghi **A 103.77.242.192**, giữ đám mây cam; SSL/TLS chế độ **Full**. Sau đó cấp chứng chỉ cho tên miền:
    `certbot certonly --webroot -w /var/www/acme -d huongchatkids.vn -d www.huongchatkids.vn`, thêm khối `nginx-https-huongchatkids.vn.conf`, chuyển Cloudflare sang **Full (strict)**.

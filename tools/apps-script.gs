@@ -131,6 +131,7 @@ function doPost(e) {
 
     var c = order.customer || {};
     var sdt = chuanSdt(c.phone);
+    if (!sdtHopLe(sdt)) return ContentService.createTextOutput(JSON.stringify({ ok: false, msg: 'Số điện thoại chưa đúng' })).setMimeType(ContentService.MimeType.JSON);   // Bỏ yêu cầu rác (máy quét gửi JSON lạ) – đơn thật luôn có SĐT
     /* C2 – chống spam đơn ảo: tối đa 8 đơn / số / 10 phút và 150 đơn / 10 phút toàn shop */
     if (!demGioiHan('gh_don', 150, 600) || (sdt && !demGioiHan('gh_don_' + sdt, 8, 600))) {
       canhBao_('tan-suat-don', '⚠️ Có quá nhiều đơn gửi lên trong 10 phút (có thể bot spam đơn ảo). Đơn vượt giới hạn đã bị chặn – kiểm tra bảng Đơn hàng.');
