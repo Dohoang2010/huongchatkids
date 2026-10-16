@@ -19,7 +19,7 @@
 
   async function ve(el) {
     if (!tu) datKhoang('30');
-    el.innerHTML = `<div class="loc" id="dashLoc">
+    el.innerHTML = `<div class="loc d1-loc" id="dashLoc">
         ${MOC.map((m) => `<button class="chip ${m.k === moc ? 'is-on' : ''}" data-moc="${m.k}">${m.t}</button>`).join('')}
         <span class="loc__tuy">Từ <input type="date" id="dTu" value="${tu}"> đến <input type="date" id="dDen" value="${den}">
         <button class="btn btn--dark btn--sm" data-loc-tuy>Xem</button></span>
@@ -70,45 +70,39 @@
   const tenMoc = (x, kieu) => (kieu === 'thang' ? `Tháng ${x.ngay.slice(5, 7)}/${x.ngay.slice(0, 4)}`
     : kieu === 'tuan' ? `Tuần ${x.ngay.slice(8)}/${x.ngay.slice(5, 7)} – ${x.den.slice(8)}/${x.den.slice(5, 7)}` : `${x.ngay.slice(8)}/${x.ngay.slice(5, 7)}/${x.ngay.slice(0, 4)}`);
 
+  let d1Tab = 'ban';
   function veSo(box, d) {
     const soNgay = soNgayKhoang(d.tu || tu, d.den || den);
     const bd = dayDu(d.theoNgay, d.tu || tu, d.den || den);
     const sapHet = (A.D.PRODUCTS || []).filter((p) => !p.an && (p.stock ?? 0) <= 5);
+    const maxGio = Math.max(1, ...d.theoGio);
     box.innerHTML = `
-      <div class="kpis">
-        ${A.the('Tổng doanh thu', fmt(d.doanhThu), `trung bình ${gon(Math.round(d.doanhThu / soNgay))}/ngày`, 'kpi--pink')}
-        ${A.the('Tổng đơn hàng', d.soDon, d.huy ? `${d.huy} đơn huỷ · ${gon(d.tienHuy)}` : 'không có đơn huỷ')}
-        ${A.the('Giá trị TB/đơn', fmt(d.giaTriTB), `trên ${d.soDon} đơn`, 'kpi--teal')}
-        ${A.the('Khách mua hàng', d.soKhach, `${d.khachMoi} khách mới`)}
-        ${A.the('Đơn có quà tặng', d.quaDaTang, `${d.soDon ? Math.round(d.quaDaTang / d.soDon * 100) : 0}% số đơn`, 'kpi--amber')}
-        ${A.the('Yêu cầu gọi lại', d.goiLai, 'khách để lại số')}
-        ${A.the('Tổng sản phẩm', (A.D.PRODUCTS || []).filter((p) => !p.an).length, `${(A.D.PRODUCTS || []).filter((p) => p.an).length} đang ẩn`)}
-        ${A.the('Sản phẩm sắp hết', sapHet.length, sapHet.length ? 'cần nhập thêm' : 'kho đang ổn', sapHet.length ? 'kpi--red' : '')}
-      </div>
-
-      <div class="dash-row dash-row--21">
-        <div class="card"><div class="dash-h"><h3>Doanh thu theo ${bd.kieu === 'thang' ? 'tháng' : bd.kieu === 'tuan' ? 'tuần' : 'ngày'}</h3><span class="muted">${esc(d.tu)} → ${esc(d.den)}</span></div>
+      <div class="d1">
+        <div class="kpis d1-kpi">
+          ${A.the('Tổng doanh thu', fmt(d.doanhThu), `TB ${gon(Math.round(d.doanhThu / soNgay))}/ngày`, 'kpi--pink')}
+          ${A.the('Tổng đơn hàng', d.soDon, d.huy ? `${d.huy} huỷ · ${gon(d.tienHuy)}` : 'không có đơn huỷ')}
+          ${A.the('Giá trị TB/đơn', fmt(d.giaTriTB), `trên ${d.soDon} đơn`, 'kpi--teal')}
+          ${A.the('Khách mua hàng', d.soKhach, `${d.khachMoi} khách mới`)}
+          ${A.the('Đơn có quà', d.quaDaTang, `${d.soDon ? Math.round(d.quaDaTang / d.soDon * 100) : 0}% số đơn`, 'kpi--amber')}
+          ${A.the('Gọi lại', d.goiLai, 'khách để lại số')}
+          ${A.the('Sản phẩm', (A.D.PRODUCTS || []).filter((p) => !p.an).length, `${(A.D.PRODUCTS || []).filter((p) => p.an).length} đang ẩn`)}
+          ${A.the('Sắp hết hàng', sapHet.length, sapHet.length ? 'cần nhập thêm' : 'kho ổn', sapHet.length ? 'kpi--red' : '')}
+        </div>
+        <div class="card d1-dt"><div class="dash-h"><h3>Doanh thu theo ${bd.kieu === 'thang' ? 'tháng' : bd.kieu === 'tuan' ? 'tuần' : 'ngày'}</h3><span class="muted">${esc(d.tu)} → ${esc(d.den)}</span></div>
           <div id="dtChart"></div></div>
-        <div class="card"><h3>Giờ khách đặt hàng</h3><p class="muted">Chọn giờ chạy quảng cáo và trực Zalo cho đúng.</p>
-          <div class="hours">${d.theoGio.map((v) => `<i style="height:${Math.max(2, v / Math.max(1, Math.max(...d.theoGio)) * 100)}%" title="${v} đơn"></i>`).join('')}</div>
-          <div class="hours-x">${d.theoGio.map((_, i) => `<div>${i % 2 === 0 ? i : ''}</div>`).join('')}</div>
-          <p class="muted mt-8">${gioCao(d.theoGio)}</p></div>
-      </div>
-
-      <div class="card tc" id="tcCard"><h3>Khách truy cập website</h3>${A.dangTai('số liệu truy cập')}</div>
-
-      <div class="dash-row ${sapHet.length ? 'dash-row--11' : ''}">
-        <div class="card"><h3>Sản phẩm bán chạy</h3><p class="muted">Theo số lượng bán trong kỳ</p>
-          <div class="tbl-wrap" style="max-height:300px"><table><thead><tr><th>#</th><th>Sản phẩm</th><th class="num">SL</th></tr></thead>
-          <tbody>${d.topSP.length ? d.topSP.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.ten)}</td><td class="num"><b>${x.sl}</b></td></tr>`).join('')
-            : '<tr><td colspan="3" class="muted">Chưa có dữ liệu</td></tr>'}</tbody></table></div></div>
-        ${sapHet.length ? `<div class="card"><h3>⚠️ Sản phẩm sắp hết / đã hết</h3><p class="muted">Tồn kho từ 5 trở xuống</p>
-          <div class="tbl-wrap" style="max-height:300px"><table><thead><tr><th>Sản phẩm</th><th class="num">Tồn</th><th></th></tr></thead><tbody>
-          ${sapHet.map((p) => `<tr><td>${esc(p.short || p.name)}</td><td class="num">${A.badge(String(p.stock ?? 0), (p.stock ?? 0) <= 0 ? 'tag--no' : 'tag--wait')}</td>
-            <td class="num"><a class="btn btn--ghost btn--sm" href="#/san-pham/${(A.D.PRODUCTS || []).indexOf(p)}">Sửa</a></td></tr>`).join('')}
-          </tbody></table></div></div>` : ''}
+        <div class="card d1-gio"><h3>Giờ khách đặt hàng</h3>
+          <div class="hours">${d.theoGio.map((v) => `<i style="height:${Math.max(2, v / maxGio * 100)}%" title="${v} đơn"></i>`).join('')}</div>
+          <div class="hours-x">${d.theoGio.map((_, i) => `<div>${i % 3 === 0 ? i : ''}</div>`).join('')}</div>
+          <p class="muted d1-nho">${gioCao(d.theoGio)}</p></div>
+        <div class="card tc d1-tc" id="tcCard"><h3>Khách truy cập website</h3>${A.dangTai('số liệu truy cập')}</div>
+        <div class="card d1-sp"><div class="dash-h"><h3>Sản phẩm</h3><div class="tc__tabs">
+            <button class="chip ${d1Tab === 'ban' ? 'is-on' : ''}" data-d1-tab="ban">Bán chạy</button>
+            <button class="chip ${d1Tab === 'het' ? 'is-on' : ''}" data-d1-tab="het">Sắp hết${sapHet.length ? ` (${sapHet.length})` : ''}</button></div></div>
+          <div class="d1-ds">${d1Tab === 'ban'
+            ? (d.topSP.length ? d.topSP.slice(0, 8).map((x, i) => `<div class="d1-dong"><i>${i + 1}</i><span>${esc(x.ten)}</span><b>${x.sl}</b></div>`).join('') : '<p class="muted">Chưa có đơn trong kỳ.</p>')
+            : (sapHet.length ? sapHet.map((p) => `<a class="d1-dong" href="#/san-pham/${(A.D.PRODUCTS || []).indexOf(p)}"><i>${(p.stock ?? 0) <= 0 ? '⛔' : '⚠️'}</i><span>${esc(p.short || p.name)}</span><b>${p.stock ?? 0}</b></a>`).join('') : '<p class="muted">Kho đang ổn – không có sản phẩm nào còn từ 5 trở xuống.</p>')}</div></div>
       </div>`;
-    veBieuDoDT();
+    veBieuDoDT(); if (tcDL) veTruyCap();
   }
   /* Vẽ biểu đồ theo đúng bề rộng khung (1 đơn vị = 1px) để chữ không bị phóng to trên màn hình rộng */
   let dtBd = null;
@@ -124,7 +118,7 @@
   function cot(list, kieu = 'ngay', rong) {
     if (!list.some((x) => x.tien > 0)) return '<p class="muted">Chưa có đơn nào trong kỳ này.</p>';
     if (!list.length) return '<p class="muted">Chưa có đơn nào trong kỳ này.</p>';
-    const W = Math.max(320, Math.round(rong || 900)), H = 240, pad = { t: 22, r: 18, b: 28, l: 56 };
+    const W = Math.max(320, Math.round(rong || 900)), H = 190, pad = { t: 20, r: 18, b: 26, l: 52 };
     const max = Math.max(...list.map((x) => x.tien), 1);
     const n = list.length;
     const X = (i) => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : i * (W - pad.l - pad.r) / (n - 1));
@@ -164,7 +158,7 @@
         <text class="nhan-cao" x="${xCao}" y="${Math.max(14, Y(cao.tien) - 11)}" text-anchor="middle">${gon(cao.tien)}</text>` : ''}
       ${nhanX}
     </svg>
-    <p class="muted mt-8">${kieu === 'thang' ? 'Tháng' : kieu === 'tuan' ? 'Tuần' : 'Ngày'} cao nhất: <b>${tenMoc(cao, kieu)}</b> · ${fmt(cao.tien)} · ${cao.don} đơn</p>`;
+    <p class="muted d1-nho">${kieu === 'thang' ? 'Tháng' : kieu === 'tuan' ? 'Tuần' : 'Ngày'} cao nhất: <b>${tenMoc(cao, kieu)}</b> · ${fmt(cao.tien)} · ${cao.don} đơn</p>`;
   }
 
   /* ================= KHÁCH TRUY CẬP WEBSITE (giữa "Giờ khách đặt hàng" và "Sản phẩm bán chạy") =================
@@ -190,46 +184,53 @@
   }
   function veTruyCap() {
     const el = $('#tcCard'); if (!el || !tcDL) return;
-    const moChiTiet = !!el.querySelector('details[open]');
     const on = tcDL.online || { online: 0, khongHoatDong: 0, theoTrang: {}, ds: [] }, tk = tcDL.thongKe || { homNay: {}, ky: {}, bieuDo: [], hanhVi: {}, phienGanDay: [] };
     const hn = tk.homNay || {}, ky = tk.ky || {}, hv = tk.hanhVi || {};
-    const maxTrang = Math.max(1, ...TC_TRANG.map(([k]) => on.theoTrang[k] || 0));
     el.innerHTML = `
       <div class="tc__h"><h3>Khách truy cập website</h3><span class="tc__live"><i></i>cập nhật 15 giây/lần</span></div>
-      <div class="tc__body">
-        <div class="tc__trai">
+      <div class="d1-tcb">
+        <div class="d1-tcl">
           <div class="tc__kpis">
-            <div class="tc__k tc__k--on"><span>🟢 Khách đang online</span><b>${soVN(on.online)}</b><small><i class="tc__dot"></i>Đang hoạt động${on.khongHoatDong ? ` · ${on.khongHoatDong} không hoạt động` : ''}</small></div>
-            <div class="tc__k"><span>👁 Lượt truy cập hôm nay</span><b>${soVN(hn.luot)}</b><small>${soVN(hn.phien)} phiên · ${soVN(hn.khach)} khách</small></div>
-            <div class="tc__k"><span>⏱ Thời gian TB / phiên</span><b>${tcGio(hn.giayTB)}</b><small>chỉ tính lúc khách thật sự xem</small></div>
-            <div class="tc__k"><span>📄 Số trang TB / phiên</span><b>${String(hn.trangTB || 0).replace('.', ',')} trang</b><small>hôm nay</small></div>
+            <div class="tc__k tc__k--on"><span>🟢 Đang online</span><b>${soVN(on.online)}</b><small>${on.khongHoatDong ? `${on.khongHoatDong} không hoạt động` : 'đang hoạt động'}</small></div>
+            <div class="tc__k"><span>👁 Lượt xem hôm nay</span><b>${soVN(hn.luot)}</b><small>${soVN(hn.phien)} phiên · ${soVN(hn.khach)} khách</small></div>
+            <div class="tc__k"><span>⏱ TB / phiên</span><b>${tcGio(hn.giayTB)}</b><small>hôm nay</small></div>
+            <div class="tc__k"><span>📄 Trang / phiên</span><b>${String(hn.trangTB || 0).replace('.', ',')}</b><small>hôm nay</small></div>
           </div>
-          <div class="tc__on"><b>🟢 ${soVN(on.online)} khách đang online</b>
-            ${TC_TRANG.filter(([k]) => k !== 'danh-muc' && k !== 'khac' || on.theoTrang[k]).map(([k, t]) => `<div class="tc__row"><span>${t}</span><i style="--w:${Math.round((on.theoTrang[k] || 0) / maxTrang * 100)}%"></i><b>${on.theoTrang[k] || 0} khách</b></div>`).join('')}
-          </div>
+          <button class="btn btn--outline btn--sm btn--block" data-tc-chitiet>👀 Xem khách đang online (${soVN(on.online)})</button>
         </div>
-        <div class="tc__phai">
+        <div class="d1-tcr">
           <div class="tc__chart-h"><b>Lượt truy cập</b><div class="tc__tabs">${[['hom-nay', 'Hôm nay'], ['7', '7 ngày'], ['30', '30 ngày']].map(([k, t]) => `<button class="chip ${tcKieu === k ? 'is-on' : ''}" data-tc-kieu="${k}">${t}</button>`).join('')}</div></div>
           <div id="tcChart"></div>
-          <div class="tc__ky">${[[soVN(ky.luot), 'lượt xem'], [soVN(ky.phien), 'phiên'], [soVN(ky.khach), 'khách'], [tcGio(ky.giayTB), 'TB / phiên'], [(ky.thoat || 0) + '%', 'thoát']].map(([v, t]) => `<span><b>${v}</b>${t}</span>`).join('')}</div>
-          <div class="tc__hv">${[['🔍', hv.tim, 'tìm kiếm'], ['🛒', hv.gio, 'thêm giỏ'], ['💳', hv.thanhtoan, 'checkout'], ['✅', hv.mua, 'mua hàng']].map(([i, v, t]) => `<span>${i} <b>${soVN(v)}</b> ${t}</span>`).join('')}</div>
+          <div class="d1-so">${[[soVN(ky.luot), 'lượt xem'], [soVN(ky.phien), 'phiên'], [soVN(ky.khach), 'khách'], [(ky.thoat || 0) + '%', 'thoát'], ['🔍 ' + soVN(hv.tim), 'tìm kiếm'], ['🛒 ' + soVN(hv.gio), 'thêm giỏ'], ['💳 ' + soVN(hv.thanhtoan), 'checkout'], ['✅ ' + soVN(hv.mua), 'mua hàng']].map(([v, t]) => `<span><b>${v}</b>${t}</span>`).join('')}</div>
         </div>
-      </div>
-      <details class="tc__more"><summary>Xem chi tiết khách đang online & phiên gần đây</summary>
-        ${on.ds.length ? `<div class="tbl-wrap"><table><thead><tr><th>Khách</th><th>Đang xem</th><th>Vào lúc</th><th class="num">Đã xem</th><th class="num">Số trang</th><th>Trạng thái</th></tr></thead><tbody>
-          ${on.ds.map((x) => `<tr><td>#${esc(x.khach)}</td><td>${esc(x.loai)}<small class="muted"> ${esc(x.trang)}</small></td><td>${esc(x.vao)}</td><td class="num">${tcGio(x.giay)}</td><td class="num">${x.soTrang}</td><td>${A.badge(x.trangThai, x.trangThai === 'Online' ? 'tag--ok' : 'tag--wait')}</td></tr>`).join('')}
-        </tbody></table></div>` : '<p class="muted">Hiện không có khách online.</p>'}
-        <h4>Phiên gần đây</h4>
-        ${(tk.phienGanDay || []).length ? `<div class="tbl-wrap"><table><thead><tr><th>Khách</th><th>Vào</th><th>Rời</th><th class="num">Thời gian xem</th><th class="num">Số trang</th><th>Trang vào → trang cuối</th></tr></thead><tbody>
-          ${tk.phienGanDay.map((x) => `<tr><td>#${esc(x.khach)}${x.mua ? ' ✅' : ''}</td><td>${esc(x.vao)}</td><td>${esc(x.roi)}</td><td class="num">${tcGio(x.giay)}</td><td class="num">${x.soTrang}</td><td><small>${esc(x.trangVao)} → ${esc(x.trangCuoi)}</small></td></tr>`).join('')}
-        </tbody></table></div>` : '<p class="muted">Chưa có phiên nào trong kỳ.</p>'}
-      </details>`;
+      </div>`;
     const cw = $('#tcChart'); if (cw) cw.innerHTML = bieuDoTC(tk.bieuDo || [], cw.clientWidth);
-    if (moChiTiet) { const dt = el.querySelector('details'); if (dt) dt.open = true; }
+    if (moCT) veChiTietTC();
+  }
+  /* Cửa sổ chi tiết: khách đang online (theo trang + từng khách) và phiên gần đây – chỉ hiện khi bấm nút */
+  let moCT = false;
+  function veChiTietTC() {
+    const m = $('#modal'); if (!m || !tcDL) return;
+    const on = tcDL.online || { online: 0, theoTrang: {}, ds: [] }, tk = tcDL.thongKe || { phienGanDay: [] };
+    const maxTrang = Math.max(1, ...TC_TRANG.map(([k]) => on.theoTrang[k] || 0));
+    const cuon = m.querySelector('.modal__box') ? m.querySelector('.modal__box').scrollTop : 0;
+    m.innerHTML = `<div class="modal__bd" data-tc-dong></div><div class="modal__box modal__box--lg">
+      <div class="ct-h"><h3>🟢 ${soVN(on.online)} khách đang online</h3><button class="icobtn" data-tc-dong title="Đóng">✕</button></div>
+      <div class="tc__on" style="border:0;padding-top:0">${TC_TRANG.filter(([k]) => k !== 'danh-muc' && k !== 'khac' || on.theoTrang[k]).map(([k, t]) => `<div class="tc__row"><span>${t}</span><i style="--w:${Math.round((on.theoTrang[k] || 0) / maxTrang * 100)}%"></i><b>${on.theoTrang[k] || 0} khách</b></div>`).join('')}</div>
+      ${on.ds.length ? `<div class="tbl-wrap mt-12"><table><thead><tr><th>Khách</th><th>Đang xem</th><th>Vào lúc</th><th class="num">Đã xem</th><th class="num">Số trang</th><th>Trạng thái</th></tr></thead><tbody>
+        ${on.ds.map((x) => `<tr><td>#${esc(x.khach)}</td><td>${esc(x.loai)}<small class="muted"> ${esc(x.trang)}</small></td><td>${esc(x.vao)}</td><td class="num">${tcGio(x.giay)}</td><td class="num">${x.soTrang}</td><td>${A.badge(x.trangThai, x.trangThai === 'Online' ? 'tag--ok' : 'tag--wait')}</td></tr>`).join('')}
+      </tbody></table></div>` : '<p class="muted mt-12">Hiện không có khách online.</p>'}
+      <h4 class="mt-12">Phiên gần đây</h4>
+      ${(tk.phienGanDay || []).length ? `<div class="tbl-wrap"><table><thead><tr><th>Khách</th><th>Vào</th><th>Rời</th><th class="num">Thời gian xem</th><th class="num">Số trang</th><th>Trang vào → trang cuối</th></tr></thead><tbody>
+        ${tk.phienGanDay.map((x) => `<tr><td>#${esc(x.khach)}${x.mua ? ' ✅' : ''}</td><td>${esc(x.vao)}</td><td>${esc(x.roi)}</td><td class="num">${tcGio(x.giay)}</td><td class="num">${x.soTrang}</td><td><small>${esc(x.trangVao)} → ${esc(x.trangCuoi)}</small></td></tr>`).join('')}
+      </tbody></table></div>` : '<p class="muted">Chưa có phiên nào trong kỳ.</p>'}
+      <p class="muted mt-8" style="font-size:12px">Tự cập nhật 15 giây/lần.</p></div>`;
+    m.classList.remove('hide');
+    const box = m.querySelector('.modal__box'); if (box) box.scrollTop = cuon;
   }
   function bieuDoTC(moc, rong) {
     if (!moc.length || !moc.some((x) => x.luot)) return '<p class="muted tc__trong">Chưa có lượt truy cập trong kỳ này.</p>';
-    const W = Math.max(300, Math.round(rong || 520)), H = 190, pad = { t: 14, r: 12, b: 24, l: 34 }, n = moc.length;
+    const W = Math.max(300, Math.round(rong || 520)), H = 140, pad = { t: 12, r: 10, b: 22, l: 32 }, n = moc.length;
     const max = Math.max(...moc.map((x) => x.luot), 1);
     const X = (i) => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : i * (W - pad.l - pad.r) / (n - 1));
     const Y = (v) => pad.t + (H - pad.t - pad.b) * (1 - v / max);
@@ -247,7 +248,10 @@
   }
   document.addEventListener('click', (e) => {
     const k = e.target.closest('[data-tc-kieu]'); if (k) { tcKieu = k.dataset.tcKieu; taiTruyCap(); return; }
-    if (e.target.closest('[data-tc-tai]')) taiTruyCap();
+    if (e.target.closest('[data-tc-tai]')) { taiTruyCap(); return; }
+    if (e.target.closest('[data-tc-chitiet]')) { moCT = true; veChiTietTC(); return; }
+    if (e.target.closest('[data-tc-dong]')) { moCT = false; const m = $('#modal'); if (m) { m.classList.add('hide'); m.innerHTML = ''; } return; }
+    const tb = e.target.closest('[data-d1-tab]'); if (tb && duLieu) { d1Tab = tb.dataset.d1Tab; veSo($('#dashBody'), duLieu); }
   });
 
   function gioCao(g) {
