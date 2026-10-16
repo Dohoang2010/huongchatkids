@@ -13,7 +13,7 @@
   "canh": [
     {
       "id": 1,
-      "html": "<div class=\"pill\">🌷 Ngày Phụ nữ Việt Nam</div><h1>Chúc mừng 20/10<br><em>quà to cho mẹ!</em></h1><div class=\"ui crop\" style=\"width:820px;height:1000px\"><img src=\"file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/su-kien/2010-poster.jpg\" style=\"top:0\"></div>",
+      "html": "<div class=\"pill\">🌷 Ngày Phụ nữ Việt Nam</div><h1>Chúc mừng 20/10<br><em>quà to cho mẹ!</em></h1><div class=\"ui crop\" style=\"width:820px;height:1000px\"><img src=\"file:///C:/Users/B-Tech%20Computer/Desktop/web%20HCK2026/img/su-kien/2010d-poster.jpg\" style=\"top:0\"></div>",
       "vo": "Mẹ ơi! Ngày Phụ nữ Việt Nam hai mươi tháng mười sắp tới rồi! Hương Chất Kids chuẩn bị quà cực to cho mẹ đây, xem ngay nhé!",
       "sub": [
         "Ngày Phụ nữ Việt Nam 20/10 sắp tới rồi!",
@@ -29,7 +29,7 @@
     },
     {
       "id": 2,
-      "html": "<div class=\"pill pill--teal\">💗 Lời chúc từ Hương</div><h2>Mẹ xứng đáng<br><em>được yêu thương nhất</em></h2><div class=\"ui crop\" style=\"width:760px;height:900px;border-radius:40px\"><img src=\"huong.jpg\" style=\"top:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%\"></div>",
+      "html": "<div class=\"pill pill--teal\">💗 Lời chúc từ Hương</div><h2>Mẹ xứng đáng<br><em>được yêu thương nhất</em></h2><div class=\"ui\" style=\"width:760px;border-radius:40px;overflow:hidden\"><img src=\"huong-the.png\"></div>",
       "vo": "Cảm ơn mẹ đã luôn chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Hương chúc mẹ luôn khoẻ, luôn xinh và thật nhiều yêu thương!",
       "sub": [
         "Cảm ơn mẹ đã chăm chút từng bữa ăn,",
@@ -49,13 +49,13 @@
         0.667,
         0.833
       ],
-      "html": "<div class=\"pill pill--amber\">🎁 Quà thứ nhất</div><h2>Đăng nhập ngày 20/10<br><em>tặng 20.100 điểm</em></h2><div class=\"box ct\" data-k=\"2\" style=\"width:640px;align-self:flex-start\"><div class=\"big\">🎁</div><b style=\"color:var(--p);font-size:120px\">+20.100</b><small style=\"margin-top:8px\">điểm thưởng</small></div><div class=\"list\" style=\"width:640px;align-self:flex-start\"><div class=\"li\" data-k=\"3\"><i>📱</i><span>Đăng nhập <b>hoặc tạo tài khoản</b> trên web</span></div><div class=\"li\" data-k=\"4\"><i>✅</i><span>Mỗi tài khoản nhận <b>1 lần</b></span></div><div class=\"li\" data-k=\"5\"><i>💰</i><span>Điểm <b>tự cộng vào ví</b></span></div></div><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\" data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"mo\" data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\" data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\" data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\" data-k=\"6\"></i>",
-      "vo": "Quà thứ nhất: trong ngày hai mươi tháng mười, mẹ chỉ cần đăng nhập hoặc tạo tài khoản trên web là được tặng ngay hai mươi nghìn một trăm điểm. Mỗi tài khoản nhận một lần, điểm tự cộng vào ví!",
+      "html": "<div class=\"pill pill--amber\">🎁 Quà thứ nhất</div><h2>Tạo tài khoản đến hết 20/10<br><em>tặng 20.100 điểm</em></h2><div class=\"box ct\" data-k=\"2\" style=\"width:640px;align-self:flex-start\"><div class=\"big\">🎁</div><b style=\"color:var(--p);font-size:120px\">+20.100</b><small style=\"margin-top:8px\">điểm thưởng</small></div><div class=\"list\" style=\"width:640px;align-self:flex-start\"><div class=\"li\" data-k=\"3\"><i>📱</i><span>Tạo tài khoản <b>từ nay đến hết 20/10</b></span></div><div class=\"li\" data-k=\"4\"><i>✅</i><span>Đã có tài khoản: <b>đăng nhập ngày 20/10</b></span></div><div class=\"li\" data-k=\"5\"><i>💰</i><span>Mỗi tài khoản nhận <b>1 lần</b></span></div></div><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-k=\"1\" data-kh=\"2\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\" data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"mo\" data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\" data-k=\"4\" data-kh=\"5\"></i><i class=\"nv\" data-tu=\"noi\" data-mieng=\"mo\" data-k=\"5\" data-kh=\"6\"></i><i class=\"nv\" data-tu=\"like\" data-mieng=\"cuoi\" data-k=\"6\"></i>",
+      "vo": "Quà thứ nhất: mẹ tạo tài khoản mới trên web từ hôm nay đến hết ngày hai mươi tháng mười là được tặng ngay hai mươi nghìn một trăm điểm. Đã có tài khoản thì đăng nhập trong ngày hai mươi tháng mười để nhận nhé. Mỗi tài khoản nhận một lần!",
       "sub": [
-        "Quà 1: đăng nhập ngày 20/10",
+        "Quà 1: tạo tài khoản từ nay đến hết 20/10",
         "tặng ngay 20.100 điểm",
-        "Đăng nhập hoặc tạo tài khoản mới",
-        "Mỗi tài khoản 1 lần – tự cộng vào ví"
+        "Đã có tài khoản: đăng nhập ngày 20/10",
+        "Mỗi tài khoản nhận 1 lần"
       ],
       "sfx": [
         {
@@ -136,11 +136,11 @@
         0.45
       ],
       "html": "<div class=\"pill\">👆 Xem ngay trên web</div><h2>Tab <em>20.10</em><br>trên trang chủ</h2><div class=\"ui\" style=\"width:780px\" data-k=\"1\"><img src=\"ui_k1.png\"></div><div class=\"ui\" style=\"width:780px;margin-top:24px\" data-k=\"2\"><img src=\"ui_k2.png\"></div>",
-      "vo": "Mẹ mở web Hương Chất Kids, bấm tab hai mươi chấm mười ngay trên trang chủ. Bấm Đăng nhập nhận quà, rồi bấm Điểm danh ngay là xong!",
+      "vo": "Mẹ mở web Hương Chất Kids, bấm tab hai mươi chấm mười ngay trên trang chủ. Bấm Tạo tài khoản nhận quà, ngày hai mươi tháng mười bấm Điểm danh ngay là xong!",
       "sub": [
         "Mở web, bấm tab 20.10 trên trang chủ",
-        "Bấm \"Đăng nhập nhận quà\"",
-        "rồi \"Điểm danh ngay\" là xong!"
+        "Bấm \"Tạo tài khoản nhận quà\"",
+        "Ngày 20/10 bấm \"Điểm danh ngay\"!"
       ],
       "sfx": [
         {
@@ -184,17 +184,17 @@
     },
     {
       "id": 8,
-      "html": "<div class=\"cta\"><div class=\"big\">🌷💐</div><h2>Hẹn mẹ ngày 20/10!</h2><p>Đăng nhập +20.100 điểm<br>Điểm danh +50.000 điểm</p><span class=\"web\">huongchatkids.vn</span></div><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-k=\"1\" data-kh=\"2\" data-noi=\"Hẹn mẹ 20/10 nha!\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"cuoi\" data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"cuoi\" data-k=\"4\"></i>",
+      "html": "<div class=\"cta\"><div class=\"big\">🌷💐</div><h2>Hẹn mẹ ngày 20/10!</h2><p>Tài khoản mới +20.100 điểm<br>Điểm danh 20/10 +50.000 điểm</p><span class=\"web\">huongchatkids.vn</span></div><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-k=\"1\" data-kh=\"2\" data-noi=\"Hẹn mẹ 20/10 nha!\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"cuoi\" data-k=\"2\" data-kh=\"3\"></i><i class=\"nv\" data-tu=\"chao\" data-mieng=\"mo\" data-k=\"3\" data-kh=\"4\"></i><i class=\"nv\" data-tu=\"chao2\" data-mieng=\"cuoi\" data-k=\"4\"></i>",
       "k": [
         0,
         0.25,
         0.5,
         0.75
       ],
-      "vo": "Nhớ ghé Hương Chất Kids chấm vi en trong ngày hai mươi tháng mười để nhận quà nhé mẹ. Chúc mẹ một ngày hai mươi tháng mười thật hạnh phúc!",
+      "vo": "Tạo tài khoản ngay hôm nay và nhớ ghé Hương Chất Kids chấm vi en ngày hai mươi tháng mười để điểm danh nhé mẹ. Chúc mẹ một ngày hai mươi tháng mười thật hạnh phúc!",
       "sub": [
-        "Ghé huongchatkids.vn ngày 20/10",
-        "để nhận quà nhé mẹ!",
+        "Tạo tài khoản ngay hôm nay",
+        "ghé huongchatkids.vn ngày 20/10 điểm danh nhé!",
         "Chúc mẹ 20/10 thật hạnh phúc!"
       ],
       "sfx": [
