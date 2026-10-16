@@ -3671,18 +3671,18 @@ window.BANNERS = [
   },
   {
     "anh": {
-      "pc": "img/banner/huong-lam-dep-pc.jpg",
-      "mb": "img/banner/huong-lam-dep-mb.jpg"
+      "pc": "img/banner/huong-lam-dep-pc-v2.jpg",
+      "mb": "img/banner/huong-lam-dep-mb-v2.jpg"
     },
     "nen": "#FFC9D8",
     "link": "collections.html?cat=cho-me",
-    "alt": "Hương Chất Cosmetics – Đẹp từ những điều chọn lọc: mỹ phẩm Hàn Quốc chính hãng cho mẹ, chính hãng 100%, tư vấn miễn phí, freeship đơn từ 3 triệu",
+    "alt": "Hương Chất Kids – Đẹp từ những điều chọn lọc: mỹ phẩm Hàn Quốc chính hãng cho mẹ, chính hãng 100%, tư vấn miễn phí, freeship đơn từ 3 triệu",
     "sub": ""
   },
   {
     "anh": {
-      "pc": "img/banner/huong-dinh-duong-pc.jpg",
-      "mb": "img/banner/huong-dinh-duong-mb.jpg"
+      "pc": "img/banner/huong-dinh-duong-pc-v2.jpg",
+      "mb": "img/banner/huong-dinh-duong-mb-v2.jpg"
     },
     "nen": "#CDEFE6",
     "link": "collections.html",
@@ -3691,18 +3691,18 @@ window.BANNERS = [
   },
   {
     "anh": {
-      "pc": "img/banner/huong-doi-tac-pc.jpg",
-      "mb": "img/banner/huong-doi-tac-mb.jpg"
+      "pc": "img/banner/huong-doi-tac-pc-v2.jpg",
+      "mb": "img/banner/huong-doi-tac-mb-v2.jpg"
     },
     "nen": "#FFE6A6",
     "link": "doi-tac.html",
-    "alt": "Mẹ Chất Kiếm Chất – làm Đối tác cùng Hương Chất: chia sẻ link sản phẩm, nhận hoa hồng mỗi đơn giao thành công, không phí, không ôm hàng",
+    "alt": "Mẹ Chất Kiếm Chất – làm Đối tác cùng Hương Chất Kids: chia sẻ link sản phẩm, nhận hoa hồng mỗi đơn giao thành công, không phí, không ôm hàng",
     "sub": ""
   },
   {
     "anh": {
-      "pc": "img/banner/huong-song-chat-pc.jpg",
-      "mb": "img/banner/huong-song-chat-mb.jpg"
+      "pc": "img/banner/huong-song-chat-pc-v2.jpg",
+      "mb": "img/banner/huong-song-chat-mb-v2.jpg"
     },
     "nen": "#FFE0CF",
     "link": "collections.html?cat=do-an",
