@@ -51,6 +51,7 @@ function theoDoiMa() {
 
 /* ---- chép dữ liệu từ Google Sheets (chế độ song song / ngày đổi) ---- */
 async function nhapTuSheets(lyDo) {
+  if (cauHinh.cheDo === 'chinh') throw new Error('Đang ở chế độ chính – VPS giữ dữ liệu thật, không chép đè từ Google Sheets');
   if (trangThai.dangNhap) throw new Error('Đang chép dữ liệu, đợi xong lượt trước');
   trangThai.dangNhap = true; const t0 = Date.now();
   try {
