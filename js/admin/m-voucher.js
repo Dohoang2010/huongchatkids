@@ -145,7 +145,7 @@
           </tbody></table></div>` : '<p class="muted">Chưa chọn sản phẩm nào.</p>') : ''}
       </div>
 
-      <div class="ct-foot">${chiXem ? '<span class="muted">Mã đã kết thúc – chỉ xem. Bấm "Sao chép" ở danh sách để tạo đợt mới.</span>' : '<span class="muted">Bấm Xác nhận để lưu vào bản nháp, rồi Xuất bản để khách dùng được.</span>'}
+      <div class="ct-foot">${chiXem ? '<span class="muted">Mã đã kết thúc – chỉ xem. Bấm "Sao chép" ở danh sách để tạo đợt mới.</span>' : '<span class="muted">Bấm Xác nhận – web tự lưu lên website sau vài giây.</span>'}
         <a class="btn btn--ghost" href="#/ma-giam-gia" data-vc-huy>${chiXem ? 'Quay lại' : 'Huỷ'}</a>${chiXem ? '' : '<button class="btn btn--primary" id="vcXacNhan">Xác nhận</button>'}</div>`;
   }
   function thu() {

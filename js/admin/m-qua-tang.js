@@ -159,7 +159,7 @@
           </tbody></table></div></div>`; }).join('') || '<p class="muted">Chưa có quà tặng.</p>'}
       </div></div>
 
-      <div class="ct-foot">${chiXem ? '<span class="muted">Chương trình đã kết thúc – chỉ xem. Bấm "Sao chép" ở danh sách để tạo đợt mới.</span>' : '<span class="muted">Bấm Xác nhận để lưu vào bản nháp, rồi Xuất bản để khách thấy.</span>'}
+      <div class="ct-foot">${chiXem ? '<span class="muted">Chương trình đã kết thúc – chỉ xem. Bấm "Sao chép" ở danh sách để tạo đợt mới.</span>' : '<span class="muted">Bấm Xác nhận – web tự lưu lên website sau vài giây.</span>'}
         <a class="btn btn--ghost" href="#/qua-tang" data-ct-huy>${chiXem ? 'Quay lại' : 'Huỷ'}</a>${chiXem ? '' : '<button class="btn btn--primary" id="ctXacNhan">Xác nhận</button>'}</div>`;
   }
   function thuThongTin() {
