@@ -9,7 +9,7 @@ const GAS = E.APPS_SCRIPT_URL;
 const NB = { 'x-noi-bo': E.NOI_BO_KHOA };
 
 async function json(url, o) { const r = await fetch(url, Object.assign({ redirect: 'follow', signal: AbortSignal.timeout(180000) }, o)); const t = await r.text(); try { return JSON.parse(t); } catch (e) { return { __khongPhaiJson: t.slice(0, 200) }; } }
-const goi = (goc, q) => json(goc + '?' + new URLSearchParams(q));
+const goi = async (goc, q) => { const d = await json(goc + '?' + new URLSearchParams(q)); return d.__khongPhaiJson ? json(goc + '?' + new URLSearchParams(q)) : d; };   // Apps Script đôi khi lỗi tạm → gọi lại 1 lần
 const che = (v) => (typeof v === 'string' ? 'chuỗi[' + v.length + ']' : JSON.stringify(v));
 
 /* Trường thay đổi theo từng giây / theo người đang online – không so */
