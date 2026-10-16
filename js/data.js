@@ -82,7 +82,7 @@ window.SITE = {
      Dữ liệu khách nằm trong Google Sheet của shop (qua Apps Script ở orderEndpoint). */
   loyalty: {
     enabled: true,
-    endpoint: 'https://script.google.com/macros/s/AKfycbzgqygxD6zYswgL8HtoBcvWvYRTQjjejhpt7H2Sqz9LcrzHVk0zt4iKf6_7JerNSUgG/exec',   // Apps Script lo OTP & hồ sơ khách – giữ nguyên kể cả khi orderEndpoint chuyển sang CRM
+    endpoint: 'https://103-77-242-192.sslip.io/api',   // máy chủ API trên VPS (từ 16/10/2026). Quay lại Apps Script: https://script.google.com/macros/s/AKfycbzgqygxD6zYswgL8HtoBcvWvYRTQjjejhpt7H2Sqz9LcrzHVk0zt4iKf6_7JerNSUgG/exec
     combineWithCoupon: false,  // false = KHÔNG cộng dồn ưu đãi hạng với mã giảm giá, web tự lấy mức có lợi nhất cho khách
     otpPhut: 10,               // mã OTP sống bao nhiêu phút
     nhoPhienNgay: 30,          // đăng nhập bằng OTP xong thì nhớ máy khách bao nhiêu ngày
