@@ -445,11 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'dkDangNhap' || e.target.id === 'dkVaoLogin') $('#btnLogin')?.click();
     if (e.target.id === 'dkOtp') openOtp({ title: 'Xác thực số điện thoại' }).then((ss) => { if (ss) render(); });
     if (e.target.id === 'btnDoiMk') MC.openDoiMk(false).then((ok) => { if (ok) render(); });
-    if (e.target.id === 'btnDT') { const b = e.target, s = Session.get();
-      if (!b.dataset.vao || !s) { location.href = 'doi-tac.html'; return; }
-      b.disabled = true; b.textContent = 'Đang mở…';
-      loyaltyApi('affTuKhach', { token: s.token, vao: 1 }).then((r) => { if (r && r.ok && r.token) store.set('mc_dt_token', r.token); location.href = 'doi-tac.html'; })
-        .catch(() => { location.href = 'doi-tac.html'; }); return; }
+    // Trang đối tác tự nhận phiên từ tài khoản khách (affTuKhach trả luôn bảng điều khiển) → chuyển trang ngay, không gọi máy chủ 2 lần
+    if (e.target.id === 'btnDT') { location.href = 'doi-tac.html'; return; }
     if (e.target.id === 'btnOut') { store.set('mc_dt_token', ''); Session.clear(); toast('Đã thoát khỏi máy này'); render(); }
     if (e.target.closest('[data-them-email]')) { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); $('#khForm').email.focus(); }
     if (e.target.id === 'btnEdit') { $('#khView').classList.add('hide'); $('#khForm').classList.remove('hide'); }
