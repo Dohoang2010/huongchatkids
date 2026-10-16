@@ -91,6 +91,8 @@ window.SITE = {
   flashSaleEnd: 'daily',  // 'daily' = ưu đãi trong hôm nay (đếm ngược tới 24:00, mỗi ngày tự đếm lại); hoặc đặt hạn cụ thể '2026-09-30T23:59:59+07:00' (qua ngày này countdown tự ẩn)
   facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
 };
+/* Web mở thẳng trên VPS mới (chạy thử trước ngày đổi tên miền) → gọi máy chủ API của chính VPS (/api). Trên huongchatkids.vn không đổi gì. */
+if (/^(103\.77\.242\.192|103-77-242-192\.sslip\.io)$/.test(location.hostname)) window.SITE.loyalty.endpoint = location.origin + '/api';
 
 window.AGES = [
   { key: '0-6m',   label: '0–6 tháng',  emoji: '🍼', desc: 'Sơ sinh',   color: '#FFE9EF' },

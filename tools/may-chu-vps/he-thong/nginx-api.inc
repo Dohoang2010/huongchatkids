@@ -8,5 +8,5 @@ location ~ ^/api(/exec|/suc-khoe)?/?$ {
   proxy_set_header X-Real-IP $remote_addr;
   proxy_read_timeout 120s;
 }
-location ^~ /api/ { return 404; }
+location /api/ { return 404; }
 location ^~ /.well-known/acme-challenge/ { root /var/www/acme; default_type text/plain; }

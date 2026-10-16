@@ -396,17 +396,7 @@ function luuPhien(sdt, kieu) {
   sheetPhien().appendRow([token, "'" + sdt, new Date(Date.now() + PHIEN_NGAY * 864e5), new Date(), kieu || '']);
   return token;
 }
-function sdtTheoToken(token) {
-  if (!token) return '';
-  var s = sheetPhien(); var n = s.getLastRow(); if (n < 2) return '';
-  var v = s.getRange(2, 1, n - 1, 3).getValues();
-  for (var i = 0; i < v.length; i++) {
-    if (String(v[i][0]) !== String(token)) continue;
-    if (new Date(v[i][2]).getTime() < Date.now()) return '';
-    return chuanSdt(v[i][1]);
-  }
-  return '';
-}
+function sdtTheoToken(token) { var ph = phienKhach(token); return ph ? ph.sdt : ''; }
 /* Dọn mã OTP & phiên hết hạn – nên đặt trigger chạy mỗi ngày */
 function donRacOtp() {
   [[sheetOtp(), 3], [sheetPhien(), 3]].forEach(function (x) {
@@ -500,25 +490,38 @@ function voiKhoa(fn) {
 function gtLoi(code, msg) { return { ok: false, valid: false, code: code, message: msg, msg: msg }; }
 
 /* ---------- Phiên khách: biết phiên đến từ OTP / mật khẩu riêng (mạnh) hay mật khẩu mặc định (yếu) ---------- */
-function phienKhach(token) {
+/* canDong = true: cần số dòng thật trong sheet (đổi mật khẩu) → bỏ qua bộ nhớ đệm.
+   Phiên hợp lệ được nhớ 10 phút trong CacheService (khỏi quét cả sheet Phiên – sheet này lớn dần theo số lần đăng nhập);
+   huyMoiPhien / đổi mật khẩu xoá bộ nhớ đệm của các phiên bị đổi. */
+function phienKhach(token, canDong) {
   if (!token) return null;
+  var cache = CacheService.getScriptCache(), ck = 'ph_' + String(token);
+  if (!canDong) {
+    var raw = cache.get(ck);
+    if (raw) { try { var o = JSON.parse(raw); if (o.het > Date.now()) return { sdt: o.sdt, kieu: o.kieu, manh: o.manh, dong: 0 }; } catch (e0) {} }
+  }
   var s = sheetPhien(); var n = s.getLastRow(); if (n < 2) return null;
   var v = s.getRange(2, 1, n - 1, 5).getValues();
   for (var i = v.length - 1; i >= 0; i--) {
     if (String(v[i][0]) !== String(token)) continue;
-    if (new Date(v[i][2]).getTime() < Date.now()) return null;
-    var kieu = String(v[i][4] || '');
-    return { sdt: chuanSdt(v[i][1]), kieu: kieu, manh: kieu === 'otp' || kieu === 'mk', dong: i + 2 };
+    var het = new Date(v[i][2]).getTime();
+    if (het < Date.now()) return null;
+    var kieu = String(v[i][4] || ''), r = { sdt: chuanSdt(v[i][1]), kieu: kieu, manh: kieu === 'otp' || kieu === 'mk', dong: i + 2 };
+    try { cache.put(ck, JSON.stringify({ sdt: r.sdt, kieu: r.kieu, manh: r.manh, het: het }), Math.max(1, Math.min(600, Math.floor((het - Date.now()) / 1000)))); } catch (e1) {}
+    return r;
   }
   return null;
 }
 
 /* ---------- Sổ điểm ---------- */
-function docSoDiem() {
+var MEMO_ = null;   // khác null chỉ trong apiTaiKhoan: các hàm đọc sheet dùng lại kết quả trong cùng 1 lần chạy
+function docSoDiem() { if (MEMO_) return MEMO_.sd || (MEMO_.sd = docSoDiem0_()); return docSoDiem0_(); }
+function docSoDiem0_() {
   var s = sheetDG(); var n = s.getLastRow();
   return n < 2 ? [] : s.getRange(2, 1, n - 1, H_DG.length).getValues();
 }
-function docGiuCho() {
+function docGiuCho() { if (MEMO_) return MEMO_.gc || (MEMO_.gc = docGiuCho0_()); return docGiuCho0_(); }
+function docGiuCho0_() {
   var s = sheetGC(); var n = s.getLastRow();
   return n < 2 ? [] : s.getRange(2, 1, n - 1, H_GC.length).getValues();
 }
@@ -1076,8 +1079,10 @@ function giaTriNguon_(cfg, nguon) {
   var m = (cfg.moc || {})['m' + nguon.replace('STREAK_', '')]; return m && m.bat ? soNguyen(m.giaTri) : 0;
 }
 
-function docDD_() { var s = sheetDDanh_(); var n = s.getLastRow(); return n < 2 ? [] : s.getRange(2, 1, n - 1, H_DDANH.length).getValues(); }
-function docVC_() { var s = sheetVC(); var n = s.getLastRow(); return n < 2 ? [] : s.getRange(2, 1, n - 1, H_VC.length).getValues(); }
+function docDD_() { if (MEMO_) return MEMO_.dd || (MEMO_.dd = docDD0_()); return docDD0_(); }
+function docDD0_() { var s = sheetDDanh_(); var n = s.getLastRow(); return n < 2 ? [] : s.getRange(2, 1, n - 1, H_DDANH.length).getValues(); }
+function docVC_() { if (MEMO_) return MEMO_.vc || (MEMO_.vc = docVC0_()); return docVC0_(); }
+function docVC0_() { var s = sheetVC(); var n = s.getLastRow(); return n < 2 ? [] : s.getRange(2, 1, n - 1, H_VC.length).getValues(); }
 function ngayO_(v) { return v instanceof Date ? ngayDD_(v.getTime()) : String(v || '').slice(0, 10); }
 /* Các ngày đã điểm danh của 1 khách trong tháng (yyyy-MM) */
 function ngayDaDD_(dd, sdt, thang) { var m = {}; dd.forEach(function (r) { var ng = ngayO_(r[0]); if (chuanSdt(r[1]) === sdt && ng.slice(0, 7) === thang) m[ng] = r; }); return m; }
@@ -1179,6 +1184,23 @@ function apiDdDiemDanh(p) {
   return diemDanh_(ph.sdt, 'nut');
 }
 /* Ví voucher của khách đang đăng nhập (chỉ voucher của chính mình) */
+/* Điểm danh tự động sau đăng nhập (web gọi ngay sau khi đã có token – đăng nhập khỏi chờ phần này) */
+function apiDdSauDangNhap(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn' };
+  if (!demGioiHan('ddsau_' + ph.sdt, 20, 600)) return { ok: false, code: 'RATE_LIMIT' };
+  return ddSauDangNhap_(ph.sdt) || { ok: false };
+}
+/* Trang tài khoản gọi 1 lần lấy đủ: hồ sơ, điểm, giới thiệu, điểm danh, voucher, đối tác (thay 6 lần gọi riêng –
+   mỗi lần ~1,5 giây chờ khởi động + mở lại bảng tính). CHỈ ĐỌC. Phần nào lỗi thì bỏ trống, web tự gọi riêng phần đó. */
+function apiTaiKhoan(p) {
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ds = [['hoSo', apiHoSo], ['diemCuaToi', apiDiemCuaToi], ['gtCuaToi', apiGtCuaToi], ['ddTongQuan', apiDdTongQuan], ['vcCuaToi', apiVcCuaToi], ['affTuKhach', apiAffTuKhach]], kq = {};
+  MEMO_ = {};
+  try {
+    ds.forEach(function (x) { try { kq[x[0]] = x[1]({ token: p.token }); } catch (e) { Logger.log('taiKhoan ' + x[0] + ': ' + e); } });
+  } finally { MEMO_ = null; }
+  return { ok: true, kq: kq };
+}
 function apiVcCuaToi(p) {
   var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
   var now = Date.now(), ds = [];
@@ -1464,7 +1486,7 @@ function qmkNhatKy(maSo, viec, chiTiet) { ghiNhatKy('Bảo mật', maSo, viec + 
 /* Đăng xuất mọi máy của 1 số điện thoại (cho phiên hết hạn ngay). giuToken: giữ lại phiên đang dùng (đổi mật khẩu khi đang đăng nhập) */
 function huyMoiPhien(sdt, giuToken) {
   var s = sheetPhien(); var n = s.getLastRow(); if (n < 2) return 0; var v = s.getRange(2, 1, n - 1, 3).getValues(); var dem = 0;
-  for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][1]) === sdt && String(v[i][0]) !== String(giuToken || '') && new Date(v[i][2]).getTime() > Date.now()) { s.getRange(i + 2, 3).setValue(new Date(0)); dem++; }
+  for (var i = 0; i < v.length; i++) if (chuanSdt(v[i][1]) === sdt && String(v[i][0]) !== String(giuToken || '') && new Date(v[i][2]).getTime() > Date.now()) { try { CacheService.getScriptCache().remove('ph_' + String(v[i][0])); } catch (e) {} s.getRange(i + 2, 3).setValue(new Date(0)); dem++; }
   return dem;
 }
 /* Ghi mật khẩu mới (kiểu băm mạnh) cho 1 số điện thoại */
@@ -2147,6 +2169,7 @@ function apiVpsNhap_(d) {
   var pr = PropertiesService.getScriptProperties();
   if (d.viec === 'chuyen') { if (d.giaTri) pr.setProperty('VPS_CHUYEN', String(d.giaTri)); else pr.deleteProperty('VPS_CHUYEN'); return { ok: true, chuyen: pr.getProperty('VPS_CHUYEN') || '' }; }
   if (d.viec === 'mail') { MailApp.sendEmail(d.thu); return { ok: true }; }
+  if (d.viec === 'xoaTrang') { var x = ss().getSheetByName(String(d.ten || '')); if (!x || String(d.ten).indexOf('__VPS_THU') !== 0) return { ok: false, msg: 'Chỉ xoá được trang thử __VPS_THU…' }; ss().deleteSheet(x); return { ok: true }; }
   if (d.viec === 'thuocTinh') { var o = d.giaTri || {}; Object.keys(o).forEach(function (k) { if (!/^VPS_/.test(k)) pr.setProperty(k, String(o[k])); }); return { ok: true, so: Object.keys(o).length }; }
   if (d.viec === 'trang') {
     var lock = LockService.getScriptLock(); lock.waitLock(30000);
@@ -2277,6 +2300,8 @@ function doGet(e) {
     if (action === 'ddTongQuan')    return traVe(apiDdTongQuan(p), cb);
     if (action === 'ddDiemDanh')    return traVe(apiDdDiemDanh(p), cb);
     if (action === 'vcCuaToi')      return traVe(apiVcCuaToi(p), cb);
+    if (action === 'taiKhoan')      return traVe(apiTaiKhoan(p), cb);
+    if (action === 'ddSauDangNhap') return traVe(apiDdSauDangNhap(p), cb);
     if (action === 'qtDdTongQuan')  return traVe(apiQtDdTongQuan(p), cb);
     if (action === 'qtDdCauHinh')   return traVe(apiQtDdCauHinh(p), cb);
     if (action === 'qtDdLichSu')    return traVe(apiQtDdLichSu(p), cb);
@@ -2334,7 +2359,7 @@ function apiDangNhap(p) {
   cache.remove(k);
   if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});
   var token = luuPhien(sdt, tk && tk.hash ? 'mk' : 'mkMacDinh');
-  return { ok: true, token: token, kh: d.kh, donHang: d.don, macDinh: !(tk && tk.hash), diemDanh: ddSauDangNhap_(sdt) };
+  return { ok: true, token: token, kh: d.kh, donHang: d.don, macDinh: !(tk && tk.hash), diemDanh: String(p.ddSau) === '1' ? undefined : ddSauDangNhap_(sdt), ddSau: String(p.ddSau) === '1' };
 }
 /* Đăng ký khách mới – KHÔNG cần OTP, chỉ điền thông tin.
    An toàn: số điện thoại ĐÃ có hồ sơ thì từ chối, bắt đăng nhập hoặc xác thực OTP,
@@ -2700,7 +2725,7 @@ function baoLenh_(data) {
 }
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
-var GIOI_HAN_10P = { guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
+var GIOI_HAN_10P = { taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
   qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, snbLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
@@ -2997,6 +3022,7 @@ function apiXoaDon(p) {
 }
 /* Chạy nền (trigger) */
 function dongBoCRMTuDong() {
+  if (!vpsLaVps_() && PropertiesService.getScriptProperties().getProperty('VPS_CHUYEN')) return;   // VPS_CHUYEN đã bật: VPS lo chạy nền, Apps Script dừng để không gửi trùng
   PropertiesService.getScriptProperties().setProperty('LICH_LUC', String(Date.now()));   // để trang quản trị biết lịch đang chạy
   try { Logger.log(JSON.stringify(dongBoCRMNhieu(150))); } catch (e) { Logger.log('Đồng bộ CRM lỗi: ' + e); }
   try { Logger.log(JSON.stringify(xuLyDiemGT())); } catch (e2) { Logger.log('Xử lý điểm lỗi: ' + e2); }   // giới thiệu & điểm
@@ -3257,7 +3283,7 @@ function apiNhatKy(p) {
 }
 
 function apiDoiMatKhau(p) {
-  var ph = phienKhach(p.token); var sdt = ph ? ph.sdt : '';
+  var ph = phienKhach(p.token, true); var sdt = ph ? ph.sdt : '';
   if (!sdt) return { ok: false, loi: 'token', code: 'RESET_TOKEN_INVALID', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
   var cfg = qmkCauHinh(); var mk = String(p.mkMoi || '');
   var kt = kiemMkMoi(mk, p.mkMoi2 != null ? p.mkMoi2 : mk, cfg); if (!kt.ok) return kt;
@@ -3266,7 +3292,7 @@ function apiDoiMatKhau(p) {
   /* datLai = '1': quên mật khẩu qua OTP số điện thoại → đăng xuất MỌI máy (kể cả máy này). Còn lại: giữ máy đang dùng, đăng xuất máy khác */
   var datLai = String(p.datLai) === '1' && ph.kieu === 'otp';
   var dx = huyMoiPhien(sdt, datLai ? '' : p.token);
-  if (!datLai) sheetPhien().getRange(ph.dong, 5).setValue('mk');   // phiên này giờ là mật khẩu riêng
+  if (!datLai) { sheetPhien().getRange(ph.dong, 5).setValue('mk'); try { CacheService.getScriptCache().remove('ph_' + String(p.token)); } catch (e3) {} }   // phiên này giờ là mật khẩu riêng
   qmkNhatKy(sdt, datLai ? 'PASSWORD_RESET_SUCCESS' : 'PASSWORD_CHANGED', (datLai ? 'qua OTP số điện thoại, ' : '') + 'đăng xuất ' + dx + ' phiên khác');
   guiMailDoiMk(sdt, (tenTheoSdt()[sdt] || ''), cfg);
   return { ok: true, code: 'PASSWORD_RESET_SUCCESS', dangXuat: datLai };
@@ -3304,7 +3330,7 @@ function apiXacThuc(p) {
   var d = docKH(sdt);
   if (!d.dong) capNhatKhachHang(sdt, { name: d.kh.ten || '', phone: sdt, tinh: d.kh.tinh, xa: d.kh.xa, diaChi: d.kh.diaChi, email: d.kh.email }, {});   // khách mới trên web: tạo hồ sơ (lấy sẵn tên/địa chỉ từ CRM nếu có)
   var token = luuPhien(sdt, 'otp');
-  return { ok: true, token: token, kh: d.kh, donHang: d.don, diemDanh: ddSauDangNhap_(sdt) };
+  return { ok: true, token: token, kh: d.kh, donHang: d.don, diemDanh: String(p.ddSau) === '1' ? undefined : ddSauDangNhap_(sdt), ddSau: String(p.ddSau) === '1' };
 }
 
 function apiHoSo(p) {

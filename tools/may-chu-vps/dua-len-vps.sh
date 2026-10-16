@@ -4,6 +4,7 @@
 set -e
 cd "$(dirname "$0")"
 VPS=root@103.77.242.192
-SSH="ssh -i $HOME/.ssh/id_ed25519_hck_vps -o BatchMode=yes"
-tar -cf - package.json src he-thong cong-cu | $SSH $VPS 'mkdir -p /opt/hck-api && tar -xf - -C /opt/hck-api'
-$SSH $VPS 'sh /opt/hck-api/he-thong/cai-dat.sh'
+KHOA="$HOME/.ssh/id_ed25519_hck_vps"
+tar -cf - package.json src he-thong cong-cu | ssh -i "$KHOA" -o BatchMode=yes $VPS \
+  'mkdir -p /opt/hck-api && tar -xf - -C /opt/hck-api && find /opt/hck-api/he-thong /opt/hck-api/cong-cu -type f -exec sed -i "s/\r$//" {} +'
+ssh -i "$KHOA" -o BatchMode=yes $VPS 'sh /opt/hck-api/he-thong/cai-dat.sh'

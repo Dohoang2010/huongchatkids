@@ -23,17 +23,19 @@ async function layTuAppsScript(cauHinh, ghi = () => {}) {
   if (!cauHinh.appsScriptUrl || !cauHinh.vpsKhoa) throw new Error('Thiếu APPS_SCRIPT_URL hoặc VPS_KHOA');
   const meta = await goiXuat(cauHinh, { viec: 'meta' });
   const LO = 3000;
-  const trang = [];
-  for (const t of meta.trang) {
+  const trang = new Array(meta.trang.length);
+  let k = 0;   // chép 4 trang cùng lúc
+  const tho = async () => { while (k < meta.trang.length) { const i = k++; const t = meta.trang[i];
     const giaTri = [];
     for (let tu = 1; tu <= t.soDong; tu += LO) {
       const d = await goiXuat(cauHinh, { viec: 'trang', ten: t.ten, tu, so: LO });
       giaTri.push(...d.giaTri);
       if (d.soDong < tu + LO - 1) break;   // trang ngắn lại trong lúc chép
     }
-    trang.push({ ten: t.ten, soCotToiDa: t.soCotToiDa, dongCoDinh: t.dongCoDinh, cotChu: t.cotChu || {}, giaTri });
+    trang[i] = ({ ten: t.ten, soCotToiDa: t.soCotToiDa, dongCoDinh: t.dongCoDinh, cotChu: t.cotChu || {}, giaTri });
     ghi('  ' + t.ten + ': ' + giaTri.length + ' dòng');
-  }
+  } };
+  await Promise.all([1, 2, 3, 4].map(tho));
   return { muiGio: meta.muiGio, ngonNgu: meta.ngonNgu, trang, thuocTinh: meta.thuocTinh || {}, luc: meta.luc };
 }
 
