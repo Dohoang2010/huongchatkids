@@ -5272,7 +5272,7 @@ window.COUPONS = {
     "value": 5,
     "min": 0,
     "desc": "Giảm 5% váng sữa canxi Calciumore – mỗi khách 1 lần",
-    "batDau": "2026-11-01T01:00",
+    "batDau": "2026-11-01T00:00",
     "motLan": true,
     "sanPham": [
       "26060839019",
@@ -5286,8 +5286,6 @@ window.COUPONS = {
     "value": 5,
     "min": 0,
     "desc": "Giảm 5% váng sữa canxi Calciumore – mỗi khách 1 lần",
-    "batDau": "2026-11-01T01:01",
-    "luuTruoc": true,
     "motLan": true,
     "sanPham": [
       "26060839019",
