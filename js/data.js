@@ -5252,11 +5252,10 @@ window.COUPONS = {
     "type": "percent",
     "value": 5,
     "min": 0,
+    "donDau": true,
     "desc": "Giảm 5% cho đơn hàng đầu tiên",
     "batDau": "2026-10-05T11:22",
-    "hetHan": "2026-10-31T23:59",
-    "donDau": true,
-    "motLan": true
+    "hetHan": "2026-10-31T23:59"
   },
   "BMWCCV": {
     "ten": "thành viên BMWCCV",
@@ -5273,6 +5272,7 @@ window.COUPONS = {
     "value": 5,
     "min": 0,
     "desc": "Giảm 5% váng sữa canxi Calciumore – mỗi khách 1 lần",
+    "batDau": "2026-11-01T01:00",
     "motLan": true,
     "sanPham": [
       "26060839019",
