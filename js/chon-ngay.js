@@ -18,6 +18,8 @@
 .cn-o:focus-visible{outline:0;border-color:#F0537A;box-shadow:0 0 0 3px #FFE1EA}
 .cn-o i{font-style:normal;opacity:.6}
 .input.cn-o,.input--sm.cn-o{margin-top:0}
+.loc__tuy .cn-o,.loc .cn-o{display:inline-flex;width:auto;min-width:150px;min-height:0;margin-top:0;padding:5px 10px;font-size:13px}
+.loc label .cn-o{margin-top:3px}
 .cn-hop{position:absolute;z-index:9999;background:#fff;border-radius:16px;box-shadow:0 18px 50px rgba(30,20,40,.22);border:1px solid #EEE;padding:14px;font-family:inherit;color:#22202A;user-select:none}
 .cn-dau{display:flex;align-items:center;gap:6px;margin-bottom:10px}
 .cn-dau select{flex:1;padding:6px 8px;border:1px solid #DCE1E7;border-radius:8px;background:#fff;font:inherit;font-size:14px;font-weight:700;width:auto;margin:0}
