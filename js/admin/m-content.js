@@ -15,7 +15,8 @@
 
   function veDS(el) {
     $('#pageAct').innerHTML = `<button class="btn btn--primary" id="btThem">+ Viết bài mới</button>`;
-    let list = ds().map((p, i) => ({ p, i }));
+    // Bản nháp, bài hẹn đăng và bài mới nhất lên đầu (theo ngày đăng giảm dần)
+    let list = ds().map((p, i) => ({ p, i })).sort((a, b) => (!!b.p.nhap - !!a.p.nhap) || (ngayBai(b.p) - ngayBai(a.p)));
     if (S.q) list = list.filter(({ p }) => khongDau(p.title + ' ' + (p.excerpt || '')).includes(khongDau(S.q)));
     if (S.cat) list = list.filter(({ p }) => p.cat === S.cat);
     el.innerHTML = `<div class="card">
