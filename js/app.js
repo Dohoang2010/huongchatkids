@@ -1200,11 +1200,30 @@
     }
   }
 
+  /* iPhone (Safari, Zalo, Facebook): sau khi bàn phím tắt, máy đôi khi giữ chiều cao màn hình cũ → thanh menu dưới,
+     nút Zalo, nút lên đầu trang bị kẹt giữa màn hình. Khi đang gõ chữ: ẩn các thanh này; luôn kéo chúng về đúng đáy
+     theo kích thước màn hình thật (visualViewport). */
+  function giuDayManHinh() {
+    const vv = window.visualViewport, root = document.documentElement, body = document.body;
+    const laO = (el) => el && el.matches && el.matches('input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),textarea,select,[contenteditable="true"]');
+    let hen = 0;
+    const chinh = () => { hen = 0; if (!vv) return; const lech = Math.round(vv.height + vv.offsetTop - window.innerHeight);
+      root.style.setProperty('--vv-lech', (body.classList.contains('dang-go') || vv.scale > 1.05 ? 0 : Math.max(0, lech)) + 'px'); };
+    const henChinh = () => { if (!hen) hen = requestAnimationFrame(chinh); };
+    if (vv) { vv.addEventListener('resize', henChinh); vv.addEventListener('scroll', henChinh); }
+    window.addEventListener('orientationchange', () => setTimeout(chinh, 300));
+    document.addEventListener('focusin', (e) => { if (laO(e.target)) { body.classList.add('dang-go'); chinh(); } });
+    document.addEventListener('focusout', (e) => { if (!laO(e.target)) return;
+      setTimeout(() => { if (laO(document.activeElement)) return; body.classList.remove('dang-go'); window.scrollTo(window.scrollX, window.scrollY); chinh(); setTimeout(chinh, 350); }, 120); });
+    chinh();
+  }
+
   /* ---------------- Boot ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
     if (AFF.moLinkGon()) return;   // link rút gọn ?r=MÃ.sp → chuyển tới sản phẩm (kèm ?aff=MÃ)
     renderShell(); initSearch(); bindGlobal(); updateCartBadges(); moiDoiMk(); GT.batRef(); AFF.batLink();
     try { quaLeTuDong(); } catch (e) { /* không ảnh hưởng web */ }
+    try { giuDayManHinh(); } catch (e) { /* không ảnh hưởng web */ }
     syncStock(); setInterval(syncStock, 3 * 60000); flushOrders();
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncStock(); });
   });

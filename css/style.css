@@ -2382,3 +2382,7 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
   .slide__img { width: 28cqw; }
 }
 @media (min-width: 1200px) { .slide--juice > p { display: block; } }
+
+/* iPhone: thanh menu dưới + nút nổi luôn bám đáy màn hình thật (--vv-lech do js/app.js tính); đang gõ chữ thì ẩn */
+.bottom-nav, .floating { transform: translateY(var(--vv-lech, 0px)); }
+@media (max-width: 991px) { body.dang-go .bottom-nav, body.dang-go .floating { display: none; } }
