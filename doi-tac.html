@@ -21,7 +21,10 @@
    Máy chủ: Apps Script affDangKy / affDangNhap / affHoSo / affCongKhai (tools/apps-script.gs, phần ĐỐI TÁC). */
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, esc, fmt, store, toast, loyaltyApi, phoneOk, productThumb, shortName } = MC;
-  const KHOA = 'mc_dt_token'; let cfg = { hh: {}, ngay: 7, ngayTra: 10, choDoiTraNgay: 7, thueTyLe: 10, thueNguong: 2000000 }; let hs = null; let tab = MC.param('dk') ? 'dang-ky' : 'dang-nhap';
+  const KHOA = 'mc_dt_token', KHOA_HS = 'mc_dt_hs';
+  const hsCu = (tk) => { const c = store.get(KHOA_HS, null); return c && c.tk === tk && c.hs ? c.hs : null; };
+  const nhanHs = (tk, r) => { const moi = JSON.stringify(r); store.set(KHOA_HS, { tk, hs: r });
+    if (hs && JSON.stringify(hs) === moi) return; hs = r; cfg = { ...cfg, ...r.cauHinh }; veHoSo(); }; let cfg = { hh: {}, ngay: 7, ngayTra: 10, choDoiTraNgay: 7, thueTyLe: 10, thueNguong: 2000000 }; let hs = null; let tab = MC.param('dk') ? 'dang-ky' : 'dang-nhap';
   const kh = (MC.Session.get() && MC.Session.kh()) || {};   // khách đang đăng nhập bấm "Trở thành đối tác" → điền sẵn
   const n0 = (x) => Number(x || 0).toLocaleString('vi-VN');
   const BASE = location.origin + location.pathname.replace(/[^/]*$/, '');
@@ -131,16 +134,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let daThuKhach = false;
   const tuKhach = () => { const s = MC.Session.get(); if (!s || !s.token || daThuKhach || MC.param('dk')) { veKhach(); return; } daThuKhach = true;
     $('#dt').innerHTML = '<p class="text-muted" style="padding:40px 0">Đang tải…</p>';
-    loyaltyApi('affTuKhach', { token: s.token, vao: 1 }).then((r) => { if (r && r.ok && r.token) { store.set(KHOA, r.token); tai(); } else veKhach(); }).catch(() => veKhach()); };
+    loyaltyApi('affTuKhach', { token: s.token, vao: 1 }).then((r) => { if (r && r.ok && r.token) { store.set(KHOA, r.token); if (r.hoSo) nhanHs(r.token, r.hoSo); else tai(); } else veKhach(); }).catch(() => veKhach()); };
   const tai = () => { const tk = store.get(KHOA, ''); if (!tk) { tuKhach(); return; }
-    $('#dt').innerHTML = '<p class="text-muted" style="padding:40px 0">Đang tải…</p>';
-    loyaltyApi('affHoSo', { token: tk }).then((r) => { if (r && r.ok) { hs = r; cfg = { ...cfg, ...r.cauHinh }; veHoSo(); } else { if (r && r.loi === 'token') store.set(KHOA, ''); toast((r && r.msg) || 'Chưa tải được', { type: 'error' }); veKhach(); } })
+    const cu = hsCu(tk); if (cu) { hs = cu; cfg = { ...cfg, ...cu.cauHinh }; veHoSo(); } else $('#dt').innerHTML = '<p class="text-muted" style="padding:40px 0">Đang tải…</p>';
+    loyaltyApi('affHoSo', { token: tk }).then((r) => { if (r && r.ok) { nhanHs(tk, r); } else { if (r && r.loi === 'token') store.set(KHOA, ''); toast((r && r.msg) || 'Chưa tải được', { type: 'error' }); veKhach(); } })
       .catch((e) => { toast(e.message, { type: 'error' }); veKhach(); }); };
 
   document.addEventListener('click', (e) => {
     const tb = e.target.closest('[data-tab]'); if (tb) { tab = tb.dataset.tab; veKhach(); return; }
     const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard?.writeText(cp.dataset.copy).then(() => toast('Đã copy link – dán vào bài đăng là xong', { type: 'ok' }), () => toast(cp.dataset.copy)); }
-    if (e.target.id === 'dtThoat') { store.set(KHOA, ''); hs = null; veKhach(); }
+    if (e.target.id === 'dtThoat') { store.set(KHOA, ''); store.set(KHOA_HS, null); hs = null; veKhach(); }
   });
   document.addEventListener('input', (e) => { if (e.target.id === 'dtTim') veSp(e.target.value); });
   document.addEventListener('change', (e) => { if (e.target.id === 'dtSx') { sx = e.target.value; veSp(); } });
@@ -164,7 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }).catch((e2) => { btn.disabled = false; btn.textContent = 'Gửi đăng ký'; loi('#dkLoi', e2.message); });
     }
   });
-  loyaltyApi('affCongKhai').then((r) => { if (r && r.ok) cfg = { ...cfg, ...r }; }).catch(() => {}).finally(tai);
+  loyaltyApi('affCongKhai').then((r) => { if (!r || !r.ok) return; cfg = { ...cfg, ...r, ...(hs ? hs.cauHinh : {}) }; if (!hs && $('#dt') && !$('#dt .text-muted[style]') && !$$('#dt input').some((i) => i.value && i.type !== 'checkbox')) veKhach(); }).catch(() => {});
+  tai();
 });
 </script>
 </body>

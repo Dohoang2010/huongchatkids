@@ -288,10 +288,12 @@ function timDongKH(sdt) {
 
 function docKH(sdt) {
   var s = sheetKH(); var dong = timDongKH(sdt);
-  var ct = tinhChiTieu(sdt);
-  /* Có CRM → tổng chi tiêu, số đơn, lịch sử đơn lấy theo CRM (trường tien của CRM → tong mà web đọc) */
-  var crm = layKhachTuCRM(sdt);
-  if (crm && crm.co && crm.kh) {
+  /* Có CRM → tổng chi tiêu, số đơn, lịch sử đơn lấy theo CRM (trường tien của CRM → tong mà web đọc).
+     CRM đọc qua bộ nhớ đệm 5 phút (đăng nhập xong mở trang tài khoản không phải gọi CRM lần nữa);
+     sheet Đơn hàng chỉ dùng khi CRM không trả lời – khỏi đọc thừa */
+  var crm = crmKhachCache(sdt), ct;
+  if (!(crm && crm.co && crm.kh)) ct = tinhChiTieu(sdt);
+  else {
     ct = { tong: Number(crm.kh.tongChiTieu) || 0, soDon: Number(crm.kh.soDon) || 0, ganNhat: '',
       don: (crm.donHang || []).slice(0, 30).map(function (d) {
         return { ma: String(d.ma || ''), ngay: String(d.ngay || ''), sanPham: String(d.sanPham || ''),
@@ -1759,7 +1761,8 @@ function apiAffTuKhach(p) {
   if (tt !== DTT.DUYET) return { ok: false, msg: tt === DTT.CHO ? 'Đăng ký đối tác đang chờ shop duyệt.' : 'Tài khoản đối tác đang ' + tt.toLowerCase() + '. Liên hệ shop ' + HOTLINE + '.' };
   if (!ph.manh) return { ok: false, canMk: true, msg: 'Mẹ đăng nhập bằng OTP hoặc mật khẩu riêng để vào thẳng trang đối tác nhé.' };
   var token = taoToken(); sheetPDT().appendRow([token, ma, new Date(Date.now() + 30 * 864e5), new Date()]);
-  return { ok: true, token: token, ma: ma };
+  var hs = null; try { hs = apiAffHoSo({ token: token }); } catch (e) { Logger.log(e); }
+  return { ok: true, token: token, ma: ma, hoSo: hs && hs.ok ? hs : null };
 }
 function phienDT(token) {
   if (!token) return null; var v = docBang(sheetPDT(), 3);
