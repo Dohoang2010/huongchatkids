@@ -2357,3 +2357,28 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .sk-khoi--chu { background: linear-gradient(135deg, #FFF4F7, #fff); }
 @media (min-width: 992px) { .sk-khoi.sk-khoi--chu { display: block; } }
 .sk-khoi__nut { margin-top: 10px; }
+
+/* Băng chuyền trang chủ: khung theo đúng tỉ lệ ảnh banner (PC 1760×760, điện thoại 1200×900) → ảnh phủ kín, không viền.
+   Banner chữ co giãn theo bề rộng khung (đơn vị cqw) để luôn vừa khung. */
+.carousel { aspect-ratio: 1200 / 900; container-type: inline-size; }
+@media (min-width: 768px) { .carousel { aspect-ratio: 1760 / 760; } }
+.carousel__track { height: 100%; }
+.carousel .slide { min-height: 0; height: 100%; }
+.slide--anh { background: #fff; }
+.slide--anh img { object-fit: cover; }
+.slide:not(.slide--anh) { padding: 4.5cqw 5cqw 7cqw; }
+.slide:not(.slide--anh) h2 { font-size: max(17px, 5.6cqw); }
+.slide:not(.slide--anh) p { font-size: max(11.5px, 3.3cqw); margin-top: 1.6cqw; line-height: 1.4; }
+.slide:not(.slide--anh) .btn { margin-top: 2.6cqw; padding: 1.8cqw 4.4cqw; font-size: max(12px, 3.6cqw); min-height: 0; }
+.slide:not(.slide--anh) .slide__badge { margin-bottom: 2cqw; padding: 1cqw 2.6cqw; font-size: max(10px, 2.8cqw); }
+.slide__img { width: 24cqw; }
+.slide--juice > p { display: none; }
+@media (min-width: 768px) {
+  .slide:not(.slide--anh) { padding: 3.2cqw 6cqw 2.6cqw; }
+  .slide:not(.slide--anh) h2 { font-size: 3.8cqw; }
+  .slide:not(.slide--anh) p { font-size: max(12px, 1.55cqw); margin-top: 1cqw; }
+  .slide:not(.slide--anh) .btn { margin-top: 1.5cqw; padding: 1cqw 2.6cqw; font-size: max(13px, 1.6cqw); }
+  .slide:not(.slide--anh) .slide__badge { margin-bottom: 1.1cqw; padding: .5cqw 1.4cqw; font-size: max(11px, 1.25cqw); }
+  .slide__img { width: 28cqw; }
+}
+@media (min-width: 1200px) { .slide--juice > p { display: block; } }
