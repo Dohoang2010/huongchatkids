@@ -3670,6 +3670,7 @@ window.BANNERS = [
     "alt": "Đo chỉ số con miễn phí theo chuẩn WHO – chiều cao, cân nặng, BMI, chế độ ăn và vận động theo tuổi"
   },
   {
+    "hienTu": "2026-10-21T00:00:00+07:00",
     "anh": {
       "pc": "img/banner/huong-lam-dep-pc-v2.jpg",
       "mb": "img/banner/huong-lam-dep-mb-v2.jpg"
@@ -3680,6 +3681,7 @@ window.BANNERS = [
     "sub": ""
   },
   {
+    "hienTu": "2026-10-21T00:00:00+07:00",
     "anh": {
       "pc": "img/banner/huong-dinh-duong-pc-v2.jpg",
       "mb": "img/banner/huong-dinh-duong-mb-v2.jpg"
@@ -3690,6 +3692,7 @@ window.BANNERS = [
     "sub": ""
   },
   {
+    "hienTu": "2026-10-21T00:00:00+07:00",
     "anh": {
       "pc": "img/banner/huong-doi-tac-pc-v2.jpg",
       "mb": "img/banner/huong-doi-tac-mb-v2.jpg"
@@ -3700,6 +3703,7 @@ window.BANNERS = [
     "sub": ""
   },
   {
+    "hienTu": "2026-10-21T00:00:00+07:00",
     "anh": {
       "pc": "img/banner/huong-song-chat-pc-v2.jpg",
       "mb": "img/banner/huong-song-chat-mb-v2.jpg"
@@ -5847,12 +5851,12 @@ window.SU_KIEN = {
   id: '2010', nhan: '20.10', icon: '🌷', ten: 'Ngày Phụ nữ Việt Nam 20.10', khau: 'Mẹ xứng đáng được yêu thương',
   hienTu: '2026-10-16T00:00:00+07:00', batDau: '2026-10-20T00:00:00+07:00', ketThuc: '2026-10-21T00:00:00+07:00',
   giuCT: true,   // không tạm dừng quà tặng / giờ vàng ngày thường
-  poster: 'img/su-kien/2010s-poster.jpg',
+  poster: 'img/su-kien/2010d-poster.jpg',
   loiChuc: 'Cảm ơn mẹ đã luôn chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Ngày 20/10 này, Hương Chất Kids gửi mẹ những món quà nhỏ – chúc mẹ luôn khoẻ, xinh và thật nhiều yêu thương 💗',
   luat: ['Quà 20.100 điểm: tạo tài khoản mới từ nay đến hết 20/10, hoặc đăng nhập trong ngày 20/10 – mỗi tài khoản nhận 1 lần.', 'Điểm danh ngày 20/10 được 50.000 điểm (ngày thường 1.000 điểm). 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.', 'Quà tặng, mã giảm giá và giờ vàng ngày thường vẫn áp dụng như bình thường.'],
   banners: [
-    { pc: 'img/su-kien/2010s-b1pc.jpg', mb: 'img/su-kien/2010s-b1mb.jpg', link: 'index.html?tab=2010', alt: 'Chúc mừng ngày Phụ nữ Việt Nam 20.10 – đăng nhập tặng 20.100 điểm, điểm danh 50.000 điểm' },
-    { pc: 'img/su-kien/2010s-b2pc.jpg', mb: 'img/su-kien/2010s-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' },
+    { pc: 'img/su-kien/2010d-b1pc.jpg', mb: 'img/su-kien/2010d-b1mb.jpg', link: 'index.html?tab=2010', alt: 'Chúc mừng ngày Phụ nữ Việt Nam 20.10 – đăng nhập tặng 20.100 điểm, điểm danh 50.000 điểm' },
+    { pc: 'img/su-kien/2010d-b2pc.jpg', mb: 'img/su-kien/2010d-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' },
   ],
   khoi: [
     { nhan: 'Quà 20/10', tieuDe: 'Tạo tài khoản / đăng nhập nhận 20.100 điểm', noiBat: 'Tặng 20.100 điểm = 20.100đ', huyHieu: 'Đến hết 20/10', dong: ['Tạo tài khoản mới từ nay đến hết 20/10 – nhận ngay', 'Đã có tài khoản: đăng nhập trong ngày 20/10', 'Điểm tự cộng vào ví – mỗi tài khoản 1 lần', 'Dùng giảm tới 10% tiền hàng mỗi đơn'], nut: { chu: 'Tạo tài khoản nhận quà', link: 'account.html' } },
