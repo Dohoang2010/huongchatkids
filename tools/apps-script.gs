@@ -1153,7 +1153,8 @@ function ddSauDangNhap_(sdt) {
    và email chúc mừng gửi tự động đúng giờ tới mọi khách đã mua hàng có email (1 lượt duy nhất).
    khuyenMai: các dòng ưu đãi in trong email – thêm chương trình mới cho ngày lễ thì thêm dòng vào đây. */
 var NGAY_LE = [
-  { id: '2010', ngay: '2026-10-20', ten: '20/10', thuongDangNhap: 20100, diemDanh: 50000,
+  { id: '2010', ngay: '2026-10-20', ten: '20/10', thuongDangNhap: 20100, dangKyTu: '2026-10-16',   // tạo tài khoản mới từ dangKyTu đến hết ngày lễ cũng nhận quà
+    diemDanh: 50000,
     mail: { gio: 8, tieuDe: '🌷 Hương Chất Kids chúc mừng ngày Phụ nữ Việt Nam 20/10 – quà 20.100 điểm đang chờ mẹ',
       loiChuc: [
         'Nhân ngày Phụ nữ Việt Nam 20/10, cả nhà Hương Chất Kids xin gửi tới {ten} lời chúc chân thành nhất: chúc mẹ luôn khoẻ mạnh, xinh đẹp, rạng rỡ và thật nhiều bình yên.',
@@ -1161,18 +1162,19 @@ var NGAY_LE = [
         'Hương cũng cảm ơn mẹ đã tin tưởng chọn sản phẩm tại shop. Nhân ngày đặc biệt này, Hương gửi mẹ vài món quà nhỏ dưới đây.'
       ],
       khuyenMai: [
-        { icon: '🎁', tieu: 'Tặng 20.100 điểm thưởng', mo: 'Đăng nhập (hoặc tạo tài khoản) trên web trong ngày 20/10 – điểm tự cộng vào ví, 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.' },
+        { icon: '🎁', tieu: 'Tặng 20.100 điểm thưởng', mo: 'Đăng nhập trên web trong ngày 20/10 (tài khoản tạo mới từ 16/10 đến hết 20/10 cũng được tặng) – điểm tự cộng vào ví, 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.' },
         { icon: '📅', tieu: 'Điểm danh nhận 50.000 điểm', mo: 'Riêng ngày 20/10, mỗi lần điểm danh được 50.000 điểm thay vì 1.000 điểm như ngày thường.' },
         { icon: '🚚', tieu: 'Freeship đơn từ 3 triệu', mo: 'Mã FREESHIP tự áp khi đơn đủ điều kiện, dùng kèm được với mã giảm giá khác.' }
       ],
       link: 'https://huongchatkids.vn/?utm_source=email&utm_medium=email&utm_campaign=2010', nut: 'Nhận quà 20/10 ngay' } }
 ];
+function leDangKy_(ngay) { ngay = ngay || ngayDD_(); for (var i = 0; i < NGAY_LE.length; i++) { var l = NGAY_LE[i]; if (l.dangKyTu && l.dangKyTu <= ngay && ngay <= l.ngay) return l; } return null; }
 function leHomNay_(ngay) { ngay = ngay || ngayDD_(); for (var i = 0; i < NGAY_LE.length; i++) if (NGAY_LE[i].ngay === ngay) return NGAY_LE[i]; return null; }
 /* Quà điểm ngày lễ khi khách đăng ký / đăng nhập (khoá LE<id>:<sdt> → mỗi khách 1 lần). Trả null nếu không có quà mới. */
-function thuongLe_(sdt) {
+function thuongLe_(sdt, dangKy) {   // dangKy = true: vừa tạo tài khoản mới (nhận quà từ dangKyTu tới hết ngày lễ)
   try {
-    var le = leHomNay_(); if (!le || !le.thuongDangNhap || !sdtHopLe(sdt) || khachBiKhoa(sdt)) return null;
-    var r = voiKhoa(function () { return ghiDiem(sdt, 'EARN', le.thuongDangNhap, 'EVENT', "'" + le.ngay, '🌷 Quà ' + le.ten + ' – đăng nhập trong ngày lễ', 'hệ thống', 'LE' + le.id + ':' + sdt); });
+    var le = leHomNay_() || (dangKy ? leDangKy_() : null); if (!le || !le.thuongDangNhap || !sdtHopLe(sdt) || khachBiKhoa(sdt)) return null;
+    var r = voiKhoa(function () { return ghiDiem(sdt, 'EARN', le.thuongDangNhap, 'EVENT', "'" + le.ngay, '🌷 Quà ' + le.ten + (dangKy ? ' – tạo tài khoản mới' : ' – đăng nhập trong ngày lễ'), 'hệ thống', 'LE' + le.id + ':' + sdt); });
     if (!r || !r.ok || r.trung || r.khongDoi) return null;
     ghiNhatKy('Quà ngày lễ', sdt, 'Tặng ' + le.thuongDangNhap + ' điểm quà ' + le.ten);
     return { ten: le.ten, diem: le.thuongDangNhap, soDu: r.soDu, thongBao: '🌷 Quà ' + le.ten + ': Hương tặng mẹ ' + le.thuongDangNhap.toLocaleString('vi-VN') + ' điểm thưởng!' };
@@ -2499,7 +2501,7 @@ function apiDangKyGoc(p) {
       + (emailHopLe(p.email) ? '\nEmail: ' + cat(p.email, 100) : '') + (chuanGioiTinh_(p.gioiTinh) ? '\nGiới tính: ' + chuanGioiTinh_(p.gioiTinh) : '');
     try { zaloBotGuiTin(bao); } catch (e1) { Logger.log(e1); }
     if (EMAIL) { try { MailApp.sendEmail(EMAIL, '🆕 Khách mới đăng ký: ' + cat(ten, 80), bao); } catch (e2) { Logger.log(e2); } }
-    return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH, quaLe: thuongLe_(sdt) };
+    return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH, quaLe: thuongLe_(sdt, true) };
   } finally { lock.releaseLock(); }
 }
 

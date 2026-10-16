@@ -5690,7 +5690,7 @@ window.LE_HOI = {
       "soNgay": 1,
       "chuDe": "hoa-hong",
       "hieuUng": null,
-      "dai": "🌷 Chào mừng ngày Phụ nữ Việt Nam 20/10 – đăng nhập ngày 20/10 nhận 20.100 điểm, điểm danh 50.000 điểm",
+      "dai": "🌷 Chào mừng 20/10 – tạo tài khoản từ nay đến hết 20/10 tặng ngay 20.100 điểm · điểm danh ngày 20/10 nhận 50.000 điểm",
       "nut": "Nhận quà",
       "link": "index.html?tab=2010",
       "moTa": "Hoa, quà tặng, lời chúc",
@@ -5911,13 +5911,13 @@ window.SU_KIEN = {
   giuCT: true,   // không tạm dừng quà tặng / giờ vàng ngày thường
   poster: 'img/su-kien/2010s-poster.jpg',
   loiChuc: 'Cảm ơn mẹ đã luôn chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Ngày 20/10 này, Hương Chất Kids gửi mẹ những món quà nhỏ – chúc mẹ luôn khoẻ, xinh và thật nhiều yêu thương 💗',
-  luat: ['Quà 20.100 điểm: mỗi tài khoản nhận 1 lần khi đăng nhập hoặc tạo tài khoản trong ngày 20/10.', 'Điểm danh ngày 20/10 được 50.000 điểm (ngày thường 1.000 điểm). 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.', 'Quà tặng, mã giảm giá và giờ vàng ngày thường vẫn áp dụng như bình thường.'],
+  luat: ['Quà 20.100 điểm: tạo tài khoản mới từ nay đến hết 20/10, hoặc đăng nhập trong ngày 20/10 – mỗi tài khoản nhận 1 lần.', 'Điểm danh ngày 20/10 được 50.000 điểm (ngày thường 1.000 điểm). 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.', 'Quà tặng, mã giảm giá và giờ vàng ngày thường vẫn áp dụng như bình thường.'],
   banners: [
     { pc: 'img/su-kien/2010s-b1pc.jpg', mb: 'img/su-kien/2010s-b1mb.jpg', link: 'index.html?tab=2010', alt: 'Chúc mừng ngày Phụ nữ Việt Nam 20.10 – đăng nhập tặng 20.100 điểm, điểm danh 50.000 điểm' },
     { pc: 'img/su-kien/2010s-b2pc.jpg', mb: 'img/su-kien/2010s-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' },
   ],
   khoi: [
-    { nhan: 'Quà 20/10', tieuDe: 'Đăng nhập nhận 20.100 điểm', noiBat: 'Tặng 20.100 điểm = 20.100đ', huyHieu: 'Chỉ ngày 20/10', dong: ['Đăng nhập hoặc tạo tài khoản trong ngày 20/10', 'Điểm tự cộng vào ví – mỗi tài khoản 1 lần', 'Dùng giảm tới 10% tiền hàng mỗi đơn'], nut: { chu: 'Đăng nhập nhận quà', link: 'account.html' } },
+    { nhan: 'Quà 20/10', tieuDe: 'Tạo tài khoản / đăng nhập nhận 20.100 điểm', noiBat: 'Tặng 20.100 điểm = 20.100đ', huyHieu: 'Đến hết 20/10', dong: ['Tạo tài khoản mới từ nay đến hết 20/10 – nhận ngay', 'Đã có tài khoản: đăng nhập trong ngày 20/10', 'Điểm tự cộng vào ví – mỗi tài khoản 1 lần', 'Dùng giảm tới 10% tiền hàng mỗi đơn'], nut: { chu: 'Tạo tài khoản nhận quà', link: 'account.html' } },
     { nhan: 'Điểm danh', tieuDe: 'Điểm danh nhận 50.000 điểm', noiBat: 'Gấp 50 lần ngày thường', huyHieu: 'Chỉ ngày 20/10', dong: ['Ngày thường: 1.000 điểm', 'Riêng 20/10: 50.000 điểm', 'Cộng quà đăng nhập: tổng 70.100 điểm'], nut: { chu: 'Điểm danh ngay', link: 'diem-danh.html' } },
     { nhan: 'Làm đẹp cho mẹ', tieuDe: 'Mẹ đẹp từ những điều chọn lọc', dong: ['Mỹ phẩm Hàn Quốc chính hãng 100%', 'Dùng điểm 20/10 giảm thêm khi mua'], ghiChu: 'Tự thưởng cho mình một món quà nhỏ nhé mẹ 💗', sp: ['26900366084', '27734205778', '57903449970', '24015583018'] },
     { nhan: 'Mẹ khoẻ con khoẻ', tieuDe: 'Dinh dưỡng Hàn Quốc cho bé', dong: ['Chọn theo đúng tuổi của con', 'Đo chỉ số chiều cao – cân nặng miễn phí'], sp: ['22686115682', '26060839019', '42878618667', '22644617070'] },
