@@ -286,10 +286,10 @@ window.PRODUCTS = [
       "Mới",
       "Cho mẹ"
     ],
-    "image": "img/cap-kem-nen.jpg",
-    "thumb": "img/thumb/cap-kem-nen.jpg",
+    "image": "img/cap-kem-nen-v2.jpg",
+    "thumb": "img/thumb/cap-kem-nen-v2.jpg",
     "images": [
-      "img/cap-kem-nen.jpg",
+      "img/cap-kem-nen-v2.jpg",
       "img/cap-kem-nen-2.jpg",
       "img/cap-kem-nen-3.jpg",
       "img/cap-kem-nen-4.jpg",
