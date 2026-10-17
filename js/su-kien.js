@@ -37,18 +37,25 @@
   function noiDung() {
     const { byId, productCard } = MC;
     const dangChay = Date.now() >= bd;
+    /* Thẻ cuối hàng dẫn sang trang tất cả sản phẩm – để khách không dừng ở 4 món */
+    const the = (x) => `<a class="sk-them" href="${esc(x.link)}">
+      <span class="sk-them__ico">${esc(x.icon || '🛍️')}</span>
+      <b>${esc(x.chu || 'Xem tất cả sản phẩm')}</b>
+      <small>${esc(x.mo || 'Xem toàn bộ danh mục')}</small>
+      <span class="sk-them__nut">Xem ngay →</span></a>`;
     const khoi = (sk.khoi || []).map((k, i) => {
       const sp = (k.sp || []).map(byId).filter((p) => p && !p.an);
       return `<section class="sk-khoi sk-khoi--${i % 3}${sp.length ? '' : ' sk-khoi--chu'}">
         <div class="sk-khoi__dau">
-          <div class="sk-khoi__nhan"><span>${esc(k.nhan)}</span>${k.huyHieu ? `<em>${esc(k.huyHieu)}</em>` : ''}</div>
+          <div class="sk-khoi__nhan">${k.icon ? `<i class="sk-khoi__ico" aria-hidden="true">${esc(k.icon)}</i>` : ''}<span>${esc(k.nhan)}</span>${k.huyHieu ? `<em>${esc(k.huyHieu)}</em>` : ''}</div>
           <h2>${esc(k.tieuDe)}</h2>
           ${k.noiBat ? `<div class="sk-khoi__noibat">${esc(k.noiBat)}</div>` : ''}
           <ul class="sk-khoi__dong">${(k.dong || []).map((d) => `<li>${esc(d)}</li>`).join('')}</ul>
           ${k.ghiChu ? `<small class="sk-khoi__ghichu">${esc(k.ghiChu)}</small>` : ''}
           ${k.nut ? `<a class="btn btn--primary btn--sm sk-khoi__nut" href="${esc(k.nut.link)}">${esc(k.nut.chu)}</a>` : ''}
+          ${k.xem ? `<a class="btn btn--ghost btn--sm sk-khoi__xem" href="${esc(k.xem.link)}">${esc(k.xem.chu || 'Xem tất cả sản phẩm')} →</a>` : ''}
         </div>
-        ${sp.length ? `<div class="row-scroll sk-khoi__sp">${sp.map((p) => productCard(p)).join('')}</div>` : ''}
+        ${sp.length ? `<div class="row-scroll sk-khoi__sp">${sp.map((p) => productCard(p)).join('')}${k.xem ? the(k.xem) : ''}</div>` : ''}
       </section>`;
     }).join('');
     const ma = MC.maCongKhai().filter((c) => !(c.donDau && MC.daMuaTruoc((MC.Customer.get() || {}).phone)));

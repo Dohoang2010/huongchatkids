@@ -282,16 +282,17 @@
       const giam = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const yeu = (w.navigator.deviceMemory && w.navigator.deviceMemory <= 2) || (w.navigator.hardwareConcurrency && w.navigator.hardwareConcurrency <= 2) || (w.navigator.connection && w.navigator.connection.saveData);
       if (hu && hat.length && cfgOk.hieuUng && !giam && !yeu && hopTrang(cd.hieuUngTrang || [], p)) {
-        const nho = w.innerWidth < 768, so = hu === 'tuyet' ? (nho ? 10 : 18) : (nho ? 6 : 12), trangChu = p === 'index.html';
+        /* Mật độ thưa + rơi chậm cho đỡ rối mắt (tuyết dày hơn chút vì hạt nhỏ) */
+        const nho = w.innerWidth < 768, so = hu === 'tuyet' ? (nho ? 7 : 12) : (nho ? 4 : 8), trangChu = p === 'index.html';
         const el = doc.createElement('div'); el.className = 'le-hoa le-hoa--' + hu; el.setAttribute('aria-hidden', 'true');
         for (let i = 0; i < so; i++) {
           const c = doc.createElement('i'); c.textContent = hat[i % hat.length];
           const lap = trangChu ? 'infinite' : '2';
-          c.style.cssText = `left:${(i + Math.random()) * 100 / so}%;font-size:${(hu === 'tuyet' ? 10 : 14) + Math.random() * 14}px;animation-duration:${8 + Math.random() * 7}s,${2.6 + Math.random() * 2}s;animation-delay:${-Math.random() * 12}s,0s;animation-iteration-count:${lap},infinite`;
+          c.style.cssText = `left:${(i + Math.random()) * 100 / so}%;font-size:${(hu === 'tuyet' ? 9 : 13) + Math.random() * 11}px;animation-duration:${18 + Math.random() * 12}s,${5 + Math.random() * 3}s;animation-delay:${-Math.random() * 26}s,0s;animation-iteration-count:${lap},infinite`;
           el.appendChild(c);
         }
         doc.body.appendChild(el); hieuUngEl = el;
-        if (!trangChu) setTimeout(() => { if (hieuUngEl === el) { el.remove(); hieuUngEl = null; } }, 32000);
+        if (!trangChu) setTimeout(() => { if (hieuUngEl === el) { el.remove(); hieuUngEl = null; } }, 60000);
       }
     }
     doc.addEventListener('visibilitychange', () => { if (hieuUngEl) hieuUngEl.style.animationPlayState = ''; if (hieuUngEl) hieuUngEl.classList.toggle('is-dung', doc.hidden); });

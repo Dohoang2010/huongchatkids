@@ -259,6 +259,123 @@ window.THEME = {
 /* ===ADMIN:PRODUCTS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.PRODUCTS = [
   {
+    "id": "cap-kem-nen-eclat",
+    "name": "Cặp Kem Dưỡng Da Tạo Nền Éclat du Teint – Hydrate UV Defense SPF50+ PA+++ & Glow Pot No.17 Max Mirror BB Cream Hàn Quốc",
+    "short": "Cặp kem dưỡng da tạo nền Éclat du Teint",
+    "brand": "khac",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1996000,
+    "oldPrice": 2695000,
+    "rating": 5.0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 10,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#E8C8CF",
+    "weight": "Cặp 2 tuýp",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot",
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/cap-kem-nen.jpg",
+    "thumb": "img/thumb/cap-kem-nen.jpg",
+    "images": [
+      "img/cap-kem-nen.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Cặp 2 tuýp (chống nắng + BB cream)",
+        "price": 1996000,
+        "oldPrice": 2695000
+      },
+      {
+        "label": "Lẻ 1 tuýp kem chống nắng Hydrate UV Defense",
+        "price": 998000,
+        "oldPrice": 1347000
+      },
+      {
+        "label": "Lẻ 1 tuýp kem nền Glow Pot No.17 BB Cream",
+        "price": 998000,
+        "oldPrice": 1347000
+      }
+    ],
+    "desc": "Cặp kem dưỡng da tạo nền Éclat du Teint gồm kem chống nắng Hydrate UV Defense SPF50+ PA+++ và BB cream Glow Pot No.17 Max Mirror. Theo nhà sản xuất: kem chống nắng bảo vệ phổ rộng, dưỡng ẩm làm dịu da, phù hợp da nhạy cảm và da đang treatment; BB cream che phủ nhẹ tự nhiên, tạo hiệu ứng da căng bóng glow khoẻ kiểu Hàn. Dùng riêng từng tuýp hoặc trộn chung để có lớp nền mỏng nhẹ.",
+    "highlights": [
+      "Kem chống nắng phổ rộng SPF50+ PA+++, chất kem mỏng nhẹ dễ tán, không bí da",
+      "Dưỡng ẩm, làm dịu – hợp da nhạy cảm, da đang treatment",
+      "BB cream che phủ nhẹ tự nhiên, da đều màu và tươi tắn hơn",
+      "Tạo hiệu ứng căng bóng glow khoẻ, cũng có SPF50+ PA+++",
+      "Mua cặp 1.996.000đ · mua lẻ từng tuýp 998.000đ"
+    ],
+    "usage": "Cách 1 – dùng riêng: sau bước dưỡng da, thoa kem chống nắng đều lên mặt và cổ, sau đó dùng lượng BB cream mỏng để tạo nền tự nhiên. Cách 2 – trộn chung: lấy một lượng kem chống nắng và một lượng nhỏ BB cream, trộn đều rồi thoa lên da. Thoa trước khi ra ngoài 15–20 phút; thoa lại kem chống nắng sau vài giờ nếu ra nhiều mồ hôi hoặc tiếp xúc nước."
+  },
+  {
+    "id": "kem-exosome-toneup",
+    "name": "Kem Trắng EXOSOME Hàn Quốc EXOPLUS Tone-up Cream Premiere Look 50ml – Nâng Tông, Dưỡng Trắng, Căng Bóng",
+    "short": "Kem trắng EXOSOME EXOPLUS Tone-up 50ml",
+    "brand": "khac",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 0,
+    "oldPrice": 0,
+    "rating": 5.0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 9,
+    "cosmetic": true,
+    "shape": "box",
+    "color": "#B9BDC4",
+    "weight": "Hũ 50ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Sản phẩm hot",
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/kem-exosome.jpg",
+    "thumb": "img/thumb/kem-exosome.jpg",
+    "images": [
+      "img/kem-exosome.jpg",
+      "img/kem-exosome-2.jpg",
+      "img/kem-exosome-3.jpg",
+      "img/kem-exosome-4.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 hũ 50ml",
+        "price": 0
+      },
+      {
+        "label": "2 hũ",
+        "price": 0
+      }
+    ],
+    "desc": "Kem trắng EXOSOME Hàn Quốc dòng EXOPLUS – mỹ phẩm ứng dụng công nghệ EXOSOME được cấp bằng sáng chế vào chăm sóc da, hàm lượng EXOSOME tăng cường. Theo nhà sản xuất, sản phẩm vừa nâng tông trang điểm nhẹ, vừa chăm sóc da sáng mịn, căng bóng, hỗ trợ cải thiện nếp nhăn và làm dịu làn da ửng đỏ, mỏng yếu.",
+    "highlights": [
+      "Công nghệ EXOSOME được cấp bằng sáng chế, dòng EXOPLUS hàm lượng cao",
+      "Thành phần dưỡng sáng mạnh gấp 4 lần Hydroquinone theo công bố của nhà sản xuất",
+      "Nâng tông tức thì, lên màu trắng hồng tự nhiên, tạo độ glow đẹp",
+      "HA đa tầng cấp ẩm sâu, chất kem mướt, ăn tệp, không bí da",
+      "Hỗ trợ trẻ hoá, cải thiện nếp nhăn, xoa dịu da ửng đỏ mỏng yếu"
+    ],
+    "usage": "Sau bước dưỡng da, lấy lượng vừa đủ thoa đều lên mặt và cổ, vỗ nhẹ cho thẩm thấu. Dùng buổi sáng trước kem chống nắng hoặc buổi tối ở bước cuối. Có thể dùng thay lớp nền mỏng khi ra ngoài.",
+    "an": true
+  },
+  {
     "id": "41002695070",
     "name": "Rong Biển Vụn Ăn Liền Sung Gyung - Lựa Chọn Hoàn Hảo Cho Bữa Ăn Nhanh Gọn và Bổ Dưỡng",
     "short": "Rong biển vụn Sung Gyung",
@@ -1626,7 +1743,9 @@ window.PRODUCTS = [
     "color": "#43A047",
     "weight": "Hộp",
     "origin": "Hàn Quốc",
-    "tags": [],
+    "tags": [
+      "Sản phẩm hot"
+    ],
     "image": "img/57413220644.jpg",
     "thumb": "img/thumb/57413220644.jpg",
     "images": [
@@ -1657,7 +1776,8 @@ window.PRODUCTS = [
       "Niacinamide + Collagen thuỷ phân",
       "Phù hợp mẹ sau sinh da khô, sạm"
     ],
-    "usage": "Đắp 15–20 phút, 2–3 lần/tuần sau khi rửa mặt sạch."
+    "usage": "Đắp 15–20 phút, 2–3 lần/tuần sau khi rửa mặt sạch.",
+    "priority": 7
   },
   {
     "id": "57903449970",
@@ -1681,7 +1801,9 @@ window.PRODUCTS = [
     "color": "#F06292",
     "weight": "Tuýp",
     "origin": "Hàn Quốc",
-    "tags": [],
+    "tags": [
+      "Sản phẩm hot"
+    ],
     "image": "img/57903449970.jpg",
     "thumb": "img/thumb/57903449970.jpg",
     "images": [
@@ -1700,7 +1822,8 @@ window.PRODUCTS = [
       "Chống nắng vô cơ, không kích ứng",
       "Thương hiệu Hàn Quốc"
     ],
-    "usage": "Thoa lớp mỏng buổi sáng sau bước dưỡng, trước khi trang điểm."
+    "usage": "Thoa lớp mỏng buổi sáng sau bước dưỡng, trước khi trang điểm.",
+    "priority": 8
   },
   {
     "id": "27355720019",
@@ -2007,7 +2130,9 @@ window.PRODUCTS = [
     "color": "#C2185B",
     "weight": "Tuýp",
     "origin": "Ý",
-    "tags": [],
+    "tags": [
+      "Sản phẩm hot"
+    ],
     "image": "img/57556697426.jpg",
     "thumb": "img/thumb/57556697426.jpg",
     "images": [
@@ -2038,7 +2163,8 @@ window.PRODUCTS = [
       "Màu hồng đổi theo độ pH của môi",
       "Dưỡng ẩm với jojoba, vitamin E, ceramide"
     ],
-    "usage": "Thoa một lớp mỏng lên môi đã làm sạch, có thể dùng riêng hoặc dặm lên son khác. Cảm giác châm nhẹ lúc đầu là bình thường."
+    "usage": "Thoa một lớp mỏng lên môi đã làm sạch, có thể dùng riêng hoặc dặm lên son khác. Cảm giác châm nhẹ lúc đầu là bình thường.",
+    "priority": 6
   },
   {
     "id": "24015142248",
@@ -5859,10 +5985,10 @@ window.SU_KIEN = {
     { pc: 'img/su-kien/2010d-b2pc.jpg', mb: 'img/su-kien/2010d-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' },
   ],
   khoi: [
-    { nhan: 'Quà 20/10', tieuDe: 'Tạo tài khoản / đăng nhập nhận 20.100 điểm', noiBat: 'Tặng 20.100 điểm = 20.100đ', huyHieu: 'Đến hết 20/10', dong: ['Tạo tài khoản mới từ nay đến hết 20/10 – nhận ngay', 'Đã có tài khoản: đăng nhập trong ngày 20/10', 'Điểm tự cộng vào ví – mỗi tài khoản 1 lần', 'Dùng giảm tới 10% tiền hàng mỗi đơn'], nut: { chu: 'Tạo tài khoản nhận quà', link: 'account.html' } },
-    { nhan: 'Điểm danh', tieuDe: 'Điểm danh nhận 50.000 điểm', noiBat: 'Gấp 50 lần ngày thường', huyHieu: 'Chỉ ngày 20/10', dong: ['Ngày thường: 1.000 điểm', 'Riêng 20/10: 50.000 điểm', 'Cộng quà đăng nhập: tổng 70.100 điểm'], nut: { chu: 'Điểm danh ngay', link: 'diem-danh.html' } },
-    { nhan: 'Làm đẹp cho mẹ', tieuDe: 'Mẹ đẹp từ những điều chọn lọc', dong: ['Mỹ phẩm Hàn Quốc chính hãng 100%', 'Dùng điểm 20/10 giảm thêm khi mua'], ghiChu: 'Tự thưởng cho mình một món quà nhỏ nhé mẹ 💗', sp: ['26900366084', '27734205778', '57903449970', '24015583018'] },
-    { nhan: 'Mẹ khoẻ con khoẻ', tieuDe: 'Dinh dưỡng Hàn Quốc cho bé', dong: ['Chọn theo đúng tuổi của con', 'Đo chỉ số chiều cao – cân nặng miễn phí'], sp: ['22686115682', '26060839019', '42878618667', '22644617070'] },
+    { nhan: 'Quà 20/10', icon: '🎁', tieuDe: 'Tạo tài khoản / đăng nhập nhận 20.100 điểm', noiBat: 'Tặng 20.100 điểm = 20.100đ', huyHieu: 'Đến hết 20/10', dong: ['Tạo tài khoản mới từ nay đến hết 20/10 – nhận ngay', 'Đã có tài khoản: đăng nhập trong ngày 20/10', 'Điểm tự cộng vào ví – mỗi tài khoản 1 lần', 'Dùng giảm tới 10% tiền hàng mỗi đơn'], nut: { chu: 'Tạo tài khoản nhận quà', link: 'account.html' } },
+    { nhan: 'Điểm danh', icon: '📅', tieuDe: 'Điểm danh nhận 50.000 điểm', noiBat: 'Gấp 50 lần ngày thường', huyHieu: 'Chỉ ngày 20/10', dong: ['Ngày thường: 1.000 điểm', 'Riêng 20/10: 50.000 điểm', 'Cộng quà đăng nhập: tổng 70.100 điểm'], nut: { chu: 'Điểm danh ngay', link: 'diem-danh.html' } },
+    { nhan: 'Làm đẹp cho mẹ', icon: '💄', tieuDe: 'Mẹ đẹp từ những điều chọn lọc', dong: ['Mỹ phẩm Hàn Quốc chính hãng 100%', 'Dùng điểm 20/10 giảm thêm khi mua'], ghiChu: 'Tự thưởng cho mình một món quà nhỏ nhé mẹ 💗', xem: { chu: 'Xem tất cả mỹ phẩm', mo: 'Toàn bộ sản phẩm dành cho mẹ', icon: '💄', link: 'collections.html?cat=cho-me' }, sp: ['26900366084', '27734205778', '57903449970', '24015583018'] },
+    { nhan: 'Mẹ khoẻ con khoẻ', icon: '🍼', tieuDe: 'Dinh dưỡng Hàn Quốc cho bé', dong: ['Chọn theo đúng tuổi của con', 'Đo chỉ số chiều cao – cân nặng miễn phí'], xem: { chu: 'Xem tất cả sản phẩm cho bé', mo: 'Sữa, hồng sâm, vitamin, nước ép…', icon: '🍼', link: 'collections.html' }, sp: ['22686115682', '26060839019', '42878618667', '22644617070'] },
   ],
 };
 
