@@ -289,7 +289,13 @@ window.PRODUCTS = [
     "image": "img/cap-kem-nen.jpg",
     "thumb": "img/thumb/cap-kem-nen.jpg",
     "images": [
-      "img/cap-kem-nen.jpg"
+      "img/cap-kem-nen.jpg",
+      "img/cap-kem-nen-2.jpg",
+      "img/cap-kem-nen-3.jpg",
+      "img/cap-kem-nen-4.jpg",
+      "img/cap-kem-nen-5.jpg",
+      "img/cap-kem-nen-6.jpg",
+      "img/cap-kem-nen-7.jpg"
     ],
     "variants": [
       {
