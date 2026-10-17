@@ -100,7 +100,7 @@ window.AGES = [
   { key: '1-3y',   label: '1–3 tuổi',   emoji: '🧸', desc: 'Tập đi',    color: '#E0F5F2' },
   { key: '3-6y',   label: '3–6 tuổi',   emoji: '🎨', desc: 'Mầm non',   color: '#EAF0FF' },
   { key: '6-12y',  label: '6–12 tuổi',  emoji: '🎒', desc: 'Tiểu học',  color: '#EEF8E6' },
-  { key: '12-18y', label: '12–18 tuổi', emoji: '⚽', desc: 'Tuổi teen', color: '#F3E9FF' },
+  { key: '12-18y', label: '12–18 tuổi', emoji: '⚽', desc: 'Tuổi teen', color: '#F3E9FF' }
 ];
 
 /* tpcn: true → hiện cảnh báo "không phải là thuốc" theo quy định quảng cáo TPCN. image: ảnh đại diện ô danh mục trang chủ (bỏ trống sẽ dùng icon) */
@@ -113,7 +113,7 @@ window.CATEGORIES = [
   { key: 'rong-bien', label: 'Rong biển & ăn dặm',        icon: '🍙', color: '#FFF8E1', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
   { key: 'thuc-pham', label: 'Thực phẩm gia đình',        icon: '🍎', color: '#FFEBEE', desc: 'Táo đỏ Hotan, granola Nhật Bản', tpcn: false, image: 'img/thumb/28467224687.jpg' },
   { key: 'do-an',     label: 'Đồ ăn & ăn vặt',            icon: '🍱', color: '#FFF1E0', desc: 'Bò xuyên tiêu, cơm cháy, lợn đen gác bếp', tpcn: false, image: 'img/thumb/bo-xuyen-tieu.jpg' },
-  { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Chống nắng, serum, collagen, chăm sóc mẹ', tpcn: true, image: 'img/thumb/49061985399.jpg' },
+  { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Chống nắng, serum, collagen, chăm sóc mẹ', tpcn: true, image: 'img/thumb/49061985399.jpg' }
 ];
 
 window.NEEDS = [
@@ -132,7 +132,7 @@ window.NEEDS = [
   { key: 'sua-tuoi',         label: 'Sữa tươi' },
   { key: 'tri-nao',          label: 'Phát triển trí não' },
   { key: 'an-vat',           label: 'Ăn vặt lành mạnh' },
-  { key: 'lam-dep',          label: 'Làm đẹp cho mẹ' },
+  { key: 'lam-dep',          label: 'Làm đẹp cho mẹ' }
 ];
 
 window.BRANDS = [
@@ -168,7 +168,7 @@ window.BRANDS = [
   { key: 'chef-to-factory', label: 'CF – Chef To Factory', origin: 'Việt Nam', color: '#8A2A2A' },
   { key: 'vua-dinh-vi', label: 'Vua Đỉnh Vị', origin: 'Việt Nam', color: '#B71C1C' },
   { key: 'hexacare', label: 'Hexacare', origin: 'Pháp', color: '#C2185B' },
-  { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' },
+  { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' }
 ];
 
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
@@ -197,7 +197,7 @@ window.NAV = [
     { title: 'Tắm gội & làm đẹp', links: [['Sữa tắm dưỡng trắng Glutanex 300ml', 'product.html?id=24465090622'], ['Cặp dầu gội & xả Arganicare', 'product.html?id=27809051612'], ['Xịt phun sương Grace By Chera', 'product.html?id=51013054442'], ['Son filler RVB LAB Lip Explosion', 'product.html?id=57556697426'], ['Bột trắng răng Akiko Nhật Bản', 'product.html?id=56857599724']] } ] },
   { label: 'Chọn theo tuổi', short: 'Theo tuổi', tiny: 'Theo tuổi', ages: true },
   { label: 'Flash sale', short: 'Flash sale', tiny: 'Sale', link: 'collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot', hot: true },
-  { label: 'Cẩm nang chăm con', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' },
+  { label: 'Cẩm nang chăm con', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' }
 ];
 /* ===/ADMIN:NAV=== */
 
@@ -293,9 +293,7 @@ window.PRODUCTS = [
       "img/cap-kem-nen-2.jpg",
       "img/cap-kem-nen-3.jpg",
       "img/cap-kem-nen-4.jpg",
-      "img/cap-kem-nen-5.jpg",
-      "img/cap-kem-nen-6.jpg",
-      "img/cap-kem-nen-7.jpg"
+      "img/cap-kem-nen-5.jpg"
     ],
     "variants": [
       {
@@ -357,8 +355,7 @@ window.PRODUCTS = [
     "images": [
       "img/kem-exosome.jpg",
       "img/kem-exosome-2.jpg",
-      "img/kem-exosome-3.jpg",
-      "img/kem-exosome-4.jpg"
+      "img/kem-exosome-3.jpg"
     ],
     "variants": [
       {
@@ -571,7 +568,6 @@ window.PRODUCTS = [
     "thumb": "img/thumb/42878618667.jpg",
     "images": [
       "img/42878618667.jpg",
-      "img/42878618667-2.jpg",
       "img/42878618667-3.jpg",
       "img/42878618667-4.jpg",
       "img/42878618667-5.jpg"
@@ -1516,11 +1512,7 @@ window.PRODUCTS = [
     "image": "img/47357633686.jpg",
     "thumb": "img/thumb/47357633686.jpg",
     "images": [
-      "img/47357633686.jpg",
-      "img/47357633686-2.jpg",
-      "img/47357633686-3.jpg",
-      "img/47357633686-4.jpg",
-      "img/47357633686-5.jpg"
+      "img/47357633686.jpg"
     ],
     "shopeeId": "47357633686",
     "shopeeUrl": "https://shopee.vn/product/837223358/47357633686",
@@ -3755,7 +3747,7 @@ window.FEEDBACKS = [
   { image: "img/feedback/fb-48.jpg", thumb: "img/feedback/thumb/fb-48.jpg", name: "Hoà Minzy", kol: true },
   { image: "img/feedback/fb-49.jpg", thumb: "img/feedback/thumb/fb-49.jpg", name: "Đông Nhi", kol: true },
   { image: "img/feedback/fb-50.jpg", thumb: "img/feedback/thumb/fb-50.jpg", name: "Đông Nhi", kol: true },
-  { image: "img/feedback/fb-51.jpg", thumb: "img/feedback/thumb/fb-51.jpg", name: "Nước dinh dưỡng Lotte", kol: true },
+  { image: "img/feedback/fb-51.jpg", thumb: "img/feedback/thumb/fb-51.jpg", name: "Nước dinh dưỡng Lotte", kol: true }
 ];
 
 /* Banner đầu trang chủ. Ảnh minh hoạ bên phải: image (1 ảnh) · images + sticker (nhiều ảnh xếp chồng + nhãn dán) · tiers: true (bảng hạng khách hàng lấy từ TIERS) */
@@ -3869,7 +3861,7 @@ window.REVIEWS = [
   { name: 'Mẹ Thu Hà', child: 'bé Bin 3 tuổi', city: 'Q.7, TP.HCM', stars: 5, text: 'Đặt hồng sâm ChuChu buổi sáng, trưa đã có hàng. Bé uống vị táo lê rất thích, dạo này ít ốm vặt hẳn. Có tem phụ đầy đủ nên mình yên tâm.', product: '22644617070' },
   { name: 'Mẹ Ngọc Anh', child: 'bé Sóc 8 tháng', city: 'Cầu Giấy, Hà Nội', stars: 5, text: 'Mua D3K2 nhỏ giọt cho con, chuyên gia dinh dưỡng gọi hướng dẫn liều dùng rất kỹ. Giá tốt hơn mấy shop khác mà còn freeship.', product: '42878618667' },
   { name: 'Mẹ Phương Linh', child: 'bé Na 4 tuổi', city: 'Đà Nẵng', stars: 5, text: 'Nút mua nhanh tiện thật, chỉ nhập số điện thoại với địa chỉ là xong, không phải đăng ký tài khoản. Lần 2 mua nước ép Lotte còn tự điền sẵn luôn.', product: '22686115682' },
-  { name: 'Chị Mai Trang', child: 'con trai 6 tuổi', city: 'Thủ Đức, TP.HCM', stars: 4, text: 'Con biếng ăn nên mình mua gạc hươu Sumo. Giao hàng đúng hẹn, đóng gói cẩn thận, thùng không móp. Mong shop có thêm mã giảm.', product: '26156646705' },
+  { name: 'Chị Mai Trang', child: 'con trai 6 tuổi', city: 'Thủ Đức, TP.HCM', stars: 4, text: 'Con biếng ăn nên mình mua gạc hươu Sumo. Giao hàng đúng hẹn, đóng gói cẩn thận, thùng không móp. Mong shop có thêm mã giảm.', product: '26156646705' }
 ];
 
 /* ===ADMIN:POSTS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
@@ -3901,7 +3893,7 @@ window.POSTS = [
       "- Theo dõi cân nặng, chiều cao định kỳ để biết con lớn đều hay không.",
       "## Bổ sung khi cần",
       "Vitamin D giúp cơ thể hấp thu canxi. Bé ít ra nắng hoặc ăn ít sữa có thể cần bổ sung. Theo nhà sản xuất, D3K2 Pure Vitality dạng giọt dùng được từ sơ sinh, D3 hỗ trợ hấp thu canxi, K2 hỗ trợ đưa canxi vào xương.",
-      "![Vitamin D3K2 Pure Vitality dạng giọt](img/42878618667-2.jpg)",
+      "![Vitamin D3K2 Pure Vitality dạng giọt](img/42878618667.jpg)",
       "[[sp:42878618667]]",
       "[[sp:26060839019]]",
       "[[sp:41353214697]]",
@@ -5984,13 +5976,13 @@ window.SU_KIEN = {
   luat: ['Quà 20.100 điểm: tạo tài khoản mới từ nay đến hết 20/10, hoặc đăng nhập trong ngày 20/10 – mỗi tài khoản nhận 1 lần.', 'Điểm danh ngày 20/10 được 50.000 điểm (ngày thường 1.000 điểm). 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.', 'Quà tặng, mã giảm giá và giờ vàng ngày thường vẫn áp dụng như bình thường.'],
   banners: [
     { pc: 'img/su-kien/2010d-b1pc.jpg', mb: 'img/su-kien/2010d-b1mb.jpg', link: 'index.html?tab=2010', alt: 'Chúc mừng ngày Phụ nữ Việt Nam 20.10 – đăng nhập tặng 20.100 điểm, điểm danh 50.000 điểm' },
-    { pc: 'img/su-kien/2010d-b2pc.jpg', mb: 'img/su-kien/2010d-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' },
+    { pc: 'img/su-kien/2010d-b2pc.jpg', mb: 'img/su-kien/2010d-b2mb.jpg', link: 'diem-danh.html', alt: 'Chỉ trong ngày 20/10 – điểm danh nhận 50.000 điểm thưởng' }
   ],
   khoi: [
     { nhan: 'Quà 20/10', icon: '🎁', tieuDe: 'Tạo tài khoản / đăng nhập nhận 20.100 điểm', noiBat: 'Tặng 20.100 điểm = 20.100đ', huyHieu: 'Đến hết 20/10', dong: ['Tạo tài khoản mới từ nay đến hết 20/10 – nhận ngay', 'Đã có tài khoản: đăng nhập trong ngày 20/10', 'Điểm tự cộng vào ví – mỗi tài khoản 1 lần', 'Dùng giảm tới 10% tiền hàng mỗi đơn'], nut: { chu: 'Tạo tài khoản nhận quà', link: 'account.html' } },
     { nhan: 'Điểm danh', icon: '📅', tieuDe: 'Điểm danh nhận 50.000 điểm', noiBat: 'Gấp 50 lần ngày thường', huyHieu: 'Chỉ ngày 20/10', dong: ['Ngày thường: 1.000 điểm', 'Riêng 20/10: 50.000 điểm', 'Cộng quà đăng nhập: tổng 70.100 điểm'], nut: { chu: 'Điểm danh ngay', link: 'diem-danh.html' } },
     { nhan: 'Làm đẹp cho mẹ', icon: '💄', tieuDe: 'Mẹ đẹp từ những điều chọn lọc', dong: ['Mỹ phẩm Hàn Quốc chính hãng 100%', 'Dùng điểm 20/10 giảm thêm khi mua'], ghiChu: 'Tự thưởng cho mình một món quà nhỏ nhé mẹ 💗', xem: { chu: 'Xem tất cả mỹ phẩm', mo: 'Toàn bộ sản phẩm dành cho mẹ', icon: '💄', link: 'collections.html?cat=cho-me' }, sp: ['cap-kem-nen-eclat', '57903449970', '57413220644', '57556697426'] },
-    { nhan: 'Mẹ khoẻ con khoẻ', icon: '🍼', tieuDe: 'Dinh dưỡng Hàn Quốc cho bé', dong: ['Chọn theo đúng tuổi của con', 'Đo chỉ số chiều cao – cân nặng miễn phí'], xem: { chu: 'Xem tất cả sản phẩm cho bé', mo: 'Sữa, hồng sâm, vitamin, nước ép…', icon: '🍼', link: 'collections.html' }, sp: ['22686115682', '26060839019', '42878618667', '22644617070'] },
+    { nhan: 'Mẹ khoẻ con khoẻ', icon: '🍼', tieuDe: 'Dinh dưỡng Hàn Quốc cho bé', dong: ['Chọn theo đúng tuổi của con', 'Đo chỉ số chiều cao – cân nặng miễn phí'], xem: { chu: 'Xem tất cả sản phẩm cho bé', mo: 'Sữa, hồng sâm, vitamin, nước ép…', icon: '🍼', link: 'collections.html' }, sp: ['22686115682', '26060839019', '42878618667', '22644617070'] }
   ],
 };
 
@@ -6003,7 +5995,7 @@ window.SU_KIEN = {
    - ngày có SU_KIEN đang chạy (vd 10.10) thì giờ vàng tạm nghỉ
    ===================================================================== */
 window.GIO_VANG = [
-  { id: 'lotte-5', ten: 'Giờ vàng Lotte', giam: 5, tu: '20:00', den: '22:00', brands: ['lotte'], sanPham: [], tuNgay: '2026-10-12', denNgay: '', tat: false },
+  { id: 'lotte-5', ten: 'Giờ vàng Lotte', giam: 5, tu: '20:00', den: '22:00', brands: ['lotte'], sanPham: [], tuNgay: '2026-10-12', denNgay: '', tat: false }
 ];
 
 /* =====================================================================
@@ -6020,55 +6012,55 @@ window.MUA_KEM = {
       ['42878618667', 'Uống cùng sữa – D3K2 hỗ trợ hấp thu canxi'],
       ['41353214697', 'Bộ đôi hỗ trợ phát triển chiều cao mẹ hay chọn'],
       ['26060839019', 'Thêm canxi hữu cơ cho bé ăn vặt'],
-      ['45462512687', 'Trộn cơm hỗ trợ bé ăn ngon miệng hơn'],
+      ['45462512687', 'Trộn cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'nuoc-ep': [
       ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ'],
       ['42878618667', 'Thêm D3K2 hỗ trợ bé phát triển chiều cao'],
       ['27355720019', 'Hồng sâm hỗ trợ trí não khi đi học'],
-      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'hong-sam': [
       ['25632276959', 'Nước ép tăng cân uống xen với hồng sâm'],
       ['42878618667', 'Thêm D3K2 hỗ trợ bé phát triển chiều cao'],
       ['26156646705', 'Gạc hươu hỗ trợ bé tăng cân'],
-      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'vitamin': [
       ['13899935993', 'Sữa dê bổ sung canxi, dễ hấp thu'],
       ['41353214697', 'Bộ đôi hỗ trợ phát triển chiều cao mẹ hay chọn'],
       ['42878618667', 'Mẹ hay dùng D3K2 cùng canxi'],
-      ['45462512687', 'Trộn cơm hỗ trợ bé ăn ngon miệng hơn'],
+      ['45462512687', 'Trộn cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'tang-can': [
       ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ'],
       ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
       ['13899935993', 'Sữa dê dễ hấp thu, hỗ trợ tăng cân'],
-      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'rong-bien': [
       ['41002695070', 'Đổi vị rong biển cho bé đỡ ngán'],
       ['45462512687', 'Đổi vị rong biển cho bé đỡ ngán'],
       ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
-      ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ'],
+      ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ']
     ],
     'thuc-pham': [
       ['43532388498', 'Ăn sáng nhanh cùng sữa chua, sữa tươi'],
       ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà'],
       ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
-      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn'],
+      ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'do-an': [
       ['com-chay-phomai', 'Ăn vặt giòn rụm cho cả nhà'],
       ['muoi-xuyen-tieu', 'Muối chấm hoa quả, thịt luộc'],
       ['bo-xuyen-tieu', 'Bò sấy dẻo nhâm nhi'],
-      ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà'],
+      ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà']
     ],
     'cho-me': [
       ['27734205778', 'Chống nắng mỗi ngày – bước dưỡng không thể thiếu'],
       ['24015583018', 'Mặt nạ bán chạy, đắp 2–3 lần/tuần'],
       ['28467224687', 'Táo đỏ hầm canh, pha trà cho mẹ'],
-      ['25632276959', 'Mua kèm cho bé – nước ép bán chạy nhất'],
+      ['25632276959', 'Mua kèm cho bé – nước ép bán chạy nhất']
     ],
   },
 };
@@ -6081,7 +6073,7 @@ window.TIERS = [
   { key: 'silver',   label: 'Silver',   icon: '🥈', color: '#78909C', min: 5000000,   discount: 5,  desc: 'Giảm 5% mọi đơn hàng' },
   { key: 'gold',     label: 'Gold',     icon: '🥇', color: '#C98A12', min: 20000000,  discount: 7,  desc: 'Giảm 7% mọi đơn hàng' },
   { key: 'diamond',  label: 'Diamond',  icon: '💎', color: '#1E9CB8', min: 40000000,  discount: 10, desc: 'Giảm 10% mọi đơn hàng' },
-  { key: 'platinum', label: 'Platinum', icon: '👑', color: '#6A4FB6', min: 100000000, discount: 12, desc: 'Giảm 12% mọi đơn hàng' },
+  { key: 'platinum', label: 'Platinum', icon: '👑', color: '#6A4FB6', min: 100000000, discount: 12, desc: 'Giảm 12% mọi đơn hàng' }
 ];
 /* ===/ADMIN:TIERS=== */
 
