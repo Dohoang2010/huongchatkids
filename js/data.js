@@ -293,7 +293,9 @@ window.PRODUCTS = [
       "img/cap-kem-nen-2.jpg",
       "img/cap-kem-nen-3.jpg",
       "img/cap-kem-nen-4.jpg",
-      "img/cap-kem-nen-5.jpg"
+      "img/cap-kem-nen-5.jpg",
+      "img/cap-kem-nen-6.jpg",
+      "img/cap-kem-nen-7.jpg"
     ],
     "variants": [
       {
@@ -355,7 +357,8 @@ window.PRODUCTS = [
     "images": [
       "img/kem-exosome.jpg",
       "img/kem-exosome-2.jpg",
-      "img/kem-exosome-3.jpg"
+      "img/kem-exosome-3.jpg",
+      "img/kem-exosome-4.jpg"
     ],
     "variants": [
       {
@@ -568,6 +571,7 @@ window.PRODUCTS = [
     "thumb": "img/thumb/42878618667.jpg",
     "images": [
       "img/42878618667.jpg",
+      "img/42878618667-2.jpg",
       "img/42878618667-3.jpg",
       "img/42878618667-4.jpg",
       "img/42878618667-5.jpg"
@@ -1512,7 +1516,11 @@ window.PRODUCTS = [
     "image": "img/47357633686.jpg",
     "thumb": "img/thumb/47357633686.jpg",
     "images": [
-      "img/47357633686.jpg"
+      "img/47357633686.jpg",
+      "img/47357633686-2.jpg",
+      "img/47357633686-3.jpg",
+      "img/47357633686-4.jpg",
+      "img/47357633686-5.jpg"
     ],
     "shopeeId": "47357633686",
     "shopeeUrl": "https://shopee.vn/product/837223358/47357633686",
@@ -3893,7 +3901,7 @@ window.POSTS = [
       "- Theo dõi cân nặng, chiều cao định kỳ để biết con lớn đều hay không.",
       "## Bổ sung khi cần",
       "Vitamin D giúp cơ thể hấp thu canxi. Bé ít ra nắng hoặc ăn ít sữa có thể cần bổ sung. Theo nhà sản xuất, D3K2 Pure Vitality dạng giọt dùng được từ sơ sinh, D3 hỗ trợ hấp thu canxi, K2 hỗ trợ đưa canxi vào xương.",
-      "![Vitamin D3K2 Pure Vitality dạng giọt](img/42878618667.jpg)",
+      "![Vitamin D3K2 Pure Vitality dạng giọt](img/42878618667-2.jpg)",
       "[[sp:42878618667]]",
       "[[sp:26060839019]]",
       "[[sp:41353214697]]",
