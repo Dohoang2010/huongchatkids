@@ -193,19 +193,20 @@
     'tinh-yeu':  { m1: '#E0245E', m2: '#FF8FB1', chu: '#fff', sticker: '💝', hieuUng: 'tim', hat: ['💗', '💖', '🌹'] },
     'hoa-hong':  { m1: '#E8436E', m2: '#FF9BB5', chu: '#fff', sticker: '💐', hieuUng: 'hoa', hat: ['🌸', '🌷', '🌺', '💮'] },
     'hoa-tim':   { m1: '#8E44AD', m2: '#F06292', chu: '#fff', sticker: '💐', hieuUng: 'hoa', hat: ['🌸', '🌷', '💜'] },
-    'trang-trong': { m1: '#B71C1C', m2: '#F9A825', chu: '#fff', sticker: '🇻🇳', hieuUng: '', hat: [] },
+    'trang-trong': { m1: '#B71C1C', m2: '#F9A825', chu: '#fff', sticker: '🇻🇳', hieuUng: 'sao-vang', hat: ['⭐', '🌟', '🇻🇳'] },
     'gia-dinh':  { m1: '#E07A5F', m2: '#F2CC8F', chu: '#fff', sticker: '💐', hieuUng: 'hoa', hat: ['🌸', '🌷', '💗'] },
     'thieu-nhi': { m1: '#2E86DE', m2: '#FF9F43', chu: '#fff', sticker: '🎈', hieuUng: 'bong-bay', hat: ['🎈', '🎈', '⭐', '🧸'] },
-    'am-ap':     { m1: '#2C3E50', m2: '#D4A373', chu: '#fff', sticker: '👔', hieuUng: '', hat: [] },
-    'tuu-truong': { m1: '#1E88E5', m2: '#FDD835', chu: '#fff', sticker: '🎒', hieuUng: '', hat: [] },
+    'am-ap':     { m1: '#2C3E50', m2: '#D4A373', chu: '#fff', sticker: '👔', hieuUng: 'am-ap', hat: ['💙', '👔', '⭐', '🤍'] },
+    'tuu-truong': { m1: '#1E88E5', m2: '#FDD835', chu: '#fff', sticker: '🎒', hieuUng: 'hoc-cu', hat: ['📚', '✏️', '🎒', '📐', '⭐'] },
     'trung-thu': { m1: '#1A237E', m2: '#FFB300', chu: '#fff', sticker: '🏮', hieuUng: 'den-long', hat: ['🏮', '🌕', '⭐'] },
     'halloween': { m1: '#3D1E6D', m2: '#FF7518', chu: '#fff', sticker: '🎃', hieuUng: 'halloween', hat: ['🎃', '🦇', '👻', '🍬'] },
-    'sale':      { m1: '#E53935', m2: '#FF7043', chu: '#fff', sticker: '🛍️', hieuUng: '', hat: [] },
+    'sale':      { m1: '#E53935', m2: '#FF7043', chu: '#fff', sticker: '🛍️', hieuUng: 'qua-sale', hat: ['🛍️', '🎁', '🏷️', '✨'] },
     'tri-an':    { m1: '#00796B', m2: '#E57373', chu: '#fff', sticker: '📚', hieuUng: 'hoa', hat: ['🌷', '🌸'] },
-    'sale-den':  { m1: '#111111', m2: '#FFC107', chu: '#fff', sticker: '🏷️', hieuUng: '', hat: [] },
+    'sale-den':  { m1: '#111111', m2: '#FFC107', chu: '#fff', sticker: '🏷️', hieuUng: 'the-gia', hat: ['🏷️', '💥', '✨', '🖤'] },
     'giang-sinh': { m1: '#1B5E20', m2: '#C62828', chu: '#fff', sticker: '🎄', hieuUng: 'tuyet', hat: ['❄', '❅', '❆'] },
   };
-  const HIEU_UNG = { '': 'Không có', hoa: 'Cánh hoa rơi', tim: 'Trái tim bay', 'phao-hoa': 'Lấp lánh năm mới', 'bong-bay': 'Bóng bay', 'den-long': 'Đèn lồng', halloween: 'Bí ngô & dơi vui nhộn', tuyet: 'Tuyết nhẹ' };
+  const HIEU_UNG = { '': 'Không có', hoa: 'Cánh hoa rơi', tim: 'Trái tim bay', 'phao-hoa': 'Lấp lánh năm mới', 'bong-bay': 'Bóng bay', 'den-long': 'Đèn lồng', halloween: 'Bí ngô & dơi vui nhộn', tuyet: 'Tuyết nhẹ',
+    'sao-vang': 'Sao vàng bay nhẹ', 'am-ap': 'Lời chúc ấm áp', 'hoc-cu': 'Sách vở, bút chì', 'qua-sale': 'Túi quà, nhãn giá', 'the-gia': 'Nhãn giá Black Friday' };
 
   /* ---------- 19 chiến dịch mặc định ---------- */
   const C = (id, ten, lich, x) => Object.assign({ id, ten, lich, bat: true, uuTien: 10, truoc: 3, soNgay: 1, chuDe: 'hoa-hong', hieuUng: null, dai: '', nut: '', link: '', moTa: '',
@@ -215,7 +216,7 @@
     C('tet-nguyen-dan', 'Tết Nguyên Đán', { loai: 'am', thang: 1, ngay: 1 }, { chuDe: 'tet', soNgay: 3, uuTien: 100, dai: '🧧 Chúc Mừng Năm Mới – Hương Chất Kids chúc cả nhà an khang thịnh vượng, bé ăn ngoan chóng lớn!', moTa: 'Mùng 1–3 Tết âm lịch: hoa đào, hoa mai, lì xì' }),
     C('valentine', 'Valentine', { loai: 'duong', ngay: '02-14' }, { chuDe: 'tinh-yeu', dai: '💝 Valentine ngọt ngào – yêu thương bắt đầu từ những điều chọn lọc cho cả nhà', moTa: 'Trái tim, quà tặng, hoa' }),
     C('quoc-te-phu-nu', 'Ngày Quốc tế Phụ nữ 8/3', { loai: 'duong', ngay: '03-08' }, { chuDe: 'hoa-tim', uuTien: 30, dai: '💐 Chúc mừng ngày Quốc tế Phụ nữ 8/3 – chúc mẹ luôn xinh đẹp, hạnh phúc và được yêu thương', moTa: 'Hoa, quà tặng, lời chúc phụ nữ' }),
-    C('gio-to', 'Giỗ Tổ Hùng Vương', { loai: 'am', thang: 3, ngay: 10 }, { chuDe: 'trang-trong', uuTien: 40, dai: '🇻🇳 Dù ai đi ngược về xuôi, nhớ ngày Giỗ Tổ mùng mười tháng ba', moTa: 'Trang trọng, văn hoá Việt – không hiệu ứng' }),
+    C('gio-to', 'Giỗ Tổ Hùng Vương', { loai: 'am', thang: 3, ngay: 10 }, { chuDe: 'trang-trong', uuTien: 40, dai: '🇻🇳 Dù ai đi ngược về xuôi, nhớ ngày Giỗ Tổ mùng mười tháng ba', moTa: 'Trang trọng, văn hoá Việt – sao vàng bay nhẹ' }),
     C('30-4-1-5', 'Giải phóng miền Nam & Quốc tế Lao động', { loai: 'duong', ngay: '04-30' }, { chuDe: 'trang-trong', soNgay: 2, uuTien: 40, dai: '🇻🇳 Chào mừng 30/4 – 1/5 · Chúc cả nhà kỳ nghỉ lễ vui vẻ, an toàn', moTa: '30/4 và 1/5 – trang trọng, hiện đại' }),
     C('ngay-cua-me', 'Ngày của Mẹ', { loai: 'quytac', ma: 'ngay-cua-me' }, { chuDe: 'gia-dinh', uuTien: 30, dai: '💐 Ngày của Mẹ – cảm ơn mẹ vì tất cả. Hương Chất Kids chúc mẹ luôn khoẻ và hạnh phúc', moTa: 'Chủ nhật thứ 2 của tháng 5' }),
     C('thieu-nhi', 'Quốc tế Thiếu nhi 1/6', { loai: 'duong', ngay: '06-01' }, { chuDe: 'thieu-nhi', uuTien: 30, dai: '🎈 Chúc mừng ngày Quốc tế Thiếu nhi 1/6 – chúc các bé luôn vui khoẻ, mau lớn!', moTa: 'Bóng bay, màu sắc vui tươi' }),
@@ -282,13 +283,15 @@
       const giam = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const yeu = (w.navigator.deviceMemory && w.navigator.deviceMemory <= 2) || (w.navigator.hardwareConcurrency && w.navigator.hardwareConcurrency <= 2) || (w.navigator.connection && w.navigator.connection.saveData);
       if (hu && hat.length && cfgOk.hieuUng && !giam && !yeu && hopTrang(cd.hieuUngTrang || [], p)) {
-        /* Mật độ thưa + rơi chậm cho đỡ rối mắt (tuyết dày hơn chút vì hạt nhỏ) */
-        const nho = w.innerWidth < 768, so = hu === 'tuyet' ? (nho ? 7 : 12) : (nho ? 4 : 8), trangChu = p === 'index.html';
+        /* Mật độ thưa + rơi chậm cho đỡ rối mắt: tuyết dày hơn chút (hạt nhỏ), ngày trang trọng thưa và chậm nhất */
+        const nho = w.innerWidth < 768, trangChu = p === 'index.html';
+        const nhe = hu === 'sao-vang' || hu === 'am-ap';                                  // ngày lễ trang trọng: rất nhẹ nhàng
+        const so = hu === 'tuyet' ? (nho ? 7 : 12) : nhe ? (nho ? 3 : 6) : (nho ? 4 : 8);
         const el = doc.createElement('div'); el.className = 'le-hoa le-hoa--' + hu; el.setAttribute('aria-hidden', 'true');
         for (let i = 0; i < so; i++) {
           const c = doc.createElement('i'); c.textContent = hat[i % hat.length];
           const lap = trangChu ? 'infinite' : '2';
-          c.style.cssText = `left:${(i + Math.random()) * 100 / so}%;font-size:${(hu === 'tuyet' ? 9 : 13) + Math.random() * 11}px;animation-duration:${18 + Math.random() * 12}s,${5 + Math.random() * 3}s;animation-delay:${-Math.random() * 26}s,0s;animation-iteration-count:${lap},infinite`;
+          c.style.cssText = `left:${(i + Math.random()) * 100 / so}%;font-size:${(hu === 'tuyet' ? 9 : 13) + Math.random() * 11}px;animation-duration:${(nhe ? 26 : 18) + Math.random() * 12}s,${5 + Math.random() * 3}s;animation-delay:${-Math.random() * 26}s,0s;animation-iteration-count:${lap},infinite`;
           el.appendChild(c);
         }
         doc.body.appendChild(el); hieuUngEl = el;

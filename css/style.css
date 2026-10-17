@@ -2332,6 +2332,10 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .le-hoa.is-dung i { animation-play-state: paused; }
 .le-hoa--tuyet i { color: #fff; text-shadow: 0 0 3px rgba(80,120,160,.6); opacity: .9; }
 .le-hoa--bong-bay i, .le-hoa--den-long i { animation-name: leBay, leDua; top: auto; bottom: -50px; }
+/* Ngày lễ trang trọng: sao vàng mờ nhẹ, không xoay – giữ sự nghiêm trang */
+.le-hoa--sao-vang i, .le-hoa--am-ap i { animation-name: leRoiThang, leDua; opacity: .5; }
+.le-hoa--the-gia i { opacity: .8; }
+@keyframes leRoiThang { 0% { transform: translateY(-40px) rotate(0); } 100% { transform: translateY(110vh) rotate(60deg); } }
 @keyframes leRoi { 0% { transform: translateY(-40px) rotate(0); } 100% { transform: translateY(110vh) rotate(220deg); } }
 @keyframes leBay { 0% { transform: translateY(0); } 100% { transform: translateY(-115vh); } }
 @keyframes leDua { 0%, 100% { margin-left: -9px; } 50% { margin-left: 9px; } }

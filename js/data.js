@@ -329,8 +329,8 @@ window.PRODUCTS = [
       "cho-me",
       "lam-dep"
     ],
-    "price": 0,
-    "oldPrice": 0,
+    "price": 980000,
+    "oldPrice": 1323000,
     "rating": 5.0,
     "reviews": 0,
     "sold": 0,
@@ -357,11 +357,8 @@ window.PRODUCTS = [
     "variants": [
       {
         "label": "1 hũ 50ml",
-        "price": 0
-      },
-      {
-        "label": "2 hũ",
-        "price": 0
+        "price": 980000,
+        "oldPrice": 1323000
       }
     ],
     "desc": "Kem trắng EXOSOME Hàn Quốc dòng EXOPLUS – mỹ phẩm ứng dụng công nghệ EXOSOME được cấp bằng sáng chế vào chăm sóc da, hàm lượng EXOSOME tăng cường. Theo nhà sản xuất, sản phẩm vừa nâng tông trang điểm nhẹ, vừa chăm sóc da sáng mịn, căng bóng, hỗ trợ cải thiện nếp nhăn và làm dịu làn da ửng đỏ, mỏng yếu.",
@@ -372,8 +369,7 @@ window.PRODUCTS = [
       "HA đa tầng cấp ẩm sâu, chất kem mướt, ăn tệp, không bí da",
       "Hỗ trợ trẻ hoá, cải thiện nếp nhăn, xoa dịu da ửng đỏ mỏng yếu"
     ],
-    "usage": "Sau bước dưỡng da, lấy lượng vừa đủ thoa đều lên mặt và cổ, vỗ nhẹ cho thẩm thấu. Dùng buổi sáng trước kem chống nắng hoặc buổi tối ở bước cuối. Có thể dùng thay lớp nền mỏng khi ra ngoài.",
-    "an": true
+    "usage": "Sau bước dưỡng da, lấy lượng vừa đủ thoa đều lên mặt và cổ, vỗ nhẹ cho thẩm thấu. Dùng buổi sáng trước kem chống nắng hoặc buổi tối ở bước cuối. Có thể dùng thay lớp nền mỏng khi ra ngoài."
   },
   {
     "id": "41002695070",
