@@ -24,21 +24,33 @@
   }
 
   /* ================= DANH SÁCH CHƯƠNG TRÌNH ================= */
-  let loc = { q: '', tu: '', den: '' };
+  let loc = { q: '', tu: '', den: '' }, tab = 'tat';   // tab: tat | dang | sap | het (giống trang Mã giảm giá)
+  const nhomTT = (k) => (k === 'tat' ? 'het' : k);   // chương trình đã tắt tính vào Đã kết thúc
+  const THU_TU = { sap: 0, dang: 1, het: 2 };
   function veDanhSach(el, veHang) {
     const q = QT();
     $('#pageAct').innerHTML = `<a class="btn btn--primary" href="#/qua-tang/moi">+ Tạo chương trình</a>`;
+    const dem = { tat: q.chuongTrinh.length, dang: 0, sap: 0, het: 0 }; q.chuongTrinh.forEach((c) => { dem[nhomTT(trangThai(c)[2])]++; });
     const list = q.chuongTrinh.filter((c) => {
+      if (tab !== 'tat' && nhomTT(trangThai(c)[2]) !== tab) return false;
       if (loc.q && !khongDau(c.ten).includes(khongDau(loc.q))) return false;
       if (loc.tu && Date.parse(c.ketThuc) < Date.parse(loc.tu + 'T00:00')) return false;
       if (loc.den && Date.parse(c.batDau) > Date.parse(loc.den + 'T23:59')) return false;
       return true;
-    }).sort((a, b) => Date.parse(b.batDau) - Date.parse(a.batDau));
+    }).sort((a, b) => {   // Sắp diễn ra → Đang diễn ra → Đã kết thúc; trong nhóm: sắp/đang theo ngày gần nhất, đã kết thúc mới nhất lên trước
+      const ka = nhomTT(trangThai(a)[2]), kb = nhomTT(trangThai(b)[2]);
+      if (ka !== kb) return THU_TU[ka] - THU_TU[kb];
+      if (ka === 'sap') return Date.parse(a.batDau) - Date.parse(b.batDau);
+      if (ka === 'dang') return Date.parse(a.ketThuc) - Date.parse(b.ketThuc);
+      return Date.parse(b.ketThuc) - Date.parse(a.ketThuc);
+    });
+    const hienMacDinh = tab === 'tat' || tab === (q.enabled ? 'dang' : 'het');
     const thumbs = (c) => [...(c.sanPhamChinh || []), ...(c.quaTang || [])].slice(0, 3).map((x) => sp(x.id)).filter(Boolean)
       .map((p) => `<img class="ct-thumb" src="${anh(p)}" alt="" title="${esc(p.short || p.name)}" onerror="this.style.visibility='hidden'">`).join('');
     el.innerHTML = `
       <div class="card"><h3>🎁 Danh sách chương trình quà tặng</h3>
-        <p class="muted">Bấm vào tên chương trình để xem chi tiết. Các chương trình không cộng dồn – web tự lấy chương trình tặng nhiều quà nhất cho đơn.</p>
+        <p class="muted">Bấm vào tên chương trình để xem chi tiết. Các chương trình không cộng dồn – web tự lấy chương trình tặng nhiều quà nhất cho đơn (trừ chương trình được cài cộng thêm, vd quà Bò xuyên tiêu).</p>
+        <div class="vc-tabs">${[['tat', 'Tất cả'], ['dang', 'Đang diễn ra'], ['sap', 'Sắp diễn ra'], ['het', 'Đã kết thúc']].map(([k, t]) => `<button class="${tab === k ? 'is-on' : ''}" data-ct-tab="${k}">${t} (${dem[k]})</button>`).join('')}</div>
         <div class="loc">
           <label>Tìm kiếm<input id="ctQ" value="${esc(loc.q)}" placeholder="Tên chương trình"></label>
           <label>Từ ngày<input type="date" id="ctTu" value="${esc(loc.tu)}"></label>
@@ -55,7 +67,7 @@
               <a href="#/qua-tang/${esc(c.id)}">${k === 'het' ? 'Chi tiết' : 'Chỉnh sửa'}</a>
               <button data-ct-sao="${esc(c.id)}">Sao chép</button>
               ${k === 'dang' ? `<button data-ct-tat="${esc(c.id)}">Kết thúc sớm</button>` : `<button class="red" data-ct-xoa="${esc(c.id)}">Xoá</button>`}</div></td></tr>`; }).join('')}
-          ${q.ten || q.donTu || q.thung ? `<tr>
+          ${hienMacDinh && (q.ten || q.donTu || q.thung) ? `<tr>
             <td data-nhan="Chương trình">${A.badge(q.enabled ? 'Đang chạy liên tục' : 'Đang tắt', q.enabled ? 'tag--vang' : 'tag--off')}<br><a class="ct-ten" href="#/qua-tang/mac-dinh">Quà ${esc(q.ten || 'mặc định')} (đơn từ ${fmt((q.donTu || {}).muc || 0)} · mua thùng)</a><small class="muted">Chương trình cũ, không giới hạn thời gian</small></td>
             <td data-nhan="Loại">Tặng theo giá trị đơn / số thùng</td><td data-nhan="Sản phẩm"><span class="muted">${esc((q.vi || []).join(', '))}</span></td>
             <td data-nhan="Thời gian">Không thời hạn</td><td data-nhan="Thao tác"><div class="ct-act"><a href="#/qua-tang/mac-dinh">Chỉnh sửa</a>
@@ -268,6 +280,7 @@
     const t = e.target;
     if (t.closest('[data-ct-huy]')) { nhap = null; goc = null; return; }
     if (t.id === 'ctDatLai') { loc = { q: '', tu: '', den: '' }; return A.veTrang(); }
+    const ctb = t.closest('[data-ct-tab]'); if (ctb) { tab = ctb.dataset.ctTab; return A.veTrang(); }
     /* Chương trình chạy liên tục (QUA_TANG cũ): kết thúc / bật lại / sao chép thành chương trình mới có thời hạn */
     if (t.closest('[data-md-tat]')) {
       if (!await A.hoi({ tieuDe: 'Kết thúc chương trình chạy liên tục?', noiDung: `Quà <b>${esc(QT().ten || 'mặc định')}</b> (đơn từ … / mua thùng) sẽ dừng tặng sau khi Xuất bản. Cấu hình vẫn giữ nguyên – bấm <b>Bật lại</b> khi cần.`, nutOk: 'Kết thúc' })) return;
