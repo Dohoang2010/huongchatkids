@@ -5337,6 +5337,445 @@ window.QUA_TANG = {
           }
         }
       ]
+    },
+    {
+      "id": "ct-2010-mp-5tr",
+      "ten": "20/10 · Mỹ phẩm đơn từ 5 triệu tặng 1 hộp mặt nạ NMN",
+      "batDau": "2026-10-18T00:00",
+      "ketThuc": "2026-10-21T00:00",
+      "kieu": "tien",
+      "tenQua": "hộp mặt nạ NMN Kousa",
+      "bac": [
+        {
+          "muc": 5000000,
+          "soQua": 1
+        }
+      ],
+      "muc": 5000000,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "cap-kem-nen-eclat",
+          "bat": true
+        },
+        {
+          "id": "kem-exosome-toneup",
+          "bat": true
+        },
+        {
+          "id": "49061985399",
+          "bat": true
+        },
+        {
+          "id": "48112514210",
+          "bat": true
+        },
+        {
+          "id": "57413220644",
+          "bat": true
+        },
+        {
+          "id": "57903449970",
+          "bat": true
+        },
+        {
+          "id": "51013054442",
+          "bat": true
+        },
+        {
+          "id": "24767149051",
+          "bat": true
+        },
+        {
+          "id": "50002678694",
+          "bat": true
+        },
+        {
+          "id": "24465090622",
+          "bat": true
+        },
+        {
+          "id": "57556697426",
+          "bat": true
+        },
+        {
+          "id": "24015142248",
+          "bat": true
+        },
+        {
+          "id": "24764883120",
+          "bat": true
+        },
+        {
+          "id": "24015583018",
+          "bat": true
+        },
+        {
+          "id": "28902157429",
+          "bat": true
+        },
+        {
+          "id": "26800350417",
+          "bat": true
+        },
+        {
+          "id": "27734205778",
+          "bat": true
+        },
+        {
+          "id": "25678530796",
+          "bat": true
+        },
+        {
+          "id": "29006040615",
+          "bat": true
+        },
+        {
+          "id": "27809051612",
+          "bat": true
+        },
+        {
+          "id": "24329101823",
+          "bat": true
+        },
+        {
+          "id": "26900366084",
+          "bat": true
+        },
+        {
+          "id": "56857599724",
+          "bat": true
+        },
+        {
+          "id": "28806784125",
+          "bat": true
+        },
+        {
+          "id": "hexacare",
+          "bat": true
+        }
+      ],
+      "quaTang": [
+        {
+          "id": "24015583018",
+          "bienThe": {
+            "1 hộp": true,
+            "2 hộp": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "ct-2010-mp-10tr",
+      "ten": "20/10 · Mỹ phẩm đơn từ 10 triệu tặng son Filler (hoặc giảm 5%)",
+      "batDau": "2026-10-18T00:00",
+      "ketThuc": "2026-10-21T00:00",
+      "kieu": "tien",
+      "tenQua": "son Filler RVB LAB",
+      "hoacGiam": 5,
+      "bac": [
+        {
+          "muc": 10000000,
+          "soQua": 1
+        }
+      ],
+      "muc": 10000000,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "cap-kem-nen-eclat",
+          "bat": true
+        },
+        {
+          "id": "kem-exosome-toneup",
+          "bat": true
+        },
+        {
+          "id": "49061985399",
+          "bat": true
+        },
+        {
+          "id": "48112514210",
+          "bat": true
+        },
+        {
+          "id": "57413220644",
+          "bat": true
+        },
+        {
+          "id": "57903449970",
+          "bat": true
+        },
+        {
+          "id": "51013054442",
+          "bat": true
+        },
+        {
+          "id": "24767149051",
+          "bat": true
+        },
+        {
+          "id": "50002678694",
+          "bat": true
+        },
+        {
+          "id": "24465090622",
+          "bat": true
+        },
+        {
+          "id": "57556697426",
+          "bat": true
+        },
+        {
+          "id": "24015142248",
+          "bat": true
+        },
+        {
+          "id": "24764883120",
+          "bat": true
+        },
+        {
+          "id": "24015583018",
+          "bat": true
+        },
+        {
+          "id": "28902157429",
+          "bat": true
+        },
+        {
+          "id": "26800350417",
+          "bat": true
+        },
+        {
+          "id": "27734205778",
+          "bat": true
+        },
+        {
+          "id": "25678530796",
+          "bat": true
+        },
+        {
+          "id": "29006040615",
+          "bat": true
+        },
+        {
+          "id": "27809051612",
+          "bat": true
+        },
+        {
+          "id": "24329101823",
+          "bat": true
+        },
+        {
+          "id": "26900366084",
+          "bat": true
+        },
+        {
+          "id": "56857599724",
+          "bat": true
+        },
+        {
+          "id": "28806784125",
+          "bat": true
+        },
+        {
+          "id": "hexacare",
+          "bat": true
+        }
+      ],
+      "quaTang": [
+        {
+          "id": "57556697426",
+          "bienThe": {
+            "1 cây": true,
+            "2 cây": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "ct-2010-mp-15tr",
+      "ten": "20/10 · Mỹ phẩm đơn từ 15 triệu tặng nồi luộc gà (hoặc giảm 5%)",
+      "batDau": "2026-10-18T00:00",
+      "ketThuc": "2026-10-21T00:00",
+      "kieu": "tien",
+      "tenQua": "nồi luộc gà inox Ciwete Royal Knight 28cm",
+      "hoacGiam": 5,
+      "bac": [
+        {
+          "muc": 15000000,
+          "soQua": 1
+        }
+      ],
+      "muc": 15000000,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "cap-kem-nen-eclat",
+          "bat": true
+        },
+        {
+          "id": "kem-exosome-toneup",
+          "bat": true
+        },
+        {
+          "id": "49061985399",
+          "bat": true
+        },
+        {
+          "id": "48112514210",
+          "bat": true
+        },
+        {
+          "id": "57413220644",
+          "bat": true
+        },
+        {
+          "id": "57903449970",
+          "bat": true
+        },
+        {
+          "id": "51013054442",
+          "bat": true
+        },
+        {
+          "id": "24767149051",
+          "bat": true
+        },
+        {
+          "id": "50002678694",
+          "bat": true
+        },
+        {
+          "id": "24465090622",
+          "bat": true
+        },
+        {
+          "id": "57556697426",
+          "bat": true
+        },
+        {
+          "id": "24015142248",
+          "bat": true
+        },
+        {
+          "id": "24764883120",
+          "bat": true
+        },
+        {
+          "id": "24015583018",
+          "bat": true
+        },
+        {
+          "id": "28902157429",
+          "bat": true
+        },
+        {
+          "id": "26800350417",
+          "bat": true
+        },
+        {
+          "id": "27734205778",
+          "bat": true
+        },
+        {
+          "id": "25678530796",
+          "bat": true
+        },
+        {
+          "id": "29006040615",
+          "bat": true
+        },
+        {
+          "id": "27809051612",
+          "bat": true
+        },
+        {
+          "id": "24329101823",
+          "bat": true
+        },
+        {
+          "id": "26900366084",
+          "bat": true
+        },
+        {
+          "id": "56857599724",
+          "bat": true
+        },
+        {
+          "id": "28806784125",
+          "bat": true
+        },
+        {
+          "id": "hexacare",
+          "bat": true
+        }
+      ],
+      "quaTang": [
+        {
+          "ten": "Nồi luộc gà inox Ciwete Royal Knight 28cm (trị giá 1.790.000đ)",
+          "gia": 1790000
+        }
+      ]
+    },
+    {
+      "id": "ct-2010-bo-xuyen-tieu",
+      "congDon": true,
+      "tenSP": "Bò xuyên tiêu",
+      "ten": "20/10 · Mua Bò xuyên tiêu tặng chai sốt xào / sốt nướng",
+      "batDau": "2026-10-18T00:00",
+      "ketThuc": "2026-10-21T00:00",
+      "kieu": "soLuong",
+      "donVi": "gói",
+      "tenQua": "chai sốt (xào hoặc nướng)",
+      "bac": [
+        {
+          "muc": 1,
+          "soQua": 1
+        },
+        {
+          "muc": 2,
+          "soQua": 2
+        },
+        {
+          "muc": 3,
+          "soQua": 3
+        },
+        {
+          "muc": 4,
+          "soQua": 4
+        },
+        {
+          "muc": 5,
+          "soQua": 5
+        },
+        {
+          "muc": 6,
+          "soQua": 6
+        }
+      ],
+      "muc": 1,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "bo-xuyen-tieu",
+          "bat": true,
+          "heSo": {
+            "1 gói 200g": 1,
+            "2 gói": 2
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "ten": "Sốt xào",
+          "gia": 1
+        },
+        {
+          "ten": "Sốt nướng",
+          "gia": 1
+        }
+      ]
     }
   ]
 };

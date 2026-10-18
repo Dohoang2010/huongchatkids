@@ -814,7 +814,7 @@
     $('#qbQty').value = QB.qty;
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
     const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
-    const gw = $('#qbGift'); if (gw) gw.innerHTML = giftBox(g, true, QB.quaVi);
+    const gw = $('#qbGift'); if (gw) gw.innerHTML = g && g.hoacGiam ? giftBox(g, false) : giftBox(g, true, QB.quaVi);   // chọn giảm thay quà làm ở trang thanh toán
     $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>${k.hang.laSinhNhat ? 'Ưu đãi sinh nhật 🎂' : 'Ưu đãi hạng ' + esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
     const qbGtHint = (k) => { const G2 = QB.gt;
       return G2.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
@@ -1725,15 +1725,18 @@
     const cu = giftForCu(lines, opts);
     /* Chương trình cài ở trang quản trị (riêng cho sản phẩm) được ưu tiên hơn chương trình cũ; nhiều chương trình
        cùng đạt thì lấy quà giá trị cao nhất (số quà × giá phân loại quà rẻ nhất) */
-    let tot = null, giaTriTot = 0, goiY = '', gan = 0;
+    let tot = null, giaTriTot = 0, goiY = '', gan = 0; const them = [];   // them: quà của chương trình congDon (cộng thêm, khác ngành hàng)
     ctDangChay().forEach((x) => {
       const dat = ctDat(x, lines); if (!dat) return;
       const bacDat = [...x.bac].reverse().find((b) => dat >= b.muc), bacSau = x.bac.find((b) => dat < b.muc);
+      if (x.c.congDon) { if (bacDat) them.push({ soQua: bacDat.soQua, ten: x.ten, vi: x.vi, id: x.c.id, lyDo: x.soLuong ? `Mua ${dat} ${x.donVi} ${x.c.tenSP || 'sản phẩm chương trình'}` : `Mua ${x.c.tenSP || 'sản phẩm chương trình'} từ ${fmt(bacDat.muc)}` }); return; }
       const giaQua = Math.min(...(x.c.quaTang || []).map((g) => { if (!g.id) return Number(g.gia) || Infinity; const p = byId(g.id); return p ? Math.min(...(p.variants && p.variants.length ? p.variants.filter((v) => (g.bienThe || {})[v.label] !== false).map((v) => v.price) : [p.price]), Infinity) : Infinity; }), Infinity);
       const giaTri = bacDat ? bacDat.soQua * (isFinite(giaQua) ? giaQua : 1) : 0;
       if (bacDat && giaTri > giaTriTot) {
         giaTriTot = giaTri;
+        const hg = Number(x.c.hoacGiam) || 0;   // hoacGiam: khách được chọn giảm hg % tiền sản phẩm chương trình thay cho quà
         tot = { soQua: bacDat.soQua, chuongTrinh: x.c.id, thung: 0, vi: x.vi, ten: x.ten, goiY: '', moTa: `${bacDat.soQua} ${x.ten}`,
+          hoacGiam: hg, giamTien: hg && !x.soLuong ? Math.round(dat * hg / 100) : 0,
           lyDo: x.soLuong ? `Mua ${dat} ${x.donVi} sản phẩm chương trình` : `Mua sản phẩm chương trình từ ${fmt(bacDat.muc)}` };
       }
       /* Gợi ý bậc kế tiếp (chọn chương trình khách gần đạt nhất) */
@@ -1742,6 +1745,13 @@
         goiY = `Mua thêm ${ctMoc(x, bacSau.muc - dat)} ${x.soLuong ? 'nữa' : 'sản phẩm chương trình'} để được tặng ${bacSau.soQua} ${x.ten}.`;
       }
     });
+    /* Gộp quà cộng thêm: không có quà chính thì quà cộng thêm đầu tiên làm quà chính (khách chọn vị), còn lại ghi kèm */
+    if (them.length) {
+      let chinh = tot || (cu && cu.soQua ? { ...cu } : null), ds = them;
+      if (!chinh) { const a = them[0]; chinh = { soQua: a.soQua, chuongTrinh: a.id, thung: 0, vi: a.vi, ten: a.ten, goiY: '', moTa: `${a.soQua} ${a.ten}`, lyDo: a.lyDo }; ds = them.slice(1); }
+      if (ds.length) chinh = { ...chinh, moTa: chinh.moTa + ds.map((a) => ` + ${a.soQua} ${a.ten}`).join(''), lyDo: [chinh.lyDo, ...ds.map((a) => a.lyDo)].filter(Boolean).join(' · '), chuongTrinh: [chinh.chuongTrinh, ...ds.map((a) => a.id)].filter(Boolean).join('+'), themMoTa: ds.map((a) => `${a.soQua} ${a.ten}`).join(' + ') };
+      return { ...chinh, goiY };
+    }
     if (tot) return { ...tot, goiY };
     if (cu && cu.soQua) return goiY ? { ...cu, goiY } : cu;
     if (cu && cu.goiY) return cu;
@@ -1775,8 +1785,16 @@
       lyDo: ct === 'thung' ? `Mua ${thung} thùng nước dinh dưỡng Lotte` : ct === 'don' ? `Đơn hàng từ ${fmt(mucDon)}` : '' };
   }
   /* Khối quà hiện ở giỏ hàng / thanh toán. chonVi = true thì cho khách chọn vị. */
-  function giftBox(g, chonVi, viDangChon) {
+  function giftBox(g, chonVi, viDangChon, chonGiam) {
     if (!g) return '';
+    /* Quà có lựa chọn "hoặc giảm %": giỏ hàng chỉ báo, trang thanh toán cho khách chọn 1 trong 2 */
+    if (g.soQua && g.hoacGiam && g.giamTien) {
+      if (!chonVi) return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)} hoặc giảm ${g.hoacGiam}% (−${fmt(g.giamTien)})</b><p>${esc(g.lyDo)} · mẹ chọn ở bước thanh toán${g.goiY ? ' · ' + esc(g.goiY) : ''}</p></div></div>`;
+      const giam = chonGiam === 'giam', vi = g.vi || [];
+      return `<div class="giftbox"><span class="giftbox__ico">${giam ? '💸' : '🎁'}</span><div><b>${giam ? `Đơn này chọn giảm ${g.hoacGiam}% (−${fmt(g.giamTien)}) thay quà` : `Đơn này được tặng ${esc(g.moTa)}`}</b><p>${esc(g.lyDo)} · mẹ chọn nhận quà hoặc giảm ${g.hoacGiam}%${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>
+        <div class="giftbox__vi"><label class="chip chip--pick ${giam ? '' : 'is-on'}"><input type="radio" name="quaHoacGiam" value="qua" ${giam ? '' : 'checked'}>🎁 Nhận ${esc(g.ten)}</label><label class="chip chip--pick ${giam ? 'is-on' : ''}"><input type="radio" name="quaHoacGiam" value="giam" ${giam ? 'checked' : ''}>💸 Giảm ${g.hoacGiam}% (−${fmt(g.giamTien)})</label></div>
+        ${!giam && vi.length > 1 ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : ''}</div></div>`;
+    }
     if (!g.soQua) return g.goiY ? `<div class="giftbox giftbox--hint"><span class="giftbox__ico">🎁</span><div><b>Quà tặng của shop</b><p>${esc(g.goiY)}</p></div></div>` : '';
     const vi = g.vi || [];
     return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)}</b><p>${esc(g.lyDo)}${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>

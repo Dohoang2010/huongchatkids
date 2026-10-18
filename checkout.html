@@ -22,7 +22,7 @@
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261017b"></script>
+<script src="js/app.js?v=20261018a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let sub = Cart.subtotal(); let multi = Cart.multiDiscount();
   const { maTotNhat, chipMaDaLuu } = MC; if (!coupon) coupon = maTotNhat(sub - multi, lines);   // tự áp mã khách đã lưu ở trang chủ
   const DIA = window.DIA_CHI || [];
-  let qua = giftFor(lines); let quaVi = (qua && qua.vi && qua.vi[0]) || '';
+  let qua = giftFor(lines); let quaVi = (qua && qua.vi && qua.vi[0]) || ''; let quaChon = 'qua';   // quaChon: 'qua' | 'giam' (chương trình cho chọn giảm % thay quà)
   /* ---- Giới thiệu bạn bè + điểm thưởng: số liệu hiển thị trước, máy chủ chốt lại lúc bấm Đặt hàng (giữ chỗ) ---- */
   let gtCfg = { bat: false };
   let gt = { ma: GT.ref(), ok: false, msg: '', tenAn: '', sdt: '', dangXet: false };
@@ -70,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (dungGT && dungVc) { if (vcAmt >= gtAmt) dungGT = false; else dungVc = false; }
     if (dungGT && dungHang && !ketHop().hangMa) { if (hangAmt > gtAmt) dungGT = false; else dungHang = false; }
-    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0) + (dungVc ? vcAmt : 0);
+    const giamQua = qua && qua.soQua && qua.hoacGiam && quaChon === 'giam' ? Number(qua.giamTien) || 0 : 0;   // khách chọn giảm % thay quà
+    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0) + (dungVc ? vcAmt : 0) + giamQua;
     /* Điểm: chỉ trừ vào tiền hàng còn lại (không trừ phí ship), không quá số điểm khả dụng */
     const gtd = Number(gtCfg.giaTriDiem) || 1;
     const ptDiem = gtCfg.diemToiDaPhanTram != null ? Number(gtCfg.diemToiDaPhanTram) : 10;   // mỗi đơn dùng điểm tối đa ptDiem % giá trị đơn
@@ -79,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
     let ship = ((r && r.ok && r.freeship && !boMa) || MC.maShipTuDong(base, lines)) && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
     if (!city && ship && shipMethod !== 'express') ship = null;
-    return { laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { giamQua, laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
   /* Quy tắc quà: giảm giới thiệu tính như 1 mã giảm giá (không phải freeship) */
   const quaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : k.dungVc ? MC.maChoQua({ ok: true, discount: k.vcAmt, freeship: false, code: k.vc.ma }, true) : MC.maChoQua(k.boMa ? null : k.r, k.dungMa));
@@ -102,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="field mt-12"><label>Ghi chú cho shipper / chuyên gia dinh dưỡng</label><textarea class="input" name="note" placeholder="VD: Giao giờ hành chính, gọi trước khi giao, bé 2 tuổi 12kg cần tư vấn liều…"></textarea></div>
           <p class="qb__privacy" style="text-align:left">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
         </div>
-        <div id="giftWrap">${giftBox(qua, true, quaVi)}</div>
+        <div id="giftWrap">${giftBox(qua, true, quaVi, quaChon)}</div>
         <div class="card card--pad"><h3><span class="num">2</span>Vận chuyển</h3><div class="form-grid">
           <label class="ship-option"><input type="radio" name="ship" value="standard" checked><div><b>Giao tiêu chuẩn</b><small>Nội thành Hà Nội trong ngày · Tỉnh khác 1–3 ngày</small></div><span class="fee" id="stdFee"></span></label>
           <label class="ship-option" id="expressOpt"><input type="radio" name="ship" value="express"><div><b>Giao hoả tốc 2–4h</b><small>Chỉ nội thành Hà Nội, đặt trước 16h</small></div><span class="fee">${fmt(SITE.expressFee || 35000)}</span></label>
@@ -138,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const truoc = qua && qua.soQua;
     qua = giftFor(lines, quaOpts(calc()));
     if (qua && qua.vi && !qua.vi.includes(quaVi)) quaVi = qua.vi[0] || '';
-    const w = $('#giftWrap'); if (w) w.innerHTML = giftBox(qua, true, quaVi);
+    const w = $('#giftWrap'); if (w) w.innerHTML = giftBox(qua, true, quaVi, quaChon);
     if (!!truoc !== !!(qua && qua.soQua)) { const it = $('#orderItems'); if (it) it.innerHTML = itemsHTML(); }
   };
   const renderSummary = () => {
@@ -152,7 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
       + (k.dungVc ? `<div class="summary-line"><span>Voucher ${esc(k.vc.ma)}</span><span class="text-teal">−${fmt(k.vcAmt)}</span></div>` : '')
       + (k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${gtCfg.giam}%)</span><span class="text-teal">−${fmt(k.gtAmt)}</span></div>` : '')
       + (k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="text-teal">−${fmt(k.giamDiem)}</span></div>` : '')
-      + (qua && qua.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">${esc(qua.moTa)}</span></div>` : '')
+      + (k.giamQua ? `<div class="summary-line"><span>Giảm ${qua.hoacGiam}% thay quà</span><span class="text-teal">−${fmt(k.giamQua)}</span></div>` : '')
+      + (qua && qua.soQua && (!k.giamQua || qua.themMoTa) ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">${esc(k.giamQua ? qua.themMoTa : qua.moTa)}</span></div>` : '')
       + `<div class="summary-line"><span>Phí vận chuyển${k.ship && shipMethod !== 'express' ? ` <small class="text-muted">(${esc(ghnInfo(k.city, lines))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div><div class="summary-line total"><span>${k.ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(k.total)}</b></div>`;
     /* Phí ô "Giao tiêu chuẩn" theo tỉnh đang chọn */
     const city = form.elements.city.value; let std = shipFee(sub - multi, 'standard', { tinh: city || '?', lines }); if (!city && std) std = null;
@@ -286,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     qua = giftFor(lines, quaOpts(calc())); if (qua && qua.vi && !qua.vi.includes(quaVi)) quaVi = qua.vi[0] || '';
     $('#orderCount').textContent = Cart.count();
     $('#orderItems').innerHTML = itemsHTML();
-    $('#giftWrap').innerHTML = giftBox(qua, true, quaVi);
+    $('#giftWrap').innerHTML = giftBox(qua, true, quaVi, quaChon);
     renderSummary(); renderUpsell();
   };
   document.addEventListener('cart:change', refreshOrder);
@@ -359,6 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.name === 'ship') { shipMethod = e.target.value; renderSummary(); }
     if (e.target.id === 'diemDung') { diemMuon = e.target.checked ? calc().diemToiDa : 0; if (e.target.checked && !diemMuon) toast('Đơn này chưa dùng được điểm', { type: 'error' }); renderSummary(); }
     if (e.target.id === 'diemSo') { diemMuon = Math.max(0, Math.floor(Number(e.target.value) || 0)); renderSummary(); }    if (e.target.name === 'city') { form.elements.ward.innerHTML = xaOptions(e.target.value, ''); syncExpress(); renderSummary(); }
+    if (e.target.name === 'quaHoacGiam') { quaChon = e.target.value; renderSummary(); return; }
     if (e.target.name === 'giftVi') { quaVi = e.target.value; $$('.giftbox__vi .chip').forEach((ch) => ch.classList.toggle('is-on', ch.querySelector('input').checked)); const n = $('#giftViNote'); if (n) n.textContent = quaVi; }
   });
   document.addEventListener('click', (e) => {
@@ -415,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
       maGiu = res.maGiu || '';
       btn.innerHTML = '<span>Đang xử lý đơn hàng…</span>';
     }
-    const uuDai = [k.dungVc ? `Voucher ${k.vc.ma} (${k.vc.nguonTen}): -${fmt(k.vcAmt)}` : '', k.dungGT ? `Giảm giới thiệu ${gtCfg.giam}% (người giới thiệu ${gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
+    const uuDai = [k.giamQua ? `Chọn giảm ${qua.hoacGiam}% thay quà ${qua.moTa} (chương trình ${qua.chuongTrinh}): -${fmt(k.giamQua)}` : '', k.dungVc ? `Voucher ${k.vc.ma} (${k.vc.nguonTen}): -${fmt(k.vcAmt)}` : '', k.dungGT ? `Giảm giới thiệu ${gtCfg.giam}% (người giới thiệu ${gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
     const order = await submitOrder({ type: 'checkout', code,
       customer: { name: v.name.trim(), phone: sdtDat, address: fullAddress, email: v.email, tinh: v.city, xa: v.ward, diaChi: v.address.trim() },
       note: uuDai ? `[${uuDai}]${v.note ? '\n' + v.note : ''}` : v.note, shipMethod, payment: v.payment,
@@ -423,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
       coupon: k.dungVc ? 'VC:' + k.vc.ma : k.dungMa ? k.r.code : '', voucher: k.dungVc ? { ma: k.vc.ma, giam: k.vcAmt } : null,
       hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (s && phoneKey(s.sdt) === phoneKey(v.phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
       token: s ? s.token : '',
-      qua: qua && qua.soQua ? { soQua: qua.soQua, ten: qua.ten, vi: quaVi, chuongTrinh: qua.chuongTrinh, moTa: `${qua.moTa} (${quaVi})` } : null,
+      qua: qua && qua.soQua && k.giamQua ? (qua.themMoTa ? { soQua: 1, ten: 'quà cộng thêm', vi: '', chuongTrinh: qua.chuongTrinh, moTa: qua.themMoTa } : null) : qua && qua.soQua ? { soQua: qua.soQua, ten: qua.ten, vi: quaVi, chuongTrinh: qua.chuongTrinh, moTa: `${qua.moTa} (${quaVi})` } : null,
       items: lines.map((l) => ({ id: l.id, name: l.name, short: shortName(l.p), variant: l.variantLabel, qty: l.qty, price: l.price })),
       subtotal: sub, discount: multi + k.discount + k.giamDiem, ship: k.ship, total: k.total });
     io.disconnect(); $('#stickyOrder')?.remove();
