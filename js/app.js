@@ -431,14 +431,14 @@
     const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
     const tagCls = (t) => (t === 'Mới' ? 'badge--new' : t === 'Combo' ? 'badge--teal' : t === 'Sản phẩm hot' ? 'badge--fire' : 'badge--hot');
     return `<article class="pcard ${oos ? 'pcard--oos' : ''}" data-id="${p.id}">
-      <a class="pcard__media" href="product.html?id=${p.id}">
+      <a class="pcard__media" href="${spUrl(p)}">
         <img src="${productThumb(p)}" alt="${esc(shortName(p))}" loading="lazy" width="420" height="420">
         <div class="pcard__badges">${p.gioVang ? `<span class="badge badge--sale">⏰ -${p.gioVang.giam}% giờ vàng</span>` : d >= 5 ? `<span class="badge badge--sale">-${d}%</span>` : ''}${tags.map((t) => `<span class="badge ${tagCls(t)}">${t === 'Sản phẩm hot' ? '🔥 ' : ''}${t}</span>`).join('')}</div>
         <button class="pcard__wish ${Wish.has(p.id) ? 'is-on' : ''}" type="button" data-wish="${p.id}" aria-label="Lưu vào yêu thích" aria-pressed="${Wish.has(p.id)}">${I.heart}</button>
       </a>
       <div class="pcard__body">
         <div class="pcard__brand">${esc(b.label)}${p.origin && p.origin !== 'Hàn Quốc' ? ` · ${esc(p.origin)}` : ''}</div>
-        <a class="pcard__name" href="product.html?id=${p.id}" title="${esc(p.name)}">${esc(shortName(p))}</a>
+        <a class="pcard__name" href="${spUrl(p)}" title="${esc(p.name)}">${esc(shortName(p))}</a>
         <div class="pcard__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)} <span class="text-muted">(${p.reviews})</span></span>` : ''}${p.reviews > 0 && p.sold > 0 ? '<span>·</span>' : ''}${p.sold > 0 ? `<span>Đã bán ${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'k' : p.sold}</span>` : ''}${!p.reviews && !p.sold ? `<span class="text-teal fw-600">${I.check} Chính hãng</span>` : ''}</div>
         <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : p.giaGoc ? `<s>${fmt(p.giaGoc)}</s>` : ''}</div>
         <div class="pcard__age">${p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
@@ -976,6 +976,11 @@
     return { ds: gan.map((x) => x.p), ganDung: gan.length > 0 };
   }
 
+  /* Link trang sản phẩm: /<slug> trên web thật; máy thử (localhost / file) vẫn dùng product.html?id= */
+  const laMayThu = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.protocol === 'file:';
+  function spUrl(p, them) { const id = p && typeof p === 'object' ? p.id : p, s = (window.SP_SLUG || {})[id];
+    return (s && !laMayThu ? '/' + s : 'product.html?id=' + encodeURIComponent(id)) + (them ? (s && !laMayThu ? '?' : '&') + them : ''); }
+
   function initSearch() {
     const input = $('#searchInput'), box = $('#searchSuggest'); if (!input) return;
     const hot = SITE.hotSearches || [];
@@ -983,7 +988,7 @@
       q = q.trim().toLowerCase();
       if (!q) { box.innerHTML = `<div class="search__hint">Tìm kiếm phổ biến<div class="chips">${hot.map((h) => `<a class="chip chip--sm" href="collections.html?q=${encodeURIComponent(h)}">${h}</a>`).join('')}</div></div>`; box.classList.add('is-open'); return; }
       const kq = timSP(q), res = kq.ds.slice(0, 6);
-      box.innerHTML = res.length ? (kq.ganDung ? `<div class="search__hint">Không có sản phẩm khớp đủ "${esc(q)}" – gợi ý gần đúng:</div>` : "") + res.map((p) => `<a href="product.html?id=${p.id}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Mẹ thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
+      box.innerHTML = res.length ? (kq.ganDung ? `<div class="search__hint">Không có sản phẩm khớp đủ "${esc(q)}" – gợi ý gần đúng:</div>` : "") + res.map((p) => `<a href="${spUrl(p)}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Mẹ thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
       box.classList.add('is-open');
     };
     input.addEventListener('input', debounce(() => render(input.value), 120));
@@ -2018,7 +2023,7 @@
       const r = String(param('r') || '').trim(); const m = r.match(/^([A-Za-z0-9]{2,16})(?:\.(~?[\w-]+))?$/); if (!m) return false;
       const ma = m[1].toUpperCase(); const k = m[2] || '';
       const id = !k ? '' : k[0] === '~' ? k.slice(1) : parseInt(k, 36).toString();
-      location.replace(id ? `product.html?id=${encodeURIComponent(id)}&aff=${ma}` : `index.html?aff=${ma}`);
+      location.replace(id ? spUrl(id, 'aff=' + ma) : `index.html?aff=${ma}`);
       return true;
     },
     ganDon(o) {
@@ -2032,5 +2037,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    spUrl, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

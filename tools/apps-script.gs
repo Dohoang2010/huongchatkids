@@ -2315,6 +2315,11 @@ function doGet(e) {
   var vpsCt = vpsChuyenTiep_(e, false); if (vpsCt) return vpsCt;
   var chan = chanTanSuat_(action); if (chan) return traVe(chan, cb);
   try {
+    if (action === 'dgDs')      return traVe(apiDgDs(p), cb);
+    if (action === 'dgTomTat')  return traVe(apiDgTomTat(), cb);
+    if (action === 'dgGui')     return traVe(apiDgGui(p), cb);
+    if (action === 'qtDgDs')    return traVe(apiQtDgDs(p), cb);
+    if (action === 'qtDgDuyet') return traVe(apiQtDgDuyet(p), cb);
     if (action === 'chatGui')   return traVe(apiChatGui(p), cb);
     if (action === 'chatDoc')   return traVe(apiChatDoc(p), cb);
     if (action === 'qtChatDs')  return traVe(apiQtChatDs(p), cb);
@@ -2827,7 +2832,7 @@ function baoLenh_(data) {
 }
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
-var GIOI_HAN_10P = { chatGui: 1500, chatDoc: 20000, chatApi: 6000, quaLe: 600, maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
+var GIOI_HAN_10P = { dgGui: 200, dgDs: 20000, dgTomTat: 20000, chatGui: 1500, chatDoc: 20000, chatApi: 6000, quaLe: 600, maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
   qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, snbLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
@@ -3488,6 +3493,85 @@ function apiCapNhat(p) {
   if (p.gioiTinh != null) s.getRange(dong, 13).setValue(chuanGioiTinh_(p.gioiTinh));
   var d = docKH(sdt);
   return { ok: true, kh: d.kh, donHang: d.don };
+}
+
+/* ===================== ĐÁNH GIÁ SẢN PHẨM CỦA KHÁCH =====================
+   Khách đã đăng nhập viết đánh giá ở trang sản phẩm (1–5 sao, nội dung, tối đa 4 ảnh tải qua /api/chat-tep).
+   Mỗi khách 1 đánh giá / sản phẩm (gửi lại = sửa). Khách đã mua sản phẩm (đối chiếu lịch sử đơn) → hiện ngay, gắn nhãn "Đã mua hàng";
+   chưa mua → chờ shop duyệt ở Quản trị › Đánh giá sản phẩm. Điểm trung bình dùng cho trang sản phẩm và schema Google. */
+var SHEET_DG2 = 'Đánh giá';
+var H_DG2 = ['Thời gian', 'Mã', 'Mã SP', 'Điện thoại', 'Tên hiển thị', 'Sao', 'Nội dung', 'Ảnh', 'Đã mua', 'Trạng thái', 'Trả lời shop', 'Trả lời lúc', 'Tên SP'];
+var DG_TT = { CHO: 'cho', HIEN: 'hien', AN: 'an' };
+function sheetDg2_() { return sheetPhu(SHEET_DG2, H_DG2); }
+function dgDocHet_() { var sh = sheetDg2_(), n = sh.getLastRow(); return n < 2 ? [] : sh.getRange(2, 1, n - 1, H_DG2.length).getValues(); }
+function dgAnh_(v) { var a = []; try { a = JSON.parse(String(v || '[]')); } catch (e) { a = []; } return (Array.isArray(a) ? a : []).filter(function (u) { return /^\/chat-tep\/\d{6}\/[a-z0-9-]+\.(jpg|png|webp|gif)$/.test(String(u)); }).slice(0, 4); }
+function dgTenAn_(ten, sdt) { ten = String(ten || '').trim(); if (ten) { var t = ten.split(/\s+/); return t.length > 1 ? 'Mẹ ' + t[t.length - 1] : ten; } return 'Khách ' + String(sdt || '').slice(0, 3) + '****' + String(sdt || '').slice(-3); }
+function dgRa_(r, quanTri) {
+  var o = { ma: String(r[1]), id: String(r[2]), ten: String(r[4]), sao: Number(r[5]) || 0, noiDung: String(r[6]), anh: dgAnh_(r[7]), daMua: String(r[8]) === 'x', luc: new Date(r[0]).getTime(), traLoi: String(r[10] || '') };
+  if (quanTri) { o.sdt = chuanSdt(r[3]); o.trangThai = String(r[9]); o.tenSP = String(r[12] || ''); }
+  return o;
+}
+function apiDgDs(p) {
+  var id = String(p.id || '').slice(0, 60); if (!id) return { ok: false, msg: 'Thiếu mã sản phẩm' };
+  var ds = dgDocHet_().filter(function (r) { return String(r[2]) === id && String(r[9]) === DG_TT.HIEN; }).map(function (r) { return dgRa_(r); });
+  ds.sort(function (a, b) { return (b.daMua - a.daMua) || (b.anh.length - a.anh.length) || (b.luc - a.luc); });
+  var phan = [0, 0, 0, 0, 0], tong = 0; ds.forEach(function (d) { if (d.sao >= 1 && d.sao <= 5) { phan[d.sao - 1]++; tong += d.sao; } });
+  var cua = null, sdt = p.token ? sdtTheoToken(p.token) : '';
+  if (sdt) { var m = dgDocHet_().filter(function (r) { return String(r[2]) === id && chuanSdt(r[3]) === sdt; })[0]; if (m) { cua = dgRa_(m); cua.trangThai = String(m[9]); } }
+  return { ok: true, so: ds.length, tb: ds.length ? Math.round(tong / ds.length * 10) / 10 : 0, phan: phan, ds: ds.slice(0, 100), cuaToi: cua };
+}
+function apiDgTomTat() {
+  var m = {};
+  dgDocHet_().forEach(function (r) { if (String(r[9]) !== DG_TT.HIEN) return; var id = String(r[2]), sao = Number(r[5]) || 0; if (sao < 1) return; var c = m[id] || (m[id] = { so: 0, tong: 0 }); c.so++; c.tong += sao; });
+  var kq = {}; Object.keys(m).forEach(function (k) { kq[k] = { so: m[k].so, tb: Math.round(m[k].tong / m[k].so * 10) / 10 }; });
+  return { ok: true, sp: kq };
+}
+/* Khách đã mua sản phẩm chưa: tìm tên sản phẩm trong lịch sử đơn (CRM / sheet Đơn hàng) */
+function dgDaMua_(sdt, tenSP) {
+  var k = khongDau_(String(tenSP || '')).slice(0, 22); if (k.length < 6) return false;
+  try { var d = docKH(sdt); return (d.don || []).some(function (o) { return khongDau_(String(o.sanPham || '')).indexOf(k) > -1; }); } catch (e) { return false; }
+}
+function khongDau_(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, ' ').trim(); }
+function apiDgGui(p) {
+  var sdt = sdtTheoToken(p.token); if (!sdt) return { ok: false, loi: 'token', msg: 'Mẹ đăng nhập để gửi đánh giá nhé' };
+  if (!demGioiHan('dg_' + sdt, 15, 3600)) return { ok: false, msg: 'Mẹ gửi nhiều quá, thử lại sau ít phút nhé' };
+  var id = String(p.id || '').slice(0, 60), sao = Math.round(Number(p.sao) || 0), nd = String(p.noiDung || '').trim().slice(0, 1500);
+  if (!/^[\w-]{1,60}$/.test(id)) return { ok: false, msg: 'Sản phẩm không hợp lệ' };
+  if (sao < 1 || sao > 5) return { ok: false, msg: 'Mẹ chọn số sao (1–5) nhé' };
+  if (nd.length < 10) return { ok: false, msg: 'Mẹ viết thêm vài dòng cảm nhận (ít nhất 10 ký tự) nhé' };
+  if (khachBiKhoa(sdt)) return { ok: false, msg: 'Tài khoản đang bị khoá' };
+  var anh = dgAnh_(p.anh), tenSP = String(p.tenSP || '').slice(0, 160);
+  var kh = docKH(sdt).kh, ten = String(p.ten || '').trim().slice(0, 40) || dgTenAn_(kh.ten, sdt);
+  var daMua = dgDaMua_(sdt, tenSP), tt = daMua ? DG_TT.HIEN : DG_TT.CHO;
+  return voiKhoa(function () {
+    var sh = sheetDg2_(), v = dgDocHet_(), dong = 0, ma = '';
+    for (var i = 0; i < v.length; i++) if (String(v[i][2]) === id && chuanSdt(v[i][3]) === sdt) { dong = i + 2; ma = String(v[i][1]); break; }
+    var hang = [new Date(), ma || ('DG' + Date.now().toString(36).toUpperCase()), id, "'" + sdt, ten, sao, nd, JSON.stringify(anh), daMua ? 'x' : '', tt, '', '', tenSP];
+    if (dong) { var cu = sh.getRange(dong, 1, 1, H_DG2.length).getValues()[0]; hang[10] = cu[10]; hang[11] = cu[11]; if (String(cu[9]) === DG_TT.AN) hang[9] = DG_TT.CHO; sh.getRange(dong, 1, 1, H_DG2.length).setValues([hang]); }
+    else sh.appendRow(hang);
+    ghiNhatKy('Đánh giá', sdt, (dong ? 'Sửa' : 'Viết') + ' đánh giá ' + sao + '★ cho ' + (tenSP || id) + (daMua ? ' (đã mua)' : ' (chờ duyệt)'));
+    try { zaloBotGuiTin('⭐ Đánh giá ' + sao + '★ – ' + (tenSP || id) + '\n' + ten + ' (' + sdt + ')' + (daMua ? ' · đã mua' : ' · CHỜ DUYỆT') + '\n' + nd.slice(0, 300) + (anh.length ? '\n[' + anh.length + ' ảnh]' : '') + '\nQuản trị › Đánh giá sản phẩm'); } catch (z) { Logger.log(z); }
+    return { ok: true, trangThai: hang[9], daMua: daMua, msg: hang[9] === DG_TT.HIEN ? 'Cảm ơn mẹ đã đánh giá! Đánh giá đã hiện trên trang sản phẩm.' : 'Cảm ơn mẹ! Đánh giá sẽ hiện sau khi shop xem qua (thường trong ngày).' };
+  });
+}
+function apiQtDgDs(p) {
+  if (!coQuyen(p, 'product.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var ds = dgDocHet_().map(function (r) { return dgRa_(r, true); }).sort(function (a, b) { return b.luc - a.luc; });
+  return { ok: true, ds: ds.slice(0, 500) };
+}
+function apiQtDgDuyet(p) {
+  if (!coQuyen(p, 'product.edit') && !coQuyen(p, 'product.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var ma = String(p.ma || ''), tt = String(p.trangThai || '');
+  return voiKhoa(function () {
+    var sh = sheetDg2_(), v = dgDocHet_();
+    for (var i = 0; i < v.length; i++) if (String(v[i][1]) === ma) {
+      if (tt) { if ([DG_TT.CHO, DG_TT.HIEN, DG_TT.AN].indexOf(tt) < 0) return { ok: false, msg: 'Trạng thái không hợp lệ' }; sh.getRange(i + 2, 10).setValue(tt); }
+      if (p.traLoi != null) sh.getRange(i + 2, 11, 1, 2).setValues([[String(p.traLoi).trim().slice(0, 1000), p.traLoi ? new Date() : '']]);
+      var ph = phienQT(p.token); ghiNhatKy('Đánh giá', chuanSdt(v[i][3]), (ph ? ph.tk + ': ' : '') + (tt ? 'đặt trạng thái ' + tt : '') + (p.traLoi != null ? ' trả lời đánh giá ' + ma : ''));
+      return { ok: true, dg: dgRa_(sh.getRange(i + 2, 1, 1, H_DG2.length).getValues()[0], true) };
+    }
+    return { ok: false, msg: 'Không thấy đánh giá' };
+  });
 }
 
 /* ===================== CHAT TRÊN WEB =====================

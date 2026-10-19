@@ -197,12 +197,13 @@
     }
 
     if (tabHienTai === 'seo') {
-      const url = 'https://huongchatkids.vn/product.html?id=' + encodeURIComponent(p.id);
+      const url = 'https://huongchatkids.vn/' + (p.slug ? window.taoSlug(p.slug) : ((window.SP_SLUG || {})[p.id] || 'product.html?id=' + encodeURIComponent(p.id)));
       const tieuDe = p.seoTitle || `${p.short || p.name} – Hương Chất Kids`;
       const mota = p.seoDesc || (p.desc || '').slice(0, 155);
       b.innerHTML = `
         <div class="row row-2">
           <div>
+            <label>Đường dẫn (link) sản phẩm<input data-p="slug" value="${esc(p.slug || '')}" placeholder="${esc((window.SP_SLUG || {})[p.id] || window.taoSlug(p.short || p.name))}" maxlength="70"><small class="hint">huongchatkids.vn/<b>${esc(p.slug ? window.taoSlug(p.slug) : (window.SP_SLUG || {})[p.id] || '')}</b> – chữ thường không dấu, nối bằng gạch ngang. Để trống = tự tạo từ tên ngắn. Nên đặt 1 lần: đổi link thì link cũ đã chia sẻ sẽ không vào được nữa (link product.html?id=… vẫn luôn dùng được).</small></label>
             <label>Tiêu đề SEO<input data-p="seoTitle" value="${esc(p.seoTitle || '')}" placeholder="${esc(tieuDe)}" maxlength="70"><small class="hint">Nên 50–60 ký tự.</small></label>
             <label>Mô tả SEO<textarea data-p="seoDesc" rows="3" maxlength="170" placeholder="${esc(mota)}">${esc(p.seoDesc || '')}</textarea><small class="hint">Nên 120–155 ký tự.</small></label>
             <label>Từ khoá chính<input data-p="seoKey" value="${esc(p.seoKey || '')}" placeholder="VD: váng sữa canxi Hàn Quốc"></label>
@@ -225,7 +226,7 @@
       if (k === 'an') { if (el.checked) p.an = true; else delete p.an; return; }
       if (k === 'highlights') { p.highlights = el.value.split('\n').map((x) => x.trim()).filter(Boolean); return; }
       if (el.type === 'number') p[k] = Number(el.value) || 0;
-      else { const v = el.value; if (v === '' && ['seoTitle', 'seoDesc', 'seoKey'].includes(k)) delete p[k]; else p[k] = v; }
+      else { const v = el.value; if (v === '' && ['seoTitle', 'seoDesc', 'seoKey', 'slug'].includes(k)) delete p[k]; else if (k === 'slug') p[k] = window.taoSlug(v); else p[k] = v; }
     });
     const nhan = $$('#nhanList [data-nhan]', f);
     if (nhan.length) {

@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261019c">
+  <link rel="stylesheet" href="css/style.css?v=20261019d">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -169,11 +169,11 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261017g"></script>
+<script src="js/data.js?v=20261019a"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261019z"></script>
-<script src="js/chat.js?v=20261019c" defer></script>
+<script src="js/app.js?v=20261019y"></script>
+<script src="js/chat.js?v=20261019d" defer></script>
 <script src="js/chon-ngay.js?v=20261016b"></script>
 <script src="js/diem-danh-ui.js?v=20261016b"></script>
 <script src="js/suc-khoe.js?v=20261014e"></script>
@@ -250,7 +250,7 @@ TỰ ÁP</i></a>`; }
   ].map(([ic, t, s]) => `<div class="trust__item"><span class="trust__icon">${ic}</span><div><b>${t}</b><small>${s}</small></div></div>`).join('');
 
   /* Ages */
-  $('#ageGrid').innerHTML = AGES.map((a) => { const list = PRODUCTS.filter((p) => p.ages.includes(a.key)); const href = list.length === 1 ? 'product.html?id=' + list[0].id : 'collections.html?age=' + a.key; return `<a class="age-card" href="${href}" style="background:${a.color}"><span class="emoji">${a.emoji}</span><b>${a.label}</b><small>${list.length === 1 ? esc(MC.shortName(list[0])) : a.desc + ' · ' + list.length + ' sản phẩm'}</small></a>`; }).join('');
+  $('#ageGrid').innerHTML = AGES.map((a) => { const list = PRODUCTS.filter((p) => p.ages.includes(a.key)); const href = list.length === 1 ? MC.spUrl(list[0]) : 'collections.html?age=' + a.key; return `<a class="age-card" href="${href}" style="background:${a.color}"><span class="emoji">${a.emoji}</span><b>${a.label}</b><small>${list.length === 1 ? esc(MC.shortName(list[0])) : a.desc + ' · ' + list.length + ' sản phẩm'}</small></a>`; }).join('');
 
   /* Categories */
   $('#catGrid').innerHTML = CATEGORIES.map((c) => `<a class="cat-tile" href="collections.html?cat=${c.key}" style="background:${c.color}">${c.image ? `<img class="cat-tile__img" src="${c.image}" alt="" loading="lazy">` : `<span class="icon">${c.icon}</span>`}<h3>${c.label}</h3><p>${c.desc}</p><span class="link">Xem ${PRODUCTS.filter((p) => p.cat === c.key).length} sản phẩm ${I.arrowR}</span></a>`).join('');
@@ -298,7 +298,7 @@ TỰ ÁP</i></a>`; }
 
   /* Combos (ẩn cả mục nếu chưa có combo) */
   if (!PRODUCTS.some((p) => p.isCombo)) $('#comboSection').classList.add('hide');
-  $('#comboGrid').innerHTML = PRODUCTS.filter((p) => p.isCombo).map((p) => `<div class="combo-card"><a href="product.html?id=${p.id}"><img src="${productImage(p)}" alt="${esc(p.name)}"></a><div><a href="product.html?id=${p.id}"><h3>${esc(p.name)}</h3></a>${listPrice(p.oldPrice, p.price) ? `<span class="badge badge--teal save">Tiết kiệm ${fmt(p.oldPrice - p.price)}</span>` : ''}<div class="items">Gồm: ${p.items.map((id) => byId(id).short).join(' + ')}</div><div class="price"><b>${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div><div class="flex gap-8 wrap"><button class="btn btn--primary" type="button" data-buy="${p.id}">${I.zap}Mua ngay</button><button class="btn btn--outline" type="button" data-add="${p.id}">${I.cart}Thêm giỏ</button></div></div></div>`).join('');
+  $('#comboGrid').innerHTML = PRODUCTS.filter((p) => p.isCombo).map((p) => `<div class="combo-card"><a href="${MC.spUrl(p)}"><img src="${productImage(p)}" alt="${esc(p.name)}"></a><div><a href="${MC.spUrl(p)}"><h3>${esc(p.name)}</h3></a>${listPrice(p.oldPrice, p.price) ? `<span class="badge badge--teal save">Tiết kiệm ${fmt(p.oldPrice - p.price)}</span>` : ''}<div class="items">Gồm: ${p.items.map((id) => byId(id).short).join(' + ')}</div><div class="price"><b>${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : ''}</div><div class="flex gap-8 wrap"><button class="btn btn--primary" type="button" data-buy="${p.id}">${I.zap}Mua ngay</button><button class="btn btn--outline" type="button" data-add="${p.id}">${I.cart}Thêm giỏ</button></div></div></div>`).join('');
 
   /* Dành cho mẹ */
   const momList = PRODUCTS.filter((p) => p.cat === 'cho-me' && !p.isCombo).sort((a, b) => b.sold - a.sold).slice(0, 8);
@@ -320,7 +320,7 @@ TỰ ÁP</i></a>`; }
   $('#reviewSub').textContent = `${avg.toFixed(1)}/5 từ ${totalReviews.toLocaleString('vi-VN')} lượt đánh giá · đã bán ${totalSold.toLocaleString('vi-VN')} sản phẩm trên gian hàng Shopee của ${SITE.name}`;
   $('#reviewLink').href = SITE.shopee || '#';
   /* Thẻ bấm vào mở thẳng trang sản phẩm trên Shopee (phần đánh giá nằm ngay trên trang đó) */
-  $('#reviewGrid').innerHTML = [...rated].sort((a, b) => b.reviews - a.reviews).slice(0, 4).map((p) => `<a class="review-card review-card--shopee" href="${p.shopeeUrl || 'product.html?id=' + p.id}" ${p.shopeeUrl ? 'target="_blank" rel="noopener"' : ''} aria-label="Xem ${p.reviews} đánh giá của ${esc(MC.shortName(p))} trên Shopee"><div class="flex items-center gap-12"><img src="${MC.productThumb(p)}" alt="" width="56" height="56" style="border-radius:12px;object-fit:cover"><div><b class="fs-14">${esc(MC.shortName(p))}</b><div class="stars">${MC.starRow(p.rating)}</div></div></div><p><b style="font-size:22px;font-family:var(--font-head);color:var(--price)">${p.rating.toFixed(1)}</b><span class="text-muted"> / 5 · ${p.reviews.toLocaleString('vi-VN')} đánh giá</span><br><span class="text-muted fs-13">Đã bán ${p.sold.toLocaleString('vi-VN')} trên Shopee</span></p><div class="prod prod--shopee">${I.external} Xem đánh giá trên Shopee</div></a>`).join('');
+  $('#reviewGrid').innerHTML = [...rated].sort((a, b) => b.reviews - a.reviews).slice(0, 4).map((p) => `<a class="review-card review-card--shopee" href="${p.shopeeUrl || MC.spUrl(p)}" ${p.shopeeUrl ? 'target="_blank" rel="noopener"' : ''} aria-label="Xem ${p.reviews} đánh giá của ${esc(MC.shortName(p))} trên Shopee"><div class="flex items-center gap-12"><img src="${MC.productThumb(p)}" alt="" width="56" height="56" style="border-radius:12px;object-fit:cover"><div><b class="fs-14">${esc(MC.shortName(p))}</b><div class="stars">${MC.starRow(p.rating)}</div></div></div><p><b style="font-size:22px;font-family:var(--font-head);color:var(--price)">${p.rating.toFixed(1)}</b><span class="text-muted"> / 5 · ${p.reviews.toLocaleString('vi-VN')} đánh giá</span><br><span class="text-muted fs-13">Đã bán ${p.sold.toLocaleString('vi-VN')} trên Shopee</span></p><div class="prod prod--shopee">${I.external} Xem đánh giá trên Shopee</div></a>`).join('');
   if (SITE.showReviews) $('#reviewGrid').insertAdjacentHTML('beforeend', REVIEWS.map((r) => `<div class="review-card"><div class="stars">${MC.starRow(r.stars)}</div><p>"${esc(r.text)}"</p><div class="who"><div><b>${esc(r.name)} · ${esc(r.child)}</b><small>${esc(r.city)}</small></div></div></div>`).join(''));
 
   /* Feedback thực tế: ẩn mục nếu chưa có ảnh */

@@ -10,16 +10,16 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261019c">
+  <link rel="stylesheet" href="css/style.css?v=20261019d">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="blogPage"></div></main>
-<script src="js/data.js?v=20261017g"></script>
+<script src="js/data.js?v=20261019a"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261019z"></script>
-<script src="js/chat.js?v=20261019c" defer></script>
+<script src="js/app.js?v=20261019y"></script>
+<script src="js/chat.js?v=20261019d" defer></script>
 <script src="js/lead-tu-van.js?v=20261013a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
       xa();
       if (/^## /.test(t)) h += `<h2>${esc(t.slice(3))}</h2>`;
       else if ((m = t.match(/^!\[(.*?)\]\((.+?)\)$/))) h += `<figure><img src="${esc(m[2])}" alt="${esc(m[1])}" loading="lazy">${m[1] ? `<figcaption>${esc(m[1])}</figcaption>` : ''}</figure>`;
-      else if ((m = t.match(/^\[\[sp:(.+?)\]\]$/))) { const sp = byId(m[1]); if (sp) h += `<a class="post-sp" href="product.html?id=${encodeURIComponent(sp.id)}"><img src="${productThumb(sp)}" alt=""><span><b>${esc(shortName(sp))}</b><small>${fmt(sp.price)}</small></span><span class="btn btn--primary btn--sm">Xem sản phẩm</span></a>`; }
+      else if ((m = t.match(/^\[\[sp:(.+?)\]\]$/))) { const sp = byId(m[1]); if (sp) h += `<a class="post-sp" href="${MC.spUrl(sp)}"><img src="${productThumb(sp)}" alt=""><span><b>${esc(shortName(sp))}</b><small>${fmt(sp.price)}</small></span><span class="btn btn--primary btn--sm">Xem sản phẩm</span></a>`; }
       else h += `<p>${esc(t)}</p>`;
     });
     xa(); return h;

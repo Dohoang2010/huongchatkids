@@ -451,6 +451,7 @@ window.PRODUCTS = [
   },
   {
     "id": "22686115682",
+    "slug": "nuoc-ep-lotte-organic-hoa-qua-rau-cu",
     "name": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
     "short": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
     "brand": "lotte",
@@ -3417,6 +3418,7 @@ window.PRODUCTS = [
   },
   {
     "id": "zinc-purevitality",
+    "slug": "kem-zinc-pure-vitality",
     "name": "Kẽm ZinC Pure Vitality New Zealand – Bổ Sung Kẽm Hỗ Trợ Tăng Đề Kháng & Phát Triển Toàn Diện – Lọ Nhỏ Giọt 30ml Không Hương",
     "short": "Kẽm ZinC Pure Vitality 30ml",
     "brand": "purevitality",
@@ -3760,6 +3762,21 @@ window.PRODUCTS = [
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */
+
+/* Đường dẫn sản phẩm có từ khoá: huongchatkids.vn/<slug> (vd /nuoc-ep-lotte-tang-cao).
+   slug = p.slug (sửa ở Quản trị › Sản phẩm › SEO) hoặc tự tạo từ tên ngắn; trùng nhau / trùng tên trang có sẵn thì thêm mã sản phẩm.
+   Máy chủ VPS đọc cùng bảng này để trả trang sản phẩm + chuyển link cũ product.html?id=… sang link mới. */
+window.taoSlug = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70).replace(/-+$/, '');
+(function () {
+  var TRANG = ['index', 'product', 'collections', 'cart', 'checkout', 'account', 'admin', 'blog', 'policy', 'gioi-thieu', 'doi-tac', 'diem-danh', 'vi-voucher', 'quen-mat-khau', 'quan-ly-ton-kho', 'css', 'js', 'img', 'data', 'tools', 'api', 'chat-tep', 'lich-trinh', '2010', 'sitemap', 'robots'];
+  var bySlug = {}, byId = {};
+  (window.PRODUCTS || []).forEach(function (p) {
+    var s = window.taoSlug(p.slug || p.short || p.name) || window.taoSlug(String(p.id));
+    if (bySlug[s] || TRANG.indexOf(s) > -1) s = s + '-' + window.taoSlug(String(p.id));
+    bySlug[s] = p.id; byId[p.id] = s;
+  });
+  window.SP_SLUG = byId; window.SP_THEO_SLUG = bySlug;
+})();
 
 /* Feedback thực tế của khách (ảnh chụp tin nhắn/bình luận/ảnh bé dùng sản phẩm) – đặt file vào img/feedback/.
    Chỉ dùng ảnh đã được khách đồng ý; nên làm mờ tên/avatar; không dùng ảnh có tuyên bố chữa bệnh, "cao thêm X cm" (quy định quảng cáo TPCN).

@@ -43,7 +43,7 @@
     if (dk.loai === 'video') { const u = dk.tam || GOC_TEP() + dk.url; return `<video class="chat-dk chat-dk--video" src="${esc(u)}" controls preload="metadata" playsinline></video>`; }
     if (dk.loai === 'sp') {
       const p = MC.byId(dk.id); if (!p) return `<div class="chat-dk chat-dk--sp"><span>Sản phẩm ${esc(dk.id)} (đã ngừng bán)</span></div>`;
-      return `<div class="chat-dk chat-dk--sp"><a href="product.html?id=${encodeURIComponent(p.id)}"><img src="${esc(MC.productThumb(p))}" alt=""></a><div><a href="product.html?id=${encodeURIComponent(p.id)}" class="chat-sp__ten">${esc(MC.shortName(p))}</a>${dk.bt ? `<small>${esc(dk.bt)}</small>` : ''}<b>${fmt(p.price)}</b>
+      return `<div class="chat-dk chat-dk--sp"><a href="${MC.spUrl(p)}"><img src="${esc(MC.productThumb(p))}" alt=""></a><div><a href="${MC.spUrl(p)}" class="chat-sp__ten">${esc(MC.shortName(p))}</a>${dk.bt ? `<small>${esc(dk.bt)}</small>` : ''}<b>${fmt(p.price)}</b>
         ${!toi ? `<button type="button" class="chat-sp__mua" data-buy="${esc(p.id)}">${dk.moi ? '⚡ Đặt hàng ngay' : 'Mua ngay'}</button>` : ''}</div></div>`;
     }
     if (dk.loai === 'don') return `<div class="chat-dk chat-dk--don"><b>📦 Đơn ${esc(dk.ma)}</b>${dk.ngay ? `<small>${esc(dk.ngay)}</small>` : ''}${dk.sp ? `<span>${esc(dk.sp)}</span>` : ''}<span>${dk.tong ? fmt(dk.tong) : ''}${dk.tt ? ' · ' + esc(dk.tt) : ''}</span></div>`;

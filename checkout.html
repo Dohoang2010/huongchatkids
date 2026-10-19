@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261019c">
+  <link rel="stylesheet" href="css/style.css?v=20261019d">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -18,12 +18,12 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261017g"></script>
+<script src="js/data.js?v=20261019a"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/diachi.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261019z"></script>
-<script src="js/chat.js?v=20261019c" defer></script>
+<script src="js/app.js?v=20261019y"></script>
+<script src="js/chat.js?v=20261019d" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
       : 'Mẹ thường mua cùng các sản phẩm trong đơn – thêm vào đơn chỉ 1 chạm.';
     box.innerHTML = `<h3>🛍️ Sản phẩm nên mua kèm</h3><p class="upsell__hint">${hint}</p><div class="upsell__list">${ds.map(({ p, lyDo }) => {
       const v = p.variants ? p.variants[bienTheCon(p)] : null;
-      return `<div class="upsell__it"><a href="product.html?id=${p.id}" target="_blank"><img src="${productThumb(p)}" alt="" loading="lazy"></a><div class="upsell__info"><a class="n" href="product.html?id=${p.id}" target="_blank">${esc(shortName(p))}</a><small>${esc(lyDo)}</small><b>${fmt(v ? v.price : p.price)}${v ? ` <span>/ ${esc(v.label)}</span>` : ''}</b></div><button class="btn btn--outline btn--sm" type="button" data-upsell="${p.id}">+ Thêm</button></div>`;
+      return `<div class="upsell__it"><a href="${MC.spUrl(p)}" target="_blank"><img src="${productThumb(p)}" alt="" loading="lazy"></a><div class="upsell__info"><a class="n" href="${MC.spUrl(p)}" target="_blank">${esc(shortName(p))}</a><small>${esc(lyDo)}</small><b>${fmt(v ? v.price : p.price)}${v ? ` <span>/ ${esc(v.label)}</span>` : ''}</b></div><button class="btn btn--outline btn--sm" type="button" data-upsell="${p.id}">+ Thêm</button></div>`;
     }).join('')}</div>`;
   };
 

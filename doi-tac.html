@@ -8,16 +8,16 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261019c">
+  <link rel="stylesheet" href="css/style.css?v=20261019d">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <main id="app"><div class="container" id="dt"></div></main>
-<script src="js/data.js?v=20261017g"></script>
+<script src="js/data.js?v=20261019a"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261019z"></script>
-<script src="js/chat.js?v=20261019c" defer></script>
+<script src="js/app.js?v=20261019y"></script>
+<script src="js/chat.js?v=20261019d" defer></script>
 <script>
 /* TRANG ĐỐI TÁC – đăng ký (shop duyệt), đăng nhập, lấy link sản phẩm, xem lượt bấm / đơn / hoa hồng / kỳ thanh toán.
    Máy chủ: Apps Script affDangKy / affDangNhap / affHoSo / affCongKhai (tools/apps-script.gs, phần ĐỐI TÁC). */
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="dt-sp__hh">Hoa hồng <b>${String(m.pt).replace('.', ',')}%</b> ≈ ${fmt(Math.round(p.price * m.pt / 100))}/sp${m.cd ? ` <em>🎯 Riêng cho bạn${m.cd.kt ? ' · đến ' + esc(m.cd.kt.slice(0, 10)) : ''}</em>` : ''}</span>
         <small class="text-muted">Đã bán ${Number(p.sold || 0).toLocaleString('vi-VN')}${ban ? ` · <b class="text-teal">bạn bán ${ban} đơn</b>` : ''}</small>
         <code class="dt-sp__lk">${esc(url.replace(/^https?:\/\//, ''))}</code></div>
-        <div class="dt-sp__nut"><button class="btn btn--primary btn--sm" type="button" data-copy="${esc(url)}">Copy link</button><a class="btn btn--ghost btn--sm" href="product.html?id=${p.id}" target="_blank">Xem</a></div></div>`; }).join('')
+        <div class="dt-sp__nut"><button class="btn btn--primary btn--sm" type="button" data-copy="${esc(url)}">Copy link</button><a class="btn btn--ghost btn--sm" href="${MC.spUrl(p)}" target="_blank">Xem</a></div></div>`; }).join('')
       || `<p class="text-muted fs-14">${k ? 'Không thấy sản phẩm phù hợp.' : 'Shop chưa mở sản phẩm nào cho chương trình đối tác. Bạn quay lại sau nhé!'}</p>`;
   }
   /* Chưa có phiên đối tác nhưng đang đăng nhập tài khoản khách là đối tác đã duyệt → vào thẳng, khỏi đăng nhập lại */

@@ -9,6 +9,7 @@ const { Kho } = require('./kho');
 const { BoChay } = require('./thuc-thi');
 const { taoGuiDi } = require('./gui-di');
 const { layTuAppsScript, doiChieuBam } = require('./nhap');
+const { taoTrangWeb } = require('./trang-web');
 
 const E = process.env;
 const cauHinh = {
@@ -34,6 +35,7 @@ const nhatKyHeThong = [];
 const ghi = (s) => { const d = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' ' + s; console.log(d); nhatKyHeThong.push(d); if (nhatKyHeThong.length > 200) nhatKyHeThong.shift(); };
 const guiDi = taoGuiDi({ pool, cauHinh, ghi });
 const bc = new BoChay({ kho, cauHinh, guiDi });
+const trangWeb = taoTrangWeb({ thuMuc: E.WEB_DIR || '/var/www/huongchatkids', bc, ghi: (s) => ghi(s) });
 const trangThai = { batDau: Date.now(), lanNhap: null, lanNhapLoi: null, doiChieu: null, lich: {}, dangNhap: false };
 
 function napMa() {
@@ -168,6 +170,18 @@ const mayChu = http.createServer(async (req, res) => {
         bao(); setTimeout(bao, 8000).unref();
       }
       return traJson(res, 200, { ok: true }, cors);
+    }
+    /* ---- Trang web cho Google (nginx gửi sang): link sản phẩm có từ khoá, link cũ product.html?id=, sitemap ---- */
+    if (duongDan === '/sitemap.xml') return tra(res, 200, 'application/xml', trangWeb.sitemap(), { 'Cache-Control': 'public, max-age=600' });
+    if (duongDan === '/product.html') {
+      const moi = trangWeb.chuyenTuLinkCu(url.searchParams);
+      if (moi) { res.writeHead(301, { Location: moi, 'Cache-Control': 'public, max-age=3600' }); return res.end(); }
+      return tra(res, 200, 'text/html', fs.readFileSync((E.WEB_DIR || '/var/www/huongchatkids') + '/product.html', 'utf8'), { 'Cache-Control': 'no-cache' });
+    }
+    if (/^\/[a-z0-9-]{2,90}$/.test(duongDan) && !duongDan.startsWith('/api')) {
+      const html = await trangWeb.trangSP(duongDan.slice(1));
+      if (html) return tra(res, 200, 'text/html', html, { 'Cache-Control': 'public, max-age=120' });
+      return tra(res, 404, 'text/html', '<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Không tìm thấy trang – Hương Chất Kids</title></head><body style="font-family:sans-serif;text-align:center;padding:60px 16px"><h1>Không tìm thấy trang</h1><p>Trang này không có hoặc sản phẩm đã đổi đường dẫn.</p><p><a href="/">Về trang chủ Hương Chất Kids</a> · <a href="/collections.html">Xem tất cả sản phẩm</a></p></body></html>');
     }
     if (duongDan === '/api/chat-tep') return nhanTepChat(req, res, url, cors);
     if (duongDan === '/api/suc-khoe') return traJson(res, 200, { ok: true, cheDo: cauHinh.cheDo, luc: Date.now(), lanNhap: trangThai.lanNhap ? trangThai.lanNhap.luc : null });
