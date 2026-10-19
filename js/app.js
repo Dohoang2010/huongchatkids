@@ -6,6 +6,21 @@
    - Ảnh minh hoạ sản phẩm tự sinh (SVG) khi chưa có ảnh thật
    - Footer, floating contact, bottom nav (mobile), toast
    ===================================================================== */
+/* Ghi lỗi giao diện về máy chủ (chỉ nội dung lỗi + trang + trình duyệt, không có thông tin khách) – tối đa 5 lỗi mỗi lần mở trang */
+(function () {
+  var dem = 0;
+  function gui(msg, src, dong, cot, stack) {
+    try {
+      if (dem++ >= 5 || !/huongchatkids\.vn$/.test(location.hostname)) return;
+      var d = JSON.stringify({ m: String(msg || '').slice(0, 300), s: String(src || '').slice(0, 200), l: dong || 0, c: cot || 0, st: String(stack || '').slice(0, 1200), u: location.pathname + location.search.slice(0, 80), ua: navigator.userAgent.slice(0, 160) });
+      if (navigator.sendBeacon) navigator.sendBeacon('/api/loi-js', d); else fetch('/api/loi-js', { method: 'POST', body: d, keepalive: true });
+    } catch (e) { /* bỏ qua */ }
+  }
+  window.addEventListener('error', function (e) { if (e && e.message) gui(e.message, e.filename, e.lineno, e.colno, e.error && e.error.stack); });
+  window.addEventListener('unhandledrejection', function (e) { var r = e && e.reason; gui('Promise: ' + (r && r.message || r), '', 0, 0, r && r.stack); });
+  window.__baoLoi = gui;
+})();
+
 (function () {
   'use strict';
 

@@ -1,5 +1,5 @@
 # Đường /api → máy chủ Node (127.0.0.1:3100). Chỉ cho /api, /api/exec, /api/suc-khoe, /api/keo-web ra ngoài.
-location ~ ^/api(/exec|/suc-khoe|/keo-web)?/?$ {
+location ~ ^/api(/exec|/suc-khoe|/keo-web|/loi-js)?/?$ {
   limit_req zone=hck_api burst=60 nodelay;
   client_max_body_size 4m;
   proxy_pass http://127.0.0.1:3100;

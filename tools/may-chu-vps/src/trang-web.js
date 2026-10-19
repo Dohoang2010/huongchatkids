@@ -68,13 +68,36 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   ${them || ''}`;
   }
 
-  /* Thẻ sản phẩm rút gọn (cùng class với MC.productCard để không nháy giao diện) */
+  /* Biểu tượng + nhãn độ tuổi lấy thẳng từ js/app.js (thẻ dựng sẵn giống hệt MC.productCard) */
+  const cu = () => docTheoGio('js/app.js', (ma) => {
+    const lay = (dau, cuoi) => { const a = ma.indexOf(dau); if (a < 0) return ''; const b = ma.indexOf(cuoi, a); return b < 0 ? '' : ma.slice(a, b + cuoi.length); };
+    const hop = { AGES: duLieu().tuoi };
+    try { vm.runInNewContext(lay('const ic = ', '\n  };') + '\n' + lay('const ageLabel = ', '\n  };') + '\nthis.I = I; this.ageRange = ageRange;', hop, { timeout: 1000 }); } catch (e) { ghi('trang-web: không đọc được biểu tượng app.js – ' + e.message); }
+    return { I: hop.I || {}, ageRange: hop.ageRange || (() => '') };
+  });
+  /* Thẻ sản phẩm dựng sẵn – cùng HTML với MC.productCard (nút Mua ngay / giỏ hàng chạy bằng app.js) */
   function the(d, p) {
-    const b = d.hieu.find((x) => x.key === p.brand), u = spLink(d, p), ten = p.short || p.name;
-    return `<article class="pcard${Number(p.stock) <= 0 ? ' pcard--oos' : ''}" data-id="${esc(p.id)}"><a class="pcard__media" href="${esc(u)}"><img src="${esc(anh(p.thumb || (p.images || [])[0] || p.image || ''))}" alt="${esc(ten)}" loading="lazy" width="420" height="420"></a>
-      <div class="pcard__body"><div class="pcard__brand">${esc(b ? b.label : '')}</div><a class="pcard__name" href="${esc(u)}" title="${esc(p.name)}">${esc(ten)}</a>
-      <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b></div></div></article>`;
+    const { I, ageRange } = cu(), b = d.hieu.find((x) => x.key === p.brand) || {}, u = spLink(d, p), ten = p.short || p.name, het = Number(p.stock) <= 0;
+    const giam = d.site.showOldPrice && p.oldPrice > p.price ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+    const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
+    const lop = (t) => (t === 'Mới' ? 'badge--new' : t === 'Combo' ? 'badge--teal' : t === 'Sản phẩm hot' ? 'badge--fire' : 'badge--hot');
+    const ban = Number(p.sold) || 0, dg = Number(p.reviews) || 0;
+    let tuoi = ''; try { tuoi = p.ages && p.ages.length ? `<span>${I.user || ''}${esc(ageRange(p.ages))}${p.family ? ' &amp; cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`; } catch { /* bỏ qua */ }
+    return `<article class="pcard ${het ? 'pcard--oos' : ''}" data-id="${esc(p.id)}">
+      <a class="pcard__media" href="${esc(u)}"><img src="${esc(anh(p.thumb || (p.images || [])[0] || p.image || ''))}" alt="${esc(ten)}" loading="lazy" width="420" height="420">
+        <div class="pcard__badges">${giam >= 5 ? `<span class="badge badge--sale">-${giam}%</span>` : ''}${tags.map((t) => `<span class="badge ${lop(t)}">${t === 'Sản phẩm hot' ? '🔥 ' : ''}${esc(t)}</span>`).join('')}</div>
+        <button class="pcard__wish" type="button" data-wish="${esc(p.id)}" aria-label="Lưu vào yêu thích" aria-pressed="false">${I.heart || ''}</button></a>
+      <div class="pcard__body"><div class="pcard__brand">${esc(b.label || '')}${p.origin && p.origin !== 'Hàn Quốc' ? ' · ' + esc(p.origin) : ''}</div>
+        <a class="pcard__name" href="${esc(u)}" title="${esc(p.name)}">${esc(ten)}</a>
+        <div class="pcard__meta">${dg > 0 ? `<span class="star">${I.star || '★'}${(Number(p.rating) || 0).toFixed(1)} <span class="text-muted">(${dg})</span></span>` : ''}${dg > 0 && ban > 0 ? '<span>·</span>' : ''}${ban > 0 ? `<span>Đã bán ${ban >= 1000 ? (ban / 1000).toFixed(1) + 'k' : ban}</span>` : ''}${!dg && !ban ? `<span class="text-teal fw-600">${I.check || ''} Chính hãng</span>` : ''}</div>
+        <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b></div>
+        <div class="pcard__age">${tuoi}</div>
+        <div class="pcard__actions"><button class="btn btn--primary" type="button" data-buy="${esc(p.id)}" ${het ? 'disabled' : ''}>${I.zap || ''}Mua ngay</button><button class="btn btn--outline btn--icon" type="button" data-add="${esc(p.id)}" aria-label="Thêm ${esc(ten)} vào giỏ" ${het ? 'disabled' : ''}>${I.cart || ''}</button></div>
+      </div></article>`;
   }
+  /* Thẻ combo (giống index.html) */
+  const theCombo = (d, p) => { const { I } = cu(), u = esc(spLink(d, p)), gom = (p.items || []).map((id) => (d.sp.find((x) => String(x.id) === String(id)) || {}).short).filter(Boolean);
+    return `<div class="combo-card"><a href="${u}"><img src="${esc(anh((p.images || [])[0] || p.image || ''))}" alt="${esc(p.name)}" loading="lazy"></a><div><a href="${u}"><h3>${esc(p.name)}</h3></a>${gom.length ? `<div class="items">Gồm: ${esc(gom.join(' + '))}</div>` : ''}<div class="price"><b>${fmt(p.price)}</b></div><div class="flex gap-8 wrap"><button class="btn btn--primary" type="button" data-buy="${esc(p.id)}">${I.zap || ''}Mua ngay</button><button class="btn btn--outline" type="button" data-add="${esc(p.id)}">${I.cart || ''}Thêm giỏ</button></div></div></div>`; };
   const theBai = (d, b) => `<a class="post-card" href="${esc(baiLink(d, b))}"><div class="post-card__thumb" style="background:${esc(b.color || '#FFE9EF')}">${b.image ? `<img src="${esc(anh(b.image))}" alt="" loading="lazy">` : esc(b.emoji || '📖')}</div><div class="post-card__body"><div class="post-card__meta"><span class="badge badge--soft">${esc(b.cat)}</span><span>${esc(b.date)}</span></div><h3>${esc(b.title)}</h3><p>${esc(b.excerpt)}</p></div></a>`;
   const danhSachSP = (d, ds, url) => ({ '@context': 'https://schema.org', '@type': 'ItemList', url, numberOfItems: ds.length,
     itemListElement: ds.slice(0, 50).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: GOC + spLink(d, p), name: p.short || p.name })) });
@@ -181,7 +204,8 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   /* ================= Trang chủ ================= */
   function trangChu() {
     const d = duLieu(), ds = spHien(d), s = d.site;
-    const noiBat = ds.slice().sort((a, b) => (Number(b.priority) || 0) - (Number(a.priority) || 0) || (Number(b.sold) || 0) - (Number(a.sold) || 0)).slice(0, 8);
+    const me = (p) => (p.cat === 'cho-me' ? 1 : 0);   // giống MC.rankDefault (tab Bán chạy)
+    const noiBat = ds.filter((p) => !p.isCombo).sort((a, b) => me(a) - me(b) || (Number(b.priority) || 0) - (Number(a.priority) || 0) || (Number(b.sold) || 0) - (Number(a.sold) || 0) || ds.indexOf(a) - ds.indexOf(b)).slice(0, 8);
     const to = { '@context': 'https://schema.org', '@type': 'OnlineStore', name: s.name || 'Hương Chất Kids', url: GOC + '/', logo: GOC + '/img/logo-192.png',
       description: s.slogan || undefined, email: s.email || undefined, telephone: s.hotlineTel || s.hotline || undefined,
       address: s.address ? { '@type': 'PostalAddress', streetAddress: s.address, addressCountry: 'VN' } : undefined,
@@ -192,7 +216,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     html = themVaoDau(html, `<link rel="canonical" href="${GOC}/">\n  ${ld(to)}\n  ${ld(web)}\n  ${ld(danhSachSP(d, noiBat, GOC + '/'))}`);
     html = chen(html, 'featGrid', noiBat.map((p) => the(d, p)).join(''));
     html = chen(html, 'catGrid', d.danhMuc.map((c) => `<a class="cat-tile" href="/collections.html?cat=${esc(c.key)}" style="background:${esc(c.color || '')}"><b>${esc(c.label)}</b></a>`).join(''));
-    html = chen(html, 'comboGrid', ds.filter((p) => p.isCombo).map((p) => the(d, p)).join(''));
+    html = chen(html, 'comboGrid', ds.filter((p) => p.isCombo).map((p) => theCombo(d, p)).join(''));
     html = chen(html, 'momGrid', ds.filter((p) => p.cat === 'cho-me' && !p.isCombo).sort((a, b) => (Number(b.sold) || 0) - (Number(a.sold) || 0)).slice(0, 8).map((p) => the(d, p)).join(''));
     html = chen(html, 'postGrid',baiHien(d, false).slice(0, 3).map((b) => theBai(d, b)).join(''));
     html = chen(html, 'brandRow', d.hieu.filter((b) => b.key !== 'khac').map((b) => `<a href="/collections.html?brand=${esc(b.key)}">${esc(b.label)}</a>`).join(''));
