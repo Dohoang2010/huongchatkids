@@ -1427,67 +1427,6 @@ window.PRODUCTS = [
     "usage": "1 muỗng gạt pha với 30ml nước ấm theo bảng trên hộp. Sữa pha xong dùng trong 1 giờ."
   },
   {
-    "id": "47357633686",
-    "name": "Sâm Organic Pinkfong Kid Up 40ml – Hỗ Trợ Phát Triển Chiều Cao, Tăng Đề Kháng, Ăn Ngon Ngủ Ngon",
-    "short": "Sâm Organic Pinkfong Kid Up 40ml",
-    "brand": "pinkfong",
-    "cat": "hong-sam",
-    "ages": [
-      "3-6y",
-      "6-12y",
-      "12-18y"
-    ],
-    "needs": [
-      "tang-chieu-cao",
-      "de-khang",
-      "tang-can"
-    ],
-    "price": 1190000,
-    "oldPrice": 1607000,
-    "rating": 0,
-    "reviews": 0,
-    "sold": 1,
-    "stock": 50,
-    "shape": "box",
-    "color": "#EC407A",
-    "weight": "Hộp (gói 40ml)",
-    "origin": "Hàn Quốc",
-    "tags": [
-      "Mới"
-    ],
-    "image": "img/47357633686.jpg",
-    "thumb": "img/thumb/47357633686.jpg",
-    "images": [
-      "img/47357633686.jpg",
-      "img/47357633686-2.jpg",
-      "img/47357633686-3.jpg",
-      "img/47357633686-4.jpg",
-      "img/47357633686-5.jpg"
-    ],
-    "shopeeId": "47357633686",
-    "shopeeUrl": "https://shopee.vn/product/837223358/47357633686",
-    "shopeeCategory": "Mẹ & Bé › Chăm sóc sức khỏe bé › Vitamin & Thực phẩm bổ sung",
-    "variants": [
-      {
-        "label": "1 hộp",
-        "price": 1190000,
-        "oldPrice": 1607000
-      },
-      {
-        "label": "2 hộp",
-        "price": 2380000,
-        "oldPrice": 3213000
-      }
-    ],
-    "desc": "Sâm hữu cơ Pinkfong Kid Up gói 40ml (Hàn Quốc), hạn dùng 24 tháng. Theo nhà sản xuất: hỗ trợ bé phát triển chiều cao và thể chất, hỗ trợ tăng đề kháng và cải thiện tình trạng biếng ăn.",
-    "highlights": [
-      "Nhân sâm organic Hàn Quốc",
-      "Nhân vật Pinkfong bé thích",
-      "Hộp gói 40ml tiện mang theo – mua 2 hộp tiết kiệm hơn"
-    ],
-    "usage": "Bé 3–6 tuổi: 2/3 gói/ngày; trên 7 tuổi: 1–2 gói/ngày, uống buổi sáng."
-  },
-  {
     "id": "48112514210",
     "name": "SUPER COLLAGEN ALPHA 90 Gói Collagen Peptide VERISOL Đức, Hỗ Trợ Đẹp Da, Tăng Độ Đàn Hồi, Dưỡng Ẩm",
     "short": "Super Collagen Alpha 90 gói (Đức)",
