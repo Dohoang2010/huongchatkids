@@ -92,16 +92,46 @@
   ];
   let tabHienTai = 'co-ban';
 
+  /* Trang sửa sản phẩm: sửa chỉ là bản nháp (khung xem trước vẫn đổi theo), bấm Lưu mới lưu & đăng lên web */
+  let goc = null, gocIdx = -1, chuaLuuSP = false;
+  function chuaLuu() { chuaLuuSP = true; A.doiNhap(); veThanhSP(); }
+  function veThanhSP() {
+    const b = $('#spLuu'); if (!b) return;
+    b.classList.toggle('is-doi', chuaLuuSP);
+    $('#spLuuTT', b).innerHTML = chuaLuuSP ? '<span class="cham"></span><b>Có thay đổi chưa lưu</b> <span class="muted">– bấm Lưu để đăng lên website</span>' : '<span class="muted">✓ Đã lưu – chưa có thay đổi mới</span>';
+    $('[data-sp-luu]', b).disabled = !chuaLuuSP; $('[data-sp-huy]', b).disabled = !chuaLuuSP;
+  }
+  async function luuSP() {
+    if (!chuaLuuSP) return; thu();
+    chuaLuuSP = false; goc = A.sao(ds()[gocIdx]); veThanhSP();
+    A.doiDuLieu(); A.toast('Đang lưu…'); await A.xuatBan();
+  }
+  function huySP() {
+    if (gocIdx < 0 || !goc) return; ds()[gocIdx] = A.sao(goc); chuaLuuSP = false; A.doiNhap(); A.veTrang(); A.toast('Đã bỏ các thay đổi chưa lưu');
+  }
+  /* Rời trang sửa khi chưa lưu → hỏi Lưu hay bỏ thay đổi */
+  window.addEventListener('hashchange', async () => {
+    if (!chuaLuuSP || gocIdx < 0 || location.hash === '#/san-pham/' + gocIdx) return;
+    const idx = gocIdx, ok = await A.hoi({ tieuDe: 'Lưu thay đổi sản phẩm?', noiDung: 'Mẹ đã sửa sản phẩm nhưng chưa bấm <b>Lưu</b>.<br>Bấm <b>Lưu</b> để đăng lên website, bấm <b>Huỷ</b> để bỏ các thay đổi.', nutOk: 'Lưu' });
+    if (ok) { chuaLuuSP = false; A.doiDuLieu(); A.toast('Đang lưu…'); await A.xuatBan(); }
+    else { if (goc) ds()[idx] = A.sao(goc); chuaLuuSP = false; A.doiNhap(); A.toast('Đã bỏ các thay đổi chưa lưu'); }
+    gocIdx = -1; goc = null;
+  });
+  window.addEventListener('beforeunload', (e) => { if (chuaLuuSP) { e.preventDefault(); e.returnValue = ''; } });
+
   function veForm(el, idx) {
     const p = ds()[idx];
     if (!p) { el.innerHTML = A.trong('Không tìm thấy sản phẩm', 'Sản phẩm này có thể đã bị xoá.', '🔍'); return; }
+    if (gocIdx !== idx || !goc) { gocIdx = idx; goc = A.sao(p); chuaLuuSP = false; }
     $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/san-pham">← Danh sách</a>
       <a class="btn btn--ghost" href="product.html?id=${encodeURIComponent(p.id)}&preview=1" target="_blank" rel="noopener">Xem trên web ↗</a>
       <button class="btn btn--red" data-xoa-sp="${idx}">Xoá</button>`;
     el.innerHTML = `<div class="card" id="spForm" data-idx="${idx}">
       <div class="tabs2">${TAB.map(([k, t]) => `<button class="tab2 ${k === tabHienTai ? 'is-on' : ''}" data-tab2="${k}">${t}</button>`).join('')}</div>
-      <div id="tabBody"></div></div>`;
-    veTab(p, idx);
+      <div id="tabBody"></div>
+      <div class="sp-luu" id="spLuu"><div id="spLuuTT"></div><span class="grow"></span>
+        <button class="btn btn--ghost" data-sp-huy>Huỷ thay đổi</button><button class="btn btn--primary" data-sp-luu>💾 Lưu</button></div></div>`;
+    veTab(p, idx); veThanhSP();
   }
 
   function veTab(p, idx) {
@@ -219,7 +249,7 @@
 
   document.addEventListener('input', (e) => {
     if (e.target.id === 'spQ') { S.q = e.target.value; timTre(); return; }
-    if (e.target.closest('#spForm')) { thu(); A.doiDuLieu(); if (e.target.dataset.p === 'seoTitle' || e.target.dataset.p === 'seoDesc') veTab(ds()[Number($('#spForm').dataset.idx)], 0); }
+    if (e.target.closest('#spForm')) { thu(); chuaLuu(); if (e.target.dataset.p === 'seoTitle' || e.target.dataset.p === 'seoDesc') veTab(ds()[Number($('#spForm').dataset.idx)], 0); }
   });
   document.addEventListener('change', (e) => {
     if (e.target.id === 'spCat') { S.cat = e.target.value; S.trang = 1; return A.veTrang(); }
@@ -235,7 +265,7 @@
       if (bulk) { bulk.classList.toggle('hide', !S.chon.size); const b = bulk.querySelector('b'); if (b) b.textContent = `Đã chọn ${S.chon.size} sản phẩm`; }
       return;
     }
-    if (e.target.closest('#spForm')) { thu(); A.doiDuLieu(); }
+    if (e.target.closest('#spForm') && e.target.id !== 'imgFile') { thu(); chuaLuu(); }
     if (e.target.id === 'imgFile') taiAnhLen(Array.from(e.target.files || []));
   });
 
@@ -250,6 +280,8 @@
       A.doiDuLieu(); tabHienTai = 'co-ban'; A.di('#/san-pham/' + (ds().length - 1));
       A.toast('Đã tạo sản phẩm mới (đang ẩn) – điền thông tin rồi bỏ ẩn', 'ok'); return;
     }
+    if (t.closest('[data-sp-luu]')) return luuSP();
+    if (t.closest('[data-sp-huy]')) return huySP();
     const tab = t.closest('[data-tab2]');
     if (tab) { thu(); tabHienTai = tab.dataset.tab2; $$('.tab2').forEach((x) => x.classList.toggle('is-on', x === tab)); veTab(ds()[Number($('#spForm').dataset.idx)], 0); return; }
     const xoa = t.closest('[data-xoa-sp]');
@@ -257,6 +289,7 @@
       const i = Number(xoa.dataset.xoaSp); const p = ds()[i];
       const ok = await A.hoi({ tieuDe: 'Xoá sản phẩm?', noiDung: `Xoá hẳn <b>${esc(p.short || p.name)}</b> khỏi website?<br><span class="muted">Muốn tạm ẩn thì dùng ô “Ẩn sản phẩm” sẽ an toàn hơn.</span>`, nutOk: 'Xoá', nguyHiem: true });
       if (!ok) return;
+      chuaLuuSP = false; gocIdx = -1; goc = null;
       ds().splice(i, 1); S.chon.clear(); A.doiDuLieu(); A.di('#/san-pham'); A.toast('Đã xoá sản phẩm'); return;
     }
     const bulk = t.closest('[data-bulk]');
@@ -284,14 +317,14 @@
     const bia = t.closest('[data-lam-bia]');
     if (bia) { const p = ds()[Number($('#spForm').dataset.idx)]; const i = Number(bia.dataset.lamBia);
       p.images = [p.images[i], ...p.images.filter((_, j) => j !== i)]; p.image = p.images[0]; p.thumb = p.images[0];
-      A.doiDuLieu(); veTab(p, 0); return; }
+      chuaLuu(); veTab(p, 0); return; }
     const xa = t.closest('[data-xoa-anh]');
     if (xa) { const p = ds()[Number($('#spForm').dataset.idx)]; p.images = (p.images || []).filter((_, j) => j !== Number(xa.dataset.xoaAnh));
-      p.image = p.images[0] || ''; p.thumb = p.images[0] || ''; A.doiDuLieu(); veTab(p, 0); return; }
+      p.image = p.images[0] || ''; p.thumb = p.images[0] || ''; chuaLuu(); veTab(p, 0); return; }
     if (t.id === 'btnThemV') { const p = ds()[Number($('#spForm').dataset.idx)]; thu(); p.variants = p.variants || [];
-      p.variants.push({ label: 'Phân loại mới', price: p.price || 0 }); A.doiDuLieu(); veTab(p, 0); return; }
+      p.variants.push({ label: 'Phân loại mới', price: p.price || 0 }); chuaLuu(); veTab(p, 0); return; }
     const xv = t.closest('[data-xoa-v]');
-    if (xv) { const p = ds()[Number($('#spForm').dataset.idx)]; thu(); p.variants.splice(Number(xv.dataset.xoaV), 1); A.doiDuLieu(); veTab(p, 0); return; }
+    if (xv) { const p = ds()[Number($('#spForm').dataset.idx)]; thu(); p.variants.splice(Number(xv.dataset.xoaV), 1); chuaLuu(); veTab(p, 0); return; }
   });
 
   async function taiAnhLen(files) {
@@ -305,7 +338,7 @@
         p.images = p.images || []; p.images.push(duong);
         if (!p.image) p.image = duong; if (!p.thumb) p.thumb = duong;
       }
-      A.doiDuLieu(); veTab(p, 0); A.toast('Đã tải ảnh lên', 'ok');
+      chuaLuu(); veTab(p, 0); A.toast('Đã tải ảnh lên – bấm Lưu để đăng lên web', 'ok');
     } catch (err) { A.toast(err.message, 'err'); }
   }
 

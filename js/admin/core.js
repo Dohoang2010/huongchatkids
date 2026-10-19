@@ -172,6 +172,12 @@ window.ADMIN = (() => {
     PREVIEW && PREVIEW.capNhat(D);
     henTuXuat();
   }
+  /* Chỉ ghi bản nháp + cập nhật khung xem trước, KHÔNG tự lưu lên web (trang sửa sản phẩm: bấm Lưu mới lưu) */
+  function doiNhap() {
+    sessionStorage.setItem('hck_admin_nhap', JSON.stringify(D));
+    sessionStorage.setItem('hck_preview', JSON.stringify(D));
+    PREVIEW && PREVIEW.capNhat(D);
+  }
   /* Báo VPS kéo bản mới ngay (không phải chờ lịch 1 phút) */
   function keoVPS() { try { const u = ((SITE.loyalty && SITE.loyalty.endpoint) || '').replace(/\/api\/?$/, '/api/keo-web'); if (/\/api\/keo-web$/.test(u)) fetch(u, { mode: 'no-cors', cache: 'no-store' }).catch(() => {}); } catch { /* bỏ qua */ } }
   function boNhap() {
@@ -460,7 +466,7 @@ window.ADMIN = (() => {
     toast, hoi, co, VAI_TRO, nguoiDung,
     api, adminKey, xacThuc, ghToken, ghDoc, ghGhi, b64, unb64, taiAnh, kiemTraGh,
     get D() { return D; }, get GOC() { return GOC; }, get daSua() { return daSua; },
-    doiDuLieu, boNhap, daDoiGi, xuatBan, napNhap,
+    doiDuLieu, doiNhap, boNhap, daDoiGi, xuatBan, napNhap,
     dangKy, MODULES, NHOM, di, duong, veTrang, veSidebar,
     trong, dangTai, loiTai, the, badge, sapXep, phanTrang, thongBao,
     datPreview, batDau, dangNhapHopLe, ghiPhien, thoat, TAI_KHOAN };

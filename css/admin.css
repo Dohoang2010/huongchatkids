@@ -750,3 +750,9 @@ a.d1-dong:hover{background:var(--line-2);border-radius:6px}
 .lh-mau{display:flex;align-items:center;gap:8px}.lh-mau input[type=color]{width:46px;height:34px;padding:2px}
 .lh-sua h4{margin:18px 0 8px}.lh-sua details{margin:10px 0}.lh-sua summary{cursor:pointer;font-weight:600}
 .box-note--warn{background:#FFF6E0;border-color:#F0A500;color:#7a4b00}
+
+/* Trang sửa sản phẩm: thanh Lưu cố định ở đáy khung */
+.sp-luu{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px -18px -18px;padding:12px 18px;background:#fff;border-top:1px solid var(--line);border-radius:0 0 12px 12px;box-shadow:0 -6px 18px rgba(20,24,31,.06)}
+.sp-luu.is-doi{background:#FFF8E6;border-top-color:#F5C451}
+.sp-luu .cham{display:inline-block;width:8px;height:8px;border-radius:50%;background:#F0A500;margin-right:6px;vertical-align:middle}
+.sp-luu button:disabled{opacity:.45;cursor:not-allowed}
