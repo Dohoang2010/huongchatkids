@@ -2,7 +2,7 @@
 window.ADMIN_DANH_MUC = {
  "tep": {
   "m-dashboard.js": {
-   "v": "744313c1",
+   "v": "983716ca",
    "can": [],
    "ngay": true
   },
@@ -39,7 +39,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-gioi-thieu.js": {
-   "v": "e156137a",
+   "v": "ed662d6c",
    "can": [],
    "ngay": false
   },
@@ -83,14 +83,14 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-voucher.js": {
-   "v": "e5402e8c",
+   "v": "51c7d5e0",
    "can": [
     "m-qua-tang.js"
    ],
    "ngay": false
   },
   "m-menu.js": {
-   "v": "e2c30d05",
+   "v": "72186565",
    "can": [],
    "ngay": false
   },
@@ -110,7 +110,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-theme.js": {
-   "v": "40afd0ff",
+   "v": "e0eeebbf",
    "can": [],
    "ngay": false
   },
@@ -125,12 +125,12 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-users.js": {
-   "v": "3426b62b",
+   "v": "3adf5a30",
    "can": [],
    "ngay": false
   },
   "m-system.js": {
-   "v": "ce74cbf6",
+   "v": "d28d22d3",
    "can": [
     "m-bao-mat.js"
    ],

@@ -35,7 +35,7 @@ function tao() {
   const tep = fs.readdirSync(THU_MUC).filter((f) => /^m-.*\.js$/.test(f)).sort((a, b) => vt(a) - vt(b) || a.localeCompare(b));
   const muc = [], tepDs = {};
   for (const f of tep) {
-    const ma = fs.readFileSync(path.join(THU_MUC, f));
+    const ma = fs.readFileSync(path.join(THU_MUC, f), 'utf8').replace(/\r\n/g, '\n');
     tepDs[f] = { v: crypto.createHash('sha1').update(ma).digest('hex').slice(0, 8), can: CAN[f] || [], ngay: NGAY.includes(f) };
     chupDangKy(f).forEach((m) => {
       const o = { tep: f }; for (const k of Object.keys(m)) if (['string', 'number', 'boolean'].includes(typeof m[k])) o[k] = m[k];
@@ -51,10 +51,10 @@ const bam = (s) => crypto.createHash('sha1').update(s).digest('hex').slice(0, 8)
 const ADMIN = path.join(GOC, 'admin.html');
 let html = fs.readFileSync(ADMIN, 'utf8');
 const htmlMoi = html.replace(/(js\/admin\/danh-muc\.js\?v=)\w+/, '$1' + bam(moi))
-  .replace(/(js\/admin\/(m-[\w-]+\.js)\?v=)\w+/g, (m, a, f) => (NGAY.includes(f) ? a + bam(fs.readFileSync(path.join(THU_MUC, f))) : m));
+  .replace(/(js\/admin\/(m-[\w-]+\.js)\?v=)\w+/g, (m, a, f) => (NGAY.includes(f) ? a + bam(fs.readFileSync(path.join(THU_MUC, f), 'utf8').replace(/\r\n/g, '\n')) : m));
 if (process.argv.includes('--kiem')) {
   const cu = fs.existsSync(ra) ? fs.readFileSync(ra, 'utf8').replace(/\r\n/g, '\n') : '';
-  if (cu !== moi || html !== htmlMoi) { console.error('js/admin/danh-muc.js / admin.html chưa cập nhật – chạy: node tools/kiem-thu/tao-danh-muc-qt.js'); process.exit(1); }
+  if (cu !== moi || html.replace(/\r\n/g, '\n') !== htmlMoi.replace(/\r\n/g, '\n')) { console.error('js/admin/danh-muc.js / admin.html chưa cập nhật – chạy: node tools/kiem-thu/tao-danh-muc-qt.js'); process.exit(1); }
   console.log('danh-muc.js đã cập nhật');
 } else { fs.writeFileSync(ra, moi); if (html !== htmlMoi) fs.writeFileSync(ADMIN, htmlMoi); console.log('Đã ghi js/admin/danh-muc.js + phiên bản trong admin.html'); }
 module.exports = { tao };
