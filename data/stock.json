@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-15T15:14:04.420Z",
+  "updatedAt": "2026-10-19T16:00:25.070Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -413,6 +413,35 @@
         "1 hũ 100g": true,
         "3 hũ": true
       }
-    }
+    },
+    "cap-kem-nen-eclat": {
+      "in": true,
+      "variants": {
+        "Cặp 2 tuýp (chống nắng + BB cream)": true,
+        "Lẻ 1 tuýp kem chống nắng Hydrate UV Defense": true,
+        "Lẻ 1 tuýp kem nền Glow Pot No.17 BB Cream": true
+      }
+    },
+    "kem-exosome-toneup": {
+      "in": true,
+      "variants": {
+        "1 hũ 50ml": true,
+        "2 hũ": true
+      }
+    },
+    "ngu-coc-bap-thien-ma-kitea": {
+      "in": true,
+      "variants": {
+        "Hộp 900g (50 gói)": true,
+        "2 Hộp": true
+      }
+    },
+    "goi-xa-boryeong-mud": {
+      "in": true,
+      "variants": {
+        "Gội + xả 500ml": true
+      }
+    },
+    "sp1792425617216": true
   }
 }
