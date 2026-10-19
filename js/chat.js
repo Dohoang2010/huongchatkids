@@ -13,8 +13,8 @@
     ten: 'Hương Chất Kids',
     phuDe: 'Chuyên gia tư vấn · thường trả lời trong vài phút',
     chao: [
-      'Chào mẹ 👋 Hương Chất Kids rất vui được hỗ trợ mẹ!',
-      'Mẹ cần tư vấn dinh dưỡng cho bé theo độ tuổi, chọn mỹ phẩm cho mẹ hay hỗ trợ đơn hàng ạ? Mẹ cứ nhắn, gửi ảnh sản phẩm hoặc đơn hàng – chuyên gia của Hương trả lời ngay nhé 💗'
+      'Chào mẹ, Hương Chất Kids rất vui được hỗ trợ mẹ!',
+      'Mẹ cần tư vấn dinh dưỡng cho bé theo độ tuổi, chọn mỹ phẩm cho mẹ hay hỗ trợ đơn hàng ạ? Mẹ cứ nhắn, gửi ảnh sản phẩm hoặc đơn hàng – chuyên gia của Hương trả lời ngay nhé.'
     ],
     nhanh: [
       ['🍼', 'Tư vấn dinh dưỡng cho bé', 'Hương ơi, tư vấn giúp mình dinh dưỡng cho bé nhà mình với ạ. Bé '],
@@ -53,7 +53,7 @@
     const chao = CHAT_CFG.chao.map((t) => ({ tu: 'nv', noiDung: t }));
     b.innerHTML = chao.concat(tin).map((x) => { const toi = x.tu === 'khach';
       return `<div class="chat-m chat-m--${toi ? 'toi' : x.tu === 'he-thong' ? 'ht' : 'shop'}${x.tam ? ' is-tam' : ''}">${x.dk ? theDK(x.dk, toi) : ''}${x.noiDung ? `<div class="chat-m__b">${esc(x.noiDung).replace(/\n/g, '<br>')}</div>` : ''}${x.luc ? `<small>${x.tam ? 'Đang gửi…' : (x.tu === 'nv' && x.nv ? esc(x.nv) + ' · ' : '') + gioVN(x.luc)}</small>` : ''}</div>`; }).join('')
-      + (!tin.length ? `<div class="chat-nhanh">${CHAT_CFG.nhanh.map(([i, t], k) => `<button type="button" data-chat-nhanh="${k}">${i} ${esc(t)}</button>`).join('')}</div>` : '');
+      + (!tin.length ? `<div class="chat-nhanh">${CHAT_CFG.nhanh.map(([, t], k) => `<button type="button" data-chat-nhanh="${k}">${esc(t)}</button>`).join('')}</div>` : '');
     b.scrollTop = b.scrollHeight;
     b.querySelectorAll('img,video').forEach((m) => m.addEventListener(m.tagName === 'IMG' ? 'load' : 'loadedmetadata', () => { b.scrollTop = b.scrollHeight; }, { once: true }));
   }
