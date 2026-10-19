@@ -227,7 +227,7 @@
     return new Promise((resolve) => {
       setTimeout(() => {
         const code = order.code || taoMaDon();
-        const saved = { ...order, code, createdAt: new Date().toISOString(), site: location.host };
+        const saved = { ...order, code, createdAt: new Date().toISOString(), site: location.host, theoDoi: tcChoDon() };   // nguồn khách → báo cáo bán hàng
         const aff = AFF.get(); if (aff && saved.type !== 'callback') { saved.doiTac = aff.ma; saved.note = `[Đối tác ${aff.ma}]` + (saved.note ? '\n' + saved.note : ''); }
         const orders = store.get('mc_orders', []); orders.unshift(saved); store.set('mc_orders', orders.slice(0, 20));
         store.set('mc_last_order', saved); if (saved.type !== 'callback') trackSu('mua', code);
@@ -1885,26 +1885,49 @@
      Nhịp tim 15 giây cho biết khách đang online / không hoạt động. Dữ liệu: sheet "Truy cập" (Apps Script).
      ===================================================================== */
   const TC = { key: 'mc_tc', st: null, giayTrang: 0, lastAct: Date.now(), bat: false };
+  const tcDoan = () => { try { return decodeURIComponent(location.pathname.split('/').pop() || ''); } catch { return ''; } };
   function tcLoaiTrang() {
-    const f = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    const f = (location.pathname.split('/').pop() || 'index.html').toLowerCase(), d = tcDoan();
+    if (d && (window.SP_THEO_SLUG || {})[d] != null) return 'san-pham';   // /nuoc-ep-lotte-tang-cao
+    if (d && (window.BAI_THEO_SLUG || {})[d] != null) return 'cam-nang';
     return { 'index.html': 'trang-chu', '': 'trang-chu', 'product.html': 'san-pham', 'cart.html': 'gio-hang', 'checkout.html': 'thanh-toan', 'collections.html': 'danh-muc', 'blog.html': 'cam-nang', 'account.html': 'tai-khoan' }[f] || 'khac';
   }
   function tcGui(su, them) {
     if (!TC.bat) return;
     const st = TC.st, url = (SITE.loyalty || {}).endpoint;   // Apps Script – KHÔNG gửi vào link nhận đơn của CRM
-    const id = new URLSearchParams(location.search).get('id') || '';
-    const goi = { type: 'track', su, vid: st.vid, sid: st.sid, luc: new Date().toISOString(), loai: tcLoaiTrang(), trang: (location.pathname.split('/').pop() || 'index.html') + (id ? '?id=' + id : ''),
-      q: id, nguon: st.nguon, tb: innerWidth < 768 ? 'Điện thoại' : innerWidth < 1100 ? 'Máy tính bảng' : 'Máy tính', batDau: st.batDau, soTrang: st.soTrang, giayPhien: st.giayPhien, ...(them || {}) };
+    const loai = tcLoaiTrang(), d = tcDoan();
+    const id = new URLSearchParams(location.search).get('id') || (loai === 'san-pham' ? (window.SP_THEO_SLUG || {})[d] : loai === 'cam-nang' ? (window.BAI_THEO_SLUG || {})[d] : '') || '';
+    const trang = loai === 'san-pham' && id ? 'product.html?id=' + id : loai === 'cam-nang' && id ? 'blog.html?id=' + id : (location.pathname.split('/').pop() || 'index.html') + (id ? '?id=' + id : '');
+    const goi = { type: 'track', su, vid: st.vid, sid: st.sid, luc: new Date().toISOString(), loai, trang,
+      q: id, nguon: st.nguon, cd: st.cd || '', tb: innerWidth < 768 ? 'Điện thoại' : innerWidth < 1100 ? 'Máy tính bảng' : 'Máy tính', batDau: st.batDau, soTrang: st.soTrang, giayPhien: st.giayPhien, ...(them || {}) };
     try {
       const body = JSON.stringify(goi);
       if (!(navigator.sendBeacon && navigator.sendBeacon(url, body))) fetch(url, { method: 'POST', body, mode: 'no-cors', keepalive: true }).catch(() => {});
     } catch { /* không bao giờ làm hỏng trang */ }
   }
   function tcLuu() { store.set(TC.key, TC.st); }
+  /* Nguồn khách: link theo dõi (?nguon=facebook&cd=ten-bai, tạo ở Quản trị › Thống kê bán hàng) / utm_source, hoặc trang dẫn tới */
+  const TEN_NGUON = [[/facebook|^fb$|fb\.(com|me)$|messenger/, 'Facebook'], [/google/, 'Google'], [/zalo/, 'Zalo'], [/tiktok/, 'TikTok'], [/instagram|^ig$/, 'Instagram'],
+    [/youtube|youtu\.be|^yt$/, 'YouTube'], [/shopee/, 'Shopee'], [/coccoc/, 'Cốc Cốc'], [/bing/, 'Bing'], [/^doi-tac$/, 'Đối tác'], [/^(email|mail)$|mail\./, 'Email'], [/^(qr|in-an)/, 'QR / in ấn'], [/^sms$/, 'SMS']];
+  const tenNguon = (x) => { x = String(x || '').toLowerCase().trim(); if (!x) return ''; for (const [r, t] of TEN_NGUON) if (r.test(x)) return t; return x.replace(/[^\w.-]/g, '').slice(0, 40); };
+  function tcNguon() {
+    const q = new URLSearchParams(location.search);
+    let ref = ''; try { ref = document.referrer && !document.referrer.includes(location.host) ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch { /* bỏ qua */ }
+    const n = q.get('nguon') || q.get('utm_source') || (q.get('aff') ? 'doi-tac' : '') || (q.get('fbclid') ? 'facebook' : '') || (q.get('gclid') ? 'google' : '') || ref;
+    return { nguon: tenNguon(n) || 'Trực tiếp', cd: String(q.get('cd') || q.get('utm_campaign') || '').replace(/[^\w.-]/g, '').slice(0, 60) };
+  }
   function tcPhienMoi(st) {
-    const ref = document.referrer && !document.referrer.includes(location.host) ? new URL(document.referrer).hostname.replace(/^www\./, '') : '';
-    const utm = new URLSearchParams(location.search).get('utm_source');
-    return { vid: st.vid, sid: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), batDau: Date.now(), last: Date.now(), soTrang: 0, giayPhien: 0, nguon: utm || ref || 'Trực tiếp' };
+    const ng = tcNguon();
+    return { vid: st.vid, sid: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), batDau: Date.now(), last: Date.now(), soTrang: 0, giayPhien: 0, nguon: ng.nguon, cd: ng.cd,
+      trangVao: (location.pathname.split('/').pop() || 'index.html').slice(0, 60) };
+  }
+  /* Nguồn gắn vào đơn: nguồn gần nhất (không tính vào thẳng) trong 30 ngày, không có thì nguồn của phiên này */
+  function tcChoDon() {
+    try {
+      const st = TC.st || {}, gn = store.get('mc_nguon', null), conHan = gn && Date.now() - (gn.luc || 0) < 30 * 864e5;
+      const x = conHan ? gn : { nguon: st.nguon || 'Trực tiếp', cd: st.cd || '', trang: st.trangVao || '' };
+      return { nguon: x.nguon, cd: x.cd || '', trangVao: x.trang || '', vid: st.vid || '' };
+    } catch { return null; }
   }
   /* Hành vi: 'tim' (tìm kiếm) · 'gio' (thêm giỏ) · 'thanhtoan' · 'mua' */
   function trackSu(su, ct) { try { if (TC.bat) tcGui(su, { ct: String(ct || '').slice(0, 80) }); } catch { /* bỏ qua */ } }
@@ -1917,6 +1940,7 @@
     const vid = cu.vid || 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
     TC.st = cu.sid && Date.now() - (cu.last || 0) < 30 * 60e3 ? { ...cu, vid } : tcPhienMoi({ vid });
     TC.st.soTrang = (TC.st.soTrang || 0) + 1; TC.st.last = Date.now(); TC.bat = true; tcLuu();
+    { const ng = tcNguon(); if (ng.nguon !== 'Trực tiếp') store.set('mc_nguon', { nguon: ng.nguon, cd: ng.cd, luc: Date.now(), trang: (location.pathname.split('/').pop() || 'index.html').slice(0, 60) }); }
     tcGui('xem');
     const p = new URLSearchParams(location.search);
     if (tcLoaiTrang() === 'danh-muc' && p.get('q')) trackSu('tim', p.get('q'));

@@ -797,3 +797,15 @@ a.d1-dong:hover{background:var(--line-2);border-radius:6px}
 .dg-qt__dau small{display:block;color:var(--muted);font-size:12.5px}.dg-qt__nd{margin:10px 0 0;font-size:14px;line-height:1.6}
 .dg-qt__anh{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.dg-qt__anh img{width:80px;height:80px;border-radius:8px;object-fit:cover}
 .dg-qt__tl{margin-top:10px;display:flex;flex-direction:column;gap:8px}.dg-qt__nut{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Thống kê bán hàng (m-thong-ke-ban.js) */
+.tkb-pheu{display:flex;flex-direction:column;gap:8px;margin:6px 0 10px}
+.tkb-pheu__dong{display:grid;grid-template-columns:130px 1fr 70px 56px;gap:10px;align-items:center;font-size:13.5px}
+.tkb-pheu__ong{height:22px;background:#F1F3F6;border-radius:6px;overflow:hidden}.tkb-pheu__ong i{display:block;height:100%;border-radius:6px}
+.tkb-pheu__dong b{text-align:right}.tkb-pheu__dong small{color:var(--muted)}
+.tkb-tuy{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.tkb-link{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:8px}
+.tkb-link label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600}
+.tkb-link__ra{display:flex;gap:8px;margin:12px 0 6px}.tkb-link__ra input{flex:1;font-family:monospace;font-size:13px}
+tr.tkb-canh td{background:#FFF8E1}
+@media (max-width:600px){.tkb-pheu__dong{grid-template-columns:96px 1fr 52px 44px;font-size:12.5px}}

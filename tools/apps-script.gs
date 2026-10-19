@@ -156,6 +156,7 @@ function doPost(e) {
     var thanhToan = order.payment === 'bank' ? 'Chuyển khoản' : (order.payment ? 'COD' : '');
     var quaText = order.qua && order.qua.soQua ? (order.qua.moTa || (order.qua.soQua + ' ' + order.qua.ten)) : '';
 
+    try { ghiNguonDon_(order, loai); } catch (eNd) { Logger.log(eNd); }   // nguồn khách + chương trình của đơn (báo cáo bán hàng)
     sheetDon().appendRow([
       new Date(), order.code || '', loai, c.name || '', "'" + sdt, c.address || '', items,
       order.subtotal || 0, order.discount || 0, order.ship || 0, order.total || 0,
@@ -2351,6 +2352,7 @@ function doGet(e) {
     if (action === 'xoaDon')       return traVe(apiXoaDon(p), cb);
     if (action === 'suaDon')       return traVe(apiSuaDon(p), cb);
     if (action === 'truyCap')      return traVe(apiTruyCap(p), cb);
+    if (action === 'qtBaoCaoBan')  return traVe(apiQtBaoCaoBan(p), cb);
     if (action === 'khachHang')    return traVe(apiKhachHang(p), cb);
     if (action === 'khachChiTiet') return traVe(apiKhachChiTiet(p), cb);
     if (action === 'khoaKhach')    return traVe(apiKhoaKhach(p), cb);
@@ -2535,6 +2537,106 @@ function apiDangKyGoc(p) {
    - su = 'tim' | 'gio' | 'thanhtoan' | 'mua' cho hành vi · su = 'hb' nhịp tim 15 giây (chỉ lưu bộ nhớ đệm, không ghi sheet)
    Mã khách (vid) cố định trong trình duyệt, mã phiên (sid) đổi sau 30 phút không hoạt động.
    Sheet "Truy cập": mỗi dòng 1 sự kiện. Khách online lưu trong CacheService (tự hết hạn). */
+/* ===================== BÁO CÁO BÁN HÀNG: khách đến từ đâu, chương trình nào ra đơn =====================
+   Web (js/app.js) gửi kèm mỗi đơn: theoDoi = { nguon, cd (bài / chiến dịch), vid, trangVao } – nguồn gần nhất trong 30 ngày.
+   Sheet "Nguồn đơn" lưu nguồn + chương trình đã áp của từng đơn; báo cáo ghép với "Đơn hàng" (tiền, huỷ) và "Truy cập" (phễu). */
+var SHEET_ND = 'Nguồn đơn';
+var H_ND = ['Thời gian', 'Mã đơn', 'Loại', 'Nguồn', 'Bài / chiến dịch', 'Mã khách', 'Trang vào', 'Chương trình', 'Sản phẩm', 'Tổng tiền'];
+function sheetND_() { return sheetPhu(SHEET_ND, H_ND); }
+function ghiNguonDon_(o, loai) {
+  if (!o || !o.code || o.type === 'callback') return;
+  var td = o.theoDoi || {}, cat = function (x, n) { return String(x == null ? '' : x).slice(0, n); };
+  var uu = (String(o.note || '').match(/^\[([^\]]{1,80})\]/) || [])[1] || '';
+  var ct = {};
+  if (o.coupon && String(o.coupon).indexOf('VC:') !== 0) ct.ma = maChuan_(o.coupon);
+  if (o.voucher || String(o.coupon || '').indexOf('VC:') === 0) ct.vc = 1;
+  if (o.qua && o.qua.chuongTrinh) ct.qua = cat(o.qua.chuongTrinh, 40);
+  if (uu) ct.uuDai = uu;
+  if (o.gioiThieu) ct.gt = 1;
+  if (o.diem && o.diem.so) ct.diem = Number(o.diem.so) || 0;
+  if (o.hang) ct.hang = cat(o.hang, 20);
+  if (o.doiTac) ct.dt = cat(o.doiTac, 16);
+  var sp = (o.items || []).slice(0, 30).map(function (it) { return { id: cat(it.id, 60), sl: Number(it.qty) || 1, gia: Number(it.price) || 0 }; }).filter(function (x) { return x.id; });
+  sheetND_().appendRow([new Date(), cat(o.code, 40), cat(loai, 20), cat(td.nguon || 'Chưa rõ', 40), cat(td.cd, 60), cat(td.vid, 40), cat(td.trangVao, 80), JSON.stringify(ct), JSON.stringify(sp), Number(o.total) || 0]);
+}
+function apiQtBaoCaoBan(p) {
+  if (!coQuyen(p, 'dashboard.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var tz = 'Asia/Ho_Chi_Minh', ngayRe = /^\d{4}-\d{2}-\d{2}$/;
+  var den = ngayRe.test(String(p.den || '')) ? new Date(p.den + 'T23:59:59+07:00') : new Date();
+  var tu = ngayRe.test(String(p.tu || '')) ? new Date(p.tu + 'T00:00:00+07:00') : new Date(den.getTime() - 29 * 864e5 - (den.getTime() % 864e5));
+  var tuMs = tu.getTime(), denMs = den.getTime();
+  var kq = { ok: true, tu: Utilities.formatDate(tu, tz, 'yyyy-MM-dd'), den: Utilities.formatDate(den, tz, 'yyyy-MM-dd'),
+    tong: { phien: 0, khach: 0, xemSP: 0, gio: 0, thanhToan: 0, mua: 0, don: 0, doanhThu: 0, donCoNguon: 0 }, nguon: [], baiDang: [], chuongTrinh: [], sanPham: [] };
+  var them = function (m, k, ten) { return m[k] || (m[k] = { ten: ten || k, phien: 0, xemSP: 0, gio: 0, thanhToan: 0, mua: 0, don: 0, doanhThu: 0 }); };
+  var theoNguon = {}, theoBai = {}, sp = {}, khach = {};
+  var spCua = function (id) { return sp[id] || (sp[id] = { id: id, xem: 0, gio: 0, don: 0, sl: 0, doanhThu: 0 }); };
+
+  /* --- Phễu: theo phiên (sheet Truy cập) --- */
+  var s = sheetTC(), n = s.getLastRow(), phien = {};
+  if (n >= 2) {
+    var bd = Math.max(2, n - 80000), v = s.getRange(bd, 1, n - bd + 1, H_TC.length).getValues();
+    for (var i = v.length - 1; i >= 0; i--) {
+      if (!v[i][0]) continue; var t = new Date(v[i][0]).getTime(); if (t < tuMs) break; if (t > denMs) continue;
+      var sid = String(v[i][2] || ''), su = String(v[i][8] || ''); if (!sid) continue;
+      var ph = phien[sid] || (phien[sid] = { vid: String(v[i][1] || ''), nguon: '', cd: '', xem: 0, spXem: {}, gio: 0, thanhToan: 0, mua: 0 });
+      if (su === 'xem') {
+        ph.xem++; ph.nguon = String(v[i][5] || 'Trực tiếp'); if (v[i][9]) ph.cd = String(v[i][9]);   // duyệt ngược → giữ lại giá trị của lượt xem đầu tiên
+        var tr = String(v[i][3] || ''), mm = tr.match(/^product\.html\?id=([\w-]{1,60})/); if (mm) ph.spXem[mm[1]] = 1;
+      } else if (su === 'gio') { ph.gio++; if (v[i][9]) spCua(String(v[i][9])).gio++; }
+      else if (su === 'thanhtoan') ph.thanhToan++;
+      else if (su === 'mua') ph.mua++;
+    }
+  }
+  Object.keys(phien).forEach(function (sid) {
+    var ph = phien[sid]; if (!ph.xem) return;
+    var ds = [kq.tong, them(theoNguon, ph.nguon)]; if (ph.cd) ds.push(them(theoBai, ph.nguon + ' · ' + ph.cd));
+    var coSP = Object.keys(ph.spXem).length > 0;
+    ds.forEach(function (x) { x.phien++; if (coSP) x.xemSP++; if (ph.gio) x.gio++; if (ph.thanhToan) x.thanhToan++; if (ph.mua) x.mua++; });
+    Object.keys(ph.spXem).forEach(function (id) { spCua(id).xem++; });
+    if (ph.vid) khach[ph.vid] = 1;
+  });
+  kq.tong.khach = Object.keys(khach).length;
+
+  /* --- Đơn (sheet Đơn hàng) + nguồn đơn --- */
+  var nd = {}, sn = sheetND_(), nn = sn.getLastRow();
+  if (nn >= 2) sn.getRange(Math.max(2, nn - 20000), 1, nn - Math.max(2, nn - 20000) + 1, H_ND.length).getValues().forEach(function (r) { if (r[1]) nd[String(r[1])] = r; });
+  var ct = {}, ctCua = function (k, ten) { return ct[k] || (ct[k] = { ten: ten, don: 0, doanhThu: 0 }); };
+  var sd = sheetDon(), nDon = sd.getLastRow();
+  if (nDon >= 2) {
+    var dv = sd.getRange(2, 1, nDon - 1, HEADERS.length).getValues();
+    for (var j = 0; j < dv.length; j++) {
+      if (!dv[j][0]) continue; var td = new Date(dv[j][0]).getTime(); if (td < tuMs || td > denMs) continue;
+      if (String(dv[j][2] || '').indexOf('gọi lại') > -1 || /huỷ|huy|hoàn|hoan/i.test(String(dv[j][18] || ''))) continue;
+      var tien = Number(dv[j][10]) || 0, ma = String(dv[j][1] || ''), r = nd[ma];
+      kq.tong.don++; kq.tong.doanhThu += tien;
+      var ng = r ? String(r[3] || 'Chưa rõ') : 'Chưa rõ';
+      if (r) kq.tong.donCoNguon++;
+      var xn = them(theoNguon, ng); xn.don++; xn.doanhThu += tien;
+      if (r && r[4]) { var xb = them(theoBai, ng + ' · ' + r[4]); xb.don++; xb.doanhThu += tien; }
+      var c = {}; try { c = r ? JSON.parse(String(r[7] || '{}')) : {}; } catch (e1) { c = {}; }
+      var ma0 = maChuan_(dv[j][12]); if (ma0 && String(dv[j][12]).indexOf('VC:') !== 0) c.ma = ma0; else if (String(dv[j][12]).indexOf('VC:') === 0) c.vc = 1;
+      if (!c.uuDai) { var u0 = (String(dv[j][13] || '').match(/^\[([^\]]{1,80})\]/) || [])[1]; if (u0) c.uuDai = u0; }
+      var coCT = false, cong = function (k, ten) { var x = ctCua(k, ten); x.don++; x.doanhThu += tien; coCT = true; };
+      if (c.ma) cong('ma:' + c.ma, 'Mã giảm giá ' + c.ma);
+      if (c.vc) cong('vc', 'Voucher trong ví khách');
+      if (c.qua) cong('qua:' + c.qua, 'Quà tặng: ' + c.qua);
+      if (c.uuDai) cong('uu:' + c.uuDai, 'Ưu đãi: ' + c.uuDai);
+      if (c.gt) cong('gt', 'Giới thiệu bạn bè');
+      if (c.diem) cong('diem', 'Dùng điểm tích luỹ');
+      if (c.hang) cong('hang', 'Ưu đãi hạng thành viên');
+      if (c.dt) cong('dt', 'Qua đối tác (affiliate)');
+      if (!coCT) cong('khong', 'Không dùng ưu đãi nào');
+      if (r) { var dsSp = []; try { dsSp = JSON.parse(String(r[8] || '[]')); } catch (e2) { dsSp = []; }
+        dsSp.forEach(function (x) { var y = spCua(String(x.id)); y.don++; y.sl += Number(x.sl) || 1; y.doanhThu += (Number(x.gia) || 0) * (Number(x.sl) || 1); }); }
+    }
+  }
+  var xep = function (m) { return Object.keys(m).map(function (k) { var x = m[k]; x.tyLe = x.phien ? Math.round(x.don / x.phien * 1000) / 10 : null; return x; }).sort(function (a, b) { return b.doanhThu - a.doanhThu || b.phien - a.phien; }); };
+  kq.nguon = xep(theoNguon); kq.baiDang = xep(theoBai).slice(0, 50);
+  kq.chuongTrinh = Object.keys(ct).map(function (k) { return ct[k]; }).sort(function (a, b) { return b.doanhThu - a.doanhThu; });
+  kq.sanPham = Object.keys(sp).map(function (k) { var x = sp[k]; x.tyLe = x.xem ? Math.round(x.don / x.xem * 1000) / 10 : null; return x; }).sort(function (a, b) { return b.xem - a.xem || b.don - a.don; }).slice(0, 60);
+  kq.tong.tyLe = kq.tong.phien ? Math.round(kq.tong.don / kq.tong.phien * 1000) / 10 : 0;
+  return kq;
+}
 var SHEET_TC = 'Truy cập';
 var H_TC = ['Thời gian', 'Mã khách', 'Phiên', 'Trang', 'Mã SP', 'Nguồn', 'Thiết bị', 'Giây', 'Sự kiện', 'Chi tiết'];
 function sheetTC() { return sheetPhu(SHEET_TC, H_TC); }
@@ -2546,7 +2648,7 @@ function ghiTruyCap(d) {
   var luc = d.luc ? new Date(d.luc) : new Date();
   if (isNaN(luc.getTime()) || Math.abs(luc.getTime() - Date.now()) > 864e5) luc = new Date();
   var giay = Math.max(0, Math.min(1800, Math.round(Number(d.giay) || 0)));
-  sheetTC().appendRow([luc, cat(d.vid, 40), cat(d.sid, 24), cat(d.trang, 60), cat(d.q, 40), cat(d.nguon, 60), cat(d.tb, 20), giay, su, cat(d.ct, 80)]);
+  sheetTC().appendRow([luc, cat(d.vid, 40), cat(d.sid, 24), cat(d.trang, 60), cat(d.q, 40), cat(d.nguon, 60), cat(d.tb, 20), giay, su, cat(d.ct || (su === 'xem' ? d.cd : ''), 80)]);   // lượt xem: Chi tiết = bài / chiến dịch (?cd=)
   if (su === 'xem' || su === 'roi') capNhatOnline(d);
 }
 /* Khách online: 1 khoá đệm chứa cả danh sách, khoá script để nhiều khách gửi cùng lúc không ghi đè nhau */

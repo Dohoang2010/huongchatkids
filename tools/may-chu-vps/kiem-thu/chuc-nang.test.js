@@ -196,3 +196,44 @@ test('đơn hàng: khách xem được đơn của mình, không xem được đ
   assert.strictEqual(ds.donHang.length, 1, 'chỉ 1 đơn (đơn trùng không tính 2 lần): ' + ma); assert.ok(!ma.includes(SDT2), 'không lộ đơn của khách khác');
   assert.strictEqual((await m.get('action=donHang&token=' + dn.token)).ok, false, 'danh sách mọi đơn là của quản trị');
 });
+
+/* ---------- Thống kê bán hàng (nguồn khách, phễu, chương trình) ---------- */
+test('báo cáo bán hàng: phễu theo lượt vào, đơn gắn đúng nguồn / bài đăng / chương trình, đơn huỷ không tính', async () => {
+  const m = taoMay(), luc = () => new Date().toISOString();
+  const su = (sid, s, o = {}) => m.bc.doPost(new URLSearchParams(), JSON.stringify(Object.assign({ type: 'track', su: s, vid: 'v' + sid, sid, luc: luc(), loai: 'khac', trang: 'index.html', nguon: 'Facebook', cd: 'bai-20-10', tb: 'Điện thoại' }, o)));   // lượt truy cập trả 'ok' (không phải JSON)
+  // Phiên 1 (Facebook, bài 20-10): vào → xem SP → thêm giỏ → thanh toán → mua
+  await su('s1', 'xem'); await su('s1', 'xem', { trang: 'product.html?id=41353214697', q: '41353214697' }); await su('s1', 'gio', { ct: '41353214697' }); await su('s1', 'thanhtoan'); await su('s1', 'mua', { ct: 'HCKBC0000001' });
+  // Phiên 2 (Facebook, bài 20-10): chỉ xem SP rồi đi
+  await su('s2', 'xem', { trang: 'product.html?id=41353214697' });
+  // Phiên 3 (Google): vào trang chủ rồi đi
+  await su('s3', 'xem', { nguon: 'Google', cd: '' });
+  // Đơn từ phiên 1: mã giảm giá + quà chương trình
+  await datDon(m, SDT, { code: 'HCKBC0000001', coupon: 'HUONG20', qua: { soQua: 1, ten: 'mặt nạ', chuongTrinh: 'ct-2010-5tr' }, items: [{ id: '41353214697', short: 'Nước ép Lotte Tăng Cao', qty: 2, price: 448000 }], total: 896000,
+    theoDoi: { nguon: 'Facebook', cd: 'bai-20-10', vid: 'vs1', trangVao: 'index.html' } });
+  // Đơn Zalo, không ưu đãi
+  await datDon(m, SDT2, { code: 'HCKBC0000002', total: 500000, theoDoi: { nguon: 'Zalo', cd: '', vid: 'vx' } });
+  // Đơn cũ không có nguồn
+  await datDon(m, '0905111222', { code: 'HCKBC0000003', total: 300000 });
+  assert.strictEqual(m.trang('Nguồn đơn').getLastRow(), 4, 'mỗi đơn 1 dòng nguồn');
+  assert.strictEqual((await m.get('action=qtBaoCaoBan&token=sai')).ok, false, 'báo cáo cần quyền quản trị');
+  const r = await m.qt('action=qtBaoCaoBan');
+  assert.strictEqual(r.ok, true, JSON.stringify(r));
+  assert.deepStrictEqual([r.tong.phien, r.tong.xemSP, r.tong.gio, r.tong.thanhToan, r.tong.mua], [3, 2, 1, 1, 1], 'phễu: ' + JSON.stringify(r.tong));
+  assert.strictEqual(r.tong.don, 3); assert.strictEqual(r.tong.doanhThu, 1696000); assert.strictEqual(r.tong.donCoNguon, 3);
+  const fb = r.nguon.find((x) => x.ten === 'Facebook');
+  assert.deepStrictEqual([fb.phien, fb.don, fb.doanhThu, fb.tyLe], [2, 1, 896000, 50]);
+  assert.strictEqual(r.nguon.find((x) => x.ten === 'Zalo').don, 1);
+  assert.strictEqual(r.nguon.find((x) => x.ten === 'Google').don, 0);
+  assert.strictEqual(r.nguon.find((x) => x.ten === 'Chưa rõ').don, 1, 'đơn không kèm nguồn → Chưa rõ');
+  const bai = r.baiDang.find((x) => x.ten === 'Facebook · bai-20-10');
+  assert.deepStrictEqual([bai.phien, bai.don, bai.doanhThu], [2, 1, 896000]);
+  const ct = Object.fromEntries(r.chuongTrinh.map((x) => [x.ten, x.don]));
+  assert.strictEqual(ct['Mã giảm giá HUONG20'], 1); assert.strictEqual(ct['Quà tặng: ct-2010-5tr'], 1); assert.strictEqual(ct['Không dùng ưu đãi nào'], 2);
+  const sp = r.sanPham.find((x) => x.id === '41353214697');
+  assert.deepStrictEqual([sp.xem, sp.gio, sp.don, sp.sl, sp.doanhThu], [2, 1, 1, 2, 896000]);
+  // đơn huỷ không tính doanh thu
+  const sh = m.trang('Đơn hàng'), v = sh.getDataRange().getValues(), dong = v.findIndex((x) => x[1] === 'HCKBC0000002') + 1;
+  sh.getRange(dong, 19).setValue('Đã huỷ');
+  const r2 = await m.qt('action=qtBaoCaoBan');
+  assert.strictEqual(r2.tong.don, 2); assert.strictEqual(r2.tong.doanhThu, 1196000);
+});
