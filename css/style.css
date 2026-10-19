@@ -2513,3 +2513,10 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .dg-muc__anh { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; } .dg-muc__anh img { width: 84px; height: 84px; border-radius: 10px; object-fit: cover; }
 .dg-tl { margin-top: 10px; background: #FFF4F7; border-left: 3px solid var(--primary, #F0537A); padding: 8px 12px; border-radius: 0 10px 10px 0; font-size: 13.5px; }
 .dg-tab { color: #FFB020; font-weight: 700; }
+
+/* Chỗ giữ sẵn cho phần đầu trang (thanh trên 34px + header 64px / 119px) – app.js thay bằng phần đầu thật, tránh xô lệch (CLS) */
+.dau-cho { height: 98px; }
+@media (min-width: 992px) { .dau-cho { height: 153px; } }
+
+.sk-tabs-cho { height: 53.25px; border-bottom: 1px solid var(--line, #eee); }
+@media (min-width: 992px) { .dv-cum { min-height: 180px; } }

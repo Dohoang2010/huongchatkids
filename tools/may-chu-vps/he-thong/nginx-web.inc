@@ -2,7 +2,7 @@
 # Node lỗi / đang khởi động lại → nginx tự trả tệp tĩnh như trước (web vẫn chạy, chỉ thiếu phần dựng sẵn).
 gzip_proxied any;
 location = / { limit_req zone=hck_api burst=60 nodelay; proxy_pass http://127.0.0.1:3100; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; proxy_read_timeout 15s; proxy_intercept_errors on; error_page 500 502 503 504 = @tinh_chu; }
-location ~ ^/(index|collections|blog|product)\.html$ { limit_req zone=hck_api burst=60 nodelay; proxy_pass http://127.0.0.1:3100; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; proxy_read_timeout 15s; proxy_intercept_errors on; error_page 500 502 503 504 = @tinh; }
+location ~ ^/(?!admin\.html|quan-ly-ton-kho\.html)[a-z0-9-]+\.html$ { limit_req zone=hck_api burst=60 nodelay; proxy_pass http://127.0.0.1:3100; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; proxy_read_timeout 15s; proxy_intercept_errors on; error_page 500 502 503 504 = @tinh; }
 location = /js/data.js { proxy_pass http://127.0.0.1:3100; proxy_set_header Host $host; proxy_read_timeout 15s; proxy_intercept_errors on; error_page 500 502 503 504 = @tinh_data; }
 # JS / CSS bản nén gọn (src/nen-tep.js); Node lỗi → tệp gốc
 location ~* ^/(js|css)/.+\.(js|css)$ { proxy_pass http://127.0.0.1:3100; proxy_set_header Host $host; proxy_read_timeout 15s; proxy_intercept_errors on; error_page 404 500 502 503 504 = @tinh_tep; }

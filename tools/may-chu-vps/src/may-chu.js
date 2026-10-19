@@ -190,17 +190,18 @@ const mayChu = http.createServer(async (req, res) => {
     }
     if (/^\/(js|css)\//.test(duongDan) && nenTep.tra(req, res, duongDan)) return;
     if (duongDan === '/sitemap.xml') return tra(res, 200, 'application/xml', trangWeb.sitemap(), { 'Cache-Control': 'public, max-age=600' });
-    if (duongDan === '' || duongDan === '/index.html') return tra(res, 200, 'text/html', trangWeb.trangChu(), HTML_TS);
-    if (duongDan === '/collections.html') return tra(res, 200, 'text/html', trangWeb.trangDanhMuc(url.searchParams), HTML_TS);
-    if (duongDan === '/blog.html') { const r = trangWeb.trangBlog(url.searchParams); return r.chuyen ? chuyen(r.chuyen) : tra(res, 200, 'text/html', r.html, HTML_TS); }
+    if (duongDan === '' || duongDan === '/index.html') return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangChu(), 'index.html'), HTML_TS);
+    if (duongDan === '/collections.html') return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangDanhMuc(url.searchParams), 'collections.html'), HTML_TS);
+    if (duongDan === '/blog.html') { const r = trangWeb.trangBlog(url.searchParams); return r.chuyen ? chuyen(r.chuyen) : tra(res, 200, 'text/html', trangWeb.hoanThien(r.html, 'blog.html'), HTML_TS); }
     if (duongDan === '/product.html') {
       const moi = trangWeb.chuyenTuLinkCu(url.searchParams);
       if (moi) return chuyen(moi);
-      return tra(res, 200, 'text/html', trangWeb.doiAnhHtml(trangWeb.mau('product.html')), HTML_TS);
+      return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.mau('product.html'), 'product.html'), HTML_TS);
     }
+    if (/^\/[a-z0-9-]+\.html$/.test(duongDan)) { const h = trangWeb.trangKhac(duongDan.slice(1)); if (h) return tra(res, 200, 'text/html', h, HTML_TS); }
     if (/^\/[a-z0-9-]{2,90}$/.test(duongDan) && !duongDan.startsWith('/api')) {
       const html = (await trangWeb.trangSP(duongDan.slice(1))) || trangWeb.trangBaiTheoSlug(duongDan.slice(1));
-      if (html) return tra(res, 200, 'text/html', html, { 'Cache-Control': 'public, max-age=120', 'Referrer-Policy': 'strict-origin-when-cross-origin' });
+      if (html) return tra(res, 200, 'text/html', trangWeb.hoanThien(html, duongDan.slice(1)), { 'Cache-Control': 'public, max-age=120', 'Referrer-Policy': 'strict-origin-when-cross-origin' });
       return tra(res, 404, 'text/html', '<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Không tìm thấy trang – Hương Chất Kids</title></head><body style="font-family:sans-serif;text-align:center;padding:60px 16px"><h1>Không tìm thấy trang</h1><p>Trang này không có hoặc sản phẩm đã đổi đường dẫn.</p><p><a href="/">Về trang chủ Hương Chất Kids</a> · <a href="/collections.html">Xem tất cả sản phẩm</a></p></body></html>');
     }
     /* Lỗi giao diện trình duyệt khách gửi về (js/app.js) – chỉ ghi nhật ký, tối đa 30 lỗi / 10 phút mỗi IP */

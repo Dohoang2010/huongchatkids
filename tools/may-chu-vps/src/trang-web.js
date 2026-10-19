@@ -36,9 +36,38 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     hop.window = hop; hop.self = hop;
     vm.runInNewContext(ma, hop, { filename: 'data.js', timeout: 3000 });
     return { sp: hop.PRODUCTS || [], bai: hop.POSTS || [], hieu: hop.BRANDS || [], slug: hop.SP_SLUG || {}, theoSlug: hop.SP_THEO_SLUG || {},
-      baiSlug: hop.BAI_SLUG || {}, baiTheoSlug: hop.BAI_THEO_SLUG || {}, danhMuc: hop.CATEGORIES || [], nhuCau: hop.NEEDS || [], tuoi: hop.AGES || [], site: hop.SITE || {} };
+      baiSlug: hop.BAI_SLUG || {}, baiTheoSlug: hop.BAI_THEO_SLUG || {}, banner: hop.BANNERS || [], leHoi: hop.LE_HOI, suKien: hop.SU_KIEN || null, danhMuc: hop.CATEGORIES || [], nhuCau: hop.NEEDS || [], tuoi: hop.AGES || [], site: hop.SITE || {} };
   });
   const mau = (ten) => docTheoGio(ten, (s) => s);
+
+  /* ---- Giao diện ngày lễ dựng sẵn (cùng tính toán với js/le-hoi.js) – dải chào mừng có sẵn trong HTML nên trang không bị xô khi nó hiện ---- */
+  const leHoi = () => docTheoGio('js/le-hoi.js', (ma) => { const m = { exports: {} }; vm.runInNewContext(ma, { module: m, exports: m.exports, console: { log() {}, warn() {}, error() {} } }, { timeout: 2000 }); return m.exports; });
+  function chenLe(html, ten) {
+    try {
+      const LH = leHoi(), d = duLieu(), cd = LH.chon(d.leHoi, Date.now()); if (!cd) return html;
+      const p = String(ten || 'index.html').toLowerCase(), hop = (ds) => Array.isArray(ds) && ds.some((x) => x === '*' || String(x).toLowerCase() === p);
+      if (!hop(cd.trang || ['*']) || hop(cd.truTrang || [])) return html;
+      const cd0 = LH.CHU_DE[cd.chuDe] || LH.CHU_DE['hoa-hong'], m = cd.mau || {}, hl = (s, mac) => (/^#[0-9a-f]{6}$/i.test(String(s || '')) ? s : mac);
+      const lop = 'le-on le--' + String(cd.chuDe || 'hoa-hong').replace(/[^a-z0-9-]/g, '');
+      html = html.replace(/<html([^>]*)>/, (x, a) => '<html' + a + ' class="' + lop + '" style="--le-1:' + hl(m.m1, cd0.m1) + ';--le-2:' + hl(m.m2, cd0.m2) + ';--le-chu:' + hl(m.chu, cd0.chu) + '">');
+      if (cd.dai) {
+        const link = /^(https:\/\/|[a-z0-9-]+\.html)/i.test(String(cd.link || '')) && !/^javascript:/i.test(cd.link) ? cd.link : '';
+        const st0 = String(cd.sticker || cd0.sticker || ''), sticker = String(cd.dai).indexOf(st0) === 0 ? '' : esc(st0);
+        const dai = '<div class="le-dai" role="note"><' + (link ? 'a href="' + esc(link) + '"' : 'div') + ' class="le-dai__in"><span class="le-dai__st" aria-hidden="true">' + sticker + '</span><span class="le-dai__chu">' + esc(cd.dai) + '</span>' +
+          (link && cd.nut ? '<b>' + esc(cd.nut) + ' →</b>' : '') + '</' + (link ? 'a' : 'div') + '><button type="button" aria-label="Đóng lời chào">×</button></div>';
+        html = html.replace(/<body([^>]*)>\n?/, (x) => x.replace(/\n?$/, '\n') + dai + '\n');
+      }
+    } catch (e) { ghi('trang-web: giao diện ngày lễ dựng sẵn lỗi – ' + e.message); }
+    return html;
+  }
+  /* Hoàn thiện mọi trang HTML do máy chủ trả: dải ngày lễ + ảnh WebP */
+  const hoanThien = (html, ten) => doiAnhHtml(chenLe(html, ten));
+  /* Trang .html khác (giỏ hàng, tài khoản, giới thiệu…): chỉ hoàn thiện, không dựng nội dung */
+  function trangKhac(ten) {
+    if (!/^[a-z0-9-]+\.html$/.test(ten) || /^(admin|quan-ly-ton-kho)\.html$/.test(ten)) return null;
+    let html; try { html = mau(ten); } catch { return null; }
+    return hoanThien(html, ten);
+  }
   const spHien = (d) => d.sp.filter((p) => !p.an);
   const baiHien = (d, xemTruoc) => d.bai.filter((b) => !b.nhap && (xemTruoc || ngayBai(b) <= Date.now())).sort((a, b) => ngayBai(b) - ngayBai(a));
   const spLink = (d, p) => d.slug[p.id] ? '/' + d.slug[p.id] : '/product.html?id=' + encodeURIComponent(p.id);
@@ -214,6 +243,16 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       potentialAction: { '@type': 'SearchAction', target: GOC + '/collections.html?q={search_term_string}', 'query-input': 'required name=search_term_string' } };
     let html = mau('index.html');
     html = themVaoDau(html, `<link rel="canonical" href="${GOC}/">\n  ${ld(to)}\n  ${ld(web)}\n  ${ld(danhSachSP(d, noiBat, GOC + '/'))}`);
+    /* Sự kiện đang hiện (giống MC.suKienHien): banner sự kiện lên đầu băng chuyền + giữ chỗ thanh tab "Trang chủ | sự kiện" (js/su-kien.js thay vào) */
+    const sk = d.suKien && d.suKien.ketThuc && Date.now() >= Date.parse(d.suKien.hienTu || d.suKien.batDau) && Date.now() < Date.parse(d.suKien.ketThuc) ? d.suKien : null;
+    const dsBanner = (sk && Array.isArray(sk.banners) ? sk.banners.map((b) => ({ anh: b, link: b.link, alt: b.alt })) : []).concat(d.banner);
+    if (sk) html = html.replace(/<main id="app"([^>]*)>/, (x) => x + '\n<div class="sk-tabs-cho" aria-hidden="true"></div>');
+    { const nay = Date.now(), bn = dsBanner.filter((b) => !(b.hienTu && nay < Date.parse(b.hienTu)) && !(b.anTu && nay >= Date.parse(b.anTu)))[0];
+      if (bn && bn.anh && bn.anh.mb) {
+        const mb = anh(bn.anh.mb), pc = anh(bn.anh.pc || bn.anh.mb);
+        html = themVaoDau(html, `<link rel="preload" as="image" href="${esc(mb)}" media="(max-width: 767px)" fetchpriority="high"><link rel="preload" as="image" href="${esc(pc)}" media="(min-width: 768px)" fetchpriority="high">`);
+        html = chen(html, 'carouselTrack', `<a class="slide slide--anh" href="${esc(bn.link || '#')}"${bn.nen ? ` style="background:${esc(bn.nen)}"` : ''}><picture><source media="(min-width: 768px)" srcset="${esc(pc)}"><img src="${esc(mb)}" alt="${esc(bn.alt || '')}" loading="eager" fetchpriority="high"></picture></a>`);
+      } }
     html = chen(html, 'featGrid', noiBat.map((p) => the(d, p)).join(''));
     html = chen(html, 'catGrid', d.danhMuc.map((c) => `<a class="cat-tile" href="/collections.html?cat=${esc(c.key)}" style="background:${esc(c.color || '')}"><b>${esc(c.label)}</b></a>`).join(''));
     html = chen(html, 'comboGrid', ds.filter((p) => p.isCombo).map((p) => theCombo(d, p)).join(''));
@@ -249,6 +288,24 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       ld(danhSachSP(d, ds, canon)) + '\n  ' + ld(vun([['Trang chủ', GOC + '/'], [ten, canon]])) }));
     html = html.replace(/(<h1 class="page-title" id="title">)[^<]*(<\/h1>)/, (m, a, z) => a + esc(ten) + z);
     html = chen(html, 'grid', ds.map((p) => the(d, p)).join(''));
+    /* đường dẫn + hàng chọn độ tuổi dựng sẵn (giống collections.html) để trang không bị xô */
+    html = html.replace(/(<nav class="breadcrumb" id="crumb">)(<\/nav>)/, (m, a, z) => a + '<a href="index.html">Trang chủ</a><span>›</span><a href="collections.html">Sản phẩm</a>' + (ten !== 'Tất cả sản phẩm' ? '<span>›</span><span>' + esc(ten) + '</span>' : '') + z);
+    html = html.replace(/(<p class="text-muted fs-14 mb-16" id="subtitle">)(<\/p>)/, (m, a, z) => thamSo.get('km') ? m : a + esc(age.length === 1 ? 'Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ' + ((d.tuoi.find((t) => t.key === age[0]) || {}).label || age[0]) : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả 7 ngày') + z);
+    /* bộ lọc bên trái, bộ lọc đang chọn, số sản phẩm – dựng sẵn giống collections.html (renderFilters / renderActive) */
+    { const tatCa = spHien(d), S = { age, cat, need, brand, price: lay('price') };
+      let KHOANG = []; try { const mm = mau('collections.html').match(/const PRICE_RANGES = (\[[^;]*\]);/); if (mm) KHOANG = vm.runInNewContext(mm[1], {}, { timeout: 200 }); } catch { /* bỏ qua */ }
+      const cb = (name, key, label, n) => '<label><input type="checkbox" name="' + name + '" value="' + esc(key) + '" ' + (S[name].includes(key) ? 'checked' : '') + '>' + label + '<span class="count">' + n + '</span></label>';
+      html = chen(html, 'fAge', d.tuoi.map((a) => cb('age', a.key, esc(a.emoji) + ' ' + esc(a.label), tatCa.filter((p) => (p.ages || []).includes(a.key)).length)).join(''));
+      html = chen(html, 'fCat', d.danhMuc.map((c) => cb('cat', c.key, esc(c.label), tatCa.filter((p) => p.cat === c.key).length)).join(''));
+      html = chen(html, 'fNeed', d.nhuCau.map((n) => cb('need', n.key, esc(n.label), tatCa.filter((p) => (p.needs || []).includes(n.key)).length)).join(''));
+      html = chen(html, 'fBrand', d.hieu.filter((b) => tatCa.some((p) => p.brand === b.key)).map((b) => cb('brand', b.key, esc(b.label), tatCa.filter((p) => p.brand === b.key).length)).join(''));
+      if (KHOANG.length) html = chen(html, 'fPrice', KHOANG.map((r) => cb('price', r.key, esc(r.label), tatCa.filter((p) => p.price >= r.min && p.price < r.max).length)).join(''));
+      const chip = (k, v, nhan) => '<button class="chip chip--sm is-active" type="button" data-rm="' + k + '" data-val="' + esc(v) + '">' + esc(nhan) + ' <span class="chip__x">×</span></button>';
+      const chips = [].concat(age.map((a) => chip('age', a, (d.tuoi.find((t) => t.key === a) || {}).label || a)), cat.map((c) => chip('cat', c, (d.danhMuc.find((x) => x.key === c) || {}).label || c)),
+        need.map((n) => chip('need', n, (d.nhuCau.find((x) => x.key === n) || {}).label || n)), brand.map((b) => chip('brand', b, (d.hieu.find((x) => x.key === b) || {}).label || b)), tag ? [chip('tag', tag, tag)] : []);
+      if (chips.length && !q && !S.price.length && !thamSo.get('km')) html = chen(html, 'activeFilters', chips.join('') + '<button class="chip chip--sm" type="button" id="clearAllChips">Xoá tất cả</button>');
+      html = html.replace(/(<span class="count" id="count">)(<\/span>)/, (m, a, z) => a + ds.length + ' sản phẩm' + z); }
+    html = chen(html, 'ageChips', '<a class="chip' + (!age.length ? ' is-active' : '') + '" href="#" data-age="">Tất cả tuổi</a>' + d.tuoi.map((t) => '<a class="chip' + (age.length === 1 && age[0] === t.key ? ' is-active' : '') + '" href="#" data-age="' + esc(t.key) + '">' + esc(t.emoji) + ' ' + esc(t.label) + '</a>').join(''));
     return doiAnhHtml(html);
   }
 
@@ -293,7 +350,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const q = con.toString(); return '/' + slug + (q ? '?' + q : '');
   }
 
-  return { trangSP, trangBaiTheoSlug, trangBlog, trangChu, trangDanhMuc, dataGon, sitemap, chuyenTuLinkCu, doiAnhHtml, mau };
+  return { trangSP, trangBaiTheoSlug, trangBlog, trangChu, trangDanhMuc, dataGon, sitemap, chuyenTuLinkCu, hoanThien, trangKhac, doiAnhHtml, mau };
 }
 
 module.exports = { taoTrangWeb };

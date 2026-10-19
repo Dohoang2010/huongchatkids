@@ -36,7 +36,9 @@ function taoNenTep({ thuMuc, ghi }) {
   function tra(req, res, duong) {
     const t = lay(duong); if (!t) return false;
     const ae = String(req.headers['accept-encoding'] || '');
-    const dau = { 'Content-Type': t.kieu + '; charset=utf-8', 'Cache-Control': 'public, max-age=14400', ETag: t.etag, Vary: 'Accept-Encoding', 'X-Content-Type-Options': 'nosniff', 'X-Nen-Gon': t.gon ? '1' : '0' };
+    /* có ?v= (đổi tệp là đổi số phiên bản) → giữ lâu 30 ngày; không có → 4 giờ */
+    const lau = /[?&]v=/.test(req.url || '');
+    const dau = { 'Content-Type': t.kieu + '; charset=utf-8', 'Cache-Control': lau ? 'public, max-age=2592000, immutable' : 'public, max-age=14400', ETag: t.etag, Vary: 'Accept-Encoding', 'X-Content-Type-Options': 'nosniff', 'X-Nen-Gon': t.gon ? '1' : '0' };
     if (req.headers['if-none-match'] === t.etag) { res.writeHead(304, dau); res.end(); return true; }
     const [than, nen] = /\bbr\b/.test(ae) ? [t.br, 'br'] : /\bgzip\b/.test(ae) ? [t.gz, 'gzip'] : [t.buf, null];
     res.writeHead(200, Object.assign(dau, nen ? { 'Content-Encoding': nen } : {}, { 'Content-Length': than.length }));

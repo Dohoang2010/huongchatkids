@@ -607,7 +607,9 @@
     <div class="modal" id="quickBuy" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Mua nhanh"><div class="modal__backdrop" data-close-modal></div><div class="modal__panel"><div class="modal__grip"></div><div id="quickBuyContent"></div></div></div>
     <div class="modal" id="callbackModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Yêu cầu gọi lại"><div class="modal__backdrop" data-close-modal></div><div class="modal__panel modal__panel--sm"><div class="modal__grip"></div><div id="callbackContent"></div></div></div>
     <div class="modal" id="otpModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Xác thực số điện thoại"><div class="modal__backdrop" data-close-modal></div><div class="modal__panel modal__panel--sm"><div class="modal__grip"></div><div id="otpContent"></div></div></div>`;
-    document.body.insertAdjacentHTML('afterbegin', header);
+    /* Chèn vào chỗ giữ sẵn (.dau-cho, cao bằng phần đầu trang) để trang không bị xô xuống khi phần đầu hiện ra */
+    const choDau = document.querySelector('.dau-cho');
+    if (choDau) { choDau.insertAdjacentHTML('beforebegin', header); choDau.remove(); } else document.body.insertAdjacentHTML('afterbegin', header);
     document.body.insertAdjacentHTML('beforeend', footer);
     const page = location.pathname.split('/').pop().replace('.html', '') || 'index';
     $$('.bottom-nav [data-nav]').forEach((a) => a.classList.toggle('is-active', a.dataset.nav === page));
