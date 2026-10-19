@@ -271,7 +271,7 @@ window.PRODUCTS = [
     ],
     "price": 1996000,
     "oldPrice": 2695000,
-    "rating": 5.0,
+    "rating": 5,
     "reviews": 0,
     "sold": 0,
     "stock": 50,
@@ -337,7 +337,7 @@ window.PRODUCTS = [
     ],
     "price": 980000,
     "oldPrice": 1323000,
-    "rating": 5.0,
+    "rating": 5,
     "reviews": 0,
     "sold": 0,
     "stock": 50,
@@ -365,6 +365,10 @@ window.PRODUCTS = [
         "label": "1 hũ 50ml",
         "price": 980000,
         "oldPrice": 1323000
+      },
+      {
+        "label": "2 hũ",
+        "price": 980000
       }
     ],
     "desc": "Kem trắng EXOSOME Hàn Quốc dòng EXOPLUS – mỹ phẩm ứng dụng công nghệ EXOSOME được cấp bằng sáng chế vào chăm sóc da, hàm lượng EXOSOME tăng cường. Theo nhà sản xuất, sản phẩm vừa nâng tông trang điểm nhẹ, vừa chăm sóc da sáng mịn, căng bóng, hỗ trợ cải thiện nếp nhăn và làm dịu làn da ửng đỏ, mỏng yếu.",
