@@ -10,11 +10,11 @@ if [ -n "$LOI" ]; then
   echo "→ Bỏ khoá khỏi file, cất trong Script Properties rồi commit lại."
   exit 1
 fi
-# Sửa mã máy chủ (tools/apps-script.gs, tools/may-chu-vps/…) hoặc giao diện ngày lễ → chạy kiểm thử, hỏng thì chặn commit
-if git diff --cached --name-only | grep -qE '^tools/(apps-script\.gs|may-chu-vps/(src|kiem-thu)/|kiem-thu/)|^js/le-hoi\.js'; then
+# Sửa mã máy chủ (tools/apps-script.gs, tools/may-chu-vps/…), js/app.js (giá / quà / voucher) hoặc giao diện ngày lễ → chạy kiểm thử, hỏng thì chặn commit
+if git diff --cached --name-only | grep -qE '^tools/(apps-script\.gs|may-chu-vps/(src|kiem-thu)/|kiem-thu/)|^js/(le-hoi|app)\.js'; then
   echo "Đang chạy kiểm thử máy chủ…"
   NHAT_KY=$(mktemp)
-  if ! node --test tools/may-chu-vps/kiem-thu/kiem-thu.js tools/may-chu-vps/kiem-thu/chuc-nang.test.js tools/kiem-thu/le-hoi.test.js > "$NHAT_KY" 2>&1; then
+  if ! node --test tools/may-chu-vps/kiem-thu/kiem-thu.js tools/may-chu-vps/kiem-thu/chuc-nang.test.js tools/kiem-thu/le-hoi.test.js tools/kiem-thu/gia-gio-hang.test.js > "$NHAT_KY" 2>&1; then
     echo "⛔ CHẶN COMMIT: kiểm thử máy chủ hỏng – sửa xong mới commit được:"
     grep -E '^✖|AssertionError|Error:' "$NHAT_KY" | head -20
     rm -f "$NHAT_KY"; exit 1

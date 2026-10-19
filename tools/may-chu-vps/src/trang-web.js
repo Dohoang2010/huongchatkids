@@ -171,7 +171,14 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const dau = dauTrang({ tieuDe, moTa, url, anhOg: p.image || (p.images || [])[0], loai: 'product',
       them: (gia ? `<meta property="product:price:amount" content="${gia}"><meta property="product:price:currency" content="VND">\n  ` : '') + schemaSP(p, d, url, dg) });
     const anhChinh = anh((p.images || [])[0] || p.image || '');   // ảnh lớn đầu trang (MC.productImage) – báo trình duyệt tải ngay, không chờ JS
-    return doiAnhHtml(themVaoDau(thayDauSEO(mau('product.html'), dau), anhChinh ? `<link rel="preload" as="image" href="${esc(anhChinh)}" fetchpriority="high">` : ''));
+    const dm = d.danhMuc.find((x) => x.key === p.cat), hieu = d.hieu.find((x) => x.key === p.brand) || {}, ten = p.short || p.name;
+    const soAnh = p.images && p.images.length ? Math.min(6, p.images.length) : 0;
+    const khung = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="collections.html?cat=${esc(p.cat)}">${esc(dm ? dm.label : 'Sản phẩm')}</a><span>›</span><span>${esc(ten)}</span></nav>
+    <div class="pdp"><div class="gallery"><div class="gallery__main">${anhChinh ? `<img id="mainImg" data-dung-san="1" src="${esc(anhChinh)}" alt="${esc(ten)}" fetchpriority="high">` : ''}</div>
+      ${soAnh > 1 ? `<div class="gallery__thumbs">${p.images.slice(0, soAnh).map((u, i) => `<button type="button" class="${i ? '' : 'is-active'}" aria-label="Ảnh ${i + 1}"><img src="${esc(anh(u))}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}</div>
+      <div class="pdp__info"><a class="pdp__brand" href="collections.html?brand=${esc(p.brand)}">${esc(hieu.label || '')}${p.origin ? ' · Xuất xứ ' + esc(p.origin) : ''}</a><h1 class="pdp__title">${esc(ten)}</h1>
+        ${p.short && p.short !== p.name ? `<p class="pdp__fullname">${esc(p.name)}</p>` : ''}<p class="pdp__price"><b>${fmt(gia)}</b></p><p class="muted">${esc(gon(p.desc, 300))}</p></div></div>`;
+    return doiAnhHtml(chen(themVaoDau(thayDauSEO(mau('product.html'), dau), anhChinh ? `<link rel="preload" as="image" href="${esc(anhChinh)}" fetchpriority="high">` : ''), 'pdp', khung));
   }
 
   /* ================= Bài cẩm nang ================= */

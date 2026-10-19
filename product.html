@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const similar = PRODUCTS.filter((x) => x.id !== p.id && (x.cat === p.cat || x.needs.some((n) => p.needs.includes(n)))).sort((a, c) => c.sold - a.sold).slice(0, 5);
   const reviewsFor = SITE.showReviews ? REVIEWS.filter((r) => r.product === p.id) : [];
 
+  const sanAnh = document.querySelector('#mainImg[data-dung-san]');
   $('#pdp').innerHTML = `
     <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="collections.html?cat=${p.cat}">${(CATEGORIES.find((c) => c.key === p.cat) || {}).label || 'Sản phẩm'}</a><span>›</span><span>${esc(p.short || p.name)}</span></nav>
     <div class="pdp">
@@ -109,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <section class="section"><div class="section-head"><div><h2>Sản phẩm tương tự</h2></div><a class="link" href="collections.html?cat=${p.cat}">Xem thêm ${I.arrowR}</a></div><div class="row-scroll">${similar.map((x) => productCard(x)).join('')}</div></section>`;
+  /* ảnh chính do máy chủ dựng sẵn: giữ đúng phần tử đó (không tải / vẽ lại ảnh lớn nhất màn hình đầu) */
+  if (sanAnh) { const moi = $('#mainImg'); if (moi && moi.getAttribute('src') === sanAnh.getAttribute('src')) { sanAnh.removeAttribute('data-dung-san'); sanAnh.alt = moi.alt; moi.replaceWith(sanAnh); } }
 
   $('#stickyBuy').innerHTML = `<button class="btn btn--outline btn--icon" type="button" id="stickyAdd" aria-label="Thêm vào giỏ">${I.cart}</button><button class="btn btn--primary" type="button" id="stickyBuyBtn">${I.zap}Mua ngay · <span id="stickyPrice">${fmt(price())}</span></button>`;
 
