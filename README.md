@@ -85,10 +85,8 @@ Trạng thái tồn kho nằm ở `data/stock.json` (`true` = còn hàng, `false
 
 Ba cách cập nhật:
 
-1. **Trang quản lý (tiện nhất, làm được trên điện thoại)** – mở `quan-ly-ton-kho.html` trên web
-   (https://huongchatkids.vn/quan-ly-ton-kho.html), bật/tắt từng sản phẩm rồi bấm **Lưu lên web**.
-   Lần đầu cần dán 1 mã GitHub (fine-grained token, quyền *Contents: Read and write* cho repo này);
-   mã chỉ lưu trong máy/điện thoại đó. Trang này không có trong menu và có thẻ `noindex`.
+1. **Trang quản trị (tiện nhất, làm được trên điện thoại)** – Quản trị › Sản phẩm, bấm **Còn hàng / Cháy hàng** ngay trong danh sách.
+   Lưu qua máy chủ VPS theo quyền từng nhân viên, không cần mã GitHub. (Trang cũ quan-ly-ton-kho.html giờ chỉ chuyển sang đây.)
 2. **Dòng lệnh trên máy**: `python3 tools/stock.py list` / `het <id hoặc tên>` / `con <id>` / `con --all`,
    thêm `--push` để tự commit và đẩy lên web.
 3. Sửa tay `data/stock.json` rồi commit.
