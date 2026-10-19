@@ -225,6 +225,26 @@ const mayChu = http.createServer(async (req, res) => {
         if (!cauHinh.smtp) return traJson(res, 200, { ok: false, msg: 'Chưa cài SMTP trong /etc/hck-api/env' });
         try { const kq = await guiDi.thuSmtp(cauHinh.emailChu); return traJson(res, 200, { ok: true, kq }); } catch (e) { return traJson(res, 200, { ok: false, msg: e.message }); }
       }
+      /* Bản sao lưu có khoá hằng tháng (he-thong/sao-luu-thang.sh) → gửi Gmail chủ shop */
+      if (viec === 'gui-sao-luu' && req.method === 'POST') {
+        const thang = new Date().toLocaleDateString('vi-VN', { month: '2-digit', year: 'numeric' });
+        if (url.searchParams.get('loi') === 'chua-mat-khau') {
+          guiDi([{ loai: 'mail', tomTat: 'Sao lưu tháng: chưa có mật khẩu', thu: { to: cauHinh.emailChu, subject: 'Sao lưu tháng ' + thang + ': CHƯA gửi được – chưa đặt mật khẩu khoá file',
+            body: 'Máy chủ VPS vẫn sao lưu mỗi đêm trên VPS, nhưng chưa gửi bản dự phòng về Gmail vì chưa có mật khẩu khoá file.\nChạy tools/may-chu-vps/cai-mat-khau-sao-luu.ps1 trên máy tính shop để đặt mật khẩu.' } }], 'sao-luu-thang');
+          return traJson(res, 200, { ok: true, gui: 'nhac-mat-khau' });
+        }
+        const ten = String(url.searchParams.get('tep') || '');
+        if (!/^hck-sao-luu-\d{6}\.tar\.gz\.gpg$/.test(ten)) return traJson(res, 400, { ok: false, msg: 'Tên tệp không hợp lệ' });
+        const tep = '/var/lib/hck-api/gui-thang/' + ten, kb = Math.round(fs.statSync(tep).size / 1024);
+        try {
+          const kq = await guiDi.guiTep({ to: cauHinh.emailChu, subject: 'Bản sao lưu dữ liệu Hương Chất Kids tháng ' + thang + ' (có khoá)',
+            body: 'Đính kèm: bản sao lưu toàn bộ dữ liệu web (khách hàng, đơn, điểm, voucher, chat, đánh giá) + cấu hình máy chủ, ' + (url.searchParams.get('ghi') || '') + '.\n' +
+              'Dung lượng: ' + kb + ' KB. Tệp đã khoá bằng mật khẩu chị tự đặt (AES-256) – không mở được nếu không có mật khẩu.\n\n' +
+              'Chỉ cần GIỮ mail này. Khi VPS hỏng hẳn: tải tệp về, đưa cho người kỹ thuật kèm mật khẩu để khôi phục (hướng dẫn: tools/may-chu-vps/README.md, mục "Sao lưu & khôi phục").\n' +
+              'Tự mở trên Windows: cài Gpg4win (gpg4win.org), bấm đúp tệp .gpg, nhập mật khẩu → ra tệp .tar.gz (mở bằng 7-Zip).' }, tep);
+          return traJson(res, 200, { ok: true, kb, kq });
+        } catch (e) { ghi('LỖI gửi sao lưu tháng: ' + e.message); return traJson(res, 200, { ok: false, msg: e.message }); }
+      }
       if (viec === 'nap-ma' && req.method === 'POST') { napMa(); return traJson(res, 200, { ok: true, maLuc: trangThai.maLuc }); }
       return traJson(res, 404, { ok: false });
     }

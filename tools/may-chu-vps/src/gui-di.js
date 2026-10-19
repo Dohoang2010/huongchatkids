@@ -22,7 +22,8 @@ function taoGuiDi(o) {
   const guiSmtp = async (thu) => {
     const tu = cauHinh.smtp.from || cauHinh.smtp.user;
     return smtp.sendMail({ from: { name: thu.name || 'Hương Chất Kids', address: tu }, to: thu.to, cc: thu.cc || undefined, bcc: thu.bcc || undefined,
-      replyTo: thu.replyTo || undefined, subject: thu.subject, text: thu.body || undefined, html: thu.htmlBody || undefined });
+      replyTo: thu.replyTo || undefined, subject: thu.subject, text: thu.body || undefined, html: thu.htmlBody || undefined,
+      attachments: thu.tep ? [{ filename: require('node:path').basename(thu.tep), path: thu.tep }] : undefined });
   };
   const guiMail = async (thu) => {
     /* SMTP (VPS tự gửi); SMTP lỗi (sai mật khẩu ứng dụng, Gmail chặn…) → vẫn nhờ Apps Script gửi hộ để khách không mất mail */
@@ -57,6 +58,11 @@ function taoGuiDi(o) {
   /* Thử SMTP: kiểm tra đăng nhập + gửi 1 mail tới chủ shop */
   gui.thuSmtp = async (toi) => { if (!smtp) throw new Error('Chưa cài SMTP'); await smtp.verify();
     const r = await guiSmtp({ to: toi, subject: 'Thử gửi mail từ máy chủ VPS Hương Chất Kids', body: 'Máy chủ VPS đã gửi mail trực tiếp được (SMTP). Từ giờ mail cho khách gửi thẳng từ VPS, không cần nhờ Google Apps Script.' });
+    return { messageId: r.messageId, accepted: r.accepted }; };
+  /* Gửi 1 mail kèm tệp (bản sao lưu hằng tháng) – chỉ qua SMTP */
+  gui.guiTep = async (thu, tep) => { if (!smtp) throw new Error('Chưa cài SMTP – không gửi được tệp đính kèm');
+    const r = await guiSmtp(Object.assign({}, thu, { tep }));
+    await luu({ loai: 'mail', tomTat: thu.subject, thu: { to: thu.to, subject: thu.subject, body: thu.body } }, 'da-gui', 'smtp + tệp');
     return { messageId: r.messageId, accepted: r.accepted }; };
   return gui;
 }

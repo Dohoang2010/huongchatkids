@@ -74,4 +74,6 @@ Bước 1–4 gói sẵn trong 1 lệnh trên VPS: `sh /opt/hck-api/cong-cu/chuy
   5. `systemctl start hck-api` (máy chủ nạp lại dữ liệu từ PostgreSQL khi khởi động)
 - Khôi phục ảnh chat: `rsync -a /var/backups/hck/chat-tep/ /var/lib/hck-api/chat-tep/`
 - Đã thử khôi phục vào CSDL tạm ngày 19/10/2026: khớp 100% (7.207 dòng, 27 trang tính).
-- Lưu ý: bản sao lưu nằm cùng VPS – VPS hỏng hẳn thì mất cả bản sao. Muốn an toàn hơn: gửi bản nén có khoá về Gmail / Drive (chưa bật).
+- **Bản dự phòng ngoài VPS – ngày 1 hằng tháng 04:00** (`hck-sao-luu-thang.timer` → `he-thong/sao-luu-thang.sh`): gói CSDL mới nhất + env + ảnh chat (nếu < 18MB), khoá AES-256 bằng gpg, gửi qua SMTP về Gmail chủ shop (tệp `hck-sao-luu-YYYYMM.tar.gz.gpg`).
+  - Mật khẩu khoá `SAO_LUU_MAT_KHAU` trong /etc/hck-api/env – chủ shop tự đặt: `powershell -ExecutionPolicy Bypass -File toolsmay-chu-vpscai-mat-khau-sao-luu.ps1` (gửi thử 1 bản ngay). Chưa có mật khẩu → chỉ gửi mail nhắc, không gửi tệp.
+  - Mở: `gpg -d hck-sao-luu-YYYYMM.tar.gz.gpg > sao-luu.tar.gz` (hoặc Gpg4win trên Windows) → `tar -xzf sao-luu.tar.gz` → khôi phục như trên. VPS mới: cài theo mục đầu README, chép env, pg_restore, rsync ảnh chat.

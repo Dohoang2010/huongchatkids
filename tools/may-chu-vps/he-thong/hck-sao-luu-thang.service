@@ -1,0 +1,8 @@
+[Unit]
+Description=Gui ban sao luu co khoa ve Gmail chu shop (moi thang)
+After=postgresql.service hck-api.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /opt/hck-api/he-thong/sao-luu-thang.sh
+Nice=10

@@ -29,6 +29,11 @@ systemctl enable --now hck-keo-web-ngay.path >/dev/null 2>&1
 cp he-thong/hck-sao-luu.service he-thong/hck-sao-luu.timer /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable --now hck-sao-luu.timer >/dev/null 2>&1
+# Ngày 1 hằng tháng gửi bản sao lưu có khoá về Gmail chủ shop (he-thong/sao-luu-thang.sh)
+cp he-thong/hck-sao-luu-thang.service he-thong/hck-sao-luu-thang.timer /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now hck-sao-luu-thang.timer >/dev/null 2>&1
+mkdir -p /var/lib/hck-api/gui-thang && chown hckapi:hckapi /var/lib/hck-api/gui-thang && chmod 700 /var/lib/hck-api/gui-thang
 # Thư mục tệp chat (ảnh / video khách gửi) – nginx đọc được (SELinux: httpd_sys_content_t)
 mkdir -p /var/lib/hck-api/chat-tep /var/lib/hck-api/webp && chown -R hckapi:hckapi /var/lib/hck-api && chmod 755 /var/lib/hck-api /var/lib/hck-api/chat-tep /var/lib/hck-api/webp
 if command -v semanage >/dev/null 2>&1; then semanage fcontext -a -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?' 2>/dev/null || semanage fcontext -m -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?'; restorecon -R /var/lib/hck-api/chat-tep; fi

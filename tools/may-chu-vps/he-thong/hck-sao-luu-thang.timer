@@ -1,0 +1,10 @@
+[Unit]
+Description=Gui ban sao luu co khoa ve Gmail ngay 1 hang thang luc 04:00
+
+[Timer]
+OnCalendar=*-*-01 04:00:00
+RandomizedDelaySec=600
+Persistent=true
+
+[Install]
+WantedBy=timers.target
