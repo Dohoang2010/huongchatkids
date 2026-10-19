@@ -20,7 +20,7 @@
     <p>Hương Chất Kids</p>
     <div id="lgBuoc1">
     <label>Tên đăng nhập
-      <input id="lgId" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="adminhck"></label>
+      <input id="lgId" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Tên đăng nhập"></label>
     <label>Mật khẩu
       <input id="lgPw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
     </div>
@@ -47,7 +47,7 @@
 <script src="js/chon-ngay.js?v=20261016b"></script>
 <script src="js/le-hoi.js?v=20261019c"></script>
 <script src="js/admin/danh-muc.js?v=a9d01f0e"></script>
-<script src="js/admin/core.js?v=20261019q"></script>
+<script src="js/admin/core.js?v=20261019x"></script>
 <script src="js/admin/preview.js?v=20261009c"></script>
 <script src="js/admin/m-dashboard.js?v=983716ca"></script>
 <script>
@@ -113,11 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r && r.ok && r.can2) { buoc2(r); return; }
       if (r && r.msg && r.ten === undefined && !/chưa đúng/.test(r.msg)) { baoLoi(r.msg); return; }
     } catch { mayChuTraLoi = false; }
-    /* Chỉ khi máy chủ không phản hồi: tài khoản chủ shop mở được giao diện (không đọc được dữ liệu máy chủ) */
-    if (!mayChuTraLoi && id === A.TAI_KHOAN.id && mk === A.TAI_KHOAN.mk) {
-      localStorage.removeItem('hck_dn_sai'); localStorage.removeItem('hck_dn_cho');
-      A.ghiPhien(); vao(); return;
-    }
+    /* Mật khẩu chỉ được kiểm tra trên máy chủ – không còn mật khẩu nào ghi trong mã trang */
     batSai();
     err.innerHTML = mayChuTraLoi ? 'Tên đăng nhập hoặc mật khẩu chưa đúng.'
       : 'Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.';

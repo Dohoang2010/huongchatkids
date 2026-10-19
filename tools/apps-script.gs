@@ -2847,25 +2847,29 @@ function timQT(tk) {
   for (var i = 0; i < v.length; i++) if (String(v[i][0]).trim().toLowerCase() === String(tk).trim().toLowerCase()) return i + 2;
   return 0;
 }
-/* Lần đầu chạy: tạo sẵn tài khoản chủ shop để không bị khoá ngoài */
+/* Lần đầu chạy: tạo sẵn tài khoản chủ shop để không bị khoá ngoài.
+   Mật khẩu ban đầu lấy từ khoá QT_MK_DAU (đặt trong /etc/hck-api/env) – KHÔNG ghi mật khẩu trong mã (repo công khai) */
+function mkChuShopDau_() { return String(PropertiesService.getScriptProperties().getProperty('QT_MK_DAU') || ''); }
 function taoChuShopNeuChuaCo() {
   var s = sheetQT();
   if (s.getLastRow() >= 2) return;
+  var mk = mkChuShopDau_(); if (!mk) { Logger.log('Chua dat QT_MK_DAU – chua tao tai khoan chu shop'); return; }
   var muoi = Utilities.getUuid().slice(0, 12);
-  s.appendRow(['adminhck', 'Chủ shop', 'SUPER_ADMIN', bamMkQT('123', muoi), muoi, 'Hoạt động', new Date(), '', '']);
+  s.appendRow(['adminhck', 'Chủ shop', 'SUPER_ADMIN', bamMkQT(mk, muoi), muoi, 'Hoạt động', new Date(), '', '']);
 }
-/* Chạy tay trong Apps Script nếu muốn đưa mật khẩu tài khoản adminhck về 123 */
+/* Chạy tay khi quên mật khẩu: đưa mật khẩu tài khoản adminhck về giá trị khoá QT_MK_DAU */
 function datLaiMatKhauChuShop() {
   taoChuShopNeuChuaCo();
+  var mk = mkChuShopDau_(); if (!mk) { Logger.log('Chua dat QT_MK_DAU'); return; }
   var dong = timQT('adminhck');
   if (!dong) { Logger.log('Khong thay tai khoan adminhck'); return; }
   var muoi = Utilities.getUuid().slice(0, 12);
   var s = sheetQT();
-  s.getRange(dong, 4).setValue(bamMkQT('123', muoi));
+  s.getRange(dong, 4).setValue(bamMkQT(mk, muoi));
   s.getRange(dong, 5).setValue(muoi);
   s.getRange(dong, 3).setValue('SUPER_ADMIN');
   s.getRange(dong, 6).setValue('Hoạt động');
-  Logger.log('✅ Da dat lai: adminhck / 123');
+  Logger.log('✅ Da dat lai mat khau adminhck theo QT_MK_DAU');
 }
 
 function apiQtDangNhap(p) {

@@ -65,7 +65,6 @@ window.ADMIN = (() => {
 
   /* ---------------- Đăng nhập ---------------- */
   const KHOA_PHIEN = 'hck_admin_in';
-  const TAI_KHOAN = { id: 'adminhck', mk: '123' };
   const PHIEN_GIO = 8;   // tự thoát sau 8 giờ không dùng
 
   function dangNhapHopLe() {
@@ -518,5 +517,5 @@ window.ADMIN = (() => {
     doiDuLieu, doiNhap, boNhap, daDoiGi, xuatBan, napNhap,
     dangKy, MODULES, NHOM, di, duong, veTrang, veSidebar, taiMuc,
     trong, dangTai, loiTai, the, badge, sapXep, phanTrang, thongBao,
-    datPreview, batDau, dangNhapHopLe, ghiPhien, thoat, TAI_KHOAN };
+    datPreview, batDau, dangNhapHopLe, ghiPhien, thoat };
 })();

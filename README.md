@@ -155,7 +155,7 @@ theo bảng giá hãng vận chuyển nhưng không thấp hơn `SITE.shipping.t
 
 ## Trang quản trị (admin.html)
 
-Mở `https://huongchatkids.vn/admin.html` — đăng nhập `adminhck` / `123`.
+Mở `https://huongchatkids.vn/admin.html` — đăng nhập bằng tài khoản quản trị (mật khẩu chỉ lưu trên máy chủ, không ghi ở đây).
 
 | Tab | Làm được gì |
 |---|---|
