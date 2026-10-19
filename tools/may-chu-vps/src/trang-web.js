@@ -53,7 +53,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       if (cd.dai) {
         const link = /^(https:\/\/|[a-z0-9-]+\.html)/i.test(String(cd.link || '')) && !/^javascript:/i.test(cd.link) ? cd.link : '';
         const st0 = String(cd.sticker || cd0.sticker || ''), sticker = String(cd.dai).indexOf(st0) === 0 ? '' : esc(st0);
-        const dai = '<div class="le-dai" role="note"><' + (link ? 'a href="' + esc(link) + '"' : 'div') + ' class="le-dai__in"><span class="le-dai__st" aria-hidden="true">' + sticker + '</span><span class="le-dai__chu">' + esc(cd.dai) + '</span>' +
+        const dai = '<div class="le-dai" role="note" data-dung-san="1"><' + (link ? 'a href="' + esc(link) + '"' : 'div') + ' class="le-dai__in"><span class="le-dai__st" aria-hidden="true">' + sticker + '</span><span class="le-dai__chu">' + esc(cd.dai) + '</span>' +
           (link && cd.nut ? '<b>' + esc(cd.nut) + ' →</b>' : '') + '</' + (link ? 'a' : 'div') + '><button type="button" aria-label="Đóng lời chào">×</button></div>';
         html = html.replace(/<body([^>]*)>\n?/, (x) => x.replace(/\n?$/, '\n') + dai + '\n');
       }
@@ -105,7 +105,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     return { I: hop.I || {}, ageRange: hop.ageRange || (() => '') };
   });
   /* Thẻ sản phẩm dựng sẵn – cùng HTML với MC.productCard (nút Mua ngay / giỏ hàng chạy bằng app.js) */
-  function the(d, p) {
+  function the(d, p, uuTien) {
     const { I, ageRange } = cu(), b = d.hieu.find((x) => x.key === p.brand) || {}, u = spLink(d, p), ten = p.short || p.name, het = Number(p.stock) <= 0;
     const giam = d.site.showOldPrice && p.oldPrice > p.price ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
     const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
@@ -113,7 +113,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const ban = Number(p.sold) || 0, dg = Number(p.reviews) || 0;
     let tuoi = ''; try { tuoi = p.ages && p.ages.length ? `<span>${I.user || ''}${esc(ageRange(p.ages))}${p.family ? ' &amp; cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`; } catch { /* bỏ qua */ }
     return `<article class="pcard ${het ? 'pcard--oos' : ''}" data-id="${esc(p.id)}">
-      <a class="pcard__media" href="${esc(u)}"><img src="${esc(anh(p.thumb || (p.images || [])[0] || p.image || ''))}" alt="${esc(ten)}" loading="lazy" width="420" height="420">
+      <a class="pcard__media" href="${esc(u)}"><img src="${esc(anh(p.thumb || (p.images || [])[0] || p.image || ''))}" alt="${esc(ten)}" ${uuTien ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} width="420" height="420">
         <div class="pcard__badges">${giam >= 5 ? `<span class="badge badge--sale">-${giam}%</span>` : ''}${tags.map((t) => `<span class="badge ${lop(t)}">${t === 'Sản phẩm hot' ? '🔥 ' : ''}${esc(t)}</span>`).join('')}</div>
         <button class="pcard__wish" type="button" data-wish="${esc(p.id)}" aria-label="Lưu vào yêu thích" aria-pressed="false">${I.heart || ''}</button></a>
       <div class="pcard__body"><div class="pcard__brand">${esc(b.label || '')}${p.origin && p.origin !== 'Hàn Quốc' ? ' · ' + esc(p.origin) : ''}</div>
@@ -170,7 +170,8 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const moTa = gon(p.seoDesc || (p.name + (gia ? ' giá ' + gia.toLocaleString('vi-VN') + 'đ' : '') + '. ' + (p.desc || '')), 158);
     const dau = dauTrang({ tieuDe, moTa, url, anhOg: p.image || (p.images || [])[0], loai: 'product',
       them: (gia ? `<meta property="product:price:amount" content="${gia}"><meta property="product:price:currency" content="VND">\n  ` : '') + schemaSP(p, d, url, dg) });
-    return doiAnhHtml(thayDauSEO(mau('product.html'), dau));
+    const anhChinh = anh((p.images || [])[0] || p.image || '');   // ảnh lớn đầu trang (MC.productImage) – báo trình duyệt tải ngay, không chờ JS
+    return doiAnhHtml(themVaoDau(thayDauSEO(mau('product.html'), dau), anhChinh ? `<link rel="preload" as="image" href="${esc(anhChinh)}" fetchpriority="high">` : ''));
   }
 
   /* ================= Bài cẩm nang ================= */
@@ -268,7 +269,8 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const cat = lay('cat'), need = lay('need'), age = lay('age'), brand = lay('brand'), tag = thamSo.get('tag') || '', q = (thamSo.get('q') || '').trim();
     let ds = spHien(d).filter((p) => (!cat.length || cat.includes(p.cat)) && (!need.length || need.some((n) => (p.needs || []).includes(n)))
       && (!age.length || age.some((a) => (p.ages || []).includes(a))) && (!brand.length || brand.includes(p.brand)) && (!tag || (p.tags || []).includes(tag)));
-    ds.sort((a, b) => (Number(b.sold) || 0) - (Number(a.sold) || 0));
+    const me = (p) => (p.cat === 'cho-me' ? 1 : 0), thuTu = spHien(d);   // giống MC.rankDefault (Bán chạy nhất)
+    ds.sort((a, b) => me(a) - me(b) || (Number(b.priority) || 0) - (Number(a.priority) || 0) || (Number(b.sold) || 0) - (Number(a.sold) || 0) || thuTu.indexOf(a) - thuTu.indexOf(b));
     const mot = (arr, ...khac) => arr.length === 1 && khac.every((x) => !x.length);
     let ten = 'Tất cả sản phẩm', moTa = '', canon = GOC + '/collections.html';
     const c = mot(cat, need, age, brand) && d.danhMuc.find((x) => x.key === cat[0]);
@@ -287,7 +289,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     html = thayDauSEO(html, dauTrang({ tieuDe, moTa, url: canon, them: (loc ? '' : '<meta name="robots" content="noindex, follow">\n  ') +
       ld(danhSachSP(d, ds, canon)) + '\n  ' + ld(vun([['Trang chủ', GOC + '/'], [ten, canon]])) }));
     html = html.replace(/(<h1 class="page-title" id="title">)[^<]*(<\/h1>)/, (m, a, z) => a + esc(ten) + z);
-    html = chen(html, 'grid', ds.map((p) => the(d, p)).join(''));
+    html = chen(html, 'grid', ds.slice(0, 12).map((p, i) => the(d, p, i < 4)).join(''));   // trang đầu 12 sản phẩm như collections.html (PER = 12); 4 ảnh đầu tải ngay
     /* đường dẫn + hàng chọn độ tuổi dựng sẵn (giống collections.html) để trang không bị xô */
     html = html.replace(/(<nav class="breadcrumb" id="crumb">)(<\/nav>)/, (m, a, z) => a + '<a href="index.html">Trang chủ</a><span>›</span><a href="collections.html">Sản phẩm</a>' + (ten !== 'Tất cả sản phẩm' ? '<span>›</span><span>' + esc(ten) + '</span>' : '') + z);
     html = html.replace(/(<p class="text-muted fs-14 mb-16" id="subtitle">)(<\/p>)/, (m, a, z) => thamSo.get('km') ? m : a + esc(age.length === 1 ? 'Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ' + ((d.tuoi.find((t) => t.key === age[0]) || {}).label || age[0]) : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả 7 ngày') + z);

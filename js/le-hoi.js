@@ -251,10 +251,13 @@
     };
     function go() {
       doc.documentElement.classList.remove('le-on'); [...doc.documentElement.classList].forEach((c) => c.indexOf('le--') === 0 && doc.documentElement.classList.remove(c));
-      doc.querySelectorAll('.le-dai,.le-hoa').forEach((x) => x.remove()); hieuUngEl = null; dangCo = null;
+      doc.querySelectorAll('.le-dai,.le-hoa').forEach((x) => { if (!x.hasAttribute('data-dung-san')) x.remove(); }); hieuUngEl = null; dangCo = null;
     }
     function ap() {
       clearTimeout(hen); go();
+      /* dải do máy chủ dựng sẵn (cùng tính toán) – giữ lại nếu giống hệt để trang không vẽ lại */
+      const san = doc.querySelector('.le-dai[data-dung-san]'); if (san) san.removeAttribute('data-dung-san');
+      const boSan = () => { if (san) san.remove(); };
       const xt = xemTruoc(); let cfg = (xt && xt.cfg) || w.LE_HOI; let ms = Date.now(), cd = null;
       try {
         if (xt && xt.ngay && docChuoi(xt.ngay)) { const n = docChuoi(xt.ngay); ms = dauNgayVN(n.y, n.m, n.d) + 12 * 36e5; }
@@ -262,8 +265,8 @@
         else cd = chon(cfg, ms);
       } catch (e) { try { console.warn('Giao diện ngày lễ lỗi, dùng giao diện mặc định:', e); } catch { /* */ } cd = null; }
       if (!xt) { const t = mocKeTiep(cfg, Date.now()); if (t - Date.now() < 2 * NGAY) hen = setTimeout(ap, Math.max(1000, t - Date.now() + 500)); }   // tới mốc thì tự đổi
-      if (!cd) return;
-      const p = trangHienTai(w); if (!hopTrang(cd.trang || ['*'], p) || hopTrang(cd.truTrang || [], p)) return;
+      if (!cd) return boSan();
+      const p = trangHienTai(w); if (!hopTrang(cd.trang || ['*'], p) || hopTrang(cd.truTrang || [], p)) return boSan();
       const cfgOk = cauHinh(cfg), cd0 = CHU_DE[cd.chuDe] || CHU_DE['hoa-hong'], m = cd.mau || {};
       const root = doc.documentElement; dangCo = cd;
       root.classList.add('le-on', 'le--' + String(cd.chuDe || 'hoa-hong').replace(/[^a-z0-9-]/g, ''));
@@ -275,9 +278,10 @@
         const d = doc.createElement('div'); d.className = 'le-dai'; d.setAttribute('role', 'note');
         const link = linkHopLe(cd.link), st0 = String(cd.sticker || cd0.sticker || ''), sticker = String(cd.dai).indexOf(st0) === 0 ? '' : an(st0);   // lời chào đã mở đầu bằng sticker thì không lặp
         d.innerHTML = `<${link ? 'a href="' + an(link) + '"' : 'div'} class="le-dai__in"><span class="le-dai__st" aria-hidden="true">${sticker}</span><span class="le-dai__chu">${an(cd.dai)}</span>${link && cd.nut ? `<b>${an(cd.nut)} →</b>` : ''}</${link ? 'a' : 'div'}><button type="button" aria-label="Đóng lời chào">×</button>`;
-        d.querySelector('button').addEventListener('click', () => { d.remove(); try { w.sessionStorage.setItem(KD, '1'); } catch { /* */ } });
-        doc.body.prepend(d);
-      }
+        const giu = san && san.innerHTML === d.innerHTML ? san : null, dai = giu || d;
+        dai.querySelector('button').addEventListener('click', () => { dai.remove(); try { w.sessionStorage.setItem(KD, '1'); } catch { /* */ } });
+        if (!giu) { boSan(); doc.body.prepend(d); }
+      } else boSan();
       /* Hiệu ứng nhẹ: tắt khi người dùng chọn giảm chuyển động, máy yếu, tab ẩn; ít hạt trên điện thoại */
       const hu = cd.hieuUng == null ? cd0.hieuUng : cd.hieuUng, hat = (Array.isArray(cd.hat) && cd.hat.length ? cd.hat : cd0.hat).slice(0, 6);
       const giam = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;

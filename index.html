@@ -171,7 +171,7 @@
 </main>
 
 <script src="js/data.js?v=20261019c" defer></script>
-<script src="js/le-hoi.js?v=20261019a" defer></script>
+<script src="js/le-hoi.js?v=20261019b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
 <script src="js/app.js?v=20261019zc" defer></script>
 <script src="js/chat.js?v=20261019e" defer></script>
@@ -180,7 +180,8 @@
 <script src="js/suc-khoe.js?v=20261014e" defer></script>
 <script src="js/su-kien.js?v=20261019b" defer></script>
 <script type="module">
-document.addEventListener('DOMContentLoaded', () => {
+/* Vẽ lại trang chủ SAU khi trình duyệt đã hiện bản máy chủ dựng sẵn (banner, sản phẩm…) – khách thấy trang sớm hơn */
+document.addEventListener('DOMContentLoaded', () => { let xong = false; const lam = () => { if (xong) return; xong = true;
   const { $, $$, fmt, I, listPrice, productImage, productCard, byId, brandOf, store, toast, phoneOk, Customer, countdown, esc } = MC;
   $$('[data-icon]').forEach((el) => { el.innerHTML = I[el.dataset.icon]; });
   $$('.promo-tile .arrow').forEach((el) => { el.innerHTML = I.arrowR; });
@@ -372,6 +373,7 @@ TỰ ÁP</i></a>`; }
 
   /* Subscribe */
   $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ!<br><small>Shop sẽ nhắn ưu đãi và kiến thức chăm con qua Zalo ${esc(v)}.</small></div>`; });
+}; requestAnimationFrame(() => setTimeout(lam, 0)); setTimeout(lam, 250);   // tab ẩn không có khung hình → tối đa 0,25 giây
 });
 </script>
 </body>
