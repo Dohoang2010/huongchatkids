@@ -25,6 +25,10 @@ systemctl enable hck-api >/dev/null 2>&1
 systemctl enable --now hck-keo-web.timer >/dev/null 2>&1
 mkdir -p /run/hck-api && chown hckapi:hckapi /run/hck-api && touch /run/hck-api/keo-web && chown hckapi:hckapi /run/hck-api/keo-web
 systemctl enable --now hck-keo-web-ngay.path >/dev/null 2>&1
+# Sao lưu dữ liệu 03:00 mỗi đêm (he-thong/sao-luu.sh → /var/backups/hck)
+cp he-thong/hck-sao-luu.service he-thong/hck-sao-luu.timer /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now hck-sao-luu.timer >/dev/null 2>&1
 # Thư mục tệp chat (ảnh / video khách gửi) – nginx đọc được (SELinux: httpd_sys_content_t)
 mkdir -p /var/lib/hck-api/chat-tep /var/lib/hck-api/webp && chown -R hckapi:hckapi /var/lib/hck-api && chmod 755 /var/lib/hck-api /var/lib/hck-api/chat-tep /var/lib/hck-api/webp
 if command -v semanage >/dev/null 2>&1; then semanage fcontext -a -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?' 2>/dev/null || semanage fcontext -m -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?'; restorecon -R /var/lib/hck-api/chat-tep; fi

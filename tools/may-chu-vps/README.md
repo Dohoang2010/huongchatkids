@@ -58,3 +58,20 @@ Bước 1–4 gói sẵn trong 1 lệnh trên VPS: `sh /opt/hck-api/cong-cu/chuy
 - Token Zalo / CRM_KEY nằm trong thuộc tính (chép từ Script Properties). Token Zalo: chủ shop nhập ở Quản trị › Hệ thống › Bảo mật hệ thống.
 - nginx: chỉ mở `/api`, `/api/exec`, `/api/suc-khoe`; giới hạn 20 yêu cầu/giây/IP (lấy IP thật qua Cloudflare); `/tools/`, `.git` bị chặn. Đường `/noi-bo/*` chỉ gọi được trong máy (cổng 3100, có khoá).
 - Dịch vụ chạy user `hckapi` (không phải root), PostgreSQL đăng nhập kiểu peer (không mật khẩu).
+
+## Sao lưu & khôi phục (từ 19/10/2026)
+- `he-thong/sao-luu.sh` chạy **03:00 mỗi đêm** (`hck-sao-luu.timer`), lưu ở `/var/backups/hck` (chỉ root đọc):
+  - `csdl/hck-YYYYMMDD-HHMM.dump` – toàn bộ PostgreSQL `hck` (pg_dump nén), giữ 30 ngày (ít nhất 7 bản), tự kiểm tra đọc lại được.
+  - `cau-hinh/env-…` – bản sao `/etc/hck-api/env` (có khoá), giữ 30 ngày.
+  - `chat-tep/` – ảnh / video khách gửi trong chat, chép thêm mỗi Chủ nhật (không xoá tệp cũ).
+  - Kết quả lần gần nhất: `cat /var/backups/hck/lan-cuoi.txt` · nhật ký: `journalctl -t hck-sao-luu`.
+- Chạy tay: `sh /opt/hck-api/he-thong/sao-luu.sh --ca-chat`
+- **Khôi phục cơ sở dữ liệu** (ví dụ lỡ xoá / sửa nhầm):
+  1. `systemctl stop hck-api`
+  2. `su - postgres -c "pg_dump -Fc hck" > /root/truoc-khoi-phuc.dump` (giữ bản hiện tại phòng khi cần quay lại)
+  3. `cp /var/backups/hck/csdl/hck-<ngày>.dump /tmp/kp.dump && chown postgres /tmp/kp.dump`
+  4. `su - postgres -c "pg_restore -d hck --clean --if-exists --no-owner /tmp/kp.dump"`
+  5. `systemctl start hck-api` (máy chủ nạp lại dữ liệu từ PostgreSQL khi khởi động)
+- Khôi phục ảnh chat: `rsync -a /var/backups/hck/chat-tep/ /var/lib/hck-api/chat-tep/`
+- Đã thử khôi phục vào CSDL tạm ngày 19/10/2026: khớp 100% (7.207 dòng, 27 trang tính).
+- Lưu ý: bản sao lưu nằm cùng VPS – VPS hỏng hẳn thì mất cả bản sao. Muốn an toàn hơn: gửi bản nén có khoá về Gmail / Drive (chưa bật).

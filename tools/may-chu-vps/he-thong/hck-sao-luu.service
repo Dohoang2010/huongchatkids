@@ -1,0 +1,9 @@
+[Unit]
+Description=Sao luu du lieu Huong Chat Kids (PostgreSQL + cau hinh + anh chat)
+After=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /opt/hck-api/he-thong/sao-luu.sh
+Nice=10
+IOSchedulingClass=idle

@@ -1,0 +1,10 @@
+[Unit]
+Description=Sao luu du lieu Huong Chat Kids luc 03:00 moi dem
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+RandomizedDelaySec=300
+Persistent=true
+
+[Install]
+WantedBy=timers.target
