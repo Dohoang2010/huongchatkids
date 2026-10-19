@@ -227,19 +227,23 @@ TỰ ÁP</i></a>`; }
   go(0); auto();
 
   /* Reorder strip (1-chạm mua lại đơn gần nhất) */
+  try {
   const last = store.get('mc_last_order'); const cust = Customer.get();
   if (last && last.items && last.items.length && last.type !== 'callback') {
-    $('#reorderStrip').innerHTML = `<div class="reorder"><span class="emoji">🔁</span><div><b>Chào ${esc(cust?.name || 'mẹ')}, bé sắp hết ${esc(last.items[0].name.split(' ').slice(0, 4).join(' '))}…?</b><small>Mua lại đơn ${last.code} chỉ với 1 chạm – thông tin giao hàng đã lưu sẵn.</small></div><button class="btn btn--primary btn--sm" type="button" data-reorder>${I.refresh}Mua lại ngay</button></div>`;
+    $('#reorderStrip').innerHTML = `<div class="reorder"><span class="emoji">🔁</span><div><b>Chào ${esc(cust?.name || 'mẹ')}, bé sắp hết ${esc(String(last.items[0].name || (byId(last.items[0].id) || {}).short || 'sản phẩm cũ').split(' ').slice(0, 4).join(' '))}…?</b><small>Mua lại đơn ${last.code} chỉ với 1 chạm – thông tin giao hàng đã lưu sẵn.</small></div><button class="btn btn--primary btn--sm" type="button" data-reorder>${I.refresh}Mua lại ngay</button></div>`;
   }
 
+  } catch (e) { console.error('Trang chủ – mua lại đơn:', e); }
   /* Mã giảm giá cho mẹ: vé mã công khai, bấm "Lưu" → web tự áp mã lợi nhất khi thanh toán */
+  try {
   const dsMa = MC.maCongKhai().filter((c) => !(c.donDau && MC.daMuaTruoc((Customer.get() || {}).phone)));
   const vstripDau = `<div class="vstrip__h"><span class="vstrip__ic">🎟️</span><div><b>Mã giảm giá cho mẹ</b><small>Bấm <b>Lưu</b> – web tự áp mã lợi nhất khi mẹ thanh toán</small></div><a class="vstrip__vi" href="vi-voucher.html">Ví voucher ›</a></div>`;
   const veVstrip = (them = '') => { if (!dsMa.length && !them) return; $('#voucherStrip').innerHTML = `<section class="vstrip" aria-label="Mã giảm giá">${vstripDau}${dsMa.length ? `<div class="vstrip__row">${dsMa.map(MC.voucherTicket).join('')}</div>` : ''}${them}</section>`; };
   veVstrip();
 
+  } catch (e) { console.error('Trang chủ – mã giảm giá:', e); }
   /* Lịch điểm danh mini cạnh Mã giảm giá: điểm danh ngay tại trang chủ, không hiện số dư điểm */
-  if (window.DDUI) DDUI.mini($('#ddMini'), { che: 'storefront' });
+  try { if (window.DDUI) DDUI.mini($('#ddMini'), { che: 'storefront' }); } catch (e) { console.error('Trang chủ – điểm danh:', e); }
 
   /* Trust strip */
   const expertCard = SITE.expert ? `<a class="trust__item trust__item--cta" href="tel:${SITE.expert.phone}"><span class="trust__icon">${I.phoneCall}</span><div><b>Gặp trực tiếp ${SITE.expert.title.toLowerCase()}</b><small>Gọi / Zalo ${SITE.expert.display}</small><span class="trust__call">Bấm để gọi ngay ${I.arrowR}</span></div></a>` : '';

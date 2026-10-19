@@ -192,7 +192,9 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     html = themVaoDau(html, `<link rel="canonical" href="${GOC}/">\n  ${ld(to)}\n  ${ld(web)}\n  ${ld(danhSachSP(d, noiBat, GOC + '/'))}`);
     html = chen(html, 'featGrid', noiBat.map((p) => the(d, p)).join(''));
     html = chen(html, 'catGrid', d.danhMuc.map((c) => `<a class="cat-tile" href="/collections.html?cat=${esc(c.key)}" style="background:${esc(c.color || '')}"><b>${esc(c.label)}</b></a>`).join(''));
-    html = chen(html, 'postGrid', baiHien(d, false).slice(0, 3).map((b) => theBai(d, b)).join(''));
+    html = chen(html, 'comboGrid', ds.filter((p) => p.isCombo).map((p) => the(d, p)).join(''));
+    html = chen(html, 'momGrid', ds.filter((p) => p.cat === 'cho-me' && !p.isCombo).sort((a, b) => (Number(b.sold) || 0) - (Number(a.sold) || 0)).slice(0, 8).map((p) => the(d, p)).join(''));
+    html = chen(html, 'postGrid',baiHien(d, false).slice(0, 3).map((b) => theBai(d, b)).join(''));
     html = chen(html, 'brandRow', d.hieu.filter((b) => b.key !== 'khac').map((b) => `<a href="/collections.html?brand=${esc(b.key)}">${esc(b.label)}</a>`).join(''));
     return doiAnhHtml(html);
   }
