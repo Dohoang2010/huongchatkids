@@ -116,6 +116,14 @@ function tien(n) { return (Number(n) || 0).toLocaleString('vi-VN') + 'đ'; }
 function ngayVN(d) { return Utilities.formatDate(new Date(d), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm'); }
 
 /* ===================== NHẬN ĐƠN (POST từ website) ===================== */
+/* Mã đơn đã có trong 500 dòng cuối của sheet Đơn hàng chưa (đơn mới luôn ở cuối) */
+function donDaNhan_(ma) {
+  if (!/^[A-Z0-9-]{6,40}$/i.test(ma)) return false;
+  var s = sheetDon(), n = s.getLastRow(); if (n < 2) return false;
+  var tu = Math.max(2, n - 499), v = s.getRange(tu, 2, n - tu + 1, 1).getValues();
+  for (var i = v.length - 1; i >= 0; i--) if (String(v[i][0]) === ma) return true;
+  return false;
+}
 function doPost(e) {
   try {
     var order = JSON.parse(e.postData.contents);
@@ -139,6 +147,8 @@ function doPost(e) {
       canhBao_('tan-suat-don', '⚠️ Có quá nhiều đơn gửi lên trong 10 phút (có thể bot spam đơn ảo). Đơn vượt giới hạn đã bị chặn – kiểm tra bảng Đơn hàng.');
       return ContentService.createTextOutput(JSON.stringify({ ok: false, code: 'RATE_LIMITED', msg: 'Hệ thống đang bận, mẹ gọi hotline ' + HOTLINE + ' để đặt hàng nhé' })).setMimeType(ContentService.MimeType.JSON);
     }
+    /* Đơn đã nhận rồi (web gửi lại khi mạng chập chờn) → trả ok, không ghi thêm, không gửi lại mail / Zalo */
+    if (order.code && donDaNhan_(String(order.code))) return ContentService.createTextOutput(JSON.stringify({ ok: true, trung: true })).setMimeType(ContentService.MimeType.JSON);
     var items = (order.items || []).map(function (it) {
       return (it.short || it.name) + (it.variant ? ' – ' + it.variant : '') + ' × ' + (it.qty || 1);
     }).join('\n');

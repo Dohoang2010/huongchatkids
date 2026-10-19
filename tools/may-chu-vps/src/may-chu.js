@@ -49,9 +49,22 @@ function napMa() {
   trangThai.maLuc = fs.statSync(cauHinh.gsFile).mtime.toISOString();
 }
 /* Mã Apps Script đổi trên GitHub (VPS kéo về mỗi phút) → nạp lại, lần chạy sau dùng mã mới */
+/* Chạy bộ kiểm thử (kiem-thu/*.js) với mã mới – chỉ đọc, dữ liệu giả, không đụng dữ liệu thật */
+function kiemThuMa() {
+  const tm = require('node:path').join(__dirname, '..', 'kiem-thu'); let ds = [];
+  try { ds = fs.readdirSync(tm).filter((f) => /\.js$/.test(f)).map((f) => require('node:path').join(tm, f)); } catch { return { ok: true, boQua: true }; }
+  if (!ds.length) return { ok: true, boQua: true };
+  const r = require('node:child_process').spawnSync(process.execPath, ['--test', '--test-reporter=spec', ...ds], { env: Object.assign({}, process.env, { GS: cauHinh.gsFile }), timeout: 120000, encoding: 'utf8' });
+  const ra = String(r.stdout || '') + String(r.stderr || '');
+  return { ok: r.status === 0, tom: (ra.match(/^ℹ (pass|fail) \d+/gm) || []).join(', '), loi: (ra.match(/^✖ .*$/gm) || []).slice(0, 5).join(' | ') };
+}
 function theoDoiMa() {
   setInterval(() => {
-    try { const luc = fs.statSync(cauHinh.gsFile).mtime.toISOString(); if (luc !== trangThai.maLuc) { napMa(); ghi('Đã nạp lại mã Apps Script (sửa lúc ' + luc + ')'); } }
+    try { const luc = fs.statSync(cauHinh.gsFile).mtime.toISOString(); if (luc !== trangThai.maLuc) {
+      const kt = kiemThuMa();
+      if (!kt.ok) { trangThai.maLuc = luc; ghi('LỖI: mã Apps Script mới (sửa lúc ' + luc + ') KHÔNG qua kiểm thử – vẫn chạy bản cũ. ' + kt.tom + ' ' + kt.loi);
+        bc.goiHam('zaloBotGuiTin', ['⚠️ Máy chủ web: mã mới đẩy lên GitHub KHÔNG qua kiểm thử nên VPS vẫn chạy bản cũ (web vẫn hoạt động bình thường). Cần sửa: ' + kt.loi.slice(0, 300)]).catch(() => {}); return; }
+      napMa(); ghi('Đã nạp lại mã Apps Script (sửa lúc ' + luc + ')' + (kt.boQua ? '' : ' – qua kiểm thử: ' + kt.tom)); } }
     catch (e) { ghi('LỖI nạp lại mã Apps Script, vẫn chạy bản cũ: ' + e.message); try { trangThai.maLuc = fs.statSync(cauHinh.gsFile).mtime.toISOString(); } catch (e2) { /* bỏ qua */ } }
   }, 30000).unref();
 }
