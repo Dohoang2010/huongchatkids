@@ -192,6 +192,10 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .breadcrumb { display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--muted); padding: 14px 0; }
 .breadcrumb a:hover { color: var(--primary); }
 .breadcrumb span:last-child { color: var(--ink-2); }
+/* Đường dẫn luôn 1 dòng (tên dài → …): chiều cao cố định, trang không bị xô khi vẽ lại / đổi phông */
+.breadcrumb { flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+.breadcrumb > * { flex: 0 0 auto; }
+.breadcrumb > :last-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .page-title { font-size: 24px; margin-bottom: 6px; }
 @media (min-width: 768px) { .page-title { font-size: 30px; } }
 .card { background: #fff; border-radius: var(--radius); border: 1px solid var(--line); }
