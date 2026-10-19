@@ -16,8 +16,8 @@ window.SITE = {
   slogan: 'Mẹ nào cũng là siêu nhân',
   hotline: '(+84) 967.233.003',
   hotlineTel: '+84967233003',
-  zalo: 'https://zalo.me/0967233003',
-  zaloQr: 'img/zalo-qr.png',        // mã QR Zalo (tạo từ số hotline) hiện ở footer & modal gọi lại
+  zalo: 'https://zalo.me/2560253151670008554',
+  zaloQr: 'img/zalo-qr-oa.png',     // mã QR Zalo OA của shop hiện ở footer & modal gọi lại
   messenger: '',                      // điền link m.me/... nếu có fanpage; để trống sẽ ẩn nút Messenger
   shopee: 'https://shopee.vn/shop/837223358',
   shopeeSale: { days: [15, 25], doubleDays: true, label: 'Siêu ưu đãi ngày {d}' },  // ngày sale Shopee: 15, 25 hằng tháng + ngày đôi (1/1, 2/2 … 12/12) → nút Shopee tự gắn tag; xem trước: thêm ?demo_date=2026-09-09 vào URL

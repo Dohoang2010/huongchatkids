@@ -128,7 +128,7 @@ window.POLICIES = [
 <h3>Cách chúng tôi làm việc</h3>
 <ul><li>Nhập khẩu chính ngạch, đầy đủ tem phụ tiếng Việt và số công bố; hoá đơn VAT theo yêu cầu.</li><li>Tư vấn 1:1 miễn phí qua Zalo/điện thoại trước và sau khi mua: bé mấy tháng dùng được, liều bao nhiêu, kết hợp thế nào.</li><li>Bán trên website này và gian hàng Shopee chính thức với cùng chính sách.</li></ul>
 <h3>Thông tin liên hệ</h3>
-<ul><li>Địa chỉ: {address}</li><li>Hotline / Zalo: {hotline} ({hours})</li><li>Email: {email}</li></ul>
+<ul><li>Địa chỉ: {address}</li><li>Hotline: {hotline} ({hours}) · Zalo: <a href="{zaloLink}" target="_blank" rel="noopener">Hương Chất Kids</a></li><li>Email: {email}</li></ul>
 <div class="note">Thông tin pháp nhân (tên doanh nghiệp/hộ kinh doanh, mã số thuế, số giấy chứng nhận đăng ký kinh doanh, cơ quan cấp) sẽ được công bố tại đây và chân trang theo Điều 29 Nghị định 52/2013/NĐ-CP sau khi hoàn tất thủ tục thông báo website với Bộ Công Thương (online.gov.vn).</div>` },
 
   { key: 'chinh-hang', group: 'about', icon: '🛡️', title: 'Cam kết chính hãng', summary: 'Nguồn gốc, tem phụ, công bố ATTP, hoàn tiền 100% nếu hàng giả', html: `
@@ -162,6 +162,6 @@ window.POLICIES = [
 <p>Hương Chất Kids tìm đối tác phân phối sản phẩm dinh dưỡng Hàn Quốc chính hãng:</p>
 <ul><li><b>Đại lý / cửa hàng mẹ & bé, nhà thuốc</b>: chiết khấu theo doanh số, hỗ trợ tài liệu sản phẩm, tem phụ và hoá đơn đầy đủ.</li><li><b>Cộng tác viên online</b> (mẹ bỉm sữa, hội nhóm, TikTok/Facebook): hoa hồng theo đơn, không cần ôm hàng, có mã riêng.</li><li><b>Nhà cung cấp</b> muốn giới thiệu sản phẩm cho bé: gửi hồ sơ công bố, mẫu thử.</li></ul>
 <h3>Liên hệ</h3>
-<ul><li>Email: <a href="mailto:{email}?subject=Hợp tác với Hương Chất Kids">{email}</a> (tiêu đề "Hợp tác")</li><li>Zalo / Hotline: {zalo} – {hotline} ({hours})</li><li>Địa chỉ: {address}</li></ul>
+<ul><li>Email: <a href="mailto:{email}?subject=Hợp tác với Hương Chất Kids">{email}</a> (tiêu đề "Hợp tác")</li><li>Hotline: {hotline} ({hours}) · Zalo: <a href="{zaloLink}" target="_blank" rel="noopener">Hương Chất Kids</a></li><li>Địa chỉ: {address}</li></ul>
 <p>Vui lòng gửi: tên đơn vị/cá nhân, khu vực, kênh bán, sản phẩm quan tâm. Chúng tôi phản hồi trong 2 ngày làm việc.</p>` },
 ];

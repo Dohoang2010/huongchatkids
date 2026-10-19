@@ -25,7 +25,7 @@ var EMAIL = 'huongchatkids@gmail.com';   // nơi nhận email báo đơn & báo 
 var TEN_SHOP = 'Hương Chất Kids';
 var HOTLINE = '0967.233.003';
 var WEB = 'https://huongchatkids.vn';
-var ZALO_LINK = 'https://zalo.me/0967233003';
+var ZALO_LINK = 'https://zalo.me/2560253151670008554';
 var GUI_EMAIL_CHO_KHACH = true;   // false = tắt email xác nhận đơn gửi cho khách
 
 // Bot Zalo báo đơn (tạo tại https://zalo.me/s/botcreator/). Để trống = tắt báo Zalo.

@@ -17,14 +17,14 @@
 <main id="app"><div class="container" id="policyPage"></div></main>
 <script src="js/data.js?v=20261017g"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
-<script src="js/policies.js?v=20261008b"></script>
+<script src="js/policies.js?v=20261019z"></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261019b"></script>
+<script src="js/app.js?v=20261019z"></script>
 <script src="js/chat.js?v=20261019c" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, esc, param, I } = MC;
-  const fill = (s) => String(s).replace(/\{hotline\}/g, SITE.hotline).replace(/\{zalo\}/g, SITE.hotline).replace(/\{email\}/g, SITE.email).replace(/\{address\}/g, SITE.address).replace(/\{company\}/g, SITE.company).replace(/\{freeship\}/g, fmt(SITE.freeshipFrom)).replace(/\{shipFee\}/g, fmt(SITE.shipFee)).replace(/\{expressFee\}/g, fmt(SITE.expressFee || 35000)).replace(/\{hours\}/g, SITE.workingHours).replace(/\{bankFull\}/g, (SITE.bank || {}).fullName || '').replace(/\{bankAccount\}/g, (SITE.bank || {}).account || '').replace(/\{bankHolder\}/g, (SITE.bank || {}).holder || 'đang cập nhật');
+  const fill = (s) => String(s).replace(/\{hotline\}/g, SITE.hotline).replace(/\{zaloLink\}/g, SITE.zalo).replace(/\{zalo\}/g, `<a href="${SITE.zalo}" target="_blank" rel="noopener">Hương Chất Kids</a>`).replace(/\{email\}/g, SITE.email).replace(/\{address\}/g, SITE.address).replace(/\{company\}/g, SITE.company).replace(/\{freeship\}/g, fmt(SITE.freeshipFrom)).replace(/\{shipFee\}/g, fmt(SITE.shipFee)).replace(/\{expressFee\}/g, fmt(SITE.expressFee || 35000)).replace(/\{hours\}/g, SITE.workingHours).replace(/\{bankFull\}/g, (SITE.bank || {}).fullName || '').replace(/\{bankAccount\}/g, (SITE.bank || {}).account || '').replace(/\{bankHolder\}/g, (SITE.bank || {}).holder || 'đang cập nhật');
   const groups = [{ key: 'support', title: 'Hỗ trợ khách hàng', desc: 'Chính sách theo Luật Bảo vệ quyền lợi người tiêu dùng 2023 và quy định về thương mại điện tử' }, { key: 'about', title: 'Về Hương Chất Kids', desc: 'Chúng tôi là ai và cam kết gì với mẹ' }];
   const hrefOf = (p) => p.link || `policy.html?p=${p.key}`;
   const key = param('p') || (location.hash ? location.hash.slice(1) : '');
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!cur) {
     /* Trang tổng: 2 nhóm nút */
     $('#policyPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Trung tâm hỗ trợ</span></nav>
-      <h1 class="page-title">Trung tâm hỗ trợ</h1><p class="text-muted fs-14 mb-16">Cập nhật ngày 21/09/2026 · Cần hỗ trợ ngay? Gọi/Zalo <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> (${SITE.workingHours})</p>
+      <h1 class="page-title">Trung tâm hỗ trợ</h1><p class="text-muted fs-14 mb-16">Cập nhật ngày 21/09/2026 · Cần hỗ trợ ngay? Gọi <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> (${SITE.workingHours})</p>
       ${groups.map((g) => `<section class="pgroup"><div class="section-head"><div><h2>${g.title}</h2><p>${g.desc}</p></div></div><div class="pgrid">${POLICIES.filter((p) => p.group === g.key).map((p) => btn(p, false)).join('')}</div></section>`).join('')}
       <div class="callout mt-16"><span class="emoji">👩‍⚕️</span><div><b>Chưa tìm thấy câu trả lời?</b>Nhắn Zalo hoặc để lại số, chuyên viên tư vấn gọi lại trong giờ làm việc.</div><div class="flex gap-8"><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button></div></div>`;
     return;
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <aside class="policy__nav" aria-label="Các mục hỗ trợ">${groups.map((g) => `<h4>${g.title}</h4>${POLICIES.filter((p) => p.group === g.key).map((p) => `<a class="${p.key === cur.key ? 'is-active' : ''}" href="${hrefOf(p)}">${p.icon} ${esc(p.title)}</a>`).join('')}`).join('')}</aside>
       <article class="policy__body"><div class="policy__head"><span class="policy__icon">${cur.icon}</span><div><h1>${esc(cur.title)}</h1><p class="text-muted fs-14">${esc(fill(cur.summary))} · Cập nhật 21/09/2026</p></div></div>${body}
         <div class="policy__foot">${prev ? `<a class="btn btn--ghost" href="${hrefOf(prev)}">${I.chevronL}${esc(prev.title)}</a>` : '<span></span>'}${next ? `<a class="btn btn--ghost" href="${hrefOf(next)}">${esc(next.title)}${I.chevronR}</a>` : ''}</div>
-        <div class="callout mt-16"><span class="emoji">💬</span><div><b>Cần giải đáp thêm?</b>Gọi/Zalo ${SITE.hotline} (${SITE.workingHours}) hoặc email ${SITE.email}.</div><div class="flex gap-8"><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button></div></div>
+        <div class="callout mt-16"><span class="emoji">💬</span><div><b>Cần giải đáp thêm?</b>Gọi ${SITE.hotline} (${SITE.workingHours}), nhắn Zalo hoặc email ${SITE.email}.</div><div class="flex gap-8"><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button></div></div>
       </article>
     </div>`;
   window.scrollTo(0, 0);

@@ -16,7 +16,7 @@
 <script src="js/data.js?v=20261017g"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261019b"></script>
+<script src="js/app.js?v=20261019z"></script>
 <script src="js/chat.js?v=20261019c" defer></script>
 <script>
 /* TRANG ĐỐI TÁC – đăng ký (shop duyệt), đăng nhập, lấy link sản phẩm, xem lượt bấm / đơn / hoa hồng / kỳ thanh toán.
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="bm-row"><span>Ngân hàng</span><b>${esc(d.nganHang)} ${esc(d.stk)}</b></div>
             <div class="bm-row"><span>Hình thức</span><b>${esc(LOAI[d.loaiThue] || d.loaiThue)}</b></div>
             <div class="bm-row"><span>Liên hệ</span><b>${esc(d.sdt)} · ${esc(d.email)}</b></div>
-            <p class="qmk__note mt-8">Cần đổi tài khoản ngân hàng / hình thức thuế? Nhắn shop qua Zalo ${esc(SITE.hotline)}.</p>
+            <p class="qmk__note mt-8">Cần đổi tài khoản ngân hàng / hình thức thuế? Nhắn <a class="text-primary fw-700" href="${SITE.zalo}" target="_blank" rel="noopener">Zalo Hương Chất Kids</a> hoặc gọi ${esc(SITE.hotline)}.</p>
           </div></div>
       </div>`;
     veSp('');
