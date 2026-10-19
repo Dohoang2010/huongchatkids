@@ -112,7 +112,7 @@ s { color: var(--muted); font-weight: 400; }
 .btn--block { width: 100%; }
 .btn--icon { width: 42px; padding: 0; }
 .btn--icon.btn--sm { width: 34px; }
-.btn[disabled] { opacity: .55; pointer-events: none; }
+.btn[disabled], .btn.is-disabled { opacity: .45; pointer-events: none; cursor: not-allowed; filter: grayscale(.4); }   /* cháy hàng: mờ, không bấm được */
 .btn--wrap { white-space: normal; text-align: center; padding-top: 8px; padding-bottom: 8px; line-height: 1.3; }
 .btn--stack { flex-direction: column; gap: 2px; line-height: 1.15; white-space: normal; text-align: center; padding-top: 8px; padding-bottom: 8px; }
 .btn--stack small { font-weight: 500; font-size: 11.5px; opacity: .9; }

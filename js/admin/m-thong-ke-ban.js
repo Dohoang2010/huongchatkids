@@ -18,8 +18,8 @@
 
   function khoang() {
     const nay = new Date();
-    if (ky === 'tuy' && tu && den) return [tu, den];
-    const n = ky === 'hom-nay' ? 0 : Number(ky) - 1;
+    if (ky === 'tuy' && tu && den) return tu <= den ? [tu, den] : [den, tu];
+    const n = ky === 'hom-nay' ? 0 : ky === 'tuy' ? 29 : Number(ky) - 1;   // Tự chọn chưa chọn ngày: 30 ngày gần nhất
     return [ngay(new Date(nay.getTime() - n * 864e5)), ngay(nay)];
   }
   async function tai() {

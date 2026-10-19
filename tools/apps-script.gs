@@ -2559,6 +2559,15 @@ function ghiNguonDon_(o, loai) {
   var sp = (o.items || []).slice(0, 30).map(function (it) { return { id: cat(it.id, 60), sl: Number(it.qty) || 1, gia: Number(it.price) || 0 }; }).filter(function (x) { return x.id; });
   sheetND_().appendRow([new Date(), cat(o.code, 40), cat(loai, 20), cat(td.nguon || 'Chưa rõ', 40), cat(td.cd, 60), cat(td.vid, 40), cat(td.trangVao, 80), JSON.stringify(ct), JSON.stringify(sp), Number(o.total) || 0]);
 }
+/* Tên nguồn chuẩn (giống tenNguon trong js/app.js) – dữ liệu cũ ghi 'fb', 'facebook.com', 'zalo'… */
+function tenNguonBC_(x) {
+  var s = String(x || '').toLowerCase().trim(); if (!s) return 'Trực tiếp';
+  if (s === 'trực tiếp' || s === 'chưa rõ') return String(x).charAt(0).toUpperCase() + String(x).slice(1);
+  var ds = [[/facebook|^fb$|fb\.(com|me)$|messenger/, 'Facebook'], [/google/, 'Google'], [/zalo/, 'Zalo'], [/tiktok/, 'TikTok'], [/instagram|^ig$/, 'Instagram'], [/youtube|youtu\.be|^yt$/, 'YouTube'],
+    [/shopee/, 'Shopee'], [/coccoc|cốc cốc/, 'Cốc Cốc'], [/bing/, 'Bing'], [/^doi-tac$|^đối tác$/, 'Đối tác'], [/^(email|mail)$|mail\./, 'Email'], [/^(qr|in-an)|qr \/ in ấn/, 'QR / in ấn'], [/^sms$/, 'SMS']];
+  for (var i = 0; i < ds.length; i++) if (ds[i][0].test(s)) return ds[i][1];
+  return String(x).slice(0, 40);
+}
 function apiQtBaoCaoBan(p) {
   if (!coQuyen(p, 'dashboard.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var tz = 'Asia/Ho_Chi_Minh', ngayRe = /^\d{4}-\d{2}-\d{2}$/;
@@ -2580,7 +2589,7 @@ function apiQtBaoCaoBan(p) {
       var sid = String(v[i][2] || ''), su = String(v[i][8] || ''); if (!sid) continue;
       var ph = phien[sid] || (phien[sid] = { vid: String(v[i][1] || ''), nguon: '', cd: '', xem: 0, spXem: {}, gio: 0, thanhToan: 0, mua: 0 });
       if (su === 'xem') {
-        ph.xem++; ph.nguon = String(v[i][5] || 'Trực tiếp'); if (v[i][9]) ph.cd = String(v[i][9]);   // duyệt ngược → giữ lại giá trị của lượt xem đầu tiên
+        ph.xem++; ph.nguon = tenNguonBC_(v[i][5]); if (v[i][9]) ph.cd = String(v[i][9]);   // duyệt ngược → giữ lại giá trị của lượt xem đầu tiên
         var tr = String(v[i][3] || ''), mm = tr.match(/^product\.html\?id=([\w-]{1,60})/); if (mm) ph.spXem[mm[1]] = 1;
       } else if (su === 'gio') { ph.gio++; if (v[i][9]) spCua(String(v[i][9])).gio++; }
       else if (su === 'thanhtoan') ph.thanhToan++;
@@ -2609,7 +2618,7 @@ function apiQtBaoCaoBan(p) {
       if (String(dv[j][2] || '').indexOf('gọi lại') > -1 || /huỷ|huy|hoàn|hoan/i.test(String(dv[j][18] || ''))) continue;
       var tien = Number(dv[j][10]) || 0, ma = String(dv[j][1] || ''), r = nd[ma];
       kq.tong.don++; kq.tong.doanhThu += tien;
-      var ng = r ? String(r[3] || 'Chưa rõ') : 'Chưa rõ';
+      var ng = r ? tenNguonBC_(r[3] || 'Chưa rõ') : 'Chưa rõ';
       if (r) kq.tong.donCoNguon++;
       var xn = them(theoNguon, ng); xn.don++; xn.doanhThu += tien;
       if (r && r[4]) { var xb = them(theoBai, ng + ' · ' + r[4]); xb.don++; xb.doanhThu += tien; }

@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261019i">
+  <link rel="stylesheet" href="css/style.css?v=20261019j">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -21,7 +21,7 @@
 <script src="js/data.js?v=20261019c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261019ze" defer></script>
+<script src="js/app.js?v=20261019zg" defer></script>
 <script src="js/chat.js?v=20261019e" defer></script>
 <script src="js/danh-gia.js?v=20261019c" defer></script>
 <script type="module">
@@ -141,6 +141,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const buy = () => openQuickBuy(p.id, { qty, variant: variant ?? undefined });
   const add = () => { Cart.add(p.id, qty, variant); toast('Đã thêm vào giỏ hàng', { action: { label: 'Thanh toán ngay', onClick: () => location.href = 'checkout.html' } }); if (window.innerWidth >= 992) MC.openCart(); };
   $('#btnBuy').addEventListener('click', buy); $('#stickyBuyBtn').addEventListener('click', buy); $('#btnAdd').addEventListener('click', add); $('#stickyAdd').addEventListener('click', add);
+  /* Cháy hàng (mọi phân loại hết, hoặc phân loại đang chọn hết): nút Mua ngay, Thêm giỏ, Đặt qua Zalo mờ đi, không bấm được */
+  const capNhatChay = () => {
+    const het = MC.chayHang(p, variant);
+    ['#btnBuy', '#btnAdd', '#stickyBuyBtn', '#stickyAdd'].forEach((s) => { const b = $(s); if (b) b.disabled = het; });
+    $$('.pdp__info .btn--zalo').forEach((a) => { a.classList.toggle('is-disabled', het); a.setAttribute('aria-disabled', het ? 'true' : 'false'); });
+    const nho = $('#btnBuy small'); if (nho) { if (nho.dataset.goc == null) nho.dataset.goc = nho.textContent; nho.textContent = het ? 'Sản phẩm đang cháy hàng – mẹ xem sản phẩm khác nhé' : nho.dataset.goc; }
+  };
+  capNhatChay(); document.addEventListener('stock:change', capNhatChay);
+  $('#pdp').addEventListener('click', (e) => { if (e.target.closest('[data-variant],[data-gt],[data-tang]')) setTimeout(capNhatChay, 0); });
+  $('#pdp').addEventListener('change', () => setTimeout(capNhatChay, 0));
   $$('[data-thumb]').forEach((t) => t.addEventListener('click', () => { $$('[data-thumb]').forEach((x) => { x.classList.toggle('is-active', x === t); x.setAttribute('aria-pressed', x === t); }); $('#mainImg').src = productImage(p, Number(t.dataset.thumb)); }));
   $('#pdpTabs').addEventListener('click', (e) => { const t = e.target.closest('.tab'); if (!t) return; $$('#pdpTabs .tab').forEach((x) => { x.classList.toggle('is-active', x === t); x.setAttribute('aria-selected', x === t); }); $$('.pdp__panel').forEach((x) => x.classList.toggle('is-active', x.id === 'panel-' + t.dataset.panel)); });
   $$('[data-goto-reviews]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); $('[data-panel=reviews]').click(); $('.pdp__tabs').scrollIntoView({ behavior: 'smooth' }); }));

@@ -122,3 +122,15 @@ test('hết hàng: mọi phân loại hết (hoặc tồn kho 0) mới hiện nh
   const k = W.PRODUCTS.find((x) => !x.variants || !x.variants.length) || { stock: 0 };
   k.stock = 0; assert.strictEqual(MC.hetHang(k), true, 'tồn kho 0');
 });
+
+test('cháy hàng: không thêm được vào giỏ (cả sản phẩm hết, hoặc phân loại đang chọn hết); phân loại còn hàng vẫn thêm được', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const p = W.PRODUCTS.find((x) => x.variants && x.variants.length > 1); p.stock = 50;
+  p.variants.forEach((v, i) => { v.oos = i === 0; });
+  assert.strictEqual(MC.chayHang(p, 0), true, 'phân loại 1 hết'); assert.strictEqual(MC.chayHang(p, 1), false);
+  assert.strictEqual(MC.Cart.add(p.id, 1, 0), false, 'không thêm được phân loại đã hết');
+  MC.Cart.add(p.id, 1, 1); assert.strictEqual(MC.Cart.items().length, 1, 'phân loại còn hàng thêm được');
+  p.variants.forEach((v) => { v.oos = true; });
+  assert.strictEqual(MC.Cart.add(p.id, 1, 1), false, 'cả sản phẩm cháy hàng');
+  assert.strictEqual(MC.Cart.items().length, 1);
+});

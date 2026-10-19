@@ -237,3 +237,11 @@ test('báo cáo bán hàng: phễu theo lượt vào, đơn gắn đúng nguồn
   const r2 = await m.qt('action=qtBaoCaoBan');
   assert.strictEqual(r2.tong.don, 2); assert.strictEqual(r2.tong.doanhThu, 1196000);
 });
+
+test('báo cáo bán hàng: tên nguồn cũ (fb, facebook.com, m.facebook.com, zalo) được gộp về Facebook / Zalo', async () => {
+  const m = taoMay(), luc = new Date().toISOString();
+  for (const [sid, ng] of [['a', 'fb'], ['b', 'facebook.com'], ['c', 'm.facebook.com'], ['d', 'zalo'], ['e', 'Trực tiếp']])
+    await m.bc.doPost(new URLSearchParams(), JSON.stringify({ type: 'track', su: 'xem', vid: 'v' + sid, sid, luc, loai: 'khac', trang: 'index.html', nguon: ng }));
+  const r = await m.qt('action=qtBaoCaoBan'), ten = Object.fromEntries(r.nguon.map((x) => [x.ten, x.phien]));
+  assert.deepStrictEqual(ten, { Facebook: 3, Zalo: 1, 'Trực tiếp': 1 });
+});

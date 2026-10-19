@@ -176,6 +176,7 @@
     save(items) { store.set(this.key, items); updateCartBadges(); document.dispatchEvent(new CustomEvent('cart:change')); },
     add(id, qty = 1, variant = null) {
       const p = byId(id); if (!p) return;
+      if (chayHang(p, variant)) { toast('Sản phẩm này đang cháy hàng – mẹ chọn phân loại / sản phẩm khác nhé'); return false; }
       const items = this.items();
       const vKey = variant != null ? String(variant) : '';
       const line = items.find((i) => i.id === id && (i.variant ?? '') === vKey);
@@ -443,6 +444,8 @@
   /* ---------------- Product card ---------------- */
   /* Hết hàng = tồn kho bằng 0, HOẶC sản phẩm có phân loại mà mọi phân loại đều hết (Quản trị › Tồn kho) */
   const hetHang = (p) => !!p && (p.stock <= 0 || (Array.isArray(p.variants) && p.variants.length > 0 && p.variants.every((v) => v.oos)));
+  /* Cháy hàng khi mua: cả sản phẩm hết, hoặc phân loại đang chọn đã hết */
+  function chayHang(p, variant) { if (hetHang(p)) return true; const v = variant != null && variant !== '' && p && p.variants ? p.variants[Number(variant)] : null; return !!(v && v.oos); }
   function productCard(p, opts = {}) {
     const d = pct(p); const b = brandOf(p); const oos = hetHang(p);
     const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
@@ -827,6 +830,9 @@
   }
   window.addEventListener('mc:ma-gh', () => { if (QB.id && document.getElementById('qbForm')) qbRefresh(); });
   function qbRefresh() {
+    { const het = chayHang(byId(QB.id), QB.variant), sb = $('#qbSubmit');
+      if (sb) { sb.disabled = het; const nho = sb.querySelector('small'); if (nho) { if (nho.dataset.goc == null) nho.dataset.goc = nho.textContent; nho.textContent = het ? 'Phân loại này đang cháy hàng – mẹ chọn phân loại khác nhé' : nho.dataset.goc; } }
+      $$('#quickBuy .btn--zalo').forEach((a) => { a.classList.toggle('is-disabled', het); a.setAttribute('aria-disabled', het ? 'true' : 'false'); }); }
     const { price, old } = qbPrice(); const k = qbCalc();
     $('#qbPrice').innerHTML = `<b>${fmt(price)}</b>${listPrice(old, price) ? `<s>${fmt(old)}</s>` : ''}`;
     $('#qbTotal').textContent = fmt(k.total);
@@ -854,6 +860,7 @@
     const z = $('#quickBuy [data-zalo-copy]'); const p = byId(QB.id); if (z && p) z.dataset.zaloCopy = `${shortName(p)}${p.variants && QB.variant != null ? ' – ' + p.variants[QB.variant].label : ''} × ${QB.qty}`;
   }
   async function qbSubmit(form) {
+    if (chayHang(byId(QB.id), QB.variant)) { toast('Sản phẩm này đang cháy hàng'); return; }
     const fd = new FormData(form); const name = fd.get('name').trim(), phone = fd.get('phone').trim(), address = fd.get('address').trim(), payment = fd.get('payment') || 'cod';
     const email = String(fd.get('email') || '').trim();
     const err = $('#qbError'); err.classList.add('hide');
@@ -2083,5 +2090,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    spUrl, baiUrl, hetHang, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    spUrl, baiUrl, hetHang, chayHang, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

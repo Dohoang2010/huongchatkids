@@ -15,13 +15,13 @@ function taoWeb(o = {}) {
   const phanTu = () => ({ style: { setProperty() {} }, classList: { add() {}, remove() {}, toggle() {}, contains: () => false }, setAttribute() {}, getAttribute: () => null, appendChild() {}, append() {}, prepend() {},
     addEventListener() {}, querySelector: () => null, querySelectorAll: () => [], insertAdjacentHTML() {}, remove() {}, dataset: {}, innerHTML: '', textContent: '' });
   const document = { readyState: 'loading', cookie: '', referrer: '', title: '', hidden: false, visibilityState: 'visible', documentElement: phanTu(), body: phanTu(), head: phanTu(),
-    addEventListener() {}, removeEventListener() {}, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, createElement: phanTu };
+    addEventListener() {}, removeEventListener() {}, dispatchEvent() { return true; }, querySelector: () => null, querySelectorAll: () => [], getElementById: () => null, createElement: phanTu };
   const W = { document, console, Date: DateGia, Math, JSON, Intl, URL, URLSearchParams, Promise, setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {}, requestAnimationFrame: () => 0,
     localStorage: luuTru, sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} }, navigator: { userAgent: 'node', sendBeacon: () => true, clipboard: {} },
     location: { hostname: 'huongchatkids.vn', host: 'huongchatkids.vn', protocol: 'https:', pathname: '/', search: '', hash: '', href: 'https://huongchatkids.vn/', origin: 'https://huongchatkids.vn' },
     history: { replaceState() {}, pushState() {} }, matchMedia: () => ({ matches: false, addEventListener() {}, addListener() {} }), addEventListener() {}, removeEventListener() {}, innerWidth: 412, innerHeight: 800,
     fetch: () => Promise.resolve({ ok: true, json: async () => ({}), text: async () => '' }), XMLHttpRequest: class { open() {} send() {} }, IntersectionObserver: class { observe() {} disconnect() {} }, MutationObserver: class { observe() {} disconnect() {} },
-    performance: { now: () => 0 }, screen: { width: 412 } };
+    performance: { now: () => 0 }, screen: { width: 412 }, CustomEvent: class { constructor(t, o) { this.type = t; this.detail = o && o.detail; } }, Event: class { constructor(t) { this.type = t; } } };
   W.window = W; W.self = W; W.globalThis = W; W.top = W;
   vm.createContext(W);
   vm.runInContext(fs.readFileSync(path.join(GOC, 'js/data.js'), 'utf8'), W, { filename: 'js/data.js' });
