@@ -923,15 +923,67 @@
   }
 
   /* ---------------- Search suggestions ---------------- */
+  /* ---------------- Tìm sản phẩm ----------------
+     Tách từng từ, không phân biệt dấu / hoa thường / dấu gạch: "goi xa" khớp "Dầu Gội – Xả".
+     Tìm trong tên, tên ngắn, thương hiệu, danh mục, nhu cầu, phân loại, nhãn, xuất xứ, mô tả.
+     Đủ mọi từ → kết quả chính (xếp theo độ khớp: tên > thương hiệu/danh mục > mô tả).
+     Không có kết quả đủ từ → trả kết quả khớp nhiều từ nhất (ganDung = true). */
+  const boDau = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, ' ').trim();
+  const chiThuong = (s) => String(s || '').normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const TU_BO = new Set(['cho', 'va', 'cua', 'loai', 'san', 'pham', 'mua', 'ban']);
+  const chiMucTim = new Map();
+  function chiMuc(p) {
+    let m = chiMucTim.get(p); if (m) return m;
+    const cat = (CATEGORIES.find((c) => c.key === p.cat) || {}).label || '';
+    const needs = (p.needs || []).map((n) => (NEEDS.find((x) => x.key === n) || {}).label || '').join(' ');
+    const ten = (p.name || '') + ' ' + (p.short || '');
+    const phu = [brandOf(p).label, p.brand, cat, needs, (p.variants || []).map((v) => v.label).join(' '), (p.tags || []).join(' '), p.origin, p.weight].join(' ');
+    const moTa = (p.desc || '') + ' ' + (p.highlights || []).join(' ');
+    const hai = (x) => ({ k: ' ' + boDau(x) + ' ', d: ' ' + chiThuong(x) + ' ' });   // k: không dấu, d: giữ dấu
+    m = { ten: hai(ten), phu: hai(phu), moTa: hai(moTa) };
+    chiMucTim.set(p, m); return m;
+  }
+  /* che = 'd' so khớp giữ dấu (khách gõ có dấu: "gội" không nhầm "gói"), 'k' bỏ dấu */
+  function chamTim(ds, tu, cumTu, che) {
+    return ds.map((p) => {
+      const m = chiMuc(p), ten = m.ten[che], phu = m.phu[che], moTa = m.moTa[che]; let khop = 0, diem = 0;
+      tu.forEach((t) => {
+        const dauTu = ' ' + t;   // khớp đầu từ được ưu tiên hơn khớp giữa từ
+        if (ten.includes(dauTu)) { khop++; diem += ten.includes(dauTu + ' ') ? 12 : 9; }
+        else if (ten.includes(t) && t.length >= 3) { khop++; diem += 5; }
+        else if (phu.includes(dauTu)) { khop++; diem += 6; }
+        else if (t.length >= 3 && moTa.includes(dauTu)) { khop++; diem += 2; }
+      });
+      if (khop === tu.length && ten.includes(' ' + cumTu)) diem += 15;   // cả cụm liền nhau trong tên
+      return { p, khop, diem };
+    });
+  }
+  function timSP(q, ds) {
+    ds = ds || PRODUCTS;
+    const qk = boDau(q); if (!qk) return { ds: ds.slice(), ganDung: false };
+    const loc = (x) => { const c = x.split(' ').filter(Boolean), chinh = c.filter((t) => !TU_BO.has(boDau(t))); return chinh.length ? chinh : c; };
+    const sx = (a, b) => b.diem - a.diem || rankDefault(a.p, b.p);
+    const coDau = /[^\x00-\x7f]/.test(q);
+    const lan = coDau ? [['d', chiThuong(q)], ['k', qk]] : [['k', qk]];
+    let cham = null, tu = null;
+    for (const [che, cau] of lan) {
+      tu = loc(cau); cham = chamTim(ds, tu, cau, che);
+      const du = cham.filter((x) => x.khop === tu.length && x.diem > 0);
+      if (du.length) return { ds: du.sort(sx).map((x) => x.p), ganDung: false };
+    }
+    const toiThieu = Math.max(1, Math.ceil(tu.length / 2));   // không có kết quả đủ từ → gần đúng (theo bỏ dấu)
+    const gan = cham.filter((x) => x.khop >= toiThieu && x.diem >= 5).sort((a, b) => b.khop - a.khop || sx(a, b));
+    return { ds: gan.map((x) => x.p), ganDung: gan.length > 0 };
+  }
+
   function initSearch() {
     const input = $('#searchInput'), box = $('#searchSuggest'); if (!input) return;
     const hot = SITE.hotSearches || [];
     const render = (q) => {
       q = q.trim().toLowerCase();
       if (!q) { box.innerHTML = `<div class="search__hint">Tìm kiếm phổ biến<div class="chips">${hot.map((h) => `<a class="chip chip--sm" href="collections.html?q=${encodeURIComponent(h)}">${h}</a>`).join('')}</div></div>`; box.classList.add('is-open'); return; }
-      const res = PRODUCTS.filter((p) => (p.name + ' ' + p.short + ' ' + brandOf(p).label + ' ' + (p.needs || []).map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ')).toLowerCase().includes(q))
-        .sort(rankDefault).slice(0, 6);
-      box.innerHTML = res.length ? res.map((p) => `<a href="product.html?id=${p.id}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Mẹ thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
+      const kq = timSP(q), res = kq.ds.slice(0, 6);
+      box.innerHTML = res.length ? (kq.ganDung ? `<div class="search__hint">Không có sản phẩm khớp đủ "${esc(q)}" – gợi ý gần đúng:</div>` : "") + res.map((p) => `<a href="product.html?id=${p.id}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Mẹ thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
       box.classList.add('is-open');
     };
     input.addEventListener('input', debounce(() => render(input.value), 120));
@@ -1980,5 +2032,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

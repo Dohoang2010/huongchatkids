@@ -56,7 +56,7 @@
 <script src="js/data.js?v=20261017g"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261018a"></script>
+<script src="js/app.js?v=20261019b"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productCard, brandOf, ageLabel, esc } = MC;
@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     history.replaceState(null, '', 'collections.html' + (u.toString() ? '?' + u : ''));
   }
 
+  let ganDung = false;   // không có sản phẩm khớp đủ từ khoá → đang hiện kết quả gần đúng
   function filtered() {
     const q = S.q.trim().toLowerCase();
     let list = PRODUCTS.filter((p) => {
@@ -90,15 +91,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (S.price.length && !S.price.some((k) => { const r = PRICE_RANGES.find((x) => x.key === k); return p.price >= r.min && p.price < r.max; })) return false;
       if (S.tag && !(p.tags || []).includes(S.tag)) return false;
       if (S.km && !MC.dangKhuyenMai(p)) return false;
-      if (q && !(p.name + ' ' + brandOf(p).label + ' ' + p.needs.map((n) => (NEEDS.find((x) => x.key === n) || {}).label).join(' ') + ' ' + p.origin).toLowerCase().includes(q)) return false;
       return true;
     });
     const sorters = { best: MC.rankDefault, 'price-asc': (a, b) => a.price - b.price, 'price-desc': (a, b) => b.price - a.price, rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews, new: (a, b) => PRODUCTS.indexOf(b) - PRODUCTS.indexOf(a) };
+    if (q) { const kq = MC.timSP(q, list); ganDung = kq.ganDung; return S.sort === 'best' ? kq.ds : kq.ds.sort(sorters[S.sort]); }   // có từ khoá: xếp theo độ khớp
+    ganDung = false;
     return list.sort(sorters[S.sort] || sorters.best);
   }
 
   function titleText() {
-    if (S.q) return `Kết quả cho "${S.q}"`;
+    if (S.q) return ganDung ? `Gợi ý gần đúng cho "${S.q}"` : `Kết quả cho "${S.q}"`;
     if (S.km) return '🏷️ Sản phẩm đang khuyến mãi';
     if (S.tag) return S.tag === 'Combo' ? 'Combo tiết kiệm' : (S.tag === 'Sản phẩm hot' ? '🔥 Sản phẩm hot của shop' : S.tag);
     if (S.cat.length === 1) return (CATEGORIES.find((c) => c.key === S.cat[0]) || {}).label || 'Sản phẩm';
