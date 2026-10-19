@@ -105,3 +105,20 @@ test('tìm kiếm không dấu / sai chính tả nhẹ và link sản phẩm có
   assert.strictEqual(MC.spUrl(LOTTE), '/' + W.SP_SLUG[LOTTE]);
   assert.strictEqual(MC.spUrl(LOTTE, 'aff=ABC'), '/' + W.SP_SLUG[LOTTE] + '?aff=ABC');
 });
+
+/* ---------- Hết hàng ---------- */
+test('hết hàng: mọi phân loại hết (hoặc tồn kho 0) mới hiện nhãn "Hết hàng" và khoá nút mua; còn 1 phân loại thì vẫn bán', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const p = W.PRODUCTS.find((x) => x.variants && x.variants.length > 1);
+  p.stock = 50; p.variants.forEach((v) => { v.oos = false; });
+  assert.strictEqual(MC.hetHang(p), false);
+  p.variants.forEach((v, i) => { v.oos = i > 0; });
+  assert.strictEqual(MC.hetHang(p), false, 'còn 1 phân loại');
+  assert.ok(!MC.productCard(p).includes('pcard--oos'));
+  p.variants.forEach((v) => { v.oos = true; });
+  assert.strictEqual(MC.hetHang(p), true, 'mọi phân loại đều hết');
+  const the = MC.productCard(p);
+  assert.ok(the.includes('pcard--oos'), 'thẻ có nhãn hết hàng'); assert.match(the, /data-buy="[^"]+" disabled/, 'khoá nút Mua ngay');
+  const k = W.PRODUCTS.find((x) => !x.variants || !x.variants.length) || { stock: 0 };
+  k.stock = 0; assert.strictEqual(MC.hetHang(k), true, 'tồn kho 0');
+});

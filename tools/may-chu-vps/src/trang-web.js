@@ -97,6 +97,15 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   ${them || ''}`;
   }
 
+  /* Tồn kho (data/stock.json do Quản trị › Tồn kho ghi) – giống MC.applyStock + MC.hetHang */
+  const tonKho = () => { try { return docTheoGio('data/stock.json', (s) => (JSON.parse(s) || {}).items || {}); } catch { return {}; } };
+  function hetHang(p) {
+    const e = tonKho()[p.id]; let con = Number(p.stock) > 0, vo = null;
+    if (e !== undefined) { con = e && typeof e === 'object' ? e.in !== false : e !== false; vo = e && typeof e === 'object' ? e.variants : null; }
+    if (!con) return true;
+    const ds = Array.isArray(p.variants) ? p.variants : []; if (!ds.length) return false;
+    return ds.every((v) => (vo && v.label in vo ? vo[v.label] === false : !!v.oos));
+  }
   /* Biểu tượng + nhãn độ tuổi lấy thẳng từ js/app.js (thẻ dựng sẵn giống hệt MC.productCard) */
   const cu = () => docTheoGio('js/app.js', (ma) => {
     const lay = (dau, cuoi) => { const a = ma.indexOf(dau); if (a < 0) return ''; const b = ma.indexOf(cuoi, a); return b < 0 ? '' : ma.slice(a, b + cuoi.length); };
@@ -106,7 +115,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   });
   /* Thẻ sản phẩm dựng sẵn – cùng HTML với MC.productCard (nút Mua ngay / giỏ hàng chạy bằng app.js) */
   function the(d, p, uuTien) {
-    const { I, ageRange } = cu(), b = d.hieu.find((x) => x.key === p.brand) || {}, u = spLink(d, p), ten = p.short || p.name, het = Number(p.stock) <= 0;
+    const { I, ageRange } = cu(), b = d.hieu.find((x) => x.key === p.brand) || {}, u = spLink(d, p), ten = p.short || p.name, het = hetHang(p);
     const giam = d.site.showOldPrice && p.oldPrice > p.price ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
     const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
     const lop = (t) => (t === 'Mới' ? 'badge--new' : t === 'Combo' ? 'badge--teal' : t === 'Sản phẩm hot' ? 'badge--fire' : 'badge--hot');

@@ -441,8 +441,10 @@
   }
 
   /* ---------------- Product card ---------------- */
+  /* Hết hàng = tồn kho bằng 0, HOẶC sản phẩm có phân loại mà mọi phân loại đều hết (Quản trị › Tồn kho) */
+  const hetHang = (p) => !!p && (p.stock <= 0 || (Array.isArray(p.variants) && p.variants.length > 0 && p.variants.every((v) => v.oos)));
   function productCard(p, opts = {}) {
-    const d = pct(p); const b = brandOf(p); const oos = p.stock <= 0;
+    const d = pct(p); const b = brandOf(p); const oos = hetHang(p);
     const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
     const tagCls = (t) => (t === 'Mới' ? 'badge--new' : t === 'Combo' ? 'badge--teal' : t === 'Sản phẩm hot' ? 'badge--fire' : 'badge--hot');
     return `<article class="pcard ${oos ? 'pcard--oos' : ''}" data-id="${p.id}">
@@ -1085,13 +1087,13 @@
   function paintStock() {
     $$('.pcard[data-id]').forEach((card) => {
       const p = byId(card.dataset.id); if (!p) return;
-      const oos = p.stock <= 0;
+      const oos = hetHang(p);
       card.classList.toggle('pcard--oos', oos);
       card.querySelectorAll('[data-buy],[data-add]').forEach((b) => { b.disabled = oos; });
     });
-    const cur = byId(param('id'));
+    const cur = byId(param('id') || (window.SP_THEO_SLUG || {})[decodeURIComponent(location.pathname.split('/').pop() || '')]);   // cả link /ten-san-pham
     if (cur && $('.pdp__buy')) {
-      const oos = cur.stock <= 0;
+      const oos = hetHang(cur);
       $$('.pdp__buy [data-buy], .pdp__buy [data-add], .sticky-buy [data-buy], .sticky-buy [data-add]').forEach((b) => { b.disabled = oos; });
       const meta = $('.pdp__meta > span:last-child');
       if (meta) meta.innerHTML = oos ? '<span class="text-red fw-600">\u25cf T\u1ea1m h\u1ebft</span>' : '<span class="text-teal fw-600">\u25cf C\u00f2n h\u00e0ng</span>';
@@ -2081,5 +2083,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    spUrl, baiUrl, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    spUrl, baiUrl, hetHang, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();
