@@ -2315,6 +2315,12 @@ function doGet(e) {
   var vpsCt = vpsChuyenTiep_(e, false); if (vpsCt) return vpsCt;
   var chan = chanTanSuat_(action); if (chan) return traVe(chan, cb);
   try {
+    if (action === 'chatGui')   return traVe(apiChatGui(p), cb);
+    if (action === 'chatDoc')   return traVe(apiChatDoc(p), cb);
+    if (action === 'qtChatDs')  return traVe(apiQtChatDs(p), cb);
+    if (action === 'qtChatXem') return traVe(apiQtChatXem(p), cb);
+    if (action === 'qtChatTraLoi') return traVe(apiQtChatTraLoi(p), cb);
+    if (action === 'chatApi')   return traVe(apiChatApi(p), cb);
     if (action === 'kiemTra')  return traVe(apiKiemTra(p), cb);
     if (action === 'guiOtp')   return traVe(apiGuiOtp(p), cb);
     if (action === 'xacThuc')  return traVe(apiXacThuc(p), cb);
@@ -2821,7 +2827,7 @@ function baoLenh_(data) {
 }
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
-var GIOI_HAN_10P = { quaLe: 600, maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
+var GIOI_HAN_10P = { chatGui: 1500, chatDoc: 20000, chatApi: 6000, quaLe: 600, maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
   qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, snbLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
@@ -3482,6 +3488,118 @@ function apiCapNhat(p) {
   if (p.gioiTinh != null) s.getRange(dong, 13).setValue(chuanGioiTinh_(p.gioiTinh));
   var d = docKH(sdt);
   return { ok: true, kh: d.kh, donHang: d.don };
+}
+
+/* ===================== CHAT TRÊN WEB =====================
+   Khách chat ở góc phải web (js/chat.js) · nhân viên trả lời ở Quản trị › Khách hàng › Chat với khách.
+   Sheet "Chat": mỗi dòng 1 tin. Mã phiên do trình duyệt khách tạo ngẫu nhiên (khó đoán) – khách chỉ đọc được phiên của mình.
+   Sẵn cho phần mềm chat của nhân viên sau này (xem tools/may-chu-vps/CHAT-API.md):
+   - Gọi vào: action=chatApi&key=<CHAT_API_KEY>&viec=ds|xem|traLoi … (CHAT_API_KEY đặt trong Script Properties / env VPS)
+   - Đẩy ra: có tin mới của khách → POST JSON tới CHAT_WEBHOOK (nếu đặt trong Script Properties). */
+var SHEET_CHAT = 'Chat';
+var H_CHAT = ['Thời gian', 'Mã phiên', 'Mã tin', 'Người gửi', 'Nội dung', 'Tên khách', 'SĐT', 'Trang', 'Nhân viên', 'Đã đọc', 'Đính kèm'];
+/* Đính kèm (JSON): {loai:'anh'|'video', url:'/chat-tep/…'} · {loai:'sp', id, moi:true = nhân viên mời đặt} · {loai:'don', ma, tong, tt, sp} */
+function chatDinhKem_(v) {
+  var d = null; try { d = typeof v === 'string' ? JSON.parse(v || 'null') : v; } catch (e) { return null; } if (!d || typeof d !== 'object') return null;
+  if ((d.loai === 'anh' || d.loai === 'video') && /^\/chat-tep\/\d{6}\/[a-z0-9-]+\.(jpg|png|webp|gif|mp4|mov|webm)$/.test(String(d.url || ''))) return { loai: d.loai, url: String(d.url) };
+  if (d.loai === 'sp' && /^[\w-]{1,60}$/.test(String(d.id || ''))) return { loai: 'sp', id: String(d.id), bt: String(d.bt || '').slice(0, 80), moi: !!d.moi };
+  if (d.loai === 'don' && /^[\w-]{3,40}$/.test(String(d.ma || ''))) return { loai: 'don', ma: String(d.ma), tong: Math.max(0, Math.round(Number(d.tong) || 0)), tt: String(d.tt || '').slice(0, 40), sp: String(d.sp || '').slice(0, 200), ngay: String(d.ngay || '').slice(0, 20) };
+  return null;
+}
+function chatMoTaDK_(dk) { return !dk ? '' : dk.loai === 'anh' ? '[Ảnh]' : dk.loai === 'video' ? '[Video]' : dk.loai === 'sp' ? (dk.moi ? '[Mời đặt sản phẩm ' : '[Sản phẩm ') + dk.id + ']' : '[Đơn hàng ' + dk.ma + ']'; }
+function sheetChat_() { var sh = sheetPhu(SHEET_CHAT, H_CHAT); if (sh.getLastColumn() < H_CHAT.length) sh.getRange(1, H_CHAT.length).setValue(H_CHAT[H_CHAT.length - 1]); return sh; }
+function chatPhien_(v) { v = String(v || ''); return /^c[a-z0-9]{12,40}$/.test(v) ? v : ''; }
+function chatDocHet_() { var sh = sheetChat_(), n = sh.getLastRow(); if (n < 2) return []; var tu = Math.max(2, n - 4999); return sh.getRange(tu, 1, n - tu + 1, H_CHAT.length).getValues(); }
+function chatTin_(r) { var t = { ma: String(r[2]), luc: new Date(r[0]).getTime(), tu: String(r[3]), noiDung: String(r[4]), nv: String(r[8] || '') }; var dk = chatDinhKem_(String(r[10] || '')); if (dk) t.dk = dk; return t; }
+function chatGio_() { var h = Number(Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'H')); return h >= 8 && h < 22; }
+function chatThem_(phien, tu, noiDung, kh, nv, dk) {
+  var ma = 'm' + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
+  sheetChat_().appendRow([new Date(), phien, ma, tu, noiDung, kh.ten || '', kh.sdt ? "'" + kh.sdt : '', kh.trang || '', nv || '', tu === 'khach' ? '' : 'x', dk ? JSON.stringify(dk) : '']);
+  var t = { ma: ma, luc: Date.now(), tu: tu, noiDung: noiDung, nv: nv || '' }; if (dk) t.dk = dk; return t;
+}
+function chatWebhook_(goi) {
+  var url = PropertiesService.getScriptProperties().getProperty('CHAT_WEBHOOK'); if (!url || !/^https:\/\//.test(url)) return;
+  try { UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: JSON.stringify(goi), muteHttpExceptions: true }); } catch (e) { Logger.log('Chat webhook lỗi: ' + e); }
+}
+/* Khách gửi tin */
+function apiChatGui(p) {
+  var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
+  var nd = String(p.noiDung || '').replace(/\s+$/, '').slice(0, 1000).trim(), dk = chatDinhKem_(p.dinhKem);
+  if (dk && dk.loai === 'sp') dk.moi = false;
+  if (!nd && !dk) return { ok: false, msg: 'Mẹ nhập nội dung nhé' };
+  if (!demGioiHan('chat_' + phien, 40, 600)) return { ok: false, msg: 'Mẹ gửi nhanh quá, chờ một chút rồi gửi tiếp nhé' };
+  var sdt = chuanSdt(p.sdt), kh = { ten: String(p.ten || '').slice(0, 60), sdt: sdtHopLe(sdt) ? sdt : '', trang: String(p.trang || '').slice(0, 120) };
+  return voiKhoa(function () {
+    var ds = chatDocHet_().filter(function (r) { return String(r[1]) === phien; });
+    var cuoi = ds.length ? new Date(ds[ds.length - 1][0]).getTime() : 0;
+    var tin = chatThem_(phien, 'khach', nd, kh, '', dk), them = [];
+    var coNv = ds.some(function (r) { return String(r[3]) === 'nv'; });
+    /* Tin đầu tiên (hoặc khách quay lại sau 30 phút): tự trả lời + báo nhân viên qua Zalo */
+    if (!ds.length || Date.now() - cuoi > 30 * 60000) {
+      if (!coNv || Date.now() - cuoi > 30 * 60000) them.push(chatThem_(phien, 'he-thong', chatGio_()
+        ? 'Hương đã nhận được tin nhắn của mẹ 💗 Chuyên gia tư vấn sẽ trả lời mẹ trong ít phút. Mẹ để lại số điện thoại để Hương gọi lại khi cần nhé.'
+        : 'Hương đã nhận được tin nhắn của mẹ 💗 Hiện ngoài giờ tư vấn (8:00 – 22:00), Hương sẽ trả lời mẹ sớm nhất vào sáng mai. Mẹ để lại số điện thoại để Hương gọi lại nhé.', {}));
+      try { zaloBotGuiTin('💬 Khách chat trên web' + (kh.ten ? ' – ' + kh.ten : '') + (kh.sdt ? ' (' + kh.sdt + ')' : '') + ':\n' + ((nd ? nd + ' ' : '') + chatMoTaDK_(dk)).slice(0, 300) + '\nTrả lời: Quản trị › Chat với khách'); } catch (z) { Logger.log(z); }
+    }
+    /* Khách gõ số điện thoại trong tin → ghi nhớ cho nhân viên gọi lại */
+    var sdtTrongTin = (nd.match(/(?:\+?84|0)\d[\d .]{7,11}\d/) || [''])[0];
+    if (sdtTrongTin && sdtHopLe(chuanSdt(sdtTrongTin))) ghiNhatKy('Chat web', chuanSdt(sdtTrongTin), 'Khách để lại số trong chat: ' + nd.slice(0, 200));
+    chatWebhook_({ su: 'tin_moi', phien: phien, khach: kh, tin: tin });
+    return { ok: true, tin: [tin].concat(them) };
+  });
+}
+/* Khách đọc tin mới (sau mã thời gian 'sau') */
+function apiChatDoc(p) {
+  var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
+  var sau = Number(p.sau) || 0;
+  var tin = chatDocHet_().filter(function (r) { return String(r[1]) === phien && new Date(r[0]).getTime() > sau; }).map(chatTin_);
+  return { ok: true, tin: tin, gio: chatGio_() };
+}
+/* Danh sách cuộc chat (mới nhất trước) */
+function chatDs_() {
+  var m = {};
+  chatDocHet_().forEach(function (r, i) {
+    var ph = String(r[1]); if (!ph) return;
+    var c = m[ph] || (m[ph] = { phien: ph, ten: '', sdt: '', trang: '', soTin: 0, chuaDoc: 0, cuoi: '', cuoiTu: '', luc: 0 });
+    c.soTin++; if (r[5]) c.ten = String(r[5]); if (r[6]) c.sdt = chuanSdt(r[6]); if (r[7]) c.trang = String(r[7]);
+    if (String(r[3]) === 'khach' && !r[9]) c.chuaDoc++;
+    if (String(r[3]) !== 'he-thong') { c.cuoi = (String(r[4]) || chatMoTaDK_(chatDinhKem_(String(r[10] || '')))).slice(0, 120); c.cuoiTu = String(r[3]); }
+    c.luc = new Date(r[0]).getTime();
+  });
+  return Object.keys(m).map(function (k) { return m[k]; }).sort(function (a, b) { return b.luc - a.luc; }).slice(0, 200);
+}
+function chatXem_(phien) {
+  var sh = sheetChat_(), n = sh.getLastRow(); if (n < 2) return [];
+  var tu = Math.max(2, n - 4999), v = sh.getRange(tu, 1, n - tu + 1, H_CHAT.length).getValues(), tin = [];
+  v.forEach(function (r, i) { if (String(r[1]) !== phien) return; tin.push(chatTin_(r)); if (String(r[3]) === 'khach' && !r[9]) sh.getRange(tu + i, 10).setValue('x'); });
+  return tin;
+}
+function chatTraLoi_(phien, nd, nv, dinhKem) {
+  nd = String(nd || '').slice(0, 2000).trim(); var dk = chatDinhKem_(dinhKem); if (!nd && !dk) return { ok: false, msg: 'Chưa có nội dung' };
+  var tin = voiKhoa(function () { return chatThem_(phien, 'nv', nd, {}, nv, dk); });
+  return { ok: true, tin: tin };
+}
+function apiQtChatDs(p) { if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' }; return { ok: true, ds: chatDs_() }; }
+function apiQtChatXem(p) {
+  if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
+  return { ok: true, tin: chatXem_(phien) };
+}
+function apiQtChatTraLoi(p) {
+  if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
+  var ph = phienQT(p.token); return chatTraLoi_(phien, p.noiDung, ph ? ph.tk : 'Nhân viên', p.dinhKem);
+}
+/* Cổng cho phần mềm chat bên ngoài (chưa dùng – bật bằng CHAT_API_KEY) */
+function apiChatApi(p) {
+  var key = PropertiesService.getScriptProperties().getProperty('CHAT_API_KEY');
+  if (!key || String(p.key || '') !== key) return { ok: false, code: 'UNAUTHORIZED', msg: 'Sai hoặc chưa cấu hình CHAT_API_KEY' };
+  var viec = String(p.viec || 'ds');
+  if (viec === 'ds') return { ok: true, ds: chatDs_() };
+  var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
+  if (viec === 'xem') return { ok: true, tin: chatXem_(phien) };
+  if (viec === 'traLoi') return chatTraLoi_(phien, p.noiDung, String(p.nv || 'Phần mềm chat').slice(0, 40), p.dinhKem);
+  return { ok: false, msg: 'viec chỉ nhận ds | xem | traLoi' };
 }
 
 /* ===================== BOT ZALO ===================== */

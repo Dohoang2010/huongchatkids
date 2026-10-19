@@ -11,7 +11,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261019a">
+  <link rel="stylesheet" href="css/style.css?v=20261019c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -173,6 +173,7 @@
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/qrcode.min.js"></script>
 <script src="js/app.js?v=20261019b"></script>
+<script src="js/chat.js?v=20261019a" defer></script>
 <script src="js/chon-ngay.js?v=20261016b"></script>
 <script src="js/diem-danh-ui.js?v=20261016b"></script>
 <script src="js/suc-khoe.js?v=20261014e"></script>
@@ -215,7 +216,7 @@ TỰ ÁP</i></a>`; }
   { const bnNay = Date.now(); window.BANNERS = (window.BANNERS || []).filter((b) => !(b.hienTu && bnNay < Date.parse(b.hienTu)) && !(b.anTu && bnNay >= Date.parse(b.anTu))); }
   $('#carouselTrack').innerHTML = BANNERS.map((b, i) => b.anh ? `<a class="slide slide--anh" href="${esc(b.link || '#')}"${b.nen ? ` style="background:${esc(b.nen)}"` : ''}><picture><source media="(min-width: 768px)" srcset="${esc(b.anh.pc)}"><img src="${esc(b.anh.mb)}" alt="${esc(b.alt || '')}" loading="${i ? 'lazy' : 'eager'}"></picture></a>` : `<div class="slide slide--${b.theme} ${b.image || b.images || b.tiers || b.voucher ? 'slide--img' : ''} ${b.fx ? 'slide--fx' : ''}">${slideFx(b)}<span class="slide__badge">${b.badge}</span><h2>${b.title}</h2><p>${b.sub}</p>${b.prices ? `<div class="slide__prices">${b.prices.map(([l, v]) => `<span><small>${esc(l)}</small><b>${esc(v)}</b></span>`).join('')}</div>` : ''}${b.luuMa ? `<button type="button" class="btn btn--light btn--lg" data-luu-ma="${esc(b.luuMa)}" data-da-luu="Đã lưu mã ${esc(b.luuMa)} ✓">${MC.ViMa.co(b.luuMa) ? `Đã lưu mã ${esc(b.luuMa)} ✓` : b.cta}</button>` : `<a class="btn btn--light btn--lg" href="${b.link}">${b.cta} ${I.arrowR}</a>`}${slideArt(b, i)}</div>`).join('');
   $('#promoContact').innerHTML = `Zalo / Hotline <b>${SITE.hotline}</b><br><span class="text-muted">${SITE.workingHours}</span>`;
-  $('#promoBtns').innerHTML = `<a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--dark btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button>`;
+  $('#promoBtns').innerHTML = `<a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener" data-mo-chat>💬 Chat ngay</a><button class="btn btn--dark btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button>`;
   $('.carousel__arrow--prev').innerHTML = I.chevronL; $('.carousel__arrow--next').innerHTML = I.chevronR;
   let cur = 0, timer; const n = BANNERS.length;
   $('#carouselDots').innerHTML = BANNERS.map((_, i) => `<button type="button" data-dot="${i}" aria-label="Slide ${i + 1}"></button>`).join('');
@@ -348,7 +349,7 @@ TỰ ÁP</i></a>`; }
   const kolNames = [];
   (window.FEEDBACKS || []).forEach((f) => { if (f.kol && f.name && f.name !== 'Nước dinh dưỡng Lotte' && kolNames.indexOf(f.name) < 0) kolNames.push(f.name); });
   if (kolNames.length) $('#aboutKol').innerHTML = `<b>Được các gia đình nổi tiếng tin dùng 🌟</b><div class="kolbar__names kolbar__names--left">${kolNames.map((n) => `<span class="kolbar__name kolbar__name--sm">${I.checkCircle}${esc(n)}</span>`).join('')}</div><a class="link" href="gioi-thieu.html">Xem bài đăng của các gia đình ${I.arrowR}</a>`;
-  $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${I.messenger}Chat với Hương Chất Kids</a><a class="link" href="gioi-thieu.html">Tìm hiểu thêm về shop ${I.arrowR}</a>`;
+  $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-mo-chat>${I.messenger}Chat với Hương Chất Kids</a><a class="link" href="gioi-thieu.html">Tìm hiểu thêm về shop ${I.arrowR}</a>`;
 
   /* Hàng mới về: các sản phẩm đăng sau cùng */
   const freshList = [...PRODUCTS].filter((p) => !p.isCombo).reverse().slice(0, 10);

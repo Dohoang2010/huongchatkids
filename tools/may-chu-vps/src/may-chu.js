@@ -100,6 +100,43 @@ function docThan(req, toiDa = 4 * 1024 * 1024) {
     req.on('end', () => ok(Buffer.concat(ds).toString('utf8'))); req.on('error', loi);
   });
 }
+/* ---- Tệp khách gửi trong chat (ảnh / video): lưu ở /var/lib/hck-api/chat-tep, nginx phục vụ ở /chat-tep/ ---- */
+const THU_MUC_TEP = process.env.CHAT_TEP_DIR || '/var/lib/hck-api/chat-tep';
+const TEP_TOI_DA = 25 * 1024 * 1024;
+const demTep = new Map();   // giới hạn số tệp theo phiên chat & theo IP (10 phút)
+function choPhepTep(k, toiDa) { const n = Date.now(), ds = (demTep.get(k) || []).filter((t) => n - t < 600000); if (ds.length >= toiDa) return false; ds.push(n); demTep.set(k, ds); return true; }
+/* Nhận diện loại tệp theo nội dung (không tin đuôi file / content-type khách gửi) */
+function loaiTep(b) {
+  if (b.length < 12) return null;
+  if (b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF) return ['anh', 'jpg'];
+  if (b.slice(0, 8).equals(Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]))) return ['anh', 'png'];
+  if (b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP') return ['anh', 'webp'];
+  if (b.toString('ascii', 0, 3) === 'GIF') return ['anh', 'gif'];
+  if (b.toString('ascii', 4, 8) === 'ftyp') { const br = b.toString('ascii', 8, 12); return /^qt/.test(br) ? ['video', 'mov'] : /^(hei|mif1|avif)/.test(br) ? null : ['video', 'mp4']; }
+  if (b[0] === 0x1A && b[1] === 0x45 && b[2] === 0xDF && b[3] === 0xA3) return ['video', 'webm'];
+  return null;
+}
+function docTep(req) {
+  return new Promise((ok, loi) => {
+    const ds = []; let n = 0;
+    req.on('data', (c) => { n += c.length; if (n > TEP_TOI_DA) { loi(new Error('QUA_LON')); req.destroy(); } else ds.push(c); });
+    req.on('end', () => ok(Buffer.concat(ds))); req.on('error', loi);
+  });
+}
+async function nhanTepChat(req, res, url, cors) {
+  if (req.method !== 'POST') return traJson(res, 405, { ok: false }, cors);
+  const phien = String(url.searchParams.get('phien') || '');
+  if (!/^c[a-z0-9]{12,40}$/.test(phien)) return traJson(res, 400, { ok: false, msg: 'Phiên chat không hợp lệ' }, cors);
+  const ip = String(req.headers['x-real-ip'] || req.socket.remoteAddress || '');
+  if (!choPhepTep('p' + phien, 15) || !choPhepTep('i' + ip, 40)) return traJson(res, 429, { ok: false, msg: 'Mẹ gửi nhiều tệp quá, chờ ít phút rồi gửi tiếp nhé' }, cors);
+  let b; try { b = await docTep(req); } catch (e) { return traJson(res, 413, { ok: false, msg: 'Tệp quá lớn (tối đa 25MB) – mẹ quay video ngắn hơn hoặc gửi qua Zalo nhé' }, cors); }
+  const lt = loaiTep(b); if (!lt) return traJson(res, 415, { ok: false, msg: 'Chỉ gửi được ảnh (JPG, PNG, WEBP) hoặc video (MP4, MOV, WEBM)' }, cors);
+  const thang = new Date().toISOString().slice(0, 7).replace('-', '');
+  const ten = phien.slice(-6) + '-' + Date.now().toString(36) + require('node:crypto').randomBytes(5).toString('hex') + '.' + lt[1];
+  fs.mkdirSync(THU_MUC_TEP + '/' + thang, { recursive: true });
+  fs.writeFileSync(THU_MUC_TEP + '/' + thang + '/' + ten, b);
+  return traJson(res, 200, { ok: true, loai: lt[0], url: '/chat-tep/' + thang + '/' + ten, kichThuoc: b.length }, cors);
+}
 const laNoiBo = (req) => !!cauHinh.noiBoKhoa && req.headers['x-noi-bo'] === cauHinh.noiBoKhoa;
 
 const mayChu = http.createServer(async (req, res) => {
@@ -132,6 +169,7 @@ const mayChu = http.createServer(async (req, res) => {
       }
       return traJson(res, 200, { ok: true }, cors);
     }
+    if (duongDan === '/api/chat-tep') return nhanTepChat(req, res, url, cors);
     if (duongDan === '/api/suc-khoe') return traJson(res, 200, { ok: true, cheDo: cauHinh.cheDo, luc: Date.now(), lanNhap: trangThai.lanNhap ? trangThai.lanNhap.luc : null });
     /* ---- nội bộ (cần khoá NOI_BO_KHOA; nginx không cho ra ngoài) ---- */
     if (duongDan.startsWith('/noi-bo/')) {

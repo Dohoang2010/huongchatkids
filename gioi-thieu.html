@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261019a">
+  <link rel="stylesheet" href="css/style.css?v=20261019c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -104,6 +104,7 @@
 <script src="js/policies.js?v=20261008b"></script>
 <script src="js/qrcode.min.js"></script>
 <script src="js/app.js?v=20261019b"></script>
+<script src="js/chat.js?v=20261019a" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, esc, I, addrShow, hoursNote } = MC;
@@ -170,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else $('.kolbar').classList.add('hide');
 
   $$('.fbslider__arrow').forEach((b) => { b.innerHTML = I.chevron; });
-  $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${I.messenger}Chat với Hương Chất Kids</a>`;
+  $('#aboutCta').innerHTML = `<a class="btn btn--primary" href="collections.html">Xem tất cả sản phẩm</a><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-mo-chat>${I.messenger}Chat với Hương Chất Kids</a>`;
 
   const why = [
     { icon: I.shield, t: 'Chính hãng 100%', d: 'Nhập khẩu chính ngạch, tem phụ tiếng Việt, số công bố an toàn thực phẩm; hoàn tiền nếu phát hiện hàng giả.' },
@@ -187,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <li>${I.headset}<span>Chuyên gia dinh dưỡng: <a href="tel:${SITE.expert.phone}"><b>${esc(SITE.expert.display)}</b></a></span></li>
       <li>${I.mail}<span><a href="mailto:${SITE.email}">${esc(SITE.email)}</a></span></li>
     </ul>
-    <div class="about__cta mt-16"><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${I.messenger}Chat Zalo</a><a class="btn btn--outline" href="policy.html">Trung tâm hỗ trợ</a><a class="btn btn--ghost" href="policy.html?p=chinh-hang">Cam kết chính hãng</a></div>`;
+    <div class="about__cta mt-16"><a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-mo-chat>${I.messenger}Chat với Hương Chất Kids</a><a class="btn btn--outline" href="policy.html">Trung tâm hỗ trợ</a><a class="btn btn--ghost" href="policy.html?p=chinh-hang">Cam kết chính hãng</a></div>`;
 });
 </script>
 </body>

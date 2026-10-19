@@ -756,3 +756,37 @@ a.d1-dong:hover{background:var(--line-2);border-radius:6px}
 .sp-luu.is-doi{background:#FFF8E6;border-top-color:#F5C451}
 .sp-luu .cham{display:inline-block;width:8px;height:8px;border-radius:50%;background:#F0A500;margin-right:6px;vertical-align:middle}
 .sp-luu button:disabled{opacity:.45;cursor:not-allowed}
+
+/* Chat với khách (m-chat.js) */
+.ch{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;height:calc(100vh - 190px);min-height:520px}
+.ch .card{margin:0;display:flex;flex-direction:column;min-height:0;padding:0;overflow:hidden}
+.ch-trai__dau{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.ch-ds{overflow-y:auto;flex:1}
+.ch-dong{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:#fff;padding:10px 12px;cursor:pointer;font:inherit}
+.ch-dong:hover{background:var(--bg)}.ch-dong.is-on{background:#FFF0F4}
+.ch-ava{width:36px;height:36px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.ch-dong__tt{flex:1;min-width:0;display:flex;flex-direction:column}.ch-dong__tt b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-dong__tt small{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-dong__p{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.ch-dong__p small{font-size:11px;color:var(--muted);white-space:nowrap}
+.ch-dong__p i{font-style:normal;background:var(--pink);color:#fff;border-radius:999px;min-width:20px;padding:0 6px;font-size:11.5px;text-align:center;line-height:20px}
+.ch-dau{padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.ch-tin{flex:1;overflow-y:auto;padding:14px;background:#FAFAFB;display:flex;flex-direction:column;gap:8px}
+.ch-m{display:flex;flex-direction:column;gap:3px;max-width:72%;align-items:flex-start}.ch-m small{font-size:11px;color:var(--muted)}
+.ch-m__b{background:#fff;border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:8px 12px;font-size:14px;line-height:1.5;word-break:break-word}
+.ch-m--nv{align-self:flex-end;align-items:flex-end}.ch-m--nv .ch-m__b{background:var(--pink);color:#fff;border-color:transparent;border-radius:14px 14px 4px 14px}
+.ch-m--ht{align-self:center;align-items:center;max-width:90%}.ch-m--ht .ch-m__b{background:#FFF6E0;border-color:#F5D99A;font-size:12.5px}
+.ch-anh{display:block;max-width:260px;max-height:300px;border-radius:12px;object-fit:cover;background:#000}
+.ch-sp{display:flex;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;max-width:300px}
+.ch-sp img{width:60px;height:60px;border-radius:8px;object-fit:cover}.ch-sp>div{display:flex;flex-direction:column;gap:2px;font-size:12.5px;min-width:0}
+.ch-sp b{font-size:13px}.ch-sp span{color:var(--pink);font-weight:700}.ch-sp a{font-size:12px}
+.ch-bang{border-top:1px solid var(--line);max-height:46%;display:flex;flex-direction:column;background:#fff}
+.ch-bang__dau{display:flex;gap:8px;padding:8px 12px}.ch-bang__dau input{flex:1}
+.ch-bang__ds{overflow-y:auto;padding:0 12px 10px;display:flex;flex-direction:column;gap:6px}
+.ch-bsp{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:6px 8px}
+.ch-bsp img{width:48px;height:48px;border-radius:8px;object-fit:cover}.ch-bsp>div{flex:1;min-width:0;display:flex;flex-direction:column;font-size:12.5px}
+.ch-bsp b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ch-bsp span{color:var(--pink);font-weight:700}.ch-bsp small{color:var(--muted)}
+.ch-mau{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 0;border-top:1px solid var(--line)}
+.ch-mau button{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer;color:var(--ink-2)}
+.ch-o{display:flex;gap:8px;align-items:flex-end;padding:8px 12px}.ch-o textarea{flex:1;resize:vertical;min-height:44px}
+.ch-ghi{font-size:11.5px;padding:0 12px 10px;margin:0}
+@media (max-width:900px){.ch{grid-template-columns:1fr;height:auto}.ch-trai{max-height:260px}.ch-phai{height:70vh}}

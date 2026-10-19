@@ -25,6 +25,9 @@ systemctl enable hck-api >/dev/null 2>&1
 systemctl enable --now hck-keo-web.timer >/dev/null 2>&1
 mkdir -p /run/hck-api && chown hckapi:hckapi /run/hck-api && touch /run/hck-api/keo-web && chown hckapi:hckapi /run/hck-api/keo-web
 systemctl enable --now hck-keo-web-ngay.path >/dev/null 2>&1
+# Thư mục tệp chat (ảnh / video khách gửi) – nginx đọc được (SELinux: httpd_sys_content_t)
+mkdir -p /var/lib/hck-api/chat-tep && chown -R hckapi:hckapi /var/lib/hck-api && chmod 755 /var/lib/hck-api /var/lib/hck-api/chat-tep
+if command -v semanage >/dev/null 2>&1; then semanage fcontext -a -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?' 2>/dev/null || semanage fcontext -m -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?'; restorecon -R /var/lib/hck-api/chat-tep; fi
 # nginx
 mkdir -p /var/www/acme /etc/nginx/hck
 cp he-thong/nginx-gioi-han.conf /etc/nginx/conf.d/00-hck-gioi-han.conf
