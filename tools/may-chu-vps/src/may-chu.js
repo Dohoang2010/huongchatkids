@@ -11,6 +11,7 @@ const { taoGuiDi } = require('./gui-di');
 const { layTuAppsScript, doiChieuBam } = require('./nhap');
 const { taoTrangWeb } = require('./trang-web');
 const { taoAnhWebp } = require('./anh-webp');
+const { taoNenTep } = require('./nen-tep');
 
 const E = process.env;
 const cauHinh = {
@@ -38,6 +39,7 @@ const guiDi = taoGuiDi({ pool, cauHinh, ghi });
 const bc = new BoChay({ kho, cauHinh, guiDi });
 const WEB_DIR = E.WEB_DIR || '/var/www/huongchatkids';
 const anhWebp = taoAnhWebp({ thuMucWeb: WEB_DIR, thuMucRa: E.WEBP_DIR || '/var/lib/hck-api/webp', ghi: (s) => ghi(s) });
+const nenTep = taoNenTep({ thuMuc: WEB_DIR, ghi: (s) => ghi(s) });
 const trangWeb = taoTrangWeb({ thuMuc: WEB_DIR, bc, ghi: (s) => ghi(s), webp: anhWebp });
 const trangThai = { batDau: Date.now(), lanNhap: null, lanNhapLoi: null, doiChieu: null, lich: {}, dangNhap: false };
 
@@ -186,6 +188,7 @@ const mayChu = http.createServer(async (req, res) => {
       const [than, nen] = /\bbr\b/.test(ae) ? [g.br, 'br'] : /\bgzip\b/.test(ae) ? [g.gz, 'gzip'] : [g.buf, null];
       res.writeHead(200, Object.assign(dau, nen ? { 'Content-Encoding': nen } : {}, { 'Content-Length': than.length })); return res.end(than);
     }
+    if (/^\/(js|css)\//.test(duongDan) && nenTep.tra(req, res, duongDan)) return;
     if (duongDan === '/sitemap.xml') return tra(res, 200, 'application/xml', trangWeb.sitemap(), { 'Cache-Control': 'public, max-age=600' });
     if (duongDan === '' || duongDan === '/index.html') return tra(res, 200, 'text/html', trangWeb.trangChu(), HTML_TS);
     if (duongDan === '/collections.html') return tra(res, 200, 'text/html', trangWeb.trangDanhMuc(url.searchParams), HTML_TS);
@@ -217,6 +220,11 @@ const mayChu = http.createServer(async (req, res) => {
       if (viec === 'doi-chieu') { trangThai.doiChieu = await doiChieuBam(cauHinh, kho); return traJson(res, 200, Object.assign({ ok: true }, trangThai.doiChieu)); }
       if (viec === 'anh-chup') return traJson(res, 200, { ok: true, muiGio: kho.muiGio, ngonNgu: kho.ngonNgu, trang: kho.anhChup(), thuocTinh: Object.fromEntries(kho.thuocTinh) });
       if (viec === 'chay' && req.method === 'POST') { const ten = url.searchParams.get('ham'); return traJson(res, 200, { ok: true, kq: await bc.goiHam(ten, JSON.parse(url.searchParams.get('thamSo') || '[]'), { thoiGian: 330000 }) }); }
+      /* Thử gửi 1 mail tới chủ shop bằng SMTP (sau khi chạy cai-mail.ps1) */
+      if (viec === 'thu-mail' && req.method === 'POST') {
+        if (!cauHinh.smtp) return traJson(res, 200, { ok: false, msg: 'Chưa cài SMTP trong /etc/hck-api/env' });
+        try { const kq = await guiDi.thuSmtp(cauHinh.emailChu); return traJson(res, 200, { ok: true, kq }); } catch (e) { return traJson(res, 200, { ok: false, msg: e.message }); }
+      }
       if (viec === 'nap-ma' && req.method === 'POST') { napMa(); return traJson(res, 200, { ok: true, maLuc: trangThai.maLuc }); }
       return traJson(res, 404, { ok: false });
     }
