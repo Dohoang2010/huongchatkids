@@ -26,12 +26,15 @@ systemctl enable --now hck-keo-web.timer >/dev/null 2>&1
 mkdir -p /run/hck-api && chown hckapi:hckapi /run/hck-api && touch /run/hck-api/keo-web && chown hckapi:hckapi /run/hck-api/keo-web
 systemctl enable --now hck-keo-web-ngay.path >/dev/null 2>&1
 # Thư mục tệp chat (ảnh / video khách gửi) – nginx đọc được (SELinux: httpd_sys_content_t)
-mkdir -p /var/lib/hck-api/chat-tep && chown -R hckapi:hckapi /var/lib/hck-api && chmod 755 /var/lib/hck-api /var/lib/hck-api/chat-tep
+mkdir -p /var/lib/hck-api/chat-tep /var/lib/hck-api/webp && chown -R hckapi:hckapi /var/lib/hck-api && chmod 755 /var/lib/hck-api /var/lib/hck-api/chat-tep /var/lib/hck-api/webp
 if command -v semanage >/dev/null 2>&1; then semanage fcontext -a -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?' 2>/dev/null || semanage fcontext -m -t httpd_sys_content_t '/var/lib/hck-api/chat-tep(/.*)?'; restorecon -R /var/lib/hck-api/chat-tep; fi
+# Ảnh WebP tự tạo (src/anh-webp.js) – nginx phục vụ ở /webp/
+if command -v semanage >/dev/null 2>&1; then semanage fcontext -a -t httpd_sys_content_t '/var/lib/hck-api/webp(/.*)?' 2>/dev/null || semanage fcontext -m -t httpd_sys_content_t '/var/lib/hck-api/webp(/.*)?'; restorecon -R /var/lib/hck-api/webp; fi
 # nginx
 mkdir -p /var/www/acme /etc/nginx/hck
 cp he-thong/nginx-gioi-han.conf /etc/nginx/conf.d/00-hck-gioi-han.conf
 cp he-thong/nginx-api.inc /etc/nginx/hck/api.inc
+cp he-thong/nginx-web.inc /etc/nginx/hck/web.inc
 cp he-thong/nginx-huongchatkids.conf /etc/nginx/conf.d/huongchatkids.conf
 # khối HTTPS chỉ bật khi đã có chứng chỉ
 for f in he-thong/nginx-https-*.conf; do

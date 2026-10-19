@@ -10,6 +10,7 @@ const { BoChay } = require('./thuc-thi');
 const { taoGuiDi } = require('./gui-di');
 const { layTuAppsScript, doiChieuBam } = require('./nhap');
 const { taoTrangWeb } = require('./trang-web');
+const { taoAnhWebp } = require('./anh-webp');
 
 const E = process.env;
 const cauHinh = {
@@ -35,7 +36,9 @@ const nhatKyHeThong = [];
 const ghi = (s) => { const d = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' ' + s; console.log(d); nhatKyHeThong.push(d); if (nhatKyHeThong.length > 200) nhatKyHeThong.shift(); };
 const guiDi = taoGuiDi({ pool, cauHinh, ghi });
 const bc = new BoChay({ kho, cauHinh, guiDi });
-const trangWeb = taoTrangWeb({ thuMuc: E.WEB_DIR || '/var/www/huongchatkids', bc, ghi: (s) => ghi(s) });
+const WEB_DIR = E.WEB_DIR || '/var/www/huongchatkids';
+const anhWebp = taoAnhWebp({ thuMucWeb: WEB_DIR, thuMucRa: E.WEBP_DIR || '/var/lib/hck-api/webp', ghi: (s) => ghi(s) });
+const trangWeb = taoTrangWeb({ thuMuc: WEB_DIR, bc, ghi: (s) => ghi(s), webp: anhWebp });
 const trangThai = { batDau: Date.now(), lanNhap: null, lanNhapLoi: null, doiChieu: null, lich: {}, dangNhap: false };
 
 function napMa() {
@@ -171,16 +174,30 @@ const mayChu = http.createServer(async (req, res) => {
       }
       return traJson(res, 200, { ok: true }, cors);
     }
-    /* ---- Trang web cho Google (nginx gửi sang): link sản phẩm có từ khoá, link cũ product.html?id=, sitemap ---- */
+    /* ---- Trang web dựng sẵn (nginx gửi sang, xem src/trang-web.js): trang chủ, danh mục, cẩm nang, sản phẩm /slug,
+       link cũ product.html?id= / blog.html?id= (301), data.js bản gọn, sitemap ---- */
+    const HTML_TS = { 'Cache-Control': 'no-cache', 'Referrer-Policy': 'strict-origin-when-cross-origin' };
+    const chuyen = (moi) => { res.writeHead(301, { Location: moi, 'Cache-Control': 'public, max-age=3600' }); return res.end(); };
+    if (duongDan === '/js/data.js') {
+      if (url.searchParams.get('day-du')) return tra(res, 200, 'application/javascript', fs.readFileSync(WEB_DIR + '/js/data.js', 'utf8'), { 'Cache-Control': 'private, no-cache, max-age=0' });
+      const g = trangWeb.dataGon(), ae = String(req.headers['accept-encoding'] || '');
+      const dau = { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'private, no-cache, max-age=0', ETag: g.etag, Vary: 'Accept-Encoding', 'X-Content-Type-Options': 'nosniff' };
+      if (req.headers['if-none-match'] === g.etag) { res.writeHead(304, dau); return res.end(); }
+      const [than, nen] = /\bbr\b/.test(ae) ? [g.br, 'br'] : /\bgzip\b/.test(ae) ? [g.gz, 'gzip'] : [g.buf, null];
+      res.writeHead(200, Object.assign(dau, nen ? { 'Content-Encoding': nen } : {}, { 'Content-Length': than.length })); return res.end(than);
+    }
     if (duongDan === '/sitemap.xml') return tra(res, 200, 'application/xml', trangWeb.sitemap(), { 'Cache-Control': 'public, max-age=600' });
+    if (duongDan === '' || duongDan === '/index.html') return tra(res, 200, 'text/html', trangWeb.trangChu(), HTML_TS);
+    if (duongDan === '/collections.html') return tra(res, 200, 'text/html', trangWeb.trangDanhMuc(url.searchParams), HTML_TS);
+    if (duongDan === '/blog.html') { const r = trangWeb.trangBlog(url.searchParams); return r.chuyen ? chuyen(r.chuyen) : tra(res, 200, 'text/html', r.html, HTML_TS); }
     if (duongDan === '/product.html') {
       const moi = trangWeb.chuyenTuLinkCu(url.searchParams);
-      if (moi) { res.writeHead(301, { Location: moi, 'Cache-Control': 'public, max-age=3600' }); return res.end(); }
-      return tra(res, 200, 'text/html', fs.readFileSync((E.WEB_DIR || '/var/www/huongchatkids') + '/product.html', 'utf8'), { 'Cache-Control': 'no-cache' });
+      if (moi) return chuyen(moi);
+      return tra(res, 200, 'text/html', trangWeb.doiAnhHtml(trangWeb.mau('product.html')), HTML_TS);
     }
     if (/^\/[a-z0-9-]{2,90}$/.test(duongDan) && !duongDan.startsWith('/api')) {
-      const html = await trangWeb.trangSP(duongDan.slice(1));
-      if (html) return tra(res, 200, 'text/html', html, { 'Cache-Control': 'public, max-age=120' });
+      const html = (await trangWeb.trangSP(duongDan.slice(1))) || trangWeb.trangBaiTheoSlug(duongDan.slice(1));
+      if (html) return tra(res, 200, 'text/html', html, { 'Cache-Control': 'public, max-age=120', 'Referrer-Policy': 'strict-origin-when-cross-origin' });
       return tra(res, 404, 'text/html', '<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Không tìm thấy trang – Hương Chất Kids</title></head><body style="font-family:sans-serif;text-align:center;padding:60px 16px"><h1>Không tìm thấy trang</h1><p>Trang này không có hoặc sản phẩm đã đổi đường dẫn.</p><p><a href="/">Về trang chủ Hương Chất Kids</a> · <a href="/collections.html">Xem tất cả sản phẩm</a></p></body></html>');
     }
     if (duongDan === '/api/chat-tep') return nhanTepChat(req, res, url, cors);
@@ -215,7 +232,7 @@ const mayChu = http.createServer(async (req, res) => {
   const kq = await kho.taiTuPG();
   ghi('Đã tải ' + kq.trang + ' trang tính, ' + kq.dong + ' dòng từ PostgreSQL. Chế độ: ' + cauHinh.cheDo + (cauHinh.smtp ? ', có SMTP' : ', mail nhờ Apps Script gửi'));
   if (!kq.dong && cauHinh.appsScriptUrl && cauHinh.cheDo !== 'chinh') await nhapTuSheets('lần đầu').catch(() => {});
-  batLich(); theoDoiMa();
+  batLich(); theoDoiMa(); anhWebp.batDau();
   mayChu.listen(cauHinh.cong, '127.0.0.1', () => ghi('Máy chủ API chạy ở 127.0.0.1:' + cauHinh.cong));
 })().catch((e) => { console.error('Không khởi động được:', e); process.exit(1); });
 

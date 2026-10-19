@@ -15,21 +15,25 @@
 </head>
 <body>
 <main id="app"><div class="container" id="blogPage"></div></main>
-<script src="js/data.js?v=20261019a"></script>
+<script src="js/data.js?v=20261019b"></script>
 <script src="js/le-hoi.js?v=20261017c" defer></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261019y"></script>
+<script src="js/app.js?v=20261019z"></script>
 <script src="js/chat.js?v=20261019d" defer></script>
 <script src="js/lead-tu-van.js?v=20261013a"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, param, esc, I, productCard, productThumb, shortName, fmt, byId } = MC;
   const TEN = 'Cẩm nang chăm con';
-  const id = param('id'); const post = POSTS.find((p) => p.id === id);
+  /* Mở bằng link có từ khoá (/ten-bai) hoặc link cũ blog.html?id= */
+  const id = param('id') || (window.BAI_THEO_SLUG || {})[decodeURIComponent(location.pathname.split('/').pop() || '')] || '';
+  const post = POSTS.find((p) => p.id === id);
+  /* data.js bản gọn (VPS) không kèm nội dung bài – máy chủ đã gửi sẵn nội dung bài đang mở trong window.BAI_DAY_DU */
+  if (post && !post.body && window.BAI_DAY_DU && window.BAI_DAY_DU.id === post.id) post.body = window.BAI_DAY_DU.body;
   const thumb = (p) => `<div class="post-card__thumb" style="background:${esc(p.color || '#FFE9EF')}">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy">` : (p.emoji || '📖')}</div>`;
   const meta = (p) => `<div class="post-card__meta"><span class="badge badge--soft">${esc(p.cat)}</span><span>${esc(p.date)} · ${esc(p.read)} đọc</span></div>`;
-  const card = (p) => `<a class="post-card" href="blog.html?id=${encodeURIComponent(p.id)}">${thumb(p)}<div class="post-card__body">${meta(p)}<h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`;
-  const dong = (p, i) => `<a class="blog-item" href="blog.html?id=${encodeURIComponent(p.id)}">${thumb(p)}<div class="blog-item__body">${meta(p)}<h3>${i === 0 && !cat ? '<span class="blog-item__moi">Mới nhất</span>' : ''}${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><span class="blog-item__doc">Đọc tiếp ${I.arrowR}</span></div></a>`;
+  const card = (p) => `<a class="post-card" href="${MC.baiUrl(p)}">${thumb(p)}<div class="post-card__body">${meta(p)}<h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`;
+  const dong = (p, i) => `<a class="blog-item" href="${MC.baiUrl(p)}">${thumb(p)}<div class="blog-item__body">${meta(p)}<h3>${i === 0 && !cat ? '<span class="blog-item__moi">Mới nhất</span>' : ''}${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><span class="blog-item__doc">Đọc tiếp ${I.arrowR}</span></div></a>`;
   const spCua = (p) => (p.sanPham || []).map(byId).filter(Boolean);
   /* Bài nổi bật = bài được đánh dấu nổi bật hoặc viết về sản phẩm hot */
   const noiBat = POSTS.filter((p) => p.noiBat || spCua(p).some((x) => (x.tags || []).includes('Sản phẩm hot'))).slice(0, 8);
@@ -52,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (post) {
     document.title = post.title + ' – ' + TEN + ' Hương Chất Kids';
+    /* Link cũ blog.html?id= → hiện link có từ khoá trên thanh địa chỉ (máy chủ cũng tự chuyển 301) */
+    if (/blog\.html$/.test(location.pathname) && !param('preview') && window.BAI_SLUG && BAI_SLUG[post.id] && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && location.protocol !== 'file:') { const q = new URLSearchParams(location.search); q.delete('id'); history.replaceState(null, '', '/' + BAI_SLUG[post.id] + (q.toString() ? '?' + q : '') + location.hash); }
     const rel = { 'Dinh dưỡng': 'cat=nuoc-ep', 'Vitamin': 'need=d3k2', 'Chăm con': 'need=tang-can', 'Tuổi teen': 'age=12-18y', 'Tiêu hoá': 'need=tieu-hoa', 'Mua sắm': 'cat=hong-sam', 'Làm đẹp cho mẹ': 'cat=cho-me', 'Món ngon gia đình': 'cat=do-an' }[post.cat] || '';
     let sug = spCua(post);
     if (sug.length < 4) { const u = new URLSearchParams(rel); sug = [...sug, ...PRODUCTS.filter((p) => !sug.includes(p) && (!u.get('cat') || p.cat === u.get('cat')) && (!u.get('need') || (p.needs || []).includes(u.get('need'))) && (!u.get('age') || (p.ages || []).includes(u.get('age')))).sort((a, b) => b.sold - a.sold)].slice(0, 4); }
@@ -71,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="blog-list" id="blogList"></div><div class="blog-more" id="blogMore"></div>
     ${noiBat.length ? `<section class="section feat" id="feat"><div class="section-head"><div><h2>Bài viết nổi bật 🔥</h2><p>Về các sản phẩm được mẹ tin dùng nhiều nhất</p></div>
       <div class="feat__nav"><button type="button" class="feat__btn" data-feat="-1" aria-label="Bài trước">‹</button><button type="button" class="feat__btn" data-feat="1" aria-label="Bài sau">›</button></div></div>
-      <div class="feat__vp"><div class="feat__track">${noiBat.map((p) => `<a class="feat__slide" href="blog.html?id=${encodeURIComponent(p.id)}" style="background:${esc(p.color || '#FFE9EF')}"><div class="feat__img">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy">` : p.emoji}</div><div class="feat__txt">${meta(p)}<h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><span class="btn btn--primary btn--sm">Đọc bài ${I.arrowR}</span></div></a>`).join('')}</div></div>
+      <div class="feat__vp"><div class="feat__track">${noiBat.map((p) => `<a class="feat__slide" href="${MC.baiUrl(p)}" style="background:${esc(p.color || '#FFE9EF')}"><div class="feat__img">${p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy">` : p.emoji}</div><div class="feat__txt">${meta(p)}<h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><span class="btn btn--primary btn--sm">Đọc bài ${I.arrowR}</span></div></a>`).join('')}</div></div>
       <div class="feat__dots">${noiBat.map((_, i) => `<button type="button" data-feat-i="${i}" aria-label="Bài nổi bật ${i + 1}"></button>`).join('')}</div></section>` : ''}`;
   const veList = () => {
     const ds = POSTS.filter((p) => !cat || p.cat === cat);
