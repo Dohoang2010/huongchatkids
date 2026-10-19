@@ -2704,7 +2704,6 @@ window.PRODUCTS = [
     "images": [
       "img/goi-xa-boryeong-mud.jpg",
       "img/goi-xa-boryeong-mud-2.jpg",
-      "img/goi-xa-boryeong-mud-3.jpg",
       "img/goi-xa-boryeong-mud-4.jpg",
       "img/goi-xa-boryeong-mud-5.jpg",
       "img/goi-xa-boryeong-mud-6.jpg",
