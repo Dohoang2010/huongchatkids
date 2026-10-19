@@ -44,6 +44,8 @@
       <small>${esc(x.mo || 'Xem toàn bộ danh mục')}</small>
       <span class="sk-them__nut">Xem ngay →</span></a>`;
     const khoi = (sk.khoi || []).map((k, i) => {
+      /* Khối ảnh (vd ảnh ưu đãi mỹ phẩm): { anh, alt, link } */
+      if (k.anh) return `<section class="sk-khoi sk-khoi--anh">${k.link ? `<a href="${esc(k.link)}">` : ""}<img src="${esc(k.anh)}" alt="${esc(k.alt || sk.ten)}" loading="lazy" width="1080" height="1350">${k.link ? "</a>" : ""}</section>`;
       const sp = (k.sp || []).map(byId).filter((p) => p && !p.an);
       return `<section class="sk-khoi sk-khoi--${i % 3}${sp.length ? '' : ' sk-khoi--chu'}">
         <div class="sk-khoi__dau">

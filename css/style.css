@@ -2405,3 +2405,7 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 
 /* Icon đứng trước nhãn của khối sự kiện */
 .sk-khoi__ico{font-style:normal;font-size:16px;line-height:1;margin-right:5px}
+
+/* Tab sự kiện: khối ảnh (ảnh ưu đãi) */
+.sk-khoi.sk-khoi--anh { display: block; padding: 0; border-top: 0; background: none; box-shadow: none; text-align: center; }
+.sk-khoi--anh img { display: block; width: 100%; max-width: 620px; height: auto; margin: 0 auto; border-radius: 18px; box-shadow: 0 14px 34px rgba(90, 15, 46, .18); }
