@@ -1,0 +1,7 @@
+[Unit]
+Description=Ghi web ngay khi trang quan tri vua luu (file /run/hck-api/luu-moi doi)
+[Path]
+PathModified=/run/hck-api/luu-moi
+Unit=hck-luu-web.service
+[Install]
+WantedBy=multi-user.target

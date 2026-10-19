@@ -1,0 +1,8 @@
+[Unit]
+Description=Huong Chat Kids - ghi ngay thay doi cua trang quan tri vao thu muc web (hang cho /var/lib/hck-api/luu-cho)
+[Service]
+Type=oneshot
+WorkingDirectory=/var/www/huongchatkids
+ExecStart=/usr/bin/node /opt/hck-api/src/dong-bo-web.js --ap-dung
+ExecStartPost=/usr/bin/systemctl start --no-block hck-keo-web.service
+TimeoutStartSec=120

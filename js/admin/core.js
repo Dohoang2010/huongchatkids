@@ -113,10 +113,11 @@ window.ADMIN = (() => {
   }
 
   /* ---------------- GitHub ----------------
-     Lưu QUA MÁY CHỦ VPS (/api/qt-github): mã GitHub chỉ nằm trên VPS, máy chủ kiểm quyền theo tài khoản quản trị + ghi nhật ký.
+     Lưu QUA MÁY CHỦ VPS (/api/qt-github): máy chủ kiểm quyền theo tài khoản quản trị + ghi nhật ký, ghi thẳng vào web trên VPS (web đổi ngay),
+     rồi tự gửi bản sao lên GitHub (GitHub chỉ là nơi sao lưu – cheDo 'vps').
      Máy chủ chưa cài mã (cai-github.ps1) thì tạm dùng mã cũ trong trình duyệt; máy chủ có mã rồi thì mã trong trình duyệt tự bị xoá. */
   const ghTokenCu = () => localStorage.getItem('hck_gh_token') || '';
-  const GH = { mayChu: null, tk: '' };
+  const GH = { mayChu: null, tk: '', cheDo: '', dongBo: null };
   const ghUrl = () => { try { return new URL((SITE.loyalty || {}).endpoint || '').origin + '/api/qt-github'; } catch { return ''; } };
   async function ghMayChu(viec, them = {}) {
     let r; try { r = await fetch(ghUrl(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...xacThuc(), viec, ...them }) }); }
@@ -127,7 +128,7 @@ window.ADMIN = (() => {
   }
   async function kiemMayChuGh(lai) {
     if (GH.mayChu !== null && !lai) return GH.mayChu;
-    try { const d = await ghMayChu('trangThai'); GH.mayChu = !!d.coToken; GH.tk = d.tk || ''; } catch { GH.mayChu = false; }
+    try { const d = await ghMayChu('trangThai'); GH.mayChu = !!d.coToken; GH.tk = d.tk || ''; GH.cheDo = d.cheDo || ''; GH.dongBo = d.dongBo || null; } catch { GH.mayChu = false; }
     if (GH.mayChu && ghTokenCu()) localStorage.removeItem('hck_gh_token');   // máy chủ đã giữ mã → xoá mã khỏi trình duyệt
     return GH.mayChu;
   }

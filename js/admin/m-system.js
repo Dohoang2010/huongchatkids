@@ -49,9 +49,19 @@
     const b = $('#chBody');
     if (tab === 'quen-mat-khau') return A.veQmkCauHinh ? A.veQmkCauHinh(b) : null;
 
+    /* Lưu thẳng vào VPS: tình trạng gửi bản sao lên GitHub (src/dong-bo-web.js ghi /var/lib/hck-api/dong-bo.json mỗi phút) */
+    const veDongBo = () => {
+      if (A.GH.cheDo !== 'vps') return '';
+      const d = A.GH.dongBo || {}, gio = (x) => (x ? new Date(x).toLocaleString('vi-VN') : 'chưa có');
+      const tot = d.ok !== false && !d.choGui;
+      return `<div class="card" style="margin-top:8px;background:${tot ? '#F4F8FF' : '#FFF6E0'};border-color:${tot ? '#C9DAF8' : '#F4D48A'}">
+        <b>💾 Web lưu thẳng trên VPS – sửa xong là web đổi ngay.</b> GitHub chỉ giữ bản sao lưu.<br>
+        ${tot ? '✅ Bản sao GitHub đã cập nhật' : '⏳ Bản sao GitHub đang chờ gửi' + (d.choGui ? ' (' + d.choGui + ' thay đổi)' : '') + ' – web vẫn chạy bình thường, máy chủ tự thử lại mỗi phút.'}
+        <br><span class="muted">Kiểm tra lần cuối: ${esc(gio(d.luc))} · gửi lần cuối: ${esc(gio(d.daGuiLuc))}${d.loi ? ' · ' + esc(d.loi) : ''}</span></div>`;
+    };
     if (tab === 'github') b.innerHTML = `
       <h3>Kết nối GitHub</h3>
-      ${A.GH.mayChu ? '<div class="card" style="background:#E8F7F4;border-color:#BDE7DD"><b>✅ Đang lưu qua máy chủ VPS.</b> Mã GitHub nằm an toàn trên VPS – máy này và máy nhân viên không cần dán mã. Mỗi lần lưu, máy chủ kiểm tra quyền của tài khoản và ghi vào Nhật ký hoạt động.</div>' : '<p class="muted"><b>Nên cài mã trên máy chủ:</b> trên máy tính shop chạy <code>tools\\may-chu-vps\\cai-github.ps1</code> – xong thì không cần dán mã ở đây nữa. Tạm thời vẫn có thể dán mã cho riêng máy này:</p>'}
+      ${A.GH.mayChu ? '<div class="card" style="background:#E8F7F4;border-color:#BDE7DD"><b>✅ Đang lưu qua máy chủ VPS.</b> Mã GitHub nằm an toàn trên VPS – máy này và máy nhân viên không cần dán mã. Mỗi lần lưu, máy chủ kiểm tra quyền của tài khoản và ghi vào Nhật ký hoạt động.</div>' + veDongBo() : '<p class="muted"><b>Nên cài mã trên máy chủ:</b> trên máy tính shop chạy <code>tools\\may-chu-vps\\cai-github.ps1</code> – xong thì không cần dán mã ở đây nữa. Tạm thời vẫn có thể dán mã cho riêng máy này:</p>'}
       <ol class="huong-dan">
         <li>Vào <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Fine-grained token</a></li>
         <li><b>Repository access</b> → Only select repositories → chọn <b>${A.REPO}</b></li>

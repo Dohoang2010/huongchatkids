@@ -1,6 +1,7 @@
 [Unit]
-Description=Huong Chat Kids - keo ban moi tu GitHub
+Description=Huong Chat Kids - dong bo web voi GitHub (ghi thay doi quan tri, keo ban moi, gui ban sao len GitHub)
 [Service]
 Type=oneshot
 WorkingDirectory=/var/www/huongchatkids
-ExecStart=/usr/bin/git pull -q --ff-only
+ExecStart=/usr/bin/node /opt/hck-api/src/dong-bo-web.js --dong-bo
+TimeoutStartSec=300

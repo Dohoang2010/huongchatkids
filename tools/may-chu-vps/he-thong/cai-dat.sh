@@ -19,12 +19,22 @@ them LICH_30P dongBoCRMTuDong
 chmod 600 $ENV
 # Dịch vụ
 cp he-thong/hck-api.service /etc/systemd/system/hck-api.service
-cp he-thong/hck-keo-web.service he-thong/hck-keo-web.timer he-thong/hck-keo-web-ngay.path /etc/systemd/system/
+cp he-thong/hck-keo-web.service he-thong/hck-keo-web.timer he-thong/hck-keo-web-ngay.path he-thong/hck-luu-web.service he-thong/hck-luu-web.path /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable hck-api >/dev/null 2>&1
 systemctl enable --now hck-keo-web.timer >/dev/null 2>&1
 mkdir -p /run/hck-api && chown hckapi:hckapi /run/hck-api && touch /run/hck-api/keo-web && chown hckapi:hckapi /run/hck-api/keo-web
 systemctl enable --now hck-keo-web-ngay.path >/dev/null 2>&1
+# Lưu thẳng vào VPS (src/dong-bo-web.js): máy chủ API bỏ thay đổi vào hàng chờ, hck-luu-web (root) ghi tệp + commit, rồi gửi bản sao lên GitHub
+mkdir -p /var/lib/hck-api/luu-cho /var/lib/hck-api/luu-xong && chown hckapi:hckapi /var/lib/hck-api/luu-cho /var/lib/hck-api/luu-xong && chmod 750 /var/lib/hck-api/luu-cho
+touch /run/hck-api/luu-moi && chown hckapi:hckapi /run/hck-api/luu-moi
+systemctl daemon-reload
+systemctl enable --now hck-luu-web.path >/dev/null 2>&1
+# Nhật ký hệ thống giữ qua các lần khởi động lại (để tìm nguyên nhân khi VPS bị treo)
+mkdir -p /var/log/journal /etc/systemd/journald.conf.d && printf "[Journal]
+Storage=persistent
+SystemMaxUse=300M
+" > /etc/systemd/journald.conf.d/hck.conf
 # Sao lưu dữ liệu 03:00 mỗi đêm (he-thong/sao-luu.sh → /var/backups/hck)
 cp he-thong/hck-sao-luu.service he-thong/hck-sao-luu.timer /etc/systemd/system/
 systemctl daemon-reload
