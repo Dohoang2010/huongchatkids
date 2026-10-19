@@ -241,7 +241,7 @@
   const hopTrang = (ds, p) => Array.isArray(ds) && ds.some((x) => x === '*' || String(x).toLowerCase() === p);
 
   function khoiDong(w) {
-    const doc = w.document, SEARCH0 = w.location.search; let hen = 0, dangCo = null, hieuUngEl = null;   // một số trang tự gọn URL → nhớ tham số lúc nạp
+    const doc = w.document, SEARCH0 = w.location.search; let hen = 0, dangCo = null, hieuUngEl = null; let lanDau = true;   // một số trang tự gọn URL → nhớ tham số lúc nạp
     const xemTruoc = () => {          // trang quản trị: ?preview=1&le=<id> hoặc bản nháp trong sessionStorage
       try {
         if (!/[?&]preview=1/.test(SEARCH0) && w.top === w) return null;
@@ -298,7 +298,7 @@
           c.style.cssText = `left:${(i + Math.random()) * 100 / so}%;font-size:${(hu === 'tuyet' ? 9 : 13) + Math.random() * 11}px;animation-duration:${(nhe ? 26 : 18) + Math.random() * 12}s,${5 + Math.random() * 3}s;animation-delay:${-Math.random() * 26}s,0s;animation-iteration-count:${lap},infinite`;
           el.appendChild(c);
         }
-        doc.body.appendChild(el); hieuUngEl = el;
+        hieuUngEl = el; setTimeout(() => { if (hieuUngEl === el) doc.body.appendChild(el); }, lanDau ? 2500 : 0); lanDau = false;   // lần đầu: chờ trang hiện xong
         if (!trangChu) setTimeout(() => { if (hieuUngEl === el) { el.remove(); hieuUngEl = null; } }, 60000);
       }
     }

@@ -252,7 +252,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       if (bn && bn.anh && bn.anh.mb) {
         const mb = anh(bn.anh.mb), pc = anh(bn.anh.pc || bn.anh.mb);
         html = themVaoDau(html, `<link rel="preload" as="image" href="${esc(mb)}" media="(max-width: 767px)" fetchpriority="high"><link rel="preload" as="image" href="${esc(pc)}" media="(min-width: 768px)" fetchpriority="high">`);
-        html = chen(html, 'carouselTrack', `<a class="slide slide--anh" href="${esc(bn.link || '#')}"${bn.nen ? ` style="background:${esc(bn.nen)}"` : ''}><picture><source media="(min-width: 768px)" srcset="${esc(pc)}"><img src="${esc(mb)}" alt="${esc(bn.alt || '')}" loading="eager" fetchpriority="high"></picture></a>`);
+        html = chen(html, 'carouselTrack', `<a class="slide slide--anh" data-dung-san="1" href="${esc(bn.link || '#')}"${bn.nen ? ` style="background:${esc(bn.nen)}"` : ''}><picture><source media="(min-width: 768px)" srcset="${esc(pc)}"><img src="${esc(mb)}" alt="${esc(bn.alt || '')}" loading="eager" fetchpriority="high"></picture></a>`);
       } }
     html = chen(html, 'featGrid', noiBat.map((p) => the(d, p)).join(''));
     html = chen(html, 'catGrid', d.danhMuc.map((c) => `<a class="cat-tile" href="/collections.html?cat=${esc(c.key)}" style="background:${esc(c.color || '')}"><b>${esc(c.label)}</b></a>`).join(''));
