@@ -14,6 +14,12 @@ Chủ shop không rành kỹ thuật: luôn trả lời **tiếng Việt**, ng�
   - **Kiểm thử máy chủ** (dữ liệu giả, không đụng dữ liệu thật): `node --test tools/may-chu-vps/kiem-thu/kiem-thu.js tools/may-chu-vps/kiem-thu/chuc-nang.test.js tools/kiem-thu/le-hoi.test.js tools/kiem-thu/gia-gio-hang.test.js` (gia-gio-hang = giờ vàng, mã giảm giá, quà tặng, ship, tìm kiếm của js/app.js, nạp qua tools/kiem-thu/moi-truong-web.js). Hook pre-commit tự chạy khi sửa mã máy chủ hoặc js/app.js; VPS chỉ nạp apps-script.gs mới khi qua kiểm thử (hỏng → giữ bản cũ + báo Zalo). Thêm chức năng máy chủ = thêm bài kiểm thử trong chuc-nang.test.js.
   - Không bao giờ chạy lệnh nhập lại từ Google Sheets (`/noi-bo/nhap`): sẽ ghi đè dữ liệu thật bằng dữ liệu cũ.
 
+## Trang quản trị (19/10/2026)
+- **Lưu qua máy chủ**: trình duyệt không giữ mã GitHub nữa. Admin gửi `POST /api/qt-github` (`tools/may-chu-vps/src/luu-github.js`), VPS kiểm quyền từng khối ADMIN theo tài khoản nhân viên (`qtQuyenGh_` trong apps-script.gs), ghi nhật ký rồi commit "Quản trị (tk): …". Mã `GITHUB_TOKEN` nằm trong /etc/hck-api/env, đặt bằng `tools/may-chu-vps/cai-github.ps1`.
+- **Tự làm ảnh bìa**: `POST /api/qt-anh-bia` (`src/anh-bia.js` + `src/tach-nen.mjs`, AI @imgly chạy tiến trình con ~1 GB RAM; VPS có swap 2 GB).
+- **Mục nào mở mới tải**: admin.html chỉ nạp core.js + m-dashboard.js + `js/admin/danh-muc.js` (TỰ SINH). Thêm / sửa `js/admin/m-*.js` xong **phải chạy** `node tools/kiem-thu/tao-danh-muc-qt.js` (hook pre-commit chặn nếu quên; phiên bản ?v= của mục = mã băm, không cần tăng tay).
+- Sửa máy chủ Node (tools/may-chu-vps/src, he-thong, package.json) cần `sh tools/may-chu-vps/dua-len-vps.sh` (khác apps-script.gs tự nạp).
+
 ## Quy tắc bắt buộc
 - Repo **công khai**: không ghi mật khẩu, token, khoá vào bất kỳ file nào. Khoá chỉ nằm trong `/etc/hck-api/env` trên VPS.
   Hook `.git/hooks/pre-commit` chặn chuỗi giống khoá – không bỏ qua bằng `--no-verify`.
