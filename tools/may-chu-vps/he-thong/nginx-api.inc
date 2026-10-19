@@ -8,6 +8,25 @@ location ~ ^/api(/exec|/suc-khoe|/keo-web|/loi-js)?/?$ {
   proxy_set_header X-Real-IP $remote_addr;
   proxy_read_timeout 120s;
 }
+# Trang quản trị lưu lên GitHub qua máy chủ (ảnh tới ~9MB, data.js ~300KB)
+location = /api/qt-anh-bia {
+  limit_req zone=hck_api burst=5 nodelay;
+  client_max_body_size 15m;
+  proxy_pass http://127.0.0.1:3100;
+  proxy_http_version 1.1;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_read_timeout 180s;
+}
+location = /api/qt-github {
+  limit_req zone=hck_api burst=20 nodelay;
+  client_max_body_size 26m;
+  proxy_pass http://127.0.0.1:3100;
+  proxy_http_version 1.1;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_read_timeout 120s;
+}
 # Khách gửi ảnh / video trong chat (tối đa 25MB, máy chủ Node tự kiểm tra loại tệp)
 location = /api/chat-tep {
   limit_req zone=hck_api burst=10 nodelay;

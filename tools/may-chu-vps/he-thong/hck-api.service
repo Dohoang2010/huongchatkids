@@ -17,7 +17,8 @@ StateDirectory=hck-api
 StateDirectoryMode=0755
 Restart=always
 RestartSec=3
-MemoryMax=1500M
+# tách nền ảnh bìa (tiến trình con) dùng ~0,7GB lúc chạy
+MemoryMax=2300M
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes

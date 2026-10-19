@@ -31,8 +31,11 @@
     const box = $('#dashBody'); if (!box) return;
     box.innerHTML = A.dangTai('số liệu');
     try {
-      const d = await A.api('thongKe', { key: A.adminKey(), tu, den });
+      /* Kỳ trước: cùng số ngày, ngay trước kỳ đang xem (vd 7 ngày này so với 7 ngày trước đó) */
+      const n = soNgayKhoang(tu, den), denT = ngayISO(new Date(Date.parse(tu + 'T12:00') - 864e5)), tuT = ngayISO(new Date(Date.parse(denT + 'T12:00') - (n - 1) * 864e5));
+      const [d, truoc, bcb] = await Promise.all([A.api('thongKe', { key: A.adminKey(), tu, den }), A.api('thongKe', { key: A.adminKey(), tu: tuT, den: denT }).catch(() => null), A.api('qtBaoCaoBan', { tu, den }).catch(() => null)]);
       if (!d || !d.ok) { box.innerHTML = loiKhoa(d && d.msg); return; }
+      d._truoc = truoc && truoc.ok ? { ...truoc, tuT, denT } : null; d._bcb = bcb && bcb.ok ? bcb : null;
       if (!d.theoNgay) { box.innerHTML = chuaDeploy(); return; }
       duLieu = d; veSo(box, d); taiTruyCap();
     } catch (e) { box.innerHTML = A.loiTai(e.message); }
@@ -70,24 +73,40 @@
   const tenMoc = (x, kieu) => (kieu === 'thang' ? `Tháng ${x.ngay.slice(5, 7)}/${x.ngay.slice(0, 4)}`
     : kieu === 'tuan' ? `Tuần ${x.ngay.slice(8)}/${x.ngay.slice(5, 7)} – ${x.den.slice(8)}/${x.den.slice(5, 7)}` : `${x.ngay.slice(8)}/${x.ngay.slice(5, 7)}/${x.ngay.slice(0, 4)}`);
 
+  /* Khung "Bán hàng theo nguồn" (số chính của Quản trị › Thống kê bán hàng) */
+  function veBanHang(b) {
+    if (!b || !b.tong) return '';
+    const t = b.tong, ngTop = (b.nguon || []).filter((x) => x.don || x.phien).slice(0, 4), ctTop = (b.chuongTrinh || []).filter((x) => !/^Không dùng/.test(x.ten)).slice(0, 3);
+    return `<div class="card d1-bh"><div class="d1-bh__dau"><h3>📈 Bán hàng theo nguồn</h3><a class="btn btn--ghost btn--sm" href="#/thong-ke-ban">Xem chi tiết →</a></div>
+      <div class="d1-bh__so"><div><b>${(t.phien || 0).toLocaleString('vi-VN')}</b><span>lượt vào web</span></div><div><b>${t.tyLe || 0}%</b><span>tỉ lệ chốt đơn</span></div>
+        <div><b>${t.gio || 0}</b><span>lượt thêm giỏ</span></div><div><b>${t.thanhToan || 0}</b><span>lượt mở thanh toán</span></div></div>
+      <div class="d1-bh__hai"><div><h4>Nguồn ra đơn</h4>${ngTop.length ? ngTop.map((x) => `<div class="d1-bh__dong"><span>${esc(x.ten)}</span><b>${x.don} đơn</b><small>${gon(x.doanhThu)}</small></div>`).join('') : '<p class="muted">Chưa có</p>'}</div>
+        <div><h4>Chương trình ra đơn</h4>${ctTop.length ? ctTop.map((x) => `<div class="d1-bh__dong"><span>${esc(x.ten)}</span><b>${x.don} đơn</b><small>${gon(x.doanhThu)}</small></div>`).join('') : '<p class="muted">Chưa có đơn dùng ưu đãi</p>'}</div></div></div>`;
+  }
   let d1Tab = 'ban';
   function veSo(box, d) {
     const soNgay = soNgayKhoang(d.tu || tu, d.den || den);
     const bd = dayDu(d.theoNgay, d.tu || tu, d.den || den);
     const sapHet = (A.D.PRODUCTS || []).filter((p) => !p.an && (p.stock ?? 0) <= 5);
     const maxGio = Math.max(1, ...d.theoGio);
+    /* So với kỳ trước: ▲ / ▼ % (kỳ trước = 0 thì ghi "mới") */
+    const T = d._truoc;
+    const ss = (a, b) => { if (b == null) return ''; if (!b) return a ? '<br><span class="d1-ss d1-ss--len">▲ kỳ trước chưa có</span>' : ''; const p = Math.round((a - b) / b * 100);
+      return `<br><span class="d1-ss ${p > 0 ? 'd1-ss--len' : p < 0 ? 'd1-ss--xuong' : ''}">${p > 0 ? '▲' : p < 0 ? '▼' : '='} ${Math.abs(p)}% so với kỳ trước</span>`; };
     box.innerHTML = `
       <div class="d1">
+        ${d._truoc ? `<p class="muted d1-ss-chu">So với kỳ trước: ${esc(d._truoc.tuT.split('-').reverse().join('/'))} – ${esc(d._truoc.denT.split('-').reverse().join('/'))}</p>` : ''}
         <div class="kpis d1-kpi">
-          ${A.the('Tổng doanh thu', fmt(d.doanhThu), `TB ${gon(Math.round(d.doanhThu / soNgay))}/ngày`, 'kpi--pink')}
-          ${A.the('Tổng đơn hàng', d.soDon, d.huy ? `${d.huy} huỷ · ${gon(d.tienHuy)}` : 'không có đơn huỷ')}
-          ${A.the('Giá trị TB/đơn', fmt(d.giaTriTB), `trên ${d.soDon} đơn`, 'kpi--teal')}
-          ${A.the('Khách mua hàng', d.soKhach, `${d.khachMoi} khách mới`)}
+          ${A.the('Tổng doanh thu', fmt(d.doanhThu), `TB ${gon(Math.round(d.doanhThu / soNgay))}/ngày${ss(d.doanhThu, T && T.doanhThu)}`, 'kpi--pink')}
+          ${A.the('Tổng đơn hàng', d.soDon, `${d.huy ? `${d.huy} huỷ · ${gon(d.tienHuy)}` : 'không có đơn huỷ'}${ss(d.soDon, T && T.soDon)}`)}
+          ${A.the('Giá trị TB/đơn', fmt(d.giaTriTB), `trên ${d.soDon} đơn${ss(d.giaTriTB, T && T.giaTriTB)}`, 'kpi--teal')}
+          ${A.the('Khách mua hàng', d.soKhach, `${d.khachMoi} khách mới${ss(d.soKhach, T && T.soKhach)}`)}
           ${A.the('Đơn có quà', d.quaDaTang, `${d.soDon ? Math.round(d.quaDaTang / d.soDon * 100) : 0}% số đơn`, 'kpi--amber')}
           ${A.the('Gọi lại', d.goiLai, 'khách để lại số')}
           ${A.the('Sản phẩm', (A.D.PRODUCTS || []).filter((p) => !p.an).length, `${(A.D.PRODUCTS || []).filter((p) => p.an).length} đang ẩn`)}
           ${A.the('Sắp hết hàng', sapHet.length, sapHet.length ? 'cần nhập thêm' : 'kho ổn', sapHet.length ? 'kpi--red' : '')}
         </div>
+        ${veBanHang(d._bcb)}
         <div class="card d1-dt"><div class="dash-h"><h3>Doanh thu theo ${bd.kieu === 'thang' ? 'tháng' : bd.kieu === 'tuan' ? 'tuần' : 'ngày'}</h3><span class="muted">${esc(d.tu)} → ${esc(d.den)}</span></div>
           <div id="dtChart"></div></div>
         <div class="card d1-gio"><h3>Giờ khách đặt hàng</h3>

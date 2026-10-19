@@ -16,10 +16,7 @@
     el.innerHTML = A.dangTai('lịch sử phiên bản');
     try {
       if (!ds) {
-        const r = await fetch(`https://api.github.com/repos/${A.REPO}/commits?path=js/data.js&per_page=30&t=${Date.now()}`,
-          A.ghToken() ? { headers: { Authorization: 'Bearer ' + A.ghToken() } } : {});
-        if (!r.ok) throw new Error('Không đọc được lịch sử (' + r.status + ')');
-        ds = await r.json();
+        ds = await A.ghLichSu('js/data.js', 30);
       }
       veBang(el);
     } catch (e) { el.innerHTML = A.loiTai(e.message); }
@@ -83,10 +80,7 @@
 
   /* ---------------- Đọc một phiên bản cũ ---------------- */
   async function docPhienBan(sha) {
-    const r = await fetch(`https://api.github.com/repos/${A.REPO}/contents/js/data.js?ref=${sha}`,
-      A.ghToken() ? { headers: { Authorization: 'Bearer ' + A.ghToken(), Accept: 'application/vnd.github+json' } } : { headers: { Accept: 'application/vnd.github+json' } });
-    if (!r.ok) throw new Error('Không đọc được phiên bản này (' + r.status + ')');
-    const f = await r.json();
+    const f = await A.ghDocBan('js/data.js', sha);
     const src = A.unb64(f.content);
     const w = {};
     new Function('window', src)(w);

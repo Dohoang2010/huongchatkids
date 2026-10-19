@@ -17,13 +17,10 @@
     } catch (e) { loi.push(e.message); }
     /* Thay đổi nội dung website ghi trong lịch sử Git */
     try {
-      const r = await fetch(`https://api.github.com/repos/${A.REPO}/commits?per_page=40&t=${Date.now()}`,
-        A.ghToken() ? { headers: { Authorization: 'Bearer ' + A.ghToken() } } : {});
-      if (r.ok) (await r.json()).forEach((c) => ds.push({
+      (await A.ghLichSu('', 40)).forEach((c) => ds.push({
         ngay: new Date(c.commit.author.date).toLocaleString('vi-VN'),
         nguoi: c.commit.author.name, muc: 'Website', viec: c.commit.message.split('\n')[0], link: c.html_url, loai: 'git',
         luc: new Date(c.commit.author.date).getTime() }));
-      else loi.push('Không đọc được lịch sử Git (' + r.status + ')');
     } catch (e) { loi.push(e.message); }
 
     const gio = (x) => { if (x.luc) return x.luc; const m = String(x.ngay).match(/(\d{2})\/(\d{2})\/(\d{4})[^\d]*(\d{2}):(\d{2})/); return m ? new Date(`${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}`).getTime() : 0; };
@@ -54,7 +51,7 @@
 
     if (tab === 'github') b.innerHTML = `
       <h3>Kết nối GitHub</h3>
-      <p class="muted">Trang quản trị ghi thay đổi thẳng vào mã nguồn website trên GitHub. Mã này chỉ lưu trên máy này, không nằm trong mã nguồn.</p>
+      ${A.GH.mayChu ? '<div class="card" style="background:#E8F7F4;border-color:#BDE7DD"><b>✅ Đang lưu qua máy chủ VPS.</b> Mã GitHub nằm an toàn trên VPS – máy này và máy nhân viên không cần dán mã. Mỗi lần lưu, máy chủ kiểm tra quyền của tài khoản và ghi vào Nhật ký hoạt động.</div>' : '<p class="muted"><b>Nên cài mã trên máy chủ:</b> trên máy tính shop chạy <code>tools\\may-chu-vps\\cai-github.ps1</code> – xong thì không cần dán mã ở đây nữa. Tạm thời vẫn có thể dán mã cho riêng máy này:</p>'}
       <ol class="huong-dan">
         <li>Vào <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Fine-grained token</a></li>
         <li><b>Repository access</b> → Only select repositories → chọn <b>${A.REPO}</b></li>

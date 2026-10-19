@@ -113,8 +113,39 @@ window.ADMIN = (() => {
     return { ...(k ? { key: k } : {}), ...(p ? { token: p } : {}), ...(extra || {}) };
   }
 
-  /* ---------------- GitHub ---------------- */
-  const ghToken = () => localStorage.getItem('hck_gh_token') || '';
+  /* ---------------- GitHub ----------------
+     Lưu QUA MÁY CHỦ VPS (/api/qt-github): mã GitHub chỉ nằm trên VPS, máy chủ kiểm quyền theo tài khoản quản trị + ghi nhật ký.
+     Máy chủ chưa cài mã (cai-github.ps1) thì tạm dùng mã cũ trong trình duyệt; máy chủ có mã rồi thì mã trong trình duyệt tự bị xoá. */
+  const ghTokenCu = () => localStorage.getItem('hck_gh_token') || '';
+  const GH = { mayChu: null, tk: '' };
+  const ghUrl = () => { try { return new URL((SITE.loyalty || {}).endpoint || '').origin + '/api/qt-github'; } catch { return ''; } };
+  async function ghMayChu(viec, them = {}) {
+    let r; try { r = await fetch(ghUrl(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...xacThuc(), viec, ...them }) }); }
+    catch { throw new Error('Không kết nối được máy chủ – kiểm tra mạng rồi thử lại'); }
+    const d = await r.json().catch(() => ({ ok: false, msg: 'Máy chủ không trả lời (' + r.status + ')' }));
+    if (!d.ok) { const e = new Error(d.msg || 'Chưa lưu được'); e.loi = d.loi; throw e; }
+    return d;
+  }
+  async function kiemMayChuGh(lai) {
+    if (GH.mayChu !== null && !lai) return GH.mayChu;
+    try { const d = await ghMayChu('trangThai'); GH.mayChu = !!d.coToken; GH.tk = d.tk || ''; } catch { GH.mayChu = false; }
+    if (GH.mayChu && ghTokenCu()) localStorage.removeItem('hck_gh_token');   // máy chủ đã giữ mã → xoá mã khỏi trình duyệt
+    return GH.mayChu;
+  }
+  /* "Có lưu được không" (các mục dùng để hiện / ẩn nút tải ảnh, lưu…) */
+  const ghToken = () => (GH.mayChu ? 'may-chu' : ghTokenCu());
+  const ghDauCu = () => (ghTokenCu() ? { Authorization: 'Bearer ' + ghTokenCu() } : {});
+  /* Lịch sử commit / đọc phiên bản cũ (Phiên bản, Nhật ký) */
+  async function ghLichSu(duong, soLuong = 30) {
+    if (await kiemMayChuGh()) return (await ghMayChu('lichSu', { duong, soLuong })).ds;
+    const r = await fetch(`https://api.github.com/repos/${REPO}/commits?per_page=${soLuong}${duong ? '&path=' + encodeURIComponent(duong) : ''}&t=${Date.now()}`, { headers: ghDauCu() });
+    if (!r.ok) throw new Error('Không đọc được lịch sử (' + r.status + ')'); return r.json();
+  }
+  async function ghDocBan(duong, ref) {
+    if (await kiemMayChuGh()) return (await ghMayChu('docBan', { duong, ref })).tep;
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${duong}?ref=${ref}`, { headers: { ...ghDauCu(), Accept: 'application/vnd.github+json' } });
+    if (!r.ok) throw new Error('Không đọc được phiên bản này (' + r.status + ')'); return r.json();
+  }
   const b64 = (s) => btoa(unescape(encodeURIComponent(s)));
   const unb64 = (s) => decodeURIComponent(escape(atob(String(s).replace(/\n/g, ''))));
 
@@ -126,23 +157,26 @@ window.ADMIN = (() => {
     return `Lỗi GitHub ${status}${msg ? ': ' + msg : ''}`;
   }
   async function ghDoc(duong, nhanh = 'main') {
+    if (await kiemMayChuGh()) return (await ghMayChu('doc', { duong })).tep;
     const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${duong}?ref=${nhanh}&t=${Date.now()}`,
-      { headers: { Authorization: 'Bearer ' + ghToken(), Accept: 'application/vnd.github+json' } });
+      { headers: { Authorization: 'Bearer ' + ghTokenCu(), Accept: 'application/vnd.github+json' } });
     if (!r.ok) throw new Error(loiGh(r.status, duong));
     return r.json();
   }
   async function ghGhi(duong, noiDung, sha, loi, nhanh = 'main') {
+    if (await kiemMayChuGh()) { const d = await ghMayChu('ghi', { duong, noiDung, sha, thongDiep: loi }); return { content: d.tep || {}, commit: { sha: d.commit } }; }
     const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${duong}`, {
       method: 'PUT',
-      headers: { Authorization: 'Bearer ' + ghToken(), Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      headers: { Authorization: 'Bearer ' + ghTokenCu(), Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: loi, content: noiDung, sha, branch: nhanh }),
     });
     if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(loiGh(r.status, duong, d.message)); }
     return r.json();
   }
-  function kiemTraGh() {
+  async function kiemTraGh() {
     const dot = $('#ghDot'); if (!dot) return;
-    const t = ghToken();
+    if (await kiemMayChuGh()) { dot.className = 'dot ok'; dot.title = 'Lưu qua máy chủ (mã GitHub nằm trên VPS)'; return; }
+    const t = ghTokenCu();
     if (!t) { dot.className = 'dot no'; dot.title = 'Chưa có mã GitHub – không lưu được'; return; }
     fetch(`https://api.github.com/repos/${REPO}`, { headers: { Authorization: 'Bearer ' + t } })
       .then((r) => { dot.className = 'dot ' + (r.ok ? 'ok' : 'no'); dot.title = r.ok ? 'Đã kết nối GitHub' : 'Mã GitHub không dùng được'; })
@@ -201,7 +235,8 @@ window.ADMIN = (() => {
   /* Ghi bản nháp lên website thật (commit vào js/data.js + data/stock.json) */
   async function xuatBan(tuDong) {
     if (tuDong === true) clearTimeout(tgHenXuat); else { clearTimeout(tgHenXuat); tuDong = false; }
-    if (!ghToken()) { const b0 = $('#bar'); if (b0) { b0.className = 'bar bar--err'; b0.innerHTML = '❌ Chưa có mã GitHub nên chưa tự lưu được – vào ⚙️ Cấu hình › GitHub để dán mã.'; } if (!tuDong) { toast('Chưa có mã GitHub – vào ⚙️ Cấu hình để dán mã', 'err'); di('#/cau-hinh/github'); } return; }
+    await kiemMayChuGh();
+    if (!ghToken()) { const b0 = $('#bar'); if (b0) { b0.className = 'bar bar--err'; b0.innerHTML = '❌ Chưa lưu được: máy chủ chưa có mã GitHub (chủ shop chạy cai-github.ps1 trên máy tính shop).'; } if (!tuDong) { toast('Chưa có mã GitHub – vào ⚙️ Cấu hình để dán mã', 'err'); di('#/cau-hinh/github'); } return; }
     if (dangXuat) { xuatLai = true; return; }
     const doi = daDoiGi();
     if (!doi.length) { daSua = false; veThanhLuu(); if (!tuDong) toast('Không có gì thay đổi'); return; }
@@ -278,7 +313,21 @@ window.ADMIN = (() => {
     { key: 'he-thong', ten: 'Hệ thống', icon: '🔐' },
     { key: 'cau-hinh', ten: 'Cấu hình', icon: '⚙️' },
   ];
-  function dangKy(mod) { MODULES.push(mod); }
+  /* Mục được tải khi mở (js/admin/danh-muc.js – tự sinh): menu có đủ mục ngay, mã từng mục chỉ tải lúc mở mục đó.
+     Mục thật đăng ký (dangKy) sẽ thay chỗ "mục chờ" cùng route. */
+  function dangKy(mod) { const i = MODULES.findIndex((m) => m.cho && m.route === mod.route); if (i > -1) MODULES[i] = mod; else MODULES.push(mod); }
+  const DM = window.ADMIN_DANH_MUC || { tep: {}, muc: [] }, daTai = {};
+  function taiMuc(tep) {
+    if (daTai[tep]) return daTai[tep];
+    const t = DM.tep[tep] || {};
+    daTai[tep] = Promise.all((t.can || []).map(taiMuc)).then(() => new Promise((ok, loi) => {
+      const s = document.createElement('script'); s.src = 'js/admin/' + tep + '?v=' + (t.v || Date.now());
+      s.onload = ok; s.onerror = () => { delete daTai[tep]; s.remove(); loi(new Error('Không tải được mục này – kiểm tra mạng rồi bấm Thử lại')); };
+      document.head.appendChild(s);
+    }));
+    return daTai[tep];
+  }
+  DM.muc.forEach((m) => { if (!(DM.tep[m.tep] || {}).ngay) MODULES.push({ ...m, cho: true, ve: async (el) => { el.innerHTML = dangTai(m.ten); await taiMuc(m.tep); veTrang(); } }); });
   const timMod = (route) => MODULES.find((m) => m.route === route) || MODULES.find((m) => route.startsWith(m.route + '/'));
 
   /* ---------------- Router ---------------- */
@@ -455,7 +504,7 @@ window.ADMIN = (() => {
   function datPreview(p) { PREVIEW = p; }
 
   function batDau() {
-    veKhung(); gan(); napNhap(); kiemTraGh(); thongBao();
+    veKhung(); gan(); napNhap(); thongBao(); kiemTraGh().then(() => { thongBao(); if (GH.mayChu) veTrang(); });   // hỏi máy chủ có lưu được không rồi vẽ lại
     PREVIEW && PREVIEW.dung();
     if (!location.hash) location.hash = '#/tong-quan';
     veTrang();
@@ -464,10 +513,10 @@ window.ADMIN = (() => {
 
   return { $, $$, esc, fmt, gon, ngayISO, sao, hoan, tre, khongDau, REPO,
     toast, hoi, co, VAI_TRO, nguoiDung,
-    api, adminKey, xacThuc, ghToken, ghDoc, ghGhi, b64, unb64, taiAnh, kiemTraGh,
+    api, adminKey, xacThuc, ghToken, ghDoc, ghGhi, ghLichSu, ghDocBan, kiemMayChuGh, GH, b64, unb64, taiAnh, kiemTraGh,
     get D() { return D; }, get GOC() { return GOC; }, get daSua() { return daSua; },
     doiDuLieu, doiNhap, boNhap, daDoiGi, xuatBan, napNhap,
-    dangKy, MODULES, NHOM, di, duong, veTrang, veSidebar,
+    dangKy, MODULES, NHOM, di, duong, veTrang, veSidebar, taiMuc,
     trong, dangTai, loiTai, the, badge, sapXep, phanTrang, thongBao,
     datPreview, batDau, dangNhapHopLe, ghiPhien, thoat, TAI_KHOAN };
 })();

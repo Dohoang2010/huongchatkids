@@ -67,22 +67,22 @@
           <select id="dhNgay">
             ${[['7', '7 ngày'], ['30', '30 ngày'], ['90', '3 tháng'], ['365', '1 năm'], ['all', 'Tất cả']].map(([v, t]) => `<option value="${v}" ${S.ngay === v ? 'selected' : ''}>${t}</option>`).join('')}</select>
         </div>
-        ${tong ? `<div class="tbl-wrap"><table>
+        ${tong ? `<div class="tbl-wrap"><table class="tbl-don">
           <thead><tr><th>Mã đơn</th><th>Thời gian</th><th>Khách hàng</th><th class="num">SP</th><th class="num">Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th><th class="num">Thao tác</th><th>Chuyển trạng thái</th></tr></thead>
           <tbody>${slice.map((o) => `<tr>
-            <td><a href="#/don-hang/${o.dong}"><b>${esc(o.ma)}</b></a>${o.qua ? '<br><small class="muted">🎁 có quà</small>' : ''}</td>
-            <td data-nhan="Thời gian">${esc(o.ngay)}<br><small class="muted">${esc(o.loai)}</small></td>
-            <td data-nhan="Khách hàng"><b>${esc(o.khach || '—')}</b><br><small class="muted">${esc(o.sdt)}</small></td>
-            <td class="num" data-nhan="Số SP">${o.soMon}</td>
-            <td class="num"><b>${fmt(o.tong)}</b>${o.giamHang ? `<br><small class="muted">hạng ${esc(o.hang)}</small>` : ''}</td>
-            <td data-nhan="Thanh toán">${esc(o.thanhToan)}</td>
-            <td>${A.badge(o.trangThai, MAU[o.trangThai] || '')}</td>
-            <td class="num"><div class="dh-nut">
+            <td class="dh-ma"><a href="#/don-hang/${o.dong}"><b>${esc(o.ma)}</b></a>${o.qua ? '<br><small class="muted">🎁 có quà</small>' : ''}</td>
+            <td class="dh-tg" data-nhan="Thời gian">${esc(o.ngay)}<br><small class="muted">${esc(o.loai)}</small></td>
+            <td class="dh-kh" data-nhan="Khách hàng"><b>${esc(o.khach || '—')}</b><br><small class="muted">${esc(o.sdt)}</small></td>
+            <td class="num dh-sl" data-nhan="Số SP">${o.soMon}</td>
+            <td class="num dh-tien"><b>${fmt(o.tong)}</b>${o.giamHang ? `<br><small class="muted">hạng ${esc(o.hang)}</small>` : ''}</td>
+            <td class="dh-ttoan" data-nhan="Thanh toán">${esc(o.thanhToan)}</td>
+            <td class="dh-trang">${A.badge(o.trangThai, MAU[o.trangThai] || '')}</td>
+            <td class="num dh-nut-td"><div class="dh-nut">
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a>
               ${capNhat ? `<a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/sua" title="Sửa đơn">✏️ Sửa</a>` : ''}
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/in" title="In đơn">🖨 In</a>
             </div></td>
-            <td data-nhan="Chuyển trạng thái">${capNhat ? chonTT(o) : ''}</td>
+            <td class="dh-chuyen" data-nhan="Chuyển trạng thái">${capNhat ? chonTT(o) : ''}</td>
           </tr>`).join('')}</tbody></table></div>
           ${A.phanTrang(tong, S.trang, S.moiTrang, 'dh-pg')}`
           : A.trong('Không có đơn nào', 'Thử bỏ bớt bộ lọc hoặc chọn khoảng thời gian rộng hơn.', '🧾')}

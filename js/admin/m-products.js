@@ -3,10 +3,12 @@
   'use strict';
   const A = window.ADMIN, { $, $$, esc, fmt, khongDau } = A;
 
-  const S = { q: '', cat: '', tt: '', sx: 'moi', trang: 1, moiTrang: 12, chon: new Set() };
+  const S = { q: '', cat: '', tt: '', sx: 'moi', trang: 1, moiTrang: 12, chon: new Set(), moPL: new Set() };
   const SX = { moi: 'Mới nhất', cu: 'Cũ nhất', 'ten-az': 'Tên A→Z', 'gia-cao': 'Giá cao→thấp', 'gia-thap': 'Giá thấp→cao', 'ton-thap': 'Tồn ít nhất', 'ban-chay': 'Bán chạy' };
 
   const ds = () => A.D.PRODUCTS || [];
+  /* Cháy hàng = tồn 0 hoặc mọi phân loại hết (giống MC.hetHang ngoài web) */
+  const hetSP = (p) => (p.stock ?? 0) <= 0 || ((p.variants || []).length > 0 && p.variants.every((v) => v.oos));
   const tenDM = (k) => ((window.CATEGORIES || []).find((c) => c.key === k) || {}).label || k || '—';
   const tenTH = (k) => ((window.BRANDS || []).find((b) => b.key === k) || {}).label || k || '—';
 
@@ -62,7 +64,7 @@
         ${tong ? `<div class="tbl-wrap"><table class="tbl-sp">
           <thead><tr>
             <th class="tbl-ck"><input type="checkbox" id="spAll" aria-label="Chọn tất cả"></th>
-            <th>Sản phẩm</th><th>Danh mục</th><th class="num">Giá bán</th><th class="num">Tồn</th><th class="num">Đã bán</th><th>Nhãn</th><th>Trạng thái</th><th></th>
+            <th>Sản phẩm</th><th>Danh mục</th><th class="num">Giá bán</th><th class="num">Hàng</th><th class="num">Đã bán</th><th>Nhãn</th><th>Trạng thái</th><th></th>
           </tr></thead>
           <tbody>${slice.map(({ p, i }) => `<tr class="${S.chon.has(i) ? 'is-pick' : ''}">
             <td class="tbl-ck"><input type="checkbox" data-pick="${i}" ${S.chon.has(i) ? 'checked' : ''} aria-label="Chọn ${esc(p.short || p.name)}"></td>
@@ -70,13 +72,13 @@
               <img src="${esc(p.thumb || p.image || '')}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
               <span><b>${esc(p.short || p.name)}</b><small>${esc(p.id)}${(p.variants || []).length ? ' · ' + p.variants.length + ' phân loại' : ''}</small></span></a></td>
             <td data-nhan="Danh mục">${esc(tenDM(p.cat))}</td>
-            <td class="num" data-nhan="Giá bán">${fmt(p.price)}</td>
-            <td class="num">${A.badge(String(p.stock ?? 0), (p.stock ?? 0) <= 0 ? 'tag--no' : (p.stock ?? 0) <= 5 ? 'tag--wait' : 'tag--ok')}</td>
+            <td class="num" data-nhan="Giá bán">${(p.variants || []).length ? `<button class="sp-pl-nut" type="button" data-mo-pl="${i}" title="Sửa giá / tồn từng phân loại">${fmt(p.price)} <small>${p.variants.length} loại ${S.moPL.has(i) ? '▴' : '▾'}</small></button>` : `<input class="sp-gia" type="number" min="0" step="1000" inputmode="numeric" data-gia="${i}" value="${p.price || 0}" aria-label="Giá bán ${esc(p.short || p.name)}">`}</td>
+            <td class="num" data-nhan="Hàng"><button class="sp-tg ${hetSP(p) ? 'is-off' : 'is-on'}" type="button" data-ton="${i}" title="Bấm để đổi còn hàng / cháy hàng">${hetSP(p) ? 'Cháy hàng' : 'Còn hàng'}</button></td>
             <td class="num" data-nhan="Đã bán">${p.sold || 0}</td>
-            <td>${(p.tags || []).slice(0, 2).map((t) => A.badge(t, t === 'Sản phẩm hot' ? 'tag--hot' : '')).join(' ') || '—'}</td>
-            <td>${p.an ? A.badge('Đang ẩn', 'tag--off') : A.badge('Đang hiện', 'tag--ok')}</td>
-            <td class="num"><a class="btn btn--ghost btn--sm" href="#/san-pham/${i}">Sửa</a></td>
-          </tr>`).join('')}</tbody></table></div>
+            <td class="sp-nhan-col">${(p.tags || []).slice(0, 2).map((t) => A.badge(t, t === 'Sản phẩm hot' ? 'tag--hot' : '')).join(' ') || '—'}</td>
+            <td data-nhan="Trạng thái"><button class="sp-tg ${p.an ? 'is-off' : 'is-on'}" type="button" data-hien="${i}" title="Bấm để ẩn / hiện trên web">${p.an ? 'Đang ẩn' : 'Đang hiện'}</button></td>
+            <td class="num sp-nut"><a class="btn btn--ghost btn--sm" href="#/san-pham/${i}">Sửa</a> <button class="btn btn--ghost btn--sm" type="button" data-nhan-ban="${i}" title="Nhân bản sản phẩm này">⧉<span class="sp-nb-chu"> Nhân bản</span></button></td>
+          </tr>${S.moPL.has(i) && (p.variants || []).length ? `<tr class="sp-pl"><td colspan="9"><div class="sp-pl__ds">${p.variants.map((v, j) => `<div class="sp-pl__dong"><span>${esc(v.label)}</span><input class="sp-gia" type="number" min="0" step="1000" inputmode="numeric" data-gia-pl="${i}:${j}" value="${v.price || 0}" aria-label="Giá ${esc(v.label)}"><button class="sp-tg ${v.oos ? 'is-off' : 'is-on'}" type="button" data-ton-pl="${i}:${j}">${v.oos ? 'Cháy hàng' : 'Còn hàng'}</button></div>`).join('')}</div></td></tr>` : ''}`).join('')}</tbody></table></div>
           ${A.phanTrang(tong, S.trang, S.moiTrang, 'sp-pg')}`
         : A.trong('Không có sản phẩm nào', S.q || S.cat || S.tt ? 'Thử bỏ bớt bộ lọc xem sao.' : 'Bấm "Thêm sản phẩm" để tạo sản phẩm đầu tiên.', '📦')}
       </div>`;
@@ -167,7 +169,8 @@
           ${i === 0 ? '<em>Ảnh bìa</em>' : `<button class="imgs__x" data-lam-bia="${i}" title="Đặt làm ảnh bìa">★</button>`}
           <button class="imgs__x imgs__x--d" data-xoa-anh="${i}" title="Xoá ảnh">✕</button></div>`).join('')
           || '<p class="muted">Chưa có ảnh nào.</p>'}</div>
-        <div class="drop" id="imgDrop">📁 Bấm hoặc kéo ảnh vào đây để tải lên website<input type="file" id="imgFile" accept="image/*" multiple hidden></div>`;
+        <div class="drop" id="imgDrop">📁 Bấm hoặc kéo ảnh vào đây để tải lên website<input type="file" id="imgFile" accept="image/*" multiple hidden></div>
+        ${veBia(p)}`;
     }
 
     if (tabHienTai === 'gia') b.innerHTML = `
@@ -244,6 +247,33 @@
     }).filter((v) => v.label);
     if ($('#vList', f)) { if (vs.length) p.variants = vs; else delete p.variants; }
   }
+
+  /* ---------------- Sửa nhanh trong danh sách (tự lưu sau 3 giây, như các mục khác) ---------------- */
+  const luuNhanh = (msg) => { A.doiDuLieu(); A.veTrang(); if (msg) A.toast(msg + ' – tự lưu sau 3 giây', 'ok'); };
+  document.addEventListener('change', (e) => {
+    if (!location.hash.startsWith('#/san-pham') || /#\/san-pham\/\d/.test(location.hash)) return; const t = e.target;
+    if (t.matches('[data-gia]')) { const p = ds()[Number(t.dataset.gia)]; const g = Math.max(0, Math.round(Number(t.value) || 0)); if (p && g !== p.price) { p.price = g; luuNhanh('Đã đổi giá ' + (p.short || p.name)); } }
+    if (t.matches('[data-gia-pl]')) { const [i, j] = t.dataset.giaPl.split(':').map(Number), p = ds()[i], v = p && p.variants && p.variants[j]; const g = Math.max(0, Math.round(Number(t.value) || 0));
+      if (v && g !== v.price) { v.price = g; if (j === 0) p.price = g; luuNhanh('Đã đổi giá ' + v.label); } }
+  });
+  document.addEventListener('click', (e) => {
+    if (!location.hash.startsWith('#/san-pham') || /#\/san-pham\/\d/.test(location.hash)) return; const t = e.target;
+    const mo = t.closest('[data-mo-pl]'); if (mo) { const i = Number(mo.dataset.moPl); S.moPL.has(i) ? S.moPL.delete(i) : S.moPL.add(i); A.veTrang(); return; }
+    const ton = t.closest('[data-ton]'); if (ton) { const p = ds()[Number(ton.dataset.ton)]; const het = hetSP(p);
+      if (het) { p.stock = p.stock > 0 ? p.stock : 50; (p.variants || []).forEach((v) => { delete v.oos; }); } else { p.stock = 0; (p.variants || []).forEach((v) => { v.oos = true; }); }
+      return luuNhanh((p.short || p.name) + (het ? ': còn hàng' : ': cháy hàng')); }
+    const tpl = t.closest('[data-ton-pl]'); if (tpl) { const [i, j] = tpl.dataset.tonPl.split(':').map(Number), p = ds()[i], v = p.variants[j];
+      if (v.oos) { delete v.oos; if ((p.stock ?? 0) <= 0) p.stock = 50; } else v.oos = true; return luuNhanh(v.label + (v.oos ? ': cháy hàng' : ': còn hàng')); }
+    const hien = t.closest('[data-hien]'); if (hien) { const p = ds()[Number(hien.dataset.hien)]; p.an = !p.an; return luuNhanh((p.short || p.name) + (p.an ? ': đã ẩn khỏi web' : ': đã hiện trên web')); }
+    const nb = t.closest('[data-nhan-ban]'); if (nb) {
+      const i = Number(nb.dataset.nhanBan), goc = ds()[i], ban = JSON.parse(JSON.stringify(goc));
+      ban.id = String(goc.id).replace(/-ban-sao-[a-z0-9]+$/, '') + '-ban-sao-' + Date.now().toString(36);
+      ban.name = goc.name + ' (bản sao)'; ban.short = (goc.short || goc.name) + ' (bản sao)'; ban.an = true;
+      ban.sold = 0; ban.reviews = 0; ban.rating = 5; delete ban.slug; delete ban.seoTitle; delete ban.seoDesc;
+      ds().splice(i + 1, 0, ban); A.doiDuLieu(); tabHienTai = 'co-ban'; A.di('#/san-pham/' + (i + 1));
+      A.toast('Đã nhân bản (đang ẩn) – sửa tên, giá, ảnh rồi bấm Lưu, sau đó bỏ ẩn', 'ok'); return;
+    }
+  });
 
   /* ---------------- Sự kiện ---------------- */
   const timTre = A.tre(() => { S.trang = 1; A.veTrang(); }, 350);
@@ -326,6 +356,58 @@
       p.variants.push({ label: 'Phân loại mới', price: p.price || 0 }); chuaLuu(); veTab(p, 0); return; }
     const xv = t.closest('[data-xoa-v]');
     if (xv) { const p = ds()[Number($('#spForm').dataset.idx)]; thu(); p.variants.splice(Number(xv.dataset.xoaV), 1); chuaLuu(); veTab(p, 0); return; }
+  });
+
+  /* ---------------- ✨ Tự làm ảnh bìa: máy chủ tách nền + đặt vào khung logo Hương Chất Kids (không ghi giá) ---------------- */
+  const BIA = { id: '', file: null, ten: '', kq: null, dangLam: false, cach: 'tu-dong', sang: false, loi: '' };
+  const urlBia = () => { try { return new URL((SITE.loyalty || {}).endpoint || '').origin + '/api/qt-anh-bia'; } catch { return ''; } };
+  function veBia(p) {
+    if (BIA.id !== p.id) Object.assign(BIA, { id: p.id, file: null, ten: '', kq: null, loi: '' });
+    return `<div class="bia-tu card mt-12"><h4>✨ Tự làm ảnh bìa</h4>
+      <p class="muted">Chọn 1 ảnh sản phẩm (chụp điện thoại cũng được) → web tự tách nền, đặt sản phẩm to giữa bục trong khung logo Hương Chất Kids, không ghi giá. Xem trước rồi mới dùng.</p>
+      <div class="bia-tu__chon"><label class="btn btn--ghost">📷 Chọn ảnh sản phẩm<input type="file" id="biaFile" accept="image/*" hidden></label><span class="muted">${esc(BIA.ten || 'chưa chọn ảnh')}</span></div>
+      <div class="bia-tu__cach">
+        <label><input type="radio" name="biaCach" value="tu-dong" ${BIA.cach === 'tu-dong' ? 'checked' : ''}> Tự tách nền (ảnh chụp có nền bất kỳ)</label>
+        <label><input type="radio" name="biaCach" value="nen-trang" ${BIA.cach === 'nen-trang' ? 'checked' : ''}> Xoá nền trắng (ảnh nền trắng sẵn)</label>
+        <label><input type="radio" name="biaCach" value="giu" ${BIA.cach === 'giu' ? 'checked' : ''}> Giữ nguyên ảnh (đặt cả ảnh lên bục)</label>
+        <label><input type="checkbox" id="biaSang" ${BIA.sang ? 'checked' : ''}> Thêm quầng sáng phía sau (sản phẩm màu hồng / trắng nhạt)</label>
+      </div>
+      <button class="btn btn--primary" id="biaLam" type="button" ${BIA.file && !BIA.dangLam ? '' : 'disabled'}>${BIA.dangLam ? '⏳ Đang làm ảnh bìa… (5–20 giây)' : '✨ Làm ảnh bìa'}</button>
+      ${BIA.loi ? `<p class="err mt-8">${esc(BIA.loi)}</p>` : ''}
+      ${BIA.kq ? `<div class="bia-tu__xem"><img src="data:image/jpeg;base64,${BIA.kq.bia}" alt="Ảnh bìa mới"><div><p><b>Ảnh bìa mới</b><br><span class="muted">Làm trong ${BIA.kq.giay} giây. Chưa ưng: đổi cách tách nền / quầng sáng rồi làm lại.</span></p>
+        <button class="btn btn--primary" id="biaDung" type="button">✓ Dùng làm ảnh bìa</button> <button class="btn btn--ghost" id="biaBo" type="button">Bỏ</button></div></div>` : ''}
+      <p class="muted" style="font-size:11.5px;margin-top:8px">Tách nền dùng thư viện mã nguồn mở @imgly/background-removal (AGPL-3.0, github.com/imgly/background-removal-js), chạy trên máy chủ của shop.</p></div>`;
+  }
+  const docB64 = (f) => new Promise((ok, loi) => { const r = new FileReader(); r.onload = () => ok(String(r.result).replace(/^data:[^,]*,/, '')); r.onerror = loi; r.readAsDataURL(f); });
+  async function lamBia() {
+    const p = ds()[Number($('#spForm').dataset.idx)]; if (!BIA.file || BIA.dangLam) return;
+    BIA.dangLam = true; BIA.loi = ''; BIA.kq = null; veTab(p, 0);
+    try {
+      const r = await fetch(urlBia(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...A.xacThuc(), anh: await docB64(BIA.file), cach: BIA.cach, sang: BIA.sang }) });
+      const d = await r.json().catch(() => ({ ok: false, msg: 'Máy chủ không trả lời (' + r.status + ')' }));
+      if (!d.ok) throw new Error(d.msg || 'Chưa làm được ảnh bìa'); BIA.kq = d;
+    } catch (e) { BIA.loi = e.message; } finally { BIA.dangLam = false; veTab(ds()[Number($('#spForm').dataset.idx)], 0); }
+  }
+  async function dungBia() {
+    const p = ds()[Number($('#spForm').dataset.idx)]; if (!BIA.kq) return;
+    if (!A.ghToken()) { A.toast('Chưa lưu được ảnh: máy chủ chưa có mã GitHub', 'err'); return; }
+    A.toast('Đang tải ảnh bìa lên…');
+    try {
+      const t = Date.now().toString(36), bia = `img/${p.id}-bia-${t}.jpg`, nho = `img/thumb/${p.id}-${t}.jpg`;
+      await A.ghGhi(bia, BIA.kq.bia, undefined, 'Quản trị: ảnh bìa ' + p.id);
+      await A.ghGhi(nho, BIA.kq.thumb, undefined, 'Quản trị: ảnh nhỏ ' + p.id);
+      p.images = [bia, ...(p.images || []).filter((x) => x !== bia)]; p.image = bia; p.thumb = nho;
+      Object.assign(BIA, { file: null, ten: '', kq: null }); chuaLuu(); veTab(p, 0); A.toast('Đã đặt ảnh bìa mới – bấm Lưu để đăng lên web', 'ok');
+    } catch (e) { A.toast(e.message, 'err'); }
+  }
+  document.addEventListener('change', (e) => {
+    if (!$('#spForm')) return; const t = e.target;
+    if (t.id === 'biaFile' && t.files && t.files[0]) { BIA.file = t.files[0]; BIA.ten = t.files[0].name; BIA.kq = null; BIA.loi = ''; veTab(ds()[Number($('#spForm').dataset.idx)], 0); }
+    else if (t.name === 'biaCach') BIA.cach = t.value; else if (t.id === 'biaSang') BIA.sang = t.checked;
+  });
+  document.addEventListener('click', (e) => {
+    if (!$('#spForm')) return; const id = e.target.id;
+    if (id === 'biaLam') lamBia(); else if (id === 'biaDung') dungBia(); else if (id === 'biaBo') { BIA.kq = null; veTab(ds()[Number($('#spForm').dataset.idx)], 0); }
   });
 
   async function taiAnhLen(files) {

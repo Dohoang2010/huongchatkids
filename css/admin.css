@@ -809,3 +809,50 @@ a.d1-dong:hover{background:var(--line-2);border-radius:6px}
 .tkb-link__ra{display:flex;gap:8px;margin:12px 0 6px}.tkb-link__ra input{flex:1;font-family:monospace;font-size:13px}
 tr.tkb-canh td{background:#FFF8E1}
 @media (max-width:600px){.tkb-pheu__dong{grid-template-columns:96px 1fr 52px 44px;font-size:12.5px}}
+
+/* Tự làm ảnh bìa (m-products.js) */
+.bia-tu h4{margin:0 0 4px}.bia-tu__chon{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.bia-tu__cach{display:flex;flex-direction:column;gap:6px;margin:6px 0 12px;font-size:13.5px}.bia-tu__cach label{display:flex;gap:8px;align-items:center}
+.bia-tu__xem{display:flex;gap:16px;align-items:flex-start;margin-top:14px;flex-wrap:wrap}.bia-tu__xem img{width:260px;max-width:100%;border-radius:12px;border:1px solid var(--line)}
+
+/* Sửa nhanh trong danh sách sản phẩm */
+.sp-gia{width:110px;text-align:right;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;font-weight:600}.sp-gia:focus{border-color:var(--pink);outline:none}
+.sp-tg{border:0;border-radius:99px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}.sp-tg.is-on{background:#E3F6EF;color:#0B7B5E}.sp-tg.is-off{background:#FDE8E8;color:#C53030}.sp-tg:hover{filter:brightness(.95)}
+.sp-pl-nut{border:1px dashed var(--line);background:#fff;border-radius:8px;padding:5px 9px;font:inherit;font-weight:600;cursor:pointer}.sp-pl-nut small{color:var(--muted);font-weight:500}
+tr.sp-pl td{background:#FAFBFC}.sp-pl__ds{display:flex;flex-wrap:wrap;gap:8px 18px}.sp-pl__dong{display:flex;gap:8px;align-items:center;font-size:13px}.sp-pl__dong span{min-width:120px}
+.sp-nut{white-space:nowrap}
+
+/* Danh sách GỌN trên điện thoại: Sản phẩm, Đơn hàng – mỗi dòng 2 hàng chữ, ~5 dòng / màn hình */
+@media (max-width:720px){
+  .tbl-wrap table.tbl-sp tr,.tbl-wrap table.tbl-don tr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:8px 10px;margin-bottom:6px;border-radius:10px}
+  .tbl-sp td,.tbl-don td{width:auto;padding:0;display:block}
+  .tbl-sp td::before,.tbl-don td::before{display:none}
+  .tbl-sp td.tbl-ck{flex:0 0 22px;align-self:flex-start;padding-top:8px}
+  .tbl-sp td[data-nhan="Sản phẩm"]{flex:1 1 calc(100% - 34px);min-width:0}
+  .tbl-sp .sp-cell img{width:40px;height:40px}
+  .tbl-sp .sp-cell b{display:block;font-size:13.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tbl-sp .sp-cell small{font-size:11.5px}
+  .tbl-sp td[data-nhan="Danh mục"],.tbl-sp td[data-nhan="Đã bán"],.tbl-sp td.sp-nhan-col{display:none}
+  .tbl-sp td[data-nhan="Giá bán"]{margin-left:0}.tbl-sp .sp-pl-nut,.tbl-sp .sp-gia{padding:3px 6px;font-size:12.5px}.tbl-sp .sp-gia{width:84px}
+  .tool:has(#spQ){display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tool:has(#spQ) .tool__tim{grid-column:1/-1}.tool:has(#spQ) select{min-width:0;padding:6px 4px;font-size:12.5px}
+  .tbl-wrap table.tbl-sp tr{gap:6px 4px;padding:6px 6px}.tbl-sp td.sp-nut .btn{padding:4px 6px}.tbl-sp td.tbl-ck{order:-3}.tbl-sp td[data-nhan="Sản phẩm"]{order:-2;flex:1 1 calc(100% - 112px)}.tbl-sp td.sp-nut{order:-1;align-self:flex-start}.tbl-sp tr.sp-pl{flex-basis:100%}.tbl-sp .sp-cell{min-width:0}.tbl-sp .sp-cell span{min-width:0;overflow:hidden}.tbl-sp .sp-cell small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tbl-sp .sp-cell{gap:8px}.tbl-sp .sp-nb-chu{display:none}
+  .tbl-sp td[data-nhan="Hàng"],.tbl-sp td[data-nhan="Trạng thái"]{flex:0 0 auto}.tbl-sp .sp-tg{padding:3px 8px;font-size:11.5px}.tbl-sp .sp-pl-nut small{display:none}
+  .tbl-sp .sp-gia{width:92px;padding:4px 6px}
+  .tbl-sp .sp-tg{padding:4px 9px;font-size:12px}
+  .tbl-sp td.sp-nut{margin-left:auto}.tbl-sp td.sp-nut .btn{padding:4px 8px;font-size:12px}
+  .tbl-sp tr.sp-pl{display:block;margin-top:-4px}
+  .tbl-don td.dh-ma{flex:1 1 auto}.tbl-don td.dh-trang{flex:0 0 auto}
+  .tbl-don td.dh-kh{flex:1 1 60%;min-width:0;font-size:13px}.tbl-don td.dh-kh br{display:none}.tbl-don td.dh-kh small{margin-left:6px}
+  .tbl-don td.dh-tien{flex:0 0 auto;margin-left:auto}
+  .tbl-don td.dh-tg{flex:1 1 100%;font-size:11.5px;color:var(--muted)}.tbl-don td.dh-tg br{display:none}.tbl-don td.dh-tg small{margin-left:6px}
+  .tbl-don td.dh-sl,.tbl-don td.dh-ttoan{display:none}
+  .tbl-don td.dh-nut-td{flex:0 0 auto}.tbl-don .dh-nut .btn{padding:4px 8px;font-size:12px}
+  .tbl-don td.dh-chuyen{flex:1 1 auto}.tbl-don td.dh-chuyen select{width:100%;padding:4px 6px;font-size:12.5px}
+}
+
+/* Tổng quan: so với kỳ trước + bán hàng theo nguồn */
+.d1-ss{font-weight:700;font-size:11.5px;color:var(--muted)}.d1-ss--len{color:#0B7B5E}.d1-ss--xuong{color:#C53030}.d1-ss-chu{font-size:12.5px;margin:0 0 6px}
+.d1-bh__dau{display:flex;justify-content:space-between;align-items:center;gap:10px}.d1-bh__dau h3{margin:0}
+.d1-bh__so{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0}.d1-bh__so div{background:#F7F8FA;border-radius:10px;padding:10px 12px}.d1-bh__so b{display:block;font-size:20px;font-family:Quicksand,sans-serif}.d1-bh__so span{font-size:12px;color:var(--muted)}
+.d1-bh__hai{display:grid;grid-template-columns:1fr 1fr;gap:16px}.d1-bh__hai h4{margin:4px 0 6px}@media (max-width:720px){.d1-bh__hai{grid-template-columns:1fr}}
+.d1-bh__dong{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13.5px}.d1-bh__dong span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.d1-bh__dong small{color:var(--muted);min-width:70px;text-align:right}

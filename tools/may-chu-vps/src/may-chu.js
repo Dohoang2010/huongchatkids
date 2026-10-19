@@ -12,6 +12,8 @@ const { layTuAppsScript, doiChieuBam } = require('./nhap');
 const { taoTrangWeb } = require('./trang-web');
 const { taoAnhWebp } = require('./anh-webp');
 const { taoNenTep } = require('./nen-tep');
+const { taoLuuGithub } = require('./luu-github');
+const { taoAnhBia } = require('./anh-bia');
 
 const E = process.env;
 const cauHinh = {
@@ -39,6 +41,8 @@ const guiDi = taoGuiDi({ pool, cauHinh, ghi });
 const bc = new BoChay({ kho, cauHinh, guiDi });
 const WEB_DIR = E.WEB_DIR || '/var/www/huongchatkids';
 const anhWebp = taoAnhWebp({ thuMucWeb: WEB_DIR, thuMucRa: E.WEBP_DIR || '/var/lib/hck-api/webp', ghi: (s) => ghi(s) });
+const luuGithub = taoLuuGithub({ bc, ghi: (s) => ghi(s), docThan: (req, n) => docThan(req, n) });
+const anhBia = taoAnhBia({ bc, ghi: (s) => ghi(s), docThan: (req, n) => docThan(req, n) });
 const nenTep = taoNenTep({ thuMuc: WEB_DIR, ghi: (s) => ghi(s) });
 const trangWeb = taoTrangWeb({ thuMuc: WEB_DIR, bc, ghi: (s) => ghi(s), webp: anhWebp });
 const trangThai = { batDau: Date.now(), lanNhap: null, lanNhapLoi: null, doiChieu: null, lich: {}, dangNhap: false };
@@ -222,6 +226,9 @@ const mayChu = http.createServer(async (req, res) => {
       if (choPhepTep('loi:' + (req.headers['x-real-ip'] || ''), 30)) { const t = String(await docThan(req, 4096)).replace(/[\r\n]+/g, ' ').slice(0, 2000); ghi('LỖI JS khách: ' + t); trangThai.loiJs = (trangThai.loiJs || []).concat([{ luc: Date.now(), t }]).slice(-50); }
       res.writeHead(204); return res.end();
     }
+    /* Trang quản trị lưu lên GitHub qua máy chủ (mã GitHub chỉ ở VPS) – src/luu-github.js */
+    if (duongDan === '/api/qt-anh-bia' && req.method === 'POST') return anhBia.xuLy(req, res, cors, traJson);   // tự làm ảnh bìa sản phẩm (src/anh-bia.js)
+    if (duongDan === '/api/qt-github' && req.method === 'POST') return luuGithub.xuLy(req, res, cors, traJson);
     if (duongDan === '/api/chat-tep') return nhanTepChat(req, res, url, cors);
     if (duongDan === '/api/suc-khoe') return traJson(res, 200, { ok: true, cheDo: cauHinh.cheDo, luc: Date.now(), lanNhap: trangThai.lanNhap ? trangThai.lanNhap.luc : null });
     /* ---- nội bộ (cần khoá NOI_BO_KHOA; nginx không cho ra ngoài) ---- */

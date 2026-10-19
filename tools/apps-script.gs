@@ -2986,6 +2986,13 @@ function phienQT(token) {
   }
   return null;
 }
+/* Máy chủ VPS (src/luu-github.js) hỏi: phiên quản trị này là ai, có những quyền nào (để cho / không cho lưu lên GitHub) */
+function qtQuyenGh_(token, key, ds) {
+  var p = { token: token, key: key }, ph = phienQT(token), laKhoa = !ph && coQuyen(p, '*');
+  var kq = { ok: !!ph || laKhoa, tk: ph ? ph.tk : (laKhoa ? 'chủ shop (khoá dự phòng)' : ''), co: {} };
+  if (kq.ok) (ds || []).forEach(function (q) { kq.co[q] = coQuyen(p, q); });
+  return kq;
+}
 function coQuyen(p, quyen) {
   var kc = khoaChuShop_(); if (kc && String(p.key || '') === kc) return true;   // khoá dự phòng (chỉ khi đặt trong Script Properties)
   var ph = phienQT(p.token); if (!ph) return false;
