@@ -3535,8 +3535,11 @@ function apiChatGui(p) {
     var tin = chatThem_(phien, 'khach', nd, kh, '', dk), them = [];
     var coNv = ds.some(function (r) { return String(r[3]) === 'nv'; });
     /* Tin đầu tiên (hoặc khách quay lại sau 30 phút): tự trả lời + báo nhân viên qua Zalo */
+    /* Khách bấm nút trong khung chat → web gửi kèm câu trả lời tự động (soạn từ dữ liệu sản phẩm / ưu đãi đang chạy) */
+    var td = String(p.tuDong || '').slice(0, 1800).trim();
+    if (td) them.push(chatThem_(phien, 'tu-dong', td, {}, 'Trả lời tự động'));
     if (!ds.length || Date.now() - cuoi > 30 * 60000) {
-      if (!coNv || Date.now() - cuoi > 30 * 60000) them.push(chatThem_(phien, 'he-thong', chatGio_()
+      if (!td && (!coNv || Date.now() - cuoi > 30 * 60000)) them.push(chatThem_(phien, 'he-thong', chatGio_()
         ? 'Hương đã nhận được tin nhắn của mẹ. Chuyên gia tư vấn sẽ trả lời mẹ trong ít phút. Mẹ để lại số điện thoại để Hương gọi lại khi cần nhé.'
         : 'Hương đã nhận được tin nhắn của mẹ. Hiện ngoài giờ tư vấn (8:00 – 22:00), Hương sẽ trả lời mẹ sớm nhất vào sáng mai. Mẹ để lại số điện thoại để Hương gọi lại nhé.', {}));
       try { zaloBotGuiTin('💬 Khách chat trên web' + (kh.ten ? ' – ' + kh.ten : '') + (kh.sdt ? ' (' + kh.sdt + ')' : '') + ':\n' + ((nd ? nd + ' ' : '') + chatMoTaDK_(dk)).slice(0, 300) + '\nTrả lời: Quản trị › Chat với khách'); } catch (z) { Logger.log(z); }

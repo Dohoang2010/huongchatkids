@@ -38,7 +38,7 @@
     const b = $('#chTin'); if (!b) return;
     const c = ds.find((x) => x.phien === chon);
     $('#chDau').innerHTML = c ? `<b>${esc(c.ten || 'Khách chưa đăng nhập')}</b>${c.sdt ? ` · <a href="#/thanh-vien/${encodeURIComponent(c.sdt)}">${esc(c.sdt)}</a> · <a href="tel:${esc(c.sdt)}">Gọi</a>` : ''}${c.trang ? ` <small class="muted">· đang xem ${esc(c.trang)}</small>` : ''}` : '<span class="muted">Chọn một cuộc chat bên trái</span>';
-    b.innerHTML = chon ? tin.map((t) => `<div class="ch-m ch-m--${t.tu === 'khach' ? 'kh' : t.tu === 'he-thong' ? 'ht' : 'nv'}">${theDK(t.dk)}${t.noiDung ? `<div class="ch-m__b">${esc(t.noiDung).replace(/\n/g, '<br>')}</div>` : ''}<small>${t.tu === 'nv' ? esc(t.nv || 'Nhân viên') + ' · ' : t.tu === 'he-thong' ? 'Tự động · ' : ''}${gio(t.luc)}</small></div>`).join('') : '';
+    b.innerHTML = chon ? tin.map((t) => `<div class="ch-m ch-m--${t.tu === 'khach' ? 'kh' : t.tu === 'he-thong' ? 'ht' : 'nv'}">${theDK(t.dk)}${t.noiDung ? `<div class="ch-m__b">${esc(t.noiDung).replace(/\n/g, '<br>')}</div>` : ''}<small>${t.tu === 'nv' ? esc(t.nv || 'Nhân viên') + ' · ' : t.tu === 'he-thong' || t.tu === 'tu-dong' ? 'Tự động · ' : ''}${gio(t.luc)}</small></div>`).join('') : '';
     b.scrollTop = b.scrollHeight;
     $('#chO').disabled = !chon; $('#chGui').disabled = !chon;
   }

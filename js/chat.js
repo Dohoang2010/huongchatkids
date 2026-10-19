@@ -16,12 +16,13 @@
       'Chào mẹ, Hương Chất Kids rất vui được hỗ trợ mẹ!',
       'Mẹ cần tư vấn dinh dưỡng cho bé theo độ tuổi, chọn mỹ phẩm cho mẹ hay hỗ trợ đơn hàng ạ? Mẹ cứ nhắn, gửi ảnh sản phẩm hoặc đơn hàng – chuyên gia của Hương trả lời ngay nhé.'
     ],
+    /* [icon (không hiện), chữ trên nút, câu khách gửi, mã câu trả lời tự động – xem traLoiTuDong()] */
     nhanh: [
-      ['🍼', 'Tư vấn dinh dưỡng cho bé', 'Hương ơi, tư vấn giúp mình dinh dưỡng cho bé nhà mình với ạ. Bé '],
-      ['📏', 'Bé chậm tăng cân, chiều cao', 'Bé nhà mình chậm tăng cân / chiều cao, Hương tư vấn giúp mình với. Bé '],
-      ['💄', 'Mỹ phẩm cho mẹ', 'Hương tư vấn giúp mình mỹ phẩm phù hợp với da mình với ạ. Da mình '],
-      ['📦', 'Hỗ trợ đơn hàng', '#don'],
-      ['🎁', 'Ưu đãi hôm nay', 'Hôm nay shop đang có ưu đãi gì vậy Hương?']
+      ['', 'Tư vấn dinh dưỡng cho bé', 'Hương ơi, tư vấn giúp mình dinh dưỡng cho bé nhà mình với ạ.', 'dinh-duong'],
+      ['', 'Bé chậm tăng cân, chiều cao', 'Bé nhà mình chậm tăng cân / chiều cao, Hương tư vấn giúp mình với ạ.', 'tang-can'],
+      ['', 'Mỹ phẩm cho mẹ', 'Hương tư vấn giúp mình mỹ phẩm phù hợp với da mình với ạ.', 'my-pham'],
+      ['', 'Hỗ trợ đơn hàng', '#don'],
+      ['', 'Ưu đãi hôm nay', 'Hôm nay shop đang có ưu đãi gì vậy Hương?', 'uu-dai']
     ]
   };
   const KP = 'mc_chat_phien', KT = 'mc_chat_tin';
@@ -52,7 +53,7 @@
     const b = document.getElementById('chatTin'); if (!b) return;
     const chao = CHAT_CFG.chao.map((t) => ({ tu: 'nv', noiDung: t }));
     b.innerHTML = chao.concat(tin).map((x) => { const toi = x.tu === 'khach';
-      return `<div class="chat-m chat-m--${toi ? 'toi' : x.tu === 'he-thong' ? 'ht' : 'shop'}${x.tam ? ' is-tam' : ''}">${x.dk ? theDK(x.dk, toi) : ''}${x.noiDung ? `<div class="chat-m__b">${esc(x.noiDung).replace(/\n/g, '<br>')}</div>` : ''}${x.luc ? `<small>${x.tam ? 'Đang gửi…' : (x.tu === 'nv' && x.nv ? esc(x.nv) + ' · ' : '') + gioVN(x.luc)}</small>` : ''}</div>`; }).join('')
+      return `<div class="chat-m chat-m--${toi ? 'toi' : x.tu === 'he-thong' ? 'ht' : 'shop'}${x.tam ? ' is-tam' : ''}">${x.dk ? theDK(x.dk, toi) : ''}${x.noiDung ? `<div class="chat-m__b">${esc(x.noiDung).replace(/\n/g, '<br>')}</div>` : ''}${x.luc ? `<small>${x.tam ? 'Đang gửi…' : (x.tu === 'tu-dong' ? 'Trả lời tự động · ' : x.tu === 'nv' && x.nv ? esc(x.nv) + ' · ' : '') + gioVN(x.luc)}</small>` : ''}</div>`; }).join('')
       + (!tin.length ? `<div class="chat-nhanh">${CHAT_CFG.nhanh.map(([, t], k) => `<button type="button" data-chat-nhanh="${k}">${esc(t)}</button>`).join('')}</div>` : '');
     b.scrollTop = b.scrollHeight;
     b.querySelectorAll('img,video').forEach((m) => m.addEventListener(m.tagName === 'IMG' ? 'load' : 'loadedmetadata', () => { b.scrollTop = b.scrollHeight; }, { once: true }));
@@ -83,6 +84,47 @@
     ds.innerHTML = list.map((p) => `<div class="chat-bang__dong"><img src="${esc(MC.productThumb(p))}" alt=""><div><b>${esc(MC.shortName(p))}</b><span>${fmt(p.price)}</span></div><button type="button" class="chat-bang__gui" data-gui-sp="${esc(p.id)}">Gửi</button></div>`).join('') || '<p class="chat-bang__trong">Không tìm thấy sản phẩm</p>';
   }
 
+  /* ---- Câu trả lời tự động (gửi ngay khi khách bấm nút; nhân viên vẫn trả lời tiếp như thường) ---- */
+  const cuaHang = () => (window.PRODUCTS || []);
+  const tenSP = (id) => { const p = MC.byId(id); return p ? MC.shortName(p) : ''; };
+  const nhanMa = (c) => (c.type === 'ship' ? 'Miễn phí vận chuyển' : c.type === 'percent' ? 'Giảm ' + c.value + '%' + (c.max ? ' (tối đa ' + fmt(c.max) + ')' : '') : 'Giảm ' + fmt(c.value));
+  function traLoiTuDong(loai, x) {
+    const gioLam = (() => { const h = new Date(Date.now() + 7 * 36e5).getUTCHours(); return h >= 8 && h < 22; })();
+    const cho = gioLam ? 'Chuyên gia của Hương sẽ trả lời mẹ chi tiết trong ít phút ạ.' : 'Hiện ngoài giờ tư vấn (8:00 – 22:00), Hương sẽ trả lời mẹ sớm nhất vào sáng mai ạ.';
+    if (loai === 'dinh-duong') return 'Dạ để tư vấn đúng cho bé, mẹ cho Hương xin vài thông tin nhé:\n1. Bé bao nhiêu tuổi (năm / tháng)?\n2. Cân nặng và chiều cao hiện tại của bé?\n3. Bé có biếng ăn, táo bón, hay ốm vặt hay đang uống sản phẩm gì không?\n\nMẹ cũng có thể dùng "Đo chỉ số con miễn phí" trên trang chủ để xem bé so với chuẩn WHO và nhận gợi ý theo tuổi. ' + cho;
+    if (loai === 'tang-can') {
+      const goiY = ['25632276959', '41353214697', '26060839019', '42878618667'].map(tenSP).filter(Boolean);
+      return 'Dạ Hương hiểu mẹ đang lo ạ. Mẹ cho Hương xin tuổi, cân nặng, chiều cao của bé và bé ăn ngủ thế nào để chuyên gia đánh giá bé đang ở mức nào so với chuẩn nhé.' + (goiY.length ? '\n\nCác mẹ có bé chậm tăng cân, chiều cao hay tham khảo: ' + goiY.join(', ') + ' – liều dùng theo tuổi bé, Hương sẽ tư vấn cụ thể ạ.' : '') + '\n\n' + cho;
+    }
+    if (loai === 'my-pham') return 'Dạ để chọn đúng sản phẩm cho da mẹ, mẹ cho Hương biết:\n1. Da mẹ thuộc loại dầu, khô, hỗn hợp hay nhạy cảm?\n2. Mẹ đang gặp vấn đề gì: mụn, thâm nám, lỗ chân lông, xỉn màu, lão hoá…?\n3. Mẹ có đang mang thai hoặc cho con bú không?\n\nMẹ có thể gửi ảnh da (ảnh/video ở nút bên dưới) để chuyên gia xem kỹ hơn nhé. ' + cho;
+    if (loai === 'uu-dai') {
+      const ds = [];
+      try {
+        const sk = MC.suKienHien && MC.suKienHien();
+        if (sk) { ds.push('Sự kiện ' + sk.ten + ':'); (sk.khoi || []).filter((k) => !k.anh && (k.noiBat || k.huyHieu)).slice(0, 3).forEach((k) => ds.push('• ' + k.tieuDe + (k.noiBat ? ' – ' + k.noiBat : ''))); }
+        const ct = (MC.ctDangChay ? MC.ctDangChay() : []).filter((c) => !c.c.suKien).slice(0, 6);
+        if (ct.length) { ds.push('Quà tặng theo đơn:'); ct.forEach((c) => ds.push('• ' + (c.c.ten || MC.ctMoTa(c)).replace(/^20\/10 · /, ''))); }
+        const ma = (MC.maCongKhai ? MC.maCongKhai() : []).slice(0, 4);
+        if (ma.length) { ds.push('Mã giảm giá đang dùng được:'); ma.forEach((c) => ds.push('• ' + c.ma + ': ' + nhanMa(c) + (c.min ? ', đơn từ ' + fmt(c.min) : '') + (c.donDau ? ', khách mua lần đầu' : ''))); }
+        const gv = (window.GIO_VANG || []).filter((g) => !g.tat);
+        if (gv.length) { ds.push('Giờ vàng:'); gv.forEach((g) => ds.push('• ' + g.ten + ' ' + g.tu + ' – ' + g.den + ' mỗi ngày: giảm ' + g.giam + '%')); }
+      } catch { /* thiếu dữ liệu thì bỏ qua phần đó */ }
+      if (SITE.freeshipFrom) ds.push('Freeship cho đơn từ ' + fmt(SITE.freeshipFrom) + '.');
+      return 'Dạ hôm nay Hương Chất Kids đang có các ưu đãi sau ạ:\n' + ds.join('\n') + '\n\nWeb tự áp ưu đãi có lợi nhất khi mẹ thanh toán. Mẹ cần tư vấn chọn sản phẩm cứ nhắn Hương nhé.';
+    }
+    if (loai === 'anh' || loai === 'video') return 'Dạ Hương đã nhận ' + (loai === 'anh' ? 'ảnh' : 'video') + ' của mẹ. Mẹ mô tả thêm giúp Hương mẹ cần hỗ trợ gì (sản phẩm, tình trạng của bé / da, hay vấn đề đơn hàng) nhé. ' + cho;
+    if (loai === 'sp') {
+      const p = MC.byId(x && x.id); if (!p) return 'Dạ Hương đã nhận sản phẩm mẹ gửi. ' + cho;
+      const v = (p.variants || []).filter((y) => !y.oos).map((y) => y.label + ': ' + fmt(y.price)).slice(0, 4);
+      return 'Dạ đây là ' + MC.shortName(p) + (p.origin ? ' (' + p.origin + ')' : '') + ' ạ.\n'
+        + 'Giá: ' + (v.length ? v.join(' · ') : fmt(p.price)) + (Number(p.stock) > 0 ? ' – còn hàng.' : ' – tạm hết hàng.') + '\n'
+        + ((p.highlights || []).length ? 'Điểm nổi bật: ' + p.highlights.slice(0, 3).join('; ') + '.\n' : '')
+        + 'Mẹ cần tư vấn liều dùng, cách dùng theo tuổi bé hay muốn đặt luôn thì nhắn Hương nhé. Mẹ cũng có thể bấm "Mua ngay" trên thẻ sản phẩm để đặt nhanh. ' + cho;
+    }
+    if (loai === 'don') return 'Dạ Hương đã nhận thông tin đơn ' + ((x && x.ma) || '') + '. Mẹ cần hỗ trợ gì cho đơn này ạ: kiểm tra tình trạng giao hàng, đổi địa chỉ, thêm / bớt sản phẩm hay đổi trả? ' + cho;
+    return '';
+  }
+
   /* ---- Gửi / đọc tin ---- */
   async function docMoi() {
     if (!phien) return;
@@ -98,7 +140,7 @@
   /* Đọc tin mới: 5 giây/lần khi mở khung, 60 giây/lần khi đóng (chỉ khi đã từng chat), dừng khi tab ẩn */
   function lap() { clearTimeout(hen); if (!phien || document.hidden) return; hen = setTimeout(async () => { await docMoi(); lap(); }, mo ? 5000 : 60000); }
   const baoLoi = (msg) => { tin.push({ ma: 'loi' + Date.now(), tu: 'he-thong', noiDung: msg, luc: Date.now(), daXem: true }); };
-  async function gui(nd, dk, tamDK) {
+  async function gui(nd, dk, tamDK, tuDong) {
     nd = String(nd || '').trim(); if ((!nd && !dk) || dangGui) return;
     if (!phien) { phien = taoPhien(); store.set(KP, phien); }
     dangGui = true;
@@ -112,7 +154,8 @@
         if (!r0.ok || !j.ok) throw new Error(j.msg || 'Chưa gửi được tệp, mẹ thử lại nhé');
         dk = { loai: j.loai, url: j.url };
       }
-      const r = await loyaltyApi('chatGui', { phien, noiDung: nd, dinhKem: dk ? JSON.stringify(dk) : '', ten: k.ten, sdt: k.sdt, trang: location.pathname.split('/').pop() + location.search }, 20000);
+      const td = tuDong || (dk ? traLoiTuDong(dk.loai, dk) : '');
+      const r = await loyaltyApi('chatGui', { phien, noiDung: nd, dinhKem: dk ? JSON.stringify(dk) : '', tuDong: String(td || '').slice(0, 1800), ten: k.ten, sdt: k.sdt, trang: location.pathname.split('/').pop() + location.search }, 20000);
       tin = tin.filter((x) => x !== tam);
       if (r && r.ok) (r.tin || []).forEach((x) => { x.daXem = true; tin.push(x); }); else baoLoi((r && r.msg) || 'Chưa gửi được, mẹ thử lại nhé');
     } catch (e) {
@@ -179,7 +222,7 @@
       const gs = t.closest('[data-gui-sp]'); if (gs) { bang = ''; veBang(); return gui('', { loai: 'sp', id: gs.dataset.guiSp }); }
       const gd = t.closest('[data-gui-don]'); if (gd) { const d = document.getElementById('chatBang')._don[Number(gd.dataset.guiDon)]; bang = ''; veBang(); return gui('Hương hỗ trợ giúp mình đơn này với ạ', { loai: 'don', ma: d.ma, tong: d.tong, tt: d.tt, sp: d.sp.slice(0, 200), ngay: d.ngay }); }
       const n = t.closest('[data-chat-nhanh]');
-      if (n) { const c = CHAT_CFG.nhanh[Number(n.dataset.chatNhanh)]; if (c[2] === '#don') return moBang('don'); const o = document.getElementById('chatO'); if (/ $/.test(c[2])) { o.value = c[2]; o.focus(); o.setSelectionRange(o.value.length, o.value.length); } else gui(c[2]); }
+      if (n) { const c = CHAT_CFG.nhanh[Number(n.dataset.chatNhanh)]; if (c[2] === '#don') return moBang('don'); gui(c[2], null, null, c[3] ? traLoiTuDong(c[3]) : ''); }
     });
     w.addEventListener('input', (e) => { if (e.target.id === 'chatTimSP') veDsSP(e.target.value); });
     document.getElementById('chatTep').addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; chonTep(f); });
@@ -199,5 +242,5 @@
     e.preventDefault(); moKhung(true);
     const nhap = n.dataset.chatNhap; if (nhap) { const o = document.getElementById('chatO'); o.value = nhap; o.dispatchEvent(new Event('input')); setTimeout(() => { o.focus(); o.setSelectionRange(o.value.length, o.value.length); }, 160); }
   });
-  MC.chat = { mo: () => moKhung(true), gui };
+  MC.chat = { mo: () => moKhung(true), gui, traLoiTuDong };
 })();
