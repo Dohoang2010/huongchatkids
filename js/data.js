@@ -2719,6 +2719,10 @@ window.PRODUCTS = [
       {
         "label": "Hộp 900g (50 gói)",
         "price": 449000
+      },
+      {
+        "label": "2 Hộp",
+        "price": 898000
       }
     ],
     "desc": "Ngũ cốc Bắp Thiên Ma Kitea là sự kết hợp giữa bột thiên ma, bột bắp và các loại hạt giàu dinh dưỡng. Sản phẩm có hương vị thơm béo, ngọt dịu, kèm topping gạo lứt sấy giòn, phù hợp dùng vào bữa sáng, bữa phụ hoặc những lúc cần bổ sung năng lượng nhanh chóng. Thương hiệu Kitea, xuất xứ Hàn Quốc, nhà sản xuất Korea Ginseng Product Co., Ltd. Hộp 900g gồm 50 gói, mỗi gói khoảng 18g. Hạn sử dụng: xem trên bao bì sản phẩm.",
