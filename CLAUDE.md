@@ -11,6 +11,7 @@ Chủ shop không rành kỹ thuật: luôn trả lời **tiếng Việt**, ng�
   qua lớp giả lập trong `tools/may-chu-vps/` – xem `tools/may-chu-vps/README.md`. Dữ liệu nằm trong PostgreSQL trên VPS.
   - Sửa chức năng máy chủ = sửa `tools/apps-script.gs` rồi push → **lên thật ngay**, nên kiểm tra kỹ (`node -e "new Function(require('fs').readFileSync('tools/apps-script.gs','utf8'))"`).
   - Google Apps Script cũ chỉ còn chuyển tiếp sang VPS. **Sửa / deploy Apps Script trên Google không còn tác dụng** – không dùng `tools/deploy-appscript.sh` nữa.
+  - **Kiểm thử máy chủ** (dữ liệu giả, không đụng dữ liệu thật): `node --test tools/may-chu-vps/kiem-thu/kiem-thu.js tools/may-chu-vps/kiem-thu/chuc-nang.test.js tools/kiem-thu/le-hoi.test.js`. Hook pre-commit tự chạy khi sửa mã máy chủ; VPS chỉ nạp apps-script.gs mới khi qua kiểm thử (hỏng → giữ bản cũ + báo Zalo). Thêm chức năng máy chủ = thêm bài kiểm thử trong chuc-nang.test.js.
   - Không bao giờ chạy lệnh nhập lại từ Google Sheets (`/noi-bo/nhap`): sẽ ghi đè dữ liệu thật bằng dữ liệu cũ.
 
 ## Quy tắc bắt buộc
