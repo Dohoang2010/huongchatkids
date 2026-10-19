@@ -168,6 +168,7 @@ window.BRANDS = [
   { key: 'chef-to-factory', label: 'CF – Chef To Factory', origin: 'Việt Nam', color: '#8A2A2A' },
   { key: 'vua-dinh-vi', label: 'Vua Đỉnh Vị', origin: 'Việt Nam', color: '#B71C1C' },
   { key: 'hexacare', label: 'Hexacare', origin: 'Pháp', color: '#C2185B' },
+  { key: 'boryeong-mud', label: 'Boryeong MUD+', origin: 'Hàn Quốc', color: '#8B6B4E' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' }
 ];
 
@@ -2671,6 +2672,62 @@ window.PRODUCTS = [
       "Cho tóc khô, hư tổn sau uốn nhuộm"
     ],
     "usage": "Gội sạch tóc, thoa dầu xả lên thân và ngọn tóc, để 2–3 phút rồi xả kỹ với nước."
+  },
+  {
+    "id": "goi-xa-boryeong-mud",
+    "name": "Cặp Dầu Gội – Xả Bùn Khoáng Boryeong MUD+ Hàn Quốc 500ml – Anti-Hair Loss Shampoo & Deep Care Treatment, Bộ Skincare Cho Da Đầu",
+    "short": "Cặp gội xả bùn khoáng Boryeong MUD+ 500ml",
+    "brand": "boryeong-mud",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1050000,
+    "oldPrice": 0,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#8B6B4E",
+    "weight": "Gội 500ml + xả 500ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/goi-xa-boryeong-mud.jpg",
+    "thumb": "img/thumb/goi-xa-boryeong-mud.jpg",
+    "images": [
+      "img/goi-xa-boryeong-mud.jpg",
+      "img/goi-xa-boryeong-mud-2.jpg",
+      "img/goi-xa-boryeong-mud-3.jpg",
+      "img/goi-xa-boryeong-mud-4.jpg",
+      "img/goi-xa-boryeong-mud-5.jpg",
+      "img/goi-xa-boryeong-mud-6.jpg",
+      "img/goi-xa-boryeong-mud-7.jpg",
+      "img/goi-xa-boryeong-mud-8.jpg",
+      "img/goi-xa-boryeong-mud-9.jpg",
+      "img/goi-xa-boryeong-mud-10.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Gội + xả 500ml",
+        "price": 1050000
+      }
+    ],
+    "desc": "Bộ đôi dầu gội Anti-Hair Loss Shampoo và dầu xả Deep Care Treatment Boryeong MUD+ (Hàn Quốc), mỗi chai 500ml – \"bộ skincare cho da đầu\" với tinh tuý bùn khoáng biển Boryeong. Theo nhà sản xuất: dầu gội làm sạch sâu, kiểm soát dầu thừa, làm thông thoáng nang tóc và hỗ trợ giảm gãy rụng; dầu xả giúp phục hồi tóc hư tổn, giảm khô xơ, tăng độ mềm mượt và bảo vệ sợi tóc. Thành phần nổi bật: bùn biển Boryeong (9 khoáng chất tự nhiên), Salicylic Acid, Climbazole, Niacinamide, Panthenol (dầu gội); Ceramide NP, Amodimethicone, Behentrimonium Chloride (dầu xả). Đã thử nghiệm kích ứng da tại Viện Nghiên cứu Da liễu Hàn Quốc (2023) trên 30 người trưởng thành: dịu nhẹ, không gây kích ứng. Sản xuất tại nhà máy Groovy Cosmetic đạt ISO 9001, ISO 22716 (GMP mỹ phẩm), ISO 14001.",
+    "highlights": [
+      "Bùn khoáng biển Boryeong – 9 khoáng chất tự nhiên",
+      "Cặp gội + xả 500ml, công nghệ Ozone Therapy",
+      "Đã thử nghiệm kích ứng da tại Viện Nghiên cứu Da liễu Hàn Quốc",
+      "Theo NSX: tới 5 ngày không bết, da đầu dầu, gàu, ngứa cải thiện sau khoảng 3 lần gội",
+      "Cho mẹ lo tóc rụng, tóc thưa, da đầu dầu, gàu ngứa, tóc hư tổn"
+    ],
+    "usage": "Làm ướt tóc, lấy lượng dầu gội vừa đủ, massage nhẹ da đầu 2–3 phút rồi xả sạch. Sau khi gội, lau bớt nước, thoa dầu xả đều lên thân và ngọn tóc, massage nhẹ 2–3 phút rồi xả sạch bằng nước ấm. Mẹo: dùng đều 2–3 lần/tuần giúp phục hồi tóc hư tổn hiệu quả hơn. Không dùng trên vùng da bị thương, tránh để dính vào mắt; ngưng sử dụng nếu xuất hiện kích ứng."
   },
   {
     "id": "24329101823",
