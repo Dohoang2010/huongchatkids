@@ -57,6 +57,7 @@ window.SITE = {
       '41002695070': 600,    // rong biển Sung Gyung 500g
       '28467224687': 1100,   // táo đỏ 1kg
       '43532388498': 300,    // granola 200g
+      'ngu-coc-bap-thien-ma-kitea': 1100,   // ngũ cốc thiên ma Kitea hộp 900g
       '19491505209': 1050, '19682441455': 1050, '20992159167': 1050,   // sữa Biostime 800g
       '47357633686': 1300,   // sâm Pinkfong
       '27355720019': 550,    // hồng sâm Rich Kid 10 gói 40ml
@@ -169,6 +170,7 @@ window.BRANDS = [
   { key: 'vua-dinh-vi', label: 'Vua Đỉnh Vị', origin: 'Việt Nam', color: '#B71C1C' },
   { key: 'hexacare', label: 'Hexacare', origin: 'Pháp', color: '#C2185B' },
   { key: 'boryeong-mud', label: 'Boryeong MUD+', origin: 'Hàn Quốc', color: '#8B6B4E' },
+  { key: 'kitea', label: 'Kitea', origin: 'Hàn Quốc', color: '#C2561B' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' }
 ];
 
@@ -2673,6 +2675,64 @@ window.PRODUCTS = [
       "Cho tóc khô, hư tổn sau uốn nhuộm"
     ],
     "usage": "Gội sạch tóc, thoa dầu xả lên thân và ngọn tóc, để 2–3 phút rồi xả kỹ với nước."
+  },
+  {
+    "id": "ngu-coc-bap-thien-ma-kitea",
+    "slug": "ngu-coc-bap-thien-ma-kitea-han-quoc",
+    "name": "Ngũ Cốc Bắp Thiên Ma Kitea Hàn Quốc Hộp 900g 50 Gói – Trà Ngũ Cốc Cornflakes Thiên Ma Pha Nóng Hoặc Lạnh",
+    "short": "Ngũ cốc bắp thiên ma Kitea 900g (50 gói)",
+    "brand": "kitea",
+    "cat": "thuc-pham",
+    "ages": [
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "an-vat"
+    ],
+    "price": 449000,
+    "oldPrice": 0,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "shape": "box",
+    "color": "#C2561B",
+    "weight": "Hộp 900g (50 gói x 18g)",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới"
+    ],
+    "family": true,
+    "image": "img/ngu-coc-bap-thien-ma-kitea.jpg",
+    "thumb": "img/thumb/ngu-coc-bap-thien-ma-kitea.jpg",
+    "images": [
+      "img/ngu-coc-bap-thien-ma-kitea.jpg",
+      "img/ngu-coc-bap-thien-ma-kitea-tt.jpg",
+      "img/ngu-coc-bap-thien-ma-kitea-dd.jpg",
+      "img/ngu-coc-bap-thien-ma-kitea-hd.jpg",
+      "img/ngu-coc-bap-thien-ma-kitea-2.jpg",
+      "img/ngu-coc-bap-thien-ma-kitea-3.jpg",
+      "img/ngu-coc-bap-thien-ma-kitea-4.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Hộp 900g (50 gói)",
+        "price": 449000
+      }
+    ],
+    "desc": "Ngũ cốc Bắp Thiên Ma Kitea là sự kết hợp giữa bột thiên ma, bột bắp và các loại hạt giàu dinh dưỡng. Sản phẩm có hương vị thơm béo, ngọt dịu, kèm topping gạo lứt sấy giòn, phù hợp dùng vào bữa sáng, bữa phụ hoặc những lúc cần bổ sung năng lượng nhanh chóng. Thương hiệu Kitea, xuất xứ Hàn Quốc, nhà sản xuất Korea Ginseng Product Co., Ltd. Hộp 900g gồm 50 gói, mỗi gói khoảng 18g. Hạn sử dụng: xem trên bao bì sản phẩm.",
+    "highlights": [
+      "Kết hợp bột thiên ma, bột bắp và nhiều loại hạt dinh dưỡng",
+      "Có thêm topping gạo lứt sấy giòn, tạo cảm giác thơm ngon khi thưởng thức",
+      "Hương vị thơm dịu, dễ uống, phù hợp với nhiều độ tuổi",
+      "Gói nhỏ 18g tiện lợi, dễ mang theo khi đi học, đi làm hoặc đi du lịch",
+      "Pha nóng hoặc pha lạnh tùy theo sở thích – hợp bữa sáng, bữa phụ"
+    ],
+    "usage": "Pha nóng: cho 01 gói ngũ cốc vào cốc, thêm khoảng 80–100ml nước nóng, khuấy đều và thưởng thức. Pha lạnh: cho 01 gói ngũ cốc vào khoảng 40ml nước, khuấy đều cho bột hòa tan, thêm đá lạnh và thưởng thức. Có thể điều chỉnh lượng nước tùy theo khẩu vị đậm hoặc nhạt.",
+    "seoTitle": "Ngũ cốc bắp thiên ma Kitea Hàn Quốc 900g (50 gói) – Hương Chất Kids",
+    "seoDesc": "Ngũ cốc bắp thiên ma Kitea Hàn Quốc hộp 900g 50 gói, giá 449.000đ. Thơm béo, ngọt dịu, pha nóng hoặc lạnh, tiện cho bữa sáng, bữa phụ của cả nhà.",
+    "seoKey": "ngũ cốc bắp thiên ma, ngũ cốc thiên ma Kitea, trà ngũ cốc thiên ma Hàn Quốc, ngũ cốc Hàn Quốc 50 gói"
   },
   {
     "id": "goi-xa-boryeong-mud",
