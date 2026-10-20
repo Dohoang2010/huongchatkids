@@ -1800,12 +1800,12 @@ window.PRODUCTS = [
     "variants": [
       {
         "label": "1 hộp",
-        "price": 6000000,
+        "price": 4950000,
         "oldPrice": 8100000
       },
       {
         "label": "2 hộp",
-        "price": 12000000,
+        "price": 9900000,
         "oldPrice": 16200000
       }
     ],
