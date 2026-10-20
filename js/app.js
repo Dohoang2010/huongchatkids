@@ -450,6 +450,17 @@
   const hetHang = (p) => !!p && (p.stock <= 0 || (Array.isArray(p.variants) && p.variants.length > 0 && p.variants.every((v) => v.oos)));
   /* Cháy hàng khi mua: cả sản phẩm hết, hoặc phân loại đang chọn đã hết */
   function chayHang(p, variant) { if (hetHang(p)) return true; const v = variant != null && variant !== '' && p && p.variants ? p.variants[Number(variant)] : null; return !!(v && v.oos); }
+  /* Bé mẹ đã lưu ở "Theo dõi sức khỏe con" (localStorage hck_suckhoe, chỉ nằm trên máy mẹ) → nhãn "Hợp tuổi bé" trên thẻ sản phẩm */
+  let beNho = { raw: undefined, v: null };
+  function beDaLuu() {
+    let raw = null; try { raw = localStorage.getItem('hck_suckhoe'); } catch { return null; }
+    if (raw === beNho.raw) return beNho.v;
+    let v = null;
+    try { const d = JSON.parse(raw || 'null'); const ms = d && Date.parse(d.dob + 'T00:00:00');
+      if (ms) { const t = (Date.now() - ms) / 864e5 / 30.4375; v = { ten: String(d.name || '').slice(0, 30), giaiDoan: t < 6 ? '0-6m' : t < 12 ? '6-12m' : t < 36 ? '1-3y' : t < 72 ? '3-6y' : t < 144 ? '6-12y' : '12-18y' }; } } catch { v = null; }
+    beNho = { raw, v }; return v;
+  }
+  const hopTuoiBe = (p) => { const be = beDaLuu(); return !!(be && (p.ages || []).includes(be.giaiDoan)); };
   function productCard(p, opts = {}) {
     const d = pct(p); const b = brandOf(p); const oos = hetHang(p);
     const tags = (p.tags || []).filter((t) => t !== 'Giảm sâu').slice(0, 2);
@@ -465,7 +476,7 @@
         <a class="pcard__name" href="${spUrl(p)}" title="${esc(p.name)}">${esc(shortName(p))}</a>
         <div class="pcard__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)} <span class="text-muted">(${p.reviews})</span></span>` : ''}${p.reviews > 0 && p.sold > 0 ? '<span>·</span>' : ''}${p.sold > 0 ? `<span>Đã bán ${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'k' : p.sold}</span>` : ''}${!p.reviews && !p.sold ? `<span class="text-teal fw-600">${I.check} Chính hãng</span>` : ''}</div>
         <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : p.giaGoc ? `<s>${fmt(p.giaGoc)}</s>` : ''}</div>
-        <div class="pcard__age">${p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
+        <div class="pcard__age">${hopTuoiBe(p) ? `<span class="pcard__hop" title="Hợp độ tuổi ${esc(beDaLuu().ten ? 'bé ' + beDaLuu().ten : 'của bé')} (theo thông tin mẹ đã lưu)">💗 Hợp tuổi ${esc(beDaLuu().ten ? 'bé ' + beDaLuu().ten : 'bé')}</span>` : p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
         <div class="pcard__actions">
           <button class="btn btn--primary" type="button" data-buy="${p.id}" ${oos ? 'disabled' : ''}>${I.zap}Mua ngay</button>
           <button class="btn btn--outline btn--icon" type="button" data-add="${p.id}" aria-label="Thêm ${esc(shortName(p))} vào giỏ" ${oos ? 'disabled' : ''}>${I.cart}</button>
@@ -2094,5 +2105,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    spUrl, baiUrl, hetHang, chayHang, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    spUrl, baiUrl, hetHang, chayHang, beDaLuu, hopTuoiBe, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

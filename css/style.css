@@ -2526,3 +2526,78 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 
 .sk-tabs-cho { height: 53.25px; border-bottom: 1px solid var(--line, #eee); }
 @media (min-width: 992px) { .dv-cum { min-height: 180px; } }
+
+/* ---------- Theo dõi sức khỏe con: hình bé (SVG), so với chuẩn WHO, hành trình lớn lên, mỗi ngày một điều, kết quả gọn (20/10/2026) ---------- */
+.hk-be { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; font: inherit; color: inherit; }
+.hk-be svg { display: block; height: 100%; width: auto; max-width: 100%; margin: 0 auto; overflow: visible; filter: drop-shadow(0 6px 8px rgba(240, 83, 122, .16)); transform-origin: 50% 100%; }
+.hk-be--be svg { animation: hk-tho 3.2s ease-in-out infinite; }
+.hk-be--cu svg { opacity: .55; filter: grayscale(.35); }
+.hk-be:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; border-radius: 12px; }
+.hk-be.is-nhay svg { animation: hk-nhay .75s cubic-bezier(.3, 1.5, .5, 1); }
+.hk-be__noi { position: absolute; bottom: calc(100% + 4px); left: 50%; z-index: 3; width: max-content; max-width: 190px; padding: 7px 11px; border-radius: 14px; background: #fff; color: var(--ink); font-size: 12.5px; font-weight: 600; line-height: 1.35; text-align: left; box-shadow: 0 6px 18px rgba(0, 0, 0, .12); opacity: 0; transform: translate(-50%, 6px) scale(.9); transition: opacity .18s, transform .18s; pointer-events: none; }
+.hk-be__noi::after { content: ''; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: #fff; }
+.hk-be__noi.is-hien { opacity: 1; transform: translate(-50%, 0) scale(1); }
+@keyframes hk-tho { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes hk-nhay { 0% { transform: none; } 18% { transform: scale(1.06, .9); } 50% { transform: translateY(-16%) scale(.96, 1.05); } 78% { transform: scale(1.04, .95); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .hk-be svg, .hk-be.is-nhay svg, .hk-ht__ghim { animation: none; } }
+
+/* thẻ trang chủ: hình bé thay biểu tượng thước */
+.hk-card--saved:has(.hk-card__ic--be) { grid-template-columns: 76px 1fr; }
+.hk-card__ic--be { display: block; width: 76px; height: 104px; border-radius: 0; background: none; box-shadow: none; }
+.hk-card__ic--be .hk-be__noi { left: 62%; transform: translate(0, 6px) scale(.9); transform-origin: 0 100%; }
+.hk-card__ic--be .hk-be__noi.is-hien { transform: translate(0, 0) scale(1); }
+.hk-card__ic--be .hk-be__noi::after { left: 14px; }
+.hk-motdieu { margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: #FFF8E6; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
+.hk-motdieu b { display: block; margin-bottom: 2px; font-size: 12.5px; color: #B7791F; }
+
+/* So với chuẩn WHO: bé lần trước · hôm nay · bạn trung bình trên cùng một thước */
+.hk-ss__canh { position: relative; height: 270px; border-radius: 18px; background: linear-gradient(180deg, #FFF6F9 0%, #F1FAF8 100%); overflow: hidden; }
+.hk-ss__canh::before { content: ''; position: absolute; left: 40px; right: 0; bottom: 54px; height: 2px; background: #EADDE4; }
+.hk-ss__thuoc { position: absolute; left: 0; top: 36px; bottom: 54px; width: 40px; border-right: 2px solid #F3C6D4; background: repeating-linear-gradient(0deg, transparent 0 9px, rgba(240, 83, 122, .14) 9px 10px); }
+.hk-ss__thuoc span { position: absolute; right: 6px; transform: translateY(50%); font-size: 10.5px; font-weight: 700; color: var(--muted); }
+.hk-ss__thuoc span::after { content: ''; position: absolute; left: calc(100% + 6px); top: 50%; width: 2000px; border-top: 1px dashed rgba(0, 0, 0, .07); }
+.hk-ss__ds { position: absolute; left: 44px; right: 8px; top: 36px; bottom: 54px; display: flex; justify-content: space-around; align-items: flex-end; }
+.hk-ss__o { position: relative; flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 0; }
+.hk-ss__cot { position: relative; width: 100%; display: flex; justify-content: center; min-height: 24px; }
+.hk-ss__cot .hk-be { height: 100%; }
+.hk-ss__so { position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); padding: 2px 8px; border-radius: 999px; background: #fff; font-size: 12px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0, 0, 0, .06); }
+.hk-ss__o--be .hk-ss__so { background: var(--primary); color: #fff; }
+.hk-ss__ten { position: absolute; top: calc(100% + 8px); left: 0; right: 0; text-align: center; line-height: 1.25; }
+.hk-ss__ten b { display: block; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hk-ss__ten small { font-size: 11px; color: var(--muted); }
+.hk-ss__ket { margin: 12px 0 0; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; background: var(--tone-bg, var(--teal-100)); color: var(--tone-ink, var(--ink)); }
+@media (max-width: 480px) { .hk-ss__canh { height: 240px; } }
+
+/* Hành trình lớn lên: các chặng tuổi, ghim "Bé ở đây" */
+.hk-ht__ds { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(112px, 1fr); gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 2px 8px; -webkit-overflow-scrolling: touch; }
+.hk-ht__o { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 34px 8px 12px; border-radius: 16px; border: 2px solid transparent; background: var(--nen); color: inherit; text-align: center; text-decoration: none; scroll-snap-align: start; transition: transform .15s, box-shadow .15s; }
+.hk-ht__o:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm, 0 4px 12px rgba(0, 0, 0, .08)); }
+.hk-ht__o.is-o { border-color: var(--primary); box-shadow: 0 6px 18px rgba(240, 83, 122, .18); }
+.hk-ht__khung { display: flex; align-items: flex-end; justify-content: center; width: 100%; height: 120px; margin-bottom: 6px; }
+.hk-ht__be { display: block; min-height: 28px; }
+.hk-ht__be svg { display: block; height: 100%; width: auto; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .08)); }
+.hk-ht__o b { font-size: 13.5px; }
+.hk-ht__o small { font-size: 11.5px; color: var(--muted); }
+.hk-ht__ghim { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 11.5px; font-weight: 700; white-space: nowrap; animation: hk-tho 2.4s ease-in-out infinite; }
+
+/* Kết quả gọn theo từng mục: bấm mục nào mở mục đó */
+details.hk-acc > summary { position: relative; padding-right: 36px; margin-bottom: 0; cursor: pointer; list-style: none; }
+details.hk-acc > summary::-webkit-details-marker { display: none; }
+details.hk-acc > summary::after { content: ''; position: absolute; right: 8px; top: 50%; width: 10px; height: 10px; border-right: 2.5px solid var(--muted); border-bottom: 2.5px solid var(--muted); transform: translateY(-75%) rotate(45deg); transition: transform .2s; }
+details.hk-acc[open] > summary { margin-bottom: 12px; }
+details.hk-acc[open] > summary::after { transform: translateY(-25%) rotate(-135deg); }
+details.hk-acc > summary:hover h3 { color: var(--primary); }
+details.hk-acc > summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; border-radius: 8px; }
+.hk-chart__chips { margin-bottom: 10px; }
+
+/* Thẻ sản phẩm: nhãn "Hợp tuổi bé" theo bé mẹ đã lưu */
+.pcard__age .pcard__hop { background: #FFE9EF; color: #D63B67; font-weight: 700; }
+
+/* hình bé: câu nói ở thẻ trang chủ hiện bên dưới bé (phía trên bị mép thẻ che); khung so sánh rộng hơn trên máy tính */
+.hk-card__ic--be .hk-be__noi, .hk-card__ic--be .hk-be__noi.is-hien { bottom: auto; top: calc(100% + 6px); left: 0; }
+.hk-card__ic--be .hk-be__noi { transform: translateY(-6px) scale(.9); transform-origin: 20px 0; }
+.hk-card__ic--be .hk-be__noi.is-hien { transform: none; }
+.hk-card__ic--be .hk-be__noi::after { top: auto; bottom: 100%; left: 30px; border-top-color: transparent; border-bottom-color: #fff; }
+@media (min-width: 768px) { .hk-ss__canh { height: 330px; } .hk-ss__ds { left: max(52px, calc(50% - 300px)); right: max(8px, calc(50% - 330px)); } }
+.hk-ht__o.is-o { z-index: 1; }
+.hk-ht__ghim { font-size: 11px; padding: 2px 7px; z-index: 2; }

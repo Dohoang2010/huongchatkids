@@ -461,6 +461,127 @@
     </svg>`;
   }
 
+  const tenTho = (hs) => (hs.name ? 'bé ' + hs.name : 'bé');
+  /* ---------------- Hình bé (SVG tự vẽ, đổ bóng kiểu 3D, màu pastel) ----------------
+     Bé lớn theo tuổi (trẻ nhỏ đầu to, lớn dần thân dài ra), bé trai / bé gái khác tóc và quần áo.
+     loai: 'be' (bé của mẹ) | 'cu' (bé lần đo trước, nhạt hơn) | 'tb' (bạn trung bình theo chuẩn WHO) */
+  let soHinh = 0;
+  function hinhBe(sex, thang, loai = 'be') {
+    const id = 'hb' + (++soHinh), gai = sex === 2;
+    const tl = thang < 12 ? 0.36 : thang < 36 ? 0.31 : thang < 72 ? 0.27 : thang < 144 ? 0.22 : 0.185;   // tỉ lệ đầu / chiều cao
+    const r = tl * 100, cy = r + 2, co = 2 * r + 2, hong = co + (198 - co) * (thang < 36 ? 0.5 : 0.46), chan = 194;
+    const rong = thang < 12 ? 50 : thang < 36 ? 44 : thang < 144 ? 38 : 34;   // bề ngang thân
+    const x0 = 50 - rong / 2, x1 = 50 + rong / 2;
+    const ao = loai === 'tb' ? ['#E4E0F2', '#C9C2E3'] : gai ? ['#FFC6D6', '#FF94B4'] : ['#B6ECE4', '#6ED3C4'];
+    const quan = loai === 'tb' ? '#B9B1D8' : gai ? '#FF94B4' : '#9DB8FF';
+    const toc = loai === 'tb' ? '#A79FC4' : '#6B4A3A';
+    const than = gai
+      ? `M${x0 + 4},${co + 2} Q50,${co - 3} ${x1 - 4},${co + 2} L${x1 + 7},${hong + 6} Q50,${hong + 12} ${x0 - 7},${hong + 6} Z`   // váy xoè
+      : `M${x0 + 2},${co + 2} Q50,${co - 3} ${x1 - 2},${co + 2} L${x1},${hong} L${x0},${hong} Z`;
+    const chanX = [50 - rong * 0.2, 50 + rong * 0.2], dayChan = thang < 36 ? 12 : 10;
+    const tocTren = `M${50 - r - 1},${cy + 2} Q${50 - r},${cy - r - 4} 50,${cy - r - 3} Q${50 + r},${cy - r - 4} ${50 + r + 1},${cy + 2} Q${50 + r * 0.55},${cy - r * 0.45} 50,${cy - r * 0.55} Q${50 - r * 0.55},${cy - r * 0.45} ${50 - r - 1},${cy + 2} Z`;
+    const tocGai = gai ? (thang < 144
+      ? `<circle cx="${50 - r - 3}" cy="${cy - r * 0.35}" r="${r * 0.36}" fill="${toc}"/><circle cx="${50 + r + 3}" cy="${cy - r * 0.35}" r="${r * 0.36}" fill="${toc}"/>
+         <circle cx="${50 - r * 0.7}" cy="${cy - r * 0.78}" r="${r * 0.13}" fill="${ao[1]}"/><circle cx="${50 + r * 0.7}" cy="${cy - r * 0.78}" r="${r * 0.13}" fill="${ao[1]}"/>`
+      : `<path d="M${50 - r},${cy} Q${50 - r - 4},${cy + r * 1.5} ${50 - r * 0.5},${cy + r * 1.7} L${50 + r * 0.5},${cy + r * 1.7} Q${50 + r + 4},${cy + r * 1.5} ${50 + r},${cy} Z" fill="${toc}"/>`) : '';
+    return `<svg class="hb hb--${loai}" viewBox="0 0 100 200" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="${id}d" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#FFEFE4"/><stop offset=".65" stop-color="#FFD6BF"/><stop offset="1" stop-color="#F2B597"/></radialGradient>
+        <linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${ao[0]}"/><stop offset="1" stop-color="${ao[1]}"/></linearGradient>
+      </defs>
+      <ellipse cx="50" cy="197" rx="${rong * 0.62}" ry="3" fill="#000" opacity=".1"/>
+      ${tocGai && thang >= 144 ? tocGai : ''}
+      <g class="hb__chan">${chanX.map((x) => `<rect x="${x - dayChan / 2}" y="${hong - 4}" width="${dayChan}" height="${chan - hong}" rx="${dayChan / 2}" fill="url(#${id}d)"/><ellipse cx="${x + 1}" cy="${chan}" rx="${dayChan * 0.75}" ry="4" fill="${loai === 'tb' ? '#9E96BE' : '#5B6B8C'}"/>`).join('')}</g>
+      ${gai ? '' : `<rect x="${x0}" y="${hong - 10}" width="${rong}" height="${(chan - hong) * 0.42 + 10}" rx="6" fill="${quan}"/>`}
+      <g class="hb__tay"><path d="M${x0 + 3},${co + 8} Q${x0 - 9},${co + (hong - co) * 0.5} ${x0 - 5},${hong - 4}" stroke="url(#${id}d)" stroke-width="${dayChan - 1}" stroke-linecap="round" fill="none"/>
+        <path class="hb__tay-p" d="M${x1 - 3},${co + 8} Q${x1 + 9},${co + (hong - co) * 0.5} ${x1 + 5},${hong - 4}" stroke="url(#${id}d)" stroke-width="${dayChan - 1}" stroke-linecap="round" fill="none"/></g>
+      <path d="${than}" fill="url(#${id}a)"/>
+      <path d="M${x0 + 8},${co + 6} Q50,${co + 1} ${x1 - 8},${co + 6}" stroke="#fff" stroke-opacity=".55" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      ${tocGai && thang < 144 ? tocGai : ''}
+      <circle cx="50" cy="${cy}" r="${r}" fill="url(#${id}d)"/>
+      <path d="${tocTren}" fill="${toc}"/>
+      <ellipse cx="${50 - r * 0.38}" cy="${cy + r * 0.12}" rx="${r * 0.085}" ry="${r * 0.11}" fill="#3A2A2A"/><ellipse cx="${50 + r * 0.38}" cy="${cy + r * 0.12}" rx="${r * 0.085}" ry="${r * 0.11}" fill="#3A2A2A"/>
+      <circle cx="${50 - r * 0.35}" cy="${cy + r * 0.06}" r="${r * 0.03}" fill="#fff"/><circle cx="${50 + r * 0.41}" cy="${cy + r * 0.06}" r="${r * 0.03}" fill="#fff"/>
+      <ellipse cx="${50 - r * 0.6}" cy="${cy + r * 0.38}" rx="${r * 0.15}" ry="${r * 0.09}" fill="#FF8FA8" opacity=".55"/><ellipse cx="${50 + r * 0.6}" cy="${cy + r * 0.38}" rx="${r * 0.15}" ry="${r * 0.09}" fill="#FF8FA8" opacity=".55"/>
+      <path class="hb__mieng" d="M${50 - r * 0.2},${cy + r * 0.4} Q50,${cy + r * 0.62} ${50 + r * 0.2},${cy + r * 0.4}" stroke="#B5524F" stroke-width="${Math.max(1.4, r * 0.06)}" fill="none" stroke-linecap="round"/>
+    </svg>`;
+  }
+  const thangTai = (hs, d) => soNgay(hs.dob, d) / NGAY_MOI_THANG;
+  /* Nút hình bé: chạm vào thì bé nhảy lên và nói (câu nói ngẫu nhiên trong data-hk-cau) */
+  const nutBe = (sex, thang, loai, cau, nhan) => `<button class="hk-be hk-be--${loai}" type="button" data-hk-be data-hk-cau="${esc(JSON.stringify(cau))}" aria-label="${esc(nhan || 'Chạm vào bé')}">${hinhBe(sex, thang, loai)}<span class="hk-be__noi" aria-live="polite"></span></button>`;
+
+  /* "So với chuẩn WHO": bé lần trước · bé hôm nay · bạn trung bình, đứng trên cùng một thước chiều cao */
+  function canhSoSanh(hs, k) {
+    const c = k.chiSo.hfa; if (!c) return '';
+    const lan = hs.log[hs.log.length - 1], truoc = hs.log.length > 1 ? hs.log[hs.log.length - 2] : null, ten = tenTho(hs), Ten = ten[0].toUpperCase() + ten.slice(1);
+    const dH = truoc ? lan.h - truoc.h : 0;
+    const ds = [];
+    if (truoc) ds.push({ loai: 'cu', nhan: 'Lần trước', phu: hienNgay(truoc.d), h: truoc.h, thang: thangTai(hs, truoc.d), cau: [`Đây là con lúc ${tuoiChu(hs.dob, truoc.d)} nè mẹ!`, `Hồi đó con cao ${so(truoc.h)} cm thôi.`] });
+    ds.push({ loai: 'be', nhan: Ten, phu: 'hôm nay', h: lan.h, thang: k.thang,
+      cau: [`Con cao ${so(lan.h)} cm rồi nè mẹ!`, ...(truoc && dH > 0 ? [`Con cao thêm ${so(dH)} cm so với lần trước đó!`] : []),
+        c.z >= 0 ? 'Con cao hơn mức trung bình của các bạn rồi nha!' : 'Mẹ cho con ăn đủ chất, ngủ sớm để con cao thêm nha!', 'Con muốn ra ngoài chạy nhảy một chút!', 'Mẹ nhớ đo cho con mỗi 1-3 tháng nhé!'] });
+    ds.push({ loai: 'tb', nhan: 'Trung bình', phu: 'chuẩn WHO', h: c.tb, thang: k.thang, cau: [`Mình là bạn ${gioi(hs.sex)} cao trung bình ${so(c.tb)} cm theo chuẩn WHO nè!`, 'Mình cùng tuổi với bạn đó!'] });
+    const maxH = Math.max(...ds.map((x) => x.h)) * 1.14, buoc = maxH > 120 ? 20 : maxH > 60 ? 10 : 5, vach = [];
+    for (let v = 0; v <= maxH; v += buoc) vach.push(v);
+    const pct = (h) => (h / maxH * 100).toFixed(2);
+    return `<div class="hk-block hk-ss">
+      <div class="hk-block__head"><h3>So với chuẩn WHO</h3><p>${truoc ? 'Lần trước · hôm nay · bạn trung bình cùng tuổi' : 'Bé hôm nay và bạn trung bình cùng tuổi, cùng giới'} trên cùng một thước. Mẹ chạm vào bé nhé!</p></div>
+      <div class="hk-ss__canh">
+        <div class="hk-ss__thuoc" aria-hidden="true">${vach.map((v) => `<span style="bottom:${pct(v)}%">${v}</span>`).join('')}</div>
+        <div class="hk-ss__ds">${ds.map((x) => `<div class="hk-ss__o hk-ss__o--${x.loai}">
+          <div class="hk-ss__cot" style="height:${pct(x.h)}%"><b class="hk-ss__so">${so(x.h)} cm</b>${nutBe(hs.sex, x.thang, x.loai, x.cau, x.nhan + ' ' + so(x.h) + ' cm')}</div>
+          <div class="hk-ss__ten"><b>${esc(x.nhan)}</b><small>${esc(x.phu)}</small></div></div>`).join('')}</div>
+      </div>
+      <p class="hk-ss__ket hk-tone--${c.tone}">${Math.abs(lan.h - c.tb) < 0.1 ? `${esc(Ten)} cao đúng bằng bạn trung bình.` : `${esc(Ten)} ${lan.h > c.tb ? 'cao hơn' : 'thấp hơn'} bạn trung bình <b>${so(Math.abs(lan.h - c.tb))} cm</b>.`}${truoc ? ` So với lần trước bé ${dH >= 0 ? 'cao thêm' : 'giảm'} <b>${so(Math.abs(dH))} cm</b>.` : ''}</p>
+    </div>`;
+  }
+
+  /* "Hành trình lớn lên": các chặng tuổi, bé đứng ở chặng nào thì ghim "Bé ở đây" (bấm chặng → sản phẩm hợp tuổi đó) */
+  const GIUA_CHANG = { '0-6m': 3, '6-12m': 9, '1-3y': 24, '3-6y': 54, '6-12y': 108, '12-18y': 180 };
+  function hanhTrinh(hs, k) {
+    const ds = (window.AGES || []).filter((a) => GIUA_CHANG[a.key] != null);
+    if (!ds.length) return '';
+    const cao = (m) => lmsAt('hfa', hs.sex, m)[1], max = cao(GIUA_CHANG['12-18y']) * 1.05;
+    return `<div class="hk-block hk-ht">
+      <div class="hk-block__head"><h3>Hành trình lớn lên của ${tenBe(hs)}</h3><p>Chiều cao trung bình mỗi chặng theo chuẩn WHO. Bấm một chặng để xem sản phẩm hợp tuổi.</p></div>
+      <div class="hk-ht__ds">${ds.map((a) => { const o = a.key === k.giaiDoan, m = o ? k.thang : GIUA_CHANG[a.key], h = o ? hs.log[hs.log.length - 1].h : cao(m);
+        return `<a class="hk-ht__o ${o ? 'is-o' : ''}" href="collections.html?age=${a.key}" style="--nen:${esc(a.color || '#F4F6FA')}">
+          ${o ? '<span class="hk-ht__ghim">📍 Bé ở đây</span>' : ''}
+          <span class="hk-ht__khung"><span class="hk-ht__be" style="height:${(h / max * 100).toFixed(1)}%">${hinhBe(hs.sex, m, o ? 'be' : 'tb')}</span></span>
+          <b>${esc(a.label)}</b><small>${esc(a.desc || '')} · ~${so(h, 0)} cm</small></a>`; }).join('')}</div>
+    </div>`;
+  }
+
+  /* "Mỗi ngày một điều về bé": mẹo theo chặng tuổi, đổi mỗi ngày (thông tin chung, không thay lời khuyên của bác sĩ) */
+  const MOT_DIEU = {
+    '0-6m': ['Bé sơ sinh ngủ 14-17 tiếng mỗi ngày, giấc ngủ là lúc bé lớn nhanh nhất.', 'Trò chuyện, hát cho bé nghe mỗi ngày giúp bé làm quen với giọng nói của mẹ.', 'Cho bé nằm sấp vài phút mỗi ngày khi bé thức, có người lớn bên cạnh, để cổ và vai bé khoẻ hơn.',
+      'Đến khoảng 3 tháng tuổi, nhiều bé đã biết cười đáp lại khi mẹ cười với bé.', 'Trong 6 tháng đầu, WHO khuyến nghị bú mẹ hoàn toàn, chưa cần cho bé uống nước.', 'Mẹ đo chiều dài cho bé dưới 2 tuổi ở tư thế nằm để có số đo chính xác.'],
+    '6-12m': ['Từ 6 tháng, bé bắt đầu ăn dặm: mẹ cho bé làm quen từng món, mỗi món vài ngày.', 'Thức ăn giàu sắt như thịt, trứng, rau xanh đậm rất cần cho bé giai đoạn ăn dặm.', 'Để bé tự cầm nắm thức ăn mềm giúp bé khéo tay hơn.',
+      'Khoảng 9-12 tháng, nhiều bé tập bò, vịn đứng: mẹ dọn chỗ chơi an toàn cho bé nhé.', 'Đọc sách tranh cùng bé mỗi tối là thói quen tốt cho khả năng ngôn ngữ.', 'Bé dưới 1 tuổi chưa nên ăn mật ong và hạn chế muối, đường trong bữa ăn.'],
+    '1-3y': ['Bé 1-3 tuổi cần ngủ 11-14 tiếng mỗi ngày, kể cả giấc trưa.', 'Mẹ cho bé vận động ít nhất 3 tiếng mỗi ngày: chạy, nhảy, leo trèo đều tốt.', 'Bé tuổi này thích bắt chước: mẹ ăn rau cùng bé, bé sẽ dễ ăn rau hơn.',
+      'Uống sữa và ăn các món giàu canxi giúp xương bé chắc khoẻ.', 'Hạn chế cho bé dưới 2 tuổi xem màn hình (TV, điện thoại).', 'Mỗi bữa ăn nên gói gọn trong khoảng 30 phút, không ép bé ăn.'],
+    '3-6y': ['Bé 3-5 tuổi cần ngủ 10-13 tiếng mỗi ngày để lớn tốt.', 'Chơi ngoài trời có nắng sớm giúp bé vận động và vui vẻ hơn.', 'Cho bé tự xúc ăn, tự mặc áo giúp bé tự lập hơn.',
+      'Trung bình bé tuổi mầm non cao thêm khoảng 6-7 cm mỗi năm.', 'Mẹ cho bé uống nước lọc thay nước ngọt để bảo vệ răng.', 'Đánh răng 2 lần mỗi ngày, mẹ kiểm tra lại giúp bé nhé.'],
+    '6-12y': ['Bé tiểu học cần ngủ 9-12 tiếng mỗi đêm.', 'WHO khuyến nghị trẻ 5-17 tuổi vận động trung bình 60 phút mỗi ngày.', 'Bữa sáng đủ chất giúp bé tập trung học tốt hơn.',
+      'Bơi, nhảy dây, bóng rổ là những môn bé tuổi này thường thích.', 'Mẹ đo chiều cao cho bé vào buổi sáng, bé đứng thẳng, không mang giày.', 'Giới hạn thời gian dùng điện thoại, máy tính giúp bé ngủ ngon hơn.'],
+    '12-18y': ['Tuổi dậy thì là giai đoạn chiều cao tăng nhanh nhất sau những năm đầu đời.', 'Thiếu niên 13-18 tuổi cần ngủ 8-10 tiếng mỗi đêm.', 'Canxi và vitamin D rất cần cho xương trong tuổi dậy thì.',
+      'Vận động đều đặn 60 phút mỗi ngày giúp con khoẻ và giảm căng thẳng học hành.', 'Bữa ăn đủ đạm, rau quả giúp con có năng lượng cho cả ngày.', 'Mẹ lắng nghe và trò chuyện cùng con mỗi ngày là món quà lớn cho tuổi teen.'],
+  };
+  function motDieu(k) {
+    const ds = MOT_DIEU[k.giaiDoan] || []; if (!ds.length) return '';
+    const n = Math.floor((Date.now() - new Date().getTimezoneOffset() * 6e4) / 864e5);
+    return `<p class="hk-motdieu"><b>💡 Mỗi ngày một điều về bé</b>${ds[n % ds.length]}</p>`;
+  }
+
+  /* Chạm vào bé: bé nhảy lên và nói lần lượt từng câu */
+  function noiBe(b) {
+    let cau = []; try { cau = JSON.parse(b.dataset.hkCau || '[]'); } catch { cau = []; }
+    const i = (Number(b.dataset.lan ?? -1) + 1) % (cau.length || 1); b.dataset.lan = i;
+    const o = b.querySelector('.hk-be__noi'); if (o && cau.length) { o.textContent = cau[i]; o.classList.add('is-hien'); }
+    b.classList.remove('is-nhay'); void b.offsetWidth; b.classList.add('is-nhay');
+    clearTimeout(b._t); b._t = setTimeout(() => { if (o) o.classList.remove('is-hien'); }, 3500);
+  }
+
   /* ---------------- Giao diện ---------------- */
   const root = $('#sucKhoe');
   if (!root) return;
@@ -486,12 +607,14 @@
     const lan = hs.log[hs.log.length - 1];
     if (!window.WHO_GROWTH) { taiWho().then(veThe, () => {}); }
     const k = window.WHO_GROWTH ? danhGia(hs, lan) : null;
+    const tt = tenTho(hs);
     the.innerHTML = `<div class="hk-card hk-card--saved">
-      <div class="hk-card__ic" aria-hidden="true">📏</div>
+      ${k ? `<div class="hk-card__ic hk-card__ic--be">${nutBe(hs.sex, k.thang, 'be', [`Chào mẹ! Con là ${tt} nè!`, `Con ${tuoiChu(hs.dob, isoNgay(new Date()))} rồi đó mẹ!`, 'Mẹ bấm Xem kết quả để xem con lớn thế nào nhé!', 'Lâu chưa đo thì mẹ bấm Đo lần mới cho con nha!'], 'Chạm vào ' + tt)}</div>` : '<div class="hk-card__ic" aria-hidden="true">📏</div>'}
       <div class="hk-card__txt">
         <h2>${tam ? 'Kết quả tra cứu' : 'Theo dõi sức khỏe con'}</h2>
         <p>${tam ? 'Số đo' : 'Lần đo gần nhất'} của <b>${tenBe(hs)}</b> (${tuoiChu(hs.dob, lan.d)}) ngày ${hienNgay(lan.d)}: ${so(lan.h)} cm, ${so(lan.w)} kg.${tam ? ' <span class="hk-tam">Chưa lưu</span>' : ''}</p>
         ${k ? `<div class="hk-pills">${['wfa', 'hfa', 'bfa'].filter((i) => k.chiSo[i]).map((i) => `<span class="hk-pill hk-tone--${k.chiSo[i].tone}">${IND[i].replace(' theo tuổi', '')}: ${k.chiSo[i].label}</span>`).join('')}</div>` : ''}
+        ${k ? motDieu(k) : ''}
       </div>
       <div class="hk-card__acts">
         <button class="btn btn--primary" type="button" data-hk-xem aria-expanded="${moRong}" aria-controls="hkResult">${moRong ? 'Thu gọn kết quả' : 'Xem kết quả'}</button>
@@ -611,20 +734,20 @@
         <p>${gioi(hs.sex)[0].toUpperCase() + gioi(hs.sex).slice(1)}, ${tuoiChu(hs.dob, lan.d)}, đo ngày ${hienNgay(lan.d)}. BMI ${so(k.bmi)}.</p>
       </div>
       <p class="hk-verdict hk-tone--${canhBao.length ? 'warn' : 'good'}">${nhanXet}${truoc ? ` So với lần đo ${hienNgay(truoc.d)}: ${chenh(lan.h, truoc.h, 1)} cm, ${chenh(lan.w, truoc.w, 1)} kg.` : ''}</p>
+      ${canhSoSanh(hs, k)}
       <div class="hk-metrics hk-metrics--${Object.keys(c).length}">${['wfa', 'hfa', 'bfa'].filter((i) => c[i]).map((i) => oChiSo(c[i], hs, k)).join('')}</div>
-      <div class="hk-block hk-eval">
-        <div class="hk-block__head"><h3>Đánh giá chi tiết</h3></div>
+      <details class="hk-block hk-eval hk-acc" open>
+        <summary class="hk-block__head"><h3>Đánh giá chi tiết</h3></summary>
         <p class="hk-eval__tong hk-tone--${dg.tone}">${dg.tong}</p>
         <ul class="hk-eval__ds">${dg.dong.map((d) => `<li class="hk-tone--${d.tone}"><div class="hk-eval__dau"><span>${d.ten}</span><b>${d.so}</b></div><p><span class="hk-eval__so">${d.chi}</span> ${d.txt}</p></li>`).join('')}</ul>
         ${dg.da ? `<p class="hk-eval__da"><b>Đà tăng trưởng:</b> ${dg.da}</p>` : ''}
         <div class="hk-advice"><b class="hk-advice__t">Lời khuyên cho mẹ</b>${loi}</div>
-      </div>
+      </details>
       ${!c.wfa ? '<p class="hk-note">WHO chỉ dùng cân nặng theo tuổi cho trẻ dưới 10 tuổi, trên 10 tuổi mẹ xem chỉ số BMI.</p>' : ''}
 
-      <div class="hk-block hk-chart">
-        <div class="hk-block__head"><h3>Biểu đồ tăng trưởng</h3>
-          <div class="chips" role="tablist">${bd.map((i) => `<button class="chip chip--sm ${i === bieuDoDangXem ? 'is-active' : ''}" type="button" role="tab" aria-selected="${i === bieuDoDangXem}" data-hk-bd="${i}">${IND[i].replace(' theo tuổi', '')}</button>`).join('')}</div>
-        </div>
+      <details class="hk-block hk-chart hk-acc">
+        <summary class="hk-block__head"><h3>Biểu đồ tăng trưởng</h3><p>Các lần đo của bé trên biểu đồ chuẩn WHO</p></summary>
+          <div class="chips hk-chart__chips" role="tablist">${bd.map((i) => `<button class="chip chip--sm ${i === bieuDoDangXem ? 'is-active' : ''}" type="button" role="tab" aria-selected="${i === bieuDoDangXem}" data-hk-bd="${i}">${IND[i].replace(' theo tuổi', '')}</button>`).join('')}</div>
         <div class="hk-chart__body">
           <div id="hkChart"></div>
           <div class="hk-chart__side">
@@ -632,17 +755,17 @@
             <p class="hk-chart__tip">Chấm hồng nằm trong vùng xanh là bé đạt chuẩn. Mẹ đo lại mỗi 1-3 tháng: các chấm nối thành đường đi song song với đường trung bình nghĩa là bé lớn đều.</p>
           </div>
         </div>
-      </div>
+      </details>
 
-      <div class="hk-block hk-nutri">
-        <div class="hk-block__head"><h3>Bé ${esc(tuoi.label)} cần gì mỗi ngày?</h3></div>
+      <details class="hk-block hk-nutri hk-acc">
+        <summary class="hk-block__head"><h3>Bé ${esc(tuoi.label)} cần gì mỗi ngày?</h3><p>Các chất cần thiết và lượng khuyến nghị</p></summary>
         <p class="hk-nutri__focus">${gd.trongTam}</p>
         <div class="hk-nutri__grid">${gd.chat.map(([ten, luong, viSao, nguon]) => `<div class="hk-nut"><div class="hk-nut__top"><b>${ten}</b><span>${typeof luong === 'object' ? luong[hs.sex] : luong}</span></div><p>${viSao}</p><small>${nguon}</small></div>`).join('')}</div>
         <p class="hk-src">Lượng khuyến nghị mỗi ngày theo Viện Y học Hoa Kỳ (IOM, NIH); DHA theo Cơ quan An toàn Thực phẩm châu Âu (EFSA).</p>
-      </div>
+      </details>
 
-      ${an ? `<div class="hk-block hk-an">
-        <div class="hk-block__head"><h3>Chế độ ăn cho bé ${esc(tuoi.label)}</h3><p>Lượng tham khảo trung bình, mẹ điều chỉnh theo sức ăn của bé</p></div>
+      ${an ? `<details class="hk-block hk-an hk-acc">
+        <summary class="hk-block__head"><h3>Chế độ ăn cho bé ${esc(tuoi.label)}</h3><p>Lượng tham khảo trung bình, mẹ điều chỉnh theo sức ăn của bé</p></summary>
         <div class="hk-vd__chi">${an.bua.map(([ten, gt]) => `<div><small>${ten}</small><b>${gt}</b></div>`).join('')}</div>
         ${anThem.length ? `<div class="hk-vd__them">${anThem.map((t) => `<p>${t}</p>`).join('')}</div>` : ''}
         <h4 class="hk-an__t">${k.thang < 6 ? 'Mẹ cần biết' : 'Mỗi ngày nên có'}</h4>
@@ -652,10 +775,10 @@
         <ul class="hk-an__tranh">${an.tranh.map((t) => `<li>${t}</li>`).join('')}</ul>
         <p class="hk-vd__luu">${an.ghi}</p>
         <p class="hk-src">Tham khảo khuyến nghị nuôi dưỡng trẻ nhỏ của WHO/UNICEF và tháp dinh dưỡng của Viện Dinh dưỡng Quốc gia. Bé dị ứng hoặc có bệnh lý, mẹ hỏi bác sĩ dinh dưỡng.</p>
-      </div>` : ''}
+      </details>` : ''}
 
-      ${vd ? `<div class="hk-block hk-vd">
-        <div class="hk-block__head"><h3>Vận động cho bé ${esc(tuoi.label)}</h3></div>
+      ${vd ? `<details class="hk-block hk-vd hk-acc">
+        <summary class="hk-block__head"><h3>Vận động cho bé ${esc(tuoi.label)}</h3><p>Thời gian vận động, giấc ngủ và môn phù hợp</p></summary>
         <p class="hk-nutri__focus">${vd.trongTam}</p>
         <div class="hk-vd__chi">${vd.chiTieu.map(([ten, gt]) => `<div><small>${ten}</small><b>${gt}</b></div>`).join('')}</div>
         ${vdThem.length ? `<div class="hk-vd__them">${vdThem.map((t) => `<p>${t}</p>`).join('')}</div>` : ''}
@@ -664,7 +787,9 @@
         ${vdGioi ? `<p class="hk-vd__luu">${vdGioi.ghi}</p>` : ''}
         <p class="hk-vd__luu">${vd.luuY}</p>
         <p class="hk-src">Thời lượng vận động theo khuyến nghị của Tổ chức Y tế Thế giới (WHO); giấc ngủ theo Viện Hàn lâm Y học Giấc ngủ Hoa Kỳ (AASM). Bé có bệnh lý, mẹ hỏi bác sĩ trước khi cho bé tập môn mới.</p>
-      </div>` : ''}
+      </details>` : ''}
+
+      ${hanhTrinh(hs, k)}
 
       ${k.thang < 24 ? '<p class="hk-milk">Sữa mẹ là thức ăn tốt nhất cho sự phát triển của trẻ. Các sản phẩm bên dưới không thay thế sữa mẹ.</p>' : ''}
 
@@ -707,6 +832,8 @@
       </div>`;
     hienTai = { hs, k, dg };
     veBieuDo();
+    /* Hành trình lớn lên: cuộn tới chặng bé đang ở (điện thoại không hiện hết các chặng) */
+    const oHt = kq.querySelector('.hk-ht__o.is-o'); if (oHt) oHt.parentElement.scrollLeft = Math.max(0, oHt.offsetLeft - oHt.parentElement.offsetLeft - 24);
   }
   function veBieuDo() {
     const el = $('#hkChart', root);
@@ -792,6 +919,7 @@
   if (location.hash === '#sucKhoe') window.addEventListener('load', () => setTimeout(toiMuc, 100));
 
   root.addEventListener('click', (e) => {
+    const be = e.target.closest('[data-hk-be]'); if (be) { noiBe(be); return; }
     if (e.target.closest('[data-hk-mo]')) { moForm(); return; }
     if (e.target.closest('[data-hk-xem]')) { moRong = !moRong; veThe(); return; }
     if (e.target.closest('[data-hk-ve]')) { tam = null; veThe(); return; }
@@ -810,6 +938,7 @@
       veBieuDo();
     }
   });
+  root.addEventListener('toggle', (e) => { if (e.target.classList && e.target.classList.contains('hk-chart') && e.target.open) veBieuDo(); }, true);
   document.addEventListener('submit', (e) => { if (e.target.id === 'hkForm') { e.preventDefault(); guiForm(e.target); } });
   root.addEventListener('submit', async (e) => {
     if (e.target.id !== 'hkTv' || !hienTai) return;
