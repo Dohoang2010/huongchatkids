@@ -3631,6 +3631,33 @@ window.PRODUCTS = [
     "usage": "Mở nắp, lấy lượng vừa dùng rồi đậy kín. Bảo quản nơi khô ráo, thoáng mát. Không dùng khi quá hạn hoặc sản phẩm có mùi lạ, chảy nước, đổi màu.",
     "image": "img/muoi-xuyen-tieu.jpg",
     "thumb": "img/thumb/muoi-xuyen-tieu.jpg"
+  },
+  {
+    "id": "sp1792463252784",
+    "name": "Sản phẩm mới",
+    "short": "Sản phẩm mới",
+    "brand": "lotte",
+    "cat": "nuoc-ep",
+    "ages": [],
+    "needs": [],
+    "price": 0,
+    "oldPrice": 0,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 10,
+    "shape": "box",
+    "color": "#F0537A",
+    "weight": "",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "",
+    "thumb": "",
+    "images": [],
+    "desc": "",
+    "highlights": [],
+    "usage": "",
+    "an": true
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */
