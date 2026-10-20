@@ -1774,9 +1774,9 @@ window.PRODUCTS = [
     "needs": [
       "cho-me"
     ],
-    "price": 6000000,
+    "price": 3960000,
     "oldPrice": 8100000,
-    "rating": 0,
+    "rating": 5,
     "reviews": 0,
     "sold": 0,
     "stock": 50,
