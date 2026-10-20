@@ -50,6 +50,23 @@ test('mã giảm giá: %, có trần, số tiền cố định, freeship, đơn 
   assert.strictEqual(MC.applyCoupon('LOTTE15', dong(W, KHAC).total, [dong(W, KHAC)]).ok, false, 'giỏ không có sản phẩm áp dụng');
 });
 
+test('mã giảm giá KHÔNG áp dụng cho combo (giá combo đã giảm sẵn); mã freeship vẫn dùng được', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00'), truocApp: (w) => { w.GIO_VANG = []; w.COUPONS = {
+    G10: { type: 'percent', value: 10, loai: 'shop' }, MIN: { type: 'fixed', value: 50000, min: 300000, loai: 'shop' }, SHIP: { type: 'ship', value: 0, loai: 'shop' },
+    SPCB: { type: 'percent', value: 10, loai: 'sanpham', sanPham: [] } }; } });
+  const cb = W.PRODUCTS.find((p) => p.isCombo && !(p.variants || []).length) || W.PRODUCTS.find((p) => p.isCombo);
+  assert.ok(cb, 'dữ liệu có combo');
+  W.COUPONS.SPCB.sanPham = [cb.id, KHAC];
+  const lCb = dong(W, cb.id), lKhac = dong(W, KHAC);
+  const r1 = MC.applyCoupon('G10', lCb.total, [lCb]);
+  assert.strictEqual(r1.ok, false, 'giỏ chỉ có combo → mã không dùng được'); assert.match(r1.msg, /combo/);
+  const ls = [lCb, lKhac], tong = lCb.total + lKhac.total;
+  assert.strictEqual(MC.applyCoupon('G10', tong, ls).discount, Math.round(lKhac.total * 0.1), 'chỉ giảm trên tiền sản phẩm thường');
+  assert.strictEqual(MC.applyCoupon('SPCB', tong, ls).discount, Math.round(lKhac.total * 0.1), 'mã theo sản phẩm có chọn combo cũng bỏ combo');
+  if (lKhac.total < 300000) assert.match(MC.applyCoupon('MIN', tong, ls).msg || '', /không tính tiền combo/, 'đơn tối thiểu không tính tiền combo');
+  assert.strictEqual(MC.applyCoupon('SHIP', lCb.total, [lCb]).freeship, true, 'freeship vẫn dùng cho combo');
+});
+
 /* ---------- Quà tặng theo đơn ---------- */
 const chuongTrinh = (them = {}) => Object.assign({ id: 'ct-thu', ten: 'Quà thử', batDau: '2026-11-01T00:00', ketThuc: '2026-11-30T00:00', kieu: 'tien', tenQua: 'hộp quà thử',
   bac: [{ muc: 1000000, soQua: 1 }, { muc: 2000000, soQua: 2 }], sanPhamChinh: [{ id: LOTTE, bat: true }], quaTang: [{ ten: 'hộp quà thử', bat: true }] }, them);

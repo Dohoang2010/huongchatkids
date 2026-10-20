@@ -326,13 +326,17 @@
     if (c.donDau && daMuaTruoc(sdtDangDung())) return { ok: false, msg: 'Mã chỉ dành cho khách mua lần đầu' };
     const ghMsg = maGioiHan((code || '').trim().toUpperCase(), c); if (ghMsg) return { ok: false, msg: ghMsg };
     let base = subtotal;
-    if (c.loai === 'sanpham') {
-      const ls = lines || [], ids = new Set(c.sanPham || []);
-      const tong = ls.reduce((s, l) => s + l.total, 0), tienSP = ls.reduce((s, l) => s + (l.p && ids.has(l.p.id) ? l.total : 0), 0);
+    /* Combo đã giảm giá sẵn → mọi mã giảm giá KHÔNG tính trên tiền combo (chủ shop 20/10/2026); mã miễn phí ship vẫn dùng được */
+    const ls = lines || [], boCombo = c.type !== 'ship' && ls.some((l) => l.p && l.p.isCombo);
+    if (c.loai === 'sanpham' || boCombo) {
+      const ids = new Set(c.sanPham || []), hop = (l) => !!l.p && (c.loai !== 'sanpham' || ids.has(l.p.id));
+      const tong = ls.reduce((s, l) => s + l.total, 0), tienSP = ls.reduce((s, l) => s + (hop(l) ? l.total : 0), 0);
+      const tienDung = ls.reduce((s, l) => s + (hop(l) && !(boCombo && l.p.isCombo) ? l.total : 0), 0);
       if (!tienSP) return { ok: false, msg: 'Mã chỉ áp dụng cho một số sản phẩm – giỏ hàng chưa có sản phẩm nào trong số đó' };
-      base = tong ? Math.round(subtotal * tienSP / tong) : 0;
+      if (!tienDung) return { ok: false, msg: 'Mã giảm giá không áp dụng cho combo (giá combo đã được giảm sẵn)' };
+      base = tong ? Math.round(subtotal * tienDung / tong) : 0;
     }
-    if (base < (c.min || 0)) return { ok: false, msg: `Mã áp dụng cho ${c.loai === 'sanpham' ? 'sản phẩm áp dụng' : 'đơn'} từ ${fmt(c.min)}` };
+    if (base < (c.min || 0)) return { ok: false, msg: `Mã áp dụng cho ${c.loai === 'sanpham' ? 'sản phẩm áp dụng' : 'đơn'} từ ${fmt(c.min)}${boCombo ? ' (không tính tiền combo)' : ''}` };
     let discount = 0, freeship = false;
     if (c.type === 'percent') discount = Math.min(base * c.value / 100, c.max || Infinity);
     else if (c.type === 'fixed') discount = Math.min(c.value, base); else if (c.type === 'ship') freeship = true;

@@ -26,7 +26,7 @@ function taoMay(crm) {
   };
   const bc = new BoChay({ kho, cauHinh: { imLang: true, goiMang: async (ds) => ds.map(traLoi) }, guiDi: (h) => daGui.push(...h) });
   datGoiChoThu((ds) => ds.map(traLoi));
-  bc.napMa(MA, 'apps-script.gs');
+  bc.napMa(MA + '\n;NGAY_LE = [];', 'apps-script.gs');   // bài kiểm thử ngày thường: bỏ ngày lễ (chạy đúng hôm 20/10… điểm danh khác 1.000)
   const get = async (q) => JSON.parse((await bc.doGet(new URLSearchParams(q))).noiDung);
   return { kho, bc, get, daGui, goiMang };
 }
