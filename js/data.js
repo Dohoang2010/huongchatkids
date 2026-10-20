@@ -2472,12 +2472,12 @@ window.PRODUCTS = [
     "variants": [
       {
         "label": "1 cặp",
-        "price": 1290000,
+        "price": 1080000,
         "oldPrice": 1742000
       },
       {
         "label": "2 cặp",
-        "price": 2580000,
+        "price": 2160000,
         "oldPrice": 3483000
       }
     ],
