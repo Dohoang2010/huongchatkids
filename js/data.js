@@ -1800,17 +1800,18 @@ window.PRODUCTS = [
     "variants": [
       {
         "label": "1 hộp",
-        "price": 4950000,
-        "oldPrice": 8100000
+        "price": 3960000,
+        "oldPrice": 4950000
       },
       {
         "label": "2 hộp",
-        "price": 9900000,
-        "oldPrice": 16200000
+        "price": 7920000,
+        "oldPrice": 9900000
       },
       {
-        "label": "NMN Regene",
-        "price": 6950000
+        "label": "NMN Regene 1 hộp",
+        "price": 5560000,
+        "oldPrice": 6950000
       }
     ],
     "desc": "Viên uống Pure NMN 12.000mg+ (Clastive, Nhật Bản), hộp 60 viên. Thành phần gồm NMN 99,99%, collagen peptide, nhau thai ngựa, glutathione và hyaluronic acid. Theo nhà sản xuất: hỗ trợ chống lão hoá, tăng cường năng lượng và cân bằng nội tiết.",
