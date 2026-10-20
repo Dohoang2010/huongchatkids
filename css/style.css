@@ -2601,3 +2601,37 @@ details.hk-acc > summary:focus-visible { outline: 2px solid var(--primary); outl
 @media (min-width: 768px) { .hk-ss__canh { height: 330px; } .hk-ss__ds { left: max(52px, calc(50% - 300px)); right: max(8px, calc(50% - 330px)); } }
 .hk-ht__o.is-o { z-index: 1; }
 .hk-ht__ghim { font-size: 11px; padding: 2px 7px; z-index: 2; }
+
+/* ---------- Trang Đo chỉ số cho bé (do-chi-so-cho-be.html) ---------- */
+.dcs-dau { padding: 4px 0 0; }
+.dcs-dau__nhan { display: inline-block; padding: 5px 12px; border-radius: 999px; background: var(--teal-100); color: var(--teal-600); font-size: 12.5px; font-weight: 700; }
+.dcs-dau h1 { margin: 10px 0 6px; font-size: clamp(26px, 5vw, 38px); line-height: 1.2; }
+.dcs-dau p { max-width: 720px; margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.6; }
+.dcs-nd { padding-top: 8px; }
+.dcs-luoi { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 860px) { .dcs-luoi { grid-template-columns: 1fr 1fr; } }
+.dcs-the { padding: 20px; border-radius: var(--radius); background: #fff; box-shadow: var(--shadow-sm, 0 4px 14px rgba(0, 0, 0, .06)); }
+.dcs-the--rong { margin-top: 16px; }
+.dcs-the h2 { margin: 0 0 10px; font-size: 20px; }
+.dcs-the p { margin: 0 0 10px; color: var(--ink-2); line-height: 1.65; }
+.dcs-ds { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); line-height: 1.6; }
+.dcs-ds b { color: var(--ink); }
+.dcs-hd { display: grid; gap: 8px; }
+.dcs-hd details { border-radius: 12px; background: #F7F8FA; }
+.dcs-hd summary { padding: 12px 40px 12px 14px; font-weight: 700; cursor: pointer; list-style: none; position: relative; }
+.dcs-hd summary::-webkit-details-marker { display: none; }
+.dcs-hd summary::after { content: '+'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--primary); }
+.dcs-hd details[open] summary::after { content: '–'; }
+.dcs-hd details p { margin: 0; padding: 0 14px 12px; }
+.dcs-cuoi { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+
+/* Trang chủ: chỉ còn nút dẫn sang trang Đo chỉ số cho bé */
+.dcs-nut-khoi { padding-top: 10px; padding-bottom: 4px; }
+.dcs-nut { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--radius); background: linear-gradient(100deg, var(--teal-100) 0%, #FFF0F4 100%); color: var(--ink); text-decoration: none; box-shadow: 0 6px 16px rgba(23, 163, 152, .12); transition: transform .15s, box-shadow .15s; }
+.dcs-nut:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(23, 163, 152, .18); }
+.dcs-nut__ic { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: #fff; font-size: 24px; }
+.dcs-nut__chu { flex: 1; min-width: 0; }
+.dcs-nut__chu b { display: block; font-family: var(--font-head); font-size: 17px; line-height: 1.3; }
+.dcs-nut__chu small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.4; }
+.dcs-nut__mui { flex: none; padding: 9px 16px; border-radius: 999px; background: var(--primary); color: #fff; font-weight: 700; font-size: 14px; white-space: nowrap; }
+@media (max-width: 420px) { .dcs-nut { gap: 10px; padding: 12px; } .dcs-nut__ic { width: 40px; height: 40px; font-size: 20px; } .dcs-nut__chu b { font-size: 15.5px; } .dcs-nut__mui { padding: 8px 12px; font-size: 13px; } }

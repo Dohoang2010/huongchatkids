@@ -10,17 +10,17 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261020d">
+  <link rel="stylesheet" href="css/style.css?v=20261020f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <div class="dau-cho" aria-hidden="true"></div>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261019c" defer></script>
+<script src="js/data.js?v=20261020a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261020b" defer></script>
+<script src="js/app.js?v=20261020c" defer></script>
 <script src="js/chat.js?v=20261019e" defer></script>
 <script src="js/chon-ngay.js?v=20261016b" defer></script>
 <script src="js/diem-danh-ui.js?v=20261016b" defer></script>
@@ -70,14 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const beHTML = () => beTkHTML() + beDoHTML();
   const beDoHTML = () => {
     const b = beDoc();
-    if (!b) return `<p class="fs-14 text-muted mt-12">Chưa có số đo của bé trên máy này. Đo chiều cao, cân nặng để so với chuẩn WHO và tích <b>Lưu thông tin bé</b> để theo dõi lần sau.</p><a class="btn btn--teal btn--block mt-8" href="index.html#sucKhoe">📏 Đo chỉ số con miễn phí</a>`;
+    if (!b) return `<p class="fs-14 text-muted mt-12">Chưa có số đo của bé trên máy này. Đo chiều cao, cân nặng để so với chuẩn WHO và tích <b>Lưu thông tin bé</b> để theo dõi lần sau.</p><a class="btn btn--teal btn--block mt-8" href="do-chi-so-cho-be.html">📏 Đo chỉ số con miễn phí</a>`;
     const lan = b.log[b.log.length - 1];
     return `<div class="kh-view be-do"><p class="be-do__t">Số đo gần nhất (trên máy này)</p>
       <div class="kh-row"><span>Giới tính</span><b>${b.sex === 1 ? 'Bé trai' : 'Bé gái'}</b></div>
       <div class="kh-row"><span>Ngày sinh</span><b>${beNgay(b.dob)} (${beTuoi(b.dob)})</b></div>
       <div class="kh-row"><span>Lần đo gần nhất</span><b>${beSo(lan.h)} cm · ${beSo(lan.w)} kg<br><small class="text-muted">ngày ${beNgay(lan.d)}</small></b></div>
       <div class="kh-row"><span>Số lần đã đo</span><b>${b.log.length}</b></div>
-      <a class="btn btn--outline btn--block mt-12" href="index.html#sucKhoe">📏 Xem kết quả / đo lần mới</a>
+      <a class="btn btn--outline btn--block mt-12" href="do-chi-so-cho-be.html">📏 Xem kết quả / đo lần mới</a>
       <button class="btn btn--ghost btn--block btn--sm mt-8" type="button" data-be-xoa>Xoá số đo trên máy này</button>
       <p class="fs-13 text-muted mt-8">Số đo chiều cao, cân nặng chỉ lưu trên máy này, không gửi lên máy chủ.</p></div>`;
   };

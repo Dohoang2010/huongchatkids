@@ -533,7 +533,7 @@
         <div class="header__actions">
           <button class="hact hact--search" type="button" id="btnSearchToggle" aria-label="Tìm kiếm">${I.search}</button>
           <a class="hact hact--hotline" href="tel:${SITE.hotlineTel}">${I.phoneCall}<span><b>${SITE.hotline}</b><small>Tư vấn miễn phí</small></span></a>
-          <a class="hact hact--suckhoe" href="index.html#sucKhoe" title="Đo chỉ số con miễn phí" aria-label="Đo chỉ số con miễn phí"><span class="hact__emoji" aria-hidden="true">📏</span><span class="lbl">Đo chỉ số con miễn phí</span></a>
+          <a class="hact hact--suckhoe" href="do-chi-so-cho-be.html" title="Đo chỉ số con miễn phí" aria-label="Đo chỉ số con miễn phí"><span class="hact__emoji" aria-hidden="true">📏</span><span class="lbl">Đo chỉ số con miễn phí</span></a>
           <a class="hact hact--account" href="account.html">${I.user}<span class="lbl">Tài khoản</span></a>
           <button class="hact" type="button" data-open-cart aria-label="Giỏ hàng">${I.cart}<span class="lbl">Giỏ hàng</span><span class="hact__count ${cartCount ? '' : 'hide'}" data-cart-count>${cartCount}</span></button>
         </div>
@@ -561,7 +561,7 @@
         <a class="mmenu__link mmenu__link--sk" href="collections.html?km=1">🏷️ Sản phẩm đang khuyến mãi</a>
         <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
-        <a class="mmenu__link" href="index.html#sucKhoe">📏 Đo chỉ số con miễn phí</a>
+        <a class="mmenu__link" href="do-chi-so-cho-be.html">📏 Đo chỉ số con miễn phí</a>
         <a class="mmenu__link" href="diem-danh.html">📅 Điểm danh nhận quà</a>
         <a class="mmenu__link" href="vi-voucher.html">🎟️ Ví voucher của tôi</a>
         <a class="mmenu__link" href="account.html">👤 Tài khoản / Đơn hàng</a>

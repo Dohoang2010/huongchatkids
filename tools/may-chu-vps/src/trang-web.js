@@ -351,7 +351,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   function sitemap() {
     const d = duLieu(), nay = iso(Date.now());
     const dong = (loc, tanSuat, uuTien, luc) => `  <url><loc>${esc(loc)}</loc><lastmod>${luc || nay}</lastmod><changefreq>${tanSuat}</changefreq><priority>${uuTien}</priority></url>`;
-    const ds = [dong(GOC + '/', 'daily', '1.0'), dong(GOC + '/collections.html', 'daily', '0.9'), dong(GOC + '/blog.html', 'weekly', '0.7'),
+    const ds = [dong(GOC + '/', 'daily', '1.0'), dong(GOC + '/collections.html', 'daily', '0.9'), dong(GOC + '/blog.html', 'weekly', '0.7'), dong(GOC + '/do-chi-so-cho-be.html', 'monthly', '0.8'),
       dong(GOC + '/gioi-thieu.html', 'monthly', '0.5'), dong(GOC + '/doi-tac.html', 'monthly', '0.5'), dong(GOC + '/policy.html', 'yearly', '0.3')];
     d.danhMuc.forEach((c) => ds.push(dong(GOC + '/collections.html?cat=' + encodeURIComponent(c.key), 'weekly', '0.7')));
     spHien(d).forEach((p) => { if (d.slug[p.id]) ds.push(dong(GOC + '/' + d.slug[p.id], 'weekly', '0.8')); });

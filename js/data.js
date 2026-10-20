@@ -240,7 +240,7 @@ window.THEME = {
   },
   "khoi": [
     { "key": "hero", "ten": "Banner lớn đầu trang", "bat": true },
-    { "key": "suc-khoe", "ten": "Theo dõi sức khỏe con", "bat": true },
+    { "key": "suc-khoe", "ten": "Nút Đo chỉ số cho bé", "bat": true },
     { "key": "flash", "ten": "Flash sale", "bat": true },
     { "key": "noi-bat", "ten": "Mẹ tin dùng nhất", "bat": true },
     { "key": "do-tuoi", "ten": "Bé nhà mình mấy tuổi", "bat": true },
@@ -3645,7 +3645,7 @@ window.PRODUCTS = [
    Máy chủ VPS đọc cùng bảng này để trả trang sản phẩm + chuyển link cũ product.html?id=… sang link mới. */
 window.taoSlug = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70).replace(/-+$/, '');
 (function () {
-  var TRANG = ['index', 'product', 'collections', 'cart', 'checkout', 'account', 'admin', 'blog', 'policy', 'gioi-thieu', 'doi-tac', 'diem-danh', 'vi-voucher', 'quen-mat-khau', 'quan-ly-ton-kho', 'css', 'js', 'img', 'data', 'tools', 'api', 'chat-tep', 'webp', 'cam-nang', 'lich-trinh', '2010', 'sitemap', 'robots'];
+  var TRANG = ['index', 'product', 'collections', 'cart', 'checkout', 'account', 'admin', 'blog', 'policy', 'gioi-thieu', 'do-chi-so-cho-be', 'doi-tac', 'diem-danh', 'vi-voucher', 'quen-mat-khau', 'quan-ly-ton-kho', 'css', 'js', 'img', 'data', 'tools', 'api', 'chat-tep', 'webp', 'cam-nang', 'lich-trinh', '2010', 'sitemap', 'robots'];
   var bySlug = {}, byId = {};
   (window.PRODUCTS || []).forEach(function (p) {
     var s = window.taoSlug(p.slug || p.short || p.name) || window.taoSlug(String(p.id));
@@ -3748,7 +3748,7 @@ window.BANNERS = [
       "mb": "img/banner/do-chi-so-mb.jpg"
     },
     "nen": "#BFE9E1",
-    "link": "index.html#sucKhoe",
+    "link": "do-chi-so-cho-be.html",
     "alt": "Đo chỉ số con miễn phí theo chuẩn WHO – chiều cao, cân nặng, BMI, chế độ ăn và vận động theo tuổi"
   },
   {
@@ -5116,7 +5116,7 @@ window.POSTS = [
 /* Đường dẫn bài cẩm nang có từ khoá: huongchatkids.vn/<slug> (slug = mã bài). Trùng link sản phẩm / tên trang thì thêm "cam-nang-" phía trước.
    Máy chủ VPS dựng sẵn nội dung bài theo bảng này; link cũ blog.html?id=… tự chuyển sang link mới. */
 (function () {
-  var TRANG = ['index', 'product', 'collections', 'cart', 'checkout', 'account', 'admin', 'blog', 'policy', 'gioi-thieu', 'doi-tac', 'diem-danh', 'vi-voucher', 'quen-mat-khau', 'quan-ly-ton-kho', 'css', 'js', 'img', 'data', 'tools', 'api', 'chat-tep', 'webp', 'lich-trinh', '2010', 'sitemap', 'robots'];
+  var TRANG = ['index', 'product', 'collections', 'cart', 'checkout', 'account', 'admin', 'blog', 'policy', 'gioi-thieu', 'do-chi-so-cho-be', 'doi-tac', 'diem-danh', 'vi-voucher', 'quen-mat-khau', 'quan-ly-ton-kho', 'css', 'js', 'img', 'data', 'tools', 'api', 'chat-tep', 'webp', 'lich-trinh', '2010', 'sitemap', 'robots'];
   var spTheoSlug = window.SP_THEO_SLUG || {}, bySlug = {}, byId = {};
   (window.POSTS || []).forEach(function (p) {
     var s = window.taoSlug(p.id) || window.taoSlug(p.title);

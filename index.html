@@ -8,10 +8,11 @@
   <meta name="description" content="Hồng sâm ChuChu, nước ép Lotte Organic, vitamin D3K2, váng sữa canxi Calciumore, gạc hươu Sumo… chính hãng Hàn Quốc cho bé. Freeship từ 3 triệu, chuyên gia dinh dưỡng tư vấn miễn phí.">
   <!-- /ADMIN:SEO -->
   <meta name="theme-color" content="#F0537A">
+  <script>/* link cũ index.html#sucKhoe → trang Đo chỉ số cho bé */ if (location.hash === '#sucKhoe') location.replace('do-chi-so-cho-be.html');</script>
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261020d">
+  <link rel="stylesheet" href="css/style.css?v=20261020f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -36,10 +37,13 @@
     <div class="dv-cum"><div id="voucherStrip"></div><div id="ddMini"></div><div class="trust" id="trust"></div></div>
   </div></section>
 
-  <!-- THEO DÕI SỨC KHỎE CON (js/suc-khoe.js) -->
-  <section data-khoi="suc-khoe" class="section hk-section" id="sucKhoe" aria-label="Theo dõi sức khỏe con"><div class="container">
-    <div id="hkCard"></div>
-    <div class="hk-result" id="hkResult" aria-live="polite" hidden></div>
+  <!-- NÚT ĐO CHỈ SỐ CHO BÉ (công cụ ở trang riêng do-chi-so-cho-be.html) -->
+  <section data-khoi="suc-khoe" class="section dcs-nut-khoi"><div class="container">
+    <a class="dcs-nut" href="do-chi-so-cho-be.html">
+      <span class="dcs-nut__ic" aria-hidden="true">📏</span>
+      <span class="dcs-nut__chu"><b>Đo chỉ số cho bé miễn phí</b><small>Chiều cao, cân nặng, BMI theo chuẩn WHO · bé 0–19 tuổi</small></span>
+      <span class="dcs-nut__mui">Đo ngay →</span>
+    </a>
   </div></section>
 
   <!-- FLASH SALE -->
@@ -170,14 +174,13 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261019c" defer></script>
+<script src="js/data.js?v=20261020a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261020b" defer></script>
+<script src="js/app.js?v=20261020c" defer></script>
 <script src="js/chat.js?v=20261019e" defer></script>
 <script src="js/chon-ngay.js?v=20261016b" defer></script>
 <script src="js/diem-danh-ui.js?v=20261016b" defer></script>
-<script src="js/suc-khoe.js?v=20261020c" defer></script>
 <script src="js/su-kien.js?v=20261019b" defer></script>
 <script type="module">
 /* Vẽ lại trang chủ SAU khi trình duyệt đã hiện bản máy chủ dựng sẵn (banner, sản phẩm…) – khách thấy trang sớm hơn */
