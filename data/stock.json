@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-19T16:00:25.070Z",
+  "updatedAt": "2026-10-20T02:27:36.493Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -442,6 +442,7 @@
         "Gội + xả 500ml": true
       }
     },
-    "sp1792425617216": true
+    "sp1792425617216": true,
+    "sp1792463252784": true
   }
 }
