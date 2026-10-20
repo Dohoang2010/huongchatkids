@@ -2529,17 +2529,18 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 
 /* ---------- Theo dõi sức khỏe con: hình bé (SVG), so với chuẩn WHO, hành trình lớn lên, mỗi ngày một điều, kết quả gọn (20/10/2026) ---------- */
 .hk-be { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; font: inherit; color: inherit; }
-.hk-be svg { display: block; height: 100%; width: auto; max-width: 100%; margin: 0 auto; overflow: visible; filter: drop-shadow(0 6px 8px rgba(240, 83, 122, .16)); transform-origin: 50% 100%; }
-.hk-be--be svg { animation: hk-tho 3.2s ease-in-out infinite; }
-.hk-be--cu svg { opacity: .55; filter: grayscale(.35); }
+.hk-be .hb { display: block; height: 100%; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; object-position: 50% 100%; filter: drop-shadow(0 8px 10px rgba(240, 83, 122, .18)); transform-origin: 50% 100%; -webkit-user-drag: none; user-select: none; }
+.hk-be--be .hb { animation: hk-tho 3.2s ease-in-out infinite; }
+.hk-be--cu .hb { opacity: .5; filter: grayscale(.4) drop-shadow(0 6px 8px rgba(0, 0, 0, .08)); }
+.hk-be--tb .hb { opacity: .55; filter: grayscale(1) sepia(.35) hue-rotate(210deg) saturate(1.6) brightness(1.08) drop-shadow(0 6px 8px rgba(0, 0, 0, .06)); }
 .hk-be:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; border-radius: 12px; }
-.hk-be.is-nhay svg { animation: hk-nhay .75s cubic-bezier(.3, 1.5, .5, 1); }
+.hk-be.is-nhay .hb { animation: hk-nhay .75s cubic-bezier(.3, 1.5, .5, 1); }
 .hk-be__noi { position: absolute; bottom: calc(100% + 4px); left: 50%; z-index: 3; width: max-content; max-width: 190px; padding: 7px 11px; border-radius: 14px; background: #fff; color: var(--ink); font-size: 12.5px; font-weight: 600; line-height: 1.35; text-align: left; box-shadow: 0 6px 18px rgba(0, 0, 0, .12); opacity: 0; transform: translate(-50%, 6px) scale(.9); transition: opacity .18s, transform .18s; pointer-events: none; }
 .hk-be__noi::after { content: ''; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: #fff; }
 .hk-be__noi.is-hien { opacity: 1; transform: translate(-50%, 0) scale(1); }
 @keyframes hk-tho { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
 @keyframes hk-nhay { 0% { transform: none; } 18% { transform: scale(1.06, .9); } 50% { transform: translateY(-16%) scale(.96, 1.05); } 78% { transform: scale(1.04, .95); } 100% { transform: none; } }
-@media (prefers-reduced-motion: reduce) { .hk-be svg, .hk-be.is-nhay svg, .hk-ht__ghim { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .hk-be .hb, .hk-be.is-nhay .hb, .hk-ht__ghim { animation: none; } }
 
 /* thẻ trang chủ: hình bé thay biểu tượng thước */
 .hk-card--saved:has(.hk-card__ic--be) { grid-template-columns: 76px 1fr; }
@@ -2575,7 +2576,8 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 .hk-ht__o.is-o { border-color: var(--primary); box-shadow: 0 6px 18px rgba(240, 83, 122, .18); }
 .hk-ht__khung { display: flex; align-items: flex-end; justify-content: center; width: 100%; height: 120px; margin-bottom: 6px; }
 .hk-ht__be { display: block; min-height: 28px; }
-.hk-ht__be svg { display: block; height: 100%; width: auto; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .08)); }
+.hk-ht__be .hb { display: block; height: 100%; width: auto; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .1)); }
+.hk-ht__o:not(.is-o) .hk-ht__be .hb { opacity: .8; }
 .hk-ht__o b { font-size: 13.5px; }
 .hk-ht__o small { font-size: 11.5px; color: var(--muted); }
 .hk-ht__ghim { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); padding: 2px 9px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 11.5px; font-weight: 700; white-space: nowrap; animation: hk-tho 2.4s ease-in-out infinite; }
@@ -2635,3 +2637,4 @@ details.hk-acc > summary:focus-visible { outline: 2px solid var(--primary); outl
 .dcs-nut__chu small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.4; }
 .dcs-nut__mui { flex: none; padding: 9px 16px; border-radius: 999px; background: var(--primary); color: #fff; font-weight: 700; font-size: 14px; white-space: nowrap; }
 @media (max-width: 420px) { .dcs-nut { gap: 10px; padding: 12px; } .dcs-nut__ic { width: 40px; height: 40px; font-size: 20px; } .dcs-nut__chu b { font-size: 15.5px; } .dcs-nut__mui { padding: 8px 12px; font-size: 13px; } }
+@media (min-width: 768px) { .hk-ht__khung { height: 160px; } }

@@ -462,53 +462,18 @@
   }
 
   const tenTho = (hs) => (hs.name ? 'bé ' + hs.name : 'bé');
-  /* ---------------- Hình bé (SVG tự vẽ, đổ bóng kiểu 3D, màu pastel) ----------------
-     Bé lớn theo tuổi (trẻ nhỏ đầu to, lớn dần thân dài ra), bé trai / bé gái khác tóc và quần áo.
-     loai: 'be' (bé của mẹ) | 'cu' (bé lần đo trước, nhạt hơn) | 'tb' (bạn trung bình theo chuẩn WHO) */
-  let soHinh = 0;
-  function hinhBe(sex, thang, loai = 'be') {
-    const id = 'hb' + (++soHinh), gai = sex === 2;
-    const tl = thang < 12 ? 0.36 : thang < 36 ? 0.31 : thang < 72 ? 0.27 : thang < 144 ? 0.22 : 0.185;   // tỉ lệ đầu / chiều cao
-    const r = tl * 100, cy = r + 2, co = 2 * r + 2, hong = co + (198 - co) * (thang < 36 ? 0.5 : 0.46), chan = 194;
-    const rong = thang < 12 ? 50 : thang < 36 ? 44 : thang < 144 ? 38 : 34;   // bề ngang thân
-    const x0 = 50 - rong / 2, x1 = 50 + rong / 2;
-    const ao = loai === 'tb' ? ['#E4E0F2', '#C9C2E3'] : gai ? ['#FFC6D6', '#FF94B4'] : ['#B6ECE4', '#6ED3C4'];
-    const quan = loai === 'tb' ? '#B9B1D8' : gai ? '#FF94B4' : '#9DB8FF';
-    const toc = loai === 'tb' ? '#A79FC4' : '#6B4A3A';
-    const than = gai
-      ? `M${x0 + 4},${co + 2} Q50,${co - 3} ${x1 - 4},${co + 2} L${x1 + 7},${hong + 6} Q50,${hong + 12} ${x0 - 7},${hong + 6} Z`   // váy xoè
-      : `M${x0 + 2},${co + 2} Q50,${co - 3} ${x1 - 2},${co + 2} L${x1},${hong} L${x0},${hong} Z`;
-    const chanX = [50 - rong * 0.2, 50 + rong * 0.2], dayChan = thang < 36 ? 12 : 10;
-    const tocTren = `M${50 - r - 1},${cy + 2} Q${50 - r},${cy - r - 4} 50,${cy - r - 3} Q${50 + r},${cy - r - 4} ${50 + r + 1},${cy + 2} Q${50 + r * 0.55},${cy - r * 0.45} 50,${cy - r * 0.55} Q${50 - r * 0.55},${cy - r * 0.45} ${50 - r - 1},${cy + 2} Z`;
-    const tocGai = gai ? (thang < 144
-      ? `<circle cx="${50 - r - 3}" cy="${cy - r * 0.35}" r="${r * 0.36}" fill="${toc}"/><circle cx="${50 + r + 3}" cy="${cy - r * 0.35}" r="${r * 0.36}" fill="${toc}"/>
-         <circle cx="${50 - r * 0.7}" cy="${cy - r * 0.78}" r="${r * 0.13}" fill="${ao[1]}"/><circle cx="${50 + r * 0.7}" cy="${cy - r * 0.78}" r="${r * 0.13}" fill="${ao[1]}"/>`
-      : `<path d="M${50 - r},${cy} Q${50 - r - 4},${cy + r * 1.5} ${50 - r * 0.5},${cy + r * 1.7} L${50 + r * 0.5},${cy + r * 1.7} Q${50 + r + 4},${cy + r * 1.5} ${50 + r},${cy} Z" fill="${toc}"/>`) : '';
-    return `<svg class="hb hb--${loai}" viewBox="0 0 100 200" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
-      <defs>
-        <radialGradient id="${id}d" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#FFEFE4"/><stop offset=".65" stop-color="#FFD6BF"/><stop offset="1" stop-color="#F2B597"/></radialGradient>
-        <linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${ao[0]}"/><stop offset="1" stop-color="${ao[1]}"/></linearGradient>
-      </defs>
-      <ellipse cx="50" cy="197" rx="${rong * 0.62}" ry="3" fill="#000" opacity=".1"/>
-      ${tocGai && thang >= 144 ? tocGai : ''}
-      <g class="hb__chan">${chanX.map((x) => `<rect x="${x - dayChan / 2}" y="${hong - 4}" width="${dayChan}" height="${chan - hong}" rx="${dayChan / 2}" fill="url(#${id}d)"/><ellipse cx="${x + 1}" cy="${chan}" rx="${dayChan * 0.75}" ry="4" fill="${loai === 'tb' ? '#9E96BE' : '#5B6B8C'}"/>`).join('')}</g>
-      ${gai ? '' : `<rect x="${x0}" y="${hong - 10}" width="${rong}" height="${(chan - hong) * 0.42 + 10}" rx="6" fill="${quan}"/>`}
-      <g class="hb__tay"><path d="M${x0 + 3},${co + 8} Q${x0 - 9},${co + (hong - co) * 0.5} ${x0 - 5},${hong - 4}" stroke="url(#${id}d)" stroke-width="${dayChan - 1}" stroke-linecap="round" fill="none"/>
-        <path class="hb__tay-p" d="M${x1 - 3},${co + 8} Q${x1 + 9},${co + (hong - co) * 0.5} ${x1 + 5},${hong - 4}" stroke="url(#${id}d)" stroke-width="${dayChan - 1}" stroke-linecap="round" fill="none"/></g>
-      <path d="${than}" fill="url(#${id}a)"/>
-      <path d="M${x0 + 8},${co + 6} Q50,${co + 1} ${x1 - 8},${co + 6}" stroke="#fff" stroke-opacity=".55" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-      ${tocGai && thang < 144 ? tocGai : ''}
-      <circle cx="50" cy="${cy}" r="${r}" fill="url(#${id}d)"/>
-      <path d="${tocTren}" fill="${toc}"/>
-      <ellipse cx="${50 - r * 0.38}" cy="${cy + r * 0.12}" rx="${r * 0.085}" ry="${r * 0.11}" fill="#3A2A2A"/><ellipse cx="${50 + r * 0.38}" cy="${cy + r * 0.12}" rx="${r * 0.085}" ry="${r * 0.11}" fill="#3A2A2A"/>
-      <circle cx="${50 - r * 0.35}" cy="${cy + r * 0.06}" r="${r * 0.03}" fill="#fff"/><circle cx="${50 + r * 0.41}" cy="${cy + r * 0.06}" r="${r * 0.03}" fill="#fff"/>
-      <ellipse cx="${50 - r * 0.6}" cy="${cy + r * 0.38}" rx="${r * 0.15}" ry="${r * 0.09}" fill="#FF8FA8" opacity=".55"/><ellipse cx="${50 + r * 0.6}" cy="${cy + r * 0.38}" rx="${r * 0.15}" ry="${r * 0.09}" fill="#FF8FA8" opacity=".55"/>
-      <path class="hb__mieng" d="M${50 - r * 0.2},${cy + r * 0.4} Q50,${cy + r * 0.62} ${50 + r * 0.2},${cy + r * 0.4}" stroke="#B5524F" stroke-width="${Math.max(1.4, r * 0.06)}" fill="none" stroke-linecap="round"/>
-    </svg>`;
+  /* ---------------- Hình bé 3D (ảnh img/be/*.webp nền trong suốt, của shop) ----------------
+     Bé theo chặng tuổi + giới tính: em bé (dưới 1 tuổi) · chập chững (1-3 tuổi) · bé (3-12 tuổi) · teen.
+     Mỗi ảnh 2 cỡ: 560 (khung So với chuẩn WHO) và 280 (thẻ, hành trình). loai: 'be' | 'cu' (lần đo trước) | 'tb' (bạn trung bình) */
+  const ANH_BE = { 'em-be': [281, 141], 'chap-chung-gai': [242, 121], 'chap-chung-trai': [218, 109], 'be-gai': [275, 137], 'be-trai': [198, 99], 'teen-gai': [200, 100], 'teen-trai': [191, 96] };
+  const tenAnhBe = (sex, thang) => (thang < 12 ? 'em-be' : (thang < 36 ? 'chap-chung' : thang < 144 ? 'be' : 'teen') + (sex === 2 ? '-gai' : '-trai'));
+  function hinhBe(sex, thang, loai = 'be', lon = false) {
+    const t = tenAnhBe(sex, thang), h = lon ? 560 : 280;
+    return `<img class="hb hb--${loai}" src="img/be/${t}-${h}.webp" width="${ANH_BE[t][lon ? 0 : 1]}" height="${h}" alt="" loading="lazy" decoding="async" draggable="false">`;
   }
   const thangTai = (hs, d) => soNgay(hs.dob, d) / NGAY_MOI_THANG;
   /* Nút hình bé: chạm vào thì bé nhảy lên và nói (câu nói ngẫu nhiên trong data-hk-cau) */
-  const nutBe = (sex, thang, loai, cau, nhan) => `<button class="hk-be hk-be--${loai}" type="button" data-hk-be data-hk-cau="${esc(JSON.stringify(cau))}" aria-label="${esc(nhan || 'Chạm vào bé')}">${hinhBe(sex, thang, loai)}<span class="hk-be__noi" aria-live="polite"></span></button>`;
+  const nutBe = (sex, thang, loai, cau, nhan, lon) => `<button class="hk-be hk-be--${loai}" type="button" data-hk-be data-hk-cau="${esc(JSON.stringify(cau))}" aria-label="${esc(nhan || 'Chạm vào bé')}">${hinhBe(sex, thang, loai, lon)}<span class="hk-be__noi" aria-live="polite"></span></button>`;
 
   /* "So với chuẩn WHO": bé lần trước · bé hôm nay · bạn trung bình, đứng trên cùng một thước chiều cao */
   function canhSoSanh(hs, k) {
@@ -529,7 +494,7 @@
       <div class="hk-ss__canh">
         <div class="hk-ss__thuoc" aria-hidden="true">${vach.map((v) => `<span style="bottom:${pct(v)}%">${v}</span>`).join('')}</div>
         <div class="hk-ss__ds">${ds.map((x) => `<div class="hk-ss__o hk-ss__o--${x.loai}">
-          <div class="hk-ss__cot" style="height:${pct(x.h)}%"><b class="hk-ss__so">${so(x.h)} cm</b>${nutBe(hs.sex, x.thang, x.loai, x.cau, x.nhan + ' ' + so(x.h) + ' cm')}</div>
+          <div class="hk-ss__cot" style="height:${pct(x.h)}%"><b class="hk-ss__so">${so(x.h)} cm</b>${nutBe(hs.sex, x.thang, x.loai, x.cau, x.nhan + ' ' + so(x.h) + ' cm', true)}</div>
           <div class="hk-ss__ten"><b>${esc(x.nhan)}</b><small>${esc(x.phu)}</small></div></div>`).join('')}</div>
       </div>
       <p class="hk-ss__ket hk-tone--${c.tone}">${Math.abs(lan.h - c.tb) < 0.1 ? `${esc(Ten)} cao đúng bằng bạn trung bình.` : `${esc(Ten)} ${lan.h > c.tb ? 'cao hơn' : 'thấp hơn'} bạn trung bình <b>${so(Math.abs(lan.h - c.tb))} cm</b>.`}${truoc ? ` So với lần trước bé ${dH >= 0 ? 'cao thêm' : 'giảm'} <b>${so(Math.abs(dH))} cm</b>.` : ''}</p>
