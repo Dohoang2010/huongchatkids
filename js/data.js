@@ -2066,10 +2066,10 @@ window.PRODUCTS = [
     "weight": "Chai 50ml + xịt",
     "origin": "Tây Ban Nha",
     "tags": [],
-    "image": "img/24764883120-n.jpg",
-    "thumb": "img/thumb/24764883120-n.jpg",
+    "image": "img/24764883120-b.jpg",
+    "thumb": "img/thumb/24764883120-b.jpg",
     "images": [
-      "img/24764883120-n.jpg",
+      "img/24764883120-b.jpg",
       "img/24764883120-2.jpg",
       "img/24764883120-3.jpg",
       "img/24764883120-4.jpg",
