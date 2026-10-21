@@ -328,16 +328,16 @@
     let base = subtotal;
     /* Combo (giá đã giảm sẵn – 20/10/2026) và sản phẩm đang có quà tặng (21/10/2026): mã giảm giá KHÔNG tính trên tiền các dòng đó;
        mã miễn phí ship vẫn dùng được */
-    const ls = lines || [], kh = c.type !== 'ship' ? hangKhongUuDai(ls) : null, boLoai = !!(kh && kh.tien);
+    const ls = lines || [], kh = c.type !== 'ship' ? hangKhongUuDai(ls, { chiA: true }) : null, boLoai = !!(kh && kh.tien);
     if (c.loai === 'sanpham' || boLoai) {
       const ids = new Set(c.sanPham || []), hop = (l) => !!l.p && (c.loai !== 'sanpham' || ids.has(l.p.id));
       const tong = ls.reduce((s, l) => s + l.total, 0), tienSP = ls.reduce((s, l) => s + (hop(l) ? l.total : 0), 0);
       const tienDung = ls.reduce((s, l) => s + (hop(l) && !(boLoai && kh.co(l)) ? l.total : 0), 0);
       if (!tienSP) return { ok: false, msg: 'Mã chỉ áp dụng cho một số sản phẩm – giỏ hàng chưa có sản phẩm nào trong số đó' };
-      if (!tienDung) return { ok: false, msg: kh.coQua ? 'Mã giảm giá không áp dụng cho combo và sản phẩm đang được tặng quà' : 'Mã giảm giá không áp dụng cho combo (giá combo đã được giảm sẵn)' };
+      if (!tienDung) return { ok: false, msg: 'Mã giảm giá không áp dụng cho combo / phân loại đã giảm sẵn (giá combo đã được giảm sẵn)' };
       base = tong ? Math.round(subtotal * tienDung / tong) : 0;
     }
-    if (base < (c.min || 0)) return { ok: false, msg: `Mã áp dụng cho ${c.loai === 'sanpham' ? 'sản phẩm áp dụng' : 'đơn'} từ ${fmt(c.min)}${boLoai ? (kh.coQua ? ' (không tính tiền combo / sản phẩm có quà)' : ' (không tính tiền combo)') : ''}` };
+    if (base < (c.min || 0)) return { ok: false, msg: `Mã áp dụng cho ${c.loai === 'sanpham' ? 'sản phẩm áp dụng' : 'đơn'} từ ${fmt(c.min)}${boLoai ? ' (không tính tiền combo)' : ''}` };
     let discount = 0, freeship = false;
     if (c.type === 'percent') discount = Math.min(base * c.value / 100, c.max || Infinity);
     else if (c.type === 'fixed') discount = Math.min(c.value, base); else if (c.type === 'ship') freeship = true;
@@ -682,30 +682,32 @@
   function qbPrice() { const p = byId(QB.id); const v = QB.variant != null && p.variants ? p.variants[QB.variant] : null; return { price: v ? v.price : p.price, old: v ? v.oldPrice : p.oldPrice, label: v ? v.label : '' }; }
   function qbCalc() {
     const { price } = qbPrice(); const sub = price * QB.qty, qbLs = qbLines(), khUD = hangKhongUuDai(qbLs); const multi = QB.qty >= 2 && !khUD.tien ? Math.round(sub * MULTI_RATE) : 0;
-    const base = sub - multi, baseUD = baseUuDai(base, qbLs);   // baseUD: phần tiền hàng được hưởng ưu đãi (bỏ combo / sản phẩm đang có quà)
+    const base = sub - multi, baseA = baseUuDai(base, qbLs, { chiA: true }), baseAB = baseUuDai(base, qbLs);   // baseA: bỏ combo / phân loại giảm sẵn · baseAB: bỏ thêm sản phẩm đang có quà
     const loy = SITE.loyalty || {};
     const pct = loy.enabled ? Session.discountFor(qbPhone()) : 0;
     const hang = hangCho(qbPhone()) || tierOf(0);
     const laSN = !!(pct > 0 && hang.laSinhNhat);   // tháng sinh nhật: không dùng kèm mã / giới thiệu / quà, vẫn dùng điểm
-    const cr = QB.coupon && !laSN ? applyCoupon(QB.coupon, base, qbLines()) : null; const couponAmt = cr && cr.ok ? cr.discount : 0; const hangAmt = pct ? Math.round(baseUD * pct / 100) : 0;
+    const cr = QB.coupon && !laSN ? applyCoupon(QB.coupon, base, qbLines()) : null; const couponAmt = cr && cr.ok ? cr.discount : 0; let hangAmt = pct ? Math.round(baseAB * pct / 100) : 0;
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0;
     if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     /* Giảm giới thiệu = 1 mã giảm giá (không cộng dồn mã / hạng, lấy mức lợi hơn); điểm chỉ trừ tiền hàng còn lại */
     const C = QB.gtCfg || {};
-    const gtAmt = !laSN && QB.gt.ok && C.bat && baseUD >= (Number(C.donToiThieu) || 0) ? Math.round(baseUD * (Number(C.giam) || 0) / 100) : 0;
+    const gtAmt = !laSN && QB.gt.ok && C.bat && baseA >= (Number(C.donToiThieu) || 0) ? Math.round(baseA * (Number(C.giam) || 0) / 100) : 0;
     let dungGT = gtAmt > 0, boMa = false;
     if (dungGT && cr && cr.ok) {
       const giaTriMa = (dungMa ? couponAmt : 0) + (cr.freeship ? (shipFee(base, 'standard', { tinh: qbTinh(), lines: qbLines() }) || 0) : 0);
       if (giaTriMa > gtAmt) dungGT = false; else { dungMa = false; boMa = true; }
     }
     if (dungGT && dungHang && !ketHop().hangMa) { if (hangAmt > gtAmt) dungGT = false; else dungHang = false; }
+    /* đơn dùng mã / voucher / giới thiệu → bỏ quà theo sản phẩm → hạng tính lại trên cả sản phẩm đó (nhóm B) */
+    if (dungHang && (dungMa || dungGT)) hangAmt = pct ? Math.round(baseA * pct / 100) : 0;
     const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0);
     const gtd = Number(C.giaTriDiem) || 1;
     const ptDiem = C.diemToiDaPhanTram != null ? Number(C.diemToiDaPhanTram) : 10;   // mỗi đơn dùng điểm tối đa ptDiem % giá trị đơn
     const diemToiDa = QB.vi && QB.vi.dungDuoc ? Math.max(0, Math.min(QB.vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd), Math.floor(base * ptDiem / 100 / gtd))) : 0;
     const diemDung = Math.max(0, Math.min(QB.diemMuon, diemToiDa)), giamDiem = diemDung * gtd;
     const ship = (cr && cr.ok && cr.freeship && !boMa) || maShipTuDong(base, qbLines()) ? 0 : shipFee(base - discount, 'standard', { tinh: qbTinh(), lines: qbLines() });
-    return { sub, multi, base, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { sub, multi, base, baseA, baseAB, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   }
   const qbQuaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : maChoQua(k.boMa ? null : k.cr, k.dungMa));
   /* Mã giới thiệu trong Mua nhanh: kiểm tra với SĐT đang nhập (khách mới mới được giảm) */
@@ -856,7 +858,7 @@
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
     const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
     const gw = $('#qbGift'); if (gw) gw.innerHTML = g && g.hoacGiam ? giftBox(g, false) : giftBox(g, true, QB.quaVi);   // chọn giảm thay quà làm ở trang thanh toán
-    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>${k.hang.laSinhNhat ? 'Ưu đãi sinh nhật 🎂' : 'Ưu đãi hạng ' + esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}${ghiChuKhongUuDai(qbLines())}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
+    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>${k.hang.laSinhNhat ? 'Ưu đãi sinh nhật 🎂' : 'Ưu đãi hạng ' + esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}${ghiChuKhongUuDai(qbLines(), { coQua: !!((giftFor(qbLines(), qbQuaOpts(k)) || {}).soQua) })}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
     const qbGtHint = (k) => { const G2 = QB.gt;
       return G2.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
         : G2.ok && k.dungGT ? `<span class="text-teal fw-600">✓ Mã hợp lệ${G2.tenAn ? ` (${esc(G2.tenAn)})` : ''} – giảm ${QB.gtCfg.giam}% đơn đầu tiên</span>`
@@ -896,7 +898,7 @@
       let res;
       try {
         res = await GT.giuCho({ sdt: sdtDat, token: ss && phoneKey(ss.sdt) === sdtDat ? ss.token : '', maDon: code, ref: k.dungGT ? QB.gt.ma : '', dungGT: k.dungGT ? '1' : '0',
-          diem: k.diemDung, giaTri: k.base, giaTriUuDai: k.baseUD, giamKhac: (k.dungHang ? k.hangAmt : 0) + k.coupon, tongDon: k.total });
+          diem: k.diemDung, giaTri: k.base, giaTriUuDai: k.baseA, giamKhac: (k.dungHang ? k.hangAmt : 0) + k.coupon, tongDon: k.total });
       } catch (e2) { return loiGiu(e2.message + ' – mẹ bấm Đặt hàng lại giúp shop nhé.'); }
       if (!res || !res.ok) {
         if (res && res.code === 'REQUIRE_AUTH') { QB.diemMuon = 0; if (QB.vi) QB.vi = { ...QB.vi, dungDuoc: false }; }
@@ -1801,15 +1803,18 @@
   /* Sản phẩm KHÔNG nhận thêm ưu đãi (chủ shop 21/10/2026): combo (giá đã giảm sẵn) + sản phẩm đang được tặng quà
      (đủ mốc chương trình quà theo sản phẩm – vd Calciumore 2–4 hộp tặng D3K2; nước ép Lotte mua thùng tặng gói)
      + phân loại đã kèm quà / giảm sẵn trong tên (vd "3 hộp tặng 2 lọ d3k2", "1 hộp váng sữa + 1 d3k2 giảm 5%").
-     Tiền các dòng này KHÔNG tính vào: mã giảm giá, voucher, giảm hạng / sinh nhật, giảm giới thiệu, mua từ 2 giảm 3%,
-     mốc quà theo đơn. Vẫn dùng được: điểm trong ví, mã miễn phí vận chuyển. Quà của chính sản phẩm đó vẫn giữ nguyên. */
-  function hangKhongUuDai(lines) {
-    const ls = lines || [], loai = new Set();
+     Hai nhóm:
+     A – combo / phân loại đã kèm quà hoặc giảm sẵn trong tên: KHÔNG nhận mã, voucher, hạng, sinh nhật, giới thiệu, mua 2 giảm 3%, mốc quà theo đơn.
+     B – sản phẩm đủ mốc chương trình quà (vd Calciumore 2 / 3 / 4 hộp tặng 1 / 2 / 3 lọ D3K2): khi đơn GIỮ quà thì không cộng hạng, sinh nhật,
+         mua 2 giảm 3%, mốc quà theo đơn; khách áp mã / voucher / mã giới thiệu thì đơn bỏ quà và mã giảm như thường (22/10/2026).
+     opts.chiA = chỉ lấy nhóm A (dùng cho mã giảm giá, voucher). Vẫn dùng được: điểm trong ví, mã miễn phí vận chuyển. */
+  function hangKhongUuDai(lines, opts) {
+    const ls = lines || [], loai = new Set(), chiA = !!(opts && opts.chiA);
     const bienTheUuDai = (l) => /tặng|\+.*giảm|giảm.*\+/i.test(String(l.variantLabel || ''));
     ls.forEach((l, i) => { if (l.p && (l.p.isCombo || bienTheUuDai(l))) loai.add(i); });
-    ctDangChay().forEach((x) => { if (ctDat(x, ls) >= x.bac[0].muc) ls.forEach((l, i) => { if (l.p && x.chinh.has(l.p.id)) loai.add(i); }); });
+    if (!chiA) ctDangChay().forEach((x) => { if (ctDat(x, ls) >= x.bac[0].muc) ls.forEach((l, i) => { if (l.p && x.chinh.has(l.p.id)) loai.add(i); }); });
     const cfg = QT();
-    if (cfg && !suKienDangChay() && (cfg.thung || []).length && !(cfg.thungChiKhachMoi && laVip())) {
+    if (!chiA && cfg && !suKienDangChay() && (cfg.thung || []).length && !(cfg.thungChiKhachMoi && laVip())) {
       const tk = String(cfg.tuKhoaThung || 'thùng').toLowerCase(), laThung = (l) => !!l.p && laNuocLotte(l.p) && !l.p.isCombo && String(l.variantLabel || '').toLowerCase().includes(tk);
       const thung = ls.reduce((s, l) => s + (laThung(l) ? l.qty : 0), 0);
       if (thung >= Math.min(...cfg.thung.map((b) => b.tu))) ls.forEach((l, i) => { if (laThung(l)) loai.add(i); });
@@ -1818,12 +1823,25 @@
     return { co: (l) => loai.has(ls.indexOf(l)), tien, tong, coCombo: ls.some((l, i) => loai.has(i) && l.p && l.p.isCombo), coQua: ls.some((l, i) => loai.has(i) && !(l.p && l.p.isCombo)) };
   }
   /* Phần tiền hàng được hưởng ưu đãi: base (tiền hàng sau "mua 2 giảm 3%") trừ phần của các dòng không nhận ưu đãi */
-  function baseUuDai(base, lines) { const k = hangKhongUuDai(lines); return k.tong && k.tien ? Math.max(0, Math.round(base * (k.tong - k.tien) / k.tong)) : base; }
+  function baseUuDai(base, lines, opts) { const k = hangKhongUuDai(lines, opts); return k.tong && k.tien ? Math.max(0, Math.round(base * (k.tong - k.tien) / k.tong)) : base; }
   /* Dòng ghi chú cho khách ở tổng tiền khi đơn có sản phẩm không nhận thêm ưu đãi */
-  function ghiChuKhongUuDai(lines) {
-    const k = hangKhongUuDai(lines); if (!k.tien) return '';
-    const ai = k.coQua && k.coCombo ? 'Sản phẩm đang có quà tặng và combo' : k.coQua ? 'Sản phẩm đang có quà tặng' : 'Combo (giá đã giảm sẵn)';
-    return `<div class="summary-line summary-line--note"><span>ℹ️ ${ai} không áp dụng thêm mã giảm giá, voucher, ưu đãi hạng / sinh nhật</span></div>`;
+  /* opts.coQua = đơn đang giữ quà theo sản phẩm (giftFor còn soQua) */
+  function ghiChuKhongUuDai(lines, opts) {
+    const a = hangKhongUuDai(lines, { chiA: true }), b = hangKhongUuDai(lines), coB = b.tien > a.tien && !!(opts && opts.coQua), ds = [];
+    if (a.tien) ds.push('Combo / phân loại đã giảm sẵn không áp dụng thêm mã giảm giá, voucher, ưu đãi hạng / sinh nhật');
+    if (coB) ds.push('Sản phẩm đang được tặng quà không cộng thêm ưu đãi hạng / sinh nhật · áp mã giảm giá hoặc voucher thì đơn không kèm quà');
+    return ds.map((t) => `<div class="summary-line summary-line--note"><span>ℹ️ ${t}</span></div>`).join('');
+  }
+  /* Dòng "🎁 Tặng … " ngay dưới ô chọn phân loại (trang sản phẩm): theo phân loại + số lượng đang chọn */
+  function quaBienThe(p, label, qty = 1) {
+    const ds = ctChoSP(p); if (!ds.length) return '';
+    const v = (p.variants || []).find((x) => x.label === label), gia = v ? v.price : p.price;
+    const l = { p, id: p.id, qty, variantLabel: label || '', price: gia, total: gia * qty };
+    for (const x of ds) {
+      const dat = ctDat(x, [l]), b = [...x.bac].reverse().find((y) => dat >= y.muc);
+      if (b) return `<div class="qua-bt">🎁 <b>Tặng ${b.soQua} ${esc(x.ten)}</b><small>Áp mã giảm giá / voucher thì đơn không kèm quà</small></div>`;
+    }
+    return '';
   }
   /* Quy tắc dùng chung ưu đãi (trang quản trị → Quà tặng / Mã giảm giá):
      hangMa = ưu đãi hạng + mã giảm giá, quaMa = quà tặng + mã, quaHang = quà tặng + ưu đãi hạng */
@@ -1844,9 +1862,9 @@
     if (!g || !g.soQua) return g;
     const k = ketHop(), vip = opts && opts.vip != null ? !!opts.vip : laVip();
     const bo = () => ({ ...g, soQua: 0, chuongTrinh: '', moTa: '', lyDo: '', goiY: '' });   // quy tắc áp ngầm, không hiện lý do
-    if (g.chuongTrinh !== 'don') return g;   // quà theo sản phẩm (chương trình / mua thùng): sản phẩm đó đã không nhận mã, hạng, sinh nhật (hangKhongUuDai) nên giữ quà
-    const tSN = hangCho(sdtDangDung()); if (tSN && tSN.laSinhNhat) return bo(`Đơn đang được giảm ${tSN.discount}% sinh nhật nên không kèm quà tặng.`);
-    if (!k.quaHang && vip) { const t = hangCho(sdtDangDung()); return bo(`Hạng ${t ? t.label : ''} đã được giảm ${t ? t.discount : 0}% nên đơn không kèm quà tặng.`); }
+    const quaDon = g.chuongTrinh === 'don';   // quà theo sản phẩm (chương trình / mua thùng): sản phẩm đó không nhận hạng / sinh nhật nên giữ quà
+    const tSN = hangCho(sdtDangDung()); if (quaDon && tSN && tSN.laSinhNhat) return bo(`Đơn đang được giảm ${tSN.discount}% sinh nhật nên không kèm quà tặng.`);
+    if (quaDon && !k.quaHang && vip) { const t = hangCho(sdtDangDung()); return bo(`Hạng ${t ? t.label : ''} đã được giảm ${t ? t.discount : 0}% nên đơn không kèm quà tặng.`); }
     if (!k.quaMa && opts && opts.coMa && !(k.quaShip && opts.maShip)) return bo('Mã giảm giá không dùng chung với quà tặng – bỏ mã để nhận quà.');
     return g;
   }
@@ -2070,11 +2088,11 @@
       if (!v || v.trangThai !== 'AVAILABLE') return { ok: false, msg: 'Voucher không còn dùng được' };
       if (Date.parse(v.hetHan) <= Date.now()) return { ok: false, msg: 'Voucher đã hết hạn' };
       if (Date.parse(v.batDau) > Date.now()) return { ok: false, msg: 'Voucher chưa đến thời gian sử dụng' };
-      const pv = v.phamVi || {}; let tien = baseUuDai(base, lines);   // không tính combo / sản phẩm đang có quà
+      const pv = v.phamVi || {}; let tien = baseUuDai(base, lines, { chiA: true });   // không tính combo / phân loại đã giảm sẵn (dùng voucher thì đơn bỏ quà)
       if (pv.loai && pv.loai !== 'tatca') {
-        const ds = new Set(pv.ds || []), ls = lines || [], kh = hangKhongUuDai(ls);
+        const ds = new Set(pv.ds || []), ls = lines || [], kh = hangKhongUuDai(ls, { chiA: true });
         const tong = ls.reduce((t, l) => t + l.total, 0), ap = ls.reduce((t, l) => t + (l.p && !kh.co(l) && ds.has(pv.loai === 'danhmuc' ? l.p.cat : l.p.id) ? l.total : 0), 0);
-        if (!ap) return { ok: false, msg: kh.tien ? 'Voucher không áp dụng cho combo / sản phẩm đang có quà tặng' : 'Giỏ hàng chưa có sản phẩm áp dụng voucher' };
+        if (!ap) return { ok: false, msg: kh.tien ? 'Voucher không áp dụng cho combo / phân loại đã giảm sẵn' : 'Giỏ hàng chưa có sản phẩm áp dụng voucher' };
         tien = tong ? Math.round(base * ap / tong) : 0;
       }
       if (tien < (v.donToiThieu || 0)) return { ok: false, msg: `Voucher áp dụng cho ${pv.loai && pv.loai !== 'tatca' ? 'sản phẩm áp dụng' : 'đơn'} từ ${fmt(v.donToiThieu)}` };
@@ -2135,5 +2153,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    spUrl, baiUrl, hetHang, chayHang, beDaLuu, hopTuoiBe, hangKhongUuDai, baseUuDai, ghiChuKhongUuDai, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    spUrl, baiUrl, hetHang, chayHang, beDaLuu, hopTuoiBe, hangKhongUuDai, baseUuDai, ghiChuKhongUuDai, quaBienThe, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

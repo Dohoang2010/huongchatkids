@@ -2645,3 +2645,8 @@ details.hk-acc > summary:focus-visible { outline: 2px solid var(--primary); outl
 
 /* Ghi chú: combo / sản phẩm đang có quà không áp dụng thêm ưu đãi */
 .summary-line--note span { font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+
+/* Trang sản phẩm: "🎁 Tặng … " theo phân loại đang chọn */
+.qua-bt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin: 8px 0 4px; padding: 10px 14px; border-radius: 12px; background: #FFF0F4; border: 1.5px dashed #F7A6BC; font-size: 15px; }
+.qua-bt b { color: var(--primary); }
+.qua-bt small { width: 100%; color: var(--muted); font-size: 12.5px; }

@@ -972,7 +972,7 @@ window.PRODUCTS = [
         "oldPrice": 3224000
       },
       {
-        "label": "2 hộp 180 gói",
+        "label": "2 hộp váng sữa",
         "price": 4960000,
         "oldPrice": 6448000
       },
@@ -986,11 +986,11 @@ window.PRODUCTS = [
         "oldPrice": 1075000
       },
       {
-        "label": "3 hộp tặng 2 lọ d3k2",
+        "label": "3 hộp váng sữa",
         "price": 7440000
       },
       {
-        "label": "4 hộp tặng 3 lọ d3k2",
+        "label": "4 hộp váng sữa",
         "price": 9920000
       }
     ],
@@ -5202,7 +5202,10 @@ window.QUA_TANG = {
           "heSo": {
             "30 gói (không hộp)": 0,
             "1 hộp 90 gói": 1,
-            "2 hộp 180 gói": 2
+            "2 hộp váng sữa": 2,
+            "3 hộp váng sữa": 3,
+            "4 hộp váng sữa": 4,
+            "1 hộp váng sữa canxi+1 d3k2 giảm 5%": 0
           }
         }
       ],
@@ -5374,7 +5377,10 @@ window.QUA_TANG = {
           "heSo": {
             "30 gói (không hộp)": 0,
             "1 hộp 90 gói": 1,
-            "2 hộp 180 gói": 2
+            "2 hộp váng sữa": 2,
+            "3 hộp váng sữa": 3,
+            "4 hộp váng sữa": 4,
+            "1 hộp váng sữa canxi+1 d3k2 giảm 5%": 0
           }
         }
       ],
