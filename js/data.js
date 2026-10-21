@@ -2628,10 +2628,10 @@ window.PRODUCTS = [
     "weight": "Bộ sản phẩm",
     "origin": "Đan Mạch",
     "tags": [],
-    "image": "img/24329101823-b.jpg",
-    "thumb": "img/thumb/24329101823-b.jpg",
+    "image": "img/24329101823-c.jpg",
+    "thumb": "img/thumb/24329101823-c.jpg",
     "images": [
-      "img/24329101823-b.jpg",
+      "img/24329101823-c.jpg",
       "img/24329101823-2.jpg",
       "img/24329101823-3.jpg",
       "img/24329101823-4.jpg",
