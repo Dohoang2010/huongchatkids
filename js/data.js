@@ -1955,10 +1955,10 @@ window.PRODUCTS = [
     "tags": [
       "Sản phẩm hot"
     ],
-    "image": "img/57556697426-n.jpg",
-    "thumb": "img/thumb/57556697426-n.jpg",
+    "image": "img/57556697426-b.jpg",
+    "thumb": "img/thumb/57556697426-b.jpg",
     "images": [
-      "img/57556697426-n.jpg",
+      "img/57556697426-b.jpg",
       "img/57556697426-2.jpg",
       "img/57556697426-3.jpg",
       "img/57556697426-4.jpg",
