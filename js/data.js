@@ -2175,10 +2175,10 @@ window.PRODUCTS = [
     "weight": "Hộp 30 viên",
     "origin": "Úc",
     "tags": [],
-    "image": "img/28902157429-n.jpg",
-    "thumb": "img/thumb/28902157429-n.jpg",
+    "image": "img/28902157429-b.jpg",
+    "thumb": "img/thumb/28902157429-b.jpg",
     "images": [
-      "img/28902157429-n.jpg",
+      "img/28902157429-b.jpg",
       "img/28902157429-2.jpg",
       "img/28902157429-3.jpg",
       "img/28902157429-4.jpg",
