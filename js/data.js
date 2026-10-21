@@ -2121,10 +2121,10 @@ window.PRODUCTS = [
     "weight": "Hộp 8 miếng",
     "origin": "Hàn Quốc",
     "tags": [],
-    "image": "img/24015583018-b.jpg",
-    "thumb": "img/thumb/24015583018-b.jpg",
+    "image": "img/24015583018-c.jpg",
+    "thumb": "img/thumb/24015583018-c.jpg",
     "images": [
-      "img/24015583018-b.jpg",
+      "img/24015583018-c.jpg",
       "img/24015583018-2.jpg",
       "img/24015583018-3.jpg",
       "img/24015583018-4.jpg",
