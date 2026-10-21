@@ -6,6 +6,8 @@
 #      pages_manage_posts, pages_manage_engagement → Generate Access Token → đăng nhập tài khoản quản trị page → chép mã
 # Chạy:  powershell -ExecutionPolicy Bypass -File tools\may-chu-vps\cai-facebook.ps1
 $ErrorActionPreference = 'Stop'
+# chữ tiếng Việt từ VPS (tên page) hiện đúng, không bị méo
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $vps = 'root@103.77.242.192'
 $khoa = Join-Path $env:USERPROFILE '.ssh\id_ed25519_hck_vps'
 if (-not (Test-Path $khoa)) { Write-Host "Máy này chưa có khoá SSH của VPS ($khoa)." -ForegroundColor Red; exit 1 }
