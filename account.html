@@ -10,13 +10,13 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261020h">
+  <link rel="stylesheet" href="css/style.css?v=20261021a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
 <div class="dau-cho" aria-hidden="true"></div>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261020a" defer></script>
+<script src="js/data.js?v=20261021a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
@@ -224,6 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---------- Chưa xác thực: mời đăng nhập bằng OTP ---------- */
   function renderKhach() {
     const c = Customer.get();
+    /* Quà tạo tài khoản mới (window.QUA_DANG_KY, đến hết hạn thì tự ẩn) */
+    const quaDk = () => { const q = window.QUA_DANG_KY, nay = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 10); if (!q || !(q.diem > 0) || nay < q.tu || nay > q.den) return ''; const [y, m, d] = q.den.split('-'); return `<div class="dangky__perk dangky__perk--qua"><i>🎁</i><span><b>Tạo tài khoản tặng ngay ${Number(q.diem).toLocaleString('vi-VN')} điểm</b> (= ${Number(q.diem).toLocaleString('vi-VN')}đ trừ khi mua hàng) – đến hết ${d}/${m}/${y}</span></div>`; };
     $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Thông tin khách hàng</span></nav>
       <h1 class="page-title">Thông tin khách hàng</h1>
       ${GT.ref() ? `<div class="qb__saved mb-16">🤝 Mẹ được giới thiệu bởi <b>${esc(maskPhone(GT.ref()))}</b> – đăng ký hoặc đặt hàng để được giảm giá cho đơn hàng đầu tiên (mã đã điền sẵn).</div>` : ''}
@@ -250,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div id="dkWrap">
             <h3>✨ Mẹ chưa có tài khoản</h3>
             <p class="fs-14 text-muted">Đăng ký 30 giây – chỉ cần điền thông tin, không cần mã OTP.</p>
+            ${quaDk()}
             <div class="dangky__perk"><i>🎁</i><span>Khách mới: đơn từ ${fmt(((window.QUA_TANG || {}).donTu || {}).muc || 0)} được tặng ${((window.QUA_TANG || {}).donTu || {}).soQua || 0} ${esc((window.QUA_TANG || {}).ten || '')}</span></div>
             <div class="dangky__perk"><i>🥈</i><span>Mua đủ ${fmt((tiers()[1] || {}).min || 0)} lên hạng ${esc((tiers()[1] || {}).label || '')} – giảm ${(tiers()[1] || {}).discount || 0}% mọi đơn sau đó</span></div>
             <div class="dangky__perk"><i>⚡</i><span>Lần sau đặt hàng chỉ 1 chạm, địa chỉ điền sẵn</span></div>
@@ -258,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <form id="dkForm" class="hide">
             <h3>✨ Đăng ký khách hàng mới</h3>
+            ${quaDk()}
             <div class="field mt-8"><label>Họ tên <span>*</span></label><input class="input" name="ten" placeholder="VD: Nguyễn Thu Hà" required></div>
             <div class="field mt-8"><label>Số điện thoại <span>*</span></label><input class="input" name="sdt" type="tel" inputmode="numeric" placeholder="VD: 0912 345 678" value="${esc((c && c.phone) || '')}" required></div>
             <div class="field mt-8"><label>Tỉnh / Thành phố</label><select class="input" name="tinh"><option value="">Chọn tỉnh/thành</option>${DIA.map((x) => `<option>${esc(x.t)}</option>`).join('')}</select></div>
@@ -403,6 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toast('Đã tạo tài khoản cho mẹ 🎉', { type: 'ok' });
         f.outerHTML = `<div class="card card--pad" style="background:var(--teal-50,#F1FAF8);border:1px solid var(--teal-200,#B9E3DC)">
           <h3>🎉 Đã tạo tài khoản cho mẹ</h3>
+          ${res.quaLe ? `<p class="fs-14 mt-8 fw-700" style="color:var(--primary)">🎁 Hương đã tặng mẹ ${Number(res.quaLe.diem || 0).toLocaleString('vi-VN')} điểm vào ví điểm – mẹ dùng để trừ tiền khi mua hàng nhé.</p>` : ''}
           <p class="fs-14">Từ giờ mẹ đặt hàng chỉ cần 1 chạm, địa chỉ tự điền sẵn. Ưu đãi theo hạng sẽ tự trừ vào đơn khi mẹ nhập số điện thoại này.</p>
           ${res.gioiThieu ? (res.gioiThieu.ok ? `<p class="fs-14 mt-8 text-teal fw-600">🤝 Đã liên kết mã giới thiệu ${esc(maskPhone(ref))} – đơn hàng đầu tiên của mẹ được giảm ${res.gioiThieu.discountPercent || ''}%, web tự áp khi thanh toán.</p>` : `<p class="fs-14 mt-8 text-red">Mã giới thiệu chưa dùng được: ${esc(res.gioiThieu.message || res.gioiThieu.msg || '')}</p>`) : ''}
           <p class="fs-14 mt-8">Muốn xem hồ sơ, lịch sử đơn và tổng chi tiêu thì mẹ đăng nhập bằng số <b>${esc(sdt)}</b>, mật khẩu mặc định là <b>${esc(res.mkMacDinh || '1')}</b>.</p>

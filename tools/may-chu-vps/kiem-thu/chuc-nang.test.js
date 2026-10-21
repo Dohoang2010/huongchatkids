@@ -15,12 +15,13 @@ const MA = fs.readFileSync(process.env.GS || path.join(__dirname, '..', '..', 'a
 const KHOA_QT = 'khoa-quan-tri-thu-nghiem-0123456789';   // ADMIN_KEY giả (≥ 24 ký tự) – chỉ có trong bài kiểm thử
 const SDT = '0912345678', SDT2 = '0987000111';
 
-function taoMay() {
+/* them: mã chạy thêm sau apps-script.gs (vd đặt hạn QUA_DANG_KY giả để bài không phụ thuộc ngày chạy) */
+function taoMay(them) {
   const kho = new Kho(); const daGui = [];
   const traLoi = (y) => (/web-khach\?sdt=/.test(y.url) ? { ma: 200, noiDung: JSON.stringify({ ok: true, co: false, donHang: [] }), dau: {} } : { ma: 404, noiDung: '', dau: {} });
   const bc = new BoChay({ kho, cauHinh: { imLang: true, goiMang: async (ds) => ds.map(traLoi) }, guiDi: (h) => daGui.push(...h) });
   datGoiChoThu((ds) => ds.map(traLoi));
-  bc.napMa(MA, 'apps-script.gs');
+  bc.napMa(MA + (them ? '\n;' + them : ''), 'apps-script.gs');
   kho.thuocTinh.set('ADMIN_KEY', KHOA_QT);
   kho.thuocTinh.set('ZALO_BOT_TOKEN', '123456:thu-nghiem'); kho.thuocTinh.set('ZALO_BOT_CHAT_ID', 'chat-thu');   // Zalo giả: tin báo shop chỉ vào hộp thư đi của bài kiểm thử
   const get = async (q) => JSON.parse((await bc.doGet(new URLSearchParams(q))).noiDung);
@@ -42,6 +43,21 @@ const mail = (m, toi) => m.daGui.filter((x) => x.loai === 'mail' && String(x.thu
 const maTrongThu = (t) => (String(t.thu.htmlBody || t.thu.body || '').match(/\b(\d{6})\b/) || [])[1];
 
 /* ---------- Tài khoản ---------- */
+test('quà tạo tài khoản mới: trong hạn tặng ngay QUA_DANG_KY.diem điểm (1 lần / số), hết hạn thì không tặng; khách cũ không đăng ký lại được', async () => {
+  const m = taoMay("QUA_DANG_KY.tu = '2000-01-01'; QUA_DANG_KY.den = '2999-12-31';");
+  const dk = await m.get('action=dangKy&sdt=' + SDT + '&ten=Mẹ Thử&mk=Matkhau123&mk2=Matkhau123');
+  assert.strictEqual(dk.ok, true, JSON.stringify(dk));
+  assert.ok(dk.quaLe && dk.quaLe.diem >= 50000, 'có quà: ' + JSON.stringify(dk.quaLe)); assert.match(dk.quaLe.thongBao, /50\.000 điểm/);
+  const dn = await dangNhapOtp(m, SDT);
+  const vi = await m.get('action=diemCuaToi&token=' + dn.token);
+  assert.ok(vi.soDu >= 50000, 'ví có 50.000 điểm: ' + vi.soDu);
+  assert.ok((vi.lichSu || []).some((x) => /tạo tài khoản/i.test(JSON.stringify(x))), 'lịch sử ghi rõ quà tạo tài khoản');
+  assert.strictEqual((await m.get('action=dangKy&sdt=' + SDT + '&ten=Mẹ Thử&mk=Matkhau123&mk2=Matkhau123')).ok, false, 'không đăng ký lại để nhận thêm');
+  const het = taoMay("QUA_DANG_KY.tu = '2000-01-01'; QUA_DANG_KY.den = '2001-01-01';");
+  const dk2 = await het.get('action=dangKy&sdt=0912345678&ten=Mẹ Hai&mk=Matkhau123&mk2=Matkhau123');
+  assert.strictEqual(dk2.ok, true); assert.ok(!dk2.quaLe || !/tạo tài khoản/.test(dk2.quaLe.ten), 'hết hạn thì không tặng');
+});
+
 test('đăng ký → đăng nhập OTP → đặt mật khẩu riêng → đăng nhập bằng mật khẩu; số / mật khẩu sai bị từ chối', async () => {
   const m = taoMay();
   assert.strictEqual((await m.get('action=dangKy&sdt=123&ten=Mẹ Thử&mk=Matkhau123&mk2=Matkhau123')).ok, false, 'số điện thoại sai');

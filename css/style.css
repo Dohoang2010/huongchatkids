@@ -2638,3 +2638,7 @@ details.hk-acc > summary:focus-visible { outline: 2px solid var(--primary); outl
 .dcs-nut__mui { flex: none; padding: 9px 16px; border-radius: 999px; background: var(--primary); color: #fff; font-weight: 700; font-size: 14px; white-space: nowrap; }
 @media (max-width: 420px) { .dcs-nut { gap: 10px; padding: 12px; } .dcs-nut__ic { width: 40px; height: 40px; font-size: 20px; } .dcs-nut__chu b { font-size: 15.5px; } .dcs-nut__mui { padding: 8px 12px; font-size: 13px; } }
 @media (min-width: 768px) { .hk-ht__khung { height: 160px; } }
+
+/* Quà tạo tài khoản mới (account.html) */
+.dangky__perk--qua { background: #FFF0F4; border: 1.5px dashed #F7A6BC; border-radius: 12px; padding: 8px 10px; margin: 8px 0; color: var(--ink); }
+.dangky__perk--qua b { color: var(--primary); }

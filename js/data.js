@@ -6464,6 +6464,9 @@ window.LE_HOI = {
 };
 /* ===/ADMIN:LE_HOI=== */
 
+/* Quà tạo tài khoản mới: web chỉ dùng để HIỆN thông báo – máy chủ (tools/apps-script.gs › QUA_DANG_KY) mới là nơi cộng điểm, sửa cả 2 nơi */
+window.QUA_DANG_KY = { diem: 50000, tu: '2026-10-21', den: '2026-12-31' };
+
 window.SU_KIEN = {
   id: '2010', nhan: '20.10', icon: '🌷', ten: 'Ngày Phụ nữ Việt Nam 20.10', khau: 'Mẹ xứng đáng được yêu thương',
   hienTu: '2026-10-16T00:00:00+07:00', batDau: '2026-10-20T00:00:00+07:00', ketThuc: '2026-10-21T00:00:00+07:00',

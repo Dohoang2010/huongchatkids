@@ -1191,6 +1191,26 @@ function thuongLe_(sdt, dangKy) {   // dangKy = true: vừa tạo tài khoản m
     return { ten: le.ten, diem: le.thuongDangNhap, soDu: r.soDu, thongBao: '🌷 Quà ' + le.ten + ': Hương tặng mẹ ' + le.thuongDangNhap.toLocaleString('vi-VN') + ' điểm thưởng!' };
   } catch (e) { Logger.log('Quà ngày lễ lỗi: ' + e); return null; }
 }
+/* ===================== QUÀ TẠO TÀI KHOẢN MỚI =====================
+   Mẹ tạo tài khoản trên web (apiDangKy) trong khoảng tu → den (giờ Việt Nam): tặng ngay QUA_DANG_KY.diem điểm vào ví.
+   Mỗi số điện thoại nhận 1 lần (khoá DK<id>:<sdt>, ghiDiem không ghi trùng). Điểm dùng như mọi điểm khác (quy định ví điểm giữ nguyên).
+   Đổi số điểm / hạn: sửa ở đây (web đọc QUA_DANG_KY trong js/data.js để hiện thông báo – sửa cả 2 nơi). */
+var QUA_DANG_KY = { id: '2026', diem: 50000, tu: '2026-10-21', den: '2026-12-31', ten: 'Quà tạo tài khoản mới' };
+function quaDangKyChay_(ngay) { ngay = ngay || ngayDD_(); var q = QUA_DANG_KY; return q && Number(q.diem) > 0 && q.tu <= ngay && ngay <= q.den ? q : null; }
+function thuongDangKy_(sdt) {
+  try {
+    var q = quaDangKyChay_(); if (!q || !sdtHopLe(sdt) || khachBiKhoa(sdt)) return null;
+    var r = voiKhoa(function () { return ghiDiem(sdt, 'EARN', Number(q.diem), 'EVENT', "'DK" + q.id, '🎁 ' + q.ten + ' – tặng ' + Number(q.diem).toLocaleString('vi-VN') + ' điểm', 'hệ thống', 'DK' + q.id + ':' + sdt); });
+    if (!r || !r.ok || r.trung || r.khongDoi) return null;
+    ghiNhatKy('Quà tạo tài khoản', sdt, 'Tặng ' + q.diem + ' điểm');
+    return { ten: q.ten, diem: Number(q.diem), soDu: r.soDu, thongBao: '🎁 Chào mừng mẹ đến với ' + TEN_SHOP + '! Hương tặng mẹ ' + Number(q.diem).toLocaleString('vi-VN') + ' điểm thưởng vào ví điểm.' };
+  } catch (e) { Logger.log('Quà tạo tài khoản lỗi: ' + e); return null; }
+}
+/* Gộp quà ngày lễ + quà tạo tài khoản (cùng lúc) thành 1 thông báo cho web */
+function gopQua_(a, b) {
+  if (!a || !b) return a || b || null;
+  return { ten: a.ten + ' + ' + b.ten, diem: a.diem + b.diem, soDu: Math.max(a.soDu || 0, b.soDu || 0), thongBao: b.thongBao + ' ' + a.thongBao };
+}
 /* Danh sách email khách đã mua hàng: email trong đơn hàng + email hồ sơ của khách có đơn (không trùng) */
 function emailKhachDaMua_() {
   var ds = {}, them = function (mail, ten) { mail = String(mail || '').trim(); var k = mail.toLowerCase(); if (emailHopLe(mail) && !ds[k]) ds[k] = { email: mail, ten: String(ten || '').trim() }; };
@@ -2524,7 +2544,7 @@ function apiDangKyGoc(p) {
       + (emailHopLe(p.email) ? '\nEmail: ' + cat(p.email, 100) : '') + (chuanGioiTinh_(p.gioiTinh) ? '\nGiới tính: ' + chuanGioiTinh_(p.gioiTinh) : '');
     try { zaloBotGuiTin(bao); } catch (e1) { Logger.log(e1); }
     if (EMAIL) { try { MailApp.sendEmail(EMAIL, '🆕 Khách mới đăng ký: ' + cat(ten, 80), bao); } catch (e2) { Logger.log(e2); } }
-    return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH, quaLe: thuongLe_(sdt, true) };
+    return { ok: true, kh: kq.kh, mkMacDinh: MK_MAC_DINH, quaLe: gopQua_(thuongLe_(sdt, true), thuongDangKy_(sdt)) };
   } finally { lock.releaseLock(); }
 }
 
