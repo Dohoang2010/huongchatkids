@@ -2395,10 +2395,10 @@ window.PRODUCTS = [
     "weight": "Serum 30ml + kem 50ml",
     "origin": "Ý",
     "tags": [],
-    "image": "img/29006040615-n.jpg",
-    "thumb": "img/thumb/29006040615-n.jpg",
+    "image": "img/29006040615-b.jpg",
+    "thumb": "img/thumb/29006040615-b.jpg",
     "images": [
-      "img/29006040615-n.jpg",
+      "img/29006040615-b.jpg",
       "img/29006040615-2.jpg",
       "img/29006040615-3.jpg",
       "img/29006040615-4.jpg",
