@@ -135,7 +135,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-system.js": {
-   "v": "09b2442e",
+   "v": "95967bbf",
    "can": [
     "m-bao-mat.js"
    ],

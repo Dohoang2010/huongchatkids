@@ -100,16 +100,15 @@
     if (tab === 'van-chuyen') b.innerHTML = `
       <h3>Phí vận chuyển</h3>
       <div class="row row-3">
-        <label>Nội thành Hà Nội (đ)<input type="number" data-ch2="shipping.noiThanhGia" value="${(SITE.shipping || {}).noiThanhGia || 0}"></label>
-        <label>Mức tối thiểu tỉnh khác (đ)<input type="number" data-ch2="shipping.toiThieu" value="${(SITE.shipping || {}).toiThieu || 0}"></label>
         <label>Hoả tốc Hà Nội (đ)<input type="number" data-ch="expressFee" value="${gt('expressFee')}"></label>
       </div>
       <div class="row row-2">
         <label>Miễn phí ship cho đơn từ (đ)<input type="number" data-ch="freeshipFrom" value="${gt('freeshipFrom')}"></label>
         <label>Đơn vị vận chuyển<input value="${esc((SITE.shipping || {}).hang || '')}" disabled></label>
       </div>
-      <div class="box-note">Tỉnh khác tính theo bảng giá ${esc((SITE.shipping || {}).hang || 'GHN')} theo cân nặng và vùng,
-      nhưng không thấp hơn mức tối thiểu ở trên. Bảng giá chi tiết sửa trong <code>js/data.js</code>.</div>`;
+      <div class="box-note">Phí giao tiêu chuẩn theo bảng ${esc((SITE.shipping || {}).hang || 'J&T Express')}, đồng giá toàn quốc, tính theo số thùng / kiện:<br>
+      ${((SITE.shipping || {}).thung || []).map((n) => `<b>${esc(n.ten)}</b>: ${n.gia.map((g, i) => (i + 1) + ' thùng ' + g.toLocaleString('vi-VN') + 'đ').join(' · ')}`).join('<br>')}<br>
+      <b>Hàng khác</b>: mỗi kiện tới ${((SITE.shipping || {}).hangKhac || {}).kgMoiKien || 3}kg ${(((SITE.shipping || {}).hangKhac || {}).gia || 30000).toLocaleString('vi-VN')}đ. Bảng giá sửa trong <code>js/data.js</code> (SITE.shipping).</div>`;
 
     if (tab === 'thanh-toan') b.innerHTML = `
       <h3>Thanh toán</h3>

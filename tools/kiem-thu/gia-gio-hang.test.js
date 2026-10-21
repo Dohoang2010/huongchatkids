@@ -151,6 +151,30 @@ test('phí ship: đơn đủ mức miễn phí; giao nhanh có phí riêng', () 
   assert.ok(phi > 0, 'đơn nhỏ có phí ship: ' + phi);
 });
 
+test('phí ship theo bảng J&T: thùng Lotte 30/60/130/130k, gạc hươu · ChuChu · Norco 50/80/130k, hàng khác 30k mỗi kiện 3kg, đồng giá toàn quốc', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const bt = (id, re) => W.PRODUCTS.find((x) => x.id === id).variants.findIndex((v) => re.test(v.label));
+  const phi = (ls, tinh = 'Hà Nội') => MC.shipFee(1, 'standard', { tinh, lines: ls });
+  const thungLotte = bt(LOTTE, /thùng/i), hopLotte = bt(LOTTE, /^hộp 10/i);
+  assert.ok(thungLotte >= 0 && hopLotte >= 0, 'Lotte có phân loại hộp và thùng');
+  assert.strictEqual(phi([dong(W, LOTTE, 1, thungLotte)]), 30000, '1 thùng Lotte');
+  assert.strictEqual(phi([dong(W, LOTTE, 2, thungLotte)]), 60000, '2 thùng Lotte');
+  assert.strictEqual(phi([dong(W, LOTTE, 3, thungLotte)]), 130000, '3 thùng Lotte');
+  assert.strictEqual(phi([dong(W, LOTTE, 4, thungLotte)]), 130000, '4 thùng Lotte');
+  assert.strictEqual(phi([dong(W, LOTTE, 3, hopLotte)]), 30000, '3 hộp 10 gói = 1 thùng');
+  assert.strictEqual(phi([dong(W, LOTTE, 1, hopLotte)]), 30000, '1 hộp lẻ = hàng khác 1 kiện');
+  assert.strictEqual(phi([dong(W, LOTTE, 1, thungLotte)], 'Cà Mau'), 30000, 'đồng giá toàn quốc');
+  const SUMO = '26156646705', CHU = '22644617070', NORCO = '26523206270';
+  assert.strictEqual(phi([dong(W, SUMO, 1, bt(SUMO, /thùng/i))]), 50000, '1 thùng gạc hươu');
+  assert.strictEqual(phi([dong(W, SUMO, 2, bt(SUMO, /thùng/i))]), 80000, '2 thùng gạc hươu');
+  assert.strictEqual(phi([dong(W, CHU, 3, bt(CHU, /1 thùng/i))]), 130000, '3 thùng ChuChu');
+  assert.strictEqual(phi([dong(W, CHU, 2, bt(CHU, /nửa thùng/i))]), 50000, '2 × nửa thùng ChuChu = 1 thùng');
+  assert.strictEqual(phi([dong(W, NORCO, 1, bt(NORCO, /2 thùng/i))]), 80000, 'phân loại "2 thùng" Norco');
+  assert.strictEqual(phi([dong(W, '42878618667', 1)]), 30000, 'D3K2: hàng khác 1 kiện');
+  assert.strictEqual(phi([dong(W, NORCO, 1, 0), dong(W, '42878618667', 1)]), 80000, 'đơn nhiều loại: cộng từng loại');
+  assert.match(MC.ghnInfo('', [dong(W, LOTTE, 2, thungLotte)]), /J&T Express · 2 thùng Lotte/);
+});
+
 test('tìm kiếm không dấu / sai chính tả nhẹ và link sản phẩm có từ khoá', () => {
   const { MC, W } = taoWeb({ gio: gio('10:00') });
   const ids = (q) => MC.timSP(q, W.PRODUCTS).ds.map((p) => p.id);

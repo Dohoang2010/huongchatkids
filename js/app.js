@@ -238,7 +238,7 @@
       }, 700);
     });
   }
-  /* ---------------- Phí vận chuyển: bảng giá GHN (SITE.shipping) theo vùng + cân nặng ---------------- */
+  /* ---------------- Phí vận chuyển: bảng phí J&T (SITE.shipping) theo số thùng / kiện, đồng giá toàn quốc ---------------- */
   const vnKey = (s) => stripVN(s).replace(/^(TP|THANH PHO|TINH) /, '');
   /* Tỉnh nhận hàng: từ địa chỉ đã lưu dạng "Tỉnh|Xã|…" hoặc tìm tên tỉnh trong địa chỉ gõ tự do */
   function tinhTuDiaChi(addr) {
@@ -249,12 +249,6 @@
     const ds = [...(window.DIA_CHI || []).map((p) => p.t), ...(S.noiTinh || []), ...(S.noiVung || [])];
     const hit = ds.find((t) => s.includes(' ' + vnKey(t) + ' '));
     return hit || (/ (HN|HA NOI) /.test(s) ? 'Hà Nội' : / (HCM|SAI GON|SG) /.test(s) ? 'TP. Hồ Chí Minh' : '');
-  }
-  function vungShip(tinh) {
-    const S = SITE.shipping || {}; const k = vnKey(tinh);
-    if ((S.noiTinh || []).some((t) => vnKey(t) === k)) return 'noiTinh';
-    if ((S.noiVung || []).some((t) => vnKey(t) === k)) return 'noiVung';
-    return 'lienVung';
   }
   /* Cân nặng đơn (gram): cân 1 đơn vị × tỉ lệ giá phân loại so với phân loại đầu × số lượng + đóng gói */
   function canNang(lines) {
@@ -267,30 +261,40 @@
       return sum + g * heSo * (l.qty || 1);
     }, (lines || []).length ? S.dongGoi || 0 : 0);
   }
-  /* Báo giá GHN: { fee, vung, tenVung, gram } */
-  function ghnQuote(lines, tinh) {
-    const S = SITE.shipping; const vung = vungShip(tinh); const b = S.bangGia[vung];
-    const gram = Math.round(canNang(lines)); let fee = b.gia;
-    for (let w = S.goiDau || 2000; w < gram; w += 500) fee += w + 500 > 4000 ? b.moi500Tu4kg : b.moi500;
-    /* Hà Nội (nội tỉnh) thu cố định; tỉnh khác theo bảng giá hãng nhưng không thấp hơn mức tối thiểu */
-    if (vung === 'noiTinh' && S.noiThanhGia) fee = S.noiThanhGia;
-    else if (S.toiThieu) fee = Math.max(fee, S.toiThieu);
-    return { fee, vung, tenVung: b.ten, gram };
+  /* Số thùng của 1 dòng hàng: "… 20 gói" ÷ goiMotThung, hoặc "2 thùng", hoặc 1 thùng / đơn vị */
+  function soThung(l, nhom) {
+    const t = String(l.variantLabel || ''), g = t.match(/(\d+)\s*gói/i), th = t.match(/(\d+)\s*thùng/i);
+    const moi = nhom.goiMotThung && g ? Number(g[1]) / nhom.goiMotThung : th ? Number(th[1]) : 1;
+    return moi * (l.qty || 1);
   }
-  /* Phí ship của đơn. ctx: { tinh, lines }. Chưa biết tỉnh → null (hiện "theo địa chỉ"). */
+  const giaBang = (gia, n) => { let f = 0; while (n > gia.length) { f += gia[gia.length - 1]; n -= gia.length; } return f + (n > 0 ? gia[n - 1] : 0); };
+  /* Báo giá: { fee, gram, moTa } – hàng thùng theo bảng từng nhóm, phần còn lại theo kiện (tới 3kg / kiện) */
+  function ghnQuote(lines) {
+    const S = SITE.shipping; let fee = 0; const moTa = [], le = [];
+    const nhomCua = (p) => (S.thung || []).find((n) => n.ids.includes(p.id));
+    const dem = new Map();
+    (lines || []).forEach((l) => { const p = l.p || byId(l.id); if (!p) return; const n = nhomCua(p);
+      if (n) { const d = dem.get(n) || { t: 0, ls: [] }; d.t += soThung(l, n); d.ls.push(l); dem.set(n, d); } else le.push(l); });
+    dem.forEach((d, n) => { const so = Math.ceil(d.t - 1e-9);
+      if (d.t < 1 - 1e-9) { le.push(...d.ls); return; }
+      fee += giaBang(n.gia, so); moTa.push(so + ' thùng ' + n.ten); });
+    const gram = Math.round(canNang(le));
+    if (le.length) { const kg = (S.hangKhac || {}).kgMoiKien || 3, kien = Math.max(1, Math.ceil(gram / (kg * 1000) - 1e-9));
+      fee += kien * ((S.hangKhac || {}).gia || 30000); moTa.push(kien + ' kiện' + (moTa.length ? ' hàng khác' : '') + ' · ' + (gram / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + 'kg'); }
+    return { fee, gram, moTa: moTa.join(' + ') };
+  }
+  /* Phí ship của đơn (đồng giá toàn quốc – không cần biết tỉnh). ctx: { lines } */
   function shipFee(subtotal, method = 'standard', ctx = {}) {
     if (method === 'express') return SITE.expressFee || 35000;
     if (subtotal >= SITE.freeshipFrom || subtotal === 0) return 0;
     if (!SITE.shipping) return SITE.shipFee;
-    const tinh = ctx.tinh || tinhTuDiaChi((Customer.get() || {}).address);
-    if (!tinh) return null;
-    return ghnQuote(ctx.lines || Cart.lines(), tinh).fee;
+    return ghnQuote(ctx.lines || Cart.lines()).fee;
   }
-  /* Phí thấp nhất (nội tỉnh, gói đầu) – hiện "từ …" khi chưa có địa chỉ */
-  const shipFrom = () => (SITE.shipping ? (SITE.shipping.noiThanhGia || Math.max(SITE.shipping.bangGia.noiTinh.gia, SITE.shipping.toiThieu || 0)) : SITE.shipFee);
+  /* Phí thấp nhất (1 kiện hàng khác) – hiện "từ …" khi chưa tính được */
+  const shipFrom = () => (SITE.shipping ? ((SITE.shipping.hangKhac || {}).gia || 30000) : SITE.shipFee);
+  /* Ghi chú nhỏ cạnh phí, VD "J&T Express · 2 thùng Lotte" */
+  const ghnInfo = (tinh, lines) => { if (!SITE.shipping) return ''; return SITE.shipping.hang + ' · ' + ghnQuote(lines).moTa; };
   /* Ô "Phí vận chuyển" dùng chung */
-  /* Ghi chú nhỏ cạnh phí: vùng + cân nặng, VD "GHN · Nội vùng · 1,2kg" */
-  const ghnInfo = (tinh, lines) => { if (!SITE.shipping || !tinh) return ''; const q = ghnQuote(lines, tinh); return `${SITE.shipping.hang} · ${q.tenVung} · ${(q.gram / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })}kg`; };
   const shipText = (ship) => (ship === null ? `<span class="text-muted">từ ${fmt(shipFrom())} · theo địa chỉ</span>` : ship ? fmt(ship) : 'Miễn phí');
   const productThumb = (p) => p.thumb || productImage(p);
   const addrShow = (a) => addrFull(addrParse(a));

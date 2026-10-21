@@ -44,11 +44,14 @@ window.POLICIES = [
 <tr><td>Các tỉnh khác</td><td>2–3 ngày làm việc; vùng sâu, hải đảo 3–5 ngày</td><td>Có thể chậm hơn vào dịp lễ, Tết, mưa bão</td></tr></table>
 <p>Thời gian trên tính từ khi đơn được xác nhận và (với đơn chuyển khoản) đã nhận thanh toán. Chúng tôi chủ động thông báo nếu dự kiến giao chậm hơn.</p>
 <h3>Phí vận chuyển</h3>
-<p>Giao tiêu chuẩn qua <b>Giao Hàng Nhanh (GHN)</b>, phí tính đúng theo bảng giá GHN (đã gồm VAT), gửi từ Hà Nội. Web tự tính theo tỉnh nhận và cân nặng đơn, hiển thị rõ trước khi mẹ bấm Đặt hàng.</p>
-<table class="ptable"><tr><th>Khu vực nhận</th><th>Đơn tới 2kg</th><th>Mỗi 500g tiếp theo</th></tr>
-<tr><td>Hà Nội</td><td>15.500₫</td><td>+2.000₫ (từ 4kg: +3.000₫)</td></tr>
-<tr><td>Các tỉnh miền Bắc</td><td>18.000₫</td><td>+3.500₫ (từ 4kg: +5.000₫)</td></tr>
-<tr><td>Miền Trung, miền Nam</td><td>19.000₫</td><td>+3.500₫ (từ 4kg: +5.000₫)</td></tr></table>
+<p>Giao tiêu chuẩn qua <b>J&amp;T Express</b>, <b>đồng giá toàn quốc</b>, tính theo số thùng / kiện. Web tự tính và hiển thị rõ trước khi mẹ bấm Đặt hàng.</p>
+<table class="ptable"><tr><th>Hàng</th><th>1 thùng</th><th>2 thùng</th><th>3 thùng</th><th>4 thùng</th></tr>
+<tr><td>Hàng khác (mỗi kiện dưới 3kg)</td><td>30.000₫</td><td colspan="3">mỗi kiện 3kg tiếp theo +30.000₫</td></tr>
+<tr><td>Nước ép, sữa Lotte (thùng ~4kg)</td><td>30.000₫</td><td>60.000₫</td><td>130.000₫</td><td>130.000₫</td></tr>
+<tr><td>Nước gạc hươu non</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
+<tr><td>Hồng sâm ChuChu</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
+<tr><td>Sữa tươi Norco</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr></table>
+<p>Đơn có nhiều loại hàng: cộng phí của từng loại. Mua chưa đủ 1 thùng (VD hộp 10 gói) tính như hàng khác. <b>Kiện hoàn / đổi:</b> 150% phí ship lượt đi.</p>
 <ul><li>Không thu thêm phí thu hộ (COD) – mẹ chỉ trả tiền hàng và phí ship ở trên.</li><li><b>Miễn phí vận chuyển</b> cho đơn từ <b>{freeship}</b> (tính trên giá trị sau giảm giá).</li><li>Hoả tốc nội thành Hà Nội: phụ thu {expressFee}.</li></ul>
 <h3>Đóng gói</h3>
 <p>Sản phẩm được bọc chống sốc, thùng nước ép/hồng sâm đóng thùng carton riêng, dán niêm phong của Hương Chất Kids. Hàng lạnh/nhạy nhiệt (nếu có) được đóng túi giữ nhiệt.</p>

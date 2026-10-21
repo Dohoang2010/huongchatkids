@@ -19,11 +19,11 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261021c" defer></script>
+<script src="js/data.js?v=20261021d" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261021c" defer></script>
+<script src="js/app.js?v=20261021d" defer></script>
 <script src="js/chat.js?v=20261019e" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -81,9 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ptDiem = gtCfg.diemToiDaPhanTram != null ? Number(gtCfg.diemToiDaPhanTram) : 10;   // mỗi đơn dùng điểm tối đa ptDiem % giá trị đơn
     const diemToiDa = vi && vi.dungDuoc ? Math.max(0, Math.min(vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd), Math.floor(base * ptDiem / 100 / gtd))) : 0;
     const diemDung = Math.max(0, Math.min(diemMuon, diemToiDa)); const giamDiem = diemDung * gtd;
-    /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
+    /* Phí ship theo bảng J&T (đồng giá toàn quốc, theo số thùng / kiện) */
     let ship = ((r && r.ok && r.freeship && !boMa) || MC.maShipTuDong(base, lines)) && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
-    if (!city && ship && shipMethod !== 'express') ship = null;
     return { baseA, baseAB, giamQua, laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
   /* Quy tắc quà: giảm giới thiệu tính như 1 mã giảm giá (không phải freeship) */
@@ -162,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
       + MC.ghiChuKhongUuDai(lines, { coQua: !!(qua && qua.soQua) })
       + `<div class="summary-line"><span>Phí vận chuyển${k.ship && shipMethod !== 'express' ? ` <small class="text-muted">(${esc(ghnInfo(k.city, lines))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div><div class="summary-line total"><span>${k.ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(k.total)}</b></div>`;
     /* Phí ô "Giao tiêu chuẩn" theo tỉnh đang chọn */
-    const city = form.elements.city.value; let std = shipFee(sub - multi, 'standard', { tinh: city || '?', lines }); if (!city && std) std = null;
+    const city = form.elements.city.value; let std = shipFee(sub - multi, 'standard', { tinh: city || '?', lines });
     const fe = $('#stdFee'); fe.innerHTML = shipText(std); fe.classList.toggle('text-teal', std === 0);
     $('#coTotal').textContent = fmt(k.total); $('#stickyTotal').textContent = fmt(k.total);
     const bandMa = !loy.combineWithCoupon && k.couponAmt > 0 && !k.dungMa;

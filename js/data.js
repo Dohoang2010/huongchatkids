@@ -30,22 +30,21 @@ window.SITE = {
   shipFee: 25000,
   expressFee: 35000,
   expressCities: ['Hà Nội'],            // tỉnh/thành có giao hoả tốc trong ngày
-  /* Phí giao tiêu chuẩn tính theo BẢNG GIÁ GHN trên Nhanh.vn (hiệu lực 07/11/2025, đã gồm VAT), gửi từ Hà Nội.
-     Phí = giá gói đầu (tới 2kg) theo vùng + mỗi 500g tiếp theo. Đơn từ freeshipFrom vẫn miễn phí.
-     Thu hộ COD: GHN miễn phí tới 1 triệu, trên 1 triệu 0,5% – shop chịu, KHÔNG cộng vào phí của khách.
-     Muốn đổi hãng: sửa bảng giá bên dưới. shipFee ở trên chỉ còn dùng khi xoá khối này. */
+  /* Phí giao tiêu chuẩn theo BẢNG PHÍ SHIP J&T EXPRESS của shop (21/10/2026): đồng giá toàn quốc, tính theo số thùng / kiện.
+     thung: hàng đóng thùng – mỗi nhóm tính gia[số thùng − 1] (nhiều hơn bảng → cộng tiếp từ đầu bảng); số thùng = số gói ÷ goiMotThung
+       (phân loại ghi "… gói"), hoặc số thùng ghi trong tên phân loại. Chưa đủ 1 thùng → tính như hàng khác.
+     hangKhac: mỗi kiện tới kgMoiKien kg giá gia (cân nặng ước tính theo gramTheoSP / gramTheoDanhMuc bên dưới).
+     Các nhóm trong một đơn cộng lại. Đơn từ freeshipFrom vẫn miễn phí. Kiện hoàn / đổi: hoanDoi × phí ship lượt đi. */
   shipping: {
-    hang: 'GHN',
-    noiThanhGia: 30000,   // Hà Nội: thu cố định mức này
-    toiThieu: 30000,      // tỉnh khác: lấy theo bảng giá hãng vận chuyển nhưng không thấp hơn mức này
-    noiTinh: ['Hà Nội'],                                   // tỉnh gửi hàng
-    noiVung: ['Hải Phòng', 'Bắc Ninh', 'Cao Bằng', 'Hưng Yên', 'Lai Châu', 'Lào Cai', 'Lạng Sơn', 'Ninh Bình', 'Phú Thọ', 'Quảng Ninh', 'Sơn La', 'Thái Nguyên', 'Tuyên Quang', 'Điện Biên'],   // miền Bắc; tỉnh còn lại = liên vùng
-    goiDau: 2000,                                          // gram tính trong giá gói đầu
-    bangGia: {                                             // gia: gói đầu · moi500: mỗi 500g thêm (dưới 4kg / từ 4kg)
-      noiTinh:  { ten: 'Nội tỉnh',  gia: 15500, moi500: 2000, moi500Tu4kg: 3000 },
-      noiVung:  { ten: 'Nội vùng',  gia: 18000, moi500: 3500, moi500Tu4kg: 5000 },
-      lienVung: { ten: 'Liên vùng', gia: 19000, moi500: 3500, moi500Tu4kg: 5000 },
-    },
+    hang: 'J&T Express',
+    thung: [
+      { ten: 'Lotte', ids: ['22686115682', '23660586997', '41353214697', '25632276959', 'combo-lottexanh-d3k2', 'suaxanh-lotte'], goiMotThung: 30, gia: [30000, 60000, 130000, 130000] },
+      { ten: 'Gạc hươu non', ids: ['26156646705'], goiMotThung: 40, gia: [50000, 80000, 130000] },
+      { ten: 'Hồng sâm ChuChu', ids: ['22644617070'], goiMotThung: 40, gia: [50000, 80000, 130000] },
+      { ten: 'Norco', ids: ['26523206270'], gia: [50000, 80000, 130000] },
+    ],
+    hangKhac: { kgMoiKien: 3, gia: 30000 },
+    hoanDoi: 1.5,
     dongGoi: 100,                                          // gram thùng/hộp đóng gói cộng thêm mỗi đơn
     /* Cân nặng ước tính (gram) cho 1 đơn vị = phân loại đầu tiên. Phân loại khác quy đổi theo tỉ lệ giá (2 hộp ≈ 2 lần). */
     gramTheoDanhMuc: { 'nuoc-ep': 1100, 'sua': 1000, 'hong-sam': 450, 'vitamin': 200, 'tang-can': 400, 'rong-bien': 500, 'thuc-pham': 600, 'do-an': 400, 'cho-me': 350 },
