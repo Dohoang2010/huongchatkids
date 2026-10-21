@@ -14,7 +14,7 @@ fi
 if git diff --cached --name-only | grep -qE '^tools/(apps-script\.gs|may-chu-vps/(src|kiem-thu)/|kiem-thu/)|^js/(le-hoi|app)\.js'; then
   echo "Đang chạy kiểm thử máy chủ…"
   NHAT_KY=$(mktemp)
-  if ! node --test tools/may-chu-vps/kiem-thu/kiem-thu.js tools/may-chu-vps/kiem-thu/chuc-nang.test.js tools/kiem-thu/le-hoi.test.js tools/kiem-thu/gia-gio-hang.test.js tools/may-chu-vps/kiem-thu/luu-github.test.js tools/may-chu-vps/kiem-thu/luu-vps.test.js > "$NHAT_KY" 2>&1; then
+  if ! node --test tools/may-chu-vps/kiem-thu/kiem-thu.js tools/may-chu-vps/kiem-thu/chuc-nang.test.js tools/kiem-thu/le-hoi.test.js tools/kiem-thu/gia-gio-hang.test.js tools/may-chu-vps/kiem-thu/luu-github.test.js tools/may-chu-vps/kiem-thu/luu-vps.test.js tools/may-chu-vps/kiem-thu/dang-fb.test.js > "$NHAT_KY" 2>&1; then
     echo "⛔ CHẶN COMMIT: kiểm thử máy chủ hỏng – sửa xong mới commit được:"
     grep -E '^✖|AssertionError|Error:' "$NHAT_KY" | head -20
     rm -f "$NHAT_KY"; exit 1

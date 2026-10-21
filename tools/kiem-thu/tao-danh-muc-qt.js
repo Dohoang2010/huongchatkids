@@ -12,7 +12,7 @@ const THU_MUC = path.join(GOC, 'js', 'admin');
 /* Mục dùng hàm của mục khác → tải mục kia trước */
 const CAN = { 'm-customers.js': ['m-bao-mat.js'], 'm-system.js': ['m-bao-mat.js'], 'm-doi-tac.js': ['m-doi-tac-hh.js'], 'm-marketing.js': ['m-qua-tang.js'], 'm-voucher.js': ['m-qua-tang.js'] };
 /* Thứ tự tệp = thứ tự mục trên menu bên trái (thêm tệp mới vào đúng chỗ muốn hiện; tệp chưa có trong danh sách xếp cuối) */
-const THU_TU = ['m-dashboard.js', 'm-products.js', 'm-orders.js', 'm-customers.js', 'm-chat.js', 'm-danh-gia.js', 'm-thong-ke-ban.js', 'm-gioi-thieu.js', 'm-bao-mat.js', 'm-bao-mat-ht.js',
+const THU_TU = ['m-dashboard.js', 'm-products.js', 'm-orders.js', 'm-customers.js', 'm-chat.js', 'm-danh-gia.js', 'm-thong-ke-ban.js', 'm-facebook.js', 'm-gioi-thieu.js', 'm-bao-mat.js', 'm-bao-mat-ht.js',
   'm-doi-tac-hh.js', 'm-doi-tac.js', 'm-marketing.js', 'm-diem-danh.js', 'm-qua-tang.js', 'm-voucher.js', 'm-menu.js', 'm-content.js', 'm-seo.js', 'm-website.js', 'm-theme.js', 'm-le-hoi.js',
   'm-versions.js', 'm-users.js', 'm-system.js'];
 /* Tải ngay khi mở trang quản trị (trang đầu) */

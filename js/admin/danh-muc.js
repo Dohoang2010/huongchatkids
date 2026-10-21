@@ -38,6 +38,11 @@ window.ADMIN_DANH_MUC = {
    "can": [],
    "ngay": false
   },
+  "m-facebook.js": {
+   "v": "fd567959",
+   "can": [],
+   "ngay": false
+  },
   "m-gioi-thieu.js": {
    "v": "ed662d6c",
    "can": [],
@@ -200,6 +205,15 @@ window.ADMIN_DANH_MUC = {
    "nhom": "ban-hang",
    "quyen": "dashboard.view",
    "mo": "Khách đến từ đâu, chương trình / bài đăng nào ra đơn, phễu mua hàng"
+  },
+  {
+   "tep": "m-facebook.js",
+   "route": "/facebook",
+   "ten": "Lịch đăng Facebook",
+   "icon": "📣",
+   "nhom": "ban-hang",
+   "quyen": "content.update",
+   "mo": "Soạn bài, chủ shop duyệt – máy chủ tự đăng lên page đúng giờ (kèm ảnh, bình luận, link theo dõi)"
   },
   {
    "tep": "m-gioi-thieu.js",

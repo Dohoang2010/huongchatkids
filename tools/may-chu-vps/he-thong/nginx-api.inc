@@ -18,6 +18,16 @@ location = /api/qt-anh-bia {
   proxy_set_header X-Real-IP $remote_addr;
   proxy_read_timeout 180s;
 }
+# Lịch đăng Facebook (src/dang-fb.js): bài kèm tối đa 10 ảnh + ảnh bình luận (base64)
+location = /api/qt-fb {
+  limit_req zone=hck_api burst=20 nodelay;
+  client_max_body_size 45m;
+  proxy_pass http://127.0.0.1:3100;
+  proxy_http_version 1.1;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_read_timeout 180s;
+}
 location = /api/qt-github {
   limit_req zone=hck_api burst=20 nodelay;
   client_max_body_size 26m;

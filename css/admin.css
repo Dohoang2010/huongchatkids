@@ -856,3 +856,60 @@ tr.sp-pl td{background:#FAFBFC}.sp-pl__ds{display:flex;flex-wrap:wrap;gap:8px 18
 .d1-bh__so{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0}.d1-bh__so div{background:#F7F8FA;border-radius:10px;padding:10px 12px}.d1-bh__so b{display:block;font-size:20px;font-family:Quicksand,sans-serif}.d1-bh__so span{font-size:12px;color:var(--muted)}
 .d1-bh__hai{display:grid;grid-template-columns:1fr 1fr;gap:16px}.d1-bh__hai h4{margin:4px 0 6px}@media (max-width:720px){.d1-bh__hai{grid-template-columns:1fr}}
 .d1-bh__dong{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px dashed var(--line);font-size:13.5px}.d1-bh__dong span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.d1-bh__dong small{color:var(--muted);min-width:70px;text-align:right}
+
+/* ---------- Lịch đăng Facebook (m-facebook.js) ---------- */
+.fb-tt{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:14px}
+.fb-tt h3{width:100%;margin:0}.fb-tt p{width:100%;margin:2px 0}
+.fb-tt--ok{background:var(--teal-50);border-color:#BDE7DD}.fb-tt--ok .btn{margin-left:auto}
+.fb-tt--chua{background:#F4F6FA}
+.fb-tt--do{background:#FDECEC;border:2px solid #E53935}.fb-tt--do h3{color:#C62828}
+.fb-lenh{display:block;width:100%;padding:8px 10px;border-radius:8px;background:#1F2430;color:#E8F7F4;font-size:12px;word-break:break-all;user-select:all}
+.fb-loc{margin:4px 0 12px}.fb-loc .chip b{margin-left:4px;opacity:.75}
+.fb-ds{display:grid;gap:10px}
+.fb-bai{display:grid;grid-template-columns:118px 1fr auto;gap:14px;align-items:start;padding:12px}
+.fb-bai--da-dang{opacity:.85}
+.fb-bai__anh{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:3px;width:118px;height:118px;border-radius:10px;overflow:hidden;background:#F4F6FA}
+.fb-bai__anh img{width:100%;height:100%;object-fit:cover}.fb-bai__anh img:only-child{grid-column:1/-1;grid-row:1/3}
+.fb-bai__anh span{grid-column:1/-1;display:grid;place-items:center;font-size:34px}
+.fb-bai__anh i{position:absolute;right:4px;bottom:4px;background:rgba(0,0,0,.6);color:#fff;font-style:normal;font-size:12px;padding:1px 6px;border-radius:6px}
+.fb-bai__dau{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.fb-bai__chu{margin:6px 0 4px;font-size:14px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fb-bai__loi{margin:6px 0 0;color:#C62828;font-size:13px;font-weight:600}
+.fb-bai__ok{margin:6px 0 0;font-size:13px}
+.fb-bai__nut{display:flex;flex-direction:column;gap:6px;align-items:stretch;min-width:96px}
+.fb-xoa{color:#C62828}
+.fb-chu{margin-top:12px;font-size:12.5px}
+@media (max-width:720px){.fb-bai{grid-template-columns:72px 1fr}.fb-bai__anh{width:72px;height:72px}.fb-bai__nut{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}}
+/* soạn bài */
+.fb-sua{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.9fr);gap:16px;align-items:start}
+@media (max-width:980px){.fb-sua{grid-template-columns:1fr}}
+.fb-sua .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:600;font-size:13.5px}
+.fb-hang{display:grid;grid-template-columns:220px 1fr;gap:12px}@media (max-width:560px){.fb-hang{grid-template-columns:1fr}}
+textarea.fb-chu{font:inherit;font-weight:400;font-size:14.5px;line-height:1.55;resize:vertical;min-height:220px}
+.fb-anh{display:flex;flex-wrap:wrap;gap:8px}
+.fb-anh__o{position:relative;width:96px;height:96px;border-radius:10px;overflow:hidden;background:#F4F6FA}
+.fb-anh__o img{width:100%;height:100%;object-fit:cover}
+.fb-anh__o>span{position:absolute;left:4px;top:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:0 6px;border-radius:6px}
+.fb-anh__nut{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:flex-end;gap:2px;padding:3px;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.fb-anh__nut button{border:0;border-radius:6px;background:rgba(255,255,255,.9);font-size:11px;padding:2px 6px;cursor:pointer}
+.fb-anh__them{width:96px;height:96px;border:2px dashed var(--line);border-radius:10px;display:grid;place-items:center;align-content:center;font-size:26px;color:var(--muted);cursor:pointer}
+.fb-anh__them small{font-size:11.5px;font-weight:600}
+.fb-bl{display:grid;gap:6px;margin-bottom:8px;padding:8px;border-radius:10px;background:#F7F8FA}
+.fb-bl textarea{font:inherit;font-weight:400;resize:vertical}
+.fb-bl__anh{display:flex;gap:8px;align-items:center}.fb-bl__anh img{width:54px;height:54px;object-fit:cover;border-radius:8px}
+.fb-luu{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+/* xem trước giống Facebook */
+.fb-xem{position:sticky;top:76px;background:#fff;border:1px solid #DDE1E6;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden;font-family:Helvetica,Arial,sans-serif;color:#050505}
+.fb-xem__dau{display:flex;gap:10px;align-items:center;padding:12px 14px 6px}.fb-xem__dau img{width:40px;height:40px;border-radius:50%}
+.fb-xem__dau b{display:block;font-size:15px}.fb-xem__dau small{color:#65676B;font-size:12.5px}
+.fb-xem__chu{padding:4px 14px 12px;font-size:15px;line-height:1.38;word-break:break-word}
+.fb-link{color:#0064D1}
+.fb-xem__anh{display:grid;gap:2px}.fb-xem__anh div{position:relative;overflow:hidden;background:#F0F2F5}.fb-xem__anh img{width:100%;height:100%;object-fit:cover;display:block}
+.fb-xem__anh--1 div{aspect-ratio:4/5}.fb-xem__anh--2{grid-template-columns:1fr 1fr}.fb-xem__anh--2 div{aspect-ratio:1/1.25}
+.fb-xem__anh--3{grid-template-columns:1fr 1fr}.fb-xem__anh--3 div:first-child{grid-column:1/-1;aspect-ratio:16/10}.fb-xem__anh--3 div{aspect-ratio:1}
+.fb-xem__anh--4{grid-template-columns:1fr 1fr}.fb-xem__anh--4 div{aspect-ratio:1}
+.fb-xem__anh i{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.45);color:#fff;font-style:normal;font-size:28px;font-weight:700}
+.fb-xem__bl{display:flex;gap:8px;padding:10px 14px 0}.fb-xem__bl>img{width:32px;height:32px;border-radius:50%}
+.fb-xem__bl>div{background:#F0F2F5;border-radius:16px;padding:8px 12px;font-size:13.5px;max-width:calc(100% - 40px)}.fb-xem__bl b{font-size:13px}.fb-xem__bl p{margin:2px 0 0;line-height:1.35}
+.fb-xem__bl-anh{display:block;margin-top:6px;max-width:180px;border-radius:10px}
+.fb-xem__ghi{padding:10px 14px 12px;margin:0;font-size:12px;font-family:inherit}
