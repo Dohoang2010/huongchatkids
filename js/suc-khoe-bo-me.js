@@ -13,10 +13,10 @@
   const { esc, productCard } = MC;
   const KHOA = 'hck_bome';
   /* Ảnh nhân vật 3D (cùng bộ với ảnh bé). bo: chưa có ảnh → hiện biểu tượng; có ảnh thì đặt img/bo-me/bo.webp và điền vào đây */
-  const ANH = { me: 'img/bo-me/me-be.webp', thai: 'img/bo-me/me-bau.webp', bo: 'img/bo-me/bo.webp' };
+  const ANH = { me: 'img/bo-me/me-be.webp', thai: 'img/bo-me/me-bau.webp', bo: '' };
   const anhCho = (ai, tt) => (ai === 'bo' ? ANH.bo : tt === 'thai' ? ANH.thai : ANH.me);
   function doiHinh(ai, tt) { const h = document.getElementById('bmHinh'); if (!h) return; const u = anhCho(ai, tt); const cu = h.querySelector("img"); if (u && cu && cu.getAttribute("src") === u) return;
-    h.innerHTML = u ? `<img src="${u}" width="222" height="600" alt="" decoding="async">` : '<span class="bm-hinh__ic">👨</span>'; h.classList.toggle('is-bo', ai === 'bo'); }
+    h.innerHTML = u ? `<img src="${u}" width="222" height="600" alt="" decoding="async">` : ''; h.hidden = !u; }
   const so = (x, n = 1) => Number(x).toLocaleString('vi-VN', { maximumFractionDigits: n });
   const docSo = (s) => { const x = parseFloat(String(s || '').replace(',', '.')); return isFinite(x) ? x : NaN; };
   const doc = () => { try { return JSON.parse(localStorage.getItem(KHOA)) || null; } catch { return null; } };
