@@ -39,7 +39,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-facebook.js": {
-   "v": "fd567959",
+   "v": "dede1beb",
    "can": [],
    "ngay": false
   },

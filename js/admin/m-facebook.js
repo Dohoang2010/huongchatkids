@@ -6,7 +6,7 @@
   'use strict';
   const A = window.ADMIN, { $, $$, esc } = A;
   const R = '/facebook';
-  const S = { ds: null, tt: null, loc: 'cho', dangTai: false, loi: '', sua: null, chuShop: false };
+  const S = { ds: null, tt: null, loc: 'cho', q: '', trang: 1, dangTai: false, loi: '', sua: null, chuShop: false };
   const TRANG = { nhap: ['Chờ duyệt', 'tag--wait'], duyet: ['Đã duyệt · chờ tới giờ', 'tag--ok'], 'dang-dang': ['Đang đăng…', 'tag--hot'], 'da-dang': ['Đã đăng', 'tag--off'], loi: ['Lỗi', 'tag--no'] };
   const LOC = [['cho', 'Chờ duyệt', (b) => b.trangThai === 'nhap'], ['sap', 'Sắp đăng', (b) => b.trangThai === 'duyet' || b.trangThai === 'dang-dang'], ['loi', 'Lỗi', (b) => b.trangThai === 'loi'], ['da', 'Đã đăng', (b) => b.trangThai === 'da-dang'], ['het', 'Tất cả', () => true]];
 
@@ -58,13 +58,27 @@
   function veDanhSach(el) {
     $('#pageAct').innerHTML = `<button class="btn btn--primary" data-fb="moi">+ Soạn bài mới</button>`;
     if (!S.ds) { if (S.loi) { const l = S.loi; S.loi = ''; el.innerHTML = A.loiTai(l); return; } el.innerHTML = A.dangTai('lịch đăng'); tai(); return; }   // bấm Thử lại → tải lại
-    const loc = LOC.find((x) => x[0] === S.loc) || LOC[0];
-    const ds = S.ds.filter(loc[2]).sort((a, b) => (S.loc === 'da' || S.loc === 'het' ? Date.parse(b.luc) - Date.parse(a.luc) : Date.parse(a.luc) - Date.parse(b.luc)));
     el.innerHTML = `${theTrangThai()}
-      <div class="chips fb-loc">${LOC.map(([k, ten, f]) => `<button class="chip ${k === S.loc ? 'is-on' : ''}" data-fb-loc="${k}">${ten} <b>${S.ds.filter(f).length}</b></button>`).join('')}</div>
-      ${ds.length ? `<div class="fb-ds">${ds.map(veBai).join('')}</div>` : A.trong(S.loc === 'cho' ? 'Không có bài chờ duyệt' : 'Chưa có bài', 'Bấm "+ Soạn bài mới" để thêm bài vào lịch.', '🗓️')}
+      <div class="card fb-tim"><div class="tool__tim"><input id="fbQ" placeholder="Tìm bài: tiêu đề, nội dung, mã bài, ngày (VD 25/10)…" value="${esc(S.q)}" autocomplete="off"></div></div>
+      <div id="fbKq">${veKetQua()}</div>
       <p class="muted fb-chu">Bài <b>chưa duyệt không bao giờ tự đăng</b>. ${S.chuShop ? 'Mẹ là chủ shop nên duyệt được bài.' : 'Chỉ chủ shop duyệt được bài – mẹ soạn xong báo chủ shop duyệt nhé.'} Link huongchatkids.vn trong bài tự gắn mã theo dõi để xem bài nào ra đơn ở <a href="#/thong-ke-ban">Thống kê bán hàng</a>.</p>`;
   }
+  /* Ô tìm kiếm + bộ lọc trạng thái + danh sách 10 bài / trang */
+  const MOI_TRANG = 10;
+  const khop = (b) => { const k = A.khongDau(S.q.trim()); if (!k) return true; const d = new Date(b.luc), p = (n) => String(n).padStart(2, '0');
+    return A.khongDau([b.tieuDe, b.noiDung, b.cd, gio(b.luc), `${p(d.getDate())}/${p(d.getMonth() + 1)}`, `${d.getDate()}/${d.getMonth() + 1}`].join(' ')).includes(k); };
+  function veKetQua() {
+    const loc = LOC.find((x) => x[0] === S.loc) || LOC[0], tim = S.ds.filter(khop);
+    const ds = tim.filter(loc[2]).sort((a, b) => (S.loc === 'da' || S.loc === 'het' ? Date.parse(b.luc) - Date.parse(a.luc) : Date.parse(a.luc) - Date.parse(b.luc)));
+    const soTrang = Math.max(1, Math.ceil(ds.length / MOI_TRANG)); S.trang = Math.min(Math.max(1, S.trang), soTrang);
+    const trang = ds.slice((S.trang - 1) * MOI_TRANG, S.trang * MOI_TRANG);
+    return `<div class="chips fb-loc">${LOC.map(([k, ten, f]) => `<button class="chip ${k === S.loc ? 'is-on' : ''}" data-fb-loc="${k}">${ten} <b>${tim.filter(f).length}</b></button>`).join('')}</div>
+      ${ds.length ? `<div class="fb-ds">${trang.map(veBai).join('')}</div>${A.phanTrang(ds.length, S.trang, MOI_TRANG, 'fb-pg')}`
+        : S.q.trim() ? A.trong('Không tìm thấy bài nào', 'Thử từ khoá khác hoặc chọn mục khác ở trên.', '🔎')
+        : A.trong(S.loc === 'cho' ? 'Không có bài chờ duyệt' : 'Chưa có bài', 'Bấm "+ Soạn bài mới" để thêm bài vào lịch.', '🗓️')}`;
+  }
+  const veLaiKq = () => { const k = $('#fbKq'); if (k && S.ds) k.innerHTML = veKetQua(); };
+  const timTre = A.tre(veLaiKq, 250);
   function veBai(b) {
     const [nhan, lop] = TRANG[b.trangThai] || [b.trangThai, ''];
     const dong1 = String(b.noiDung || '').split('\n').find((x) => x.trim()) || '';
@@ -164,7 +178,8 @@
 
   document.addEventListener('click', async (e) => {
     if (!location.hash.startsWith('#' + R)) return; const t = e.target;
-    const l = t.closest('[data-fb-loc]'); if (l) { S.loc = l.dataset.fbLoc; A.veTrang(); return; }
+    const l = t.closest('[data-fb-loc]'); if (l) { S.loc = l.dataset.fbLoc; S.trang = 1; veLaiKq(); return; }
+    const pg = t.closest('[data-fb-pg]'); if (pg) { S.trang = Number(pg.dataset.fbPg); veLaiKq(); const k = $('#fbQ'); if (k) k.closest('.card').scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
     const a = t.closest('[data-fb-anh]'); if (a && S.sua) { docForm(); const i = Number(a.dataset.i), ds = S.sua.anh;
       if (a.dataset.fbAnh === 'bo') ds.splice(i, 1); else { const j = a.dataset.fbAnh === 'trai' ? i - 1 : i + 1; [ds[i], ds[j]] = [ds[j], ds[i]]; } A.veTrang(); return; }
     const bx = t.closest('[data-fb-bl-xoa]'); if (bx && S.sua) { docForm(); S.sua.binhLuan.splice(Number(bx.dataset.fbBlXoa), 1); A.veTrang(); return; }
@@ -188,6 +203,7 @@
   });
   /* gõ nội dung → cập nhật xem trước (không vẽ lại cả trang để khỏi mất chỗ con trỏ) */
   document.addEventListener('input', (e) => {
+    if (location.hash.startsWith('#' + R) && e.target.id === 'fbQ') { S.q = e.target.value; S.trang = 1; timTre(); return; }
     if (!location.hash.startsWith('#' + R) || !S.sua) return;
     if (e.target.id === 'fbChu' || e.target.id === 'fbCd' || e.target.id === 'fbTen') { docForm(); const x = $('#fbXemChu'); if (x) x.innerHTML = chuXem(S.sua.noiDung, S.sua.cd || slug(S.sua.tieuDe) || 'fb-moi') || ''; const d = $('#fbDem'); if (d) d.textContent = S.sua.noiDung.length + ' ký tự'; }
     if (e.target.dataset && e.target.dataset.fbBl !== undefined) docForm();
