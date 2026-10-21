@@ -85,11 +85,20 @@
   }
 
   /* ---------------- Giao diện ---------------- */
-  let S = { ai: 'me', tt: 'binh', nhom: 'da', kq: null };
-  const daLuu = doc(); if (daLuu) S = { ...S, ...daLuu, kq: null };
+  /* Mẹ và bố có ô nhập + kết quả riêng: bấm chuyển người là form trống để điền mới, quay lại vẫn còn số của người kia */
+  const S = { ai: 'me', nhom: 'da', ng: { me: { o: { tt: 'binh' }, kq: null }, bo: { o: {}, kq: null } } };
+  const daLuu = doc();
+  if (daLuu) {
+    if (daLuu.me || daLuu.bo) { S.ai = daLuu.ai === 'bo' ? 'bo' : 'me'; ['me', 'bo'].forEach((a) => { if (daLuu[a]) S.ng[a].o = { ...daLuu[a] }; }); }
+    else { const a = daLuu.ai === 'bo' ? 'bo' : 'me'; S.ai = a; S.ng[a].o = { ...daLuu }; }   // kiểu lưu cũ (1 người)
+  }
+  const cur = () => S.ng[S.ai];
+  const ttHt = () => (S.ai === 'bo' ? 'binh' : cur().o.tt || 'binh');
+  /* giữ lại những gì đang gõ dở của người hiện tại trước khi chuyển người */
+  function giuDangGo() { const f = document.getElementById('bmForm'); if (!f) return; const o = cur().o; ['h', 'w', 'tuoi', 'eo'].forEach((k) => { o[k] = f.elements[k].value; }); }
 
   function veForm() {
-    const d = (S.kq && S.kq.d) || daLuu || {};
+    const d = cur().o;
     return `<form class="bm-form" id="bmForm" novalidate>
       <div class="bm-ai chips" role="radiogroup" aria-label="Đo cho ai">
         <label class="chip ${S.ai === 'me' ? 'is-active' : ''}"><input type="radio" name="ai" value="me" ${S.ai === 'me' ? 'checked' : ''}>👩 Mẹ</label>
@@ -98,11 +107,11 @@
       <div class="bm-o">
         <div class="field"><label for="bmH">Chiều cao (cm) <span>*</span></label><input class="input" id="bmH" name="h" inputmode="decimal" autocomplete="off" placeholder="VD: 158" value="${esc(d.h || '')}"><small class="form-error" data-err="h"></small></div>
         <div class="field"><label for="bmW">Cân nặng (kg) <span>*</span></label><input class="input" id="bmW" name="w" inputmode="decimal" autocomplete="off" placeholder="VD: 52,5" value="${esc(d.w || '')}"><small class="form-error" data-err="w"></small></div>
-        <div class="field"><label for="bmT">Tuổi</label><input class="input" id="bmT" name="tuoi" inputmode="numeric" autocomplete="off" placeholder="VD: 30" value="${esc(d.tuoi || '')}"><small class="form-error" data-err="tuoi"></small></div>
-        <div class="field"><label for="bmE">Vòng eo (cm)</label><input class="input" id="bmE" name="eo" inputmode="decimal" autocomplete="off" placeholder="Không bắt buộc" value="${esc(d.eo || '')}"><small class="form-error" data-err="eo"></small></div>
+        <div class="field"><label for="bmT">Tuổi <small class="bm-tuy">Không bắt buộc</small></label><input class="input" id="bmT" name="tuoi" inputmode="numeric" autocomplete="off" placeholder="VD: 30" value="${esc(d.tuoi || '')}"><small class="form-error" data-err="tuoi"></small></div>
+        <div class="field"><label for="bmE">Vòng eo (cm) <small class="bm-tuy">Không bắt buộc</small></label><input class="input" id="bmE" name="eo" inputmode="decimal" autocomplete="off" placeholder="VD: 75" value="${esc(d.eo || '')}"><small class="hk-help">Đo ngang rốn, đứng thẳng, thở ra nhẹ. Bỏ trống nếu chưa đo.</small><small class="form-error" data-err="eo"></small></div>
       </div>
       <fieldset class="bm-tt" ${S.ai === 'me' ? '' : 'hidden'}><legend>Mẹ đang</legend>
-        <div class="chips">${[['binh', 'Bình thường'], ['thai', 'Mang thai'], ['bu', 'Cho con bú'], ['sinh', 'Mới sinh < 6 tháng']].map(([v, t]) => `<label class="chip ${S.tt === v ? 'is-active' : ''}"><input type="radio" name="tt" value="${v}" ${S.tt === v ? 'checked' : ''}>${t}</label>`).join('')}</div>
+        <div class="chips">${[['binh', 'Bình thường'], ['thai', 'Mang thai'], ['bu', 'Cho con bú'], ['sinh', 'Mới sinh < 6 tháng']].map(([v, t]) => `<label class="chip ${ttHt() === v ? 'is-active' : ''}"><input type="radio" name="tt" value="${v}" ${ttHt() === v ? 'checked' : ''}>${t}</label>`).join('')}</div>
       </fieldset>
       <label class="hk-luu"><input type="checkbox" name="luu" value="1" ${daLuu ? 'checked' : ''}><span><b>Lưu lại trên máy này</b><small>Lần sau mở trang là có sẵn số đo, không gửi đi đâu.</small></span></label>
       <button class="btn btn--primary btn--lg bm-nut" type="submit">Xem kết quả</button>
@@ -156,8 +165,9 @@
   }
 
   function ve() {
-    root.querySelector('.bm-vung').innerHTML = veForm() + (S.kq ? veKetQua(S.kq.d, S.kq.k) : '');
-    doiHinh(S.ai, S.tt);
+    const c = cur();
+    root.querySelector('.bm-vung').innerHTML = veForm() + (c.kq ? veKetQua(c.kq.d, c.kq.k) : '');
+    doiHinh(S.ai, ttHt());
   }
 
   function gui(f) {
@@ -171,8 +181,9 @@
     f.querySelectorAll('.input').forEach((el) => { el.classList.toggle('is-invalid', !!loi[el.name]); el.setAttribute('aria-invalid', loi[el.name] ? 'true' : 'false'); });
     if (Object.keys(loi).length) { const o = f.querySelector('.is-invalid'); if (o) o.focus(); return; }
     if (!isFinite(d.tuoi)) d.tuoi = ''; if (!isFinite(d.eo)) d.eo = '';
-    if (fd.get('luu')) ghi({ ai: d.ai, tt: d.tt, h: d.h, w: d.w, tuoi: d.tuoi, eo: d.eo }); else xoa();
-    S.ai = d.ai; S.tt = d.tt; S.kq = { d, k: tinh(d) };
+    S.ai = d.ai; S.ng[d.ai].o = { tt: d.tt, h: d.h, w: d.w, tuoi: d.tuoi, eo: d.eo }; S.ng[d.ai].kq = { d, k: tinh(d) };
+    const coSo = (o) => (o && o.h && o.w ? { ...o } : undefined);
+    if (fd.get('luu')) ghi({ ai: d.ai, me: coSo(S.ng.me.kq && S.ng.me.o), bo: coSo(S.ng.bo.kq && S.ng.bo.o) }); else xoa();
     ve();
     const kq = document.getElementById('bmKq');
     if (kq) { kq.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); kq.focus({ preventScroll: true }); }
@@ -183,15 +194,15 @@
     const t = e.target;
     if (t.name === 'ai' || t.name === 'tt') {
       t.closest('.chips').querySelectorAll('.chip').forEach((c) => c.classList.toggle('is-active', c.contains(t)));
-      if (t.name === 'ai') { S.ai = t.value; const tt = root.querySelector('.bm-tt'); if (tt) tt.hidden = t.value !== 'me'; }
-      if (t.name === 'tt') S.tt = t.value;
-      doiHinh(S.ai, S.ai === 'bo' ? 'binh' : S.tt);
+      if (t.name === 'ai') { if (t.value !== S.ai) { giuDangGo(); S.ai = t.value; ve(); const h = document.getElementById('bmH'); if (h) h.focus({ preventScroll: true }); } return; }
+      if (t.name === 'tt') cur().o.tt = t.value;
+      doiHinh(S.ai, ttHt());
     }
   });
   root.addEventListener('click', (e) => {
-    const n = e.target.closest('[data-bm-nhom]'); if (!n || !S.kq) return;
+    const n = e.target.closest('[data-bm-nhom]'); if (!n || !cur().kq) return;
     S.nhom = n.dataset.bmNhom;
-    const nhom = spMe(S.kq.d.tt).find((x) => x.ma === S.nhom);
+    const nhom = spMe(cur().kq.d.tt).find((x) => x.ma === S.nhom);
     root.querySelectorAll('[data-bm-nhom]').forEach((b) => { const on = b === n; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', on); });
     const el = document.getElementById('bmSp'); if (el && nhom) { el.innerHTML = nhom.sp.map((p) => productCard(p)).join(''); el.scrollLeft = 0; }
   });
