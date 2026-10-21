@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261021a">
+  <link rel="stylesheet" href="css/style.css?v=20261021b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -23,7 +23,7 @@
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261020c" defer></script>
+<script src="js/app.js?v=20261021b" defer></script>
 <script src="js/chat.js?v=20261019e" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,20 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const tierPct = () => (loy.enabled ? Session.discountFor(phoneNow()) : 0);
 
   const calc = () => {
-    const base = sub - multi;
+    const base = sub - multi, baseUD = MC.baseUuDai(base, lines);   // baseUD: phần tiền hàng được hưởng ưu đãi (bỏ combo / sản phẩm đang có quà)
     const hSN = hangCho(phoneNow()); const laSN = !!(hSN && hSN.laSinhNhat && tierPct() > 0);   // tháng sinh nhật: không dùng kèm mã / voucher / giới thiệu / quà, vẫn dùng điểm
     const vc = vcChon && vcVi && !laSN ? (vcVi.ds || []).find((x) => x.ma === vcChon) : null;
     const rv = vc ? MC.DD.giam(vc, base, lines) : null; const vcAmt = rv && rv.ok ? rv.giam : 0;
     const r = coupon && !vcAmt && !laSN ? applyCoupon(coupon, base, lines) : null;
     const couponAmt = r && r.ok ? r.discount : 0;
     const pct = tierPct(); const hang = hangCho(phoneNow()) || tierOf(0);
-    const hangAmt = pct ? Math.round(base * pct / 100) : 0;
+    const hangAmt = pct ? Math.round(baseUD * pct / 100) : 0;
     let dungHang = hangAmt > 0, dungMa = couponAmt > 0, dungVc = vcAmt > 0;
     if (dungVc && dungHang && !vcCfg.ketHopHang) { if (hangAmt >= vcAmt) dungVc = false; else dungHang = false; }
     if (!ketHop().hangMa && hangAmt > 0 && couponAmt > 0) { if (hangAmt >= couponAmt) dungMa = false; else dungHang = false; }
     const city = form.elements.city.value;
     /* Giảm giới thiệu tính như 1 mã giảm giá: không cộng dồn với mã khác (kể cả freeship) và ưu đãi hạng – lấy mức có lợi hơn */
-    const gtAmt = !laSN && gt.ok && gtCfg.bat && base >= (Number(gtCfg.donToiThieu) || 0) ? Math.round(base * (Number(gtCfg.giam) || 0) / 100) : 0;
+    const gtAmt = !laSN && gt.ok && gtCfg.bat && baseUD >= (Number(gtCfg.donToiThieu) || 0) ? Math.round(baseUD * (Number(gtCfg.giam) || 0) / 100) : 0;
     let dungGT = gtAmt > 0, boMa = false;
     if (dungGT && r && r.ok) {
       const giaTriMa = (dungMa ? couponAmt : 0) + (r.freeship && shipMethod !== 'express' ? (shipFee(base, shipMethod, { tinh: city || '?', lines }) || 0) : 0);
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Phí GHN theo tỉnh đang chọn; chưa chọn tỉnh → null (hiện "từ … · theo địa chỉ") */
     let ship = ((r && r.ok && r.freeship && !boMa) || MC.maShipTuDong(base, lines)) && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
     if (!city && ship && shipMethod !== 'express') ship = null;
-    return { giamQua, laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { baseUD, giamQua, laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
   /* Quy tắc quà: giảm giới thiệu tính như 1 mã giảm giá (không phải freeship) */
   const quaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : k.dungVc ? MC.maChoQua({ ok: true, discount: k.vcAmt, freeship: false, code: k.vc.ma }, true) : MC.maChoQua(k.boMa ? null : k.r, k.dungMa));
@@ -157,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
       + (k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="text-teal">−${fmt(k.giamDiem)}</span></div>` : '')
       + (k.giamQua ? `<div class="summary-line"><span>Giảm ${qua.hoacGiam}% thay quà</span><span class="text-teal">−${fmt(k.giamQua)}</span></div>` : '')
       + (qua && qua.soQua && (!k.giamQua || qua.themMoTa) ? `<div class="summary-line"><span>Quà tặng</span><span class="text-teal">${esc(k.giamQua ? qua.themMoTa : qua.moTa)}</span></div>` : '')
+      + MC.ghiChuKhongUuDai(lines)
       + `<div class="summary-line"><span>Phí vận chuyển${k.ship && shipMethod !== 'express' ? ` <small class="text-muted">(${esc(ghnInfo(k.city, lines))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div><div class="summary-line total"><span>${k.ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(k.total)}</b></div>`;
     /* Phí ô "Giao tiêu chuẩn" theo tỉnh đang chọn */
     const city = form.elements.city.value; let std = shipFee(sub - multi, 'standard', { tinh: city || '?', lines }); if (!city && std) std = null;
@@ -401,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let res;
       try {
         res = await GT.giuCho({ sdt: sdtDat, token: s && phoneKey(s.sdt) === sdtDat ? s.token : '', maDon: code, ref: k.dungGT ? gt.ma : '', dungGT: k.dungGT ? '1' : '0',
-          diem: k.diemDung, giaTri: sub - multi, giamKhac: (k.dungHang ? k.hangAmt : 0) + (k.dungMa ? k.couponAmt : 0), tongDon: k.total,
+          diem: k.diemDung, giaTri: sub - multi, giaTriUuDai: k.baseUD, giamKhac: (k.dungHang ? k.hangAmt : 0) + (k.dungMa ? k.couponAmt : 0), tongDon: k.total,
           maVc: k.dungVc ? k.vc.ma : '', tienVc: k.dungVc ? k.rv.tienApDung : 0 });
       } catch (e2) { return loiGiu(e2.message + ' – mẹ bấm Đặt hàng lại giúp shop nhé.'); }
       if (!res || !res.ok) {

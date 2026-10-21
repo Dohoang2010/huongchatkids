@@ -42,6 +42,17 @@ async function dangNhapOtp(m, sdt) {
 const mail = (m, toi) => m.daGui.filter((x) => x.loai === 'mail' && String(x.thu.to).includes(toi));
 const maTrongThu = (t) => (String(t.thu.htmlBody || t.thu.body || '').match(/\b(\d{6})\b/) || [])[1];
 
+/* ---------- Giảm giới thiệu chỉ tính trên phần được hưởng ưu đãi (bỏ combo / sản phẩm đang có quà – 21/10/2026) ---------- */
+test('giảm giới thiệu tính trên giaTriUuDai (web đã bỏ combo / sản phẩm có quà); web cũ không gửi thì tính trên cả đơn', async () => {
+  const m = taoMay();
+  const A = '0911000111', B = '0922000222', C = '0933000333';
+  assert.strictEqual((await m.get('action=dangKy&sdt=' + A + '&ten=Mẹ Giới Thiệu&mk=Matkhau123&mk2=Matkhau123')).ok, true);
+  const r1 = await m.get('action=gtGiuCho&sdt=' + B + '&maDon=HCKUD00001&dungGT=1&ref=' + A + '&giaTri=1000000&giaTriUuDai=400000&tongDon=1000000');
+  assert.strictEqual(r1.ok, true, JSON.stringify(r1)); assert.strictEqual(r1.giamGT, 20000, '5% của 400.000đ được hưởng ưu đãi');
+  const r2 = await m.get('action=gtGiuCho&sdt=' + C + '&maDon=HCKUD00002&dungGT=1&ref=' + A + '&giaTri=1000000&tongDon=1000000');
+  assert.strictEqual(r2.ok, true, JSON.stringify(r2)); assert.strictEqual(r2.giamGT, 50000, 'không gửi giaTriUuDai → tính trên cả đơn như cũ');
+});
+
 /* ---------- Tài khoản ---------- */
 test('quà tạo tài khoản mới: trong hạn tặng ngay QUA_DANG_KY.diem điểm (1 lần / số), hết hạn thì không tặng; khách cũ không đăng ký lại được', async () => {
   const m = taoMay("QUA_DANG_KY.tu = '2000-01-01'; QUA_DANG_KY.den = '2999-12-31';");

@@ -2642,3 +2642,6 @@ details.hk-acc > summary:focus-visible { outline: 2px solid var(--primary); outl
 /* Quà tạo tài khoản mới (account.html) */
 .dangky__perk--qua { background: #FFF0F4; border: 1.5px dashed #F7A6BC; border-radius: 12px; padding: 8px 10px; margin: 8px 0; color: var(--ink); }
 .dangky__perk--qua b { color: var(--primary); }
+
+/* Ghi chú: combo / sản phẩm đang có quà không áp dụng thêm ưu đãi */
+.summary-line--note span { font-size: 12.5px; line-height: 1.45; color: var(--muted); }

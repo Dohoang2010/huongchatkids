@@ -640,6 +640,9 @@ function apiGtGiuCho(p) {
   if (!sdtHopLe(sdt)) return { ok: false, code: 'BAD_PHONE', msg: 'Số điện thoại chưa đúng' };
   if (!/^[A-Z0-9-]{6,30}$/i.test(maDon)) return { ok: false, code: 'BAD_ORDER', msg: 'Mã đơn không hợp lệ' };
   var giaTri = Math.max(0, soNguyen(p.giaTri)), giamKhac = Math.max(0, soNguyen(p.giamKhac)), tongDon = Math.max(0, soNguyen(p.tongDon));
+  /* giaTriUuDai: phần tiền hàng được hưởng giảm giới thiệu / voucher – web đã bỏ combo và sản phẩm đang có quà tặng (21/10/2026).
+     Điểm vẫn tính trên giaTri (cả đơn). Không gửi (web cũ) = giaTri. */
+  var giaTriUD = (p.giaTriUuDai == null || p.giaTriUuDai === '') ? giaTri : Math.min(giaTri, Math.max(0, soNguyen(p.giaTriUuDai)));
   var muonDiem = Math.max(0, soNguyen(p.diem)), dungGT = String(p.dungGT) === '1';
   var maVc = String(p.maVc || '').trim().toUpperCase().slice(0, 24), tienVc = Math.max(0, soNguyen(p.tienVc));
   if (maVc && !/^VC[A-Z0-9]{6,20}$/.test(maVc)) return { ok: false, code: 'VOUCHER_NOT_FOUND', msg: 'Mã voucher không hợp lệ' };
@@ -650,7 +653,7 @@ function apiGtGiuCho(p) {
     if (!ref) return gtLoi('INVALID_REFERRAL_CODE', 'Mẹ nhập mã giới thiệu trước nhé');
     var xet = gtXetMa(ref, sdt, cfg, maDon); if (!xet.ok) return xet;
     if (cfg.canXacThuc && !cuaToi) return gtLoi('REQUIRE_OTP', 'Mẹ xác thực số điện thoại (mã OTP) để nhận ưu đãi giới thiệu nhé.');
-    if (giaTri < (Number(cfg.donToiThieu) || 0)) return gtLoi('MIN_ORDER', 'Ưu đãi giới thiệu áp dụng cho đơn từ ' + tien(cfg.donToiThieu) + '.');
+    if (giaTriUD < (Number(cfg.donToiThieu) || 0)) return gtLoi('MIN_ORDER', 'Ưu đãi giới thiệu áp dụng cho đơn từ ' + tien(cfg.donToiThieu) + (giaTriUD < giaTri ? ' (không tính combo / sản phẩm đang có quà)' : '') + '.');
   }
   if (muonDiem > 0 && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH', msg: 'Mẹ xác thực mã OTP (hoặc đăng nhập bằng mật khẩu riêng) để dùng điểm nhé.' };
   if (maVc && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH_VC', msg: 'Mẹ đăng nhập (mã OTP hoặc mật khẩu riêng) đúng số điện thoại đặt hàng để dùng voucher nhé.' };
@@ -671,10 +674,10 @@ function apiGtGiuCho(p) {
     if (dungGT) {
       var x = gtXetDong(sdt, ref, maDon); if (x.loi) return x.loi;   // kiểm tra lại trong khoá (2 tab cùng lúc)
       if (!x.r) gtLienKet(sdt, ref, 'Thanh toán');
-      phanTram = Number(cfg.giam) || 0; giamGT = Math.round(giaTri * phanTram / 100);
+      phanTram = Number(cfg.giam) || 0; giamGT = Math.round(giaTriUD * phanTram / 100);
     }
     var giamVc = 0;
-    if (maVc) { var xv = vcXet_(docVC_(), maVc, sdt, maDon, Math.max(0, giaTri - giamGT), tienVc, Date.now()); if (!xv.ok) return xv; giamVc = xv.giam; }
+    if (maVc) { var xv = vcXet_(docVC_(), maVc, sdt, maDon, Math.max(0, giaTriUD - giamGT), tienVc, Date.now()); if (!xv.ok) return xv; giamVc = xv.giam; }
     var gtd = Number(cfg.giaTriDiem) || 1, diem = 0;
     if (muonDiem > 0) {
       var vi = viDiem(sdt, docSoDiem(), gc);

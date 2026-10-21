@@ -96,10 +96,33 @@ test('quà tặng: "hoặc giảm %" tính đúng tiền giảm; quà cộng d�
   assert.strictEqual(g.hoacGiam, 5); assert.strictEqual(g.giamTien, Math.round(l1.total * 5 / 100));
   const gop = MC.giftFor([l1, dong(W, KHAC, 1)], {});
   assert.match(gop.moTa, /hộp quà thử/); assert.match(gop.moTa, /\+ 1 gói sốt/, 'quà cộng dồn ghi kèm: ' + gop.moTa);
-  assert.strictEqual(MC.giftFor([l1], { coMa: true, maShip: false }).soQua, 0, 'dùng mã giảm tiền → không kèm quà');
+  assert.strictEqual(MC.giftFor([l1], { coMa: true, maShip: false }).soQua, 1, 'quà theo sản phẩm vẫn giữ khi đơn dùng mã (mã không tính trên sản phẩm đang có quà – 21/10/2026)');
   assert.strictEqual(MC.giftFor([l1], { coMa: true, maShip: true }).soQua, 1, 'mã freeship vẫn được quà');
   const cho = taoWeb({ gio: gio('10:00'), truocApp: voiQua([chuongTrinh()], { quaMa: true, quaShip: true }) });
   assert.strictEqual(cho.MC.giftFor([dong(cho.W, LOTTE, n1)], { coMa: true }).soQua, 1, 'shop cho dùng chung mã + quà');
+});
+
+test('sản phẩm đang có quà (đủ mốc chương trình): không nhận mã, voucher, giảm hạng / sinh nhật / giới thiệu; chưa đủ mốc vẫn nhận; quà vẫn giữ', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00'), truocApp: (w) => { voiQua([chuongTrinh()])(w); w.COUPONS = { G10: { type: 'percent', value: 10, loai: 'shop' } }; } });
+  const gia = dong(W, LOTTE).price, n1 = Math.ceil(1000000 / gia);
+  const lQua = dong(W, LOTTE, n1), lKhac = dong(W, KHAC, 1), ls = [lQua, lKhac], tong = lQua.total + lKhac.total;
+  const kh = MC.hangKhongUuDai(ls);
+  assert.ok(kh.co(lQua) && !kh.co(lKhac)); assert.strictEqual(kh.tien, lQua.total);
+  assert.strictEqual(MC.hangKhongUuDai([dong(W, LOTTE, 1)]).tien, 0, 'chưa đủ mốc quà thì vẫn được ưu đãi như thường');
+  assert.strictEqual(MC.applyCoupon('G10', tong, ls).discount, Math.round(lKhac.total * 0.1), 'mã chỉ giảm sản phẩm không có quà');
+  assert.match(MC.applyCoupon('G10', lQua.total, [lQua]).msg, /quà/, 'giỏ chỉ có sản phẩm đang có quà → báo rõ');
+  assert.strictEqual(MC.baseUuDai(tong, ls), lKhac.total, 'giảm hạng / sinh nhật / giới thiệu tính trên phần còn lại');
+  const vc = { trangThai: 'AVAILABLE', hetHan: '2099-01-01T00:00:00Z', batDau: '2000-01-01T00:00:00Z', giaTri: 999999999, donToiThieu: 0, phamVi: { loai: 'tatca' } };
+  assert.strictEqual(MC.DD.giam(vc, tong, ls).giam, lKhac.total, 'voucher không tính tiền sản phẩm đang có quà');
+  assert.strictEqual(MC.DD.giam(vc, lQua.total, [lQua]).giam, 0, 'giỏ chỉ có sản phẩm có quà → voucher giảm 0đ');
+  assert.strictEqual(MC.giftFor(ls, { coMa: true, maShip: false }).soQua, 1, 'dùng mã cho sản phẩm khác vẫn giữ quà');
+  assert.match(MC.ghiChuKhongUuDai(ls), /quà tặng/, 'tổng tiền có dòng giải thích cho khách');
+  assert.strictEqual(MC.ghiChuKhongUuDai([lKhac]), '', 'đơn thường không hiện ghi chú');
+  /* phân loại đã kèm quà / giảm sẵn trong tên (vd Calciumore "3 hộp tặng 2 lọ d3k2") cũng không nhận thêm ưu đãi */
+  const calci = W.PRODUCTS.find((p) => (p.variants || []).some((v) => /tặng/i.test(v.label)));
+  if (calci) { const i = calci.variants.findIndex((v) => /tặng/i.test(v.label)), l = dong(W, calci.id, 1, i), lt = dong(W, calci.id, 1, 0);
+    assert.ok(MC.hangKhongUuDai([l]).co(l), 'phân loại "' + calci.variants[i].label + '" không nhận thêm ưu đãi');
+    assert.ok(/tặng|\+/i.test(calci.variants[0].label) || !MC.hangKhongUuDai([lt]).co(lt), 'phân loại thường vẫn nhận ưu đãi'); }
 });
 
 /* ---------- Phí ship, tìm kiếm, link ---------- */
