@@ -2285,10 +2285,10 @@ window.PRODUCTS = [
     "weight": "Tuýp 60ml",
     "origin": "Hàn Quốc",
     "tags": [],
-    "image": "img/27734205778-b.jpg",
-    "thumb": "img/thumb/27734205778-b.jpg",
+    "image": "img/27734205778-c.jpg",
+    "thumb": "img/thumb/27734205778-c.jpg",
     "images": [
-      "img/27734205778-b.jpg",
+      "img/27734205778-c.jpg",
       "img/27734205778-2.jpg",
       "img/27734205778-3.jpg",
       "img/27734205778-4.jpg",
