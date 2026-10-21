@@ -1784,10 +1784,10 @@ window.PRODUCTS = [
     "weight": "Hộp 60 viên",
     "origin": "Nhật Bản",
     "tags": [],
-    "image": "img/24767149051-b.jpg",
-    "thumb": "img/thumb/24767149051-b.jpg",
+    "image": "img/24767149051-c.jpg",
+    "thumb": "img/thumb/24767149051-c.jpg",
     "images": [
-      "img/24767149051-b.jpg",
+      "img/24767149051-c.jpg",
       "img/24767149051-2.jpg",
       "img/24767149051-3.jpg",
       "img/24767149051-4.jpg",
