@@ -68,6 +68,7 @@ window.SITE = {
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
+      'daycell-nad-white-cream': 400,      // kem NAD+ 50ml hũ thuỷ tinh có hộp
       'drvita-ecm-serum': 300,      // serum Dr.VITA 100ml có hộp
       'gac-canxi-sumo': 950,      // gạc canxi Sumo hộp 10 gói × 80ml       // men vi sinh Sysy – hộp 6 gói lớn × 10 gói 2g
     },
@@ -2178,6 +2179,66 @@ window.PRODUCTS = [
     "usage": "Sau bước làm sạch và toner, lấy một lượng vừa đủ thoa đều lên mặt và cổ, vỗ nhẹ cho thẩm thấu; dùng sáng và tối. Ban ngày dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
     "seoTitle": "Tinh chất DayCell Dr.VITA ECM Anti Aging Serum 100ml Hàn Quốc | Hương Chất Kids",
     "seoDesc": "Serum DayCell Dr.VITA ECM Anti Aging 100ml: ECM Complex 50.000 PPM, 43,9% nước collagen, 26 peptide – dưỡng ẩm, săn chắc, chăm sóc nếp nhăn theo nhà sản xuất. Chính hãng Hàn Quốc."
+  },
+  {
+    "id": "daycell-nad-white-cream",
+    "name": "Kem Dưỡng Da DayCell Medi Lab NAD+ White Cream 50ml Hàn Quốc – Dưỡng Ẩm, Dưỡng Trắng, Hỗ Trợ Làm Mờ Nám & Tàn Nhang",
+    "short": "Kem dưỡng DayCell Medi Lab NAD+ White Cream 50ml",
+    "brand": "daycell",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1550000,
+    "oldPrice": 1550000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 5,
+    "cosmetic": true,
+    "shape": "jar",
+    "color": "#C62828",
+    "weight": "Hũ 50ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/daycell-nad-white-cream.jpg",
+    "thumb": "img/thumb/daycell-nad-white-cream.jpg",
+    "images": [
+      "img/daycell-nad-white-cream.jpg",
+      "img/daycell-nad-white-cream-2.jpg",
+      "img/daycell-nad-white-cream-3.jpg",
+      "img/daycell-nad-white-cream-4.jpg",
+      "img/daycell-nad-white-cream-5.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Hũ 50ml",
+        "price": 1550000,
+        "oldPrice": 1550000
+      },
+      {
+        "label": "2 hũ",
+        "price": 3100000,
+        "oldPrice": 3100000
+      }
+    ],
+    "desc": "DayCell Medi Lab NAD+ White Cream là kem dưỡng da dung tích 50ml đến từ Hàn Quốc, kết hợp dưỡng trắng và chăm sóc lão hoá, ứng dụng công thức NAD+ và NMN cùng các thành phần dưỡng sáng, chống oxy hoá. Sản phẩm đã có giấy công bố mỹ phẩm, ghi nhận mục đích sử dụng: “Kem dưỡng da giúp dưỡng ẩm, dưỡng trắng da, hỗ trợ làm mờ các vết nám và tàn nhang trên da, mang lại làn da mềm mịn.” Theo nhà sản xuất, kem giúp cấp ẩm, cải thiện làn da xỉn màu, hỗ trợ làm mờ nám, tàn nhang, đốm sắc tố và chăm sóc nếp nhăn, mang lại làn da mềm mịn, tươi sáng. Thành phần nổi bật: NAD+ (Nicotinamide Adenine Dinucleotide) và NMN (Nicotinamide Mononucleotide) – chăm sóc da lão hoá; MadeWhite™ (nguồn gốc rau má) – hỗ trợ kiểm soát sự hình thành melanin; Idebesome (Idebenone dạng liposome) – chống oxy hoá; Tranexamic Acid – hỗ trợ làm sáng, đều màu da; Glutathione – chống oxy hoá, dưỡng sáng; Kojic Acid. Hiệu quả tuỳ cơ địa mỗi người.",
+    "highlights": [
+      "Có giấy công bố mỹ phẩm: dưỡng ẩm, dưỡng trắng, hỗ trợ làm mờ nám và tàn nhang",
+      "Công thức NAD+ và NMN – chăm sóc da lão hoá, nếp nhăn (theo nhà sản xuất)",
+      "MadeWhite™, Tranexamic Acid, Glutathione – dưỡng sáng, hỗ trợ cải thiện da xỉn màu, không đều màu",
+      "Idebesome chống oxy hoá, bảo vệ da trước gốc tự do",
+      "Kết cấu kem mỏng, dưỡng ẩm cho da mềm mịn – nhập khẩu Hàn Quốc"
+    ],
+    "usage": "Sau bước serum, lấy một lượng vừa đủ thoa đều lên mặt, massage nhẹ cho thẩm thấu; dùng sáng và tối. Ban ngày dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
+    "seoTitle": "Kem DayCell Medi Lab NAD+ White Cream 50ml Hàn Quốc | Hương Chất Kids",
+    "seoDesc": "Kem dưỡng DayCell Medi Lab NAD+ White Cream 50ml: NAD+, NMN, MadeWhite, Tranexamic Acid, Glutathione – dưỡng ẩm, dưỡng trắng, hỗ trợ làm mờ nám và tàn nhang (theo công bố). Chính hãng Hàn Quốc."
   },
   {
     "id": "24764883120",
@@ -6215,6 +6276,10 @@ window.QUA_TANG = {
         },
         {
           "id": "drvita-ecm-serum",
+          "bat": true
+        },
+        {
+          "id": "daycell-nad-white-cream",
           "bat": true
         }
       ],

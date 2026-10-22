@@ -458,6 +458,13 @@
         "Chai 100ml": true,
         "2 chai": true
       }
+    },
+    "daycell-nad-white-cream": {
+      "in": true,
+      "variants": {
+        "Hũ 50ml": true,
+        "2 hũ": true
+      }
     }
   }
 }
