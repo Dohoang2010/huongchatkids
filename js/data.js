@@ -31,7 +31,7 @@ window.SITE = {
   expressFee: 35000,
   expressCities: ['Hà Nội'],            // tỉnh/thành có giao hoả tốc trong ngày
   /* Phí giao tiêu chuẩn theo BẢNG PHÍ SHIP J&T EXPRESS của shop (21/10/2026): đồng giá toàn quốc, tính theo số thùng / kiện.
-     thung: hàng đóng thùng – mỗi nhóm tính gia[số thùng − 1] (nhiều hơn bảng → cộng tiếp từ đầu bảng); số thùng = số gói ÷ goiMotThung
+     thung: hàng đóng thùng – mỗi nhóm tính gia[số thùng − 1] (heSo: số thùng của 1 phân loại, nếu có) (nhiều hơn bảng → cộng tiếp từ đầu bảng); số thùng = số gói ÷ goiMotThung
        (phân loại ghi "… gói"), hoặc số thùng ghi trong tên phân loại. Chưa đủ 1 thùng → tính như hàng khác.
      hangKhac: mỗi kiện tới kgMoiKien kg giá gia (cân nặng ước tính theo gramTheoSP / gramTheoDanhMuc bên dưới).
      Các nhóm trong một đơn cộng lại. Đơn từ freeshipFrom vẫn miễn phí. Kiện hoàn / đổi: hoanDoi × phí ship lượt đi. */
@@ -40,6 +40,7 @@ window.SITE = {
     thung: [
       { ten: 'Lotte', ids: ['22686115682', '23660586997', '41353214697', '25632276959', 'combo-lottexanh-d3k2', 'suaxanh-lotte'], goiMotThung: 30, gia: [30000, 60000, 130000, 130000] },
       { ten: 'Gạc hươu non', ids: ['26156646705'], goiMotThung: 40, gia: [50000, 80000, 130000] },
+      { ten: 'Gạc canxi', ids: ['gac-canxi-sumo'], heSo: { 'Hộp 10 gói': 1 / 3, 'Thùng 30 gói': 1, 'Thùng 40 gói': 1 }, gia: [50000, 80000, 130000] },
       { ten: 'Hồng sâm ChuChu', ids: ['22644617070'], goiMotThung: 40, gia: [50000, 80000, 130000] },
       { ten: 'Norco', ids: ['26523206270'], gia: [50000, 80000, 130000] },
     ],
@@ -66,7 +67,8 @@ window.SITE = {
       '24465090622': 450,    // sữa tắm 300ml
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
-      'men-sysy': 350,       // men vi sinh Sysy – hộp 6 gói lớn × 10 gói 2g
+      'men-sysy': 350,
+      'gac-canxi-sumo': 950,      // gạc canxi Sumo hộp 10 gói × 80ml       // men vi sinh Sysy – hộp 6 gói lớn × 10 gói 2g
     },
   },
   expert: { title: 'Chuyên gia dinh dưỡng', phone: '+84392312796', display: '(+84) 392 312 796', zalo: 'https://zalo.me/0392312796' },  // gặp trực tiếp chuyên gia
@@ -851,6 +853,77 @@ window.PRODUCTS = [
       "Có bản gạc canxi (thùng)"
     ],
     "usage": "Bé uống 1 gói/ngày sau ăn. Liều dùng theo hướng dẫn trên bao bì hoặc chuyên gia dinh dưỡng tư vấn."
+  },
+  {
+    "id": "gac-canxi-sumo",
+    "name": "Gạc Nhung Hươu Canxi Sumo (Byplay Sumo Calcium Deer Antler Liquid) Hỗ Trợ Phát Triển Chiều Cao",
+    "short": "Gạc nhung hươu canxi Sumo",
+    "brand": "sumo",
+    "cat": "vitamin",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tang-chieu-cao",
+      "canxi"
+    ],
+    "price": 520000,
+    "oldPrice": 520000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 5,
+    "shape": "box",
+    "color": "#9CCC65",
+    "weight": "Hộp 10 gói × 80ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/gac-canxi-sumo.jpg",
+    "thumb": "img/thumb/gac-canxi-sumo.jpg",
+    "images": [
+      "img/gac-canxi-sumo.jpg",
+      "img/gac-canxi-sumo-2.jpg",
+      "img/gac-canxi-sumo-3.jpg",
+      "img/gac-canxi-sumo-4.jpg",
+      "img/gac-canxi-sumo-5.jpg",
+      "img/gac-canxi-sumo-6.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Hộp 10 gói",
+        "price": 520000,
+        "oldPrice": 520000
+      },
+      {
+        "label": "Thùng 30 gói",
+        "price": 1490000,
+        "oldPrice": 1490000
+      },
+      {
+        "label": "Thùng 40 gói",
+        "price": 1890000,
+        "oldPrice": 1890000
+      }
+    ],
+    "desc": "Gạc nhung hươu canxi Sumo (Byplay Sumo Calcium Deer Antler Liquid) là nước uống bổ sung canxi dạng túi 80ml, sản xuất tại Hàn Quốc bởi Huons Foodience CO., LTD. Theo nhà sản xuất, mỗi gói chứa 100mg canxi (lipocalcium) kết hợp chiết xuất nhung hươu New Zealand, kẽm, vitamin D3 và hỗn hợp trái cây nhiệt đới, hỗ trợ bé từ 1 tuổi phát triển chiều cao. Vị trái cây dễ uống, túi có nắp vặn tiện mang theo. Quy cách: hộp 10 gói × 80ml (túi PE, hộp giấy); thùng 30 gói (3 hộp) hoặc 40 gói. Nhà sản xuất: Huons Foodience CO., LTD (Hàn Quốc). Thành phần: Nước tinh khiết, fructooligosaccharides, hỗn hợp trái cây nhiệt đới cô đặc (cam, xoài, chanh dây, ổi, chuối – Israel), hỗn hợp thảo mộc cô đặc (đương quy, hoàng kỳ, thược dược, cam thảo, quế, bạch truật, xuyên khung, địa hoàng, phục linh), chế phẩm hỗn hợp 1 (tricalci phosphat INS 341iii, lecithin INS 322i), chiết xuất nhung hươu cô đặc (nhung hươu New Zealand, thành phần rắn 20% (70%) 0,149%), chất chống oxy hoá vitamin C INS 300, chất làm dày xanthan gum INS 415, kẽm oxit, chế phẩm hỗn hợp 2 (gum arabic INS 414, saccarose, tinh bột bắp, dầu chế biến, silicon dioxide INS 551, vitamin D3, vitamin E). Sản phẩm không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.",
+    "highlights": [
+      "100mg canxi (lipocalcium) mỗi gói – theo nhà sản xuất",
+      "Chiết xuất nhung hươu New Zealand, kẽm, vitamin D3, vitamin E",
+      "Hỗn hợp trái cây nhiệt đới Israel (cam, xoài, chanh dây, ổi, chuối) và thảo mộc Hàn Quốc",
+      "Dành cho bé từ 1 tuổi, túi 80ml nắp vặn, uống trực tiếp",
+      "Đạt chuẩn HACCP · nhập khẩu chính ngạch, có bản tự công bố sản phẩm"
+    ],
+    "usage": "Uống trực tiếp, mỗi ngày 1 túi. Bảo quản nơi khô mát, tránh ánh nắng và nhiệt độ cao; đã mở túi thì bảo quản lạnh và dùng hết sớm. Hạn sử dụng 2 năm kể từ ngày sản xuất (xem trên bao bì).",
+    "importer": "Công ty CP Xuất nhập khẩu và Phân phối Global Beauty Solutions",
+    "congBo": "01/GLOBAL BEAUTY SOLUTIONS/2024",
+    "seoTitle": "Gạc nhung hươu canxi Sumo Hàn Quốc – hộp 10 gói 80ml | Hương Chất Kids",
+    "seoDesc": "Nước gạc nhung hươu canxi Sumo (Byplay) Hàn Quốc: 100mg canxi mỗi gói, nhung hươu New Zealand, kẽm, vitamin D3 – cho bé từ 1 tuổi. Chính hãng, có công bố. Hộp 10 gói, thùng 30 / 40 gói."
   },
   {
     "id": "23660586997",
@@ -5834,7 +5907,7 @@ window.QUA_TANG = {
     },
     {
       "id": "ct-2110-gac-sumo",
-      "ten": "Kid · Gạc Sumo mua thùng 40 gói tặng 1 hộp Lotte 10 gói",
+      "ten": "Kid · Gạc Sumo / Gạc canxi mua thùng 40 gói tặng 1 hộp Lotte 10 gói",
       "batDau": "2026-10-21T00:00",
       "ketThuc": "2027-12-31T23:59",
       "kieu": "soLuong",
@@ -5873,6 +5946,15 @@ window.QUA_TANG = {
             "10 gói": 0,
             "20 gói": 0,
             "30 gói": 0,
+            "Thùng 40 gói": 1
+          }
+        },
+        {
+          "id": "gac-canxi-sumo",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói": 0,
             "Thùng 40 gói": 1
           }
         }

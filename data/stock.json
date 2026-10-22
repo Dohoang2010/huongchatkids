@@ -443,6 +443,14 @@
       }
     },
     "sp1792425617216": true,
-    "sp1792463252784": true
+    "sp1792463252784": true,
+    "gac-canxi-sumo": {
+      "in": true,
+      "variants": {
+        "Hộp 10 gói": true,
+        "Thùng 30 gói": true,
+        "Thùng 40 gói": true
+      }
+    }
   }
 }

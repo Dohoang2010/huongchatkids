@@ -264,7 +264,7 @@
   /* Số thùng của 1 dòng hàng: "… 20 gói" ÷ goiMotThung, hoặc "2 thùng", hoặc 1 thùng / đơn vị */
   function soThung(l, nhom) {
     const t = String(l.variantLabel || ''), g = t.match(/(\d+)\s*gói/i), th = t.match(/(\d+)\s*thùng/i);
-    const moi = nhom.goiMotThung && g ? Number(g[1]) / nhom.goiMotThung : th ? Number(th[1]) : 1;
+    const moi = nhom.heSo && nhom.heSo[t] != null ? Number(nhom.heSo[t]) : nhom.goiMotThung && g ? Number(g[1]) / nhom.goiMotThung : th ? Number(th[1]) : 1;
     return moi * (l.qty || 1);
   }
   const giaBang = (gia, n) => { let f = 0; while (n > gia.length) { f += gia[gia.length - 1]; n -= gia.length; } return f + (n > 0 ? gia[n - 1] : 0); };

@@ -48,7 +48,7 @@ window.POLICIES = [
 <table class="ptable"><tr><th>Hàng</th><th>1 thùng</th><th>2 thùng</th><th>3 thùng</th><th>4 thùng</th></tr>
 <tr><td>Hàng khác (mỗi kiện dưới 3kg)</td><td>30.000₫</td><td colspan="3">mỗi kiện 3kg tiếp theo +30.000₫</td></tr>
 <tr><td>Nước ép, sữa Lotte (thùng ~4kg)</td><td>30.000₫</td><td>60.000₫</td><td>130.000₫</td><td>130.000₫</td></tr>
-<tr><td>Nước gạc hươu non</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
+<tr><td>Nước gạc hươu non, gạc canxi Sumo</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
 <tr><td>Hồng sâm ChuChu</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
 <tr><td>Sữa tươi Norco</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr></table>
 <p>Đơn có nhiều loại hàng: cộng phí của từng loại. Mua chưa đủ 1 thùng (VD hộp 10 gói) tính như hàng khác. <b>Kiện hoàn / đổi:</b> 150% phí ship lượt đi.</p>

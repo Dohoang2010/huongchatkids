@@ -156,6 +156,14 @@ test('Kid: Gạc Sumo mua thùng 40 gói tặng 1 hộp nước dinh dưỡng Lo
   assert.notStrictEqual((MC.giftFor([dong(W, SUMO, 4, le)], {}) || {}).chuongTrinh, 'ct-2110-gac-sumo', '4 × 10 gói không phải thùng → không tặng hộp Lotte');
   const l = dong(W, SUMO, 1, thung); assert.ok(MC.hangKhongUuDai([l]).co(l), 'đang có quà → không cộng hạng / sinh nhật / mua 2 giảm 3%');
   assert.strictEqual(MC.giftFor([l], { coMa: true, maShip: false }).soQua, 0, 'áp mã giảm giá → bỏ quà');
+  const CX = 'gac-canxi-sumo';
+  assert.strictEqual(MC.giftFor([dong(W, CX, 1, bt(W, CX, /thùng 40/i))], {}).soQua, 1, 'Gạc canxi thùng 40 gói cũng tặng 1 hộp Lotte');
+  assert.notStrictEqual((MC.giftFor([dong(W, CX, 1, bt(W, CX, /thùng 30/i))], {}) || {}).chuongTrinh, 'ct-2110-gac-sumo', 'Gạc canxi thùng 30 gói không thuộc chương trình');
+  const phi = (ls) => MC.shipFee(1, 'standard', { tinh: 'Hà Nội', lines: ls });
+  assert.strictEqual(phi([dong(W, CX, 1, bt(W, CX, /thùng 40/i))]), 50000, 'phí ship gạc canxi 1 thùng 50k');
+  assert.strictEqual(phi([dong(W, CX, 3, bt(W, CX, /^hộp/i))]), 50000, '3 hộp 10 gói = 1 thùng');
+  assert.strictEqual(phi([dong(W, CX, 1, bt(W, CX, /^hộp/i))]), 30000, '1 hộp lẻ = hàng khác');
+  assert.strictEqual(phi([dong(W, CX, 2, bt(W, CX, /thùng 30/i))]), 80000, '2 thùng 80k');
 });
 test('MP: bộ 3 Meso bạc (cặp serum + kem + peel Anubis) tặng 1 hộp mặt nạ NMN; thiếu món nào cũng không tặng', () => {
   const { MC, W } = taoWeb({ gio: gio('10:00') });
