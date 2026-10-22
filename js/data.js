@@ -2121,7 +2121,7 @@ window.PRODUCTS = [
   {
     "id": "drvita-ecm-serum",
     "name": "Kem Dưỡng Da DayCell Dr.VITA ECM Anti Aging Serum 100ml Hàn Quốc – Dưỡng Ẩm, Săn Chắc, Chăm Sóc Nếp Nhăn",
-    "short": "Tinh chất DayCell Dr.VITA ECM Anti Aging Serum 100ml",
+    "short": "Kem Dưỡng DayCell Dr.VITA ECM Anti Aging Serum 100ml",
     "brand": "daycell",
     "cat": "cho-me",
     "ages": [],
