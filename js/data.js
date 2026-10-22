@@ -68,6 +68,7 @@ window.SITE = {
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
+      'drvita-ecm-serum': 300,      // serum Dr.VITA 100ml có hộp
       'gac-canxi-sumo': 950,      // gạc canxi Sumo hộp 10 gói × 80ml       // men vi sinh Sysy – hộp 6 gói lớn × 10 gói 2g
     },
   },
@@ -172,6 +173,7 @@ window.BRANDS = [
   { key: 'hexacare', label: 'Hexacare', origin: 'Pháp', color: '#C2185B' },
   { key: 'boryeong-mud', label: 'Boryeong MUD+', origin: 'Hàn Quốc', color: '#8B6B4E' },
   { key: 'kitea', label: 'Kitea', origin: 'Hàn Quốc', color: '#C2561B' },
+  { key: 'daycell', label: 'DayCell', origin: 'Hàn Quốc', color: '#C0392B' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' }
 ];
 
@@ -2115,6 +2117,67 @@ window.PRODUCTS = [
       "Chai nhỏ giọt 30ml định lượng dễ dùng"
     ],
     "usage": "Buổi tối sau khi làm sạch, nhỏ 3–4 giọt lên mặt và cổ, vỗ nhẹ cho thấm rồi dùng kem dưỡng. Ban ngày nhớ dùng kem chống nắng."
+  },
+  {
+    "id": "drvita-ecm-serum",
+    "name": "Tinh Chất Dưỡng Da DayCell Dr.VITA ECM Anti Aging Serum 100ml Hàn Quốc – Dưỡng Ẩm, Săn Chắc, Chăm Sóc Nếp Nhăn",
+    "short": "Tinh chất DayCell Dr.VITA ECM Anti Aging Serum 100ml",
+    "brand": "daycell",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 1290000,
+    "oldPrice": 1290000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 5,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#E8A08A",
+    "weight": "Chai 100ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/drvita-ecm-serum.jpg",
+    "thumb": "img/thumb/drvita-ecm-serum.jpg",
+    "images": [
+      "img/drvita-ecm-serum.jpg",
+      "img/drvita-ecm-serum-2.jpg",
+      "img/drvita-ecm-serum-3.jpg",
+      "img/drvita-ecm-serum-4.jpg",
+      "img/drvita-ecm-serum-5.jpg",
+      "img/drvita-ecm-serum-6.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Chai 100ml",
+        "price": 1290000,
+        "oldPrice": 1290000
+      },
+      {
+        "label": "2 chai",
+        "price": 2580000,
+        "oldPrice": 2580000
+      }
+    ],
+    "desc": "DayCell Dr.VITA ECM Anti Aging Serum là tinh chất dưỡng da chăm sóc cấu trúc da đến từ Hàn Quốc, chai 100ml. Theo nhà sản xuất, sản phẩm hỗ trợ chống lão hoá, cải thiện nếp nhăn và tăng độ đàn hồi; giúp da săn chắc, căng mịn; bổ sung độ ẩm, nuôi dưỡng và củng cố cấu trúc da; phù hợp chăm sóc làn da khô, nhạy cảm và có dấu hiệu lão hoá. Thành phần nổi bật: ECM Complex 50.000 PPM (phức hợp mô phỏng cấu trúc nền ngoại bào của da, trong đó 89% Collagen Liposome Type 1), 43,9% nước Collagen Type 1, 26 loại peptide và 20 loại axit amin, Cerasome & Cica. Theo tài liệu thử nghiệm của nhà sản xuất sau 4 tuần: cải thiện nếp nhăn vùng mắt 5,316%, độ săn chắc 4,903%, độ đàn hồi 8,891%. Hiệu quả tuỳ cơ địa mỗi người. Phù hợp: da bắt đầu xuất hiện nếp nhăn và dấu hiệu lão hoá; da thiếu săn chắc, kém đàn hồi; da khô, thiếu ẩm, thiếu sức sống; người cần chăm sóc da chuyên sâu.",
+    "highlights": [
+      "ECM Complex 50.000 PPM + 43,9% nước Collagen Type 1 – theo nhà sản xuất",
+      "26 loại peptide, 20 loại axit amin, Cerasome & Cica",
+      "Hỗ trợ cải thiện nếp nhăn, tăng độ săn chắc và đàn hồi cho da",
+      "Cấp ẩm, giúp da căng mịn – phù hợp da khô, nhạy cảm, da có dấu hiệu lão hoá",
+      "Nhập khẩu Hàn Quốc, chai 100ml dùng lâu"
+    ],
+    "usage": "Sau bước làm sạch và toner, lấy một lượng vừa đủ thoa đều lên mặt và cổ, vỗ nhẹ cho thẩm thấu; dùng sáng và tối. Ban ngày dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
+    "seoTitle": "Tinh chất DayCell Dr.VITA ECM Anti Aging Serum 100ml Hàn Quốc | Hương Chất Kids",
+    "seoDesc": "Serum DayCell Dr.VITA ECM Anti Aging 100ml: ECM Complex 50.000 PPM, 43,9% nước collagen, 26 peptide – dưỡng ẩm, săn chắc, chăm sóc nếp nhăn theo nhà sản xuất. Chính hãng Hàn Quốc."
   },
   {
     "id": "24764883120",
@@ -6148,6 +6211,10 @@ window.QUA_TANG = {
         },
         {
           "id": "goi-xa-boryeong-mud",
+          "bat": true
+        },
+        {
+          "id": "drvita-ecm-serum",
           "bat": true
         }
       ],

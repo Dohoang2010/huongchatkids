@@ -451,6 +451,13 @@
         "Thùng 30 gói": true,
         "Thùng 40 gói": true
       }
+    },
+    "drvita-ecm-serum": {
+      "in": true,
+      "variants": {
+        "Chai 100ml": true,
+        "2 chai": true
+      }
     }
   }
 }
