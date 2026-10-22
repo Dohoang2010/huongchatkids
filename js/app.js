@@ -705,13 +705,14 @@
     if (dungGT && dungHang && !ketHop().hangMa) { if (hangAmt > gtAmt) dungGT = false; else dungHang = false; }
     /* đơn dùng mã / voucher / giới thiệu → bỏ quà theo sản phẩm → hạng tính lại trên cả sản phẩm đó (nhóm B) */
     if (dungHang && (dungMa || dungGT)) hangAmt = pct ? Math.round(baseA * pct / 100) : 0;
-    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0);
+    const gn = dungMa || dungGT ? null : giamNganh(qbLs), giamNg = gn ? gn.tien : 0;   // chương trình chỉ giảm % (vd Food từ 1 triệu −5%)
+    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0) + giamNg;
     const gtd = Number(C.giaTriDiem) || 1;
     const ptDiem = C.diemToiDaPhanTram != null ? Number(C.diemToiDaPhanTram) : 10;   // mỗi đơn dùng điểm tối đa ptDiem % giá trị đơn
     const diemToiDa = QB.vi && QB.vi.dungDuoc ? Math.max(0, Math.min(QB.vi.khaDung || 0, Math.floor(Math.max(0, base - discount) / gtd), Math.floor(base * ptDiem / 100 / gtd))) : 0;
     const diemDung = Math.max(0, Math.min(QB.diemMuon, diemToiDa)), giamDiem = diemDung * gtd;
     const ship = (cr && cr.ok && cr.freeship && !boMa) || maShipTuDong(base, qbLines()) ? 0 : shipFee(base - discount, 'standard', { tinh: qbTinh(), lines: qbLines() });
-    return { sub, multi, base, baseA, baseAB, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { sub, multi, base, baseA, baseAB, gn, giamNg, coupon: dungMa ? couponAmt : 0, cr, hang, pct, hangAmt, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   }
   const qbQuaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : maChoQua(k.boMa ? null : k.cr, k.dungMa));
   /* Mã giới thiệu trong Mua nhanh: kiểm tra với SĐT đang nhập (khách mới mới được giảm) */
@@ -862,7 +863,7 @@
     $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
     const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
     const gw = $('#qbGift'); if (gw) gw.innerHTML = g && g.hoacGiam ? giftBox(g, false) : giftBox(g, true, QB.quaVi);   // chọn giảm thay quà làm ở trang thanh toán
-    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>${k.hang.laSinhNhat ? 'Ưu đãi sinh nhật 🎂' : 'Ưu đãi hạng ' + esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}${ghiChuKhongUuDai(qbLines(), { coQua: !!((giftFor(qbLines(), qbQuaOpts(k)) || {}).soQua) })}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
+    $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>${k.hang.laSinhNhat ? 'Ưu đãi sinh nhật 🎂' : 'Ưu đãi hạng ' + esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.gn ? `<div class="summary-line"><span>${esc(k.gn.ten)}</span><span class="free">−${fmt(k.gn.tien)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}${ghiChuKhongUuDai(qbLines(), { coQua: !!((giftFor(qbLines(), qbQuaOpts(k)) || {}).soQua) })}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
     const qbGtHint = (k) => { const G2 = QB.gt;
       return G2.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
         : G2.ok && k.dungGT ? `<span class="text-teal fw-600">✓ Mã hợp lệ${G2.tenAn ? ` (${esc(G2.tenAn)})` : ''} – giảm ${QB.gtCfg.giam}% đơn đầu tiên</span>`
@@ -917,7 +918,7 @@
       }
       maGiu = res.maGiu || '';
     }
-    const uuDai = [k.dungGT ? `Giảm giới thiệu ${QB.gtCfg.giam}% (người giới thiệu ${QB.gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
+    const uuDai = [k.gn ? `${k.gn.ten} (chương trình ${k.gn.chuongTrinh}): -${fmt(k.gn.tien)}` : '', k.dungGT ? `Giảm giới thiệu ${QB.gtCfg.giam}% (người giới thiệu ${QB.gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
     const order = await submitOrder({ type: 'quick', code, customer: { name, phone: sdtDat, address, email }, payment,
       note: uuDai ? `[${uuDai}]` : '', gioiThieu: k.dungGT ? { ma: QB.gt.ma, giam: k.gtAmt, phanTram: QB.gtCfg.giam } : null, diem: k.diemDung ? { so: k.diemDung, giam: k.giamDiem } : null, maGiu,
       coupon: k.dungMa && k.cr && k.cr.ok ? k.cr.code : '',
@@ -1787,13 +1788,17 @@
       /* Nhiều bậc: bac = [{ muc, soQua }]; chương trình cũ chỉ có muc/soQua = 1 bậc */
       const bac = (c.bac && c.bac.length ? c.bac : [{ muc: Number(c.muc) || 0, soQua: Number(c.soQua) || 1 }]).filter((b) => b.muc > 0).sort((a, b) => a.muc - b.muc);
       const ten = c.tenQua || (qua.length === 1 && qua[0].p ? shortName(qua[0].p) : 'quà tặng');
-      return { c, vi, chinh, heSo, bac, ten, soLuong: c.kieu === 'soLuong', donVi: c.donVi || 'hộp' };
-    }).filter((x) => x.vi.length && x.chinh.size && x.bac.length);
+      return { c, vi, chinh, heSo, bac, ten, soLuong: c.kieu === 'soLuong' || c.kieu === 'bo', bo: c.kieu === 'bo', donVi: c.donVi || (c.kieu === 'bo' ? 'bộ' : 'hộp') };
+    }).filter((x) => (x.vi.length || Number(x.c.chiGiam) > 0) && x.chinh.size && x.bac.length);
   }
   /* Phân loại "2 hộp 180 gói" tính là 2 hộp nếu trang quản trị chưa đặt hệ số */
   const heSoMacDinh = (label, donVi) => { const m = String(label || '').match(/^(\d+)\s*([^\s\d·(]+)/); return m && donVi && m[2].toLowerCase() === String(donVi).toLowerCase() ? Number(m[1]) : 1; };
   /* Mức khách đã đạt của 1 chương trình: tổng tiền hoặc tổng số lượng các sản phẩm chính trong giỏ */
   function ctDat(x, lines) {
+    /* kiểu 'bo': phải mua đủ MỖI sản phẩm chính – số bộ = sản phẩm có số lượng ít nhất */
+    if (x.bo) { const dem = {}; x.chinh.forEach((id) => { dem[id] = 0; });
+      (lines || []).forEach((l) => { if (!l.p || !x.chinh.has(l.p.id) || laComboGiam(l.p)) return; const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || ''; dem[l.p.id] += l.qty * (hs[k] != null ? Number(hs[k]) || 0 : 1); });
+      return Math.floor(Math.min(...Object.values(dem))); }
     return (lines || []).reduce((s, l) => {
       if (!l.p || !x.chinh.has(l.p.id) || laComboGiam(l.p)) return s;
       if (!x.soLuong) return s + l.total;
@@ -1803,6 +1808,37 @@
   }
   const ctMoc = (x, v) => (x.soLuong ? `${v} ${x.donVi}` : fmt(v));
   const ctMoTa = (x) => x.c.moTa || x.bac.map((b, i) => (x.soLuong ? `${i ? '' : 'Mua '}${b.muc} ${x.donVi} tặng ${b.soQua} ${x.ten}` : `${i ? 'Từ' : 'Mua từ'} ${fmt(b.muc)} tặng ${b.soQua} ${x.ten}`)).join(' · ');
+  /* Giá 1 phần quà rẻ nhất của chương trình (để so quà giữa các chương trình / với ưu đãi hạng) */
+  function ctGiaQua(x) {
+    return Math.min(...(x.c.quaTang || []).map((g) => { if (!g.id) return Number(g.gia) || Infinity; const p = byId(g.id); return p ? Math.min(...(p.variants && p.variants.length ? p.variants.filter((v) => (g.bienThe || {})[v.label] !== false).map((v) => v.price) : [p.price]), Infinity) : Infinity; }), Infinity);
+  }
+  /* Tiền hàng các sản phẩm chính của chương trình trong giỏ */
+  const ctTien = (x, lines) => (lines || []).reduce((s, l) => s + (l.p && x.chinh.has(l.p.id) && !laComboGiam(l.p) ? l.total : 0), 0);
+  /* nhuongHang (chương trình 21/10/2026, không dùng song song với ưu đãi đang có – web chọn mức lợi nhất cho khách):
+     khách có ưu đãi hạng / sinh nhật mà số tiền được giảm trên các sản phẩm đó lớn hơn giá trị chương trình → bỏ chương trình, giữ ưu đãi hạng */
+  function ctNhuong(x, dat, lines) {
+    if (!x.c.nhuongHang) return false;
+    const t = hangCho(sdtDangDung()), pct = t ? Number(t.discount) || 0 : 0; if (!pct) return false;
+    const b = [...x.bac].reverse().find((y) => dat >= y.muc); if (!b) return false;
+    const tien = ctTien(x, lines), gq = ctGiaQua(x);
+    const giaTri = Number(x.c.chiGiam) ? tien * Number(x.c.chiGiam) / 100 : Math.max(b.soQua * (isFinite(gq) ? gq : 0), tien * (Number(x.c.hoacGiam) || 0) / 100);
+    return tien * pct / 100 > giaTri;
+  }
+  /* Chương trình đạt mốc và còn hiệu lực (không nhường cho ưu đãi hạng) */
+  const ctHieuLuc = (x, lines) => { const dat = ctDat(x, lines); return dat >= x.bac[0].muc && !ctNhuong(x, dat, lines) ? dat : 0; };
+  /* Chương trình CHỈ GIẢM % (chiGiam, vd Food đơn từ 1 triệu giảm 5%): lấy chương trình giảm nhiều nhất.
+     Đơn dùng mã giảm giá / voucher / mã giới thiệu (opts.coMa) thì không giảm (không dùng song song). */
+  function giamNganh(lines, opts) {
+    if (opts && opts.coMa && !opts.maShip) return null;
+    let tot = null;
+    ctDangChay().forEach((x) => {
+      const pt = Number(x.c.chiGiam) || 0; if (!pt) return;
+      const dat = ctHieuLuc(x, lines); if (!dat) return;
+      const tien = Math.round(ctTien(x, lines) * pt / 100);
+      if (tien > 0 && (!tot || tien > tot.tien)) tot = { tien, pt, chuongTrinh: x.c.id, ten: x.c.tenGiam || `Giảm ${pt}%`, lyDo: x.c.moTa || '' };
+    });
+    return tot;
+  }
   function ctChoSP(p) { return p ? ctDangChay().filter((x) => x.chinh.has(p.id)) : []; }
   /* Sản phẩm KHÔNG nhận thêm ưu đãi (chủ shop 21/10/2026): combo (giá đã giảm sẵn) + sản phẩm đang được tặng quà
      (đủ mốc chương trình quà theo sản phẩm – vd Calciumore 2–4 hộp tặng D3K2; nước ép Lotte mua thùng tặng gói)
@@ -1816,7 +1852,7 @@
     const ls = lines || [], loai = new Set(), chiA = !!(opts && opts.chiA);
     const bienTheUuDai = (l) => /tặng|\+.*giảm|giảm.*\+/i.test(String(l.variantLabel || ''));
     ls.forEach((l, i) => { if (l.p && (l.p.isCombo || bienTheUuDai(l))) loai.add(i); });
-    if (!chiA) ctDangChay().forEach((x) => { if (ctDat(x, ls) >= x.bac[0].muc) ls.forEach((l, i) => { if (l.p && x.chinh.has(l.p.id)) loai.add(i); }); });
+    if (!chiA) ctDangChay().forEach((x) => { if (ctHieuLuc(x, ls)) ls.forEach((l, i) => { if (l.p && x.chinh.has(l.p.id)) loai.add(i); }); });
     const cfg = QT();
     if (!chiA && cfg && !suKienDangChay() && (cfg.thung || []).length && !(cfg.thungChiKhachMoi && laVip())) {
       const tk = String(cfg.tuKhoaThung || 'thùng').toLowerCase(), laThung = (l) => !!l.p && laNuocLotte(l.p) && !l.p.isCombo && String(l.variantLabel || '').toLowerCase().includes(tk);
@@ -1879,17 +1915,19 @@
        cùng đạt thì lấy quà giá trị cao nhất (số quà × giá phân loại quà rẻ nhất) */
     let tot = null, giaTriTot = 0, goiY = '', gan = 0; const them = [];   // them: quà của chương trình congDon (cộng thêm, khác ngành hàng)
     ctDangChay().forEach((x) => {
+      if (Number(x.c.chiGiam) > 0) return;   // chương trình chỉ giảm % tính riêng (giamNganh)
       const dat = ctDat(x, lines); if (!dat) return;
+      if (ctNhuong(x, dat, lines)) return;   // ưu đãi hạng / sinh nhật lợi hơn → không áp chương trình này
       const bacDat = [...x.bac].reverse().find((b) => dat >= b.muc), bacSau = x.bac.find((b) => dat < b.muc);
       if (x.c.congDon) { if (bacDat) them.push({ soQua: bacDat.soQua, ten: x.ten, vi: x.vi, id: x.c.id, lyDo: x.soLuong ? `Mua ${dat} ${x.donVi} ${x.c.tenSP || 'sản phẩm chương trình'}` : `Mua ${x.c.tenSP || 'sản phẩm chương trình'} từ ${fmt(bacDat.muc)}` }); return; }
-      const giaQua = Math.min(...(x.c.quaTang || []).map((g) => { if (!g.id) return Number(g.gia) || Infinity; const p = byId(g.id); return p ? Math.min(...(p.variants && p.variants.length ? p.variants.filter((v) => (g.bienThe || {})[v.label] !== false).map((v) => v.price) : [p.price]), Infinity) : Infinity; }), Infinity);
+      const giaQua = ctGiaQua(x);
       const giaTri = bacDat ? bacDat.soQua * (isFinite(giaQua) ? giaQua : 1) : 0;
       if (bacDat && giaTri > giaTriTot) {
         giaTriTot = giaTri;
         const hg = Number(x.c.hoacGiam) || 0;   // hoacGiam: khách được chọn giảm hg % tiền sản phẩm chương trình thay cho quà
         tot = { soQua: bacDat.soQua, chuongTrinh: x.c.id, thung: 0, vi: x.vi, ten: x.ten, goiY: '', moTa: `${bacDat.soQua} ${x.ten}`,
           hoacGiam: hg, giamTien: hg && !x.soLuong ? Math.round(dat * hg / 100) : 0,
-          lyDo: x.soLuong ? `Mua ${dat} ${x.donVi} sản phẩm chương trình` : `Mua sản phẩm chương trình từ ${fmt(bacDat.muc)}` };
+          lyDo: x.c.lyDo || (x.soLuong ? `Mua ${dat} ${x.donVi} sản phẩm chương trình` : `Mua sản phẩm chương trình từ ${fmt(bacDat.muc)}`) };
       }
       /* Gợi ý bậc kế tiếp (chọn chương trình khách gần đạt nhất) */
       if (bacSau && dat / bacSau.muc > gan) {
@@ -1951,7 +1989,7 @@
     if (!g.soQua) return g.goiY ? `<div class="giftbox giftbox--hint"><span class="giftbox__ico">🎁</span><div><b>Quà tặng của shop</b><p>${esc(g.goiY)}</p></div></div>` : '';
     const vi = g.vi || [];
     return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)}</b><p>${esc(g.lyDo)}${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>
-      ${chonVi && vi.length ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : (vi.length ? `<p class="fs-13 text-muted">Mẹ chọn vị khi thanh toán.</p>` : '')}</div></div>`;
+      ${chonVi && vi.length ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : (vi.length > 1 ? `<p class="fs-13 text-muted">Mẹ chọn ${/vị|gói|Xanh|Hồng/i.test(vi.join(' ')) ? 'vị' : 'quà'} khi thanh toán.</p>` : '')}</div></div>`;
   }
 
   /* =====================================================================
@@ -2157,5 +2195,5 @@
 
   window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
-    spUrl, baiUrl, hetHang, chayHang, beDaLuu, hopTuoiBe, hangKhongUuDai, baseUuDai, ghiChuKhongUuDai, quaBienThe, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
+    spUrl, baiUrl, hetHang, chayHang, beDaLuu, hopTuoiBe, hangKhongUuDai, baseUuDai, ghiChuKhongUuDai, quaBienThe, giamNganh, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

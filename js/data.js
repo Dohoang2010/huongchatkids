@@ -5831,6 +5831,312 @@ window.QUA_TANG = {
           "gia": 1
         }
       ]
+    },
+    {
+      "id": "ct-2110-gac-sumo",
+      "ten": "Kid · Gạc Sumo mua thùng 40 gói tặng 1 hộp Lotte 10 gói",
+      "batDau": "2026-10-21T00:00",
+      "ketThuc": "2027-12-31T23:59",
+      "kieu": "soLuong",
+      "donVi": "thùng",
+      "tenQua": "hộp nước dinh dưỡng Lotte 10 gói",
+      "nhuongHang": true,
+      "bac": [
+        {
+          "muc": 1,
+          "soQua": 1
+        },
+        {
+          "muc": 2,
+          "soQua": 2
+        },
+        {
+          "muc": 3,
+          "soQua": 3
+        },
+        {
+          "muc": 4,
+          "soQua": 4
+        },
+        {
+          "muc": 5,
+          "soQua": 5
+        }
+      ],
+      "muc": 1,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "26156646705",
+          "bat": true,
+          "heSo": {
+            "10 gói": 0,
+            "20 gói": 0,
+            "30 gói": 0,
+            "Thùng 40 gói": 1
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "id": "22686115682",
+          "bienThe": {
+            "Tăng cao (Xanh) · 10 gói": true,
+            "Tăng cân (Hồng) · 10 gói": true,
+            "Đề kháng (Cam) · 10 gói": true,
+            "Tăng cao (Xanh) · Thùng 30 gói": false,
+            "Tăng cân (Hồng) · Thùng 30 gói": false,
+            "Đề kháng (Cam) · Thùng 30 gói": false,
+            "Mix vị · Thùng 30 gói": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "ct-2110-meso-bac",
+      "ten": "MP · Bộ 3 Meso bạc (cặp serum + kem + peel Anubis) tặng 1 hộp mặt nạ NMN",
+      "batDau": "2026-10-21T00:00",
+      "ketThuc": "2027-12-31T23:59",
+      "kieu": "bo",
+      "donVi": "bộ",
+      "tenQua": "hộp mặt nạ NMN Kousa",
+      "nhuongHang": true,
+      "lyDo": "Mua bộ 3 Meso bạc (cặp serum + kem Meso bạc và bộ peel Anubis)",
+      "moTa": "Mua bộ 3 Meso bạc (cặp serum + kem Meso bạc + bộ peel Anubis) tặng 1 hộp mặt nạ NMN, không áp dụng giảm giá",
+      "bac": [
+        {
+          "muc": 1,
+          "soQua": 1
+        },
+        {
+          "muc": 2,
+          "soQua": 2
+        }
+      ],
+      "muc": 1,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "29006040615",
+          "bat": true,
+          "heSo": {
+            "Cặp tất bạc (serum + kem)": 1,
+            "Serum Meso bạc": 0,
+            "Kem dưỡng Meso bạc": 0
+          }
+        },
+        {
+          "id": "24764883120",
+          "bat": true,
+          "heSo": {
+            "1 bộ": 1,
+            "2 bộ": 2
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "id": "24015583018",
+          "bienThe": {
+            "1 hộp": true,
+            "2 hộp": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "ct-2110-mp-10tr",
+      "ten": "MP · Mỹ phẩm từ 10 triệu: giảm 5% hoặc chọn 1 quà",
+      "batDau": "2026-10-21T00:00",
+      "ketThuc": "2027-12-31T23:59",
+      "kieu": "tien",
+      "tenQua": "quà (Toner C hoặc 2 hộp mặt nạ NMN)",
+      "nhuongHang": true,
+      "hoacGiam": 5,
+      "lyDo": "Mỹ phẩm từ 10.000.000đ",
+      "moTa": "Mỹ phẩm từ 10.000.000đ: chọn giảm 5% hoặc tặng 1 quà (Toner C hoặc 2 hộp mặt nạ NMN)",
+      "bac": [
+        {
+          "muc": 10000000,
+          "soQua": 1
+        }
+      ],
+      "muc": 10000000,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "cap-kem-nen-eclat",
+          "bat": true
+        },
+        {
+          "id": "kem-exosome-toneup",
+          "bat": true
+        },
+        {
+          "id": "49061985399",
+          "bat": true
+        },
+        {
+          "id": "48112514210",
+          "bat": true
+        },
+        {
+          "id": "57413220644",
+          "bat": true
+        },
+        {
+          "id": "57903449970",
+          "bat": true
+        },
+        {
+          "id": "51013054442",
+          "bat": true
+        },
+        {
+          "id": "24767149051",
+          "bat": true
+        },
+        {
+          "id": "50002678694",
+          "bat": true
+        },
+        {
+          "id": "24465090622",
+          "bat": true
+        },
+        {
+          "id": "57556697426",
+          "bat": true
+        },
+        {
+          "id": "24015142248",
+          "bat": true
+        },
+        {
+          "id": "24764883120",
+          "bat": true
+        },
+        {
+          "id": "24015583018",
+          "bat": true
+        },
+        {
+          "id": "28902157429",
+          "bat": true
+        },
+        {
+          "id": "26800350417",
+          "bat": true
+        },
+        {
+          "id": "27734205778",
+          "bat": true
+        },
+        {
+          "id": "25678530796",
+          "bat": true
+        },
+        {
+          "id": "29006040615",
+          "bat": true
+        },
+        {
+          "id": "27809051612",
+          "bat": true
+        },
+        {
+          "id": "24329101823",
+          "bat": true
+        },
+        {
+          "id": "26900366084",
+          "bat": true
+        },
+        {
+          "id": "56857599724",
+          "bat": true
+        },
+        {
+          "id": "28806784125",
+          "bat": true
+        },
+        {
+          "id": "hexacare",
+          "bat": true
+        },
+        {
+          "id": "goi-xa-boryeong-mud",
+          "bat": true
+        }
+      ],
+      "quaTang": [
+        {
+          "ten": "Toner C – Toner Hyalu C+ (trị giá 1.270.000đ)",
+          "gia": 1270000
+        },
+        {
+          "ten": "2 hộp mặt nạ NMN Kousa (trị giá 1.190.000đ)",
+          "gia": 1190000
+        }
+      ]
+    },
+    {
+      "id": "ct-2110-food-1tr",
+      "ten": "Food · Đơn từ 1 triệu giảm 5%",
+      "batDau": "2026-10-21T00:00",
+      "ketThuc": "2027-12-31T23:59",
+      "kieu": "tien",
+      "chiGiam": 5,
+      "tenGiam": "Food từ 1 triệu giảm 5%",
+      "nhuongHang": true,
+      "moTa": "Thực phẩm & đồ ăn vặt từ 1.000.000đ giảm 5%",
+      "bac": [
+        {
+          "muc": 1000000,
+          "soQua": 1
+        }
+      ],
+      "muc": 1000000,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "28467224687",
+          "bat": true
+        },
+        {
+          "id": "43532388498",
+          "bat": true
+        },
+        {
+          "id": "ngu-coc-bap-thien-ma-kitea",
+          "bat": true
+        },
+        {
+          "id": "mien-ga-cf",
+          "bat": true
+        },
+        {
+          "id": "bo-xuyen-tieu",
+          "bat": true
+        },
+        {
+          "id": "com-chay-phomai",
+          "bat": true
+        },
+        {
+          "id": "com-vang-noi-oi",
+          "bat": true
+        },
+        {
+          "id": "lon-den-khoi-mo",
+          "bat": true
+        },
+        {
+          "id": "muoi-xuyen-tieu",
+          "bat": true
+        }
+      ],
+      "quaTang": []
     }
   ]
 };

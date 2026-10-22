@@ -19,11 +19,11 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261021p" defer></script>
+<script src="js/data.js?v=20261022a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261021d" defer></script>
+<script src="js/app.js?v=20261022a" defer></script>
 <script src="js/chat.js?v=20261019e" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
     /* đơn dùng mã / voucher / giới thiệu → bỏ quà theo sản phẩm → hạng tính lại trên cả sản phẩm đó (nhóm B) */
     if (dungHang && (dungMa || dungGT || dungVc)) hangAmt = pct ? Math.round(baseA * pct / 100) : 0;
     const giamQua = qua && qua.soQua && qua.hoacGiam && quaChon === 'giam' ? Number(qua.giamTien) || 0 : 0;   // khách chọn giảm % thay quà
-    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0) + (dungVc ? vcAmt : 0) + giamQua;
+    const gn = dungMa || dungGT || dungVc ? null : MC.giamNganh(lines), giamNg = gn ? gn.tien : 0;   // chương trình chỉ giảm % (vd Food từ 1 triệu −5%) – không dùng chung mã / voucher / giới thiệu
+    const discount = (dungHang ? hangAmt : 0) + (dungMa ? couponAmt : 0) + (dungGT ? gtAmt : 0) + (dungVc ? vcAmt : 0) + giamQua + giamNg;
     /* Điểm: chỉ trừ vào tiền hàng còn lại (không trừ phí ship), không quá số điểm khả dụng */
     const gtd = Number(gtCfg.giaTriDiem) || 1;
     const ptDiem = gtCfg.diemToiDaPhanTram != null ? Number(gtCfg.diemToiDaPhanTram) : 10;   // mỗi đơn dùng điểm tối đa ptDiem % giá trị đơn
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const diemDung = Math.max(0, Math.min(diemMuon, diemToiDa)); const giamDiem = diemDung * gtd;
     /* Phí ship theo bảng J&T (đồng giá toàn quốc, theo số thùng / kiện) */
     let ship = ((r && r.ok && r.freeship && !boMa) || MC.maShipTuDong(base, lines)) && shipMethod !== 'express' ? 0 : shipFee(base - discount, shipMethod, { tinh: city || '?', lines });
-    return { baseA, baseAB, giamQua, laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
+    return { baseA, baseAB, giamQua, gn, giamNg, laSN, ptDiem, vc, rv, vcAmt, dungVc, r, couponAmt, hangAmt, hang, pct, dungHang, dungMa, boMa, gtAmt, dungGT, diemToiDa, diemDung, giamDiem, gtd, discount, ship, city, total: Math.max(0, base - discount - giamDiem) + (ship || 0) };
   };
   /* Quy tắc quà: giảm giới thiệu tính như 1 mã giảm giá (không phải freeship) */
   const quaOpts = (k) => (k.dungGT ? { coMa: true, maShip: false } : k.dungVc ? MC.maChoQua({ ok: true, discount: k.vcAmt, freeship: false, code: k.vc.ma }, true) : MC.maChoQua(k.boMa ? null : k.r, k.dungMa));
@@ -152,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#summary').innerHTML = `<div class="summary-line"><span>Tạm tính</span><span>${fmt(sub)}</span></div>`
       + (multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : '')
       + (k.dungHang ? `<div class="summary-line"><span>${k.hang.laSinhNhat ? 'Ưu đãi sinh nhật 🎂' : 'Ưu đãi hạng ' + esc(k.hang.label)} (−${k.pct}%)</span><span class="text-teal">−${fmt(k.hangAmt)}</span></div>` : '')
+      + (k.gn ? `<div class="summary-line"><span>${esc(k.gn.ten)}</span><span class="text-teal">−${fmt(k.gn.tien)}</span></div>` : '')
       + (k.dungMa ? `<div class="summary-line"><span>Giảm giá (${k.r.code})</span><span class="text-teal">−${fmt(k.couponAmt)}</span></div>` : '')
       + (k.dungVc ? `<div class="summary-line"><span>Voucher ${esc(k.vc.ma)}</span><span class="text-teal">−${fmt(k.vcAmt)}</span></div>` : '')
       + (k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${gtCfg.giam}%)</span><span class="text-teal">−${fmt(k.gtAmt)}</span></div>` : '')
@@ -422,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
       maGiu = res.maGiu || '';
       btn.innerHTML = '<span>Đang xử lý đơn hàng…</span>';
     }
-    const uuDai = [k.giamQua ? `Chọn giảm ${qua.hoacGiam}% thay quà ${qua.moTa} (chương trình ${qua.chuongTrinh}): -${fmt(k.giamQua)}` : '', k.dungVc ? `Voucher ${k.vc.ma} (${k.vc.nguonTen}): -${fmt(k.vcAmt)}` : '', k.dungGT ? `Giảm giới thiệu ${gtCfg.giam}% (người giới thiệu ${gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
+    const uuDai = [k.gn ? `${k.gn.ten} (chương trình ${k.gn.chuongTrinh}): -${fmt(k.gn.tien)}` : '', k.giamQua ? `Chọn giảm ${qua.hoacGiam}% thay quà ${qua.moTa} (chương trình ${qua.chuongTrinh}): -${fmt(k.giamQua)}` : '', k.dungVc ? `Voucher ${k.vc.ma} (${k.vc.nguonTen}): -${fmt(k.vcAmt)}` : '', k.dungGT ? `Giảm giới thiệu ${gtCfg.giam}% (người giới thiệu ${gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
     const order = await submitOrder({ type: 'checkout', code,
       customer: { name: v.name.trim(), phone: sdtDat, address: fullAddress, email: v.email, tinh: v.city, xa: v.ward, diaChi: v.address.trim() },
       note: uuDai ? `[${uuDai}]${v.note ? '\n' + v.note : ''}` : v.note, shipMethod, payment: v.payment,

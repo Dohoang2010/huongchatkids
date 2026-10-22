@@ -142,6 +142,64 @@ test('Calciumore: phân loại 2 / 3 / 4 hộp váng sữa → dòng "Tặng 1 /
 });
 
 /* ---------- Phí ship, tìm kiếm, link ---------- */
+/* ---------- Chương trình 21/10/2026 (Kid · MP · Food): không dùng song song với ưu đãi đang có, web chọn mức lợi nhất ---------- */
+const bt = (W, id, re) => W.PRODUCTS.find((x) => x.id === id).variants.findIndex((v) => re.test(v.label));
+const phien = (chiTieu) => ({ localStorage: { mc_session: JSON.stringify({ sdt: '0900000000', token: 't', kh: { ten: 'Khách thử', tongChiTieu: chiTieu }, donHang: [], hetHan: Date.parse(gio('10:00')) + 864e6, luc: Date.parse(gio('10:00')) }),
+  mc_customer: JSON.stringify({ name: 'Khách thử', phone: '0900000000' }) } });
+test('Kid: Gạc Sumo mua thùng 40 gói tặng 1 hộp nước dinh dưỡng Lotte 10 gói (chọn xanh / hồng / cam), gói lẻ không tặng', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const SUMO = '26156646705', thung = bt(W, SUMO, /thùng 40/i), le = bt(W, SUMO, /^10 gói/);
+  const g1 = MC.giftFor([dong(W, SUMO, 1, thung)], {});
+  assert.strictEqual(g1.soQua, 1); assert.match(g1.moTa, /Lotte 10 gói/);
+  assert.strictEqual(JSON.stringify(g1.vi), JSON.stringify(['Tăng cao (Xanh) · 10 gói', 'Tăng cân (Hồng) · 10 gói', 'Đề kháng (Cam) · 10 gói']), 'chỉ chọn hộp 10 gói, đủ 3 màu');
+  assert.strictEqual(MC.giftFor([dong(W, SUMO, 2, thung)], {}).soQua, 2, '2 thùng tặng 2 hộp');
+  assert.notStrictEqual((MC.giftFor([dong(W, SUMO, 4, le)], {}) || {}).chuongTrinh, 'ct-2110-gac-sumo', '4 × 10 gói không phải thùng → không tặng hộp Lotte');
+  const l = dong(W, SUMO, 1, thung); assert.ok(MC.hangKhongUuDai([l]).co(l), 'đang có quà → không cộng hạng / sinh nhật / mua 2 giảm 3%');
+  assert.strictEqual(MC.giftFor([l], { coMa: true, maShip: false }).soQua, 0, 'áp mã giảm giá → bỏ quà');
+});
+test('MP: bộ 3 Meso bạc (cặp serum + kem + peel Anubis) tặng 1 hộp mặt nạ NMN; thiếu món nào cũng không tặng', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const MESO = '29006040615', PEEL = '24764883120', cap = bt(W, MESO, /cặp/i), serum = bt(W, MESO, /^serum/i);
+  const ctCua = (ls) => (MC.giftFor(ls, {}) || {}).chuongTrinh || '';   // (đơn từ 1 triệu vẫn có thể nhận quà đơn đầu của chương trình cũ)
+  assert.notStrictEqual(ctCua([dong(W, MESO, 1, cap)]), 'ct-2110-meso-bac', 'chỉ cặp Meso, chưa có peel');
+  assert.notStrictEqual(ctCua([dong(W, MESO, 1, serum), dong(W, PEEL, 1, 0)]), 'ct-2110-meso-bac', 'serum lẻ + peel chưa đủ bộ');
+  const g = MC.giftFor([dong(W, MESO, 1, cap), dong(W, PEEL, 1, 0)], {});
+  assert.strictEqual(g.soQua, 1); assert.match(g.moTa, /mặt nạ NMN/); assert.strictEqual(JSON.stringify(g.vi), JSON.stringify(['Mặt nạ trẻ hoá NMN Kousa hộp 8 miếng']));
+  assert.strictEqual(MC.giftFor([dong(W, MESO, 2, cap), dong(W, PEEL, 1, 0)], {}).soQua, 1, '2 cặp + 1 peel = 1 bộ');
+  const ls = [dong(W, MESO, 1, cap), dong(W, PEEL, 1, 0)]; assert.ok(MC.hangKhongUuDai(ls).co(ls[0]) && MC.hangKhongUuDai(ls).co(ls[1]), 'bộ được tặng quà không nhận thêm giảm giá');
+});
+test('MP: mỹ phẩm từ 10 triệu chọn giảm 5% hoặc 1 quà (Toner C / 2 hộp mặt nạ NMN); trùng bộ Meso bạc thì chỉ lấy 1 chương trình lợi hơn', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const MESO = '29006040615', PEEL = '24764883120', SERUM = '24015142248', cap = bt(W, MESO, /cặp/i);
+  const ls = [dong(W, MESO, 1, cap), dong(W, PEEL, 1, 0), dong(W, SERUM, 1, 0)], tien = ls.reduce((s, l) => s + l.total, 0);
+  assert.ok(tien >= 10000000);
+  const g = MC.giftFor(ls, {});
+  assert.strictEqual(g.soQua, 1); assert.strictEqual(g.chuongTrinh, 'ct-2110-mp-10tr', 'quà 10 triệu giá trị cao hơn hộp mặt nạ của bộ Meso → không cộng 2 chương trình');
+  assert.strictEqual(g.hoacGiam, 5); assert.strictEqual(g.giamTien, Math.round(tien * 0.05));
+  assert.strictEqual(g.vi.length, 2); assert.match(g.vi[0], /Toner C/); assert.match(g.vi[1], /2 hộp mặt nạ NMN/);
+  assert.notStrictEqual((MC.giftFor([dong(W, MESO, 1, cap)], {}) || {}).chuongTrinh, 'ct-2110-mp-10tr', 'dưới 10 triệu không có');
+});
+test('Food: thực phẩm / đồ ăn vặt từ 1 triệu giảm 5% – không dùng chung mã giảm giá / voucher, sản phẩm đó không cộng hạng / mua 2 giảm 3%', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const BO = 'bo-xuyen-tieu', l3 = dong(W, BO, 3), gn = MC.giamNganh([l3]);
+  assert.ok(l3.total >= 1000000); assert.ok(gn); assert.strictEqual(gn.tien, Math.round(l3.total * 0.05)); assert.strictEqual(gn.chuongTrinh, 'ct-2110-food-1tr');
+  assert.strictEqual(MC.giamNganh([dong(W, BO, 2)]), null, 'dưới 1 triệu không giảm');
+  assert.strictEqual(MC.giamNganh([l3], { coMa: true, maShip: false }), null, 'đã dùng mã / voucher thì không giảm thêm');
+  assert.ok(MC.giamNganh([l3], { coMa: true, maShip: true }), 'mã freeship vẫn dùng kèm');
+  assert.ok(MC.hangKhongUuDai([l3]).co(l3), 'đã giảm 5% → không cộng hạng / mua 2 giảm 3%');
+  const lk = dong(W, LOTTE, 1); assert.strictEqual(MC.giamNganh([lk, dong(W, BO, 2)]), null, 'tiền hàng không phải Food không tính vào mốc 1 triệu');
+});
+test('Không song song – web chọn mức lợi nhất: khách hạng cao (giảm 12%) thì bỏ giảm 5% Food / quà, giữ ưu đãi hạng', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00'), ...phien(150000000) });
+  const pct = W.TIERS.slice().sort((a, b) => b.min - a.min).find((t) => 150000000 >= t.min).discount;
+  assert.ok(pct > 5, 'hạng thử nghiệm giảm hơn 5%: ' + pct);
+  const l3 = dong(W, 'bo-xuyen-tieu', 3);
+  assert.strictEqual(MC.giamNganh([l3]), null, 'hạng giảm nhiều hơn → không áp 5% Food');
+  assert.ok(!MC.hangKhongUuDai([l3]).co(l3), 'sản phẩm được tính ưu đãi hạng như thường');
+  const k = taoWeb({ gio: gio('10:00') }), lk = dong(k.W, 'bo-xuyen-tieu', 3);
+  assert.ok(k.MC.giamNganh([lk]), 'khách chưa có hạng → được giảm 5%');
+});
+
 test('phí ship: đơn đủ mức miễn phí; giao nhanh có phí riêng', () => {
   const { MC, W } = taoWeb({ gio: gio('10:00') });
   assert.strictEqual(MC.shipFee(W.SITE.freeshipFrom, 'standard', { tinh: 'Hà Nội', lines: [] }), 0);

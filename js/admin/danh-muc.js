@@ -83,7 +83,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-qua-tang.js": {
-   "v": "fc71177d",
+   "v": "79ec21bb",
    "can": [],
    "ngay": false
   },

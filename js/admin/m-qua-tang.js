@@ -90,7 +90,7 @@
   const heSoMacDinh = (label, donVi) => { const m = String(label || '').match(/^(\d+)\s*([^\s\d·(]+)/); return m && donVi && m[2].toLowerCase() === String(donVi).toLowerCase() ? Number(m[1]) : 1; };
   function moTaTuDong(c) {
     const b = [...bacCua(c)].sort((x, y) => x.muc - y.muc), q = tenQuaCua(c), dv = c.donVi || 'hộp';
-    return b.map((x, i) => (c.kieu === 'soLuong' ? `${i ? '' : 'Mua '}${x.muc} ${dv} tặng ${x.soQua} ${q}` : `${i ? 'Từ' : 'Mua từ'} ${fmt(x.muc)} tặng ${x.soQua} ${q}`)).join(' · ');
+    return b.map((x, i) => (c.kieu !== 'tien' && c.kieu ? `${i ? '' : 'Mua '}${x.muc} ${dv} tặng ${x.soQua} ${q}` : `${i ? 'Từ' : 'Mua từ'} ${fmt(x.muc)} tặng ${x.soQua} ${q}`)).join(' · ');
   }
   function moiCT() {
     const now = Date.now() + 15 * 6e4;
@@ -109,7 +109,7 @@
     $('#pageAct').innerHTML = `<a class="btn btn--ghost" href="#/qua-tang" data-ct-huy>← Danh sách</a>`;
     const chinh = nhap.sanPhamChinh || [];
     const bat = chinh.filter((x) => x.bat !== false).length;
-    const kieu = nhap.kieu === 'soLuong' ? 'soLuong' : 'tien';
+    const kieu = nhap.kieu === 'soLuong' || nhap.kieu === 'bo' ? nhap.kieu : 'tien';
     el.innerHTML = `
       <div class="ct-buoc"><span class="ct-so">1</span><div class="card">
         <h3>Thông tin cơ bản ${A.badge(tt, cls)}</h3>
@@ -124,8 +124,8 @@
         <p class="hint">Thời gian kết thúc phải sau thời gian bắt đầu tối thiểu 1 tiếng. Chương trình đang diễn ra chỉ được rút ngắn thời gian.</p>
         <h4>Điều kiện nhận quà</h4>
         <div class="row row-3">
-          <label>Tính theo<select id="ctKieu" ${dis}><option value="tien" ${kieu === 'tien' ? 'selected' : ''}>Tổng tiền sản phẩm chính (₫)</option><option value="soLuong" ${kieu === 'soLuong' ? 'selected' : ''}>Số lượng sản phẩm chính</option></select></label>
-          ${kieu === 'soLuong' ? `<label>Đơn vị tính<input id="ctDonVi" value="${esc(nhap.donVi || 'hộp')}" maxlength="12" placeholder="hộp, lọ, thùng…" ${dis}></label>` : '<div></div>'}
+          <label>Tính theo<select id="ctKieu" ${dis}><option value="tien" ${kieu === 'tien' ? 'selected' : ''}>Tổng tiền sản phẩm chính (₫)</option><option value="soLuong" ${kieu === 'soLuong' ? 'selected' : ''}>Số lượng sản phẩm chính</option><option value="bo" ${kieu === 'bo' ? 'selected' : ''}>Đủ bộ (mua đủ MỖI sản phẩm chính)</option></select></label>
+          ${kieu !== 'tien' ? `<label>Đơn vị tính<input id="ctDonVi" value="${esc(nhap.donVi || 'hộp')}" maxlength="12" placeholder="hộp, lọ, thùng…" ${dis}></label>` : '<div></div>'}
           <label>Tên quà hiện cho khách<input id="ctTenQua" value="${esc(nhap.tenQua || '')}" maxlength="40" placeholder="VD: lọ D3K2 (để trống = tên sản phẩm quà)" ${dis}></label>
         </div>
         <div class="ct-bac">${bacCua(nhap).map((b, i) => `<div class="ct-dk">Bậc ${i + 1}: Mua ${kieu === 'tien' ? `<span class="ct-dong">₫<input type="number" data-bac-muc="${i}" min="1000" step="1000" value="${b.muc}" ${dis}></span>` : `<input type="number" data-bac-muc="${i}" min="1" value="${b.muc}" style="width:90px" ${dis}> ${esc(nhap.donVi || 'hộp')}`}
@@ -138,7 +138,7 @@
       </div></div>
 
       <div class="ct-buoc"><span class="ct-so">2</span><div class="card">
-        <div class="ct-h"><div><h3>Sản Phẩm Chính</h3><p class="muted">Khách mua các sản phẩm này đủ ${kieu === 'soLuong' ? 'số lượng' : 'mức tiền'} ở bước 1 thì được nhận quà.</p></div>
+        <div class="ct-h"><div><h3>Sản Phẩm Chính</h3><p class="muted">Khách mua các sản phẩm này đủ ${kieu === 'bo' ? 'bộ (mỗi sản phẩm ít nhất 1)' : kieu === 'soLuong' ? 'số lượng' : 'mức tiền'} ở bước 1 thì được nhận quà.</p></div>
           ${chiXem ? '' : '<button class="btn btn--outline" data-chon="chinh">+ Thêm Sản Phẩm</button>'}</div>
         ${chinh.length ? `<p class="muted"><b>${bat}</b> sản phẩm được bật, trên tổng <b>${chinh.length}</b> sản phẩm</p>
           ${chiXem ? '' : `<div class="ct-loat"><div><b>Thiết Lập Hàng Loạt</b><small class="muted">đã chọn ${chonCT.size} sản phẩm</small></div>
@@ -150,7 +150,7 @@
             <td class="num" data-nhan="Giá">${giaKhoang(p)}</td><td class="num" data-nhan="Kho">${p.stock > 0 ? p.stock : '<span class="red">Hết hàng</span>'}</td>
             <td data-nhan="Trạng thái"><label class="sw"><input type="checkbox" data-bat-chinh="${esc(x.id)}" ${x.bat !== false ? 'checked' : ''} ${dis}></label></td>
             ${chiXem ? '' : `<td><button class="icobtn" data-xoa-chinh="${esc(x.id)}" title="Xoá">🗑</button></td>`}</tr>
-            ${kieu === 'soLuong' ? `<tr class="ct-heso"><td colspan="${chiXem ? 4 : 6}"><span class="muted">Mỗi phân loại tính là:</span>
+            ${kieu !== 'tien' ? `<tr class="ct-heso"><td colspan="${chiXem ? 4 : 6}"><span class="muted">Mỗi phân loại tính là:</span>
               ${(p.variants && p.variants.length ? p.variants : [{ label: '' }]).map((v) => { const hs = (x.heSo || {})[v.label]; return `<label class="ct-heso__o">${esc(v.label || 'Mặc định')}<span><input type="number" min="0" step="1" data-heso="${esc(x.id)}" data-pl="${esc(v.label)}" value="${hs != null ? hs : heSoMacDinh(v.label, nhap.donVi || 'hộp')}" ${dis}> ${esc(nhap.donVi || 'hộp')}</span></label>`; }).join('')}
               <small class="hint">Đặt 0 nếu phân loại đó không được tính (VD gói lẻ). Khách mua 3 cái phân loại "1 hộp" = 3 hộp.</small></td></tr>` : ''}`; }).join('')}
           </tbody></table></div>` : '<p class="muted">Chưa có sản phẩm chính.</p>'}
@@ -177,7 +177,7 @@
   function thuThongTin() {
     if (!nhap || chiXem || !$('#ctTen')) return;
     nhap.ten = $('#ctTen').value.trim(); nhap.batDau = $('#ctBD').value; nhap.ketThuc = $('#ctKT').value;
-    nhap.kieu = $('#ctKieu').value === 'soLuong' ? 'soLuong' : 'tien';
+    nhap.kieu = ['soLuong', 'bo'].includes($('#ctKieu').value) ? $('#ctKieu').value : 'tien';
     if ($('#ctDonVi')) nhap.donVi = $('#ctDonVi').value.trim() || 'hộp';
     nhap.tenQua = $('#ctTenQua').value.trim(); if (!nhap.tenQua) delete nhap.tenQua;
     nhap.moTa = $('#ctMoTa').value.trim(); if (!nhap.moTa) delete nhap.moTa;
@@ -198,11 +198,11 @@
       if (!goc && e <= Date.now()) loi.push('Thời gian kết thúc phải ở tương lai');
     }
     const bac = bacCua(c);
-    if (bac.some((b) => !(b.muc > 0))) loi.push(c.kieu === 'soLuong' ? 'Nhập số lượng mua cho mọi bậc' : 'Nhập số tiền tối thiểu cho mọi bậc');
+    if (bac.some((b) => !(b.muc > 0))) loi.push(c.kieu !== 'tien' ? 'Nhập số lượng mua cho mọi bậc' : 'Nhập số tiền tối thiểu cho mọi bậc');
     if (new Set(bac.map((b) => b.muc)).size !== bac.length) loi.push('Hai bậc không được trùng mức mua');
     if (!(c.sanPhamChinh || []).some((x) => x.bat !== false && sp(x.id))) loi.push('Thêm và bật ít nhất 1 sản phẩm chính');
     const coQua = (c.quaTang || []).some((g) => { const p = sp(g.id); if (!p) return !!g.ten && g.bat !== false; return p.variants && p.variants.length ? p.variants.some((v) => (g.bienThe || {})[v.label] !== false) : g.bat !== false; });
-    if (!coQua) loi.push('Thêm và bật ít nhất 1 quà tặng');
+    if (!coQua && !(Number(c.chiGiam) > 0)) loi.push('Thêm và bật ít nhất 1 quà tặng');   // chương trình chỉ giảm % (chiGiam) không cần quà
     return loi;
   }
 
@@ -333,7 +333,7 @@
       else nhap.sanPhamChinh.forEach((x) => { if (chonCT.has(x.id)) x.bat = lo.dataset.loat === 'bat'; });
       chonCT = new Set(); A.veTrang(); return;
     }
-    if (t.id === 'ctThemBac') { thuThongTin(); const b = bacCua(nhap), cuoi = b[b.length - 1]; nhap.bac = [...b, { muc: nhap.kieu === 'soLuong' ? cuoi.muc + 1 : cuoi.muc + 500000, soQua: cuoi.soQua + 1 }]; A.veTrang(); return; }
+    if (t.id === 'ctThemBac') { thuThongTin(); const b = bacCua(nhap), cuoi = b[b.length - 1]; nhap.bac = [...b, { muc: nhap.kieu !== 'tien' ? cuoi.muc + 1 : cuoi.muc + 500000, soQua: cuoi.soQua + 1 }]; A.veTrang(); return; }
     const xb2 = t.closest('[data-xoa-bac2]'); if (xb2) { thuThongTin(); nhap.bac = bacCua(nhap).filter((_, i) => i !== Number(xb2.dataset.xoaBac2)); A.veTrang(); return; }
     if (t.id === 'ctXacNhan') {
       thuThongTin();
@@ -353,7 +353,7 @@
     const bq = t.closest('[data-bat-qua]'); if (bq) { const g = nhap.quaTang.find((y) => y.id === bq.dataset.batQua); if (g) { if (g.bienThe) g.bienThe[bq.dataset.pl] = bq.checked; else g.bat = bq.checked; } return; }
     const c1 = t.closest('[data-chon-mot]'); if (c1) { if (c1.checked) chonCT.add(c1.dataset.chonMot); else chonCT.delete(c1.dataset.chonMot); thuThongTin(); A.veTrang(); return; }
     if (t.closest('[data-chon-tat]')) { chonCT = t.checked ? new Set(nhap.sanPhamChinh.map((x) => x.id)) : new Set(); thuThongTin(); A.veTrang(); return; }
-    if (t.id === 'ctKieu') { thuThongTin(); nhap.bac = nhap.kieu === 'soLuong' ? [{ muc: 2, soQua: 1 }] : [{ muc: 1000000, soQua: 1 }]; A.veTrang(); return; }
+    if (t.id === 'ctKieu') { thuThongTin(); nhap.bac = nhap.kieu === 'bo' ? [{ muc: 1, soQua: 1 }] : nhap.kieu === 'soLuong' ? [{ muc: 2, soQua: 1 }] : [{ muc: 1000000, soQua: 1 }]; A.veTrang(); return; }
     if (['ctDonVi', 'ctTenQua', 'ctMoTa'].includes(t.id) || t.closest('[data-bac-muc]') || t.closest('[data-bac-so]') || t.closest('[data-heso]')) { thuThongTin(); A.veTrang(); return; }
     if (['ctTen', 'ctBD', 'ctKT'].includes(t.id)) thuThongTin();
   });
