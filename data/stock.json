@@ -465,6 +465,13 @@
         "Hũ 50ml": true,
         "2 hũ": true
       }
+    },
+    "avca-body-tone-up": {
+      "in": true,
+      "variants": {
+        "Chai 250ml": true,
+        "2 chai": true
+      }
     }
   }
 }

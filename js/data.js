@@ -68,6 +68,7 @@ window.SITE = {
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
+      'avca-body-tone-up': 400,      // serum body AVCA 250ml có hộp
       'daycell-nad-white-cream': 400,      // kem NAD+ 50ml hũ thuỷ tinh có hộp
       'drvita-ecm-serum': 300,      // serum Dr.VITA 100ml có hộp
       'gac-canxi-sumo': 950,      // gạc canxi Sumo hộp 10 gói × 80ml       // men vi sinh Sysy – hộp 6 gói lớn × 10 gói 2g
@@ -174,6 +175,7 @@ window.BRANDS = [
   { key: 'hexacare', label: 'Hexacare', origin: 'Pháp', color: '#C2185B' },
   { key: 'boryeong-mud', label: 'Boryeong MUD+', origin: 'Hàn Quốc', color: '#8B6B4E' },
   { key: 'kitea', label: 'Kitea', origin: 'Hàn Quốc', color: '#C2561B' },
+  { key: 'avca', label: 'AVCA', origin: 'Hàn Quốc', color: '#F59E0B' },
   { key: 'daycell', label: 'DayCell', origin: 'Hàn Quốc', color: '#C0392B' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' }
 ];
@@ -2239,6 +2241,69 @@ window.PRODUCTS = [
     "usage": "Sau bước serum, lấy một lượng vừa đủ thoa đều lên mặt, massage nhẹ cho thẩm thấu; dùng sáng và tối. Ban ngày dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
     "seoTitle": "Kem DayCell Medi Lab NAD+ White Cream 50ml Hàn Quốc | Hương Chất Kids",
     "seoDesc": "Kem dưỡng DayCell Medi Lab NAD+ White Cream 50ml: NAD+, NMN, MadeWhite, Tranexamic Acid, Glutathione – dưỡng ẩm, dưỡng trắng, hỗ trợ làm mờ nám và tàn nhang (theo công bố). Chính hãng Hàn Quốc."
+  },
+  {
+    "id": "avca-body-tone-up",
+    "name": "Serum Dưỡng Thể Nâng Tone AVCA Intense Brightening Body Tone-Up Serum 250ml Hàn Quốc",
+    "short": "Serum body nâng tone AVCA Intense Brightening 250ml",
+    "brand": "avca",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 635000,
+    "oldPrice": 635000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 5,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#FFB300",
+    "weight": "Chai 250ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới",
+      "Sản phẩm hot",
+      "Cho mẹ"
+    ],
+    "image": "img/avca-body-tone-up.jpg",
+    "thumb": "img/thumb/avca-body-tone-up.jpg",
+    "images": [
+      "img/avca-body-tone-up.jpg",
+      "img/avca-body-tone-up-2.jpg",
+      "img/avca-body-tone-up-3.jpg",
+      "img/avca-body-tone-up-4.jpg",
+      "img/avca-body-tone-up-5.jpg",
+      "img/avca-body-tone-up-6.jpg",
+      "img/avca-body-tone-up-7.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Chai 250ml",
+        "price": 635000,
+        "oldPrice": 635000
+      },
+      {
+        "label": "2 chai",
+        "price": 1270000,
+        "oldPrice": 1270000
+      }
+    ],
+    "desc": "AVCA Intense Brightening Body Tone-Up Serum là serum dưỡng thể nâng tone hàng nội địa Hàn Quốc, chai 250ml. Kết cấu mỏng nhẹ, không bết dính, dùng được cho toàn thân. Theo nhà sản xuất: Titanium Dioxide tạo hiệu ứng nâng tone ngay sau khi thoa, giúp da trông sáng hơn; Niacinamide, L-Glutathione Liposome và Licorice (cam thảo) hỗ trợ dưỡng sáng, cải thiện tình trạng da không đều màu. Không chỉ là kem nâng tone, sản phẩm kết hợp hệ dưỡng da: 8 loại Hyaluronic Acid cấp ẩm đa tầng; Panthenol (vitamin B5) làm dịu, hỗ trợ phục hồi; Adenosine hỗ trợ cải thiện độ đàn hồi; chiết xuất chuối dưỡng ẩm, làm mềm da; Ceramide NP + Panthenol + Niacinamide hỗ trợ duy trì hàng rào bảo vệ da. Phức hợp thực vật chống oxy hoá: chuối, việt quất, mâm xôi, mâm xôi đen, nam việt quất, cơm cháy và hắc mai biển (sea buckthorn). Hiệu quả tuỳ cơ địa mỗi người.",
+    "highlights": [
+      "Nâng tone ngay sau khi thoa (Titanium Dioxide) – theo nhà sản xuất",
+      "Niacinamide, L-Glutathione Liposome, Licorice – hỗ trợ dưỡng sáng, đều màu da",
+      "8 loại Hyaluronic Acid, Panthenol, Adenosine, chiết xuất chuối – cấp ẩm, làm mềm da",
+      "Ceramide NP hỗ trợ hàng rào bảo vệ da; phức hợp 7 loại quả chống oxy hoá",
+      "Serum body mỏng nhẹ, không bết dính, dùng toàn thân – hàng nội địa Hàn Quốc 250ml"
+    ],
+    "usage": "Sau khi tắm, lau khô người, nhấn vòi lấy lượng vừa đủ thoa đều lên vùng da toàn thân, massage nhẹ cho thẩm thấu. Dùng hằng ngày; ban ngày ra nắng nên dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
+    "seoTitle": "Serum body nâng tone AVCA Intense Brightening 250ml Hàn Quốc | Hương Chất Kids",
+    "seoDesc": "AVCA Intense Brightening Body Tone-Up Serum 250ml: nâng tone ngay khi thoa, Niacinamide, Glutathione liposome, 8 loại Hyaluronic Acid, Ceramide – dưỡng sáng, cấp ẩm toàn thân. Hàng nội địa Hàn Quốc."
   },
   {
     "id": "24764883120",
@@ -6280,6 +6345,10 @@ window.QUA_TANG = {
         },
         {
           "id": "daycell-nad-white-cream",
+          "bat": true
+        },
+        {
+          "id": "avca-body-tone-up",
           "bat": true
         }
       ],
