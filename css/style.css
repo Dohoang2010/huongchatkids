@@ -2774,7 +2774,7 @@ body.dm .filters input[type="checkbox"] { accent-color: var(--dm-nhan); }
 .post__body h2 { scroll-margin-top: 130px; }
 /* Ảnh nền trang đích (img/dm/nen-*.webp, phần trái + đáy đã mờ dần về màu nền của mục) */
 /* Ảnh chỉ ở phần đầu trang: lớp phủ trơn màu nền từ ~460px trở xuống để vùng sản phẩm sạch, sản phẩm nổi bật (chủ shop 23/10/2026) */
-body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { --dm-mo: linear-gradient(180deg, transparent 0, transparent 330px, var(--dm-nen) 470px); background-repeat: no-repeat; background-position: 0 0, right top 120px; background-size: 100% 100%, max(100%, 1280px) auto; }
+body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { --dm-mo: linear-gradient(transparent, transparent); background-repeat: no-repeat; background-position: 0 0, right top 120px; background-size: 100% 100%, max(100%, 1280px) auto; }
 body.dm[data-dm="be"] { background-image: var(--dm-mo), url(../img/dm/nen-be-v2.webp); }
 body.dm[data-dm="beauty"] { background-image: var(--dm-mo), url(../img/dm/nen-beauty-v2.webp); }
 body.dm[data-dm="thoi-trang"] { background-image: var(--dm-mo), url(../img/dm/nen-thoi-trang.webp); }
@@ -2785,7 +2785,7 @@ body.dm[data-dm="thuc-pham"] { background-image: var(--dm-mo), url(../img/dm/nen
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on .page-title { font-size: 28px; }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-con { position: relative; }
 @media (max-width: 767px) {
-  body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { --dm-mo: linear-gradient(180deg, transparent 0, transparent 300px, var(--dm-nen) 430px); background-size: 100% 100%, 820px auto; background-position: 0 0, right -40px top 96px; }
+  body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { --dm-mo: linear-gradient(transparent, transparent); background-size: 100% 100%, 820px auto; background-position: 0 0, right -40px top 96px; }
   body.dm[data-dm="be"] { background-image: var(--dm-mo), url(../img/dm/nen-be-v2-nho.webp); }
   body.dm[data-dm="beauty"] { background-image: var(--dm-mo), url(../img/dm/nen-beauty-v2-nho.webp); }
   body.dm[data-dm="thoi-trang"] { background-image: var(--dm-mo), url(../img/dm/nen-thoi-trang-nho.webp); }
@@ -2827,3 +2827,12 @@ body[data-dm="khuyen-mai"] .dm-hero__anh img { max-width: 92px; border-width: 3p
   .km-ma__o { flex: 0 0 auto; flex-direction: column; align-items: flex-start; gap: 1px; max-width: 220px; }
   .km-ma__o small { white-space: normal; }
 }
+
+/* Ảnh nền nhìn rõ cả phía dưới (không làm mờ), sản phẩm nổi trên khung trắng có bóng (chủ shop 23/10/2026) */
+@media (min-width: 768px) { body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { background-attachment: scroll, fixed; background-position: 0 0, right top; } }
+:is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .pcard { border-color: rgba(255,255,255,.9); box-shadow: 0 10px 28px rgba(30, 30, 50, .16); }
+:is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .pcard:hover { box-shadow: 0 16px 38px rgba(30, 30, 50, .24); }
+@media (min-width: 992px) { :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .filters { background: #fff; border-radius: 16px; padding: 4px 16px; box-shadow: 0 10px 28px rgba(30, 30, 50, .12); } }
+:is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .toolbar { background: #fff; border-radius: 14px; padding: 8px 12px; box-shadow: 0 6px 18px rgba(30, 30, 50, .1); margin-bottom: 12px; }
+:is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-o, :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) #ageChips .chip { box-shadow: 0 6px 16px rgba(30, 30, 50, .1); }
+:is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .pagination button { background: #fff; }
