@@ -2773,22 +2773,23 @@ body.dm .filters input[type="checkbox"] { accent-color: var(--dm-nhan); }
 .post-muc a { color: var(--ink); } .post-muc a:hover { color: var(--primary); }
 .post__body h2 { scroll-margin-top: 130px; }
 /* Ảnh nền trang đích (img/dm/nen-*.webp, phần trái + đáy đã mờ dần về màu nền của mục) */
-body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { background-repeat: no-repeat; background-position: right top 120px; background-size: max(100%, 1280px) auto; }
-body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be-v2.webp); }
-body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty-v2.webp); }
-body.dm[data-dm="thoi-trang"] { background-image: url(../img/dm/nen-thoi-trang.webp); }
-body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-v2.webp); }
+/* Ảnh chỉ ở phần đầu trang: lớp phủ trơn màu nền từ ~460px trở xuống để vùng sản phẩm sạch, sản phẩm nổi bật (chủ shop 23/10/2026) */
+body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { --dm-mo: linear-gradient(180deg, transparent 0, transparent 330px, var(--dm-nen) 470px); background-repeat: no-repeat; background-position: 0 0, right top 120px; background-size: 100% 100%, max(100%, 1280px) auto; }
+body.dm[data-dm="be"] { background-image: var(--dm-mo), url(../img/dm/nen-be-v2.webp); }
+body.dm[data-dm="beauty"] { background-image: var(--dm-mo), url(../img/dm/nen-beauty-v2.webp); }
+body.dm[data-dm="thoi-trang"] { background-image: var(--dm-mo), url(../img/dm/nen-thoi-trang.webp); }
+body.dm[data-dm="thuc-pham"] { background-image: var(--dm-mo), url(../img/dm/nen-thuc-pham-v2.webp); }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on { background: none; border: 0; min-height: 0; padding: 18px 0 8px; margin: 0 0 10px; align-content: center; }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero__anh { display: none !important; }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero__chu { max-width: 520px; padding: 14px 18px; border-radius: 16px; background: color-mix(in srgb, var(--dm-nen) 80%, transparent); }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on .page-title { font-size: 28px; }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-con { position: relative; }
 @media (max-width: 767px) {
-  body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { background-size: 820px auto; background-position: right -40px top 96px; }
-  body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be-v2-nho.webp); }
-  body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty-v2-nho.webp); }
-  body.dm[data-dm="thoi-trang"] { background-image: url(../img/dm/nen-thoi-trang-nho.webp); }
-  body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-v2-nho.webp); }
+  body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { --dm-mo: linear-gradient(180deg, transparent 0, transparent 300px, var(--dm-nen) 430px); background-size: 100% 100%, 820px auto; background-position: 0 0, right -40px top 96px; }
+  body.dm[data-dm="be"] { background-image: var(--dm-mo), url(../img/dm/nen-be-v2-nho.webp); }
+  body.dm[data-dm="beauty"] { background-image: var(--dm-mo), url(../img/dm/nen-beauty-v2-nho.webp); }
+  body.dm[data-dm="thoi-trang"] { background-image: var(--dm-mo), url(../img/dm/nen-thoi-trang-nho.webp); }
+  body.dm[data-dm="thuc-pham"] { background-image: var(--dm-mo), url(../img/dm/nen-thuc-pham-v2-nho.webp); }
   :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on { min-height: 0; margin-top: 190px; padding: 16px; background: rgba(255, 255, 255, .86); border-color: var(--dm-phu); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
   :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on .page-title { font-size: 26px; }
 }
