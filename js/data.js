@@ -3708,19 +3708,31 @@ window.PRODUCTS = [
     ],
     "variants": [
       {
-        "label": "1 túi 200g",
+        "label": "1 túi 200g (vị phô mai)",
         "price": 115000,
         "oldPrice": 115000
       },
       {
-        "label": "2 túi",
+        "label": "2 túi (vị phô mai)",
         "price": 230000,
         "oldPrice": 230000
       },
       {
-        "label": "3 túi",
+        "label": "3 túi (vị phô mai)",
         "price": 345000,
         "oldPrice": 345000
+      },
+      {
+        "label": "1 túi 200 gr (vị BBQ)",
+        "price": 125000
+      },
+      {
+        "label": "2 túi (vị BBQ)",
+        "price": 250000
+      },
+      {
+        "label": "3 túi  (vị BBQ)",
+        "price": 375000
       }
     ],
     "desc": "Cơm cháy Vua Đỉnh Vị được nướng thay vì chiên nên miếng cơm vàng giòn, cạnh cháy thơm mà không cứng, không ngấy dầu. Lớp phô mai phủ đều, vị béo, mặn ngọt hài hoà – bé thích, người lớn cũng mê. Túi zip dày giúp cơm giữ độ giòn sau khi mở. Món ăn vặt tiện mang đi học, đi làm, dã ngoại hay xem phim cùng cả nhà. Thành phần: gạo, dầu thực vật, đường, muối, ớt, chiết xuất nấm men, bột phô mai.",
