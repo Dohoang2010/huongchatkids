@@ -192,6 +192,9 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   }
 
   /* ================= Bài cẩm nang ================= */
+  /* mã mục (giống maMuc trong blog.html) + mục lục khi bài có từ 3 mục ## */
+  const maMuc = (t) => 'muc-' + String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70).replace(/-+$/, '').slice(0, 50);
+  const mucLuc = (body) => { const ds = (body || []).map(String).filter((t) => /^## /.test(t)).map((t) => t.slice(3)); return ds.length >= 3 ? '<nav class="post-muc" aria-label="Mục lục bài viết"><b>Nội dung bài</b><ol>' + ds.map((t) => '<li><a href="#' + maMuc(t) + '">' + esc(t) + '</a></li>').join('') + '</ol></nav>' : ''; };
   function veNoiDung(d, body) {
     let h = '', ul = [];
     const xa = () => { if (ul.length) { h += '<ul>' + ul.map((x) => `<li>${esc(x)}</li>`).join('') + '</ul>'; ul = []; } };
@@ -199,7 +202,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       t = String(t); let m;
       if (/^- /.test(t)) { ul.push(t.slice(2)); return; }
       xa();
-      if (/^## /.test(t)) h += `<h2>${esc(t.slice(3))}</h2>`;
+      if (/^## /.test(t)) h += `<h2 id="${maMuc(t.slice(3))}">${esc(t.slice(3))}</h2>`;
       else if ((m = t.match(/^!\[(.*?)\]\((.+?)\)$/))) h += `<figure><img src="${esc(anh(m[2]))}" alt="${esc(m[1])}" loading="lazy">${m[1] ? `<figcaption>${esc(m[1])}</figcaption>` : ''}</figure>`;
       else if ((m = t.match(/^\[\[sp:(.+?)\]\]$/))) { const sp = d.sp.find((x) => String(x.id) === m[1] && !x.an); if (sp) h += `<p><a href="${esc(spLink(d, sp))}">${esc(sp.short || sp.name)} – ${fmt(sp.price)}</a></p>`; }
       else h += `<p>${esc(t)}</p>`;
@@ -215,13 +218,13 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       publisher: { '@type': 'Organization', name: 'Hương Chất Kids', logo: { '@type': 'ImageObject', url: GOC + '/img/logo-192.png' } } };
     if (b.image) bv.image = [tuyetDoi(b.image)];
     let html = thayDauSEO(mau('blog.html'), dauTrang({ tieuDe, moTa, url, anhOg: b.image, loai: 'article',
-      them: `<meta property="article:published_time" content="${iso(t)}">\n  ${ld(bv)}\n  ${ld(vun([['Trang chủ', GOC + '/'], ['Cẩm nang chăm con', GOC + '/blog.html'], [gon(b.title, 80), url]]))}` +
+      them: `<meta property="article:published_time" content="${iso(t)}">\n  ${ld(bv)}\n  ${ld(vun([['Trang chủ', GOC + '/'], ['Cẩm nang chăm con', GOC + '/cam-nang'], [gon(b.title, 80), url]]))}` +
         (xemTruoc ? '\n  <meta name="robots" content="noindex">' : '') }));
     /* nội dung bài cho JavaScript của trang (data.js bản gọn không kèm nội dung bài) */
     html = html.replace('<script src="js/data.js', `<script>window.BAI_DAY_DU=${json({ id: b.id, body: b.body || [] })};</script>\n<script src="js/data.js`);
-    html = chen(html, 'blogPage', `<nav class="breadcrumb"><a href="/">Trang chủ</a><span>›</span><a href="/blog.html">Cẩm nang chăm con</a><span>›</span><span>${esc(b.cat)}</span></nav>
+    html = chen(html, 'blogPage', `<nav class="breadcrumb"><a href="/">Trang chủ</a><span>›</span><a href="/cam-nang">Cẩm nang chăm con</a><span>›</span><a href="/blog.html?cat=${encodeURIComponent(b.cat || '')}">${esc(b.cat)}</a></nav>
       <article class="post"><h1>${esc(b.title)}</h1><div class="post-card__meta mb-12"><span class="badge badge--soft">${esc(b.cat)}</span><span>${esc(b.date)}</span></div>
-      ${b.image ? `<div class="post__hero" style="background:${esc(b.color || '#FFE9EF')}"><img src="${esc(anh(b.image))}" alt=""></div>` : ''}<div class="post__body">${veNoiDung(d, b.body)}</div></article>`);
+      ${b.image ? `<div class="post__hero" style="background:${esc(b.color || '#FFE9EF')}"><img src="${esc(anh(b.image))}" alt=""></div>` : ''}<div class="post__body">${mucLuc(b.body)}${veNoiDung(d, b.body)}</div></article>`);
     return doiAnhHtml(html);
   }
   function trangBaiTheoSlug(slug) {

@@ -2741,3 +2741,29 @@ body.dm .filters input[type="checkbox"] { accent-color: var(--dm-nhan); }
 .dm-o b { display: block; font-size: 13.5px; line-height: 1.3; }
 .dm-o small { display: block; font-size: 12px; color: var(--muted); }
 .fgroup[hidden], #ageChips[hidden] { display: none; }
+
+/* Trang Khuyến mãi: thẻ chương trình + mã giảm giá (collections.html renderKM) */
+.km-ds[hidden] { display: none; }
+.km-ds__dau { margin: 6px 0 12px; } .km-ds__dau h2 { font-size: 20px; color: var(--dm-chu, var(--ink)); } .km-ds__dau p { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+.km-luoi { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 22px; }
+.km-the { display: flex; flex-direction: column; gap: 6px; padding: 16px; background: #fff; border: 1px solid var(--dm-phu, var(--line)); border-left: 4px solid var(--dm-nhan, var(--primary)); border-radius: 16px; }
+.km-the__dau { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.km-the__ic { font-size: 24px; }
+.km-the__nhan { font-size: 12px; font-weight: 700; color: var(--dm-nhan, var(--primary)); background: var(--dm-nen, #fff5f0); border-radius: 999px; padding: 3px 10px; }
+.km-the h3 { font-size: 16px; line-height: 1.35; color: var(--dm-chu, var(--ink)); }
+.km-the p { font-size: 13.5px; line-height: 1.55; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.km-the__chan { margin-top: auto; padding-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.km-the__on { color: #C62828; }
+.km-the__nut { background: var(--dm-nhan, var(--primary)); color: #fff; border: 0; }
+.km-the__nut:hover { filter: brightness(.94); color: #fff; }
+.km-ma { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-bottom: 22px; }
+.km-ma__o { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #fff; border: 1.5px dashed var(--dm-nhan, var(--primary)); border-radius: 14px; }
+.km-ma__o b { font-family: Quicksand, sans-serif; font-size: 17px; letter-spacing: .5px; color: #C62828; }
+.km-ma__o span { font-size: 13.5px; } .km-ma__o small { font-size: 12px; color: var(--muted); }
+.km-ma__vi { align-self: center; justify-self: start; font-weight: 700; color: var(--dm-nhan, var(--primary)); padding: 8px 4px; }
+/* Cẩm nang: mục lục bài + màu trang */
+.post-muc { margin: 0 0 20px; padding: 14px 18px; background: var(--dm-phu, #F5F3EE); border-radius: 14px; }
+.post-muc b { display: block; font-size: 14px; margin-bottom: 6px; }
+.post-muc ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14.5px; }
+.post-muc a { color: var(--ink); } .post-muc a:hover { color: var(--primary); }
+.post__body h2 { scroll-margin-top: 130px; }

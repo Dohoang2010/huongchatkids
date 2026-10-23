@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261023a">
+  <link rel="stylesheet" href="css/style.css?v=20261023b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -22,6 +22,7 @@
   <p class="text-muted fs-14 mb-16" id="subtitle"></p>
   <div class="dm-hero__gt" id="dmIntro"></div></div><div class="dm-hero__anh" id="dmAnh" aria-hidden="true"></div></header>
   <div class="dm-con" id="dmCon"></div>
+  <section class="km-ds" id="kmDs" hidden></section>
   <div class="chips chips--scroll mb-16" id="ageChips"></div>
 
   <div class="collection">
@@ -93,10 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const phamVi = () => (DM && DM.loc && DM.loc.cat ? PRODUCTS.filter((p) => DM.loc.cat.includes(p.cat)) : PRODUCTS);
   const giaTri = (k) => [...new Set(phamVi().flatMap((p) => thuocTinh(p)[k]))].sort((a, b) => (Number(a) || 0) - (Number(b) || 0) || a.localeCompare(b, 'vi'));
   S.size = url.getAll('size').filter((v) => giaTri('size').includes(v)); S.mau = url.getAll('mau').filter((v) => giaTri('mau').includes(v));
+  const CT = url.get('ct') && MC.ctDangChay().find((x) => x.c.id === url.get('ct'));
+  S.ct = CT ? CT.c.id : '';
   if (DM && !url.getAll('cat').length && !url.get('tag') && !url.get('km')) { const l = DM.loc || {}; S.cat = (l.cat || []).slice(); S.tag = l.tag || ''; S.km = !!l.km; }   // ?dm= kèm lọc khác (size, giá…): giữ phạm vi của mục
   const an = (g) => !!(DM && (DM.an || []).includes(g));
   const laGoc = () => { if (!DM) return false; const l = DM.loc || {}; return !S.q && ['age', 'need', 'brand', 'price', 'size', 'mau'].every((k) => !S[k].length)
-    && String([...S.cat].sort()) === String([...(l.cat || [])].sort()) && S.tag === (l.tag || '') && S.km === !!l.km; };
+    && !S.ct && String([...S.cat].sort()) === String([...(l.cat || [])].sort()) && S.tag === (l.tag || '') && S.km === !!l.km; };
 
   function syncUrl() {
     const u = new URLSearchParams();
@@ -107,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     ['age', 'cat', 'need', 'brand', 'price', 'size', 'mau'].forEach((k) => S[k].forEach((v) => u.append(k, v)));
+    if (S.ct) u.set('ct', S.ct);
     if (DM) u.set('dm', DM.key);
     if (S.km) u.set('km', '1'); if (S.q) u.set('q', S.q); if (S.tag) u.set('tag', S.tag); if (S.sort !== 'best') u.set('sort', S.sort); if (S.page > 1) u.set('page', S.page);
     history.replaceState(null, '', 'collections.html' + (u.toString() ? '?' + u : ''));
@@ -122,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (S.brand.length && !S.brand.includes(p.brand)) return false;
       if (S.price.length && !S.price.some((k) => { const r = PRICE_RANGES.find((x) => x.key === k); return p.price >= r.min && p.price < r.max; })) return false;
       if (S.tag && !(p.tags || []).includes(S.tag)) return false;
+      if (S.ct && !(CT && CT.chinh.has(p.id))) return false;
       if (S.size.length && !S.size.some((z) => thuocTinh(p).size.includes(z))) return false;
       if (S.mau.length && !S.mau.some((z) => thuocTinh(p).mau.includes(z))) return false;
       if (S.km && !MC.dangKhuyenMai(p)) return false;
@@ -135,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function titleText() {
     if (laGoc()) return DM.ten;
+    if (S.ct && CT) return 'Sản phẩm áp dụng: ' + tenCt(CT);
     if (S.q) return ganDung ? `Gợi ý gần đúng cho "${S.q}"` : `Kết quả cho "${S.q}"`;
     if (S.km) return '🏷️ Sản phẩm đang khuyến mãi';
     if (S.tag) return S.tag === 'Combo' ? 'Combo tiết kiệm' : (S.tag === 'Sản phẩm hot' ? '🔥 Sản phẩm hot của shop' : S.tag);
@@ -164,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const add = (k, v, label) => chips.push(`<button class="chip chip--sm is-active" type="button" data-rm="${k}" data-val="${esc(v)}">${esc(label)} <span class="chip__x">×</span></button>`);
     S.age.forEach((a) => add('age', a, ageLabel(a))); S.cat.forEach((c) => add('cat', c, (CATEGORIES.find((x) => x.key === c) || {}).label)); S.need.forEach((n) => add('need', n, (NEEDS.find((x) => x.key === n) || {}).label)); S.brand.forEach((b) => add('brand', b, brandOf({ brand: b }).label)); S.price.forEach((p) => add('price', p, PRICE_RANGES.find((x) => x.key === p).label));
     if (S.km) add('km', '1', 'Đang khuyến mãi'); if (S.q) add('q', S.q, `"${esc(S.q)}"`); if (S.tag) add('tag', S.tag, S.tag);
+    if (S.ct && CT) add('ct', S.ct, tenCt(CT));
     S.size.forEach((v) => add('size', v, 'Size ' + v)); S.mau.forEach((v) => add('mau', v, v));
     if (laGoc()) chips.length = 0;
     $('#activeFilters').innerHTML = chips.length ? chips.join('') + `<button class="chip chip--sm" type="button" id="clearAllChips">Xoá tất cả</button>` : '';
@@ -190,13 +197,42 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#dmCon').innerHTML = o.map(([href, hinh, ten, n]) => `<a class="dm-o" href="${href}">${hinh}<span><b>${esc(ten)}</b><small>${n} sản phẩm</small></span></a>`).join('');
   }
 
+  /* Thẻ chương trình đang chạy (trang Khuyến mãi) – lấy thẳng từ cấu hình web: QUA_TANG, GIO_VANG, COUPONS */
+  const tenCt = (x) => String(x.c.ten || '').replace(/^(Kid|MP|Food)\s*·\s*/i, '');
+  const ngayVN = (s) => { const d = new Date(Date.parse(s)); return isNaN(d) ? '' : d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }); };
+  function renderKM() {
+    const box = $('#kmDs'), bat = DM && DM.key === 'khuyen-mai' && laGoc();
+    box.hidden = !bat; if (!bat) { box.innerHTML = ''; return; }
+    const the = (ic, nhan, ten, mo, han, nut, href) => `<article class="km-the"><div class="km-the__dau"><span class="km-the__ic" aria-hidden="true">${ic}</span><span class="km-the__nhan">${esc(nhan)}</span></div>
+      <h3>${esc(ten)}</h3>${mo ? `<p>${esc(mo)}</p>` : ''}<div class="km-the__chan"><span>${han}</span>${nut ? `<a class="btn btn--sm km-the__nut" href="${href}">${esc(nut)}</a>` : ''}</div></article>`;
+    const o = [];
+    (window.GIO_VANG || []).filter((g) => !g.tat && !(g.denNgay && g.denNgay < new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10))).forEach((g) => {
+      const chay = MC.gioVangChay(g), hieu = (g.brands || []).map((b) => (BRANDS.find((x) => x.key === b) || {}).label).filter(Boolean).join(', ');
+      o.push(the('⏰', chay ? 'Đang diễn ra' : 'Mỗi ngày', g.ten + ' giảm ' + g.giam + '%', 'Từ ' + g.tu + ' đến ' + g.den + ' mỗi ngày' + (hieu ? ', áp dụng sản phẩm ' + hieu : '') + '. Giá tự giảm trong khung giờ.', chay ? '<b class="km-the__on">● Đang giảm giá</b>' : 'Bắt đầu lúc ' + esc(g.tu),
+        'Xem sản phẩm', (g.brands || []).length === 1 ? linkCon('brand=' + g.brands[0]) : linkCon('km=1')));
+    });
+    const qd = (window.QUA_TANG || {}).enabled !== false && (window.QUA_TANG || {}).donTu;
+    if (qd && qd.muc) o.push(the('🎁', qd.chiKhachMoi ? 'Khách mới' : 'Quà theo đơn', 'Đơn đầu tiên từ ' + fmt(qd.muc) + ' tặng ' + qd.soQua + ' ' + (QUA_TANG.ten || 'quà'), 'Quà tự thêm vào đơn khi đủ điều kiện. Đơn dùng mã giảm giá hoặc voucher thì không kèm quà.', 'Áp dụng khi đặt trên web', '', ''));
+    MC.ctDangChay().forEach((x) => {
+      const han = Date.parse(x.c.ketThuc) - Date.now() > 180 * 864e5 ? 'Chương trình dài hạn' : 'Đến hết ' + ngayVN(new Date(Date.parse(x.c.ketThuc) - 60000).toISOString());
+      o.push(the(Number(x.c.chiGiam) > 0 || x.c.hoacGiam ? '💰' : '🎁', x.chinh.size + ' sản phẩm áp dụng', tenCt(x), MC.ctMoTa(x), esc(han), 'Xem sản phẩm áp dụng', linkCon('ct=' + encodeURIComponent(x.c.id))));
+    });
+    const ma = (MC.maCongKhai ? MC.maCongKhai() : []).filter((c) => c.loai !== 'sanpham' || (c.sanPham || []).length);
+    box.innerHTML = `<div class="km-ds__dau"><h2>Chương trình đang diễn ra</h2><p>Các chương trình không cộng dồn, web tự chọn mức có lợi nhất cho mẹ.</p></div>
+      <div class="km-luoi">${o.join('')}</div>
+      ${ma.length ? `<div class="km-ds__dau"><h2>Mã giảm giá</h2><p>Nhập mã ở giỏ hàng hoặc bấm Lưu trong Ví voucher, web tự áp mã lợi nhất khi thanh toán.</p></div>
+      <div class="km-ma">${ma.map((c) => `<div class="km-ma__o"><b>${esc(c.ma)}</b><span>${esc(c.desc || c.ten || '')}</span><small>${c.hetHan ? 'HSD ' + ngayVN(c.hetHan) : 'Không thời hạn'}${c.min ? ' · Đơn từ ' + fmt(c.min) : ''}</small></div>`).join('')}
+      <a class="km-ma__vi" href="vi-voucher.html">Mở Ví voucher →</a></div>` : ''}
+      <div class="km-ds__dau"><h2>Sản phẩm đang có ưu đãi</h2></div>`;
+  }
+
   function render() {
     const list = filtered(); const pages = Math.max(1, Math.ceil(list.length / PER)); S.page = Math.min(S.page, pages);
     const t = titleText(); $('#title').textContent = t; document.title = t + ' – ' + SITE.name;
     $('#subtitle').textContent = S.km ? (window.GIO_VANG || []).filter((g) => !g.tat).map((g) => `⏰ ${g.ten} ${g.tu}–${g.den} mỗi ngày giảm ${g.giam}%${MC.gioVangChay(g) ? ' (đang diễn ra)' : ''}`).concat(['🎁 Mua kèm quà tặng', '💰 Combo tiết kiệm']).join(' · ') : S.age.length === 1 ? `Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ${ageLabel(S.age[0])}` : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả 7 ngày';
     $('#crumb').innerHTML = DM ? `<a href="index.html">Trang chủ</a><span>›</span>${laGoc() ? `<span>${esc(DM.nhan)}</span>` : `<a href="${linkGoc(DM)}">${esc(DM.nhan)}</a><span>›</span><span>${esc(t)}</span>`}`
       : `<a href="index.html">Trang chủ</a><span>›</span><a href="collections.html">Sản phẩm</a>${t !== 'Tất cả sản phẩm' ? `<span>›</span><span>${esc(t)}</span>` : ''}`;
-    renderHero();
+    renderHero(); renderKM();
     $('#ageChips').hidden = an('age');
     $('#ageChips').innerHTML = `<a class="chip ${!S.age.length ? 'is-active' : ''}" href="#" data-age="">Tất cả tuổi</a>` + AGES.map((a) => `<a class="chip ${S.age.length === 1 && S.age[0] === a.key ? 'is-active' : ''}" href="#" data-age="${a.key}">${a.emoji} ${a.label}</a>`).join('');
     $('#count').textContent = `${list.length} sản phẩm`;
@@ -215,13 +251,13 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Events */
   $('#filters').addEventListener('change', (e) => { const i = e.target; if (i.type !== 'checkbox') return; const arr = S[i.name]; if (i.checked) { if (!arr.includes(i.value)) arr.push(i.value); } else S[i.name] = arr.filter((v) => v !== i.value); S.page = 1; if (window.innerWidth >= 992) render(); else $('#count').textContent = `${filtered().length} sản phẩm`; });
   $('#filters').addEventListener('click', (e) => { const c = e.target.closest('[data-clear]'); if (c) { S[c.dataset.clear] = []; renderFilters(); render(); } });
-  $('#resetAll').addEventListener('click', () => { if (DM) datGoc(); else { ['age', 'cat', 'need', 'brand', 'price', 'size', 'mau'].forEach((k) => S[k] = []); S.q = ''; S.tag = ''; S.km = false; } S.page = 1; renderFilters(); render(); });
+  $('#resetAll').addEventListener('click', () => { S.ct = ''; if (DM) datGoc(); else { ['age', 'cat', 'need', 'brand', 'price', 'size', 'mau'].forEach((k) => S[k] = []); S.q = ''; S.tag = ''; S.km = false; } S.page = 1; renderFilters(); render(); });
   $('#applyFilters').addEventListener('click', () => { $('#filters').classList.remove('is-open'); document.body.classList.remove('no-scroll'); render(); });
   $('#openFilters').addEventListener('click', () => { $('#filters').classList.add('is-open'); document.body.classList.add('no-scroll'); });
   $('#closeFilters').addEventListener('click', () => { $('#filters').classList.remove('is-open'); document.body.classList.remove('no-scroll'); });
   $('#sort').addEventListener('change', (e) => { S.sort = e.target.value; S.page = 1; render(); });
   $('#ageChips').addEventListener('click', (e) => { const a = e.target.closest('[data-age]'); if (!a) return; e.preventDefault(); S.age = a.dataset.age ? [a.dataset.age] : []; S.page = 1; renderFilters(); render(); });
-  $('#activeFilters').addEventListener('click', (e) => { const rm = e.target.closest('[data-rm]'); if (rm) { const k = rm.dataset.rm; if (k === 'q' || k === 'tag') S[k] = ''; else if (k === 'km') S.km = false; else S[k] = S[k].filter((v) => v !== rm.dataset.val); S.page = 1; renderFilters(); render(); } if (e.target.id === 'clearAllChips') $('#resetAll').click(); });
+  $('#activeFilters').addEventListener('click', (e) => { const rm = e.target.closest('[data-rm]'); if (rm) { const k = rm.dataset.rm; if (k === 'q' || k === 'tag' || k === 'ct') S[k] = ''; else if (k === 'km') S.km = false; else S[k] = S[k].filter((v) => v !== rm.dataset.val); S.page = 1; renderFilters(); render(); } if (e.target.id === 'clearAllChips') $('#resetAll').click(); });
   $('#pagination').addEventListener('click', (e) => { const b = e.target.closest('[data-page]'); if (b && !b.disabled) { S.page = Number(b.dataset.page); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
   $('#grid').addEventListener('click', (e) => { if (e.target.id === 'emptyReset') $('#resetAll').click(); });
   const si = $('#searchInput'); if (si && S.q) si.value = S.q;
