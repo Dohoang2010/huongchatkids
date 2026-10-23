@@ -483,6 +483,83 @@
         "Set 5 cái (hộp)": true,
         "Set 8 cái (hộp)": true
       }
+    },
+    "mabelle-5192": {
+      "in": true,
+      "variants": {
+        "Da đậm · 34": true,
+        "Da đậm · 36": true,
+        "Da đậm · 38": true,
+        "Da sữa · 34": true,
+        "Da sữa · 36": true,
+        "Da sữa · 38": true,
+        "Đen · 34": true,
+        "Đen · 36": true,
+        "Đen · 38": true,
+        "Da hồng · 34": true,
+        "Da hồng · 36": true,
+        "Da hồng · 38": true
+      }
+    },
+    "mabelle-5790": {
+      "in": true,
+      "variants": {
+        "Size 34": true,
+        "Size 36": true,
+        "Size 38": true,
+        "Size 40": true
+      }
+    },
+    "mabelle-5038": {
+      "in": true,
+      "variants": {
+        "Ghi · 34": true,
+        "Ghi · 36": true,
+        "Ghi · 38": true,
+        "Đen · 34": true,
+        "Đen · 36": true,
+        "Đen · 38": true,
+        "Da · 34": true,
+        "Da · 36": true,
+        "Da · 38": true
+      }
+    },
+    "mabelle-5997": {
+      "in": true,
+      "variants": {
+        "Đen · 34": true,
+        "Đen · 36": true,
+        "Đen · 38": true,
+        "Da · 34": true,
+        "Da · 36": true,
+        "Da · 38": true,
+        "Đỏ · 34": true,
+        "Đỏ · 36": true,
+        "Đỏ · 38": true,
+        "Trắng · 34": true,
+        "Trắng · 36": true,
+        "Trắng · 38": true,
+        "Đá · 34": true,
+        "Đá · 36": true,
+        "Đá · 38": true
+      }
+    },
+    "mabelle-5992": {
+      "in": true,
+      "variants": {
+        "Đen · 34": true,
+        "Đen · 36": true,
+        "Đen · 38": true,
+        "Da · 34": true,
+        "Da · 36": true,
+        "Da · 38": true,
+        "Ghi · 34": true,
+        "Ghi · 36": true,
+        "Ghi · 38": true,
+        "Kem · 34": true,
+        "Kem · 36": true,
+        "Kem · 38": true
+      }
     }
   }
 }

@@ -69,6 +69,11 @@ window.SITE = {
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
       'mabelle-6999': 60,      // quần lót MaBelle 1 cái
+      'mabelle-5192': 120,      // áo lót MaBelle 1 chiếc
+      'mabelle-5790': 120,      // áo lót MaBelle 1 chiếc
+      'mabelle-5038': 120,      // áo lót MaBelle 1 chiếc
+      'mabelle-5997': 120,      // áo lót MaBelle 1 chiếc
+      'mabelle-5992': 120,      // áo lót MaBelle 1 chiếc
       'avca-body-tone-up': 400,      // serum body AVCA 250ml có hộp
       'daycell-nad-white-cream': 400,      // kem NAD+ 50ml hũ thuỷ tinh có hộp
       'drvita-ecm-serum': 300,      // serum Dr.VITA 100ml có hộp
@@ -197,7 +202,8 @@ window.NAV = [
     { title: 'Sức khoẻ & cơ thể', links: [['Viên uống Pure NMN 12000mg+', 'product.html?id=24767149051'], ['Men vi sinh phụ khoa Arravite', 'product.html?id=28902157429'], ['Super Collagen Alpha 90 gói', 'product.html?id=48112514210'], ['Nghệ nano Curcumin 365 Plus', 'product.html?id=49061985399'], ['Thảm ngải cứu trị liệu', 'product.html?id=50002678694']] },
     { title: 'Tắm gội & làm đẹp', links: [['Sữa tắm dưỡng trắng Glutanex 300ml', 'product.html?id=24465090622'], ['Cặp dầu gội & xả Arganicare', 'product.html?id=27809051612'], ['Xịt phun sương Grace By Chera', 'product.html?id=51013054442'], ['Son filler RVB LAB Lip Explosion', 'product.html?id=57556697426'], ['Bột trắng răng Akiko Nhật Bản', 'product.html?id=56857599724']] } ] },
   { label: 'Thời trang', short: 'Thời trang', tiny: 'Thời trang', link: 'collections.html?cat=thoi-trang', columns: [
-    { title: 'Đồ lót MaBelle', links: [['Quần lót su đúc kháng khuẩn MaBelle 6999', 'product.html?id=mabelle-6999'], ['Xem tất cả thời trang', 'collections.html?cat=thoi-trang']] } ] },
+    { title: 'Áo lót MaBelle', links: [['Áo ngực chống từ MaBelle 5192', 'product.html?id=mabelle-5192'], ['Áo ngực chống hằn MaBelle 5790', 'product.html?id=mabelle-5790'], ['Áo ngực có gọng MaBelle 5038', 'product.html?id=mabelle-5038'], ['Áo lót liền mạch không gọng MaBelle 5997', 'product.html?id=mabelle-5997'], ['Áo lót không gọng MaBelle 5992', 'product.html?id=mabelle-5992']] },
+    { title: 'Quần lót MaBelle', links: [['Quần lót su đúc kháng khuẩn MaBelle 6999', 'product.html?id=mabelle-6999'], ['Xem tất cả thời trang', 'collections.html?cat=thoi-trang']] } ] },
   { label: 'Thực phẩm', short: 'Thực phẩm', tiny: 'Thực phẩm', link: 'collections.html?cat=thuc-pham,do-an', columns: [
     { title: 'Thực phẩm gia đình', links: [['Táo đỏ Hoàng Gia Hotan 1kg', 'product.html?id=28467224687'], ['Granola Fuwa-Saku Nhật Bản', 'product.html?id=43532388498'], ['Ngũ cốc bắp thiên ma Kitea', 'product.html?id=ngu-coc-bap-thien-ma-kitea'], ['Miến gà sấy thăng hoa', 'product.html?id=mien-ga-cf']] },
     { title: 'Đồ ăn & ăn vặt', links: [['Bò xuyên tiêu Chef Hải', 'product.html?id=bo-xuyen-tieu'], ['Lợn đen khói mơ Tây Bắc', 'product.html?id=lon-den-khoi-mo'], ['Cơm cháy phô mai & BBQ', 'product.html?id=com-chay-phomai'], ['Cơm cháy chà bông Nội Ơi', 'product.html?id=com-vang-noi-oi'], ['Muối xuyên tiêu Chef Hải', 'product.html?id=muoi-xuyen-tieu']] } ] },
@@ -2373,6 +2379,538 @@ window.PRODUCTS = [
     "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, dùng nước giặt nhẹ, không ngâm thuốc tẩy, không vắt mạnh. Phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
     "seoTitle": "Quần lót su đúc kháng khuẩn MaBelle 6999 – mỏng nhẹ, tàng hình | Hương Chất Kids",
     "seoDesc": "Quần lót nữ su đúc MaBelle 6999: liền mạch không đường may, sợi mát lạnh, co giãn 4 chiều, kháng khuẩn, đã kiểm định Formaldehyde & amin thơm. Size 45–65kg, 118.000đ/cái, set 3/5/8 cái."
+  },
+  {
+    "id": "mabelle-5192",
+    "name": "Áo Ngực Chống Từ MaBelle 5192 – Mút Đúc Giả Gọng, Nâng Đỡ Tự Nhiên, Gom Mỡ Nách",
+    "short": "Áo ngực chống từ MaBelle 5192",
+    "brand": "mabelle",
+    "cat": "thoi-trang",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 435000,
+    "oldPrice": 435000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 100,
+    "priority": 5,
+    "shape": "box",
+    "color": "#E8C9B5",
+    "weight": "Size 34 / 36 / 38",
+    "origin": "Việt Nam",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/mabelle-5192.jpg",
+    "thumb": "img/thumb/mabelle-5192.jpg",
+    "images": [
+      "img/mabelle-5192.jpg",
+      "img/mabelle-5192-2.jpg",
+      "img/mabelle-5192-3.jpg",
+      "img/mabelle-5192-4.jpg",
+      "img/mabelle-5192-5.jpg",
+      "img/mabelle-5192-6.jpg",
+      "img/mabelle-5192-7.jpg",
+      "img/mabelle-5192-8.jpg",
+      "img/mabelle-5192-9.jpg",
+      "img/mabelle-5192-10.jpg",
+      "img/mabelle-5192-11.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Da đậm · 34",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da đậm · 36",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da đậm · 38",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da sữa · 34",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da sữa · 36",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da sữa · 38",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Đen · 34",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Đen · 36",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Đen · 38",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da hồng · 34",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da hồng · 36",
+        "price": 435000,
+        "oldPrice": 435000
+      },
+      {
+        "label": "Da hồng · 38",
+        "price": 435000,
+        "oldPrice": 435000
+      }
+    ],
+    "desc": "Áo ngực MaBelle mã 5192, mút đúc mềm mại, thiết kế giả gọng nâng đỡ nhẹ nhàng, hạn chế cảm giác cấn, bát áo ôm vừa vặn tạo dáng vòng 1 cân đối, tự nhiên. Theo nhà sản xuất: ôm sát, giữ form ổn định; hỗ trợ gom phần mỡ nách và hai bên lưng cho tổng thể gọn gàng; hợp nhiều dáng ngực (ngực nhỏ, chưa đầy hoặc có độ chảy nhẹ). Chất liệu thoáng khí, nhẹ, mềm, chống hằn, dễ phối đồ, mặc đi làm, đi chơi, dự tiệc hằng ngày. Tính năng \"chống từ\" áp dụng theo thông tin kỹ thuật của nhà sản xuất. Size 34 / 36 / 38; màu da đậm, da sữa, đen, da hồng.",
+    "highlights": [
+      "Mút đúc mềm, thiết kế giả gọng nâng đỡ nhẹ nhàng, không cấn",
+      "Ôm gọn, hỗ trợ gom mỡ nách và hai bên lưng – theo nhà sản xuất",
+      "Chất liệu thoáng khí, nhẹ, chống hằn, dễ phối đồ",
+      "Công nghệ chống từ theo thông tin kỹ thuật của nhà sản xuất",
+      "Size 34 / 36 / 38 · 4 màu da đậm, da sữa, đen, da hồng"
+    ],
+    "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, không vắt mạnh để giữ form mút; phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
+    "seoTitle": "Áo ngực chống từ MaBelle 5192 – chính hãng | Hương Chất Kids",
+    "seoDesc": "Áo ngực chống từ MaBelle 5192: Mút đúc mềm, thiết kế giả gọng nâng đỡ nhẹ nhàng, không cấn; Ôm gọn, hỗ trợ gom mỡ nách và hai bên lưng – theo nhà sản xuất; Chất liệu thoáng khí, nhẹ, chống hằn, dễ phối đồ. Giá 435.000đ/chiếc."
+  },
+  {
+    "id": "mabelle-5790",
+    "name": "Áo Ngực MaBelle 5790 – Chống Hằn, Mút Thoáng Khí, Tôn Dáng Khi Mặc Áo Dài, Váy Ôm",
+    "short": "Áo ngực chống hằn MaBelle 5790",
+    "brand": "mabelle",
+    "cat": "thoi-trang",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 456000,
+    "oldPrice": 456000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 100,
+    "priority": 5,
+    "shape": "box",
+    "color": "#E8C9B5",
+    "weight": "Size 34 / 36 / 38 / 40",
+    "origin": "Việt Nam",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/mabelle-5790.jpg",
+    "thumb": "img/thumb/mabelle-5790.jpg",
+    "images": [
+      "img/mabelle-5790.jpg",
+      "img/mabelle-5790-2.jpg",
+      "img/mabelle-5790-3.jpg",
+      "img/mabelle-5790-4.jpg",
+      "img/mabelle-5790-5.jpg",
+      "img/mabelle-5790-6.jpg",
+      "img/mabelle-5790-7.jpg",
+      "img/mabelle-5790-8.jpg",
+      "img/mabelle-5790-9.jpg",
+      "img/mabelle-5790-10.jpg",
+      "img/mabelle-5790-11.jpg",
+      "img/mabelle-5790-12.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Size 34",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Size 36",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Size 38",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Size 40",
+        "price": 456000,
+        "oldPrice": 456000
+      }
+    ],
+    "desc": "Áo ngực MaBelle mã 5790 hiện đại, ngọt ngào, giúp tự tin khi diện áo dài, váy ôm hay trang phục mỏng. Theo nhà sản xuất: thiết kế chống hằn; form ôm nhẹ nhàng, tạo dáng vòng 1 cân đối, tự nhiên; ôm gọn vùng nách và lưng; chất liệu cao cấp mềm mại, co giãn tốt. Mút thoáng khí với cấu trúc nhiều lỗ thông khí, thun mềm đàn hồi tốt, hạn chế bai giãn; mặc nhẹ nhàng cả ngày đi làm, đi chơi, dự tiệc. Size 34 / 36 / 38 / 40; màu theo ảnh, mẹ ghi màu muốn chọn ở phần ghi chú khi đặt hàng.",
+    "highlights": [
+      "Chống hằn, mặc đẹp với áo dài, váy ôm, trang phục mỏng",
+      "Form ôm nhẹ, ôm gọn vùng nách và lưng – theo nhà sản xuất",
+      "Mút thoáng khí nhiều lỗ thông khí, thun mềm, hạn chế bai giãn",
+      "Size 34 / 36 / 38 / 40"
+    ],
+    "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, không vắt mạnh để giữ form mút; phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
+    "seoTitle": "Áo ngực chống hằn MaBelle 5790 – chính hãng | Hương Chất Kids",
+    "seoDesc": "Áo ngực chống hằn MaBelle 5790: Chống hằn, mặc đẹp với áo dài, váy ôm, trang phục mỏng; Form ôm nhẹ, ôm gọn vùng nách và lưng – theo nhà sản xuất; Mút thoáng khí nhiều lỗ thông khí, thun mềm, hạn chế bai giãn. Giá 456.000đ/chiếc."
+  },
+  {
+    "id": "mabelle-5038",
+    "name": "Áo Ngực Có Gọng MaBelle 5038 – Mút Mỏng, Lót Cotton, Chống Tuột, Không Hằn",
+    "short": "Áo ngực có gọng MaBelle 5038",
+    "brand": "mabelle",
+    "cat": "thoi-trang",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 346000,
+    "oldPrice": 346000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 100,
+    "priority": 5,
+    "shape": "box",
+    "color": "#E8C9B5",
+    "weight": "Size 34 / 36 / 38",
+    "origin": "Việt Nam",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/mabelle-5038.jpg",
+    "thumb": "img/thumb/mabelle-5038.jpg",
+    "images": [
+      "img/mabelle-5038.jpg",
+      "img/mabelle-5038-2.jpg",
+      "img/mabelle-5038-3.jpg",
+      "img/mabelle-5038-4.jpg",
+      "img/mabelle-5038-5.jpg",
+      "img/mabelle-5038-6.jpg",
+      "img/mabelle-5038-7.jpg",
+      "img/mabelle-5038-8.jpg",
+      "img/mabelle-5038-9.jpg",
+      "img/mabelle-5038-10.jpg",
+      "img/mabelle-5038-11.jpg",
+      "img/mabelle-5038-12.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Ghi · 34",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Ghi · 36",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Ghi · 38",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Đen · 34",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Đen · 36",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Đen · 38",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Da · 34",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Da · 36",
+        "price": 346000,
+        "oldPrice": 346000
+      },
+      {
+        "label": "Da · 38",
+        "price": 346000,
+        "oldPrice": 346000
+      }
+    ],
+    "desc": "Áo ngực có gọng MaBelle mã 5038, mút mỏng nhẹ ôm vừa vặn, không gây bí; lớp trong cotton mềm mại cho da. Theo nhà sản xuất: phần chân ngực 2 lớp cotton giữ form chắc chắn, chống tuột, chống xô lệch; gọng ôm chuẩn, nâng đỡ tự nhiên; dây áo chắc chắn, giặt máy không lo biến dạng. Ôm gọn, tôn dáng, không hằn, êm ái suốt cả ngày. Sản phẩm đã được kiểm định an toàn. Size 34 / 36 / 38; màu ghi, đen, da.",
+    "highlights": [
+      "Có gọng ôm chuẩn, nâng đỡ tự nhiên",
+      "Chân ngực 2 lớp cotton, chống tuột, chống xô lệch – theo nhà sản xuất",
+      "Mút mỏng nhẹ, lớp trong cotton mềm, không bí",
+      "Dây áo chắc chắn, giặt máy không biến dạng",
+      "Size 34 / 36 / 38 · màu ghi, đen, da"
+    ],
+    "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, không vắt mạnh để giữ form mút; phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
+    "seoTitle": "Áo ngực có gọng MaBelle 5038 – chính hãng | Hương Chất Kids",
+    "seoDesc": "Áo ngực có gọng MaBelle 5038: Có gọng ôm chuẩn, nâng đỡ tự nhiên; Chân ngực 2 lớp cotton, chống tuột, chống xô lệch – theo nhà sản xuất; Mút mỏng nhẹ, lớp trong cotton mềm, không bí. Giá 346.000đ/chiếc."
+  },
+  {
+    "id": "mabelle-5997",
+    "name": "Áo Lót Liền Mạch Không Gọng MaBelle 5997 – Mút 3cm Hạt Massage, Đã Kiểm Định An Toàn",
+    "short": "Áo lót liền mạch không gọng MaBelle 5997",
+    "brand": "mabelle",
+    "cat": "thoi-trang",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 330000,
+    "oldPrice": 330000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 100,
+    "priority": 5,
+    "shape": "box",
+    "color": "#E8C9B5",
+    "weight": "Size 34 / 36 / 38",
+    "origin": "Việt Nam",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/mabelle-5997.jpg",
+    "thumb": "img/thumb/mabelle-5997.jpg",
+    "images": [
+      "img/mabelle-5997.jpg",
+      "img/mabelle-5997-2.jpg",
+      "img/mabelle-5997-3.jpg",
+      "img/mabelle-5997-4.jpg",
+      "img/mabelle-5997-5.jpg",
+      "img/mabelle-5997-6.jpg",
+      "img/mabelle-5997-7.jpg",
+      "img/mabelle-5997-8.jpg",
+      "img/mabelle-5997-9.jpg",
+      "img/mabelle-5997-10.jpg",
+      "img/mabelle-5997-11.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Đen · 34",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đen · 36",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đen · 38",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Da · 34",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Da · 36",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Da · 38",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đỏ · 34",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đỏ · 36",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đỏ · 38",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Trắng · 34",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Trắng · 36",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Trắng · 38",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đá · 34",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đá · 36",
+        "price": 330000,
+        "oldPrice": 330000
+      },
+      {
+        "label": "Đá · 38",
+        "price": 330000,
+        "oldPrice": 330000
+      }
+    ],
+    "desc": "Áo lót liền mạch cao cấp MaBelle mã 5997, form không gọng mặc nhẹ như không, không hằn. Theo nhà sản xuất: mút 3cm tích hợp hạt massage nâng đỡ êm ái, tạo dáng ngực đầy đặn tự nhiên; quả áo tròn đều, không nhọn, không bè; bản lưng ôm trọn nách và mỡ lưng cho dáng gọn; dây chỉnh trước tiện lợi, hạn chế hằn vai; lớp cao su non êm, thoáng, mát. Sản phẩm đã được kiểm định hàm lượng Formaldehyde và amin thơm (VNTEST). Size 34 / 36 / 38; màu đen, da, đỏ, trắng, đá.",
+    "highlights": [
+      "Liền mạch không gọng, nhẹ, không hằn",
+      "Mút 3cm có hạt massage, quả áo tròn đều – theo nhà sản xuất",
+      "Bản lưng ôm nách và mỡ lưng, dây chỉnh trước tiện lợi",
+      "Đã kiểm định Formaldehyde & amin thơm (VNTEST)",
+      "Size 34 / 36 / 38 · 5 màu đen, da, đỏ, trắng, đá"
+    ],
+    "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, không vắt mạnh để giữ form mút; phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
+    "seoTitle": "Áo lót liền mạch không gọng MaBelle 5997 – chính hãng | Hương Chất Kids",
+    "seoDesc": "Áo lót liền mạch không gọng MaBelle 5997: Liền mạch không gọng, nhẹ, không hằn; Mút 3cm có hạt massage, quả áo tròn đều – theo nhà sản xuất; Bản lưng ôm nách và mỡ lưng, dây chỉnh trước tiện lợi. Giá 330.000đ/chiếc."
+  },
+  {
+    "id": "mabelle-5992",
+    "name": "Áo Lót Không Gọng MaBelle 5992 – Dây Chỉnh Phía Trước, Mút 2cm, Chống Hằn, Chống Tuột",
+    "short": "Áo lót không gọng MaBelle 5992",
+    "brand": "mabelle",
+    "cat": "thoi-trang",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 456000,
+    "oldPrice": 456000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 100,
+    "priority": 5,
+    "shape": "box",
+    "color": "#E8C9B5",
+    "weight": "Size 34 / 36 / 38",
+    "origin": "Việt Nam",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/mabelle-5992.jpg",
+    "thumb": "img/thumb/mabelle-5992.jpg",
+    "images": [
+      "img/mabelle-5992.jpg",
+      "img/mabelle-5992-2.jpg",
+      "img/mabelle-5992-3.jpg",
+      "img/mabelle-5992-4.jpg",
+      "img/mabelle-5992-5.jpg",
+      "img/mabelle-5992-6.jpg",
+      "img/mabelle-5992-7.jpg",
+      "img/mabelle-5992-8.jpg",
+      "img/mabelle-5992-9.jpg",
+      "img/mabelle-5992-10.jpg",
+      "img/mabelle-5992-11.jpg",
+      "img/mabelle-5992-12.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Đen · 34",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Đen · 36",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Đen · 38",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Da · 34",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Da · 36",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Da · 38",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Ghi · 34",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Ghi · 36",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Ghi · 38",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Kem · 34",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Kem · 36",
+        "price": 456000,
+        "oldPrice": 456000
+      },
+      {
+        "label": "Kem · 38",
+        "price": 456000,
+        "oldPrice": 456000
+      }
+    ],
+    "desc": "Áo lót cao cấp MaBelle mã 5992, thiết kế chỉnh vai đưa về phía trước tinh tế, tiện lợi, chống hằn, mặc đẹp với mọi trang phục. Theo nhà sản xuất: mút mỏng 2cm vừa vặn, mềm êm; thân áo an toàn, thoáng nhẹ, thân thiện làn da; không gọng thoải mái cả ngày. Ôm trọn, nâng đẩy tự nhiên, gom gọn mỡ nách, hỗ trợ tạo dáng cho bầu ngực căng tròn; chống tuột, chống xô lệch, giữ form chuẩn. Size 34 / 36 / 38; màu đen, da, ghi, kem.",
+    "highlights": [
+      "Dây chỉnh vai đưa về phía trước, tiện lợi, chống hằn",
+      "Mút mỏng 2cm, không gọng, nhẹ êm cả ngày",
+      "Ôm trọn, nâng đẩy tự nhiên, gom gọn mỡ nách – theo nhà sản xuất",
+      "Chống tuột, chống xô lệch, giữ form chuẩn",
+      "Size 34 / 36 / 38 · màu đen, da, ghi, kem"
+    ],
+    "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, không vắt mạnh để giữ form mút; phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
+    "seoTitle": "Áo lót không gọng MaBelle 5992 – chính hãng | Hương Chất Kids",
+    "seoDesc": "Áo lót không gọng MaBelle 5992: Dây chỉnh vai đưa về phía trước, tiện lợi, chống hằn; Mút mỏng 2cm, không gọng, nhẹ êm cả ngày; Ôm trọn, nâng đẩy tự nhiên, gom gọn mỡ nách – theo nhà sản xuất. Giá 456.000đ/chiếc."
   },
   {
     "id": "24764883120",
