@@ -621,10 +621,10 @@ window.PRODUCTS = [
       "Sản phẩm hot",
       "Bán chạy"
     ],
-    "image": "img/42878618667-n.jpg",
-    "thumb": "img/thumb/42878618667-n.jpg",
+    "image": "img/42878618667-h.jpg",
+    "thumb": "img/thumb/42878618667-h.jpg",
     "images": [
-      "img/42878618667-n.jpg",
+      "img/42878618667-h.jpg",
       "img/42878618667-2.jpg",
       "img/42878618667-3.jpg",
       "img/42878618667-4.jpg",
@@ -3878,7 +3878,7 @@ window.PRODUCTS = [
     "images": [
       "img/combo-vangsua-d3k2-n.jpg",
       "img/26060839019.jpg",
-      "img/42878618667-n.jpg",
+      "img/42878618667-h.jpg",
       "img/26060839019-3.jpg",
       "img/42878618667-3.jpg"
     ],
@@ -3960,7 +3960,7 @@ window.PRODUCTS = [
     "images": [
       "img/combo-lottexanh-d3k2-n.jpg",
       "img/22686115682.jpg",
-      "img/42878618667-n.jpg",
+      "img/42878618667-h.jpg",
       "img/22686115682-3.jpg",
       "img/42878618667-3.jpg"
     ],
