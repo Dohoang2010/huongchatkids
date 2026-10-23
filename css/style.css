@@ -2769,7 +2769,7 @@ body.dm .filters input[type="checkbox"] { accent-color: var(--dm-nhan); }
 .post__body h2 { scroll-margin-top: 130px; }
 /* Ảnh nền trang đích (img/dm/nen-*.webp, phần trái + đáy đã mờ dần về màu nền của mục) */
 body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { background-repeat: no-repeat; background-position: right top 120px; background-size: max(100%, 1280px) auto; }
-body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be.webp); }
+body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be-v2.webp); }
 body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty-v2.webp); }
 body.dm[data-dm="thoi-trang"] { background-image: url(../img/dm/nen-thoi-trang.webp); }
 body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-v2.webp); }
@@ -2780,7 +2780,7 @@ body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-v2.
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-con { position: relative; }
 @media (max-width: 767px) {
   body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { background-size: 820px auto; background-position: right -40px top 96px; }
-  body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be-nho.webp); }
+  body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be-v2-nho.webp); }
   body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty-v2-nho.webp); }
   body.dm[data-dm="thoi-trang"] { background-image: url(../img/dm/nen-thoi-trang-nho.webp); }
   body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-v2-nho.webp); }
