@@ -2770,9 +2770,9 @@ body.dm .filters input[type="checkbox"] { accent-color: var(--dm-nhan); }
 /* Ảnh nền trang đích (img/dm/nen-*.webp, phần trái + đáy đã mờ dần về màu nền của mục) */
 body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { background-repeat: no-repeat; background-position: right top 120px; background-size: max(100%, 1280px) auto; }
 body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be.webp); }
-body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty.webp); }
+body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty-v2.webp); }
 body.dm[data-dm="thoi-trang"] { background-image: url(../img/dm/nen-thoi-trang.webp); }
-body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham.webp); }
+body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-v2.webp); }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on { background: linear-gradient(90deg, var(--dm-nen) 0, var(--dm-nen) 30%, transparent 62%); border-color: transparent; min-height: 400px; align-content: center; }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero__anh { display: none !important; }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero__chu { max-width: 560px; }
@@ -2781,9 +2781,9 @@ body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham.web
 @media (max-width: 767px) {
   body.dm[data-dm="be"], body.dm[data-dm="beauty"], body.dm[data-dm="thoi-trang"], body.dm[data-dm="thuc-pham"] { background-size: 820px auto; background-position: right -40px top 96px; }
   body.dm[data-dm="be"] { background-image: url(../img/dm/nen-be-nho.webp); }
-  body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty-nho.webp); }
+  body.dm[data-dm="beauty"] { background-image: url(../img/dm/nen-beauty-v2-nho.webp); }
   body.dm[data-dm="thoi-trang"] { background-image: url(../img/dm/nen-thoi-trang-nho.webp); }
-  body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-nho.webp); }
+  body.dm[data-dm="thuc-pham"] { background-image: url(../img/dm/nen-thuc-pham-v2-nho.webp); }
   :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on { min-height: 0; margin-top: 190px; padding: 16px; background: rgba(255, 255, 255, .86); border-color: var(--dm-phu); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
   :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-hero--on .page-title { font-size: 26px; }
 }
