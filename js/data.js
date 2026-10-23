@@ -3673,7 +3673,7 @@ window.PRODUCTS = [
     "thumb": "img/thumb/bo-xuyen-tieu.jpg"
   },
   {
-    "rating": 0,
+    "rating": 5,
     "reviews": 0,
     "sold": 0,
     "stock": 50,
@@ -3687,7 +3687,7 @@ window.PRODUCTS = [
     "needs": [],
     "id": "com-chay-phomai",
     "name": "Cơm Cháy Nướng Cháy Cạnh Vị Phô Mai Vua Đỉnh Vị – Nướng Không Chiên, Giòn Không Ngấy – Túi Zip 200g",
-    "short": "Cơm cháy nướng vị phô mai 200g",
+    "short": "Cơm cháy nướng vị phô mai & BBQ 200g",
     "brand": "vua-dinh-vi",
     "ages": [
       "3-6y",
