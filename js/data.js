@@ -100,7 +100,7 @@ window.SITE = {
     sinhNhat: { bat: true, giam: 10 },   // tháng sinh nhật: giảm giam% mọi đơn (khách đã đăng nhập, có ngày sinh); không cộng dồn với ưu đãi hạng – lấy mức cao hơn
   },
   flashSaleEnd: 'daily',  // 'daily' = ưu đãi trong hôm nay (đếm ngược tới 24:00, mỗi ngày tự đếm lại); hoặc đặt hạn cụ thể '2026-09-30T23:59:59+07:00' (qua ngày này countdown tự ẩn)
-  facebook: '', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
+  facebook: 'https://www.facebook.com/huongchatkids.vn', instagram: '', youtube: '', tiktok: '',   // điền link mạng xã hội, để trống sẽ ẩn icon
 };
 /* Web mở thẳng trên VPS mới (chạy thử trước ngày đổi tên miền) → gọi máy chủ API của chính VPS (/api). Trên huongchatkids.vn không đổi gì. */
 if (/^(103\.77\.242\.192|103-77-242-192\.sslip\.io)$/.test(location.hostname)) window.SITE.loyalty.endpoint = location.origin + '/api';
@@ -4650,6 +4650,15 @@ window.BANNERS = [
     ],
     "sticker": "MUA 2\nTẶNG D3K2",
     "fx": "canxi"
+  },
+  {
+    "anh": {
+      "pc": "img/banner/facebook-chinh-chu-pc.jpg",
+      "mb": "img/banner/facebook-chinh-chu-mb.jpg"
+    },
+    "nen": "#D6E6FF",
+    "link": "https://www.facebook.com/huongchatkids.vn",
+    "alt": "Trang Facebook chính chủ của Hương Chất Kids: facebook.com/huongchatkids.vn – mẹo nuôi con, ưu đãi mới, hơn 11.000 người theo dõi. Cẩn thận trang giả mạo."
   },
   {
     "anh": {
