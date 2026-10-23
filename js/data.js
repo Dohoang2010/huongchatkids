@@ -147,6 +147,43 @@ window.NEEDS = [
   { key: 'lam-dep',          label: 'Làm đẹp cho mẹ' }
 ];
 
+/* Trang đích của 8 mục trên menu (chủ shop 23/10/2026) – collections.html dùng chung 1 khung, mỗi mục một cấu hình:
+   slug: đường dẫn đẹp huongchatkids.vn/<slug> (máy chủ VPS dựng sẵn cho Google, link cũ collections.html?… chuyển 301)
+   loc: bộ lọc gốc (cat / tag / km) · mau: màu riêng (nền, phụ, nhấn, chữ) · con: ô danh mục con · an: nhóm bộ lọc ẩn
+   gioiThieu: đoạn giới thiệu (không ghi công dụng chữa bệnh, không số liệu tự đặt). Sửa nội dung ở đây. */
+window.TRANG_DM = [
+  { key: 'san-pham', slug: 'san-pham', ten: 'Tất cả sản phẩm', nhan: 'Danh mục sản phẩm', icon: '🛍️', loc: {},
+    mau: { nen: '#FAFAF8', phu: '#EAEAEA', nhan: '#F0537A', chu: '#262626' },
+    gioiThieu: 'Toàn bộ sản phẩm đang bán tại Hương Chất Kids: dinh dưỡng Hàn Quốc cho bé, mỹ phẩm và chăm sóc cho mẹ, đồ lót, thực phẩm gia đình. Hàng chính hãng có tem phụ tiếng Việt, mẹ lọc theo độ tuổi, nhu cầu, thương hiệu hoặc mức giá để chọn nhanh.',
+    con: 'danhMuc', seoTieuDe: 'Tất cả sản phẩm chính hãng cho mẹ và bé – Hương Chất Kids' },
+  { key: 'khuyen-mai', slug: 'khuyen-mai', ten: 'Ưu đãi và khuyến mãi', nhan: 'Khuyến mãi', icon: '🏷️', loc: { km: true },
+    mau: { nen: '#FFF9F3', phu: '#FFE3D3', nhan: '#F26A3D', chu: '#292524' },
+    gioiThieu: 'Các sản phẩm đang có quà tặng, giờ vàng giảm giá hoặc combo tiết kiệm trên huongchatkids.vn. Quà và mức giảm được web tự áp khi mẹ thêm sản phẩm vào giỏ.',
+    seoTieuDe: 'Ưu đãi, quà tặng và khuyến mãi đang diễn ra – Hương Chất Kids' },
+  { key: 'be', slug: 'danh-cho-be', ten: 'Sản phẩm dành cho bé', nhan: 'Dành cho bé', icon: '🧸', loc: { cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien'] },
+    mau: { nen: '#F1F8FC', phu: '#B8DDF2', nhan: '#4D94C4', chu: '#243746' },
+    gioiThieu: 'Nước ép, sữa, hồng sâm, vitamin, canxi và rong biển nhập khẩu từ Hàn Quốc, Úc, New Zealand. Mỗi sản phẩm ghi rõ độ tuổi nhà sản xuất khuyến nghị, mẹ chọn theo tuổi của con hoặc nhắn chuyên gia dinh dưỡng để được tư vấn miễn phí.',
+    con: 'danhMuc', theoTuoi: true, seoTieuDe: 'Dinh dưỡng cho bé chính hãng Hàn Quốc theo độ tuổi – Hương Chất Kids' },
+  { key: 'beauty', slug: 'beauty', ten: 'Beauty – chăm sóc cho mẹ', nhan: 'Beauty', icon: '💄', loc: { cat: ['cho-me'] },
+    mau: { nen: '#FFF6F0', phu: '#F2D5D2', nhan: '#B86E78', chu: '#493A38' },
+    gioiThieu: 'Mỹ phẩm Hàn Quốc chính hãng, sản phẩm tắm gội và chăm sóc cơ thể cho mẹ: kem dưỡng, serum, kem chống nắng, mặt nạ, son, sữa tắm. Thông tin thành phần và cách dùng theo nhà sản xuất, hiệu quả tuỳ cơ địa mỗi người.',
+    con: 'thuongHieu', an: ['age', 'need', 'cat'], seoTieuDe: 'Mỹ phẩm Hàn Quốc chính hãng cho mẹ – Beauty | Hương Chất Kids' },
+  { key: 'thoi-trang', slug: 'thoi-trang', ten: 'Thời trang', nhan: 'Thời trang', icon: '👗', loc: { cat: ['thoi-trang'] },
+    mau: { nen: '#FFFFFF', phu: '#F5F5F3', nhan: '#222222', chu: '#222222' },
+    gioiThieu: 'Đồ lót nữ MaBelle: áo ngực có gọng, không gọng, liền mạch và quần lót su đúc. Mỗi mẫu có đủ size và màu để mẹ chọn ngay trên trang sản phẩm.',
+    an: ['age', 'need', 'cat'], locSizeMau: true, seoTieuDe: 'Thời trang đồ lót nữ MaBelle chính hãng – Hương Chất Kids' },
+  { key: 'thuc-pham', slug: 'thuc-pham', ten: 'Thực phẩm', nhan: 'Thực phẩm', icon: '🍎', loc: { cat: ['thuc-pham', 'do-an'] },
+    mau: { nen: '#FCFBF5', phu: '#E7F0DF', nhan: '#557B4C', chu: '#2D342B' },
+    gioiThieu: 'Thực phẩm gia đình và đồ ăn vặt: táo đỏ, granola, ngũ cốc, miến, bò xuyên tiêu, lợn đen gác bếp, cơm cháy. Quy cách đóng gói và xuất xứ ghi rõ trong từng sản phẩm.',
+    con: 'danhMuc', an: ['age', 'need'], seoTieuDe: 'Thực phẩm gia đình, đặc sản và đồ ăn vặt – Hương Chất Kids' },
+  { key: 'flash-sale', slug: 'flash-sale', ten: 'Flash Sale', nhan: 'Flash sale', icon: '⚡', loc: { tag: 'Sản phẩm hot' },
+    mau: { nen: '#FFFFFF', phu: '#FFF0C2', nhan: '#E84B3C', chu: '#262626' },
+    gioiThieu: 'Những sản phẩm hot của shop, được các mẹ đặt nhiều. Giá và quà tặng hiện tại xem ngay trên từng sản phẩm.',
+    seoTieuDe: 'Flash Sale – sản phẩm hot giá tốt | Hương Chất Kids' },
+  { key: 'cam-nang', slug: 'cam-nang', ten: 'Cẩm nang chăm con', nhan: 'Cẩm nang', icon: '📖', trang: 'blog',
+    mau: { nen: '#FAF9F6', phu: '#EFEDE8', nhan: '#F0537A', chu: '#282828' } }
+];
+
 window.BRANDS = [
   { key: 'lotte',      label: 'Lotte Foods', origin: 'Hàn Quốc', color: '#E60012' },
   { key: 'chuchu',     label: 'ChuChu',      origin: 'Hàn Quốc', color: '#B5121B' },
@@ -4526,7 +4563,7 @@ window.PRODUCTS = [
    Máy chủ VPS đọc cùng bảng này để trả trang sản phẩm + chuyển link cũ product.html?id=… sang link mới. */
 window.taoSlug = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70).replace(/-+$/, '');
 (function () {
-  var TRANG = ['index', 'product', 'collections', 'cart', 'checkout', 'account', 'admin', 'blog', 'policy', 'gioi-thieu', 'do-chi-so-cho-be', 'doi-tac', 'diem-danh', 'vi-voucher', 'quen-mat-khau', 'quan-ly-ton-kho', 'css', 'js', 'img', 'data', 'tools', 'api', 'chat-tep', 'webp', 'cam-nang', 'lich-trinh', '2010', 'sitemap', 'robots'];
+  var TRANG = ['index', 'product', 'collections', 'cart', 'checkout', 'account', 'admin', 'blog', 'policy', 'gioi-thieu', 'do-chi-so-cho-be', 'doi-tac', 'diem-danh', 'vi-voucher', 'quen-mat-khau', 'quan-ly-ton-kho', 'css', 'js', 'img', 'data', 'tools', 'api', 'chat-tep', 'webp', 'cam-nang', 'lich-trinh', '2010', 'sitemap', 'robots'].concat((window.TRANG_DM || []).map(function (t) { return t.slug; }));
   var bySlug = {}, byId = {};
   (window.PRODUCTS || []).forEach(function (p) {
     var s = window.taoSlug(p.slug || p.short || p.name) || window.taoSlug(String(p.id));

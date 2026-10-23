@@ -491,26 +491,38 @@
   }
 
   /* ---------------- Menu từ dữ liệu NAV ---------------- */
+  /* Link trùng đúng bộ lọc gốc của 1 mục trong TRANG_DM → trang đích đẹp (/danh-cho-be, /beauty…); cẩm nang → /cam-nang.
+     Chạy thử trên máy (localhost / file) không có máy chủ dựng trang → collections.html?dm=<mục> */
+  const WEB_THU = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  function dmLink(href) {
+    if (href === 'blog.html') return WEB_THU ? href : '/cam-nang';
+    const m = String(href || '').match(/^collections\.html(?:\?(.*))?$/); if (!m) return href;
+    const q = new URLSearchParams(m[1] || '');
+    if ([...q.keys()].some((k) => !['cat', 'tag', 'km'].includes(k))) return href;
+    const cat = q.getAll('cat').flatMap((v) => v.split(',')).filter(Boolean).sort(), tag = q.get('tag') || '', km = q.get('km') === '1';
+    const t = (window.TRANG_DM || []).find((d) => d.loc && String([...(d.loc.cat || [])].sort()) === String(cat) && (d.loc.tag || '') === tag && !!d.loc.km === km);
+    return t ? (WEB_THU ? 'collections.html?dm=' + t.key : '/' + t.slug) : href;
+  }
   const needLink = (k) => { const n = NEEDS.find((x) => x.key === k); return n ? `<li><a href="collections.html?need=${k}">${n.label}</a></li>` : ''; };
   function navColumn(col) {
     if (col.ages) return `<div><h4>${col.title}</h4><div class="age-list">${AGES.filter((a) => col.ages === true || col.ages.includes(a.key)).map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>`;
     if (col.needs) return `<div><h4>${col.title}</h4><ul>${col.needs.map(needLink).join('')}</ul></div>`;
-    return `<div><h4>${col.title}</h4><ul>${(col.links || []).map(([l, h]) => `<li><a href="${h}">${l}</a></li>`).join('')}</ul></div>`;
+    return `<div><h4>${col.title}</h4><ul>${(col.links || []).map(([l, h]) => `<li><a href="${dmLink(h)}">${l}</a></li>`).join('')}</ul></div>`;
   }
   // Màn hình hẹp hơn thì dùng tên rút gọn để thanh menu luôn nằm gọn 1 hàng
   const navLabel = (n) => (n.short || n.tiny ? `<span class="nv-full">${n.short || n.label}</span><span class="nv-short">${n.tiny || n.short || n.label}</span>` : n.label);
   function navItem(n) {
     if (n.ages) return `<li class="navbar__item"><a class="navbar__link" href="collections.html">${navLabel(n)} ${I.chevron}</a><div class="mega"><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}"><span>${a.emoji}</span>${a.label} <small style="color:var(--muted);font-weight:500">· ${a.desc}</small></a>`).join('')}</div></div></li>`;
     if (n.brands) return `<li class="navbar__item"><a class="navbar__link" href="collections.html">${navLabel(n)} ${I.chevron}</a><div class="mega mega--brands"><div class="brand-grid">${BRANDS.map((b) => `<a href="collections.html?brand=${b.key}">${b.label} <small style="color:var(--muted)">· ${b.origin}</small></a>`).join('')}</div></div></li>`;
-    if (n.columns) return `<li class="navbar__item"><a class="navbar__link" href="${n.link}">${navLabel(n)} ${I.chevron}</a><div class="mega mega--wide">${n.columns.map(navColumn).join('')}</div></li>`;
-    return `<li class="navbar__item"><a class="navbar__link ${n.hot ? 'navbar__link--hot' : ''}" href="${n.link}">${navLabel(n)}</a></li>`;
+    if (n.columns) return `<li class="navbar__item"><a class="navbar__link" href="${dmLink(n.link)}">${navLabel(n)} ${I.chevron}</a><div class="mega mega--wide">${n.columns.map(navColumn).join('')}</div></li>`;
+    return `<li class="navbar__item"><a class="navbar__link ${n.hot ? 'navbar__link--hot' : ''}" href="${dmLink(n.link)}">${navLabel(n)}</a></li>`;
   }
   function navMobile(n, i) {
     const links = (n.columns || []).flatMap((c) => c.ages ? [] : c.needs ? c.needs.map((k) => { const x = NEEDS.find((y) => y.key === k); return x ? [x.label, 'collections.html?need=' + k] : null; }).filter(Boolean) : (c.links || []));
     if (n.brands) return `<details class="mmenu__group"><summary>${n.label} ${I.chevron}</summary><ul>${BRANDS.map((b) => `<li><a href="collections.html?brand=${b.key}">${b.label}</a></li>`).join('')}</ul></details>`;
     if (n.ages) return '';
-    if (n.columns) return `<details class="mmenu__group"><summary>${n.label} ${I.chevron}</summary><ul><li><a href="${n.link}" class="fw-700">Xem tất cả ${n.label.toLowerCase()}</a></li>${links.map(([l, h]) => `<li><a href="${h}">${l}</a></li>`).join('')}</ul></details>`;
-    return `<a class="mmenu__link ${n.hot ? 'text-red' : ''}" href="${n.link}">${n.label}</a>`;
+    if (n.columns) return `<details class="mmenu__group"><summary>${n.label} ${I.chevron}</summary><ul><li><a href="${dmLink(n.link)}" class="fw-700">Xem tất cả ${n.label.toLowerCase()}</a></li>${links.map(([l, h]) => `<li><a href="${dmLink(h)}">${l}</a></li>`).join('')}</ul></details>`;
+    return `<a class="mmenu__link ${n.hot ? 'text-red' : ''}" href="${dmLink(n.link)}">${n.label}</a>`;
   }
 
   /* ---------------- Shell: header / footer / widgets ---------------- */
@@ -544,13 +556,13 @@
         </div>
       </div>
       <nav class="navbar" aria-label="Danh mục chính"><div class="container"><ul class="navbar__list">
-        <li class="navbar__item"><a class="navbar__link navbar__link--cat" href="collections.html">${I.grid}<span class="nv-full">Danh mục sản phẩm</span><span class="nv-short">Danh mục</span></a>
+        <li class="navbar__item"><a class="navbar__link navbar__link--cat" href="${dmLink('collections.html')}">${I.grid}<span class="nv-full">Danh mục sản phẩm</span><span class="nv-short">Danh mục</span></a>
           <div class="mega mega--wide"><div><h4>Danh mục</h4><ul>${CATEGORIES.slice(0, Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>&nbsp;</h4><ul>${CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>
           <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
         ${(() => { const sk = suKienHien(); return sk ? `<li class="navbar__item"><a class="navbar__link navbar__link--sk" href="index.html?tab=${sk.id}">${sk.icon ? sk.icon + ' ' : ''}${esc(sk.nhan)}</a></li>` : ''; })()}
-        <li class="navbar__item"><a class="navbar__link navbar__link--km" href="collections.html?km=1">Khuyến mãi</a></li>
+        <li class="navbar__item"><a class="navbar__link navbar__link--km" href="${dmLink('collections.html?km=1')}">Khuyến mãi</a></li>
         ${NAV.map(navItem).join('')}
       </ul></div></nav>
     </header>
@@ -562,7 +574,7 @@
         <div class="mmenu__contact mmenu__contact--top"><a class="btn btn--primary btn--block" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi ${SITE.hotline}</a><a class="btn btn--zalo btn--block" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo với chuyên gia dinh dưỡng</a></div>
         <details class="mmenu__group"><summary>Danh mục sản phẩm ${I.chevron}</summary><ul>${CATEGORIES.map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></details>
         ${(() => { const sk = suKienHien(); return sk ? `<a class="mmenu__link mmenu__link--sk" href="index.html?tab=${sk.id}">${sk.icon || '⚡'} ${esc(sk.ten)}</a>` : ''; })()}
-        <a class="mmenu__link mmenu__link--sk" href="collections.html?km=1">🏷️ Sản phẩm đang khuyến mãi</a>
+        <a class="mmenu__link mmenu__link--sk" href="${dmLink('collections.html?km=1')}">🏷️ Sản phẩm đang khuyến mãi</a>
         <a class="mmenu__link" href="gioi-thieu.html">💗 Giới thiệu Hương Chất Kids</a>
         ${NAV.map(navMobile).join('')}
         <a class="mmenu__link" href="do-chi-so-cho-be.html">📏 Đo chỉ số con miễn phí</a>

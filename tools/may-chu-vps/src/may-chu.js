@@ -211,7 +211,13 @@ const mayChu = http.createServer(async (req, res) => {
     if (/^\/(js|css)\//.test(duongDan) && nenTep.tra(req, res, duongDan)) return;
     if (duongDan === '/sitemap.xml') return tra(res, 200, 'application/xml', trangWeb.sitemap(), { 'Cache-Control': 'public, max-age=600' });
     if (duongDan === '' || duongDan === '/index.html') return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangChu(), 'index.html'), HTML_TS);
-    if (duongDan === '/collections.html') return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangDanhMuc(url.searchParams), 'collections.html'), HTML_TS);
+    if (duongDan === '/collections.html') { const moi = trangWeb.chuyenDanhMuc(url.searchParams); if (moi) return chuyen(moi);
+      return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangDanhMuc(url.searchParams), 'collections.html'), HTML_TS); }
+    /* trang đích 8 mục menu (/danh-cho-be, /beauty…) + cẩm nang /cam-nang */
+    if (duongDan === '/cam-nang') { const r = trangWeb.trangBlog(url.searchParams); return r.chuyen ? chuyen(r.chuyen) : tra(res, 200, 'text/html', trangWeb.hoanThien(r.html, 'blog.html'), HTML_TS); }
+    { const dm = /^\/[a-z0-9-]{2,40}$/.test(duongDan) && trangWeb.trangDichTheoSlug(duongDan.slice(1));
+      if (dm) return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangDanhMuc(url.searchParams, dm), 'collections.html'), HTML_TS); }
+    if (duongDan === '/blog.html' && ![...url.searchParams.keys()].length) return chuyen('/cam-nang');
     if (duongDan === '/blog.html') { const r = trangWeb.trangBlog(url.searchParams); return r.chuyen ? chuyen(r.chuyen) : tra(res, 200, 'text/html', trangWeb.hoanThien(r.html, 'blog.html'), HTML_TS); }
     if (duongDan === '/product.html') {
       const moi = trangWeb.chuyenTuLinkCu(url.searchParams);
