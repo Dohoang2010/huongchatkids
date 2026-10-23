@@ -2745,16 +2745,21 @@ body.dm .filters input[type="checkbox"] { accent-color: var(--dm-nhan); }
 /* Trang Khuyến mãi: thẻ chương trình + mã giảm giá (collections.html renderKM) */
 .km-ds[hidden] { display: none; }
 .km-ds__dau { margin: 6px 0 12px; } .km-ds__dau h2 { font-size: 20px; color: var(--dm-chu, var(--ink)); } .km-ds__dau p { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
-.km-luoi { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 22px; }
-.km-the { display: flex; flex-direction: column; gap: 6px; padding: 16px; background: #fff; border: 1px solid var(--dm-phu, var(--line)); border-left: 4px solid var(--dm-nhan, var(--primary)); border-radius: 16px; }
+.km-day { position: relative; margin-bottom: 18px; }
+.km-luoi { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 2px 2px 8px; scrollbar-width: thin; }
+.km-luoi > .km-the { flex: 0 0 210px; scroll-snap-align: start; }
+.km-day__nut { position: absolute; top: 50%; z-index: 2; width: 36px; height: 36px; margin-top: -22px; border-radius: 50%; border: 1px solid var(--dm-phu, var(--line)); background: #fff; color: var(--dm-nhan, var(--primary)); font-size: 22px; line-height: 1; box-shadow: var(--shadow); cursor: pointer; }
+.km-day__nut--trai { left: -12px; } .km-day__nut--phai { right: -12px; }
+@media (max-width: 767px) { .km-day__nut { display: none; } .km-luoi > .km-the { flex-basis: 72%; } }
+.km-the { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px; background: #fff; border: 1px solid var(--dm-phu, var(--line)); border-left: 4px solid var(--dm-nhan, var(--primary)); border-radius: 16px; }
 .km-the__dau { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.km-the__ic { font-size: 24px; }
-.km-the__nhan { font-size: 12px; font-weight: 700; color: var(--dm-nhan, var(--primary)); background: var(--dm-nen, #fff5f0); border-radius: 999px; padding: 3px 10px; }
-.km-the h3 { font-size: 16px; line-height: 1.35; color: var(--dm-chu, var(--ink)); }
-.km-the p { font-size: 13.5px; line-height: 1.55; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.km-the__chan { margin-top: auto; padding-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.km-the__ic { font-size: 18px; }
+.km-the__nhan { font-size: 11px; font-weight: 700; color: var(--dm-nhan, var(--primary)); background: var(--dm-nen, #fff5f0); border-radius: 999px; padding: 3px 10px; }
+.km-the h3 { font-size: 14px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--dm-chu, var(--ink)); }
+.km-the p { font-size: 12.5px; line-height: 1.45; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.km-the__chan { margin-top: auto; padding-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); }
 .km-the__on { color: #C62828; }
-.km-the__nut { background: var(--dm-nhan, var(--primary)); color: #fff; border: 0; }
+.km-the__nut { background: var(--dm-nhan, var(--primary)); color: #fff; border: 0; min-height: 30px; padding: 4px 12px; font-size: 12px; }
 .km-the__nut:hover { filter: brightness(.94); color: #fff; }
 .km-ma { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-bottom: 22px; }
 .km-ma__o { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #fff; border: 1.5px dashed var(--dm-nhan, var(--primary)); border-radius: 14px; }

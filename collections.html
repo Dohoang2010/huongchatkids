@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261023e">
+  <link rel="stylesheet" href="css/style.css?v=20261023f">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -219,12 +219,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const ma = (MC.maCongKhai ? MC.maCongKhai() : []).filter((c) => c.loai !== 'sanpham' || (c.sanPham || []).length);
     box.innerHTML = `<div class="km-ds__dau"><h2>Chương trình đang diễn ra</h2><p>Các chương trình không cộng dồn, web tự chọn mức có lợi nhất cho mẹ.</p></div>
-      <div class="km-luoi">${o.join('')}</div>
+      <div class="km-day"><button class="km-day__nut km-day__nut--trai" type="button" data-km-cuon="-1" aria-label="Xem chương trình trước">‹</button><div class="km-luoi" id="kmLuoi">${o.join('')}</div><button class="km-day__nut km-day__nut--phai" type="button" data-km-cuon="1" aria-label="Xem chương trình tiếp">›</button></div>
       ${ma.length ? `<div class="km-ds__dau"><h2>Mã giảm giá</h2><p>Nhập mã ở giỏ hàng hoặc bấm Lưu trong Ví voucher, web tự áp mã lợi nhất khi thanh toán.</p></div>
       <div class="km-ma">${ma.map((c) => `<div class="km-ma__o"><b>${esc(c.ma)}</b><span>${esc(c.desc || c.ten || '')}</span><small>${c.hetHan ? 'HSD ' + ngayVN(c.hetHan) : 'Không thời hạn'}${c.min ? ' · Đơn từ ' + fmt(c.min) : ''}</small></div>`).join('')}
       <a class="km-ma__vi" href="vi-voucher.html">Mở Ví voucher →</a></div>` : ''}
       <div class="km-ds__dau"><h2>Sản phẩm đang có ưu đãi</h2></div>`;
   }
+
+  /* nút ‹ › trượt dải chương trình */
+  $('#kmDs').addEventListener('click', (e) => { const n = e.target.closest('[data-km-cuon]'); if (!n) return; const l = $('#kmLuoi'); l.scrollBy({ left: Number(n.dataset.kmCuon) * Math.max(240, l.clientWidth * 0.8), behavior: 'smooth' }); });
 
   function render() {
     const list = filtered(); const pages = Math.max(1, Math.ceil(list.length / PER)); S.page = Math.min(S.page, pages);
