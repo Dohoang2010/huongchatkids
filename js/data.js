@@ -68,6 +68,7 @@ window.SITE = {
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
+      'mabelle-6999': 60,      // quần lót MaBelle 1 cái
       'avca-body-tone-up': 400,      // serum body AVCA 250ml có hộp
       'daycell-nad-white-cream': 400,      // kem NAD+ 50ml hũ thuỷ tinh có hộp
       'drvita-ecm-serum': 300,      // serum Dr.VITA 100ml có hộp
@@ -118,6 +119,7 @@ window.CATEGORIES = [
   { key: 'rong-bien', label: 'Rong biển & ăn dặm',        icon: '🍙', color: '#FFF8E1', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
   { key: 'thuc-pham', label: 'Thực phẩm gia đình',        icon: '🍎', color: '#FFEBEE', desc: 'Táo đỏ Hotan, granola Nhật Bản', tpcn: false, image: 'img/thumb/28467224687.jpg' },
   { key: 'do-an',     label: 'Đồ ăn & ăn vặt',            icon: '🍱', color: '#FFF1E0', desc: 'Bò xuyên tiêu, cơm cháy, lợn đen gác bếp', tpcn: false, image: 'img/thumb/bo-xuyen-tieu.jpg' },
+  { key: 'thoi-trang', label: 'Thời trang', icon: '👗', color: '#FDEBF1', desc: 'Đồ lót MaBelle mỏng nhẹ, an toàn cho da', tpcn: false, image: 'img/thumb/mabelle-6999.jpg' },
   { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Chống nắng, serum, collagen, chăm sóc mẹ', tpcn: true, image: 'img/thumb/49061985399.jpg' }
 ];
 
@@ -176,6 +178,7 @@ window.BRANDS = [
   { key: 'boryeong-mud', label: 'Boryeong MUD+', origin: 'Hàn Quốc', color: '#8B6B4E' },
   { key: 'kitea', label: 'Kitea', origin: 'Hàn Quốc', color: '#C2561B' },
   { key: 'avca', label: 'AVCA', origin: 'Hàn Quốc', color: '#F59E0B' },
+  { key: 'mabelle', label: 'MaBelle', origin: 'Việt Nam', color: '#D4A017' },
   { key: 'daycell', label: 'DayCell', origin: 'Hàn Quốc', color: '#C0392B' },
   { key: 'khac',       label: 'Nhập khẩu',   origin: 'Hàn Quốc', color: '#6A1B9A' }
 ];
@@ -183,28 +186,21 @@ window.BRANDS = [
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
 /* ===ADMIN:NAV=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.NAV = [
-  { label: 'Nước ép & dinh dưỡng', short: 'Nước ép', tiny: 'Nước ép', link: 'collections.html?cat=nuoc-ep', columns: [
-    { title: 'Dòng sản phẩm', links: [['Nước ép hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép lê & rễ cát cánh (Khoẻ Mạnh)', 'product.html?id=23660586997'], ['Nước ép mận, nho & táo (Tăng Cân)', 'product.html?id=25632276959'], ['Lotte Xanh táo & củ dền (6 tháng+)', 'product.html?id=41353214697']] },
-    { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'organic'] },
+  { label: 'Dành cho bé', short: 'Dành cho bé', tiny: 'Cho bé', link: 'collections.html?cat=nuoc-ep,sua,hong-sam,vitamin,tang-can,rong-bien', columns: [
+    { title: 'Danh mục cho bé', links: [['🧃 Nước ép & nước dinh dưỡng', 'collections.html?cat=nuoc-ep'], ['🥛 Sữa cho bé', 'collections.html?cat=sua'], ['🌿 Hồng sâm & đề kháng', 'collections.html?cat=hong-sam'], ['💊 Vitamin & canxi', 'collections.html?cat=vitamin'], ['🍯 Ăn ngon, tăng cân & tiêu hoá', 'collections.html?cat=tang-can'], ['🍙 Rong biển & ăn dặm', 'collections.html?cat=rong-bien']] },
+    { title: 'Mẹ hay chọn', links: [['Nước ép Lotte hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép Lotte Tăng Cân', 'product.html?id=25632276959'], ['Vitamin D3K2 Pure Vitality', 'product.html?id=42878618667'], ['Canxi Calciumore (váng sữa)', 'product.html?id=26060839019'], ['Hồng sâm ChuChu', 'product.html?id=22644617070'], ['Gạc hươu non Sumo', 'product.html?id=26156646705'], ['Rong biển Sung Gyung', 'product.html?id=41002695070']] },
+    { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'tieu-hoa', 'tri-nao'] },
     { title: 'Theo độ tuổi', ages: ['6-12m', '1-3y', '3-6y', '6-12y', '12-18y'] } ] },
-  { label: 'Sữa cho bé', short: 'Sữa cho bé', tiny: 'Sữa bé', link: 'collections.html?cat=sua', columns: [
-    { title: 'Sữa công thức', links: [['Biostime SN-2 Bio Plus (Úc)', 'product.html?id=19491505209'], ['Sữa dê Biostime (Úc)', 'product.html?id=19682441455'], ['Biostime Organic (Pháp)', 'product.html?id=20992159167'], ['Sữa dê Lotte Kid A+', 'product.html?id=13899935993']] },
-    { title: 'Sữa tươi', links: [['Norco nguyên kem nội địa Úc', 'product.html?id=26523206270']] },
-    { title: 'Theo độ tuổi', ages: ['0-6m', '6-12m', '1-3y', '3-6y', '6-12y'] } ] },
-  { label: 'Hồng sâm & đề kháng', short: 'Hồng sâm', tiny: 'Hồng sâm', link: 'collections.html?cat=hong-sam', columns: [
-    { title: 'Sản phẩm', links: [['Hồng sâm ChuChu – hỗ trợ ăn ngon, phục hồi sau ốm', 'product.html?id=22644617070'], ['Hồng sâm Rich Kid – trí não', 'product.html?id=27355720019'], ['Sâm Organic Pinkfong Kid Up', 'product.html?id=47357633686'], ['Gạc hươu non Sumo tăng cân', 'product.html?id=26156646705']] },
-    { title: 'Theo nhu cầu', needs: ['de-khang', 'phuc-hoi', 'tang-can', 'tri-nao'] },
-    { title: 'Theo độ tuổi', ages: ['1-3y', '3-6y', '6-12y', '12-18y'] } ] },
-  { label: 'Vitamin & canxi', short: 'Vitamin & canxi', tiny: 'Vitamin', link: 'collections.html?cat=vitamin', columns: [
-    { title: 'Sản phẩm', links: [['Vitamin D3K2 Pure Vitality 30ml', 'product.html?id=42878618667'], ['Canxi hữu cơ Calciumore (dạng váng sữa)', 'product.html?id=26060839019']] },
-    { title: 'Theo nhu cầu', needs: ['d3k2', 'canxi', 'tieu-hoa', 'tang-chieu-cao'] },
-    { title: 'Danh mục khác', links: [['Rong biển & ăn dặm', 'collections.html?cat=rong-bien'], ['Thực phẩm gia đình', 'collections.html?cat=thuc-pham'], ['Đồ ăn & ăn vặt', 'collections.html?cat=do-an'], ['Dành cho mẹ', 'collections.html?cat=cho-me']] } ] },
   { label: 'Dành cho mẹ', short: 'Dành cho mẹ', tiny: 'Cho mẹ', link: 'collections.html?cat=cho-me', columns: [
     { title: 'Chăm sóc da', links: [['Kem chống nắng Hiskin 5in1 SPF50+', 'product.html?id=27734205778'], ['Serum RVB LAB Hyalu C+ 30ml', 'product.html?id=24015142248'], ['Kem dưỡng RVB LAB Hyalu C+ 30ml', 'product.html?id=26800350417'], ['Mặt nạ trẻ hoá NMN Kousa', 'product.html?id=24015583018'], ['Mặt nạ thạch lô hội Cure', 'product.html?id=57413220644']] },
     { title: 'Bộ chăm sóc chuyên sâu', links: [['Combo dưỡng da Hyalu C+', 'product.html?id=26900366084'], ['Cặp Meso bạc RVB LAB', 'product.html?id=29006040615'], ['Bộ đôi Meso Retinol siêu vi', 'product.html?id=28806784125'], ['Combo Meso vàng siêu vi', 'product.html?id=24329101823'], ['Cặp tái tạo phục hồi da Dermo Ioniq', 'product.html?id=25678530796']] },
     { title: 'Sức khoẻ & cơ thể', links: [['Viên uống Pure NMN 12000mg+', 'product.html?id=24767149051'], ['Men vi sinh phụ khoa Arravite', 'product.html?id=28902157429'], ['Super Collagen Alpha 90 gói', 'product.html?id=48112514210'], ['Nghệ nano Curcumin 365 Plus', 'product.html?id=49061985399'], ['Thảm ngải cứu trị liệu', 'product.html?id=50002678694']] },
     { title: 'Tắm gội & làm đẹp', links: [['Sữa tắm dưỡng trắng Glutanex 300ml', 'product.html?id=24465090622'], ['Cặp dầu gội & xả Arganicare', 'product.html?id=27809051612'], ['Xịt phun sương Grace By Chera', 'product.html?id=51013054442'], ['Son filler RVB LAB Lip Explosion', 'product.html?id=57556697426'], ['Bột trắng răng Akiko Nhật Bản', 'product.html?id=56857599724']] } ] },
-  { label: 'Chọn theo tuổi', short: 'Theo tuổi', tiny: 'Theo tuổi', ages: true },
+  { label: 'Thời trang', short: 'Thời trang', tiny: 'Thời trang', link: 'collections.html?cat=thoi-trang', columns: [
+    { title: 'Đồ lót MaBelle', links: [['Quần lót su đúc kháng khuẩn MaBelle 6999', 'product.html?id=mabelle-6999'], ['Xem tất cả thời trang', 'collections.html?cat=thoi-trang']] } ] },
+  { label: 'Thực phẩm', short: 'Thực phẩm', tiny: 'Thực phẩm', link: 'collections.html?cat=thuc-pham,do-an', columns: [
+    { title: 'Thực phẩm gia đình', links: [['Táo đỏ Hoàng Gia Hotan 1kg', 'product.html?id=28467224687'], ['Granola Fuwa-Saku Nhật Bản', 'product.html?id=43532388498'], ['Ngũ cốc bắp thiên ma Kitea', 'product.html?id=ngu-coc-bap-thien-ma-kitea'], ['Miến gà sấy thăng hoa', 'product.html?id=mien-ga-cf']] },
+    { title: 'Đồ ăn & ăn vặt', links: [['Bò xuyên tiêu Chef Hải', 'product.html?id=bo-xuyen-tieu'], ['Lợn đen khói mơ Tây Bắc', 'product.html?id=lon-den-khoi-mo'], ['Cơm cháy phô mai & BBQ', 'product.html?id=com-chay-phomai'], ['Cơm cháy chà bông Nội Ơi', 'product.html?id=com-vang-noi-oi'], ['Muối xuyên tiêu Chef Hải', 'product.html?id=muoi-xuyen-tieu']] } ] },
   { label: 'Flash sale', short: 'Flash sale', tiny: 'Sale', link: 'collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot', hot: true },
   { label: 'Cẩm nang chăm con', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' }
 ];
@@ -2304,6 +2300,79 @@ window.PRODUCTS = [
     "usage": "Sau khi tắm, lau khô người, nhấn vòi lấy lượng vừa đủ thoa đều lên vùng da toàn thân, massage nhẹ cho thẩm thấu. Dùng hằng ngày; ban ngày ra nắng nên dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
     "seoTitle": "Serum body nâng tone AVCA Intense Brightening 250ml Hàn Quốc | Hương Chất Kids",
     "seoDesc": "AVCA Intense Brightening Body Tone-Up Serum 250ml: nâng tone ngay khi thoa, Niacinamide, Glutathione liposome, 8 loại Hyaluronic Acid, Ceramide – dưỡng sáng, cấp ẩm toàn thân. Hàng nội địa Hàn Quốc."
+  },
+  {
+    "id": "mabelle-6999",
+    "name": "Quần Lót Nữ Su Đúc Kháng Khuẩn MaBelle 6999 – Mỏng Nhẹ, Tàng Hình, Không Đường May",
+    "short": "Quần lót su đúc kháng khuẩn MaBelle 6999",
+    "brand": "mabelle",
+    "cat": "thoi-trang",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 118000,
+    "oldPrice": 118000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 200,
+    "priority": 5,
+    "shape": "box",
+    "color": "#E8C9B5",
+    "weight": "Size 45–65kg",
+    "origin": "Việt Nam",
+    "tags": [
+      "Mới",
+      "Cho mẹ"
+    ],
+    "image": "img/mabelle-6999.jpg",
+    "thumb": "img/thumb/mabelle-6999.jpg",
+    "images": [
+      "img/mabelle-6999.jpg",
+      "img/mabelle-6999-2.jpg",
+      "img/mabelle-6999-3.jpg",
+      "img/mabelle-6999-4.jpg",
+      "img/mabelle-6999-5.jpg",
+      "img/mabelle-6999-6.jpg",
+      "img/mabelle-6999-7.jpg",
+      "img/mabelle-6999-8.jpg",
+      "img/mabelle-6999-9.jpg",
+      "img/mabelle-6999-10.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 cái",
+        "price": 118000,
+        "oldPrice": 118000
+      },
+      {
+        "label": "Set 3 cái (túi)",
+        "price": 354000,
+        "oldPrice": 354000
+      },
+      {
+        "label": "Set 5 cái (hộp)",
+        "price": 590000,
+        "oldPrice": 590000
+      },
+      {
+        "label": "Set 8 cái (hộp)",
+        "price": 944000,
+        "oldPrice": 944000
+      }
+    ],
+    "desc": "Quần lót nữ su đúc MaBelle mã 6999, thiết kế liền mạch không đường may, mỏng nhẹ ôm sát như làn da thứ hai, mặc váy hay quần ôm không lộ viền. Theo nhà sản xuất: sợi vải mát lạnh, co giãn 4 chiều, đàn hồi tốt, giữ phom chuẩn; thiết kế chống tuột, chống bong tróc khi giặt và sử dụng lâu dài; thấm hút tốt, khử mùi, kháng khuẩn. Sản phẩm đã được kiểm định hàm lượng Formaldehyde và amin thơm (VNTEST), an toàn cho vùng da nhạy cảm. Size: 45kg – 65kg (vòng 3 khoảng 92 – 98cm mặc đẹp nhất). Bán lẻ 118.000đ/cái, set 3 cái đóng túi, set 5 và set 8 cái đóng hộp.",
+    "highlights": [
+      "Su đúc liền mạch, mỏng nhẹ, tàng hình, không hằn khi mặc váy, quần ôm",
+      "Sợi mát lạnh, co giãn 4 chiều, giữ phom, chống tuột",
+      "Thấm hút, khử mùi, kháng khuẩn – theo nhà sản xuất",
+      "Đã kiểm định Formaldehyde & amin thơm (VNTEST), an toàn cho da nhạy cảm",
+      "Size 45–65kg · set 3 cái (túi), set 5 / 8 cái (hộp)"
+    ],
+    "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, dùng nước giặt nhẹ, không ngâm thuốc tẩy, không vắt mạnh. Phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
+    "seoTitle": "Quần lót su đúc kháng khuẩn MaBelle 6999 – mỏng nhẹ, tàng hình | Hương Chất Kids",
+    "seoDesc": "Quần lót nữ su đúc MaBelle 6999: liền mạch không đường may, sợi mát lạnh, co giãn 4 chiều, kháng khuẩn, đã kiểm định Formaldehyde & amin thơm. Size 45–65kg, 118.000đ/cái, set 3/5/8 cái."
   },
   {
     "id": "24764883120",

@@ -442,7 +442,7 @@
 
   /* Thứ tự hiển thị mặc định: sản phẩm cho bé trước, sản phẩm cho mẹ xếp sau;
      trong mỗi nhóm thì hàng ưu tiên lên đầu, rồi tới hàng bán chạy, cuối cùng là hàng đăng sau. */
-  const isForMom = (p) => (p.cat === 'cho-me' ? 1 : 0);
+  const isForMom = (p) => (p.cat === 'cho-me' || p.cat === 'thoi-trang' ? 1 : 0);
   function rankDefault(a, b) {
     return isForMom(a) - isForMom(b)
       || (b.priority || 0) - (a.priority || 0)
@@ -549,7 +549,6 @@
           <div><h4>&nbsp;</h4><ul>${CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>
           <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
-        <li class="navbar__item"><a class="navbar__link navbar__link--about" href="gioi-thieu.html">Giới thiệu</a></li>
         ${(() => { const sk = suKienHien(); return sk ? `<li class="navbar__item"><a class="navbar__link navbar__link--sk" href="index.html?tab=${sk.id}">${sk.icon ? sk.icon + ' ' : ''}${esc(sk.nhan)}</a></li>` : ''; })()}
         <li class="navbar__item"><a class="navbar__link navbar__link--km" href="collections.html?km=1">Khuyến mãi</a></li>
         ${NAV.map(navItem).join('')}

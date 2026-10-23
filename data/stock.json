@@ -474,6 +474,15 @@
         "2 chai": true
       }
     },
-    "sp1792727819112": true
+    "sp1792727819112": true,
+    "mabelle-6999": {
+      "in": true,
+      "variants": {
+        "1 cái": true,
+        "Set 3 cái (túi)": true,
+        "Set 5 cái (hộp)": true,
+        "Set 8 cái (hộp)": true
+      }
+    }
   }
 }
