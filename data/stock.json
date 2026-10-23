@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-20T02:27:36.493Z",
+  "updatedAt": "2026-10-23T03:57:02.829Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -75,9 +75,9 @@
       "in": true,
       "variants": {
         "1 hộp 90 gói": true,
+        "2 hộp váng sữa": true,
         "1 hộp váng sữa canxi+1 d3k2 giảm 5%": true,
         "30 gói (không hộp)": true,
-        "2 hộp váng sữa": true,
         "3 hộp váng sữa": true,
         "4 hộp váng sữa": true
       }
@@ -196,7 +196,8 @@
       "in": true,
       "variants": {
         "1 hộp": true,
-        "2 hộp": true
+        "2 hộp": true,
+        "NMN Regene 1 hộp": true
       }
     },
     "50002678694": {
@@ -472,6 +473,7 @@
         "Chai 250ml": true,
         "2 chai": true
       }
-    }
+    },
+    "sp1792727819112": true
   }
 }
