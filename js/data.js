@@ -6197,7 +6197,9 @@ window.POSTS = [
 window.QUA_TANG = {
   "enabled": true,
   "ketHop": {
+    "hangMa": true,
     "quaMa": false,
+    "quaHang": true,
     "quaShip": true
   },
   "ten": "gói nước ép Lotte",
@@ -6305,12 +6307,12 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Xanh – Táo & Củ dền · 10 gói": 0,
-            "Hồng – Nho & Mận · 10 gói": 0,
-            "Cam – Lê & Hoa chuông · 10 gói": 0,
-            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
-            "Hồng – Nho & Mận · Thùng 30 gói": 1,
-            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
+            "Tăng cao (Xanh) · 10 gói": 0,
+            "Tăng cân (Hồng) · 10 gói": 0,
+            "Đề kháng (Cam) · 10 gói": 0,
+            "Tăng cao (Xanh) · Thùng 30 gói": 1,
+            "Tăng cân (Hồng) · Thùng 30 gói": 1,
+            "Đề kháng (Cam) · Thùng 30 gói": 1,
             "Mix vị · Thùng 30 gói": 1
           }
         },
@@ -6951,12 +6953,12 @@ window.QUA_TANG = {
         {
           "id": "22686115682",
           "bienThe": {
-            "Xanh – Táo & Củ dền · 10 gói": true,
-            "Hồng – Nho & Mận · 10 gói": true,
-            "Cam – Lê & Hoa chuông · 10 gói": true,
-            "Xanh – Táo & Củ dền · Thùng 30 gói": false,
-            "Hồng – Nho & Mận · Thùng 30 gói": false,
-            "Cam – Lê & Hoa chuông · Thùng 30 gói": false,
+            "Tăng cao (Xanh) · 10 gói": true,
+            "Tăng cân (Hồng) · 10 gói": true,
+            "Đề kháng (Cam) · 10 gói": true,
+            "Tăng cao (Xanh) · Thùng 30 gói": false,
+            "Tăng cân (Hồng) · Thùng 30 gói": false,
+            "Đề kháng (Cam) · Thùng 30 gói": false,
             "Mix vị · Thùng 30 gói": false
           }
         }
@@ -7303,12 +7305,12 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Xanh – Táo & Củ dền · 10 gói": 0,
-            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
-            "Hồng – Nho & Mận · 10 gói": 0,
-            "Hồng – Nho & Mận · Thùng 30 gói": 1,
-            "Cam – Lê & Hoa chuông · 10 gói": 0,
-            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
+            "Tăng cao (Xanh) · 10 gói": 0,
+            "Tăng cao (Xanh) · Thùng 30 gói": 1,
+            "Tăng cân (Hồng) · 10 gói": 0,
+            "Tăng cân (Hồng) · Thùng 30 gói": 1,
+            "Đề kháng (Cam) · 10 gói": 0,
+            "Đề kháng (Cam) · Thùng 30 gói": 1,
             "Mix vị · Thùng 30 gói": 1
           }
         },
@@ -7344,106 +7346,6 @@ window.QUA_TANG = {
           "gia": 775000
         }
       ]
-    },
-    {
-      "id": "ct-2410-binh-lotte",
-      "ten": "Quà độc quyền web · Mua 1 thùng nước dinh dưỡng Lotte tặng bình giữ nhiệt (50 suất)",
-      "moTa": "Mua 1 thùng nước dinh dưỡng Lotte tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
-      "lyDo": "Mua thùng nước dinh dưỡng Lotte",
-      "kieu": "soLuong",
-      "donVi": "thùng",
-      "bac": [
-        {
-          "muc": 1,
-          "soQua": 1
-        }
-      ],
-      "muc": 1,
-      "soQua": 1,
-      "batDau": "2026-10-24T00:00",
-      "ketThuc": "2026-12-31T23:59",
-      "tenQua": "bình giữ nhiệt Hương Chất Kids",
-      "gioiHan": 50,
-      "giuHang": true,
-      "quaTang": [
-        {
-          "ten": "Bình giữ nhiệt Hương Chất Kids (quà độc quyền web)",
-          "bat": true,
-          "gia": 250000
-        }
-      ],
-      "sanPhamChinh": [
-        {
-          "id": "22686115682",
-          "bat": true,
-          "heSo": {
-            "Xanh – Táo & Củ dền · 10 gói": 0,
-            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
-            "Hồng – Nho & Mận · 10 gói": 0,
-            "Hồng – Nho & Mận · Thùng 30 gói": 1,
-            "Cam – Lê & Hoa chuông · 10 gói": 0,
-            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
-            "Mix vị · Thùng 30 gói": 1
-          }
-        },
-        {
-          "id": "23660586997",
-          "bat": true,
-          "heSo": {
-            "Hộp 10 gói": 0,
-            "Thùng 30 gói (3 hộp)": 1
-          }
-        },
-        {
-          "id": "41353214697",
-          "bat": true,
-          "heSo": {
-            "Hộp 10 gói": 0,
-            "Thùng 30 gói (3 hộp)": 1
-          }
-        },
-        {
-          "id": "25632276959",
-          "bat": true,
-          "heSo": {
-            "Hộp 10 gói": 0,
-            "Thùng 30 gói (3 hộp)": 1
-          }
-        }
-      ]
-    },
-    {
-      "id": "ct-2410-binh-2tr",
-      "ten": "Quà độc quyền web · Hoá đơn từ 2 triệu tặng bình giữ nhiệt (50 suất)",
-      "moTa": "Hoá đơn từ 2.000.000đ (không tính Canxi váng sữa) tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
-      "lyDo": "Hoá đơn từ 2.000.000đ",
-      "kieu": "tien",
-      "tatCaSP": true,
-      "truSP": [
-        "26060839019",
-        "combo-vangsua-d3k2"
-      ],
-      "bac": [
-        {
-          "muc": 2000000,
-          "soQua": 1
-        }
-      ],
-      "muc": 2000000,
-      "soQua": 1,
-      "batDau": "2026-10-24T00:00",
-      "ketThuc": "2026-12-31T23:59",
-      "tenQua": "bình giữ nhiệt Hương Chất Kids",
-      "gioiHan": 50,
-      "giuHang": true,
-      "quaTang": [
-        {
-          "ten": "Bình giữ nhiệt Hương Chất Kids (quà độc quyền web)",
-          "bat": true,
-          "gia": 250000
-        }
-      ],
-      "sanPhamChinh": []
     }
   ]
 };
