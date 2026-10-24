@@ -1165,7 +1165,7 @@ function ddSauDangNhap_(sdt) {
 }
 
 /* Nhập bù dữ liệu bị mất (chỉ gọi nội bộ trên VPS: /noi-bo/chay?ham=nhapBuDuLieu_). Không gửi mail / Zalo. Chạy lại an toàn:
-   d.don: [{ ma, luc, ten, sdt, diaChi, sp, tienHang, giam, ship, tong, thanhToan, email }] – mã đơn đã có thì bỏ qua
+   d.don: [{ ma, luc, ten, sdt, diaChi, sp, tienHang, giam, ship, tong, thanhToan, email, trangThai (vd 'Đã huỷ'), ghiChu }] – mã đơn đã có thì bỏ qua
    d.khach: [{ sdt, ten, tinh, xa, diaChi, email, gioiTinh, diem, lyDo }] – khách đã có hồ sơ thì không tạo lại; điểm cộng 1 lần (khoá BU:sdt)
    d.diemDanh: { sdt: [ 'yyyy-MM-dd', … ] } – đánh dấu đã điểm danh (0 điểm, chuỗi tính như thường), ngày đã có thì bỏ qua */
 function nhapBuDuLieu_(d) {
@@ -1177,7 +1177,7 @@ function nhapBuDuLieu_(d) {
       if (!ma || !sdtHopLe(sdt)) { kq.don.push(ma + ': thiếu mã / SĐT'); return; }
       if (donDaNhan_(ma)) { kq.don.push(ma + ': đã có'); return; }
       sheetDon().appendRow([new Date(o.luc), ma, 'Đặt hàng', o.ten || '', "'" + sdt, o.diaChi || '', o.sp || '', o.tienHang || 0, o.giam || 0, o.ship || 0, o.tong || 0,
-        o.thanhToan || 'COD', '', 'Nhập bù (mất dữ liệu 20–24/10)', o.email || '', '', 0, '', '']);
+        o.thanhToan || 'COD', '', 'Nhập bù (mất dữ liệu 20–24/10)' + (o.ghiChu ? ' – ' + o.ghiChu : ''), o.email || '', '', 0, '', o.trangThai || '']);
       capNhatKhachHang(sdt, { name: o.ten, phone: sdt, address: o.diaChi, email: o.email }, {});
       kq.don.push(ma + ': đã thêm');
     });
