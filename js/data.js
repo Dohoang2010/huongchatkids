@@ -529,7 +529,7 @@ window.PRODUCTS = [
     "priority": 3,
     "shape": "box",
     "color": "#E60012",
-    "weight": "Gói 100ml",
+    "weight": "Gói 80ml",
     "origin": "Hàn Quốc",
     "tags": [
       "Sản phẩm hot",
