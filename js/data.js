@@ -249,7 +249,8 @@ window.NAV = [
     { title: 'Thực phẩm gia đình', links: [['Táo đỏ Hoàng Gia Hotan 1kg', 'product.html?id=28467224687'], ['Granola Fuwa-Saku Nhật Bản', 'product.html?id=43532388498'], ['Ngũ cốc bắp thiên ma Kitea', 'product.html?id=ngu-coc-bap-thien-ma-kitea'], ['Miến gà sấy thăng hoa', 'product.html?id=mien-ga-cf']] },
     { title: 'Đồ ăn & ăn vặt', links: [['Bò xuyên tiêu Chef Hải', 'product.html?id=bo-xuyen-tieu'], ['Lợn đen khói mơ Tây Bắc', 'product.html?id=lon-den-khoi-mo'], ['Cơm cháy phô mai & BBQ', 'product.html?id=com-chay-phomai'], ['Cơm cháy chà bông Nội Ơi', 'product.html?id=com-vang-noi-oi'], ['Muối xuyên tiêu Chef Hải', 'product.html?id=muoi-xuyen-tieu']] } ] },
   { label: 'Flash sale', short: 'Flash sale', tiny: 'Sale', link: 'collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot', hot: true },
-  { label: 'Cẩm nang chăm con', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' }
+  { label: 'Cẩm nang chăm con', short: 'Cẩm nang', tiny: 'Cẩm nang', link: 'blog.html' },
+  { label: 'Đồ lưu niệm Hương Chất Kids', short: 'Lưu niệm', tiny: 'Lưu niệm', link: 'collections.html?cat=luu-niem' }
 ];
 /* ===/ADMIN:NAV=== */
 
