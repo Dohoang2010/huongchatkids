@@ -68,6 +68,7 @@ window.SITE = {
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
+      'binh-giu-nhiet-hck': 450,      // bình giữ nhiệt có hộp
       'lotte-hau-an': 3300,      // Lotte Háu Ăn – thùng 24 hộp 125ml
       'mabelle-6999': 60,      // quần lót MaBelle 1 cái
       'mabelle-5192': 120,      // áo lót MaBelle 1 chiếc
@@ -4618,6 +4619,50 @@ window.PRODUCTS = [
     "usage": "Mở nắp, lấy lượng vừa dùng rồi đậy kín. Bảo quản nơi khô ráo, thoáng mát. Không dùng khi quá hạn hoặc sản phẩm có mùi lạ, chảy nước, đổi màu.",
     "image": "img/muoi-xuyen-tieu.jpg",
     "thumb": "img/thumb/muoi-xuyen-tieu.jpg"
+  },
+  {
+    "id": "binh-giu-nhiet-hck",
+    "name": "Bình Giữ Nhiệt Hương Chất Kids – Quà Độc Quyền Website, Nắp Bật Có Vòi Hút",
+    "short": "Bình giữ nhiệt Hương Chất Kids (độc quyền web)",
+    "brand": "khac",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me"
+    ],
+    "price": 199000,
+    "oldPrice": 199000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 4,
+    "shape": "bottle",
+    "color": "#F3EAD8",
+    "weight": "Bình giữ nhiệt",
+    "origin": "",
+    "tags": [
+      "Mới"
+    ],
+    "family": true,
+    "image": "img/binh-giu-nhiet-hck.jpg",
+    "thumb": "img/thumb/binh-giu-nhiet-hck.jpg",
+    "images": [
+      "img/binh-giu-nhiet-hck.jpg",
+      "img/binh-giu-nhiet-hck-2.jpg",
+      "img/binh-giu-nhiet-hck-3.jpg",
+      "img/binh-giu-nhiet-hck-4.jpg"
+    ],
+    "desc": "Bình giữ nhiệt Hương Chất Kids – sản phẩm độc quyền, chỉ bán trên huongchatkids.vn. Thân bình màu kem, in logo Hương Chất Kids và cả nhà thú cưng đáng yêu, đáy viền vàng. Nắp bật, vòi hút gập gọn, tiện cho mẹ mang đi làm, bé mang đi học. Ngoài mua lẻ 199.000đ, bình còn là quà tặng khi mẹ mua 1 thùng nước dinh dưỡng Lotte hoặc hoá đơn từ 2 triệu, không tính Canxi váng sữa (theo chương trình, số suất có hạn).",
+    "highlights": [
+      "Sản phẩm độc quyền – chỉ có trên huongchatkids.vn",
+      "In logo Hương Chất Kids và nhân vật thú cưng ngộ nghĩnh",
+      "Nắp bật, vòi hút gập gọn",
+      "Tiện mang đi làm, đi học, đi chơi"
+    ],
+    "usage": "Rửa sạch bình và nắp trước lần dùng đầu. Rửa tay bằng nước ấm, không ngâm lâu, không dùng máy rửa bát, không cho vào lò vi sóng. Không đựng đồ uống có ga.",
+    "seoTitle": "Bình giữ nhiệt Hương Chất Kids – quà độc quyền website | Hương Chất Kids",
+    "seoDesc": "Bình giữ nhiệt Hương Chất Kids in logo và nhân vật thú cưng, nắp bật vòi hút – độc quyền huongchatkids.vn, giá 199.000đ."
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */
@@ -4711,12 +4756,12 @@ window.BANNERS = [
   {
     "hienTu": "2026-10-24T00:00:00+07:00",
     "anh": {
-      "pc": "img/banner/binh-giu-nhiet-pc.jpg",
-      "mb": "img/banner/binh-giu-nhiet-mb.jpg"
+      "pc": "img/banner/binh-giu-nhiet-v3-pc.jpg",
+      "mb": "img/banner/binh-giu-nhiet-v3-mb.jpg"
     },
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
-    "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 1 thùng Lotte hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên"
+    "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 1 thùng nước dinh dưỡng Lotte hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên"
   },
   {
     "title": "Canxi Calciumore\nmua 2 tặng D3K2",
@@ -7299,9 +7344,9 @@ window.QUA_TANG = {
     },
     {
       "id": "ct-2410-binh-lotte",
-      "ten": "Quà độc quyền web · Mua 1 thùng Lotte tặng bình giữ nhiệt (50 suất)",
-      "moTa": "Mua 1 thùng Lotte (nước ép, Lotte Háu Ăn, sữa xanh) tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
-      "lyDo": "Mua thùng Lotte",
+      "ten": "Quà độc quyền web · Mua 1 thùng nước dinh dưỡng Lotte tặng bình giữ nhiệt (50 suất)",
+      "moTa": "Mua 1 thùng nước dinh dưỡng Lotte tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
+      "lyDo": "Mua thùng nước dinh dưỡng Lotte",
       "kieu": "soLuong",
       "donVi": "thùng",
       "bac": [
@@ -7360,22 +7405,6 @@ window.QUA_TANG = {
           "heSo": {
             "Hộp 10 gói": 0,
             "Thùng 30 gói (3 hộp)": 1
-          }
-        },
-        {
-          "id": "lotte-hau-an",
-          "bat": true,
-          "heSo": {
-            "Date 12/2026 · Mua 1 tặng 1 (2 thùng)": 2,
-            "Date 03/2027 · Thùng 24 hộp": 1
-          }
-        },
-        {
-          "id": "suaxanh-lotte",
-          "bat": true,
-          "heSo": {
-            "1 thùng 24 hộp": 1,
-            "2 thùng 48 hộp": 2
           }
         }
       ]
