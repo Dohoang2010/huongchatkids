@@ -38,7 +38,7 @@ window.SITE = {
   shipping: {
     hang: 'J&T Express',
     thung: [
-      { ten: 'Lotte', ids: ['22686115682', '23660586997', '41353214697', '25632276959', 'combo-lottexanh-d3k2', 'suaxanh-lotte'], goiMotThung: 30, gia: [30000, 60000, 130000, 130000] },
+      { ten: 'Lotte', ids: ['22686115682', '23660586997', '41353214697', '25632276959', 'combo-lottexanh-d3k2', 'suaxanh-lotte', 'lotte-hau-an'], heSo: { 'Date 12/2026 · Mua 1 tặng 1 (2 thùng)': 2, 'Date 03/2027 · Thùng 24 hộp': 1 }, goiMotThung: 30, gia: [30000, 60000, 130000, 130000] },
       { ten: 'Gạc hươu non', ids: ['26156646705'], goiMotThung: 40, gia: [50000, 80000, 130000] },
       { ten: 'Gạc canxi', ids: ['gac-canxi-sumo'], heSo: { 'Hộp 10 gói': 1 / 3, 'Thùng 30 gói': 1, 'Thùng 40 gói': 1 }, gia: [50000, 80000, 130000] },
       { ten: 'Hồng sâm ChuChu', ids: ['22644617070'], goiMotThung: 40, gia: [50000, 80000, 130000] },
@@ -68,6 +68,7 @@ window.SITE = {
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
+      'lotte-hau-an': 3300,      // Lotte Háu Ăn – thùng 24 hộp 125ml
       'mabelle-6999': 60,      // quần lót MaBelle 1 cái
       'mabelle-5192': 120,      // áo lót MaBelle 1 chiếc
       'mabelle-5790': 120,      // áo lót MaBelle 1 chiếc
@@ -1597,6 +1598,69 @@ window.PRODUCTS = [
       "Đã công bố ATTP tại Việt Nam (xem ảnh cuối)"
     ],
     "usage": "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay."
+  },
+  {
+    "id": "lotte-hau-an",
+    "name": "Lotte Háu Ăn – Nước Uống Lợi Khuẩn Bareun Mokjang Lactic Hàn Quốc, Thùng 24 Hộp 125ml",
+    "short": "Lotte Háu Ăn – nước uống lợi khuẩn Bareun Mokjang (thùng 24 hộp)",
+    "brand": "lotte",
+    "cat": "sua",
+    "ages": [
+      "1-3y",
+      "3-6y",
+      "6-12y",
+      "12-18y"
+    ],
+    "needs": [
+      "tieu-hoa",
+      "de-khang",
+      "tang-can"
+    ],
+    "price": 635000,
+    "oldPrice": 635000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 100,
+    "priority": 5,
+    "shape": "box",
+    "color": "#2E7BD6",
+    "weight": "Thùng 24 hộp × 125ml",
+    "origin": "Hàn Quốc",
+    "tags": [
+      "Mới",
+      "Sản phẩm hot"
+    ],
+    "image": "img/lotte-hau-an.jpg",
+    "thumb": "img/thumb/lotte-hau-an.jpg",
+    "images": [
+      "img/lotte-hau-an.jpg",
+      "img/lotte-hau-an-2.jpg",
+      "img/lotte-hau-an-3.jpg"
+    ],
+    "variants": [
+      {
+        "label": "Date 12/2026 · Mua 1 tặng 1 (2 thùng)",
+        "price": 635000,
+        "oldPrice": 635000
+      },
+      {
+        "label": "Date 03/2027 · Thùng 24 hộp",
+        "price": 775000,
+        "oldPrice": 775000
+      }
+    ],
+    "desc": "Lotte Háu Ăn (Bareun Mokjang Lactic) là nước uống lợi khuẩn của Pasteur – Tập đoàn Lotte Hàn Quốc, hộp 125ml, thùng 24 hộp, dùng cho bé từ 1 tuổi. Theo nhà sản xuất: sản phẩm chứa 4,5% dịch nuôi cấy lợi khuẩn lên men từ sữa nguyên liệu Bareun Mokjang; Isomalto-oligosaccharide – chất xơ hoà tan, là nguồn thức ăn cho lợi khuẩn đường ruột; bổ sung 7 loại vitamin A, B2, B6, C, E, Niacin và axit folic. Vị sữa chua ngọt dịu, hộp nhỏ gọn tiện mang đi học, đi chơi. Bảo quản ở nhiệt độ phòng, hạn dùng 12 tháng kể từ ngày sản xuất (in trên bao bì). Phân loại: lô date 12/2026 mua 1 tặng 1 (nhận 2 thùng) giá 635.000đ; lô date 03/2027 giá 775.000đ/thùng. Sản phẩm không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.",
+    "highlights": [
+      "4,5% dịch nuôi cấy lợi khuẩn lên men từ sữa – theo nhà sản xuất",
+      "Isomalto-oligosaccharide (chất xơ hoà tan) – thức ăn cho lợi khuẩn đường ruột",
+      "Bổ sung 7 loại vitamin A, B2, B6, C, E, Niacin, axit folic",
+      "Dùng cho bé từ 1 tuổi · hộp 125ml, thùng 24 hộp",
+      "Date 12/2026: mua 1 tặng 1 (2 thùng) 635.000đ · Date 03/2027: 775.000đ/thùng"
+    ],
+    "usage": "Lắc nhẹ trước khi uống. Bé từ 1 tuổi dùng 1 – 2 hộp mỗi ngày, ngon hơn khi uống lạnh. Bảo quản nơi khô mát, tránh ánh nắng; hộp đã mở nên dùng hết trong ngày. Dùng theo hướng dẫn của nhà sản xuất.",
+    "seoTitle": "Lotte Háu Ăn – nước uống lợi khuẩn Bareun Mokjang Hàn Quốc thùng 24 hộp | Hương Chất Kids",
+    "seoDesc": "Lotte Háu Ăn Bareun Mokjang Lactic: 4,5% dịch nuôi cấy lợi khuẩn, chất xơ Isomalto-oligosaccharide, 7 vitamin, cho bé từ 1 tuổi. Thùng 24 hộp 125ml, date 12/2026 mua 1 tặng 1."
   },
   {
     "id": "43532388498",
