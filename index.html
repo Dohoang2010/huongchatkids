@@ -12,7 +12,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261023j">
+  <link rel="stylesheet" href="css/style.css?v=20261024q">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -228,7 +228,18 @@ TỰ ÁP</i></a>`; }
   $('.carousel__arrow--prev').innerHTML = I.chevronL; $('.carousel__arrow--next').innerHTML = I.chevronR;
   let cur = 0, timer; const n = BANNERS.length;
   $('#carouselDots').innerHTML = BANNERS.map((_, i) => `<button type="button" data-dot="${i}" aria-label="Slide ${i + 1}"></button>`).join('');
-  const go = (i) => { cur = (i + n) % n; $('#carouselTrack').style.transform = `translateX(-${cur * 100}%)`; $$('[data-dot]').forEach((d, k) => d.classList.toggle('is-active', k === cur)); };
+  /* Xoay vòng liền mạch: thêm bản sao banner cuối ở đầu và banner đầu ở cuối; lướt sang bản sao rồi nhảy ngầm về banner thật (không tua ngược qua cả dãy) */
+  const track = $('#carouselTrack'); let vt = 0;
+  if (n > 1) {
+    const sao = (el) => { const c = el.cloneNode(true); c.setAttribute('aria-hidden', 'true'); c.removeAttribute('data-dung-san'); c.querySelectorAll('a, button').forEach((x) => x.setAttribute('tabindex', '-1')); if (c.matches('a')) c.setAttribute('tabindex', '-1'); return c; };
+    const ds = [...track.children]; track.prepend(sao(ds[ds.length - 1])); track.append(sao(ds[0])); vt = 1;
+    track.style.transition = 'none'; track.style.transform = 'translateX(-100%)'; void track.offsetWidth; track.style.transition = '';
+  }
+  let hen; const veThat = () => { clearTimeout(hen); const dich = vt === 0 ? n : vt === n + 1 ? 1 : 0; if (!dich) return;
+    vt = dich; track.style.transition = 'none'; track.style.transform = `translateX(-${vt * 100}%)`; void track.offsetWidth; track.style.transition = ''; };
+  track.addEventListener('transitionend', (e) => { if (e.target === track) veThat(); });
+  const go = (i) => { if (n < 2) return; veThat(); cur = (i + n) % n; vt = i < 0 ? 0 : i >= n ? n + 1 : i + 1;
+    track.style.transform = `translateX(-${vt * 100}%)`; hen = setTimeout(veThat, 900); $$('[data-dot]').forEach((d, k) => d.classList.toggle('is-active', k === cur)); };
   const auto = () => { clearInterval(timer); timer = setInterval(() => { if (!document.hidden && !$('#carousel').matches(':hover')) go(cur + 1); }, 6000); };
   $('#carousel').addEventListener('click', (e) => { const s = e.target.closest('[data-slide]'); const d = e.target.closest('[data-dot]'); if (s) { go(cur + Number(s.dataset.slide)); auto(); } if (d) { go(Number(d.dataset.dot)); auto(); } });
   let sx = 0; $('#carousel').addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true }); $('#carousel').addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) { go(cur + (dx < 0 ? 1 : -1)); auto(); } });

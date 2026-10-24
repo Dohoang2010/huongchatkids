@@ -343,7 +343,7 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 .hero__grid { display: grid; gap: 12px; }
 @media (min-width: 992px) { .hero__grid { grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; } }
 .carousel { position: relative; border-radius: var(--radius); overflow: hidden; background: var(--bg-gray); }
-.carousel__track { display: flex; transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
+.carousel__track { display: flex; transition: transform .7s cubic-bezier(.65, 0, .35, 1); will-change: transform; }
 .slide { flex: 0 0 100%; min-height: 260px; padding: 28px 22px; display: flex; flex-direction: column; justify-content: center; position: relative; color: #fff; overflow: hidden; }
 @media (min-width: 768px) { .slide { min-height: 380px; padding: 48px 56px; } }
 .slide--pink { background: linear-gradient(120deg, #F0537A 0%, #FF8DA8 60%, #FFC1D1 100%); }
