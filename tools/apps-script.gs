@@ -1175,7 +1175,11 @@ function nhapBuDuLieu_(d) {
     (d.don || []).forEach(function (o) {
       var ma = String(o.ma || ''), sdt = chuanSdt(o.sdt);
       if (!ma || !sdtHopLe(sdt)) { kq.don.push(ma + ': thiếu mã / SĐT'); return; }
-      if (donDaNhan_(ma)) { kq.don.push(ma + ': đã có'); return; }
+      if (donDaNhan_(ma)) {   // đơn đã có: chỉ cập nhật trạng thái nếu được giao (vd Đã huỷ)
+        if (o.trangThai) { var sd = sheetDon(), v = sd.getRange(2, 2, sd.getLastRow() - 1, 1).getValues();
+          for (var i = v.length - 1; i >= 0; i--) if (String(v[i][0]) === ma) { sd.getRange(i + 2, 19).setValue(o.trangThai); break; } }
+        kq.don.push(ma + ': đã có' + (o.trangThai ? ', trạng thái → ' + o.trangThai : '')); return;
+      }
       sheetDon().appendRow([new Date(o.luc), ma, 'Đặt hàng', o.ten || '', "'" + sdt, o.diaChi || '', o.sp || '', o.tienHang || 0, o.giam || 0, o.ship || 0, o.tong || 0,
         o.thanhToan || 'COD', '', 'Nhập bù (mất dữ liệu 20–24/10)' + (o.ghiChu ? ' – ' + o.ghiChu : ''), o.email || '', '', 0, '', o.trangThai || '']);
       capNhatKhachHang(sdt, { name: o.ten, phone: sdt, address: o.diaChi, email: o.email }, {});
