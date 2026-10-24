@@ -294,3 +294,22 @@ test('quà giới hạn số suất: đơn kèm quà giữ suất, hết suất 
   assert.strictEqual((await m2.get('action=giuSuatQua&ct=ct-thu-binh&ma=HCKA2')).het, true, 'hết suất');
   assert.strictEqual((await m2.get('action=giuSuatQua&ct=ct-khac&ma=HCKA3')).het, false, 'chương trình khác không giới hạn');
 });
+
+test('nhập bù dữ liệu: thêm đơn + khách + điểm + điểm danh, chạy lại không nhân đôi, khách đã có không tạo lại', async () => {
+  const m = taoMay();
+  await datDon(m, SDT, { code: 'HCKCO00001' });   // khách SDT đã có hồ sơ
+  const d = { don: [{ ma: 'HCKBU00001', luc: '2026-10-20T09:09:00+07:00', ten: 'Mẹ Bù', sdt: SDT2, diaChi: '1 Trần Phú, Hà Đông', sp: 'Kem × 1', tienHang: 695000, ship: 30000, tong: 725000 }],
+    khach: [{ sdt: '0898788098', ten: 'Khách Bù', tinh: 'Hà Tĩnh', xa: 'Phường Thành Sen', diaChi: '173 Nguyễn Công Trứ', gioiTinh: 'Nữ', diem: 70200 }, { sdt: SDT, ten: 'Tên khác', diem: 70200 }],
+    diemDanh: { '0898788098': ['2026-10-20', '2026-10-21', '2026-10-22'] } };
+  const k1 = await m.bc.goiHam('nhapBuDuLieu_', [d]);
+  assert.deepStrictEqual(k1.don, ['HCKBU00001: đã thêm']);
+  assert.deepStrictEqual(k1.khach, ['0898788098: đã thêm', SDT + ': đã có']);
+  assert.ok(/\+70200/.test(k1.diem[0]) && /\+70200/.test(k1.diem[1]));
+  assert.deepStrictEqual(k1.diemDanh.map((x) => x.split(': ')[1]), ['chuỗi 1', 'chuỗi 2', 'chuỗi 3']);
+  const k2 = await m.bc.goiHam('nhapBuDuLieu_', [d]);
+  assert.deepStrictEqual(k2.don, ['HCKBU00001: đã có']);
+  assert.ok(k2.diem.every((x) => /đã cộng trước đó/.test(x)) && k2.diemDanh.every((x) => /đã có/.test(x)));
+  assert.strictEqual(m.trang('Đơn hàng').getDataRange().getValues().filter((r) => r[1] === 'HCKBU00001').length, 1);
+  assert.strictEqual(m.trang('Khách hàng').getDataRange().getValues().find((r) => String(r[0]).endsWith('898788098'))[1], 'Khách Bù');
+  assert.strictEqual(m.daGui.filter((h) => h.loai === 'mail').length, 0 + m.daGui.filter((h) => h.loai === 'mail' && !/HCKBU|Khách Bù/.test(JSON.stringify(h))).length, 'không gửi mail cho phần nhập bù');
+});

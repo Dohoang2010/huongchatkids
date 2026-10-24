@@ -1164,6 +1164,45 @@ function ddSauDangNhap_(sdt) {
   return r;
 }
 
+/* Nhập bù dữ liệu bị mất (chỉ gọi nội bộ trên VPS: /noi-bo/chay?ham=nhapBuDuLieu_). Không gửi mail / Zalo. Chạy lại an toàn:
+   d.don: [{ ma, luc, ten, sdt, diaChi, sp, tienHang, giam, ship, tong, thanhToan, email }] – mã đơn đã có thì bỏ qua
+   d.khach: [{ sdt, ten, tinh, xa, diaChi, email, gioiTinh, diem, lyDo }] – khách đã có hồ sơ thì không tạo lại; điểm cộng 1 lần (khoá BU:sdt)
+   d.diemDanh: { sdt: [ 'yyyy-MM-dd', … ] } – đánh dấu đã điểm danh (0 điểm, chuỗi tính như thường), ngày đã có thì bỏ qua */
+function nhapBuDuLieu_(d) {
+  d = d || {};
+  return voiKhoa(function () {
+    var kq = { don: [], khach: [], diem: [], diemDanh: [] };
+    (d.don || []).forEach(function (o) {
+      var ma = String(o.ma || ''), sdt = chuanSdt(o.sdt);
+      if (!ma || !sdtHopLe(sdt)) { kq.don.push(ma + ': thiếu mã / SĐT'); return; }
+      if (donDaNhan_(ma)) { kq.don.push(ma + ': đã có'); return; }
+      sheetDon().appendRow([new Date(o.luc), ma, 'Đặt hàng', o.ten || '', "'" + sdt, o.diaChi || '', o.sp || '', o.tienHang || 0, o.giam || 0, o.ship || 0, o.tong || 0,
+        o.thanhToan || 'COD', '', 'Nhập bù (mất dữ liệu 20–24/10)', o.email || '', '', 0, '', '']);
+      capNhatKhachHang(sdt, { name: o.ten, phone: sdt, address: o.diaChi, email: o.email }, {});
+      kq.don.push(ma + ': đã thêm');
+    });
+    (d.khach || []).forEach(function (k) {
+      var sdt = chuanSdt(k.sdt); if (!sdtHopLe(sdt)) { kq.khach.push(k.sdt + ': SĐT sai'); return; }
+      var c = docKH(sdt);
+      if (c.dong || c.kh.ten) kq.khach.push(sdt + ': đã có');
+      else { capNhatKhachHang(sdt, { name: k.ten, phone: sdt, tinh: k.tinh, xa: k.xa, diaChi: k.diaChi, email: emailHopLe(k.email) ? k.email : '', gioiTinh: k.gioiTinh }, {}); kq.khach.push(sdt + ': đã thêm'); }
+      if (k.diem) { var w = ghiDiem(sdt, 'ADJUSTMENT', k.diem, 'ADMIN', 'Nhập bù', k.lyDo || 'Bù điểm do mất dữ liệu', 'Nhập bù', 'BU:' + sdt); kq.diem.push(sdt + ': ' + (w.trung ? 'đã cộng trước đó' : w.ok ? '+' + k.diem + ' → ' + w.soDu : w.msg)); }
+    });
+    Object.keys(d.diemDanh || {}).forEach(function (so) {
+      var sdt = chuanSdt(so); if (!sdtHopLe(sdt)) return;
+      (d.diemDanh[so] || []).slice().sort().forEach(function (ngay) {
+        var daDD = ngayDaDD_(docDD0_(), sdt, ngay.slice(0, 7));
+        if (daDD[ngay]) { kq.diemDanh.push(sdt + ' ' + ngay + ': đã có'); return; }
+        var chuoi = chuoiDen_(daDD, congNgay_(ngay, -1)) + 1;
+        sheetDDanh_().appendRow(["'" + ngay, "'" + sdt, new Date(ngay + 'T09:00:00+07:00'), 'Nhập bù', chuoi, 0, '', '', 'DD:' + sdt + ':' + ngay]);
+        kq.diemDanh.push(sdt + ' ' + ngay + ': chuỗi ' + chuoi);
+      });
+    });
+    ghiNhatKy('Nhập bù', 'hệ thống', 'Đơn: ' + kq.don.join('; ') + ' | Khách: ' + kq.khach.join('; ') + ' | Điểm: ' + kq.diem.join('; ') + ' | Điểm danh: ' + kq.diemDanh.length + ' ngày');
+    return kq;
+  });
+}
+
 /* ===================== NGÀY LỄ (20/10 …) =====================
    Mỗi ngày lễ: quà điểm khi đăng ký / đăng nhập trong ngày (1 lần / khách), điểm danh ngày đó được số điểm riêng,
    và email chúc mừng gửi tự động đúng giờ tới mọi khách đã mua hàng có email (1 lượt duy nhất).
