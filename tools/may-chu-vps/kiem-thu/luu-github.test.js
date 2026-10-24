@@ -2,6 +2,7 @@
 /* Kiểm thử "trang quản trị lưu qua máy chủ" (src/luu-github.js): kiểm quyền theo khối dữ liệu, chặn sửa mã web, chặn tệp lạ.
    GitHub được giả lập (không gọi mạng thật, không đụng repo thật). */
 process.env.TZ = 'Asia/Ho_Chi_Minh';
+process.env.LUU_VPS = '0';   // bài này thử chế độ lưu GitHub – trên VPS (có thư mục web là repo git) nếu không đặt sẽ tự chuyển sang chế độ lưu thẳng VPS và đọc tệp thật
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');
