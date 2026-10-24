@@ -2849,4 +2849,5 @@ body[data-dm="khuyen-mai"] .dm-hero__anh img { max-width: 92px; border-width: 3p
 @keyframes slVaoTrai { from { transform: translateX(-100%); } to { transform: none; } }
 @keyframes slRaTrai { from { transform: none; filter: brightness(1); } to { transform: translateX(-25%); filter: brightness(.75); } }
 @keyframes slRaPhai { from { transform: none; filter: brightness(1); } to { transform: translateX(25%); filter: brightness(.75); } }
-@media (prefers-reduced-motion: reduce) { .carousel__track.slide-in > .slide.is-vao, .carousel__track.slide-in > .slide.is-ra { animation-duration: .01s; } }
+/* Banner luôn lướt chậm kể cả khi máy bật "giảm chuyển động" (chủ shop yêu cầu 24/10/2026) – thắng luật tắt hiệu ứng chung ở trên */
+@media (prefers-reduced-motion: reduce) { .carousel__track.slide-in > .slide.is-vao, .carousel__track.slide-in > .slide.is-ra { animation-duration: 2s !important; animation-iteration-count: 1 !important; } }
