@@ -280,3 +280,14 @@ test('cháy hàng: không thêm được vào giỏ (cả sản phẩm hết, ho
   assert.strictEqual(MC.Cart.add(p.id, 1, 1), false, 'cả sản phẩm cháy hàng');
   assert.strictEqual(MC.Cart.items().length, 1);
 });
+
+/* ---------- Gợi ý bậc quà: không gợi ý quà kém giá trị hơn quà đang được (24/10/2026) ---------- */
+test('gợi ý quà: bỏ gợi ý chương trình có quà rẻ hơn quà khách đang được', () => {
+  const ct = (id, gia, bac) => ({ id, ten: id, batDau: '2026-11-01T00:00', ketThuc: '2026-11-30T23:59', kieu: 'soLuong', donVi: 'hộp', tenQua: 'quà ' + id,
+    bac, sanPhamChinh: [{ id: KHAC, bat: true }], quaTang: [{ ten: 'Quà ' + id, bat: true, gia }] });
+  const { W } = taoWeb({ gio: gio('10:00'), truocApp: (w) => { w.SU_KIEN = null; w.QUA_TANG = Object.assign({}, w.QUA_TANG, { chuongTrinh: [ct('re', 100000, [{ muc: 2, soQua: 1 }]), ct('dat', 700000, [{ muc: 1, soQua: 1 }, { muc: 2, soQua: 2 }])] }); } });
+  const g = W.MC.giftFor([dong(W, KHAC, 1, 0)], {});
+  assert.strictEqual(g.chuongTrinh, 'dat');
+  assert.ok(/2 quà dat/.test(g.goiY), 'gợi ý bậc kế của chương trình đang thắng: ' + g.goiY);
+  assert.ok(!/quà re/.test(g.goiY), 'không gợi ý quà rẻ hơn');
+});

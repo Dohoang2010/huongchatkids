@@ -1924,7 +1924,7 @@
     const cu = giftForCu(lines, opts);
     /* Chương trình cài ở trang quản trị (riêng cho sản phẩm) được ưu tiên hơn chương trình cũ; nhiều chương trình
        cùng đạt thì lấy quà giá trị cao nhất (số quà × giá phân loại quà rẻ nhất) */
-    let tot = null, giaTriTot = 0, goiY = '', gan = 0; const them = [];   // them: quà của chương trình congDon (cộng thêm, khác ngành hàng)
+    let tot = null, giaTriTot = 0, goiY = '', gan = 0; const them = [], goiYDs = [];   // them: quà của chương trình congDon (cộng thêm, khác ngành hàng)
     ctDangChay().forEach((x) => {
       if (Number(x.c.chiGiam) > 0) return;   // chương trình chỉ giảm % tính riêng (giamNganh)
       const dat = ctDat(x, lines); if (!dat) return;
@@ -1940,12 +1940,10 @@
           hoacGiam: hg, giamTien: hg && !x.soLuong ? Math.round(dat * hg / 100) : 0,
           lyDo: x.c.lyDo || (x.soLuong ? `Mua ${dat} ${x.donVi} sản phẩm chương trình` : `Mua sản phẩm chương trình từ ${fmt(bacDat.muc)}`) };
       }
-      /* Gợi ý bậc kế tiếp (chọn chương trình khách gần đạt nhất) */
-      if (bacSau && dat / bacSau.muc > gan) {
-        gan = dat / bacSau.muc;
-        goiY = `Mua thêm ${ctMoc(x, bacSau.muc - dat)} ${x.soLuong ? 'nữa' : 'sản phẩm chương trình'} để được tặng ${bacSau.soQua} ${x.ten}.`;
-      }
+      /* Gợi ý bậc kế tiếp (chọn chương trình khách gần đạt nhất) – chỉ gợi ý quà có giá trị hơn quà đang được (không cộng dồn) */
+      if (bacSau) goiYDs.push({ gan: dat / bacSau.muc, giaTri: bacSau.soQua * (isFinite(giaQua) ? giaQua : 1), txt: `Mua thêm ${ctMoc(x, bacSau.muc - dat)} ${x.soLuong ? 'nữa' : 'sản phẩm chương trình'} để được tặng ${bacSau.soQua} ${x.ten}.` });
     });
+    goiYDs.filter((g) => g.giaTri > giaTriTot).forEach((g) => { if (g.gan > gan) { gan = g.gan; goiY = g.txt; } });
     /* Gộp quà cộng thêm: không có quà chính thì quà cộng thêm đầu tiên làm quà chính (khách chọn vị), còn lại ghi kèm */
     if (them.length) {
       let chinh = tot || (cu && cu.soQua ? { ...cu } : null), ds = them;

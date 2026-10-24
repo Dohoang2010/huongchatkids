@@ -4634,6 +4634,17 @@ window.FEEDBACKS = [
 /* ===ADMIN:BANNERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.BANNERS = [
   {
+    "hienTu": "2026-10-24T00:00:00+07:00",
+    "anTu": "2026-10-26T00:00:00+07:00",
+    "anh": {
+      "pc": "img/banner/hau-an-2410-pc.jpg",
+      "mb": "img/banner/hau-an-2410-mb.jpg"
+    },
+    "nen": "#CFE8FF",
+    "link": "product.html?id=26060839019",
+    "alt": "Ưu đãi 24–25/10: mua 1 hộp Canxi váng sữa Calciumore tặng 1 thùng Lotte Háu Ăn 24 hộp; mua 2 thùng nước ép Lotte tặng 1 thùng Lotte Háu Ăn 24 hộp – quà trị giá 775.000đ"
+  },
+  {
     "title": "Canxi Calciumore\nmua 2 tặng D3K2",
     "sub": "✅ 1 hộp canxi + 1 lọ D3K2 giảm 5% còn <b>2.726.000₫</b><br>✅ Mua 2 hộp tặng <b>1 lọ D3K2</b> · 3 hộp tặng <b>2 lọ</b> · 4 hộp tặng <b>3 lọ</b>",
     "cta": "Mua ngay",
@@ -7086,6 +7097,131 @@ window.QUA_TANG = {
         }
       ],
       "quaTang": []
+    },
+    {
+      "id": "ct-2410-hau-an-canxi",
+      "ten": "24–25/10 · Mua 1 hộp Canxi váng sữa tặng 1 thùng Lotte Háu Ăn 24 hộp",
+      "moTa": "Mua 1 hộp Canxi váng sữa Calciumore tặng 1 thùng Lotte Háu Ăn 24 hộp (trị giá 775.000đ)",
+      "lyDo": "Mua hộp Canxi váng sữa Calciumore",
+      "batDau": "2026-10-24T00:00",
+      "ketThuc": "2026-10-26T00:00",
+      "kieu": "soLuong",
+      "donVi": "hộp",
+      "tenQua": "thùng Lotte Háu Ăn 24 hộp",
+      "bac": [
+        {
+          "muc": 1,
+          "soQua": 1
+        },
+        {
+          "muc": 2,
+          "soQua": 2
+        },
+        {
+          "muc": 3,
+          "soQua": 3
+        },
+        {
+          "muc": 4,
+          "soQua": 4
+        }
+      ],
+      "muc": 1,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "26060839019",
+          "bat": true,
+          "heSo": {
+            "1 hộp 90 gói": 1,
+            "2 hộp váng sữa": 2,
+            "3 hộp váng sữa": 3,
+            "4 hộp váng sữa": 4,
+            "30 gói (không hộp)": 0,
+            "1 hộp váng sữa canxi+1 d3k2 giảm 5%": 0
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "ten": "Thùng Lotte Háu Ăn 24 hộp",
+          "bat": true,
+          "gia": 775000
+        }
+      ]
+    },
+    {
+      "id": "ct-2410-hau-an-lotte",
+      "ten": "24–25/10 · Mua 2 thùng nước ép Lotte tặng 1 thùng Lotte Háu Ăn 24 hộp",
+      "moTa": "Mua 2 thùng nước ép Lotte (dòng dinh dưỡng thường) tặng 1 thùng Lotte Háu Ăn 24 hộp (trị giá 775.000đ)",
+      "lyDo": "Mua thùng nước ép Lotte",
+      "batDau": "2026-10-24T00:00",
+      "ketThuc": "2026-10-26T00:00",
+      "kieu": "soLuong",
+      "donVi": "thùng",
+      "tenQua": "thùng Lotte Háu Ăn 24 hộp",
+      "bac": [
+        {
+          "muc": 2,
+          "soQua": 1
+        },
+        {
+          "muc": 4,
+          "soQua": 2
+        },
+        {
+          "muc": 6,
+          "soQua": 3
+        }
+      ],
+      "muc": 2,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "22686115682",
+          "bat": true,
+          "heSo": {
+            "Tăng cao (Xanh) · 10 gói": 0,
+            "Tăng cao (Xanh) · Thùng 30 gói": 1,
+            "Tăng cân (Hồng) · 10 gói": 0,
+            "Tăng cân (Hồng) · Thùng 30 gói": 1,
+            "Đề kháng (Cam) · 10 gói": 0,
+            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Mix vị · Thùng 30 gói": 1
+          }
+        },
+        {
+          "id": "23660586997",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        },
+        {
+          "id": "41353214697",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        },
+        {
+          "id": "25632276959",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        }
+      ],
+      "quaTang": [
+        {
+          "ten": "Thùng Lotte Háu Ăn 24 hộp",
+          "bat": true,
+          "gia": 775000
+        }
+      ]
     }
   ]
 };
