@@ -37,7 +37,7 @@
   /* ---- Giờ vàng (GIO_VANG trong data.js): trong khung giờ, giá sản phẩm áp dụng được giảm thẳng X% ---- */
   const phutVN = (t) => { const m = String(t || '').match(/^(\d{1,2}):(\d{2})/); return m ? Number(m[1]) * 60 + Number(m[2]) : 0; };
   const ngayVN = (n) => new Date(n + 7 * 3600e3).toISOString().slice(0, 10);
-  const gioVangHopLe = (g, p) => !!(g && !g.tat && p && !p.isCombo && !p.formula && ((g.sanPham || []).includes(p.id) || (g.brands || []).includes(p.brand)));
+  const gioVangHopLe = (g, p) => !!(g && !g.tat && p && !p.isCombo && !p.formula && !(g.truSanPham || []).includes(p.id) && ((g.sanPham || []).includes(p.id) || (g.brands || []).includes(p.brand)));
   function gioVangChay(g, n = Date.now()) {
     if (!g || g.tat || suKienDangChay()) return false;
     const ng = ngayVN(n); if ((g.tuNgay && ng < g.tuNgay) || (g.denNgay && ng > g.denNgay)) return false;

@@ -290,7 +290,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   /* Sản phẩm đang khuyến mãi (gần giống MC.dangKhuyenMai): giờ vàng, chương trình quà đang chạy, combo ưu đãi */
   function dangKM(d, p) {
     const nay = Date.now(), ngay = new Date(nay + 7 * 3600e3).toISOString().slice(0, 10);
-    const gv = (d.gioVang || []).some((g) => !g.tat && (!g.tuNgay || g.tuNgay <= ngay) && (!g.denNgay || ngay <= g.denNgay) && ((g.brands || []).includes(p.brand) || (g.sanPham || []).map(String).includes(String(p.id))));
+    const gv = (d.gioVang || []).some((g) => !g.tat && !(g.truSanPham || []).map(String).includes(String(p.id)) && (!g.tuNgay || g.tuNgay <= ngay) && (!g.denNgay || ngay <= g.denNgay) && ((g.brands || []).includes(p.brand) || (g.sanPham || []).map(String).includes(String(p.id))));
     const ct = d.quaTang.enabled !== false && (d.quaTang.chuongTrinh || []).some((c) => !c.tat && (!c.batDau || Date.parse(c.batDau + '+07:00') <= nay) && (!c.ketThuc || nay < Date.parse(c.ketThuc + '+07:00'))
       && (c.sanPhamChinh || []).some((x) => x.bat !== false && String(x.id) === String(p.id)));
     return gv || ct || !!(p.isCombo && (p.uuDai || []).length);

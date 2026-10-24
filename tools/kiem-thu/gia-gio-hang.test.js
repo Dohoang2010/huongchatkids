@@ -291,3 +291,9 @@ test('gợi ý quà: bỏ gợi ý chương trình có quà rẻ hơn quà khác
   assert.ok(/2 quà dat/.test(g.goiY), 'gợi ý bậc kế của chương trình đang thắng: ' + g.goiY);
   assert.ok(!/quà re/.test(g.goiY), 'không gợi ý quà rẻ hơn');
 });
+
+test('giờ vàng: sản phẩm trong truSanPham không giảm dù cùng thương hiệu', () => {
+  const { W } = taoWeb({ gio: gio('20:30'), truocApp: (w) => { w.SU_KIEN = null; w.GIO_VANG = [{ id: 'gv', ten: 'GV', giam: 5, tu: '20:00', den: '22:00', brands: ['lotte'], sanPham: [], truSanPham: [LOTTE], tuNgay: '2026-11-01', denNgay: '', tat: false }]; } });
+  assert.ok(!W.PRODUCTS.find((x) => x.id === LOTTE).gioVang, 'sản phẩm bị trừ không có giờ vàng');
+  assert.ok(W.PRODUCTS.some((x) => x.brand === 'lotte' && x.id !== LOTTE && !x.isCombo && x.gioVang), 'sản phẩm lotte khác vẫn giảm');
+});
