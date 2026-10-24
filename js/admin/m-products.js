@@ -276,7 +276,18 @@
   });
 
   /* ---------------- Sự kiện ---------------- */
-  const timTre = A.tre(() => { S.trang = 1; A.veTrang(); }, 350);
+  /* gõ tiếng Việt (Telex / VNI) đang ghép dấu thì chưa lọc; dừng gõ 500ms mới vẽ lại danh sách */
+  let dangGhep = false;
+  /* Đang gõ ô tìm: vẽ lại trang xong thì đặt lại đúng ô nhập cũ (giữ con trỏ, chữ đang gõ dở) */
+  const timTre = A.tre(async () => {
+    if (dangGhep) return;
+    const o = document.activeElement && document.activeElement.id === 'spQ' ? document.activeElement : null, vt = o ? [o.selectionStart, o.selectionEnd] : null;
+    S.trang = 1; await A.veTrang();
+    if (!o) return; const moi = document.getElementById('spQ'); if (!moi || moi === o) return;
+    S.q = o.value; moi.replaceWith(o); o.focus(); try { o.setSelectionRange(vt[0], vt[1]); } catch { /* bỏ qua */ }
+  }, 500);
+  document.addEventListener('compositionstart', (e) => { if (e.target.id === 'spQ') dangGhep = true; });
+  document.addEventListener('compositionend', (e) => { if (e.target.id === 'spQ') { dangGhep = false; S.q = e.target.value; timTre(); } });
 
   document.addEventListener('input', (e) => {
     if (e.target.id === 'spQ') { S.q = e.target.value; timTre(); return; }

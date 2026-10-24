@@ -7,7 +7,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": true
   },
   "m-products.js": {
-   "v": "564eb769",
+   "v": "45ad2149",
    "can": [],
    "ngay": false
   },
