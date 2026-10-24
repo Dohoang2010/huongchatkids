@@ -4754,7 +4754,7 @@ window.BANNERS = [
       "pc": "img/banner/canxi-chi-web-0111-pc.jpg",
       "mb": "img/banner/canxi-chi-web-0111-mb.jpg"
     },
-    "nen": "#E6F1FF",
+    "nen": "#6E1224",
     "link": "product.html?id=26060839019",
     "alt": "Từ 01/11/2026 Canxi Calciumore chỉ bán trên web huongchatkids.vn, dừng bán trên Shopee và TikTok Shop – khách quen Shopee nhập mã KHSP, khách quen TikTok Shop nhập mã KHTT giảm 5% canxi (1 lần/khách, đến 31/12/2026)"
   },
