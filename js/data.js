@@ -4748,6 +4748,17 @@ window.FEEDBACKS = [
 /* ===ADMIN:BANNERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.BANNERS = [
   {
+    "hienTu": "2026-11-01T08:30:00+07:00",
+    "anTu": "2027-01-01T00:00:00+07:00",
+    "anh": {
+      "pc": "img/banner/canxi-chi-web-0111-pc.jpg",
+      "mb": "img/banner/canxi-chi-web-0111-mb.jpg"
+    },
+    "nen": "#E6F1FF",
+    "link": "product.html?id=26060839019",
+    "alt": "Từ 01/11/2026 Canxi Calciumore chỉ bán trên web huongchatkids.vn, dừng bán trên Shopee và TikTok Shop – khách quen Shopee nhập mã KHSP, khách quen TikTok Shop nhập mã KHTT giảm 5% canxi (1 lần/khách, đến 31/12/2026)"
+  },
+  {
     "hienTu": "2026-10-24T00:00:00+07:00",
     "anTu": "2026-10-26T00:00:00+07:00",
     "anh": {
@@ -4766,7 +4777,8 @@ window.BANNERS = [
     },
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
-    "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 1 thùng nước dinh dưỡng Lotte hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên"
+    "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 1 thùng nước dinh dưỡng Lotte hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên",
+    "anTu": "2027-01-01T00:00:00+07:00"
   },
   {
     "title": "Canxi Calciumore\nmua 2 tặng D3K2",
@@ -4784,7 +4796,8 @@ window.BANNERS = [
       "💧 D3K2 30ml"
     ],
     "sticker": "MUA 2\nTẶNG D3K2",
-    "fx": "canxi"
+    "fx": "canxi",
+    "anTu": "2027-01-01T00:00:00+07:00"
   },
   {
     "anh": {
@@ -4866,7 +4879,8 @@ window.BANNERS = [
     "theme": "pink",
     "badge": "🎟️ Mã giảm giá khách mới",
     "voucher": "HCK5",
-    "fx": "voucher"
+    "fx": "voucher",
+    "anTu": "2026-11-01T00:00:00+07:00"
   },
   {
     "title": "Khách thân thiết\ngiảm đến 12%",
