@@ -2836,3 +2836,17 @@ body[data-dm="khuyen-mai"] .dm-hero__anh img { max-width: 92px; border-width: 3p
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .toolbar { background: #fff; border-radius: 14px; padding: 8px 12px; box-shadow: 0 6px 18px rgba(30, 30, 50, .1); margin-bottom: 12px; }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .dm-o, :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) #ageChips .chip { box-shadow: 0 6px 16px rgba(30, 30, 50, .1); }
 :is(body[data-dm="be"], body[data-dm="beauty"], body[data-dm="thoi-trang"], body[data-dm="thuc-pham"]) .pagination button { background: #fff; }
+
+/* Banner trang chủ – hiệu ứng slide-in (24/10/2026): banner xếp chồng, banner mới trượt vào phủ lên, banner cũ lùi nhẹ và mờ dần */
+.carousel__track.slide-in { display: grid; transform: none !important; transition: none; }
+.carousel__track.slide-in > .slide { grid-area: 1 / 1; visibility: hidden; z-index: 0; }
+.carousel__track.slide-in > .slide.is-on { visibility: visible; z-index: 1; }
+.carousel__track.slide-in > .slide.is-vao { z-index: 2; box-shadow: -18px 0 40px rgba(0, 0, 0, .18); animation: slVaoPhai 1.2s cubic-bezier(.22, .61, .36, 1) both; }
+.carousel__track.slide-in > .slide.is-vao.tu-trai { box-shadow: 18px 0 40px rgba(0, 0, 0, .18); animation-name: slVaoTrai; }
+.carousel__track.slide-in > .slide.is-ra { visibility: visible; z-index: 1; animation: slRaTrai 1.2s cubic-bezier(.22, .61, .36, 1) both; }
+.carousel__track.slide-in > .slide.is-ra.ve-phai { animation-name: slRaPhai; }
+@keyframes slVaoPhai { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes slVaoTrai { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes slRaTrai { from { transform: none; filter: brightness(1); } to { transform: translateX(-25%); filter: brightness(.75); } }
+@keyframes slRaPhai { from { transform: none; filter: brightness(1); } to { transform: translateX(25%); filter: brightness(.75); } }
+@media (prefers-reduced-motion: reduce) { .carousel__track.slide-in > .slide.is-vao, .carousel__track.slide-in > .slide.is-ra { animation-duration: .01s; } }
