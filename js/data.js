@@ -4756,8 +4756,8 @@ window.BANNERS = [
   {
     "hienTu": "2026-10-24T00:00:00+07:00",
     "anh": {
-      "pc": "img/banner/binh-giu-nhiet-v3-pc.jpg",
-      "mb": "img/banner/binh-giu-nhiet-v3-mb.jpg"
+      "pc": "img/banner/binh-giu-nhiet-v4-pc.jpg",
+      "mb": "img/banner/binh-giu-nhiet-v4-mb.jpg"
     },
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
