@@ -546,32 +546,32 @@ window.PRODUCTS = [
     "shopeeCategory": "Thực phẩm và đồ uống › Đồ uống › Khác",
     "variants": [
       {
-        "label": "Tăng cao (Xanh) · 10 gói",
+        "label": "Xanh – Táo & Củ dền · 10 gói",
         "price": 448000,
         "oldPrice": 627000
       },
       {
-        "label": "Tăng cân (Hồng) · 10 gói",
+        "label": "Hồng – Nho & Mận · 10 gói",
         "price": 448000,
         "oldPrice": 627000
       },
       {
-        "label": "Đề kháng (Cam) · 10 gói",
+        "label": "Cam – Lê & Hoa chuông · 10 gói",
         "price": 448000,
         "oldPrice": 627000
       },
       {
-        "label": "Tăng cao (Xanh) · Thùng 30 gói",
+        "label": "Xanh – Táo & Củ dền · Thùng 30 gói",
         "price": 1317000,
         "oldPrice": 1844000
       },
       {
-        "label": "Tăng cân (Hồng) · Thùng 30 gói",
+        "label": "Hồng – Nho & Mận · Thùng 30 gói",
         "price": 1317000,
         "oldPrice": 1844000
       },
       {
-        "label": "Đề kháng (Cam) · Thùng 30 gói",
+        "label": "Cam – Lê & Hoa chuông · Thùng 30 gói",
         "price": 1317000,
         "oldPrice": 1844000
       },
@@ -581,7 +581,7 @@ window.PRODUCTS = [
         "oldPrice": 1844000
       }
     ],
-    "desc": "Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic, hỗ trợ bé ăn ngon miệng, phát triển chiều cao và tăng cường sức khoẻ.",
+    "desc": "Gồm 3 dòng: Lotte xanh – Táo & Củ dền (bổ sung canxi, hỗ trợ phát triển chiều cao); Lotte hồng – Nho & Mận (bổ sung lợi khuẩn, giúp con ăn ngon miệng); Lotte cam – Lê & Hoa chuông (giúp con tăng cường sức đề kháng), theo nhà sản xuất. Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic, hỗ trợ bé ăn ngon miệng, phát triển chiều cao và tăng cường sức khoẻ.",
     "highlights": [
       "Nguyên liệu hoa quả & rau củ hữu cơ (Organic)",
       "Gói nhỏ có ống hút – tiện mang đi học, đi chơi",
@@ -974,8 +974,8 @@ window.PRODUCTS = [
   },
   {
     "id": "23660586997",
-    "name": "Nước ép Lotte dòng Đề Kháng – nước ép lê & rễ cát cánh hữu cơ Hàn Quốc, hỗ trợ đề kháng cho bé",
-    "short": "Nước ép Lotte Đề Kháng",
+    "name": "Nước Ép Hữu Cơ LOTTE Lê Và Hoa Chuông (Lotte cam) – Giúp Con Tăng Cường Sức Đề Kháng",
+    "short": "Nước ép hữu cơ Lotte Lê & Hoa chuông (cam)",
     "brand": "lotte",
     "cat": "nuoc-ep",
     "ages": [
@@ -1032,14 +1032,15 @@ window.PRODUCTS = [
         "oldPrice": 1844000
       }
     ],
-    "desc": "Nước ép lê và rễ cát cánh (doraji) hữu cơ dòng Khoẻ Mạnh (무적튼튼) của Lotte, do Viện Pasteur Hàn Quốc nghiên cứu và sản xuất, gói 80ml có ống hút, dùng cho bé từ 12 tháng tuổi. Theo nhà sản xuất: lê & rễ cát cánh hữu cơ, hồng sâm organic cô đặc và lợi khuẩn EPS Lactobacillus (được cấp bằng sáng chế); không chất bảo quản, phụ gia; chứng nhận Organic và HACCP Hàn Quốc. Bổ sung vitamin C, kali, magie, axit amin, saponin, kẽm, canxi hỗ trợ đề kháng và hấp thu dưỡng chất.",
+    "desc": "Lotte cam (dòng Đề Kháng) – Nước ép hữu cơ LOTTE Lê và Hoa chuông (rễ cát cánh): giúp con tăng cường sức đề kháng (theo nhà sản xuất). Nước ép lê và rễ cát cánh (doraji) hữu cơ dòng Khoẻ Mạnh (무적튼튼) của Lotte, do Viện Pasteur Hàn Quốc nghiên cứu và sản xuất, gói 80ml có ống hút, dùng cho bé từ 12 tháng tuổi. Theo nhà sản xuất: lê & rễ cát cánh hữu cơ, hồng sâm organic cô đặc và lợi khuẩn EPS Lactobacillus (được cấp bằng sáng chế); không chất bảo quản, phụ gia; chứng nhận Organic và HACCP Hàn Quốc. Bổ sung vitamin C, kali, magie, axit amin, saponin, kẽm, canxi hỗ trợ đề kháng và hấp thu dưỡng chất.",
     "highlights": [
       "Dùng cho bé từ 12 tháng tuổi",
       "Lê & rễ cát cánh hữu cơ + hồng sâm cô đặc + lợi khuẩn EPS",
       "Chứng nhận Organic, HACCP – không chất bảo quản, phụ gia",
       "Hộp 10 gói · thùng 30 gói (3 hộp), gói nhỏ có ống hút tiện mang đi"
     ],
-    "usage": "Bé từ 12 tháng: 1 gói (80ml)/ngày sau bữa ăn, lắc nhẹ trước khi uống, ngon hơn khi để mát. Đã mở gói nên dùng ngay. Theo hướng dẫn trên bao bì."
+    "usage": "Bé từ 12 tháng: 1 gói (80ml)/ngày sau bữa ăn, lắc nhẹ trước khi uống, ngon hơn khi để mát. Đã mở gói nên dùng ngay. Theo hướng dẫn trên bao bì.",
+    "slug": "nuoc-ep-lotte-de-khang"
   },
   {
     "id": "26060839019",
@@ -1178,8 +1179,8 @@ window.PRODUCTS = [
   },
   {
     "id": "41353214697",
-    "name": "Nước ép Lotte dòng Tăng Cao – nước ép táo & củ dền hữu cơ Hàn Quốc, hỗ trợ bé phát triển chiều cao",
-    "short": "Nước ép Lotte Tăng Cao",
+    "name": "Nước Ép Hữu Cơ LOTTE Táo Và Củ Dền (Lotte xanh) – Bổ Sung Canxi, Hỗ Trợ Phát Triển Chiều Cao",
+    "short": "Nước ép hữu cơ Lotte Táo & Củ dền (xanh)",
     "brand": "lotte",
     "cat": "nuoc-ep",
     "ages": [
@@ -1231,13 +1232,14 @@ window.PRODUCTS = [
         "oldPrice": 1844000
       }
     ],
-    "desc": "Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
+    "desc": "Lotte xanh (dòng Tăng Cao) – Nước ép hữu cơ LOTTE Táo và Củ dền: bổ sung canxi, hỗ trợ phát triển chiều cao (theo nhà sản xuất). Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
     "highlights": [
       "Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm",
       "Táo & củ dền hữu cơ, chứng nhận Organic, HACCP",
       "Bổ sung canxi, sắt, axit folic"
     ],
-    "usage": "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì."
+    "usage": "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì.",
+    "slug": "nuoc-ep-lotte-tang-cao"
   },
   {
     "id": "28467224687",
@@ -1536,8 +1538,8 @@ window.PRODUCTS = [
   },
   {
     "id": "25632276959",
-    "name": "Nước ép Lotte dòng Tăng Cân Tự Nhiên – nước ép mận, nho & táo hữu cơ Hàn Quốc, hỗ trợ bé ăn ngon",
-    "short": "Nước ép Lotte Tăng Cân Tự Nhiên",
+    "name": "Nước Ép Hữu Cơ LOTTE Nho Và Mận (Lotte hồng) – Bổ Sung Lợi Khuẩn, Giúp Con Ăn Ngon Miệng",
+    "short": "Nước ép hữu cơ Lotte Nho & Mận (hồng)",
     "brand": "lotte",
     "cat": "nuoc-ep",
     "ages": [
@@ -1592,13 +1594,14 @@ window.PRODUCTS = [
         "oldPrice": 1844000
       }
     ],
-    "desc": "Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
+    "desc": "Lotte hồng (dòng Tăng Cân) – Nước ép hữu cơ LOTTE Nho và Mận: bổ sung lợi khuẩn, giúp con ăn ngon miệng (theo nhà sản xuất). Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
     "highlights": [
       "99,94% nguyên liệu hữu cơ, chứng nhận HACCP & Organic",
       "Mận hỗ trợ nhuận tràng, giảm táo bón",
       "Đã công bố ATTP tại Việt Nam (xem ảnh cuối)"
     ],
-    "usage": "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay."
+    "usage": "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay.",
+    "slug": "nuoc-ep-lotte-tang-can-tu-nhien"
   },
   {
     "id": "lotte-hau-an",
@@ -4756,8 +4759,8 @@ window.BANNERS = [
   {
     "hienTu": "2026-10-24T00:00:00+07:00",
     "anh": {
-      "pc": "img/banner/binh-giu-nhiet-v4-pc.jpg",
-      "mb": "img/banner/binh-giu-nhiet-v4-mb.jpg"
+      "pc": "img/banner/binh-giu-nhiet-v5-pc.jpg",
+      "mb": "img/banner/binh-giu-nhiet-v5-mb.jpg"
     },
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
@@ -6302,12 +6305,12 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Tăng cao (Xanh) · 10 gói": 0,
-            "Tăng cân (Hồng) · 10 gói": 0,
-            "Đề kháng (Cam) · 10 gói": 0,
-            "Tăng cao (Xanh) · Thùng 30 gói": 1,
-            "Tăng cân (Hồng) · Thùng 30 gói": 1,
-            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Xanh – Táo & Củ dền · 10 gói": 0,
+            "Hồng – Nho & Mận · 10 gói": 0,
+            "Cam – Lê & Hoa chuông · 10 gói": 0,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
+            "Hồng – Nho & Mận · Thùng 30 gói": 1,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
             "Mix vị · Thùng 30 gói": 1
           }
         },
@@ -6948,12 +6951,12 @@ window.QUA_TANG = {
         {
           "id": "22686115682",
           "bienThe": {
-            "Tăng cao (Xanh) · 10 gói": true,
-            "Tăng cân (Hồng) · 10 gói": true,
-            "Đề kháng (Cam) · 10 gói": true,
-            "Tăng cao (Xanh) · Thùng 30 gói": false,
-            "Tăng cân (Hồng) · Thùng 30 gói": false,
-            "Đề kháng (Cam) · Thùng 30 gói": false,
+            "Xanh – Táo & Củ dền · 10 gói": true,
+            "Hồng – Nho & Mận · 10 gói": true,
+            "Cam – Lê & Hoa chuông · 10 gói": true,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": false,
+            "Hồng – Nho & Mận · Thùng 30 gói": false,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": false,
             "Mix vị · Thùng 30 gói": false
           }
         }
@@ -7300,12 +7303,12 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Tăng cao (Xanh) · 10 gói": 0,
-            "Tăng cao (Xanh) · Thùng 30 gói": 1,
-            "Tăng cân (Hồng) · 10 gói": 0,
-            "Tăng cân (Hồng) · Thùng 30 gói": 1,
-            "Đề kháng (Cam) · 10 gói": 0,
-            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Xanh – Táo & Củ dền · 10 gói": 0,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
+            "Hồng – Nho & Mận · 10 gói": 0,
+            "Hồng – Nho & Mận · Thùng 30 gói": 1,
+            "Cam – Lê & Hoa chuông · 10 gói": 0,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
             "Mix vị · Thùng 30 gói": 1
           }
         },
@@ -7374,12 +7377,12 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Tăng cao (Xanh) · 10 gói": 0,
-            "Tăng cao (Xanh) · Thùng 30 gói": 1,
-            "Tăng cân (Hồng) · 10 gói": 0,
-            "Tăng cân (Hồng) · Thùng 30 gói": 1,
-            "Đề kháng (Cam) · 10 gói": 0,
-            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Xanh – Táo & Củ dền · 10 gói": 0,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
+            "Hồng – Nho & Mận · 10 gói": 0,
+            "Hồng – Nho & Mận · Thùng 30 gói": 1,
+            "Cam – Lê & Hoa chuông · 10 gói": 0,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
             "Mix vị · Thùng 30 gói": 1
           }
         },

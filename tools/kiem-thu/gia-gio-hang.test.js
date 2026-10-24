@@ -152,7 +152,7 @@ test('Kid: Gạc Sumo mua thùng 40 gói tặng 1 hộp nước dinh dưỡng Lo
   const SUMO = '26156646705', thung = bt(W, SUMO, /thùng 40/i), le = bt(W, SUMO, /^10 gói/);
   const g1 = MC.giftFor([dong(W, SUMO, 1, thung)], {});
   assert.strictEqual(g1.soQua, 1); assert.match(g1.moTa, /Lotte 10 gói/);
-  assert.strictEqual(JSON.stringify(g1.vi), JSON.stringify(['Tăng cao (Xanh) · 10 gói', 'Tăng cân (Hồng) · 10 gói', 'Đề kháng (Cam) · 10 gói']), 'chỉ chọn hộp 10 gói, đủ 3 màu');
+  assert.strictEqual(JSON.stringify(g1.vi), JSON.stringify(['Xanh – Táo & Củ dền · 10 gói', 'Hồng – Nho & Mận · 10 gói', 'Cam – Lê & Hoa chuông · 10 gói']), 'chỉ chọn hộp 10 gói, đủ 3 màu');
   assert.strictEqual(MC.giftFor([dong(W, SUMO, 2, thung)], {}).soQua, 2, '2 thùng tặng 2 hộp');
   assert.notStrictEqual((MC.giftFor([dong(W, SUMO, 4, le)], {}) || {}).chuongTrinh, 'ct-2110-gac-sumo', '4 × 10 gói không phải thùng → không tặng hộp Lotte');
   const l = dong(W, SUMO, 1, thung); assert.ok(MC.hangKhongUuDai([l]).co(l), 'đang có quà → không cộng hạng / sinh nhật / mua 2 giảm 3%');
