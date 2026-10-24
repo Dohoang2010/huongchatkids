@@ -1783,7 +1783,7 @@
   }
   function ctDangChay() {
     const now = Date.now(), sk = suKienDangChay();
-    return ((window.QUA_TANG || {}).chuongTrinh || []).filter((c) => !c.tat && Date.parse(c.batDau) <= now && now < Date.parse(c.ketThuc) && (sk ? c.suKien === sk.id : !c.suKien)).map((c) => {
+    return ((window.QUA_TANG || {}).chuongTrinh || []).filter((c) => !c.tat && Date.parse(c.batDau) <= now && now < Date.parse(c.ketThuc) && (sk ? c.suKien === sk.id : !c.suKien) && !(window.QUA_CON && window.QUA_CON[c.id] === 0)).map((c) => {
       /* Quà có thể là sản phẩm trên web (id) hoặc quà ghi chữ (ten, vd "1 hộp GP Kid") khi web chưa bán món đó */
       const qua = (c.quaTang || []).map((g) => ({ g, p: g.id ? byId(g.id) : null })).filter((x) => (x.p ? x.p.stock > 0 && !x.p.an : !!x.g.ten && x.g.bat !== false));
       const vi = [];
@@ -1793,7 +1793,8 @@
         else if (g.bat !== false) vi.push(shortName(p));
       });
       if (vi.length === 1 && qua.length === 1 && qua[0].p) vi[0] = shortName(qua[0].p);   // chỉ 1 lựa chọn → hiện tên sản phẩm quà
-      const dsChinh = (c.sanPhamChinh || []).filter((x) => x.bat !== false);
+      /* tatCaSP: mọi sản phẩm (vd hoá đơn từ 2 triệu) trừ truSP – combo giảm sẵn vẫn không tính (ctDat) */
+      const dsChinh = c.tatCaSP ? (window.PRODUCTS || []).filter((p) => !p.an && !(c.truSP || []).includes(p.id)).map((p) => ({ id: p.id })).concat((c.sanPhamChinh || []).filter((x) => x.bat !== false)) : (c.sanPhamChinh || []).filter((x) => x.bat !== false);
       const chinh = new Set(dsChinh.map((x) => x.id));
       const heSo = {}; dsChinh.forEach((x) => { heSo[x.id] = x.heSo || {}; });
       /* Nhiều bậc: bac = [{ muc, soQua }]; chương trình cũ chỉ có muc/soQua = 1 bậc */
@@ -1850,6 +1851,11 @@
     });
     return tot;
   }
+  /* Quà giới hạn số suất (chương trình có gioiHan): hỏi máy chủ còn bao nhiêu suất – hết thì ẩn chương trình */
+  if ((((window.QUA_TANG || {}).chuongTrinh) || []).some((c) => c.gioiHan && !c.tat)) {
+    try { const n = JSON.parse(sessionStorage.getItem('hck_qua_con') || 'null'); if (n && Date.now() - n.luc < 300000) window.QUA_CON = n.con; } catch { /* bỏ qua */ }
+    if (!window.QUA_CON) setTimeout(() => { loyaltyApi('quaConSuat', {}, 15000).then((r) => { if (r && r.con) { window.QUA_CON = r.con; try { sessionStorage.setItem('hck_qua_con', JSON.stringify({ luc: Date.now(), con: r.con })); } catch { /* bỏ qua */ } } }).catch(() => {}); }, 1500);
+  }
   function ctChoSP(p) { return p ? ctDangChay().filter((x) => x.chinh.has(p.id)) : []; }
   /* Sản phẩm KHÔNG nhận thêm ưu đãi (chủ shop 21/10/2026): combo (giá đã giảm sẵn) + sản phẩm đang được tặng quà
      (đủ mốc chương trình quà theo sản phẩm – vd Calciumore 2–4 hộp tặng D3K2; nước ép Lotte mua thùng tặng gói)
@@ -1863,7 +1869,7 @@
     const ls = lines || [], loai = new Set(), chiA = !!(opts && opts.chiA);
     const bienTheUuDai = (l) => /tặng|\+.*giảm|giảm.*\+/i.test(String(l.variantLabel || ''));
     ls.forEach((l, i) => { if (l.p && (l.p.isCombo || bienTheUuDai(l))) loai.add(i); });
-    if (!chiA) ctDangChay().forEach((x) => { if (ctHieuLuc(x, ls)) ls.forEach((l, i) => { if (l.p && x.chinh.has(l.p.id)) loai.add(i); }); });
+    if (!chiA) ctDangChay().forEach((x) => { if (!x.c.giuHang && ctHieuLuc(x, ls)) ls.forEach((l, i) => { if (l.p && x.chinh.has(l.p.id)) loai.add(i); }); });
     const cfg = QT();
     if (!chiA && cfg && !suKienDangChay() && (cfg.thung || []).length && !(cfg.thungChiKhachMoi && laVip())) {
       const tk = String(cfg.tuKhoaThung || 'thùng').toLowerCase(), laThung = (l) => !!l.p && laNuocLotte(l.p) && !l.p.isCombo && String(l.variantLabel || '').toLowerCase().includes(tk);

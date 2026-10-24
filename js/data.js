@@ -4709,6 +4709,16 @@ window.BANNERS = [
     "alt": "Ưu đãi 24–25/10: mua 1 hộp Canxi váng sữa Calciumore tặng 1 thùng Lotte Háu Ăn 24 hộp; mua 2 thùng nước ép Lotte tặng 1 thùng Lotte Háu Ăn 24 hộp – quà trị giá 775.000đ"
   },
   {
+    "hienTu": "2026-10-24T00:00:00+07:00",
+    "anh": {
+      "pc": "img/banner/binh-giu-nhiet-pc.jpg",
+      "mb": "img/banner/binh-giu-nhiet-mb.jpg"
+    },
+    "nen": "#FFE6EE",
+    "link": "collections.html?ct=ct-2410-binh-lotte",
+    "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 1 thùng Lotte hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên"
+  },
+  {
     "title": "Canxi Calciumore\nmua 2 tặng D3K2",
     "sub": "✅ 1 hộp canxi + 1 lọ D3K2 giảm 5% còn <b>2.726.000₫</b><br>✅ Mua 2 hộp tặng <b>1 lọ D3K2</b> · 3 hộp tặng <b>2 lọ</b> · 4 hộp tặng <b>3 lọ</b>",
     "cta": "Mua ngay",
@@ -7286,6 +7296,122 @@ window.QUA_TANG = {
           "gia": 775000
         }
       ]
+    },
+    {
+      "id": "ct-2410-binh-lotte",
+      "ten": "Quà độc quyền web · Mua 1 thùng Lotte tặng bình giữ nhiệt (50 suất)",
+      "moTa": "Mua 1 thùng Lotte (nước ép, Lotte Háu Ăn, sữa xanh) tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
+      "lyDo": "Mua thùng Lotte",
+      "kieu": "soLuong",
+      "donVi": "thùng",
+      "bac": [
+        {
+          "muc": 1,
+          "soQua": 1
+        }
+      ],
+      "muc": 1,
+      "soQua": 1,
+      "batDau": "2026-10-24T00:00",
+      "ketThuc": "2026-12-31T23:59",
+      "tenQua": "bình giữ nhiệt Hương Chất Kids",
+      "gioiHan": 50,
+      "giuHang": true,
+      "quaTang": [
+        {
+          "ten": "Bình giữ nhiệt Hương Chất Kids (quà độc quyền web)",
+          "bat": true,
+          "gia": 250000
+        }
+      ],
+      "sanPhamChinh": [
+        {
+          "id": "22686115682",
+          "bat": true,
+          "heSo": {
+            "Tăng cao (Xanh) · 10 gói": 0,
+            "Tăng cao (Xanh) · Thùng 30 gói": 1,
+            "Tăng cân (Hồng) · 10 gói": 0,
+            "Tăng cân (Hồng) · Thùng 30 gói": 1,
+            "Đề kháng (Cam) · 10 gói": 0,
+            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Mix vị · Thùng 30 gói": 1
+          }
+        },
+        {
+          "id": "23660586997",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        },
+        {
+          "id": "41353214697",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        },
+        {
+          "id": "25632276959",
+          "bat": true,
+          "heSo": {
+            "Hộp 10 gói": 0,
+            "Thùng 30 gói (3 hộp)": 1
+          }
+        },
+        {
+          "id": "lotte-hau-an",
+          "bat": true,
+          "heSo": {
+            "Date 12/2026 · Mua 1 tặng 1 (2 thùng)": 2,
+            "Date 03/2027 · Thùng 24 hộp": 1
+          }
+        },
+        {
+          "id": "suaxanh-lotte",
+          "bat": true,
+          "heSo": {
+            "1 thùng 24 hộp": 1,
+            "2 thùng 48 hộp": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "ct-2410-binh-2tr",
+      "ten": "Quà độc quyền web · Hoá đơn từ 2 triệu tặng bình giữ nhiệt (50 suất)",
+      "moTa": "Hoá đơn từ 2.000.000đ (không tính Canxi váng sữa) tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
+      "lyDo": "Hoá đơn từ 2.000.000đ",
+      "kieu": "tien",
+      "tatCaSP": true,
+      "truSP": [
+        "26060839019",
+        "combo-vangsua-d3k2"
+      ],
+      "bac": [
+        {
+          "muc": 2000000,
+          "soQua": 1
+        }
+      ],
+      "muc": 2000000,
+      "soQua": 1,
+      "batDau": "2026-10-24T00:00",
+      "ketThuc": "2026-12-31T23:59",
+      "tenQua": "bình giữ nhiệt Hương Chất Kids",
+      "gioiHan": 50,
+      "giuHang": true,
+      "quaTang": [
+        {
+          "ten": "Bình giữ nhiệt Hương Chất Kids (quà độc quyền web)",
+          "bat": true,
+          "gia": 250000
+        }
+      ],
+      "sanPhamChinh": []
     }
   ]
 };

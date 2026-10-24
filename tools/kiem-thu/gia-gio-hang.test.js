@@ -130,7 +130,8 @@ test('sản phẩm đang có quà: giữ quà thì không cộng hạng / sinh n
 });
 
 test('Calciumore: phân loại 2 / 3 / 4 hộp váng sữa → dòng "Tặng 1 / 2 / 3 lọ D3K2" dưới ô chọn phân loại', () => {
-  const { MC, W } = taoWeb({ gio: '2026-11-05T10:00:00+07:00' });
+  /* bỏ chương trình tính theo cả hoá đơn (tatCaSP, vd hoá đơn từ 2 triệu tặng bình) – bài này chỉ xét quà theo sản phẩm */
+  const { MC, W } = taoWeb({ gio: '2026-11-05T10:00:00+07:00', truocApp: (w) => { w.QUA_TANG = Object.assign({}, w.QUA_TANG, { chuongTrinh: (w.QUA_TANG.chuongTrinh || []).filter((c) => !c.tatCaSP) }); } });
   const p = W.PRODUCTS.find((x) => x.id === '26060839019'); assert.ok(p, 'có Calciumore');
   for (const [nhan, so] of [['2 hộp váng sữa', 1], ['3 hộp váng sữa', 2], ['4 hộp váng sữa', 3]]) {
     assert.ok(p.variants.some((v) => v.label === nhan), 'có phân loại ' + nhan);
@@ -296,4 +297,16 @@ test('giờ vàng: sản phẩm trong truSanPham không giảm dù cùng thươn
   const { W } = taoWeb({ gio: gio('20:30'), truocApp: (w) => { w.SU_KIEN = null; w.GIO_VANG = [{ id: 'gv', ten: 'GV', giam: 5, tu: '20:00', den: '22:00', brands: ['lotte'], sanPham: [], truSanPham: [LOTTE], tuNgay: '2026-11-01', denNgay: '', tat: false }]; } });
   assert.ok(!W.PRODUCTS.find((x) => x.id === LOTTE).gioVang, 'sản phẩm bị trừ không có giờ vàng');
   assert.ok(W.PRODUCTS.some((x) => x.brand === 'lotte' && x.id !== LOTTE && !x.isCombo && x.gioVang), 'sản phẩm lotte khác vẫn giảm');
+});
+
+test('quà giới hạn suất: tatCaSP tính cả hoá đơn, giuHang vẫn giữ ưu đãi hạng, hết suất (QUA_CON = 0) thì ẩn', () => {
+  const ct = { id: 'ct-thu-2tr', ten: 'Hoá đơn từ 2tr tặng bình', batDau: '2026-11-01T00:00', ketThuc: '2026-11-30T23:59', kieu: 'tien', tatCaSP: true, giuHang: true, gioiHan: 50,
+    bac: [{ muc: 2000000, soQua: 1 }], sanPhamChinh: [], quaTang: [{ ten: 'Bình thử', bat: true, gia: 250000 }] };
+  const moi = (con) => taoWeb({ gio: gio('10:00'), truocApp: (w) => { w.SU_KIEN = null; w.GIO_VANG = []; w.QUA_TANG = Object.assign({}, w.QUA_TANG, { chuongTrinh: [ct] }); if (con) w.QUA_CON = con; } }).W;
+  const W = moi(); const l = dong(W, KHAC, 1, 0);
+  assert.ok(l.total >= 2000000, 'đơn thử từ 2 triệu');
+  assert.strictEqual(W.MC.giftFor([l], {}).chuongTrinh, 'ct-thu-2tr');
+  assert.ok(!W.MC.hangKhongUuDai || !W.MC.hangKhongUuDai([l]).size, 'giuHang: sản phẩm vẫn nhận ưu đãi hạng');
+  const W2 = moi({ 'ct-thu-2tr': 0 });
+  assert.notStrictEqual((W2.MC.giftFor([dong(W2, KHAC, 1, 0)], {}) || {}).chuongTrinh, 'ct-thu-2tr', 'hết suất thì không tặng');
 });

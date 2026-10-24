@@ -272,3 +272,19 @@ test('báo cáo bán hàng: tên nguồn cũ (fb, facebook.com, m.facebook.com, 
   const r = await m.qt('action=qtBaoCaoBan'), ten = Object.fromEntries(r.nguon.map((x) => [x.ten, x.phien]));
   assert.deepStrictEqual(ten, { Facebook: 3, Zalo: 1, 'Trực tiếp': 1 });
 });
+
+test('quà giới hạn số suất: đơn kèm quà giữ suất, hết suất thì đơn không kèm quà + ghi chú; đơn trùng / gọi lại không tính', async () => {
+  const m = taoMay("QUA_GIOI_HAN = { 'binh-thu': { suat: 2, ten: 'bình thử', ids: ['ct-thu-binh', 'ct-thu-binh-2'] } };");
+  const qua = { soQua: 1, ten: 'bình thử', chuongTrinh: 'ct-thu-binh', moTa: '1 bình thử' };
+  assert.deepStrictEqual((await m.get('action=quaConSuat')).con, { 'ct-thu-binh': 2, 'ct-thu-binh-2': 2 });
+  const d1 = await datDon(m, SDT, { code: 'HCKQUA0001', qua }); assert.strictEqual(d1.ok, true);
+  await datDon(m, SDT, { code: 'HCKQUA0001', qua });   // gửi lại cùng mã: không giữ thêm suất
+  await m.post({ type: 'callback', code: 'HCKQUA0002', customer: { name: 'A', phone: SDT2 }, qua });
+  assert.strictEqual((await m.get('action=quaConSuat')).con['ct-thu-binh'], 1);
+  await datDon(m, SDT2, { code: 'HCKQUA0003', qua: Object.assign({}, qua, { chuongTrinh: 'ct-thu-binh-2' }) });   // chương trình thứ 2 dùng chung suất
+  await datDon(m, SDT2, { code: 'HCKQUA0004', qua });
+  assert.strictEqual((await m.get('action=quaConSuat')).con['ct-thu-binh'], 0);
+  const dong = m.trang('Đơn hàng').getDataRange().getValues().find((r) => r[1] === 'HCKQUA0004');
+  assert.strictEqual(dong[17], '', 'hết suất: không ghi quà'); assert.ok(/Hết suất quà bình thử/.test(dong[13]), 'ghi chú hết suất');
+  assert.ok(/1 bình thử/.test(m.trang('Đơn hàng').getDataRange().getValues().find((r) => r[1] === 'HCKQUA0003')[17]));
+});

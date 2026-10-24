@@ -155,6 +155,8 @@ function doPost(e) {
     var loai = order.type === 'callback' ? 'Yêu cầu gọi lại' : (order.type === 'quick' ? 'Mua nhanh' : 'Đặt hàng');
     var thanhToan = order.payment === 'bank' ? 'Chuyển khoản' : (order.payment ? 'COD' : '');
     var quaText = order.qua && order.qua.soQua ? (order.qua.moTa || (order.qua.soQua + ' ' + order.qua.ten)) : '';
+    /* Quà giới hạn số suất (vd bình giữ nhiệt 50 suất): hết suất thì đơn không kèm quà, ghi chú cho shop */
+    if (quaText && order.type !== 'callback') { var hetQua = giuSuatQua_(String(order.qua.chuongTrinh || '')); if (hetQua) { quaText = ''; order.note = (order.note ? order.note + ' | ' : '') + 'Hết suất quà ' + hetQua + ' – đơn không kèm quà'; } }
 
     try { ghiNguonDon_(order, loai); } catch (eNd) { Logger.log(eNd); }   // nguồn khách + chương trình của đơn (báo cáo bán hàng)
     sheetDon().appendRow([
@@ -2340,6 +2342,30 @@ function traVe(data, callback) {
   return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
 }
 
+/* ===== Quà giới hạn số suất (chủ shop 24/10/2026: bình giữ nhiệt độc quyền web, 50 suất) =====
+   Nhóm quà → số suất + các mã chương trình dùng chung suất (id trong QUA_TANG.chuongTrinh ở js/data.js). Đơn kèm quà của 1 trong các chương trình được giữ 1 suất. */
+var QUA_GIOI_HAN = { 'binh-giu-nhiet': { suat: 50, ten: 'bình giữ nhiệt Hương Chất Kids', ids: ['ct-2410-binh-lotte', 'ct-2410-binh-2tr'] } };
+/* Giữ 1 suất cho đơn; trả về tên quà nếu đã hết suất ('' = còn suất hoặc quà không giới hạn) */
+function giuSuatQua_(chuongTrinh) {
+  var het = '';
+  Object.keys(QUA_GIOI_HAN).forEach(function (id) {
+    var ma = chuongTrinh.split(',').map(function (x) { return x.trim(); }), dsId = QUA_GIOI_HAN[id].ids || [id];
+    if (!ma.some(function (x) { return dsId.indexOf(x) > -1; })) return;
+    var lock = LockService.getScriptLock(); lock.waitLock(20000);
+    try {
+      var pr = PropertiesService.getScriptProperties(), k = 'qua_suat_' + id, n = Number(pr.getProperty(k) || 0);
+      if (n >= QUA_GIOI_HAN[id].suat) het = QUA_GIOI_HAN[id].ten; else pr.setProperty(k, String(n + 1));
+    } finally { lock.releaseLock(); }
+  });
+  return het;
+}
+/* Số suất còn lại của các quà giới hạn (web gọi để ẩn quà khi hết suất) */
+function apiQuaConSuat() {
+  var pr = PropertiesService.getScriptProperties(), con = {};
+  Object.keys(QUA_GIOI_HAN).forEach(function (id) { var n = Math.max(0, QUA_GIOI_HAN[id].suat - Number(pr.getProperty('qua_suat_' + id) || 0)); (QUA_GIOI_HAN[id].ids || [id]).forEach(function (x) { con[x] = n; }); });
+  return { ok: true, con: con };
+}
+
 function doGet(e) {
   var p = (e && e.parameter) || {};
   var cb = p.callback || '';
@@ -2349,6 +2375,7 @@ function doGet(e) {
   var vpsCt = vpsChuyenTiep_(e, false); if (vpsCt) return vpsCt;
   var chan = chanTanSuat_(action); if (chan) return traVe(chan, cb);
   try {
+    if (action === 'quaConSuat') return traVe(apiQuaConSuat(), cb);
     if (action === 'dgDs')      return traVe(apiDgDs(p), cb);
     if (action === 'dgTomTat')  return traVe(apiDgTomTat(), cb);
     if (action === 'dgGui')     return traVe(apiDgGui(p), cb);
