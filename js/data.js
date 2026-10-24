@@ -127,7 +127,8 @@ window.CATEGORIES = [
   { key: 'thuc-pham', label: 'Thực phẩm gia đình',        icon: '🍎', color: '#FFEBEE', desc: 'Táo đỏ Hotan, granola Nhật Bản', tpcn: false, image: 'img/thumb/28467224687.jpg' },
   { key: 'do-an',     label: 'Đồ ăn & ăn vặt',            icon: '🍱', color: '#FFF1E0', desc: 'Bò xuyên tiêu, cơm cháy, lợn đen gác bếp', tpcn: false, image: 'img/thumb/bo-xuyen-tieu.jpg' },
   { key: 'thoi-trang', label: 'Thời trang', icon: '👗', color: '#FDEBF1', desc: 'Đồ lót MaBelle mỏng nhẹ, an toàn cho da', tpcn: false, image: 'img/thumb/mabelle-6999-h.jpg' },
-  { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Chống nắng, serum, collagen, chăm sóc mẹ', tpcn: true, image: 'img/thumb/49061985399.jpg' }
+  { key: 'cho-me',    label: 'Dành cho mẹ',                icon: '💆‍♀️', color: '#F3E9FF', desc: 'Chống nắng, serum, collagen, chăm sóc mẹ', tpcn: true, image: 'img/thumb/49061985399.jpg' },
+  { key: 'luu-niem',  label: 'Đồ lưu niệm Hương Chất Kids', icon: '🎁', color: '#FFF3E6', desc: 'Sản phẩm lưu niệm độc quyền của Hương Chất Kids', tpcn: false, image: 'img/thumb/binh-giu-nhiet-hck.jpg' }
 ];
 
 window.NEEDS = [
@@ -4628,7 +4629,7 @@ window.PRODUCTS = [
     "name": "Bình Giữ Nhiệt Hương Chất Kids – Quà Độc Quyền Website, Nắp Bật Có Vòi Hút",
     "short": "Bình giữ nhiệt Hương Chất Kids (độc quyền web)",
     "brand": "khac",
-    "cat": "cho-me",
+    "cat": "luu-niem",
     "ages": [],
     "needs": [
       "cho-me"
@@ -4759,8 +4760,8 @@ window.BANNERS = [
   {
     "hienTu": "2026-10-24T00:00:00+07:00",
     "anh": {
-      "pc": "img/banner/binh-giu-nhiet-v5-pc.jpg",
-      "mb": "img/banner/binh-giu-nhiet-v5-mb.jpg"
+      "pc": "img/banner/binh-giu-nhiet-v6-pc.jpg",
+      "mb": "img/banner/binh-giu-nhiet-v6-mb.jpg"
     },
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
