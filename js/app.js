@@ -232,9 +232,18 @@
         const aff = AFF.get(); if (aff && saved.type !== 'callback') { saved.doiTac = aff.ma; saved.note = `[Đối tác ${aff.ma}]` + (saved.note ? '\n' + saved.note : ''); }
         const orders = store.get('mc_orders', []); orders.unshift(saved); store.set('mc_orders', orders.slice(0, 20));
         store.set('mc_last_order', saved); if (saved.type !== 'callback') trackSu('mua', code);
-        postOrder(saved).then((ok) => { if (!ok) queueOrder(saved); });
-        AFF.ganDon(saved);
-        resolve(saved);
+        /* Quà giới hạn số suất (vd bình giữ nhiệt 50 suất): hỏi máy chủ giữ suất trước khi gửi đơn; hết suất thì đơn không kèm quà */
+        const ctQua = saved.qua && saved.qua.chuongTrinh && saved.type !== 'callback' ? String(saved.qua.chuongTrinh).split(',').map((x) => x.trim()) : [];
+        const coGioiHan = ctQua.some((id) => (((window.QUA_TANG || {}).chuongTrinh) || []).some((c) => c.id === id && c.gioiHan));
+        const giu = coGioiHan ? loyaltyApi('giuSuatQua', { ct: ctQua.join(','), ma: code }, 12000).catch(() => null) : Promise.resolve(null);
+        giu.then((r) => {
+          if (r && r.het) { saved.note = (saved.note ? saved.note + ' | ' : '') + 'Hết suất quà ' + (r.ten || 'tặng') + ' – đơn không kèm quà'; saved.hetQua = saved.qua && saved.qua.moTa; saved.qua = null; window.QUA_CON = Object.assign({}, window.QUA_CON, Object.fromEntries(ctQua.map((id) => [id, 0]))); try { sessionStorage.removeItem('hck_qua_con'); } catch { /* bỏ qua */ } }
+          else if (coGioiHan && !r) saved.note = (saved.note ? saved.note + ' | ' : '') + 'Chưa xác nhận được suất quà (mạng lỗi) – shop kiểm tra số suất còn';
+          store.set('mc_last_order', saved);
+          postOrder(saved).then((ok) => { if (!ok) queueOrder(saved); });
+          AFF.ganDon(saved);
+          resolve(saved);
+        });
       }, 700);
     });
   }

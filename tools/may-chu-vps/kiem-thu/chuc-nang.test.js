@@ -287,4 +287,10 @@ test('quà giới hạn số suất: đơn kèm quà giữ suất, hết suất 
   const dong = m.trang('Đơn hàng').getDataRange().getValues().find((r) => r[1] === 'HCKQUA0004');
   assert.strictEqual(dong[17], '', 'hết suất: không ghi quà'); assert.ok(/Hết suất quà bình thử/.test(dong[13]), 'ghi chú hết suất');
   assert.ok(/1 bình thử/.test(m.trang('Đơn hàng').getDataRange().getValues().find((r) => r[1] === 'HCKQUA0003')[17]));
+  /* web giữ suất trước khi gửi đơn về CRM */
+  const m2 = taoMay("QUA_GIOI_HAN = { 'binh-thu': { suat: 1, ten: 'bình thử', ids: ['ct-thu-binh'] } };");
+  assert.deepStrictEqual(await m2.get('action=giuSuatQua&ct=ct-thu-binh&ma=HCKA1'), { ok: true, het: false, ten: '' });
+  assert.strictEqual((await m2.get('action=giuSuatQua&ct=ct-thu-binh&ma=HCKA1')).het, false, 'cùng mã đơn gửi lại không tính thêm');
+  assert.strictEqual((await m2.get('action=giuSuatQua&ct=ct-thu-binh&ma=HCKA2')).het, true, 'hết suất');
+  assert.strictEqual((await m2.get('action=giuSuatQua&ct=ct-khac&ma=HCKA3')).het, false, 'chương trình khác không giới hạn');
 });

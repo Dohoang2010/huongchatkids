@@ -156,7 +156,7 @@ function doPost(e) {
     var thanhToan = order.payment === 'bank' ? 'Chuyển khoản' : (order.payment ? 'COD' : '');
     var quaText = order.qua && order.qua.soQua ? (order.qua.moTa || (order.qua.soQua + ' ' + order.qua.ten)) : '';
     /* Quà giới hạn số suất (vd bình giữ nhiệt 50 suất): hết suất thì đơn không kèm quà, ghi chú cho shop */
-    if (quaText && order.type !== 'callback') { var hetQua = giuSuatQua_(String(order.qua.chuongTrinh || '')); if (hetQua) { quaText = ''; order.note = (order.note ? order.note + ' | ' : '') + 'Hết suất quà ' + hetQua + ' – đơn không kèm quà'; } }
+    if (quaText && order.type !== 'callback') { var hetQua = giuSuatQua_(String(order.qua.chuongTrinh || ''), String(order.code || '')); if (hetQua) { quaText = ''; order.note = (order.note ? order.note + ' | ' : '') + 'Hết suất quà ' + hetQua + ' – đơn không kèm quà'; } }
 
     try { ghiNguonDon_(order, loai); } catch (eNd) { Logger.log(eNd); }   // nguồn khách + chương trình của đơn (báo cáo bán hàng)
     sheetDon().appendRow([
@@ -2345,19 +2345,30 @@ function traVe(data, callback) {
 /* ===== Quà giới hạn số suất (chủ shop 24/10/2026: bình giữ nhiệt độc quyền web, 50 suất) =====
    Nhóm quà → số suất + các mã chương trình dùng chung suất (id trong QUA_TANG.chuongTrinh ở js/data.js). Đơn kèm quà của 1 trong các chương trình được giữ 1 suất. */
 var QUA_GIOI_HAN = { 'binh-giu-nhiet': { suat: 50, ten: 'bình giữ nhiệt Hương Chất Kids', ids: ['ct-2410-binh-lotte', 'ct-2410-binh-2tr'] } };
-/* Giữ 1 suất cho đơn; trả về tên quà nếu đã hết suất ('' = còn suất hoặc quà không giới hạn) */
-function giuSuatQua_(chuongTrinh) {
+/* Giữ 1 suất cho đơn (mã đơn đã giữ rồi thì không giữ thêm); trả về tên quà nếu đã hết suất ('' = còn suất / quà không giới hạn) */
+function giuSuatQua_(chuongTrinh, maDon) {
   var het = '';
   Object.keys(QUA_GIOI_HAN).forEach(function (id) {
-    var ma = chuongTrinh.split(',').map(function (x) { return x.trim(); }), dsId = QUA_GIOI_HAN[id].ids || [id];
+    var ma = String(chuongTrinh || '').split(',').map(function (x) { return x.trim(); }), dsId = QUA_GIOI_HAN[id].ids || [id];
     if (!ma.some(function (x) { return dsId.indexOf(x) > -1; })) return;
     var lock = LockService.getScriptLock(); lock.waitLock(20000);
     try {
       var pr = PropertiesService.getScriptProperties(), k = 'qua_suat_' + id, n = Number(pr.getProperty(k) || 0);
-      if (n >= QUA_GIOI_HAN[id].suat) het = QUA_GIOI_HAN[id].ten; else pr.setProperty(k, String(n + 1));
+      var ds = []; try { ds = JSON.parse(pr.getProperty('qua_don_' + id) || '[]'); } catch (eJ) { ds = []; }
+      if (maDon && ds.indexOf(maDon) > -1) return;   // đơn này đã giữ suất (web gửi lại)
+      if (n >= QUA_GIOI_HAN[id].suat) { het = QUA_GIOI_HAN[id].ten; return; }
+      pr.setProperty(k, String(n + 1));
+      if (maDon) { ds.push(maDon); pr.setProperty('qua_don_' + id, JSON.stringify(ds.slice(-500))); }
     } finally { lock.releaseLock(); }
   });
   return het;
+}
+/* Web gọi khi khách đặt đơn có quà giới hạn (đơn web gửi thẳng về CRM nên máy chủ giữ suất ở bước này) */
+function apiGiuSuatQua(p) {
+  var ma = String(p.ma || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 30), ct = String(p.ct || '').slice(0, 200);
+  if (!ma || !ct) return { ok: false, msg: 'Thiếu mã đơn' };
+  var het = giuSuatQua_(ct, ma);
+  return { ok: true, het: !!het, ten: het };
 }
 /* Số suất còn lại của các quà giới hạn (web gọi để ẩn quà khi hết suất) */
 function apiQuaConSuat() {
@@ -2376,6 +2387,7 @@ function doGet(e) {
   var chan = chanTanSuat_(action); if (chan) return traVe(chan, cb);
   try {
     if (action === 'quaConSuat') return traVe(apiQuaConSuat(), cb);
+    if (action === 'giuSuatQua') return traVe(apiGiuSuatQua(p), cb);
     if (action === 'dgDs')      return traVe(apiDgDs(p), cb);
     if (action === 'dgTomTat')  return traVe(apiDgTomTat(), cb);
     if (action === 'dgGui')     return traVe(apiDgGui(p), cb);
