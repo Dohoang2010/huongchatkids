@@ -6309,12 +6309,12 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Tăng cao (Xanh) · 10 gói": 0,
-            "Tăng cân (Hồng) · 10 gói": 0,
-            "Đề kháng (Cam) · 10 gói": 0,
-            "Tăng cao (Xanh) · Thùng 30 gói": 1,
-            "Tăng cân (Hồng) · Thùng 30 gói": 1,
-            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Xanh – Táo & Củ dền · 10 gói": 0,
+            "Hồng – Nho & Mận · 10 gói": 0,
+            "Cam – Lê & Hoa chuông · 10 gói": 0,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
+            "Hồng – Nho & Mận · Thùng 30 gói": 1,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
             "Mix vị · Thùng 30 gói": 1
           }
         },
@@ -6955,12 +6955,12 @@ window.QUA_TANG = {
         {
           "id": "22686115682",
           "bienThe": {
-            "Tăng cao (Xanh) · 10 gói": true,
-            "Tăng cân (Hồng) · 10 gói": true,
-            "Đề kháng (Cam) · 10 gói": true,
-            "Tăng cao (Xanh) · Thùng 30 gói": false,
-            "Tăng cân (Hồng) · Thùng 30 gói": false,
-            "Đề kháng (Cam) · Thùng 30 gói": false,
+            "Xanh – Táo & Củ dền · 10 gói": true,
+            "Hồng – Nho & Mận · 10 gói": true,
+            "Cam – Lê & Hoa chuông · 10 gói": true,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": false,
+            "Hồng – Nho & Mận · Thùng 30 gói": false,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": false,
             "Mix vị · Thùng 30 gói": false
           }
         }
@@ -7307,12 +7307,12 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Tăng cao (Xanh) · 10 gói": 0,
-            "Tăng cao (Xanh) · Thùng 30 gói": 1,
-            "Tăng cân (Hồng) · 10 gói": 0,
-            "Tăng cân (Hồng) · Thùng 30 gói": 1,
-            "Đề kháng (Cam) · 10 gói": 0,
-            "Đề kháng (Cam) · Thùng 30 gói": 1,
+            "Xanh – Táo & Củ dền · 10 gói": 0,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
+            "Hồng – Nho & Mận · 10 gói": 0,
+            "Hồng – Nho & Mận · Thùng 30 gói": 1,
+            "Cam – Lê & Hoa chuông · 10 gói": 0,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
             "Mix vị · Thùng 30 gói": 1
           }
         },

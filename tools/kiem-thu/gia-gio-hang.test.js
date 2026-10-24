@@ -166,6 +166,23 @@ test('Kid: Gạc Sumo mua thùng 40 gói tặng 1 hộp nước dinh dưỡng Lo
   assert.strictEqual(phi([dong(W, CX, 1, bt(W, CX, /^hộp/i))]), 30000, '1 hộp lẻ = hàng khác');
   assert.strictEqual(phi([dong(W, CX, 2, bt(W, CX, /thùng 30/i))]), 80000, '2 thùng 80k');
 });
+test('Quà theo phân loại phải khớp tên phân loại thật (đổi tên phân loại mà quên sửa chương trình → hộp lẻ bị tính như thùng)', () => {
+  const { W } = taoWeb({ gio: gio('10:00') });
+  const sai = [];
+  (W.QUA_TANG.chuongTrinh || []).forEach((c) => {
+    const kiem = (id, keys, cho) => { const p = W.PRODUCTS.find((x) => x.id === id); if (!p || !p.variants || !p.variants.length) return;
+      Object.keys(keys || {}).forEach((k) => { if (!p.variants.some((v) => v.label === k)) sai.push(c.id + ' › ' + cho + ' ' + id + ': "' + k + '"'); }); };
+    (c.sanPhamChinh || []).forEach((x) => kiem(x.id, x.heSo, 'heSo'));
+    (c.quaTang || []).forEach((x) => kiem(x.id, x.bienThe, 'bienThe'));
+  });
+  assert.deepStrictEqual(sai, [], 'tên phân loại không còn tồn tại');
+});
+test('24–25/10: 2 thùng nước ép Lotte tặng 1 thùng Háu Ăn, 2 hộp 10 gói thì không', () => {
+  const { MC, W } = taoWeb({ gio: '2026-10-24T10:00:00+07:00' });
+  const LT = '22686115682', thung = bt(W, LT, /Thùng 30 gói/), hop = bt(W, LT, /· 10 gói/);
+  assert.strictEqual((MC.giftFor([dong(W, LT, 2, thung)], {}) || {}).chuongTrinh, 'ct-2410-hau-an-lotte', '2 thùng được tặng');
+  assert.notStrictEqual((MC.giftFor([dong(W, LT, 2, hop)], {}) || {}).chuongTrinh, 'ct-2410-hau-an-lotte', '2 hộp 10 gói không phải 2 thùng');
+});
 test('MP: bộ 3 Meso bạc (cặp serum + kem + peel Anubis) tặng 1 hộp mặt nạ NMN; thiếu món nào cũng không tặng', () => {
   const { MC, W } = taoWeb({ gio: gio('10:00') });
   const MESO = '29006040615', PEEL = '24764883120', cap = bt(W, MESO, /cặp/i), serum = bt(W, MESO, /^serum/i);
