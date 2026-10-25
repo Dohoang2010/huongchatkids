@@ -8272,6 +8272,15 @@ window.COUPONS = {
       "26060839019",
       "combo-vangsua-d3k2"
     ]
+  },
+  "CAMON30": {
+    "ten": "Cảm ơn khách đã mua (poster gửi kèm đơn)",
+    "loai": "riengtu",
+    "type": "fixed",
+    "value": 30000,
+    "min": 200000,
+    "motLan": true,
+    "desc": "Giảm 30.000đ cho đơn từ 200.000đ – mỗi khách 1 lần"
   }
 };
 /* ===/ADMIN:COUPONS=== */
