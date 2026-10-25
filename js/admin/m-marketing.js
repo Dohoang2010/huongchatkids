@@ -149,7 +149,7 @@
   }
   function thuQua() {
     A.D.QUA_TANG = A.D.QUA_TANG || {};
-    if ($('#qtTen')) Object.assign(A.D.QUA_TANG, {
+    if ($('#qtBat') && $('#qtTen')) Object.assign(A.D.QUA_TANG, {
       enabled: $('#qtBat').checked, ten: $('#qtTen').value.trim(),
       vi: $('#qtVi').value.split(',').map((x) => x.trim()).filter(Boolean),
       donTu: { muc: Number($('#qtMuc').value) || 0, soQua: Number($('#qtSo').value) || 0, chiKhachMoi: $('#qtMoi').checked },
