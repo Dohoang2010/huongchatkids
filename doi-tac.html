@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261025b">
+  <link rel="stylesheet" href="css/style.css?v=20261025c">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -89,10 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="checkout">
         <div class="flex flex-col gap-16">
           <div class="card card--pad"><h3>🛍️ Sản phẩm có hoa hồng – chọn & copy link</h3>
+            <div class="dt-ca-web"><div><b>🌐 Link cả web huongchatkids.vn</b><small>Khách bấm link rồi mua bất kỳ sản phẩm nào trong ${cfg.ngay} ngày đều tính hoa hồng cho bạn</small><code>${esc(MC.AFF.linkGon(d.ma))}</code></div><button class="btn btn--primary btn--sm" type="button" data-copy="${esc(MC.AFF.linkGon(d.ma))}">Copy link web</button></div>
             <div class="dt-loc"><input class="input" id="dtTim" placeholder="Tìm sản phẩm…" autocomplete="off">
               <select class="input" id="dtSx"><option value="hh">Hoa hồng cao nhất</option><option value="ban">Bán chạy nhất</option><option value="cuaBan">Bạn bán nhiều nhất</option><option value="gia">Giá thấp → cao</option></select></div>
             <div class="dt-sp" id="dtSp"></div>
-            <div class="dt-link"><span>Link trang chủ</span><code>${esc(MC.AFF.linkGon(d.ma))}</code><button class="btn btn--dark btn--sm" type="button" data-copy="${esc(MC.AFF.linkGon(d.ma))}">Copy</button></div>
             <p class="qmk__note mt-8">Link rút gọn tự chuyển tới sản phẩm và ghi nhận cho bạn trong ${cfg.ngay} ngày kể từ lần khách bấm gần nhất.</p></div>
           <div class="card card--pad"><h3>📈 Lượt bấm 14 ngày</h3><div class="dt-chart">${hs.bieuDo.map((x) => `<div title="${x.ngay}: ${x.luot} lượt"><i style="height:${Math.round(x.luot / max * 100)}%"></i><small>${x.ngay.slice(0, 2)}</small></div>`).join('')}</div></div>
           <div class="card card--pad"><h3>🧾 Đơn hàng (${hs.don.length})</h3>${hs.don.length ? `<div class="diem-ls">${hs.don.map((o) => `<div class="diem-ls__it"><div><b>${esc(o.ma)} · khách ${esc(o.khach)}</b><small>${esc(o.ngay)} · ${esc(o.nguon)}${o.sp ? ' · ' + esc(o.sp) : ''}</small></div><div class="diem-ls__so"><span class="badge ${TT[o.tt] || 'badge--soft'}">${esc(o.tt)}</span><small>${fmt(o.tien)} × ${o.pt}% = <b>${fmt(o.hh)}</b>${o.ky ? ' · ' + esc(o.ky) : ''}</small></div></div>`).join('')}</div>` : '<p class="text-muted fs-14">Chưa có đơn nào. Đăng link sản phẩm để bắt đầu nhé!</p>'}</div>
