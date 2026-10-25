@@ -21,7 +21,7 @@ function taoMay(them) {
   const traLoi = (y) => (/web-khach\?sdt=/.test(y.url) ? { ma: 200, noiDung: JSON.stringify({ ok: true, co: false, donHang: [] }), dau: {} } : { ma: 404, noiDung: '', dau: {} });
   const bc = new BoChay({ kho, cauHinh: { imLang: true, goiMang: async (ds) => ds.map(traLoi) }, guiDi: (h) => daGui.push(...h) });
   datGoiChoThu((ds) => ds.map(traLoi));
-  bc.napMa(MA + (them ? '\n;' + them : ''), 'apps-script.gs');
+  bc.napMa(MA + '\n;OTP_QUA_SHOP = true;' + (them ? '\n;' + them : ''), 'apps-script.gs');   // các bài OTP cũ dùng kênh shop cho khách chưa có email
   kho.thuocTinh.set('ADMIN_KEY', KHOA_QT);
   kho.thuocTinh.set('ZALO_BOT_TOKEN', '123456:thu-nghiem'); kho.thuocTinh.set('ZALO_BOT_CHAT_ID', 'chat-thu');   // Zalo giả: tin báo shop chỉ vào hộp thư đi của bài kiểm thử
   const get = async (q) => JSON.parse((await bc.doGet(new URLSearchParams(q))).noiDung);
@@ -312,4 +312,12 @@ test('nhập bù dữ liệu: thêm đơn + khách + điểm + điểm danh, ch�
   assert.strictEqual(m.trang('Đơn hàng').getDataRange().getValues().filter((r) => r[1] === 'HCKBU00001').length, 1);
   assert.strictEqual(m.trang('Khách hàng').getDataRange().getValues().find((r) => String(r[0]).endsWith('898788098'))[1], 'Khách Bù');
   assert.strictEqual(m.daGui.filter((h) => h.loai === 'mail').length, 0 + m.daGui.filter((h) => h.loai === 'mail' && !/HCKBU|Khách Bù/.test(JSON.stringify(h))).length, 'không gửi mail cho phần nhập bù');
+});
+
+test('OTP: tạm dừng nhờ shop nhắn mã → khách chưa có email nhận lỗi NO_EMAIL, không gửi mail cho shop; có email thì gửi vào mail khách', async () => {
+  const m = taoMay('OTP_QUA_SHOP = false;');
+  const g = await m.get('action=guiOtp&sdt=' + SDT2); assert.strictEqual(g.ok, false); assert.strictEqual(g.code, 'NO_EMAIL');
+  assert.ok(!m.daGui.some((h) => /xin mã OTP/.test(JSON.stringify(h))), 'không gửi mail / Zalo xin mã cho shop');
+  await datDon(m, SDT);   // khách có email me.thu@example.com
+  const g2 = await m.get('action=guiOtp&sdt=' + SDT); assert.strictEqual(g2.ok, true); assert.strictEqual(g2.kenh, 'email');
 });

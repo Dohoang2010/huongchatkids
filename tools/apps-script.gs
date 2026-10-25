@@ -422,7 +422,8 @@ function donRacOtp() {
   });
 }
 
-/* Gửi mã OTP: ưu tiên SMS → email khách → báo về shop để shop nhắn tay */
+/* Gửi mã OTP: ưu tiên SMS → email khách → (OTP_QUA_SHOP) báo về shop để shop nhắn tay */
+var OTP_QUA_SHOP = false;
 function guiMaOtp(sdt, ma, emailKhach) {
   var noiDung = 'Ma xac thuc ' + TEN_SHOP + ' cua ban la ' + ma + '. Ma co hieu luc ' + OTP_PHUT + ' phut. Khong chia se ma nay cho bat ky ai.';
   if (SMS_API_KEY && SMS_SECRET_KEY) {
@@ -444,6 +445,7 @@ function guiMaOtp(sdt, ma, emailKhach) {
       return { kenh: 'email', emailAn: anEmail(emailKhach) };
     } catch (err) { Logger.log('Email OTP lỗi: ' + err); }
   }
+  if (!OTP_QUA_SHOP) return { kenh: 'khong' };   // tạm dừng nhờ shop nhắn mã (chủ shop dặn 25/10/2026): khách chưa có email thì báo nhắn Zalo shop
   var bao = '🔐 Khách ' + sdt + ' xin mã OTP: ' + ma + ' (hiệu lực ' + OTP_PHUT + ' phút).\nShop nhắn mã này cho khách qua Zalo/SMS giúp nhé.';
   try { zaloBotGuiTin(bao); } catch (err) { Logger.log(err); }
   if (EMAIL) { try { MailApp.sendEmail(EMAIL, '🔐 Mã OTP cho khách ' + sdt, bao); } catch (err) { Logger.log(err); } }
@@ -3694,6 +3696,7 @@ function apiGuiOtp(p) {
     // Số ĐÃ có hồ sơ thì chỉ dùng email đã lưu, tránh người lạ chuyển mã sang email của họ.
     if (!dong && !emailKhach && emailHopLe(p.email)) emailKhach = String(p.email).trim();
     var gui = guiMaOtp(sdt, ma, emailKhach);
+    if (gui.kenh === 'khong') return { ok: false, code: 'NO_EMAIL', msg: 'Tài khoản này chưa có email để nhận mã. Mẹ nhắn Zalo ' + HOTLINE + ' để shop hỗ trợ đăng nhập nhé.' };
     luuOtp(sdt, ma, gui.kenh);
     return { ok: true, kenh: gui.kenh, emailAn: gui.emailAn || '', hetHanGiay: OTP_PHUT * 60 };
   } finally { lock.releaseLock(); }
