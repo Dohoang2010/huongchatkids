@@ -175,7 +175,7 @@ window.TRANG_DM = [
     mau: { nen: '#FFFFFF', phu: '#F5F5F3', nhan: '#222222', chu: '#222222' },
     gioiThieu: 'Đồ lót nữ MaBelle: áo ngực có gọng, không gọng, liền mạch và quần lót su đúc. Mỗi mẫu có đủ size và màu để mẹ chọn ngay trên trang sản phẩm.',
     an: ['age', 'need', 'cat'], locSizeMau: true, seoTieuDe: 'Thời trang đồ lót nữ MaBelle chính hãng – Hương Chất Kids' },
-  { key: 'thuc-pham', slug: 'thuc-pham', ten: 'Thực phẩm', nhan: 'Thực phẩm', icon: '🍎', loc: { cat: ['thuc-pham', 'do-an'] },
+  { key: 'thuc-pham', slug: 'thuc-pham', ten: 'Foods – Đồ ăn vặt', nhan: 'Foods – Đồ ăn vặt', icon: '🍎', loc: { cat: ['thuc-pham', 'do-an'] },
     mau: { nen: '#FCFBF5', phu: '#E7F0DF', nhan: '#557B4C', chu: '#2D342B' },
     gioiThieu: 'Thực phẩm gia đình và đồ ăn vặt: táo đỏ, granola, ngũ cốc, miến, bò xuyên tiêu, lợn đen gác bếp, cơm cháy. Quy cách đóng gói và xuất xứ ghi rõ trong từng sản phẩm.',
     con: 'danhMuc', an: ['age', 'need'], seoTieuDe: 'Thực phẩm gia đình, đặc sản và đồ ăn vặt – Hương Chất Kids' },
@@ -245,7 +245,7 @@ window.NAV = [
   { label: 'Thời trang', short: 'Thời trang', tiny: 'Thời trang', link: 'collections.html?cat=thoi-trang', columns: [
     { title: 'Áo lót MaBelle', links: [['Áo ngực chống từ MaBelle 5192', 'product.html?id=mabelle-5192'], ['Áo ngực chống hằn MaBelle 5790', 'product.html?id=mabelle-5790'], ['Áo ngực có gọng MaBelle 5038', 'product.html?id=mabelle-5038'], ['Áo lót liền mạch không gọng MaBelle 5997', 'product.html?id=mabelle-5997'], ['Áo lót không gọng MaBelle 5992', 'product.html?id=mabelle-5992']] },
     { title: 'Quần lót MaBelle', links: [['Quần lót su đúc kháng khuẩn MaBelle 6999', 'product.html?id=mabelle-6999'], ['Xem tất cả thời trang', 'collections.html?cat=thoi-trang']] } ] },
-  { label: 'Thực phẩm', short: 'Thực phẩm', tiny: 'Thực phẩm', link: 'collections.html?cat=thuc-pham,do-an', columns: [
+  { label: 'Foods – Đồ ăn vặt', short: 'Foods – Đồ ăn vặt', tiny: 'Foods', link: 'collections.html?cat=thuc-pham,do-an', columns: [
     { title: 'Thực phẩm gia đình', links: [['Táo đỏ Hoàng Gia Hotan 1kg', 'product.html?id=28467224687'], ['Granola Fuwa-Saku Nhật Bản', 'product.html?id=43532388498'], ['Ngũ cốc bắp thiên ma Kitea', 'product.html?id=ngu-coc-bap-thien-ma-kitea'], ['Miến gà sấy thăng hoa', 'product.html?id=mien-ga-cf']] },
     { title: 'Đồ ăn & ăn vặt', links: [['Bò xuyên tiêu Chef Hải', 'product.html?id=bo-xuyen-tieu'], ['Lợn đen khói mơ Tây Bắc', 'product.html?id=lon-den-khoi-mo'], ['Cơm cháy phô mai & BBQ', 'product.html?id=com-chay-phomai'], ['Cơm cháy chà bông Nội Ơi', 'product.html?id=com-vang-noi-oi'], ['Muối xuyên tiêu Chef Hải', 'product.html?id=muoi-xuyen-tieu']] } ] },
   { label: 'Flash sale', short: 'Flash sale', tiny: 'Sale', link: 'collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot', hot: true },
