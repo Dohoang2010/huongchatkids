@@ -242,6 +242,8 @@
           store.set('mc_last_order', saved);
           postOrder(saved).then((ok) => { if (!ok) queueOrder(saved); });
           AFF.ganDon(saved);
+          if (saved.type !== 'callback' && saved.customer && phoneOk(saved.customer.phone)) loyaltyApi('zaloXacNhanDon', { ma: code, sdt: phoneKey(saved.customer.phone), ten: saved.customer.name || '', tong: Number(saved.total) || 0, tt: saved.payment || '',   // tin Zalo xác nhận đơn (ZBS) – máy chủ tự bỏ qua khi chưa bật
+            sp: (saved.items || []).map((it) => `${it.short || it.name}${it.variant ? ' – ' + it.variant : ''} × ${it.qty || 1}`).join('; ').slice(0, 300) }, 20000).catch(() => {});
           resolve(saved);
         });
       }, 700);
@@ -1619,6 +1621,7 @@
 
       const buocMa = (info, loi) => {
         const kenh = info.kenh === 'sms' ? `tin nhắn SMS tới <b>${esc(maskPhone(sdt))}</b>`
+          : info.kenh === 'zalo' ? `Zalo của số <b>${esc(maskPhone(sdt))}</b> (tin từ OA Hương Chất Kids)`
           : info.kenh === 'email' ? `email <b>${esc(info.emailAn || '')}</b>`
           : `Zalo/SMS từ shop (shop gửi tay trong giờ làm việc ${esc(SITE.workingHours)})`;
         box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 mb-12">Mã gồm 6 số đã được gửi qua ${kenh}.</p>

@@ -438,6 +438,7 @@ function guiMaOtp(sdt, ma, emailKhach) {
       Logger.log('SMS lỗi: ' + res.getContentText());
     } catch (err) { Logger.log('SMS lỗi: ' + err); }
   }
+  if (zbsBat_()) { var z = zbsGui_(sdt, ZBS_MAU.otp, { otp: String(ma) }, 'otp-' + sdt + '-' + Date.now()); if (z.ok) return { kenh: 'zalo' }; }
   if (emailKhach) {
     try {
       MailApp.sendEmail(emailKhach, 'Mã xác thực ' + TEN_SHOP + ': ' + ma,
@@ -2476,6 +2477,7 @@ function doGet(e) {
     if (action === 'affBam')        return traVe(apiAffBam(p), cb);
     if (action === 'affSdt')        return traVe(apiAffSdt(p), cb);
     if (action === 'affGanDon')     return traVe(apiAffGanDon(p), cb);
+    if (action === 'zaloXacNhanDon') return traVe(apiZaloXacNhanDon(p), cb);
     if (action === 'affDangKy')     return traVe(apiAffDangKy(p), cb);
     if (action === 'affDangNhap')   return traVe(apiAffDangNhap(p), cb);
     if (action === 'affTuKhach')    return traVe(apiAffTuKhach(p), cb);
@@ -3944,6 +3946,70 @@ function zaloBotGoi(method, payload) {
 function zaloBotChatId() {
   return ZALO_BOT_CHAT_ID || PropertiesService.getScriptProperties().getProperty('ZALO_BOT_CHAT_ID') || '';
 }
+/* ===================== ZALO ZBS (tin mẫu gửi qua SĐT): xác nhận đơn + mã OTP =====================
+   Mã kết nối lưu trong thuộc tính (đặt bằng tools/may-chu-vps/cai-zalo-zbs.ps1 → zbsLuuMa_): ZBS_APP_ID, ZBS_SECRET, ZBS_REFRESH.
+   Access token tự làm mới bằng refresh token (Zalo đổi refresh token mỗi lần làm mới → lưu lại ngay).
+   ZBS_BAT = '1' mới gửi thật (bật sau khi gửi thử thành công). Mẫu đã đăng ký: xác nhận đơn 656818, OTP 656823. */
+var ZBS_MAU = { don: '656818', otp: '656823' };
+function zbsTT_() { return PropertiesService.getScriptProperties(); }
+function zbsBat_() { var p = zbsTT_(); return p.getProperty('ZBS_BAT') === '1' && !!p.getProperty('ZBS_REFRESH'); }
+function zbsToken_() {
+  var p = zbsTT_(), app = p.getProperty('ZBS_APP_ID'), sec = p.getProperty('ZBS_SECRET'), rt = p.getProperty('ZBS_REFRESH');
+  if (!app || !sec || !rt) return '';
+  var at = p.getProperty('ZBS_ACCESS'), het = Number(p.getProperty('ZBS_ACCESS_HET') || 0);
+  if (at && Date.now() < het - 5 * 60e3) return at;
+  var r = UrlFetchApp.fetch('https://oauth.zaloapp.com/v4/oa/access_token', { method: 'post', headers: { secret_key: sec },
+    payload: { app_id: app, grant_type: 'refresh_token', refresh_token: rt }, muteHttpExceptions: true });
+  var d = {}; try { d = JSON.parse(r.getContentText() || '{}'); } catch (e) { d = {}; }
+  if (!d.access_token) { Logger.log('ZBS làm mới token lỗi: ' + r.getContentText()); return ''; }
+  p.setProperty('ZBS_ACCESS', d.access_token); if (d.refresh_token) p.setProperty('ZBS_REFRESH', d.refresh_token);
+  p.setProperty('ZBS_ACCESS_HET', String(Date.now() + (Number(d.expires_in) || 3600) * 1000));
+  return d.access_token;
+}
+/* Gửi 1 tin mẫu ZBS tới SĐT (dạng 84…). Trả { ok, loi } – lỗi không bao giờ làm hỏng việc chính */
+function zbsGui_(sdt, mau, duLieu, theoDoi, boQuaBat) {
+  try {
+    if (!boQuaBat && !zbsBat_()) return { ok: false, loi: 'ZBS chưa bật' };
+    sdt = chuanSdt(sdt); if (!sdtHopLe(sdt)) return { ok: false, loi: 'SĐT sai' };
+    var t = zbsToken_(); if (!t) return { ok: false, loi: 'Chưa có / hết hạn mã kết nối ZBS' };
+    var r = UrlFetchApp.fetch('https://business.openapi.zalo.me/message/template', { method: 'post', contentType: 'application/json', headers: { access_token: t },
+      payload: JSON.stringify({ phone: '84' + sdt.slice(1), template_id: mau, template_data: duLieu, tracking_id: String(theoDoi || '').slice(0, 48) }), muteHttpExceptions: true });
+    var d = {}; try { d = JSON.parse(r.getContentText() || '{}'); } catch (e) { d = {}; }
+    if (Number(d.error) === 0) return { ok: true };
+    Logger.log('ZBS gửi lỗi (' + mau + '): ' + r.getContentText());
+    return { ok: false, loi: String(d.message || r.getContentText()).slice(0, 200), ma: d.error };
+  } catch (e) { Logger.log('ZBS lỗi: ' + e); return { ok: false, loi: String(e).slice(0, 200) }; }
+}
+/* Lưu mã kết nối (chỉ gọi nội bộ trên VPS) */
+function zbsLuuMa_(appId, secret, refresh) {
+  var p = zbsTT_(); if (appId) p.setProperty('ZBS_APP_ID', String(appId).trim()); if (secret) p.setProperty('ZBS_SECRET', String(secret).trim());
+  if (refresh) { p.setProperty('ZBS_REFRESH', String(refresh).trim()); p.deleteProperty('ZBS_ACCESS'); p.deleteProperty('ZBS_ACCESS_HET'); }
+  var t = zbsToken_(); return { ok: !!t, msg: t ? 'Đã kết nối ZBS' : 'Chưa lấy được access token – kiểm tra Secret Key / refresh token' };
+}
+function zbsBatTat_(bat) { zbsTT_().setProperty('ZBS_BAT', bat ? '1' : '0'); return { ok: true, bat: !!bat }; }
+/* Gửi thử (nội bộ): loai = 'don' | 'otp' – không cần ZBS_BAT */
+function zbsGuiThu_(sdt, loai) {
+  if (loai === 'otp') return zbsGui_(sdt, ZBS_MAU.otp, { otp: '123456' }, 'thu-otp-' + Date.now(), true);
+  return zbsGui_(sdt, ZBS_MAU.don, zbsDuLieuDon_({ ma: 'HCKTHU0001', ten: 'Khách thử', sp: 'Nước ép Lotte Organic × 1', tong: 448000, tt: 'cod', luc: Date.now() }), 'thu-don-' + Date.now(), true);
+}
+function zbsDuLieuDon_(o) {
+  var cat = function (x, n) { x = String(x == null ? '' : x).replace(/\s+/g, ' ').trim(); return x.length > n ? x.slice(0, n - 1) + '…' : x; };
+  return { customer_name: cat(o.ten || 'mẹ', 30), order_code: cat(o.ma, 30), product: cat(o.sp, 200), total: cat(tien(o.tong), 20),
+    payment: o.tt === 'bank' ? 'Chuyển khoản' : 'Thanh toán khi nhận hàng', order_date: Utilities.formatDate(new Date(Number(o.luc) || Date.now()), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm') };
+}
+/* Web gọi sau khi đặt đơn xong: gửi tin xác nhận đơn vào Zalo khách. Chống lạm dụng: mỗi mã đơn 1 lần, mỗi số 3 tin / giờ, cả shop 300 tin / ngày */
+function apiZaloXacNhanDon(p) {
+  if (!zbsBat_()) return { ok: false, tat: true };
+  var ma = String(p.ma || '').trim().toUpperCase(), sdt = chuanSdt(p.sdt);
+  if (!/^HCK[0-9A-Z]{6,16}$/.test(ma) || !sdtHopLe(sdt)) return { ok: false, msg: 'Thiếu mã đơn / SĐT' };
+  var c = CacheService.getScriptCache(); if (c.get('zbs_don_' + ma)) return { ok: true, trung: true };
+  if (!demGioiHan('gh_zbs_ngay', 300, 86400) || !demGioiHan('gh_zbs_' + sdt, 3, 3600)) return { ok: false, msg: 'Quá giới hạn' };
+  c.put('zbs_don_' + ma, '1', 21600);
+  var kq = zbsGui_(sdt, ZBS_MAU.don, zbsDuLieuDon_({ ma: ma, ten: p.ten, sp: p.sp, tong: p.tong, tt: p.tt, luc: Date.now() }), 'don-' + ma);
+  if (!kq.ok) Logger.log('ZBS xác nhận đơn ' + ma + ' lỗi: ' + kq.loi);
+  return { ok: kq.ok };
+}
+
 function zaloBotGuiTin(text) {
   var chat = zaloBotChatId();
   if (!zaloToken_() || !chat) return;

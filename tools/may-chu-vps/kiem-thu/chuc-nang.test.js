@@ -321,3 +321,14 @@ test('OTP: tạm dừng nhờ shop nhắn mã → khách chưa có email nhận 
   await datDon(m, SDT);   // khách có email me.thu@example.com
   const g2 = await m.get('action=guiOtp&sdt=' + SDT); assert.strictEqual(g2.ok, true); assert.strictEqual(g2.kenh, 'email');
 });
+
+test('Zalo ZBS: chưa bật thì không gửi; bật nhưng mã kết nối lỗi thì OTP vẫn về email, xác nhận đơn báo lỗi nhưng không hỏng', async () => {
+  const m = taoMay();
+  assert.deepStrictEqual(await m.get('action=zaloXacNhanDon&ma=HCK2610207978&sdt=' + SDT), { ok: false, tat: true });
+  m.kho.thuocTinh.set('ZBS_APP_ID', '1'); m.kho.thuocTinh.set('ZBS_SECRET', 'bi-mat-gia'); m.kho.thuocTinh.set('ZBS_REFRESH', 'rt-gia'); m.kho.thuocTinh.set('ZBS_BAT', '1');
+  await datDon(m, SDT);   // khách có email
+  const g = await m.get('action=guiOtp&sdt=' + SDT); assert.strictEqual(g.ok, true); assert.strictEqual(g.kenh, 'email', 'Zalo lỗi → rơi về email');
+  const d = await m.get('action=zaloXacNhanDon&ma=HCK2610207978&sdt=' + SDT + '&ten=Me&sp=Kem&tong=725000&tt=cod'); assert.strictEqual(d.ok, false);
+  assert.deepStrictEqual(await m.get('action=zaloXacNhanDon&ma=HCK2610207978&sdt=' + SDT), { ok: true, trung: true }, 'mỗi mã đơn chỉ gửi 1 lần');
+  assert.strictEqual((await m.get('action=zaloXacNhanDon&ma=XYZ&sdt=' + SDT)).ok, false);
+});
