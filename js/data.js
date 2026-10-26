@@ -835,7 +835,7 @@ window.PRODUCTS = [
   {
     "id": "26156646705",
     "name": "Gạc Hươu Non Sumo Chiết Xuất Nhung Hươu Hỗ Trợ Tăng Cân, Ăn Ngon",
-    "short": "Gạc hươu non Sumo",
+    "short": "Gạc hươu non tăng cân Sumo",
     "brand": "sumo",
     "cat": "tang-can",
     "ages": [
@@ -844,9 +844,9 @@ window.PRODUCTS = [
       "6-12y"
     ],
     "needs": [
+      "de-khang",
       "tang-can",
-      "canxi",
-      "de-khang"
+      "canxi"
     ],
     "price": 390000,
     "oldPrice": 527000,
