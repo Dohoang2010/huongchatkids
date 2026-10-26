@@ -1,4 +1,4 @@
-# Kết nối Zalo ZBS (tin xác nhận đơn + mã OTP qua Zalo) – CHỦ SHOP TỰ CHẠY trên máy Windows có khoá SSH của VPS.
+﻿# Kết nối Zalo ZBS (tin xác nhận đơn + mã OTP qua Zalo) – CHỦ SHOP TỰ CHẠY trên máy Windows có khoá SSH của VPS.
 # Mã chỉ được gửi thẳng lên VPS, không lưu trên máy này, không nằm trong mã web.
 # Chuẩn bị (developers.zalo.me):
 #   1. Ứng dụng của tôi › Hương Chất Kids › Cài đặt: chép "Khóa bí mật của ứng dụng" (Secret Key)
