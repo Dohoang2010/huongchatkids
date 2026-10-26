@@ -4819,10 +4819,10 @@ window.BANNERS = [
   },
   {
     "anh": {
-      "pc": "img/banner/do-chi-so-pc.jpg",
-      "mb": "img/banner/do-chi-so-mb.jpg"
+      "pc": "img/banner/do-chi-so-v2-pc.jpg",
+      "mb": "img/banner/do-chi-so-v2-mb.jpg"
     },
-    "nen": "#BFE9E1",
+    "nen": "#FDEFF4",
     "link": "do-chi-so-cho-be.html",
     "alt": "Đo chỉ số con miễn phí theo chuẩn WHO – chiều cao, cân nặng, BMI, chế độ ăn và vận động theo tuổi"
   },
