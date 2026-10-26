@@ -16,7 +16,13 @@ function An($hoi) {
 function Goi($o) { return (($o | ConvertTo-Json -Compress) | ssh -i $khoa -o BatchMode=yes $vps 'node /opt/hck-api/cong-cu/dat-zbs.js') -join ' ' | ConvertFrom-Json }
 $appId = (Read-Host 'App ID (Enter = 2831485758862930392)') -replace '\s', ''
 if (-not $appId) { $appId = '2831485758862930392' }
-$secret = An 'Dán Secret Key (chữ sẽ không hiện ra)'
+$secret = (Read-Host 'Gõ hoặc dán Secret Key (khoảng 20 chữ, đừng chụp màn hình lúc này)') -replace '\s', ''
+while ($secret.Length -lt 10 -or $secret.Length -gt 60) {
+  Write-Host ("Vừa nhập " + $secret.Length + " ký tự – không đúng (Secret Key chỉ khoảng 20 chữ). Nhìn trang Zalo rồi gõ tay.") -ForegroundColor Yellow
+  $secret = (Read-Host 'Gõ Secret Key') -replace '\s', ''
+}
+Clear-Host
+Write-Host ("Đã nhận Secret Key " + $secret.Length + " ký tự.")
 $refresh = An 'Dán Refresh Token (chữ sẽ không hiện ra)'
 Write-Host 'Đang lưu mã lên VPS ...'
 $kq = Goi @{ viec = 'luu'; appId = $appId; secret = $secret; refresh = $refresh }
