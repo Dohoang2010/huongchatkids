@@ -751,6 +751,7 @@
         <div class="hk-vd__ds">${(vdGioi ? vdGioi.goiY : vd.goiY).map(([ic, ten, mo]) => `<div class="hk-vd__o"><span class="hk-vd__ic" aria-hidden="true">${ic}</span><div><b>${ten}</b><p>${mo}</p></div></div>`).join('')}</div>
         ${vdGioi ? `<p class="hk-vd__luu">${vdGioi.ghi}</p>` : ''}
         <p class="hk-vd__luu">${vd.luuY}</p>
+        <p><button type="button" class="btn btn--primary" data-vd-mo="${k.giaiDoan}" data-vd-mo-gai="${hs.sex === 2 ? 1 : 0}">🤸 Tập cùng ${esc(tenBe(hs))} ngay – bài hôm nay</button></p>
         <p class="hk-src">Thời lượng vận động theo khuyến nghị của Tổ chức Y tế Thế giới (WHO); giấc ngủ theo Viện Hàn lâm Y học Giấc ngủ Hoa Kỳ (AASM). Bé có bệnh lý, mẹ hỏi bác sĩ trước khi cho bé tập môn mới.</p>
       </details>` : ''}
 

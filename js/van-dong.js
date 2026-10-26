@@ -126,6 +126,12 @@
       if (t.hasAttribute('data-vd-tiep')) return qua();
       if (t.hasAttribute('data-vd-ve')) return veTrangChinh();
     });
+    /* Nút "Tập cùng bé ngay" trong kết quả đo (js/suc-khoe.js): mở popup đúng tuổi + giới tính của lần đo */
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-vd-mo]'); if (!t) return;
+      mo(); S.tuoi = t.dataset.vdMo; if (!(S.tuoi === '0-6m' || S.tuoi === '6-12m')) S.gai = t.dataset.vdMoGai === '1';
+      luu(); veTrangChinh();
+    });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && khung.classList.contains('is-mo')) dong(); });
     document.addEventListener('visibilitychange', function () { if (document.hidden && hen) dung = true; });
   }
