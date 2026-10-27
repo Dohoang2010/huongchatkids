@@ -4668,33 +4668,6 @@ window.PRODUCTS = [
     "usage": "Rửa sạch bình và nắp trước lần dùng đầu. Rửa tay bằng nước ấm, không ngâm lâu, không dùng máy rửa bát, không cho vào lò vi sóng. Không đựng đồ uống có ga.",
     "seoTitle": "Bình giữ nhiệt Hương Chất Kids – quà độc quyền website | Hương Chất Kids",
     "seoDesc": "Bình giữ nhiệt Hương Chất Kids in logo và nhân vật thú cưng, nắp bật vòi hút – độc quyền huongchatkids.vn, giá 199.000đ."
-  },
-  {
-    "id": "sp1793071810793",
-    "name": "Sản phẩm mới",
-    "short": "Sản phẩm mới",
-    "brand": "lotte",
-    "cat": "nuoc-ep",
-    "ages": [],
-    "needs": [],
-    "price": 0,
-    "oldPrice": 0,
-    "rating": 5,
-    "reviews": 0,
-    "sold": 0,
-    "stock": 10,
-    "shape": "box",
-    "color": "#F0537A",
-    "weight": "",
-    "origin": "Hàn Quốc",
-    "tags": [],
-    "image": "",
-    "thumb": "",
-    "images": [],
-    "desc": "",
-    "highlights": [],
-    "usage": "",
-    "an": true
   }
 ];
 /* ===/ADMIN:PRODUCTS=== */
