@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-23T03:57:02.829Z",
+  "updatedAt": "2026-10-27T03:30:14.588Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -389,9 +389,12 @@
     "com-chay-phomai": {
       "in": true,
       "variants": {
-        "1 túi 200g": true,
-        "2 túi": true,
-        "3 túi": true
+        "1 túi 200g (vị phô mai)": true,
+        "2 túi (vị phô mai)": true,
+        "3 túi (vị phô mai)": true,
+        "1 túi 200 gr (vị BBQ)": true,
+        "2 túi (vị BBQ)": true,
+        "3 túi  (vị BBQ)": true
       }
     },
     "com-vang-noi-oi": {
@@ -568,8 +571,7 @@
         "Date 03/2027 · Thùng 24 hộp": true
       }
     },
-    "binh-giu-nhiet-hck": {
-      "in": true
-    }
+    "binh-giu-nhiet-hck": true,
+    "sp1793071810793": true
   }
 }
