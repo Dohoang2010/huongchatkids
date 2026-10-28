@@ -25,6 +25,7 @@
     '48112514210': [['Hồ sơ sản phẩm – Super Collagen Alpha', d('1xTnzJM8bauG3NzDcItQFtybEcOTW4A63')], ['Giấy tờ sản phẩm – Collagen', d('1u78GGb1mrWu2R3AFmrApuT8AiFdk47No')], ['Kiểm nghiệm dinh dưỡng collagen', d('1aKxE3K7tbVQyIyh9ARfQGv9sBCvXk69R')]],
     'hexacare': [['Phiếu công bố mỹ phẩm – Hexacare Soothing (dịu nhẹ)', d('1Ax4Z_7F5iyNccMTRvsTToZEQULCCM_hW')], ['Phiếu công bố mỹ phẩm – Hexacare Extra-Gentle', d('1lhQ-Vxf-rjiRYHbzHQGx-1Js9nfvEM32')], ['Phiếu công bố mỹ phẩm – Hexacare Regulating (điều tiết)', d('1_gbjKMYn9rK6jKZQfS69MrP1PU3ugvTr')], ['Phiếu công bố mỹ phẩm – Hexacare bé gái 3–12 tuổi', d('1SWqP6cn-Nodl8Co8vtxF01El2_WFzcwI')]],
     'muoi-xuyen-tieu': [['Bản tự công bố – Muối xuyên tiêu', d('1YeK5z2JeQ-CLVx4X27rI8hNlsvY4PpjR')], ['Phiếu kiểm nghiệm – Muối xuyên tiêu', d('1eyzLFZdN_nRQ1zy-5UYvYnsVZJUK3cbH')]],
+    'ngu-coc-bap-thien-ma-kitea': [['Hồ sơ công bố – Bột thiên ma (ngũ cốc bắp Kitea)', d('1kX03GxWjjJ9-F1f6UEn3JtZVZBB6ERSn')]],
     'men-sysy': [['Hồ sơ công bố – Men Sysy nâu', d('1g2ieGmkDIBvhOmt1--L4PXCx7BOQ5l_5')], ['Hồ sơ công bố – Men Sysy xanh', d('1VDnvPXcEcRjr5iFR5BvT0Rj4UXHX2AQA')]],
   };
 })();
