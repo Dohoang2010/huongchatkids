@@ -3295,6 +3295,45 @@ window.PRODUCTS = [
     "usage": "Thoa lớp vừa đủ trước khi ra ngoài 15–20 phút, dặm lại sau mỗi 2–3 giờ nếu hoạt động ngoài trời."
   },
   {
+    "id": "hiskin-micellar",
+    "name": "Nước Tẩy Trang HISKIN Cleansing Micellar Water 500ml Hàn Quốc Làm Sạch Dịu Nhẹ, Cấp Ẩm, Chiết Xuất Trà Xanh",
+    "short": "Nước tẩy trang Hiskin Micellar Water 500ml",
+    "brand": "hiskin",
+    "cat": "cho-me",
+    "ages": [],
+    "needs": [
+      "cho-me",
+      "lam-dep"
+    ],
+    "price": 750000,
+    "rating": 5,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "cosmetic": true,
+    "shape": "bottle",
+    "color": "#2E7D32",
+    "weight": "Chai 500ml",
+    "origin": "Hàn Quốc",
+    "tags": [],
+    "image": "img/hiskin-micellar-h.jpg",
+    "thumb": "img/thumb/hiskin-micellar-h.jpg",
+    "images": [
+      "img/hiskin-micellar-h.jpg",
+      "img/hiskin-micellar-2.jpg",
+      "img/hiskin-micellar-3.jpg"
+    ],
+    "desc": "Nước tẩy trang HISKIN Cleansing Micellar Water 500ml (Hàn Quốc), dạng nước, chứa chiết xuất trà xanh, nước biển và Glycerin 4%. Theo nhà sản xuất: ứng dụng công nghệ Micellar giúp làm sạch lớp trang điểm, kem chống nắng, bụi bẩn và bã nhờn mà không cần chà xát mạnh; Glycerin 4% hỗ trợ duy trì độ ẩm, hạn chế cảm giác khô căng sau khi làm sạch; chiết xuất trà xanh và nước biển mang lại cảm giác tươi mát, dễ chịu. Kết cấu nền nước không gây nhờn, dùng được hằng ngày, phù hợp mọi loại da kể cả da nhạy cảm. Hạn sử dụng sau mở nắp: 12 tháng. Phù hợp với người thường xuyên trang điểm, dùng kem chống nắng hoặc cần làm sạch bụi bẩn, dầu thừa mỗi ngày.",
+    "highlights": [
+      "Công nghệ Micellar làm sạch nhẹ nhàng, không cần chà xát mạnh",
+      "Glycerin 4% hỗ trợ giữ ẩm, hạn chế khô căng",
+      "Chiết xuất trà xanh + nước biển, cảm giác tươi mát",
+      "Dạng nước, không nhờn, phù hợp cả da nhạy cảm",
+      "Chai 500ml, dùng được 12 tháng sau mở nắp"
+    ],
+    "usage": "Bước 1: Thấm một lượng nước tẩy trang vừa đủ vào bông tẩy trang. Bước 2: Lau nhẹ nhàng từ trung tâm khuôn mặt ra ngoài, theo chiều thớ da. Bước 3: Với vùng trang điểm đậm, đặt bông đã thấm sản phẩm lên vùng da trong giây lát rồi lau nhẹ. Bước 4: Tiếp tục dùng bông sạch cho đến khi không còn cặn trang điểm hoặc bụi bẩn trên bông."
+  },
+  {
     "id": "25678530796",
     "name": "Cặp Tái Tạo Phục Hồi Da Hỗ Trợ Kích Hoạt Tái Cấu Trúc Đa Tầng Giúp Làn Da Được Thắp Sáng Tăng Cường Sức Sống Luôn Ẩm Mịn",
     "short": "Cặp tái tạo phục hồi da Dermo Ioniq",

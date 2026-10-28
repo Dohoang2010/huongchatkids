@@ -29,6 +29,7 @@
     'lotte-hau-an': [['Tự công bố – Nước uống Bareun Mokjang Lactic (Lotte Háu Ăn)', d('1rb0x3yLKeQzhiwphZFECzEu79INSWY_b')], ['Bảng thành phần, hàm lượng vitamin', d('1vdFrzcpC1vfK-dWYDWpwPWrfdcLz4gng')]],
     '41002695070': [['Công bố – Rong biển tẩm gia vị Sung Gyung 300g, 500g', d('1tycZUrNeZJ3h0Dh-T4qaCWG2HRywUpqL')]],   // rong vụn Sung Gyung
     '56857599724': [['Phiếu công bố mỹ phẩm – Bột đánh trắng răng Akiko', d('17x51-vXVBqyvPoRMpJmajlefTxL0rBeO')]],
+    'hiskin-micellar': [['Phiếu công bố mỹ phẩm – Hiskin Cleansing Micellar Water', 'img/giay-to/hiskin-micellar-cong-bo.pdf']],
     'men-sysy': [['Hồ sơ công bố – Men Sysy nâu', d('1g2ieGmkDIBvhOmt1--L4PXCx7BOQ5l_5')], ['Hồ sơ công bố – Men Sysy xanh', d('1VDnvPXcEcRjr5iFR5BvT0Rj4UXHX2AQA')]],
   };
 })();
@@ -37,13 +38,15 @@
 document.addEventListener('click', function (e) {
   var nut = e.target.closest('[data-giay-to]'); if (!nut) return;
   var ds = (window.GIAY_TO || {})[nut.getAttribute('data-giay-to')] || []; if (!ds.length) return;
-  var xem = function (u) { return u.replace(/\/view$/, '/preview'); };
+  var tuyetDoi = function (u) { return new URL(u, location.href).href; };
+  /* Drive: bản xem trước của Drive; PDF trên web: trình xem Google (điện thoại Android không hiện PDF trong khung) */
+  var xem = function (u) { return /drive\.google\.com/.test(u) ? u.replace(/\/view$/, '/preview') : 'https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(tuyetDoi(u)); };
   var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var o = document.createElement('div'); o.className = 'gt-lop'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Giấy tờ sản phẩm');
   o.innerHTML = '<div class="gt-hop"><div class="gt-dau"><b>Giấy tờ sản phẩm</b><button type="button" class="gt-dong" aria-label="Đóng">✕</button></div>' +
     (ds.length > 1 ? '<div class="gt-tab">' + ds.map(function (x, i) { return '<button type="button" data-gt-i="' + i + '" class="' + (i ? '' : 'is-on') + '">' + esc(x[0]) + '</button>'; }).join('') + '</div>' : '<div class="gt-tab"><button type="button" class="is-on">' + esc(ds[0][0]) + '</button></div>') +
     '<iframe class="gt-khung" src="' + xem(ds[0][1]) + '" title="Giấy tờ sản phẩm" allow="autoplay"></iframe>' +
-    '<a class="gt-mo" href="' + ds[0][1] + '" target="_blank" rel="noopener">Mở toàn màn hình ↗</a></div>';
+    '<a class="gt-mo" href="' + tuyetDoi(ds[0][1]) + '" target="_blank" rel="noopener">Mở toàn màn hình ↗</a></div>';
   document.body.appendChild(o); document.body.style.overflow = 'hidden';
   var dong = function () { o.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', phim); };
   var phim = function (ev) { if (ev.key === 'Escape') dong(); };
@@ -53,6 +56,6 @@ document.addEventListener('click', function (e) {
     var t = ev.target.closest('[data-gt-i]'); if (!t) return;
     var x = ds[Number(t.getAttribute('data-gt-i'))];
     o.querySelectorAll('[data-gt-i]').forEach(function (b) { b.classList.toggle('is-on', b === t); });
-    o.querySelector('.gt-khung').src = xem(x[1]); o.querySelector('.gt-mo').href = x[1];
+    o.querySelector('.gt-khung').src = xem(x[1]); o.querySelector('.gt-mo').href = tuyetDoi(x[1]);
   });
 });
