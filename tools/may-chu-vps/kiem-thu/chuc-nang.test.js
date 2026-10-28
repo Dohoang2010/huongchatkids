@@ -178,7 +178,9 @@ test('chat: khách gửi → tự trả lời + báo shop; nhân viên trả l�
 test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin mới theo mốc', async () => {
   const m = taoMay(); const ph = 'cthunghiem000003', KEY = 'khoa-chat-thu-nghiem-0123456789';
   assert.strictEqual((await m.get('action=chatApi&key=sai&viec=ds')).code, 'UNAUTHORIZED', 'chưa đặt khoá thì từ chối');
-  m.kho.thuocTinh.set('CHAT_API_KEY', KEY); m.kho.thuocTinh.set('CHAT_WEBHOOK', 'https://crm.example.com/hook');
+  m.kho.thuocTinh.set('CHAT_API_KEY', KEY);
+  assert.strictEqual((await m.get('action=chatApi&key=' + KEY + '&viec=webhook&url=http://x.vn')).ok, false, 'webhook phải https');
+  assert.strictEqual((await m.get('action=chatApi&key=' + KEY + '&viec=webhook&url=' + encodeURIComponent('https://crm.example.com/hook'))).webhook, 'https://crm.example.com/hook');
   const hook = []; datGoiChoThu((ds) => ds.map((y) => { if (/crm\.example/.test(y.url)) hook.push(y); return { ma: 200, noiDung: '{}', dau: {} }; }));
   assert.strictEqual((await m.get('action=chatApi&key=sai&viec=ds')).ok, false, 'sai khoá');
   await m.get('action=chatGui&phien=' + ph + '&noiDung=' + encodeURIComponent('Shop ơi') + '&ten=Mẹ Na');

@@ -22,6 +22,7 @@ Lưu ý: KHÔNG ghi khoá vào repo (repo công khai).
 |---|---|---|
 | `ds` | – | `{ok, ds:[{phien, ten, sdt, trang, soTin, chuaDoc, cuoi, cuoiTu, luc}]}` – 200 cuộc chat mới nhất |
 | `xem` | `phien`, `sau` (tuỳ chọn, mili giây) | `{ok, tin:[{ma, luc, tu, noiDung, nv, dk?}]}` – đánh dấu đã đọc; có `sau` thì chỉ trả tin mới hơn mốc đó |
+| `webhook` | `url` (https của phần mềm) | `{ok, webhook}` – phần mềm tự đăng ký địa chỉ nhận tin |
 | `traLoi` | `phien`, `noiDung`, `nv` (tên NV), `dinhKem` (JSON, tuỳ chọn) | `{ok, tin}` – khách thấy trong vài giây |
 
 - `tu`: `khach` | `nv` | `he-thong` | `tu-dong`

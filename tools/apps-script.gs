@@ -3935,6 +3935,8 @@ function apiChatApi(p) {
   if (!key || String(p.key || '') !== key) return { ok: false, code: 'UNAUTHORIZED', msg: 'Sai hoặc chưa cấu hình CHAT_API_KEY' };
   var viec = String(p.viec || 'ds');
   if (viec === 'ds') return { ok: true, ds: chatDs_() };
+  /* CRM tự đăng ký địa chỉ webhook (https) – không cần nhờ shop */
+  if (viec === 'webhook') { var kq = chatCaiDat_(p.url); return kq.ok ? { ok: true, webhook: kq.webhook } : kq; }
   var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
   if (viec === 'xem') { var sau = Number(p.sau) || 0; return { ok: true, tin: chatXem_(phien).filter(function (t) { return t.luc > sau; }) }; }
   if (viec === 'traLoi') return chatTraLoi_(phien, p.noiDung, String(p.nv || 'Phần mềm chat').slice(0, 40), p.dinhKem);
