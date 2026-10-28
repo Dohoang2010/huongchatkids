@@ -3921,7 +3921,15 @@ function apiQtChatTraLoi(p) {
   var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
   var ph = phienQT(p.token); return chatTraLoi_(phien, p.noiDung, ph ? ph.tk : 'Nhân viên', p.dinhKem);
 }
-/* Cổng cho phần mềm chat bên ngoài (chưa dùng – bật bằng CHAT_API_KEY) */
+/* Nội bộ (cong-cu/dat-chat.js): tạo CHAT_API_KEY nếu chưa có (moi = true: tạo khoá mới), đặt CHAT_WEBHOOK nếu truyền vào */
+function chatCaiDat_(webhook, moi) {
+  var pr = PropertiesService.getScriptProperties(), key = pr.getProperty('CHAT_API_KEY');
+  if (!key || moi) { key = 'hck' + Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, ''); pr.setProperty('CHAT_API_KEY', key); }
+  webhook = String(webhook || '').trim();
+  if (webhook) { if (!/^https:\/\/[^\s]+$/.test(webhook)) return { ok: false, msg: 'Webhook phải bắt đầu bằng https://' }; pr.setProperty('CHAT_WEBHOOK', webhook); }
+  return { ok: true, key: key, webhook: pr.getProperty('CHAT_WEBHOOK') || '' };
+}
+/* Cổng cho phần mềm chat bên ngoài (bật bằng CHAT_API_KEY) */
 function apiChatApi(p) {
   var key = PropertiesService.getScriptProperties().getProperty('CHAT_API_KEY');
   if (!key || String(p.key || '') !== key) return { ok: false, code: 'UNAUTHORIZED', msg: 'Sai hoặc chưa cấu hình CHAT_API_KEY' };
