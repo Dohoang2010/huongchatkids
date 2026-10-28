@@ -27,6 +27,7 @@
     'muoi-xuyen-tieu': [['Bản tự công bố – Muối xuyên tiêu', d('1YeK5z2JeQ-CLVx4X27rI8hNlsvY4PpjR')], ['Phiếu kiểm nghiệm – Muối xuyên tiêu', d('1eyzLFZdN_nRQ1zy-5UYvYnsVZJUK3cbH')]],
     'ngu-coc-bap-thien-ma-kitea': [['Hồ sơ công bố – Bột thiên ma (ngũ cốc bắp Kitea)', d('1kX03GxWjjJ9-F1f6UEn3JtZVZBB6ERSn')]],
     'lotte-hau-an': [['Tự công bố – Nước uống Bareun Mokjang Lactic (Lotte Háu Ăn)', d('1rb0x3yLKeQzhiwphZFECzEu79INSWY_b')], ['Bảng thành phần, hàm lượng vitamin', d('1vdFrzcpC1vfK-dWYDWpwPWrfdcLz4gng')]],
+    '41002695070': [['Công bố – Rong biển tẩm gia vị Sung Gyung 300g, 500g', d('1tycZUrNeZJ3h0Dh-T4qaCWG2HRywUpqL')]],   // rong vụn Sung Gyung
     'men-sysy': [['Hồ sơ công bố – Men Sysy nâu', d('1g2ieGmkDIBvhOmt1--L4PXCx7BOQ5l_5')], ['Hồ sơ công bố – Men Sysy xanh', d('1VDnvPXcEcRjr5iFR5BvT0Rj4UXHX2AQA')]],
   };
 })();
