@@ -30,6 +30,9 @@
     '41002695070': [['Công bố – Rong biển tẩm gia vị Sung Gyung 300g, 500g', d('1tycZUrNeZJ3h0Dh-T4qaCWG2HRywUpqL')]],   // rong vụn Sung Gyung
     '56857599724': [['Phiếu công bố mỹ phẩm – Bột đánh trắng răng Akiko', d('17x51-vXVBqyvPoRMpJmajlefTxL0rBeO')]],
     'hiskin-micellar': [['Phiếu công bố mỹ phẩm – Hiskin Cleansing Micellar Water', 'img/giay-to/hiskin-micellar-cong-bo.pdf']],
+    'avca-body-tone-up': [['Hồ sơ công bố – AVCA Body Tone-Up Serum', d('16VgNDpOb7fgB5-7PGm1avTVf09RKbLWb')], ['Giấy chứng nhận lưu hành tự do (CFS)', d('1Xo_Tj37pKs2UVyLd4I0m3_AcU2nxK2Hm')]],
+    '28902157429': [['Hồ sơ công bố – Men Arravite tím nhạt', d('1CMs5KxWK6Jvr8q1_BaEPpvGMa6NgHcWn')], ['Hồ sơ công bố – Men Arravite tím đậm', d('1baL2A4PRbFobmSppMcbz1JajemyBcYkj')], ['Phiếu kiểm nghiệm – Men 10 tỷ lợi khuẩn', d('1tH7retWrFDEStG7sNAiEhhd67h39YOkL')]],   // men phụ khoa Arravite
+    '27734205778': [['Hồ sơ công bố – Kem chống nắng Hiskin', d('14FAjmcSe9J-y0ghuyKpymYT_uvMPdW-M')], ['Thông tin sản phẩm Hiskin', d('1O7auvkLH8324ddJ3o41skV6q9Irx64Gx')]],
     'men-sysy': [['Hồ sơ công bố – Men Sysy nâu', d('1g2ieGmkDIBvhOmt1--L4PXCx7BOQ5l_5')], ['Hồ sơ công bố – Men Sysy xanh', d('1VDnvPXcEcRjr5iFR5BvT0Rj4UXHX2AQA')]],
   };
 })();
