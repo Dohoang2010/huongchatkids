@@ -323,7 +323,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1996000,
-    "oldPrice": 2695000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -354,17 +354,17 @@ window.PRODUCTS = [
       {
         "label": "Cặp 2 tuýp (chống nắng + BB cream)",
         "price": 1996000,
-        "oldPrice": 2695000
+        "oldPrice": 0
       },
       {
         "label": "Lẻ 1 tuýp kem chống nắng Hydrate UV Defense",
         "price": 998000,
-        "oldPrice": 1347000
+        "oldPrice": 0
       },
       {
         "label": "Lẻ 1 tuýp kem nền Glow Pot No.17 BB Cream",
         "price": 998000,
-        "oldPrice": 1347000
+        "oldPrice": 0
       }
     ],
     "desc": "Cặp kem dưỡng da tạo nền Éclat du Teint gồm kem chống nắng Hydrate UV Defense SPF50+ PA+++ và BB cream Glow Pot No.17 Max Mirror. Theo nhà sản xuất: kem chống nắng bảo vệ phổ rộng, dưỡng ẩm làm dịu da, phù hợp da nhạy cảm và da đang treatment; BB cream che phủ nhẹ tự nhiên, tạo hiệu ứng da căng bóng glow khoẻ kiểu Hàn. Dùng riêng từng tuýp hoặc trộn chung để có lớp nền mỏng nhẹ.",
@@ -389,7 +389,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 980000,
-    "oldPrice": 1323000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -417,7 +417,7 @@ window.PRODUCTS = [
       {
         "label": "1 hũ 50ml",
         "price": 980000,
-        "oldPrice": 1323000
+        "oldPrice": 0
       },
       {
         "label": "2 hũ",
@@ -450,7 +450,7 @@ window.PRODUCTS = [
       "tang-can"
     ],
     "price": 520000,
-    "oldPrice": 702000,
+    "oldPrice": 0,
     "rating": 4.94,
     "reviews": 53,
     "sold": 423,
@@ -480,17 +480,17 @@ window.PRODUCTS = [
       {
         "label": "1 gói (500g)",
         "price": 520000,
-        "oldPrice": 702000
+        "oldPrice": 0
       },
       {
         "label": "2 gói",
         "price": 1040000,
-        "oldPrice": 1404000
+        "oldPrice": 0
       },
       {
         "label": "3 gói",
         "price": 1560000,
-        "oldPrice": 2106000
+        "oldPrice": 0
       }
     ],
     "desc": "Rong biển vụn ăn liền Sung Gyung – rắc cơm, cháo hoặc trộn cơm nắm cho bé. Rong biển Hàn Quốc sấy giòn, vị nhạt, giúp bữa ăn của con nhanh gọn mà vẫn bổ dưỡng.",
@@ -521,7 +521,7 @@ window.PRODUCTS = [
       "organic"
     ],
     "price": 448000,
-    "oldPrice": 627000,
+    "oldPrice": 0,
     "rating": 4.93,
     "reviews": 525,
     "sold": 3000,
@@ -550,37 +550,37 @@ window.PRODUCTS = [
       {
         "label": "Xanh – Táo & Củ dền · 10 gói",
         "price": 448000,
-        "oldPrice": 627000
+        "oldPrice": 0
       },
       {
         "label": "Hồng – Nho & Mận · 10 gói",
         "price": 448000,
-        "oldPrice": 627000
+        "oldPrice": 0
       },
       {
         "label": "Cam – Lê & Hoa chuông · 10 gói",
         "price": 448000,
-        "oldPrice": 627000
+        "oldPrice": 0
       },
       {
         "label": "Xanh – Táo & Củ dền · Thùng 30 gói",
         "price": 1317000,
-        "oldPrice": 1844000
+        "oldPrice": 0
       },
       {
         "label": "Hồng – Nho & Mận · Thùng 30 gói",
         "price": 1317000,
-        "oldPrice": 1844000
+        "oldPrice": 0
       },
       {
         "label": "Cam – Lê & Hoa chuông · Thùng 30 gói",
         "price": 1317000,
-        "oldPrice": 1844000
+        "oldPrice": 0
       },
       {
         "label": "Mix vị · Thùng 30 gói",
         "price": 1317000,
-        "oldPrice": 1844000
+        "oldPrice": 0
       }
     ],
     "desc": "Gồm 3 dòng: Lotte xanh – Táo & Củ dền (bổ sung canxi, hỗ trợ phát triển chiều cao); Lotte hồng – Nho & Mận (bổ sung lợi khuẩn, giúp con ăn ngon miệng); Lotte cam – Lê & Hoa chuông (giúp con tăng cường sức đề kháng), theo nhà sản xuất. Nước ép hoa quả và rau củ hữu cơ Lotte (Hàn Quốc) dạng gói tiện lợi, vị cam “Khoẻ Mạnh” hoặc mix vị. Theo nhà sản xuất, sản phẩm bổ sung vitamin từ rau quả organic, hỗ trợ bé ăn ngon miệng, phát triển chiều cao và tăng cường sức khoẻ.",
@@ -611,7 +611,7 @@ window.PRODUCTS = [
       "de-khang"
     ],
     "price": 390000,
-    "oldPrice": 507000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 69,
     "sold": 356,
@@ -641,12 +641,12 @@ window.PRODUCTS = [
       {
         "label": "1 lọ",
         "price": 390000,
-        "oldPrice": 507000
+        "oldPrice": 0
       },
       {
         "label": "2 lọ",
         "price": 780000,
-        "oldPrice": 1014000
+        "oldPrice": 0
       },
       {
         "label": "1 lọ d3k2 + 1 hộp váng sữa canxi giảm 5%",
@@ -678,7 +678,7 @@ window.PRODUCTS = [
       "tieu-hoa"
     ],
     "price": 589000,
-    "oldPrice": 795000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 12,
@@ -707,27 +707,27 @@ window.PRODUCTS = [
       {
         "label": "1 gói",
         "price": 589000,
-        "oldPrice": 795000
+        "oldPrice": 0
       },
       {
         "label": "2 gói",
         "price": 1178000,
-        "oldPrice": 1590000
+        "oldPrice": 0
       },
       {
         "label": "3 gói",
         "price": 1767000,
-        "oldPrice": 2385000
+        "oldPrice": 0
       },
       {
         "label": "4 gói",
         "price": 2356000,
-        "oldPrice": 3181000
+        "oldPrice": 0
       },
       {
         "label": "5 gói",
         "price": 2945000,
-        "oldPrice": 3976000
+        "oldPrice": 0
       }
     ],
     "desc": "Rong biển Busan trộn cơm Hàn Quốc, bổ sung chất xơ và vitamin tự nhiên từ rong biển. Vị mặn nhẹ, giòn, trộn cơm là bé ăn hết bát.",
@@ -755,7 +755,7 @@ window.PRODUCTS = [
       "phuc-hoi"
     ],
     "price": 290000,
-    "oldPrice": 392000,
+    "oldPrice": 0,
     "rating": 4.92,
     "reviews": 165,
     "sold": 699,
@@ -781,47 +781,47 @@ window.PRODUCTS = [
       {
         "label": "Việt quất – nho · 10 gói",
         "price": 290000,
-        "oldPrice": 392000
+        "oldPrice": 0
       },
       {
         "label": "Táo lê · 10 gói",
         "price": 290000,
-        "oldPrice": 392000
+        "oldPrice": 0
       },
       {
         "label": "Mix vị · 10 gói",
         "price": 290000,
-        "oldPrice": 392000
+        "oldPrice": 0
       },
       {
         "label": "Mix vị · 20 gói (nửa thùng)",
         "price": 580000,
-        "oldPrice": 783000
+        "oldPrice": 0
       },
       {
         "label": "Táo lê · 20 gói (nửa thùng)",
         "price": 580000,
-        "oldPrice": 783000
+        "oldPrice": 0
       },
       {
         "label": "Việt quất – nho · 20 gói (nửa thùng)",
         "price": 580000,
-        "oldPrice": 783000
+        "oldPrice": 0
       },
       {
         "label": "Mix vị · 40 gói (1 thùng)",
         "price": 1160000,
-        "oldPrice": 1566000
+        "oldPrice": 0
       },
       {
         "label": "Việt quất – nho · 40 gói (1 thùng)",
         "price": 1160000,
-        "oldPrice": 1566000
+        "oldPrice": 0
       },
       {
         "label": "Táo lê · 40 gói (1 thùng)",
         "price": 1160000,
-        "oldPrice": 1566000
+        "oldPrice": 0
       }
     ],
     "desc": "Hồng sâm ChuChu Hàn Quốc dành cho trẻ hay ốm vặt, biếng ăn. Theo nhà sản xuất, sản phẩm hỗ trợ tăng sức đề kháng, ăn ngon và phục hồi sức khoẻ sau ốm cho trẻ. Có gói 10, nửa thùng và nguyên thùng.",
@@ -849,7 +849,7 @@ window.PRODUCTS = [
       "canxi"
     ],
     "price": 390000,
-    "oldPrice": 527000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 32,
     "sold": 161,
@@ -877,22 +877,22 @@ window.PRODUCTS = [
       {
         "label": "10 gói",
         "price": 390000,
-        "oldPrice": 527000
+        "oldPrice": 0
       },
       {
         "label": "20 gói",
         "price": 780000,
-        "oldPrice": 1053000
+        "oldPrice": 0
       },
       {
         "label": "30 gói",
         "price": 1150000,
-        "oldPrice": 1553000
+        "oldPrice": 0
       },
       {
         "label": "Thùng 40 gói",
         "price": 1490000,
-        "oldPrice": 2012000
+        "oldPrice": 0
       }
     ],
     "desc": "Gạc hươu non Sumo chiết xuất nhung hươu Hàn Quốc dạng gói uống. Theo nhà sản xuất, sản phẩm hỗ trợ bé tăng cân, ăn ngon miệng và bổ sung canxi cho bé chậm lớn.",
@@ -920,7 +920,7 @@ window.PRODUCTS = [
       "canxi"
     ],
     "price": 520000,
-    "oldPrice": 520000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -947,17 +947,17 @@ window.PRODUCTS = [
       {
         "label": "Hộp 10 gói",
         "price": 520000,
-        "oldPrice": 520000
+        "oldPrice": 0
       },
       {
         "label": "Thùng 30 gói",
         "price": 1490000,
-        "oldPrice": 1490000
+        "oldPrice": 0
       },
       {
         "label": "Thùng 40 gói",
         "price": 1890000,
-        "oldPrice": 1890000
+        "oldPrice": 0
       }
     ],
     "desc": "Gạc nhung hươu canxi Sumo (Byplay Sumo Calcium Deer Antler Liquid) là nước uống bổ sung canxi dạng túi 80ml, sản xuất tại Hàn Quốc bởi Huons Foodience CO., LTD. Theo nhà sản xuất, mỗi gói chứa 100mg canxi (lipocalcium) kết hợp chiết xuất nhung hươu New Zealand, kẽm, vitamin D3 và hỗn hợp trái cây nhiệt đới, hỗ trợ bé từ 1 tuổi phát triển chiều cao. Vị trái cây dễ uống, túi có nắp vặn tiện mang theo. Quy cách: hộp 10 gói × 80ml (túi PE, hộp giấy); thùng 30 gói (3 hộp) hoặc 40 gói. Nhà sản xuất: Huons Foodience CO., LTD (Hàn Quốc). Thành phần: Nước tinh khiết, fructooligosaccharides, hỗn hợp trái cây nhiệt đới cô đặc (cam, xoài, chanh dây, ổi, chuối – Israel), hỗn hợp thảo mộc cô đặc (đương quy, hoàng kỳ, thược dược, cam thảo, quế, bạch truật, xuyên khung, địa hoàng, phục linh), chế phẩm hỗn hợp 1 (tricalci phosphat INS 341iii, lecithin INS 322i), chiết xuất nhung hươu cô đặc (nhung hươu New Zealand, thành phần rắn 20% (70%) 0,149%), chất chống oxy hoá vitamin C INS 300, chất làm dày xanthan gum INS 415, kẽm oxit, chế phẩm hỗn hợp 2 (gum arabic INS 414, saccarose, tinh bột bắp, dầu chế biến, silicon dioxide INS 551, vitamin D3, vitamin E). Sản phẩm không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.",
@@ -993,7 +993,7 @@ window.PRODUCTS = [
       "organic"
     ],
     "price": 448000,
-    "oldPrice": 627000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -1026,12 +1026,12 @@ window.PRODUCTS = [
       {
         "label": "Hộp 10 gói",
         "price": 448000,
-        "oldPrice": 627000
+        "oldPrice": 0
       },
       {
         "label": "Thùng 30 gói (3 hộp)",
         "price": 1317000,
-        "oldPrice": 1844000
+        "oldPrice": 0
       }
     ],
     "desc": "Lotte cam (dòng Đề Kháng) – Nước ép hữu cơ LOTTE Lê và Hoa chuông (rễ cát cánh): giúp con tăng cường sức đề kháng (theo nhà sản xuất). Nước ép lê và rễ cát cánh (doraji) hữu cơ dòng Khoẻ Mạnh (무적튼튼) của Lotte, do Viện Pasteur Hàn Quốc nghiên cứu và sản xuất, gói 80ml có ống hút, dùng cho bé từ 12 tháng tuổi. Theo nhà sản xuất: lê & rễ cát cánh hữu cơ, hồng sâm organic cô đặc và lợi khuẩn EPS Lactobacillus (được cấp bằng sáng chế); không chất bảo quản, phụ gia; chứng nhận Organic và HACCP Hàn Quốc. Bổ sung vitamin C, kali, magie, axit amin, saponin, kẽm, canxi hỗ trợ đề kháng và hấp thu dưỡng chất.",
@@ -1063,7 +1063,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 2480000,
-    "oldPrice": 3225000,
+    "oldPrice": 0,
     "rating": 4.92,
     "reviews": 156,
     "sold": 663,
@@ -1091,12 +1091,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp 90 gói",
         "price": 2480000,
-        "oldPrice": 3224000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp váng sữa",
         "price": 4960000,
-        "oldPrice": 6448000
+        "oldPrice": 0
       },
       {
         "label": "1 hộp váng sữa canxi+1 d3k2 giảm 5%",
@@ -1105,7 +1105,7 @@ window.PRODUCTS = [
       {
         "label": "30 gói (không hộp)",
         "price": 830000,
-        "oldPrice": 1075000
+        "oldPrice": 0
       },
       {
         "label": "3 hộp váng sữa",
@@ -1135,7 +1135,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 1290000,
-    "oldPrice": 1742000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 5,
@@ -1163,12 +1163,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 1290000,
-        "oldPrice": 1742000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 2580000,
-        "oldPrice": 3484000
+        "oldPrice": 0
       }
     ],
     "desc": "Tinh chất nghệ nano Curcumin 365 Plus Hàn Quốc, hộp 32 tép. Theo nhà sản xuất, sản phẩm hỗ trợ dạ dày, hỗ trợ làm đẹp da, giảm thâm sẹo – phù hợp cho mẹ sau sinh.",
@@ -1198,7 +1198,7 @@ window.PRODUCTS = [
       "an-dam"
     ],
     "price": 448000,
-    "oldPrice": 627000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 23,
     "sold": 190,
@@ -1226,12 +1226,12 @@ window.PRODUCTS = [
       {
         "label": "Hộp 10 gói",
         "price": 448000,
-        "oldPrice": 627000
+        "oldPrice": 0
       },
       {
         "label": "Thùng 30 gói (3 hộp)",
         "price": 1317000,
-        "oldPrice": 1844000
+        "oldPrice": 0
       }
     ],
     "desc": "Lotte xanh (dòng Tăng Cao) – Nước ép hữu cơ LOTTE Táo và Củ dền: bổ sung canxi, hỗ trợ phát triển chiều cao (theo nhà sản xuất). Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
@@ -1255,7 +1255,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 299000,
-    "oldPrice": 404000,
+    "oldPrice": 0,
     "rating": 4.9,
     "reviews": 0,
     "sold": 60,
@@ -1282,12 +1282,12 @@ window.PRODUCTS = [
       {
         "label": "1 gói",
         "price": 299000,
-        "oldPrice": 404000
+        "oldPrice": 0
       },
       {
         "label": "2 gói",
         "price": 598000,
-        "oldPrice": 807000
+        "oldPrice": 0
       }
     ],
     "desc": "Táo đỏ Hotan (Hoà Điền, Tân Cương) loại 1 size lớn, quả to dày thịt, ngọt tự nhiên, sấy khô không đường, không chất bảo quản. Dùng ăn liền, pha trà, nấu chè, hầm canh, chưng yến cho cả nhà.",
@@ -1316,7 +1316,7 @@ window.PRODUCTS = [
       "tang-chieu-cao"
     ],
     "price": 720000,
-    "oldPrice": 972000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 76,
@@ -1342,12 +1342,12 @@ window.PRODUCTS = [
       {
         "label": "1 thùng",
         "price": 720000,
-        "oldPrice": 972000
+        "oldPrice": 0
       },
       {
         "label": "2 thùng",
         "price": 1440000,
-        "oldPrice": 1944000
+        "oldPrice": 0
       }
     ],
     "desc": "Sữa tươi tiệt trùng Norco – thương hiệu sữa hơn 128 năm của Úc, sản xuất từ đàn bò ăn cỏ nội địa Úc; sữa nguyên kem giàu canxi và đạm tự nhiên, vị béo thanh, không đường. Phù hợp bé từ 1 tuổi và cả gia đình.",
@@ -1377,7 +1377,7 @@ window.PRODUCTS = [
       "de-khang"
     ],
     "price": 850000,
-    "oldPrice": 1148000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 33,
@@ -1404,12 +1404,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 850000,
-        "oldPrice": 1148000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 1700000,
-        "oldPrice": 2296000
+        "oldPrice": 0
       }
     ],
     "desc": "Sữa dê Lotte Kid A+ (Hàn Quốc) lon 760g cho bé từ 1 tuổi. Theo nhà sản xuất: bổ sung canxi, vitamin D, Alpha-lactalbumin (1.050mg/100g) hỗ trợ miễn dịch và hệ lợi khuẩn thực vật (100 triệu CFU/lon) hỗ trợ tiêu hoá tốt; đạm sữa dê dễ hấp thu, phù hợp bé chậm tăng cân.",
@@ -1437,7 +1437,7 @@ window.PRODUCTS = [
       "tang-chieu-cao"
     ],
     "price": 1170000,
-    "oldPrice": 1580000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 32,
@@ -1463,17 +1463,17 @@ window.PRODUCTS = [
       {
         "label": "Số 1 (0–6 tháng)",
         "price": 1170000,
-        "oldPrice": 1580000
+        "oldPrice": 0
       },
       {
         "label": "Số 2 (6–12 tháng)",
         "price": 1170000,
-        "oldPrice": 1580000
+        "oldPrice": 0
       },
       {
         "label": "Số 3 (từ 12 tháng)",
         "price": 1170000,
-        "oldPrice": 1580000
+        "oldPrice": 0
       }
     ],
     "desc": "Sữa dê công thức Biostime (Úc) lon 800g – dòng sữa dê cao cấp hỗ trợ bé phát triển toàn diện chiều cao và cân nặng; đạm sữa dê nhỏ, dễ tiêu, ít gây dị ứng. Số 1: 0–6 tháng, số 2: 6–12 tháng, số 3: từ 12 tháng.",
@@ -1496,7 +1496,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 3600000,
-    "oldPrice": 4860000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 4,
@@ -1522,12 +1522,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 3600000,
-        "oldPrice": 4860000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 7200000,
-        "oldPrice": 9720000
+        "oldPrice": 0
       }
     ],
     "desc": "Super Collagen Alpha hộp 90 gói, Collagen Peptide VERISOL® (Đức) kết hợp vitamin C, Hyaluronic Acid, Biotin, N-Acetylglucosamine và chiết xuất ốc sên. Theo nhà sản xuất: hỗ trợ da căng mịn, giảm nếp nhăn, chống lão hoá cho mẹ.",
@@ -1557,7 +1557,7 @@ window.PRODUCTS = [
       "de-khang"
     ],
     "price": 448000,
-    "oldPrice": 627000,
+    "oldPrice": 0,
     "rating": 4.9,
     "reviews": 0,
     "sold": 431,
@@ -1588,12 +1588,12 @@ window.PRODUCTS = [
       {
         "label": "Hộp 10 gói",
         "price": 448000,
-        "oldPrice": 627000
+        "oldPrice": 0
       },
       {
         "label": "Thùng 30 gói (3 hộp)",
         "price": 1317000,
-        "oldPrice": 1844000
+        "oldPrice": 0
       }
     ],
     "desc": "Lotte hồng (dòng Tăng Cân) – Nước ép hữu cơ LOTTE Nho và Mận: bổ sung lợi khuẩn, giúp con ăn ngon miệng (theo nhà sản xuất). Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
@@ -1623,7 +1623,7 @@ window.PRODUCTS = [
       "tang-can"
     ],
     "price": 635000,
-    "oldPrice": 635000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -1648,12 +1648,12 @@ window.PRODUCTS = [
       {
         "label": "Date 12/2026 · Mua 1 tặng 1 (2 thùng)",
         "price": 635000,
-        "oldPrice": 635000
+        "oldPrice": 0
       },
       {
         "label": "Date 03/2027 · Thùng 24 hộp",
         "price": 775000,
-        "oldPrice": 775000
+        "oldPrice": 0
       }
     ],
     "desc": "Lotte Háu Ăn (Bareun Mokjang Lactic) là nước uống lợi khuẩn của Pasteur – Tập đoàn Lotte Hàn Quốc, hộp 125ml, thùng 24 hộp, dùng cho bé từ 1 tuổi. Theo nhà sản xuất: sản phẩm chứa 4,5% dịch nuôi cấy lợi khuẩn lên men từ sữa nguyên liệu Bareun Mokjang; Isomalto-oligosaccharide – chất xơ hoà tan, là nguồn thức ăn cho lợi khuẩn đường ruột; bổ sung 7 loại vitamin A, B2, B6, C, E, Niacin và axit folic. Vị sữa chua ngọt dịu, hộp nhỏ gọn tiện mang đi học, đi chơi. Bảo quản ở nhiệt độ phòng, hạn dùng 12 tháng kể từ ngày sản xuất (in trên bao bì). Phân loại: lô date 12/2026 mua 1 tặng 1 (nhận 2 thùng) giá 635.000đ; lô date 03/2027 giá 775.000đ/thùng. Sản phẩm không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.",
@@ -1683,7 +1683,7 @@ window.PRODUCTS = [
       "an-vat"
     ],
     "price": 289000,
-    "oldPrice": 390000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 0,
@@ -1710,12 +1710,12 @@ window.PRODUCTS = [
       {
         "label": "1 gói 200g",
         "price": 289000,
-        "oldPrice": 390000
+        "oldPrice": 0
       },
       {
         "label": "2 gói",
         "price": 578000,
-        "oldPrice": 780000
+        "oldPrice": 0
       }
     ],
     "desc": "Ngũ cốc granola Healthy Fuwa-Saku (Sakuma Seika, Nhật Bản) kết hợp 15 loại ngũ cốc, hạt và trái cây tự nhiên; giàu chất xơ, vitamin, khoáng chất. 50g cung cấp 207 kcal, 3,3g protein – bữa sáng nhanh gọn cho cả nhà.",
@@ -1738,7 +1738,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 790000,
-    "oldPrice": 1067000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 0,
@@ -1767,12 +1767,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 790000,
-        "oldPrice": 1067000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 1580000,
-        "oldPrice": 2134000
+        "oldPrice": 0
       }
     ],
     "desc": "Mặt nạ thạch lô hội Cure (Kim Jeong Moon Aloe, Hàn Quốc) ứng dụng công nghệ Exosome, kết hợp lô hội, Niacinamide, Collagen thuỷ phân và vitamin. Theo nhà sản xuất: cấp ẩm sâu, làm dịu da, phục hồi da căng mướt.",
@@ -1796,7 +1796,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 693000,
-    "oldPrice": 936000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 11,
@@ -1847,7 +1847,7 @@ window.PRODUCTS = [
       "de-khang"
     ],
     "price": 480000,
-    "oldPrice": 648000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 213,
@@ -1875,12 +1875,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 480000,
-        "oldPrice": 648000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 960000,
-        "oldPrice": 1296000
+        "oldPrice": 0
       }
     ],
     "desc": "Hồng sâm hữu cơ Kinigini Kids Red Ginseng “Rich Kid” (Hàn Quốc), gói 40ml, hộp 10 gói, cho bé 2–15 tuổi. Theo nhà sản xuất: hỗ trợ phát triển trí não, tăng tập trung, tăng đề kháng.",
@@ -1903,7 +1903,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 835000,
-    "oldPrice": 1127000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 3,
     "sold": 12,
@@ -1930,17 +1930,17 @@ window.PRODUCTS = [
       {
         "label": "1 chai",
         "price": 835000,
-        "oldPrice": 1127000
+        "oldPrice": 0
       },
       {
         "label": "2 chai",
         "price": 1598000,
-        "oldPrice": 2157000
+        "oldPrice": 0
       },
       {
         "label": "3 chai",
         "price": 2293000,
-        "oldPrice": 3096000
+        "oldPrice": 0
       }
     ],
     "desc": "Xịt phun sương Grace By Chera Snow White Tone-Up Booster 150ml, sản xuất bởi SKIN N SKIN Co., Ltd (Hàn Quốc). Theo nhà sản xuất: nâng tone da tức thì, cấp ẩm, giúp da mềm mịn và đều màu hơn; dùng được cho cả mặt và toàn thân.",
@@ -1962,7 +1962,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 3960000,
-    "oldPrice": 8100000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -1988,17 +1988,17 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 3960000,
-        "oldPrice": 4950000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 7920000,
-        "oldPrice": 9900000
+        "oldPrice": 0
       },
       {
         "label": "NMN Regene 1 hộp",
         "price": 5560000,
-        "oldPrice": 6950000
+        "oldPrice": 0
       }
     ],
     "desc": "Viên uống Pure NMN 12.000mg+ (Clastive, Nhật Bản), hộp 60 viên. Thành phần gồm NMN 99,99%, collagen peptide, nhau thai ngựa, glutathione và hyaluronic acid. Theo nhà sản xuất: hỗ trợ chống lão hoá, tăng cường năng lượng và cân bằng nội tiết.",
@@ -2020,7 +2020,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 900000,
-    "oldPrice": 1215000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 9,
@@ -2047,12 +2047,12 @@ window.PRODUCTS = [
       {
         "label": "Thảm ngải cứu",
         "price": 1990000,
-        "oldPrice": 2687000
+        "oldPrice": 0
       },
       {
         "label": "Lõi thảm",
         "price": 900000,
-        "oldPrice": 1215000
+        "oldPrice": 0
       }
     ],
     "desc": "Thảm ngải cứu toả nhiệt kích thước 150×60cm, đệm sưởi điện tích hợp 220V–50Hz, có bộ điều khiển. Theo nhà sản xuất: hơi ấm từ ngải cứu giúp thư giãn vùng lưng, vai gáy và tay chân, hỗ trợ giấc ngủ và lưu thông khí huyết.",
@@ -2075,7 +2075,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1290000,
-    "oldPrice": 1742000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 1,
     "sold": 10,
@@ -2102,12 +2102,12 @@ window.PRODUCTS = [
       {
         "label": "1 chai",
         "price": 1290000,
-        "oldPrice": 1742000
+        "oldPrice": 0
       },
       {
         "label": "2 chai",
         "price": 2580000,
-        "oldPrice": 3483000
+        "oldPrice": 0
       }
     ],
     "desc": "Sữa tắm dưỡng trắng body Glutanex 300ml (Hàn Quốc) với glutathione, niacinamide, hyaluronic acid cùng chiết xuất rau má, hà thủ ô, hắc mai biển. Theo nhà sản xuất: làm sạch dịu nhẹ, dưỡng ẩm và giúp da sáng mịn hơn.",
@@ -2130,7 +2130,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 890000,
-    "oldPrice": 1202000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 3,
     "sold": 17,
@@ -2159,12 +2159,12 @@ window.PRODUCTS = [
       {
         "label": "1 cây",
         "price": 890000,
-        "oldPrice": 1202000
+        "oldPrice": 0
       },
       {
         "label": "2 cây",
         "price": 1780000,
-        "oldPrice": 2403000
+        "oldPrice": 0
       }
     ],
     "desc": "Son filler môi RVB LAB Plump & Glow, công thức có chiết xuất ớt Capsicum, dầu jojoba, lựu, vitamin E và ceramide. Sắc tố phản ứng với độ pH môi tạo màu hồng tự nhiên riêng cho từng người. Theo nhà sản xuất: tạo hiệu ứng làm đầy môi tức thì.",
@@ -2188,7 +2188,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1710000,
-    "oldPrice": 2309000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 1,
     "sold": 7,
@@ -2215,12 +2215,12 @@ window.PRODUCTS = [
       {
         "label": "1 chai",
         "price": 1710000,
-        "oldPrice": 2309000
+        "oldPrice": 0
       },
       {
         "label": "2 chai",
         "price": 3420000,
-        "oldPrice": 4617000
+        "oldPrice": 0
       }
     ],
     "desc": "Tinh chất đậm đặc RVB LAB Hyalu C+ 30ml (Ý) với vitamin C ổn định và niacinamide, chai có nắp nhỏ giọt. Theo nhà sản xuất: làm sáng da, chống oxy hoá và cải thiện làn da không đều màu.",
@@ -2243,7 +2243,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1290000,
-    "oldPrice": 1290000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2272,12 +2272,12 @@ window.PRODUCTS = [
       {
         "label": "Chai 100ml",
         "price": 1290000,
-        "oldPrice": 1290000
+        "oldPrice": 0
       },
       {
         "label": "2 chai",
         "price": 2580000,
-        "oldPrice": 2580000
+        "oldPrice": 0
       }
     ],
     "desc": "DayCell Dr.VITA ECM Anti Aging Serum là tinh chất dưỡng da chăm sóc cấu trúc da đến từ Hàn Quốc, chai 100ml. Theo nhà sản xuất, sản phẩm hỗ trợ chống lão hoá, cải thiện nếp nhăn và tăng độ đàn hồi; giúp da săn chắc, căng mịn; bổ sung độ ẩm, nuôi dưỡng và củng cố cấu trúc da; phù hợp chăm sóc làn da khô, nhạy cảm và có dấu hiệu lão hoá. Thành phần nổi bật: ECM Complex 50.000 PPM (phức hợp mô phỏng cấu trúc nền ngoại bào của da, trong đó 89% Collagen Liposome Type 1), 43,9% nước Collagen Type 1, 26 loại peptide và 20 loại axit amin, Cerasome & Cica. Theo tài liệu thử nghiệm của nhà sản xuất sau 4 tuần: cải thiện nếp nhăn vùng mắt 5,316%, độ săn chắc 4,903%, độ đàn hồi 8,891%. Hiệu quả tuỳ cơ địa mỗi người. Phù hợp: da bắt đầu xuất hiện nếp nhăn và dấu hiệu lão hoá; da thiếu săn chắc, kém đàn hồi; da khô, thiếu ẩm, thiếu sức sống; người cần chăm sóc da chuyên sâu.",
@@ -2304,7 +2304,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1550000,
-    "oldPrice": 1550000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2332,12 +2332,12 @@ window.PRODUCTS = [
       {
         "label": "Hũ 50ml",
         "price": 1550000,
-        "oldPrice": 1550000
+        "oldPrice": 0
       },
       {
         "label": "2 hũ",
         "price": 3100000,
-        "oldPrice": 3100000
+        "oldPrice": 0
       }
     ],
     "desc": "DayCell Medi Lab NAD+ White Cream là kem dưỡng da dung tích 50ml đến từ Hàn Quốc, kết hợp dưỡng trắng và chăm sóc lão hoá, ứng dụng công thức NAD+ và NMN cùng các thành phần dưỡng sáng, chống oxy hoá. Sản phẩm đã có giấy công bố mỹ phẩm, ghi nhận mục đích sử dụng: “Kem dưỡng da giúp dưỡng ẩm, dưỡng trắng da, hỗ trợ làm mờ các vết nám và tàn nhang trên da, mang lại làn da mềm mịn.” Theo nhà sản xuất, kem giúp cấp ẩm, cải thiện làn da xỉn màu, hỗ trợ làm mờ nám, tàn nhang, đốm sắc tố và chăm sóc nếp nhăn, mang lại làn da mềm mịn, tươi sáng. Thành phần nổi bật: NAD+ (Nicotinamide Adenine Dinucleotide) và NMN (Nicotinamide Mononucleotide) – chăm sóc da lão hoá; MadeWhite™ (nguồn gốc rau má) – hỗ trợ kiểm soát sự hình thành melanin; Idebesome (Idebenone dạng liposome) – chống oxy hoá; Tranexamic Acid – hỗ trợ làm sáng, đều màu da; Glutathione – chống oxy hoá, dưỡng sáng; Kojic Acid. Hiệu quả tuỳ cơ địa mỗi người.",
@@ -2364,7 +2364,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 635000,
-    "oldPrice": 635000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2395,12 +2395,12 @@ window.PRODUCTS = [
       {
         "label": "Chai 250ml",
         "price": 635000,
-        "oldPrice": 635000
+        "oldPrice": 0
       },
       {
         "label": "2 chai",
         "price": 1270000,
-        "oldPrice": 1270000
+        "oldPrice": 0
       }
     ],
     "desc": "AVCA Intense Brightening Body Tone-Up Serum là serum dưỡng thể nâng tone hàng nội địa Hàn Quốc, chai 250ml. Kết cấu mỏng nhẹ, không bết dính, dùng được cho toàn thân. Theo nhà sản xuất: Titanium Dioxide tạo hiệu ứng nâng tone ngay sau khi thoa, giúp da trông sáng hơn; Niacinamide, L-Glutathione Liposome và Licorice (cam thảo) hỗ trợ dưỡng sáng, cải thiện tình trạng da không đều màu. Không chỉ là kem nâng tone, sản phẩm kết hợp hệ dưỡng da: 8 loại Hyaluronic Acid cấp ẩm đa tầng; Panthenol (vitamin B5) làm dịu, hỗ trợ phục hồi; Adenosine hỗ trợ cải thiện độ đàn hồi; chiết xuất chuối dưỡng ẩm, làm mềm da; Ceramide NP + Panthenol + Niacinamide hỗ trợ duy trì hàng rào bảo vệ da. Phức hợp thực vật chống oxy hoá: chuối, việt quất, mâm xôi, mâm xôi đen, nam việt quất, cơm cháy và hắc mai biển (sea buckthorn). Hiệu quả tuỳ cơ địa mỗi người.",
@@ -2426,7 +2426,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 118000,
-    "oldPrice": 118000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2458,22 +2458,22 @@ window.PRODUCTS = [
       {
         "label": "1 cái",
         "price": 118000,
-        "oldPrice": 118000
+        "oldPrice": 0
       },
       {
         "label": "Set 3 cái (túi)",
         "price": 354000,
-        "oldPrice": 354000
+        "oldPrice": 0
       },
       {
         "label": "Set 5 cái (hộp)",
         "price": 590000,
-        "oldPrice": 590000
+        "oldPrice": 0
       },
       {
         "label": "Set 8 cái (hộp)",
         "price": 944000,
-        "oldPrice": 944000
+        "oldPrice": 0
       }
     ],
     "desc": "Quần lót nữ su đúc MaBelle mã 6999, thiết kế liền mạch không đường may, mỏng nhẹ ôm sát như làn da thứ hai, mặc váy hay quần ôm không lộ viền. Theo nhà sản xuất: sợi vải mát lạnh, co giãn 4 chiều, đàn hồi tốt, giữ phom chuẩn; thiết kế chống tuột, chống bong tróc khi giặt và sử dụng lâu dài; thấm hút tốt, khử mùi, kháng khuẩn. Sản phẩm đã được kiểm định hàm lượng Formaldehyde và amin thơm (VNTEST), an toàn cho vùng da nhạy cảm. Size: 45kg – 65kg (vòng 3 khoảng 92 – 98cm mặc đẹp nhất). Bán lẻ 118.000đ/cái, set 3 cái đóng túi, set 5 và set 8 cái đóng hộp.",
@@ -2499,7 +2499,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 435000,
-    "oldPrice": 435000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2532,62 +2532,62 @@ window.PRODUCTS = [
       {
         "label": "Da đậm · 34",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da đậm · 36",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da đậm · 38",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da sữa · 34",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da sữa · 36",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da sữa · 38",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 34",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 36",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 38",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da hồng · 34",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da hồng · 36",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       },
       {
         "label": "Da hồng · 38",
         "price": 435000,
-        "oldPrice": 435000
+        "oldPrice": 0
       }
     ],
     "desc": "Áo ngực MaBelle mã 5192, mút đúc mềm mại, thiết kế giả gọng nâng đỡ nhẹ nhàng, hạn chế cảm giác cấn, bát áo ôm vừa vặn tạo dáng vòng 1 cân đối, tự nhiên. Theo nhà sản xuất: ôm sát, giữ form ổn định; hỗ trợ gom phần mỡ nách và hai bên lưng cho tổng thể gọn gàng; hợp nhiều dáng ngực (ngực nhỏ, chưa đầy hoặc có độ chảy nhẹ). Chất liệu thoáng khí, nhẹ, mềm, chống hằn, dễ phối đồ, mặc đi làm, đi chơi, dự tiệc hằng ngày. Tính năng \"chống từ\" áp dụng theo thông tin kỹ thuật của nhà sản xuất. Size 34 / 36 / 38; màu da đậm, da sữa, đen, da hồng.",
@@ -2613,7 +2613,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 456000,
-    "oldPrice": 456000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2647,22 +2647,22 @@ window.PRODUCTS = [
       {
         "label": "Size 34",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Size 36",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Size 38",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Size 40",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       }
     ],
     "desc": "Áo ngực MaBelle mã 5790 hiện đại, ngọt ngào, giúp tự tin khi diện áo dài, váy ôm hay trang phục mỏng. Theo nhà sản xuất: thiết kế chống hằn; form ôm nhẹ nhàng, tạo dáng vòng 1 cân đối, tự nhiên; ôm gọn vùng nách và lưng; chất liệu cao cấp mềm mại, co giãn tốt. Mút thoáng khí với cấu trúc nhiều lỗ thông khí, thun mềm đàn hồi tốt, hạn chế bai giãn; mặc nhẹ nhàng cả ngày đi làm, đi chơi, dự tiệc. Size 34 / 36 / 38 / 40; màu theo ảnh, mẹ ghi màu muốn chọn ở phần ghi chú khi đặt hàng.",
@@ -2687,7 +2687,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 346000,
-    "oldPrice": 346000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2721,47 +2721,47 @@ window.PRODUCTS = [
       {
         "label": "Ghi · 34",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Ghi · 36",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Ghi · 38",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 34",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 36",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 38",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Da · 34",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Da · 36",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       },
       {
         "label": "Da · 38",
         "price": 346000,
-        "oldPrice": 346000
+        "oldPrice": 0
       }
     ],
     "desc": "Áo ngực có gọng MaBelle mã 5038, mút mỏng nhẹ ôm vừa vặn, không gây bí; lớp trong cotton mềm mại cho da. Theo nhà sản xuất: phần chân ngực 2 lớp cotton giữ form chắc chắn, chống tuột, chống xô lệch; gọng ôm chuẩn, nâng đỡ tự nhiên; dây áo chắc chắn, giặt máy không lo biến dạng. Ôm gọn, tôn dáng, không hằn, êm ái suốt cả ngày. Sản phẩm đã được kiểm định an toàn. Size 34 / 36 / 38; màu ghi, đen, da.",
@@ -2787,7 +2787,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 330000,
-    "oldPrice": 330000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2820,77 +2820,77 @@ window.PRODUCTS = [
       {
         "label": "Đen · 34",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 36",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 38",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Da · 34",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Da · 36",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Da · 38",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đỏ · 34",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đỏ · 36",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đỏ · 38",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Trắng · 34",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Trắng · 36",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Trắng · 38",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đá · 34",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đá · 36",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       },
       {
         "label": "Đá · 38",
         "price": 330000,
-        "oldPrice": 330000
+        "oldPrice": 0
       }
     ],
     "desc": "Áo lót liền mạch cao cấp MaBelle mã 5997, form không gọng mặc nhẹ như không, không hằn. Theo nhà sản xuất: mút 3cm tích hợp hạt massage nâng đỡ êm ái, tạo dáng ngực đầy đặn tự nhiên; quả áo tròn đều, không nhọn, không bè; bản lưng ôm trọn nách và mỡ lưng cho dáng gọn; dây chỉnh trước tiện lợi, hạn chế hằn vai; lớp cao su non êm, thoáng, mát. Sản phẩm đã được kiểm định hàm lượng Formaldehyde và amin thơm (VNTEST). Size 34 / 36 / 38; màu đen, da, đỏ, trắng, đá.",
@@ -2916,7 +2916,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 456000,
-    "oldPrice": 456000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -2950,62 +2950,62 @@ window.PRODUCTS = [
       {
         "label": "Đen · 34",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 36",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Đen · 38",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Da · 34",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Da · 36",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Da · 38",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Ghi · 34",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Ghi · 36",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Ghi · 38",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Kem · 34",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Kem · 36",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       },
       {
         "label": "Kem · 38",
         "price": 456000,
-        "oldPrice": 456000
+        "oldPrice": 0
       }
     ],
     "desc": "Áo lót cao cấp MaBelle mã 5992, thiết kế chỉnh vai đưa về phía trước tinh tế, tiện lợi, chống hằn, mặc đẹp với mọi trang phục. Theo nhà sản xuất: mút mỏng 2cm vừa vặn, mềm êm; thân áo an toàn, thoáng nhẹ, thân thiện làn da; không gọng thoải mái cả ngày. Ôm trọn, nâng đẩy tự nhiên, gom gọn mỡ nách, hỗ trợ tạo dáng cho bầu ngực căng tròn; chống tuột, chống xô lệch, giữ form chuẩn. Size 34 / 36 / 38; màu đen, da, ghi, kem.",
@@ -3032,7 +3032,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 2450000,
-    "oldPrice": 3308000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 107,
     "sold": 1000,
@@ -3059,12 +3059,12 @@ window.PRODUCTS = [
       {
         "label": "1 bộ",
         "price": 2450000,
-        "oldPrice": 3308000
+        "oldPrice": 0
       },
       {
         "label": "2 bộ",
         "price": 4900000,
-        "oldPrice": 6615000
+        "oldPrice": 0
       }
     ],
     "desc": "Bộ peel da Anubis với 14% axit azelaic tinh khiết, tặng kèm xịt trung hoà Anubismed. Theo nhà sản xuất: hỗ trợ làm sạch sâu lỗ chân lông, giảm mụn và làm mờ vết thâm.",
@@ -3087,7 +3087,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 595000,
-    "oldPrice": 803000,
+    "oldPrice": 0,
     "rating": 4.9,
     "reviews": 81,
     "sold": 703,
@@ -3114,12 +3114,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 595000,
-        "oldPrice": 803000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 1190000,
-        "oldPrice": 1607000
+        "oldPrice": 0
       }
     ],
     "desc": "Mặt nạ NMN Kousa (Hàn Quốc), hộp 8 miếng, chứa 1.000ppm NMN cùng collagen và adenosine. Theo nhà sản xuất: cấp ẩm, dưỡng sáng và giúp da mịn màng hơn.",
@@ -3142,7 +3142,7 @@ window.PRODUCTS = [
       "tieu-hoa"
     ],
     "price": 990000,
-    "oldPrice": 1337000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 3,
     "sold": 49,
@@ -3168,12 +3168,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 990000,
-        "oldPrice": 1337000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 1980000,
-        "oldPrice": 2673000
+        "oldPrice": 0
       }
     ],
     "desc": "Men vi sinh Arravite (Úc), hộp 30 viên, có các dòng 5 tỷ – 10 tỷ – 20 tỷ lợi khuẩn dành cho nam nữ từ 15 tuổi. Theo nhà sản xuất: bổ sung lợi khuẩn, hỗ trợ cân bằng hệ vi sinh và tiêu hoá.",
@@ -3196,7 +3196,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 2050000,
-    "oldPrice": 2768000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 1,
     "sold": 5,
@@ -3223,12 +3223,12 @@ window.PRODUCTS = [
       {
         "label": "1 hũ",
         "price": 2050000,
-        "oldPrice": 2768000
+        "oldPrice": 0
       },
       {
         "label": "2 hũ",
         "price": 4100000,
-        "oldPrice": 5535000
+        "oldPrice": 0
       }
     ],
     "desc": "Kem dưỡng trắng da căng bóng RVB LAB Hyalu C+ thế hệ mới, 30ml (Ý). Theo nhà sản xuất: công thức đa tác dụng giúp da mịn màng, tươi sáng và hạn chế các dấu hiệu lão hoá theo thời gian.",
@@ -3251,7 +3251,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 695000,
-    "oldPrice": 938000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 8,
     "sold": 56,
@@ -3278,12 +3278,12 @@ window.PRODUCTS = [
       {
         "label": "1 tuýp",
         "price": 695000,
-        "oldPrice": 938000
+        "oldPrice": 0
       },
       {
         "label": "2 tuýp",
         "price": 1390000,
-        "oldPrice": 1877000
+        "oldPrice": 0
       }
     ],
     "desc": "Kem chống nắng Hiskin 5in1 60ml (Hàn Quốc), SPF50+ PA++++, chứa niacinamide, glutathione và collagen. Theo nhà sản xuất: bảo vệ da khỏi tia UV, kiềm dầu, nâng tone nhẹ và phù hợp cả với da nhạy cảm.",
@@ -3360,7 +3360,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 5275000,
-    "oldPrice": 7121000,
+    "oldPrice": 0,
     "rating": 4.5,
     "reviews": 2,
     "sold": 4,
@@ -3387,12 +3387,12 @@ window.PRODUCTS = [
       {
         "label": "1 cặp",
         "price": 5275000,
-        "oldPrice": 7121000
+        "oldPrice": 0
       },
       {
         "label": "2 cặp",
         "price": 10550000,
-        "oldPrice": 14243000
+        "oldPrice": 0
       }
     ],
     "desc": "Bộ đôi tái tạo phục hồi da Dermo Ioniq (Pháp) gồm kem kích hoạt tái cấu trúc đa tầng 100ml và huyết thanh thắp sáng 30ml (có các lựa chọn kem làm dịu 40ml và huyết thanh trẻ hoá 30ml). Theo nhà sản xuất: hỗ trợ phục hồi, cấp ẩm và giúp da tăng sức sống.",
@@ -3415,7 +3415,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 3388000,
-    "oldPrice": 4574000,
+    "oldPrice": 0,
     "rating": 4.9,
     "reviews": 50,
     "sold": 525,
@@ -3442,18 +3442,18 @@ window.PRODUCTS = [
       {
         "label": "Cặp tất bạc (serum + kem)",
         "price": 6500000,
-        "oldPrice": 8775000,
+        "oldPrice": 0,
         "oos": true
       },
       {
         "label": "Serum Meso bạc",
         "price": 3388000,
-        "oldPrice": 4574000
+        "oldPrice": 0
       },
       {
         "label": "Kem dưỡng Meso bạc",
         "price": 3465000,
-        "oldPrice": 4678000
+        "oldPrice": 0
       }
     ],
     "desc": "Cặp Meso bạc RVB LAB (Ý) gồm serum Meso bạc 30ml và kem dưỡng Meso bạc 50ml với phức hợp Hyalu Smart PGA. Theo nhà sản xuất: đưa dưỡng chất sâu vào da, hỗ trợ giảm nếp nhăn và dưỡng da sáng đều màu.",
@@ -3476,7 +3476,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1290000,
-    "oldPrice": 1742000,
+    "oldPrice": 0,
     "rating": 4.7,
     "reviews": 3,
     "sold": 5,
@@ -3503,12 +3503,12 @@ window.PRODUCTS = [
       {
         "label": "1 cặp",
         "price": 1080000,
-        "oldPrice": 1742000
+        "oldPrice": 0
       },
       {
         "label": "2 cặp",
         "price": 2160000,
-        "oldPrice": 3483000
+        "oldPrice": 0
       }
     ],
     "desc": "Cặp dầu gội và dầu xả Arganicare Biotin & Collagen, mỗi chai 400ml (Ma-rốc), thành phần có biotin, dầu argan, keratin và vitamin. Theo nhà sản xuất: làm sạch dịu nhẹ, giúp tóc mềm mượt và hỗ trợ phục hồi tóc hư tổn.",
@@ -3648,7 +3648,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1450000,
-    "oldPrice": 1958000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 4,
     "sold": 24,
@@ -3675,38 +3675,38 @@ window.PRODUCTS = [
       {
         "label": "Kem chống nắng Meso",
         "price": 3500000,
-        "oldPrice": 4725000,
+        "oldPrice": 0,
         "oos": true
       },
       {
         "label": "Kem Meso Retinol",
         "price": 3250000,
-        "oldPrice": 4388000
+        "oldPrice": 0
       },
       {
         "label": "Sữa rửa mặt Meso",
         "price": 1450000,
-        "oldPrice": 1958000
+        "oldPrice": 0
       },
       {
         "label": "Kem mắt Meso",
         "price": 2590000,
-        "oldPrice": 3497000
+        "oldPrice": 0
       },
       {
         "label": "Combo siêu vi Meso",
         "price": 7200000,
-        "oldPrice": 9720000
+        "oldPrice": 0
       },
       {
         "label": "Serum vàng Meso",
         "price": 4015000,
-        "oldPrice": 5420000
+        "oldPrice": 0
       },
       {
         "label": "Kem vàng siêu vi",
         "price": 3910000,
-        "oldPrice": 5279000
+        "oldPrice": 0
       }
     ],
     "desc": "Combo Meso vàng siêu vi gồm serum vàng siêu vi và kem vàng siêu vi; ngoài ra có thêm các lựa chọn kem ngày, kem đêm, sữa rửa mặt 3in1 và kem mắt Meso. Theo nhà sản xuất: cấp ẩm chuyên sâu, hỗ trợ chống lão hoá, cho da căng bóng tươi sáng.",
@@ -3729,7 +3729,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 1270000,
-    "oldPrice": 1715000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 2,
     "sold": 13,
@@ -3756,22 +3756,22 @@ window.PRODUCTS = [
       {
         "label": "Kem dưỡng Hyalu C+",
         "price": 2050000,
-        "oldPrice": 2768000
+        "oldPrice": 0
       },
       {
         "label": "Serum Hyalu C+",
         "price": 2350000,
-        "oldPrice": 3173000
+        "oldPrice": 0
       },
       {
         "label": "Toner Hyalu C+",
         "price": 1270000,
-        "oldPrice": 1715000
+        "oldPrice": 0
       },
       {
         "label": "Bộ dưỡng da Hyalu C+",
         "price": 5030000,
-        "oldPrice": 6791000
+        "oldPrice": 0
       }
     ],
     "desc": "Combo dưỡng da Hyalu C+ (Ý) gồm kem dưỡng trắng 50ml, serum 30ml và toner 200ml. Theo nhà sản xuất: bộ ba dưỡng ẩm – làm sáng – chống oxy hoá dùng cho cả chu trình sáng và tối.",
@@ -3794,7 +3794,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 550000,
-    "oldPrice": 743000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 1,
     "sold": 14,
@@ -3821,12 +3821,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 550000,
-        "oldPrice": 743000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 1100000,
-        "oldPrice": 1485000
+        "oldPrice": 0
       }
     ],
     "desc": "Bột khử vàng răng Akiko 26g (Nhật Bản). Theo nhà sản xuất: làm sạch mảng bám và vết ố, giúp răng sáng hơn mà không gây ê buốt, đồng thời khử mùi hôi miệng.",
@@ -3849,7 +3849,7 @@ window.PRODUCTS = [
       "lam-dep"
     ],
     "price": 2590000,
-    "oldPrice": 3497000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 2,
     "sold": 12,
@@ -3876,17 +3876,17 @@ window.PRODUCTS = [
       {
         "label": "Kem Meso Retinol",
         "price": 3250000,
-        "oldPrice": 4388000
+        "oldPrice": 0
       },
       {
         "label": "Kem mắt Meso",
         "price": 2590000,
-        "oldPrice": 3497000
+        "oldPrice": 0
       },
       {
         "label": "Bộ đôi Meso",
         "price": 5840000,
-        "oldPrice": 7884000
+        "oldPrice": 0
       }
     ],
     "desc": "Bộ đôi Meso Retinol siêu vi với retinol, axit alpha lipoic và phức hợp vitamin chống oxy hoá. Theo nhà sản xuất: hỗ trợ giảm nếp nhăn, giúp da căng bóng và sáng đều màu hơn.",
@@ -3916,7 +3916,7 @@ window.PRODUCTS = [
       "sua-tuoi"
     ],
     "price": 875000,
-    "oldPrice": 1181000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 0,
@@ -3943,13 +3943,13 @@ window.PRODUCTS = [
       {
         "label": "1 thùng 24 hộp",
         "price": 875000,
-        "oldPrice": 1181000,
+        "oldPrice": 0,
         "oos": true
       },
       {
         "label": "2 thùng 48 hộp",
         "price": 1750000,
-        "oldPrice": 2363000,
+        "oldPrice": 0,
         "oos": true
       }
     ],
@@ -3980,11 +3980,12 @@ window.PRODUCTS = [
       "organic"
     ],
     "price": 2726000,
-    "oldPrice": 2870000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
     "stock": 50,
+    "comboGiam": true,
     "isCombo": true,
     "items": [
       "26060839019",
@@ -4010,22 +4011,22 @@ window.PRODUCTS = [
       {
         "label": "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%",
         "price": 2726000,
-        "oldPrice": 2870000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp váng sữa 180 gói · TẶNG 1 D3K2",
         "price": 4960000,
-        "oldPrice": 5350000
+        "oldPrice": 0
       },
       {
         "label": "3 hộp váng sữa 270 gói · TẶNG 2 D3K2",
         "price": 7440000,
-        "oldPrice": 8220000
+        "oldPrice": 0
       },
       {
         "label": "4 hộp váng sữa 360 gói · TẶNG 3 D3K2",
         "price": 9920000,
-        "oldPrice": 11090000
+        "oldPrice": 0
       }
     ],
     "uuDai": [
@@ -4062,7 +4063,7 @@ window.PRODUCTS = [
       "organic"
     ],
     "price": 1707000,
-    "oldPrice": 1707000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,
@@ -4092,7 +4093,7 @@ window.PRODUCTS = [
       {
         "label": "1 thùng Lotte Tăng cao 30 gói + 1 D3K2",
         "price": 1707000,
-        "oldPrice": 1707000
+        "oldPrice": 0
       }
     ],
     "desc": "Bộ đôi hỗ trợ phát triển chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) bé dễ uống, ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
@@ -4124,7 +4125,7 @@ window.PRODUCTS = [
       "tieu-hoa"
     ],
     "price": 986000,
-    "oldPrice": 1282000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 0,
@@ -4150,13 +4151,13 @@ window.PRODUCTS = [
       {
         "label": "Men Baby (nâu) · từ 0 tháng",
         "price": 986000,
-        "oldPrice": 1282000,
+        "oldPrice": 0,
         "oos": true
       },
       {
         "label": "Men Kids (xanh) · từ 24 tháng",
         "price": 986000,
-        "oldPrice": 1282000,
+        "oldPrice": 0,
         "oos": true
       },
       {
@@ -4185,7 +4186,7 @@ window.PRODUCTS = [
     "ages": [],
     "needs": [],
     "price": 65000,
-    "oldPrice": 88000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 0,
@@ -4212,12 +4213,12 @@ window.PRODUCTS = [
       {
         "label": "1 hộp",
         "price": 65000,
-        "oldPrice": 88000
+        "oldPrice": 0
       },
       {
         "label": "2 hộp",
         "price": 130000,
-        "oldPrice": 176000
+        "oldPrice": 0
       }
     ],
     "desc": "Miến gà sấy thăng hoa – Masterchef Phạm Tuấn Hải. Sợi miến khoai tây & đậu xanh: sợi mềm dai, dễ chín, để lâu trong nước dùng vẫn giữ được độ ngon, không nhanh nở nhũn. Nước dùng ninh 8 giờ: nấu từ xương gà, cổ cánh gà, xương heo kết hợp rau củ và gia vị, tạo vị ngọt đậm đà, thơm ngon. Gà – măng – nấm thật: không chỉ có sợi miến và gia vị, mỗi tô có đầy đủ thịt gà, măng, nấm hương, hành lá, ngò và gia vị. Sấy thăng hoa 48 giờ: ứng dụng công nghệ sấy thăng hoa giúp giữ tốt cấu trúc, màu sắc và hương vị của nguyên liệu. Khi pha với nước nóng, các thành phần hoàn nguyên để thưởng thức.",
@@ -4244,7 +4245,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 195000,
-    "oldPrice": 195000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 0,
@@ -4271,42 +4272,42 @@ window.PRODUCTS = [
       {
         "label": "Điều tiết hằng ngày – pH 3.6 · 1 chai",
         "price": 195000,
-        "oldPrice": 195000
+        "oldPrice": 0
       },
       {
         "label": "Điều tiết hằng ngày – pH 3.6 · 2 chai",
         "price": 390000,
-        "oldPrice": 390000
+        "oldPrice": 0
       },
       {
         "label": "Ngăn ngừa kháng viêm – pH 5.0 · 1 chai",
         "price": 195000,
-        "oldPrice": 195000
+        "oldPrice": 0
       },
       {
         "label": "Ngăn ngừa kháng viêm – pH 5.0 · 2 chai",
         "price": 390000,
-        "oldPrice": 390000
+        "oldPrice": 0
       },
       {
         "label": "Dịu nhẹ da nhạy cảm – pH 4.5 · 1 chai",
         "price": 195000,
-        "oldPrice": 195000
+        "oldPrice": 0
       },
       {
         "label": "Dịu nhẹ da nhạy cảm – pH 4.5 · 2 chai",
         "price": 390000,
-        "oldPrice": 390000
+        "oldPrice": 0
       },
       {
         "label": "Lành tính cho bé gái – pH 4.5 · 1 chai",
         "price": 195000,
-        "oldPrice": 195000
+        "oldPrice": 0
       },
       {
         "label": "Lành tính cho bé gái – pH 4.5 · 2 chai",
         "price": 390000,
-        "oldPrice": 390000
+        "oldPrice": 0
       }
     ],
     "chon2": [
@@ -4342,7 +4343,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 290000,
-    "oldPrice": 290000,
+    "oldPrice": 0,
     "rating": 0,
     "reviews": 0,
     "sold": 0,
@@ -4369,12 +4370,12 @@ window.PRODUCTS = [
       {
         "label": "1 lọ",
         "price": 290000,
-        "oldPrice": 290000
+        "oldPrice": 0
       },
       {
         "label": "2 lọ",
         "price": 580000,
-        "oldPrice": 580000
+        "oldPrice": 0
       }
     ],
     "desc": "ZinC – Bổ sung kẽm hỗ trợ đề kháng & phát triển toàn diện. Thành phần chính: Zinc (as Zinc Sulphate) – 6.75 mg. Công dụng nổi bật: tăng cường hệ miễn dịch, giúp cơ thể khỏe mạnh hơn; hỗ trợ xương chắc khỏe, giảm nguy cơ loãng xương; tốt cho tóc – da – móng, hỗ trợ chức năng sinh sản; tăng khả năng tập trung & hiệu suất học tập. Đối tượng sử dụng: trẻ em biếng ăn, chậm lớn, cần tăng đề kháng; phụ nữ mang thai & cho con bú; người hấp thu kém hoặc hay ốm vặt. Quy cách: lọ nhỏ giọt 30ml – không hương. Xuất xứ: New Zealand. HSD: 2 năm từ NSX.",
@@ -4407,7 +4408,7 @@ window.PRODUCTS = [
     "brand": "chef-to-factory",
     "ages": [],
     "price": 339000,
-    "oldPrice": 339000,
+    "oldPrice": 0,
     "shape": "box",
     "color": "#8A2A2A",
     "weight": "Gói 200g",
@@ -4422,12 +4423,12 @@ window.PRODUCTS = [
       {
         "label": "1 gói 200g",
         "price": 339000,
-        "oldPrice": 339000
+        "oldPrice": 0
       },
       {
         "label": "2 gói",
         "price": 678000,
-        "oldPrice": 678000
+        "oldPrice": 0
       }
     ],
     "desc": "Bò xuyên tiêu làm theo công thức của Masterchef Phạm Tuấn Hải: thịt bò mông tươi được chọn kỹ, tẩm ướp đậm đà rồi sấy dẻo nên miếng thịt vẫn mềm, dai, không khô cứng. Vị xuyên tiêu thơm nồng, tê nhẹ rất cuốn – xé ra nhâm nhi, ăn kèm cơm nóng, xôi, bánh mì hay làm món mặn trong bữa cơm gia đình đều hợp. Sản phẩm đạt tiêu chuẩn an toàn thực phẩm ISO 22000.",
@@ -4464,7 +4465,7 @@ window.PRODUCTS = [
       "12-18y"
     ],
     "price": 115000,
-    "oldPrice": 115000,
+    "oldPrice": 0,
     "shape": "box",
     "color": "#E8A317",
     "weight": "Túi zip 200g",
@@ -4479,17 +4480,17 @@ window.PRODUCTS = [
       {
         "label": "1 túi 200g (vị phô mai)",
         "price": 115000,
-        "oldPrice": 115000
+        "oldPrice": 0
       },
       {
         "label": "2 túi (vị phô mai)",
         "price": 230000,
-        "oldPrice": 230000
+        "oldPrice": 0
       },
       {
         "label": "3 túi (vị phô mai)",
         "price": 345000,
-        "oldPrice": 345000
+        "oldPrice": 0
       },
       {
         "label": "1 túi 200 gr (vị BBQ)",
@@ -4537,7 +4538,7 @@ window.PRODUCTS = [
       "12-18y"
     ],
     "price": 445000,
-    "oldPrice": 445000,
+    "oldPrice": 0,
     "shape": "box",
     "color": "#D9822B",
     "weight": "Túi 300g",
@@ -4552,12 +4553,12 @@ window.PRODUCTS = [
       {
         "label": "1 túi 300g",
         "price": 445000,
-        "oldPrice": 445000
+        "oldPrice": 0
       },
       {
         "label": "2 túi",
         "price": 890000,
-        "oldPrice": 890000
+        "oldPrice": 0
       }
     ],
     "desc": "Cơm Vàng Nội Ơi mang vị cơm cháy truyền thống: lớp cơm mỏng ép rồi nướng vàng giòn, phủ đều chà bông (ruốc) mặn ngọt vừa phải, rưới sốt mắm, ớt, hành thơm lừng. Món ăn vặt đậm vị quê nhà, hợp để cả nhà quây quần thưởng thức hay làm quà biếu. Thành phần: gạo, ruốc, dầu thực vật, đường, mạch nha, mắm, ớt, tỏi, muối, chiết xuất nấm men.",
@@ -4590,7 +4591,7 @@ window.PRODUCTS = [
     "brand": "vua-dinh-vi",
     "ages": [],
     "price": 265000,
-    "oldPrice": 265000,
+    "oldPrice": 0,
     "shape": "box",
     "color": "#5D1F14",
     "weight": "Gói 200g",
@@ -4605,13 +4606,13 @@ window.PRODUCTS = [
       {
         "label": "1 gói 200g",
         "price": 265000,
-        "oldPrice": 265000,
+        "oldPrice": 0,
         "oos": true
       },
       {
         "label": "2 gói",
         "price": 530000,
-        "oldPrice": 530000,
+        "oldPrice": 0,
         "oos": true
       }
     ],
@@ -4645,7 +4646,7 @@ window.PRODUCTS = [
     "brand": "chef-to-factory",
     "ages": [],
     "price": 48000,
-    "oldPrice": 48000,
+    "oldPrice": 0,
     "shape": "jar",
     "color": "#C62828",
     "weight": "Hũ 100g",
@@ -4660,12 +4661,12 @@ window.PRODUCTS = [
       {
         "label": "1 hũ 100g",
         "price": 48000,
-        "oldPrice": 48000
+        "oldPrice": 0
       },
       {
         "label": "3 hũ",
         "price": 144000,
-        "oldPrice": 144000
+        "oldPrice": 0
       }
     ],
     "desc": "Muối chấm và rắc xuyên tiêu của Chef Hải: vị cay nồng, tê nhẹ, mặn vừa và thơm mùi tiêu rang, chấm đâu cũng \"bắt vị\" mà không gắt. Hoà quyện nhiều loại tiêu và thảo mộc: muối, mắc khén, tiêu xanh, ớt bột sấy. Chấm hoa quả chua (xoài, cóc, ổi), thịt luộc, đồ nướng, hải sản hay rắc vào món xào đều ngon.",
@@ -4690,7 +4691,7 @@ window.PRODUCTS = [
       "cho-me"
     ],
     "price": 199000,
-    "oldPrice": 199000,
+    "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
     "sold": 0,

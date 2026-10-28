@@ -1750,9 +1750,9 @@
      Hai chương trình không cộng dồn: lấy chương trình cho nhiều quà hơn.
      ===================================================================== */
   const QT = () => (window.QUA_TANG && window.QUA_TANG.enabled ? window.QUA_TANG : null);
-  /* Combo đã được giảm giá (có giá gạch cao hơn giá bán) KHÔNG được nhận quà: không tính vào mọi chương trình quà
+  /* Combo đã được giảm giá (comboGiam: true – giá niêm yết đã về 0 từ 29/10/2026 – hoặc có giá gạch cao hơn giá bán) KHÔNG được nhận quà: không tính vào mọi chương trình quà
      (mua thùng tặng gói, đơn từ 1 triệu, chương trình cài ở trang quản trị, sự kiện 10.10…). */
-  function laComboGiam(p) { return !!(p && p.isCombo && (Number(p.oldPrice) > Number(p.price) || (p.variants || []).some((v) => Number(v.oldPrice) > Number(v.price)))); }
+  function laComboGiam(p) { return !!(p && p.isCombo && (p.comboGiam || Number(p.oldPrice) > Number(p.price) || (p.variants || []).some((v) => Number(v.oldPrice) > Number(v.price)))); }
   const COMBO_KHONG_QUA = 'Combo đã được giảm giá nên không kèm quà tặng.';
   function laNuocLotte(p) { const cfg = QT(); if (!cfg || !p || p.isCombo) return false; const l = cfg.loc || {}; return (!l.cat || p.cat === l.cat) && (!l.brand || p.brand === l.brand); }
   /* Ghi chú quà hiện trên trang sản phẩm */
