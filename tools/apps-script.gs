@@ -3844,8 +3844,9 @@ function chatThem_(phien, tu, noiDung, kh, nv, dk) {
   var t = { ma: ma, luc: Date.now(), tu: tu, noiDung: noiDung, nv: nv || '' }; if (dk) t.dk = dk; return t;
 }
 function chatWebhook_(goi) {
-  var url = PropertiesService.getScriptProperties().getProperty('CHAT_WEBHOOK'); if (!url || !/^https:\/\//.test(url)) return;
-  try { UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: JSON.stringify(goi), muteHttpExceptions: true }); } catch (e) { Logger.log('Chat webhook lỗi: ' + e); }
+  var pr = PropertiesService.getScriptProperties(), url = pr.getProperty('CHAT_WEBHOOK'); if (!url || !/^https:\/\//.test(url)) return;
+  /* x-hck-chat-key = CHAT_API_KEY: phần mềm nhận kiểm tra đúng là web gửi */
+  try { UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', headers: { 'x-hck-chat-key': pr.getProperty('CHAT_API_KEY') || '' }, payload: JSON.stringify(goi), muteHttpExceptions: true }); } catch (e) { Logger.log('Chat webhook lỗi: ' + e); }
 }
 /* Khách gửi tin */
 function apiChatGui(p) {
@@ -3873,7 +3874,7 @@ function apiChatGui(p) {
     /* Khách gõ số điện thoại trong tin → ghi nhớ cho nhân viên gọi lại */
     var sdtTrongTin = (nd.match(/(?:\+?84|0)\d[\d .]{7,11}\d/) || [''])[0];
     if (sdtTrongTin && sdtHopLe(chuanSdt(sdtTrongTin))) ghiNhatKy('Chat web', chuanSdt(sdtTrongTin), 'Khách để lại số trong chat: ' + nd.slice(0, 200));
-    chatWebhook_({ su: 'tin_moi', phien: phien, khach: kh, tin: tin });
+    chatWebhook_({ su: 'tin_moi', phien: phien, khach: kh, tin: tin, tinThem: them });
     return { ok: true, tin: [tin].concat(them) };
   });
 }
@@ -3906,6 +3907,7 @@ function chatXem_(phien) {
 function chatTraLoi_(phien, nd, nv, dinhKem) {
   nd = String(nd || '').slice(0, 2000).trim(); var dk = chatDinhKem_(dinhKem); if (!nd && !dk) return { ok: false, msg: 'Chưa có nội dung' };
   var tin = voiKhoa(function () { return chatThem_(phien, 'nv', nd, {}, nv, dk); });
+  chatWebhook_({ su: 'tin_nv', phien: phien, tin: tin });
   return { ok: true, tin: tin };
 }
 function apiQtChatDs(p) { if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' }; return { ok: true, ds: chatDs_() }; }
@@ -3926,7 +3928,7 @@ function apiChatApi(p) {
   var viec = String(p.viec || 'ds');
   if (viec === 'ds') return { ok: true, ds: chatDs_() };
   var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
-  if (viec === 'xem') return { ok: true, tin: chatXem_(phien) };
+  if (viec === 'xem') { var sau = Number(p.sau) || 0; return { ok: true, tin: chatXem_(phien).filter(function (t) { return t.luc > sau; }) }; }
   if (viec === 'traLoi') return chatTraLoi_(phien, p.noiDung, String(p.nv || 'Phần mềm chat').slice(0, 40), p.dinhKem);
   return { ok: false, msg: 'viec chỉ nhận ds | xem | traLoi' };
 }

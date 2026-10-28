@@ -175,6 +175,27 @@ test('chat: khách gửi → tự trả lời + báo shop; nhân viên trả l�
   assert.ok(kq.slice(0, 40).every((x) => x.ok)); assert.strictEqual(kq[41].ok, false, 'tin thứ 42 bị chặn');
 });
 
+test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin mới theo mốc', async () => {
+  const m = taoMay(); const ph = 'cthunghiem000003', KEY = 'khoa-chat-thu-nghiem-0123456789';
+  assert.strictEqual((await m.get('action=chatApi&key=sai&viec=ds')).code, 'UNAUTHORIZED', 'chưa đặt khoá thì từ chối');
+  m.kho.thuocTinh.set('CHAT_API_KEY', KEY); m.kho.thuocTinh.set('CHAT_WEBHOOK', 'https://crm.example.com/hook');
+  const hook = []; datGoiChoThu((ds) => ds.map((y) => { if (/crm\.example/.test(y.url)) hook.push(y); return { ma: 200, noiDung: '{}', dau: {} }; }));
+  assert.strictEqual((await m.get('action=chatApi&key=sai&viec=ds')).ok, false, 'sai khoá');
+  await m.get('action=chatGui&phien=' + ph + '&noiDung=' + encodeURIComponent('Shop ơi') + '&ten=Mẹ Na');
+  const h1 = hook.map((y) => JSON.parse(y.body)).find((b) => b.su === 'tin_moi');
+  assert.ok(h1 && h1.phien === ph && h1.tin.noiDung === 'Shop ơi' && h1.tinThem.length >= 1, 'webhook tin khách + tin tự trả lời');
+  assert.strictEqual(hook[0].headers['x-hck-chat-key'], KEY, 'webhook kèm khoá');
+  const ds = await m.get('action=chatApi&key=' + KEY + '&viec=ds'); assert.ok(ds.ds.some((c) => c.phien === ph && c.ten === 'Mẹ Na'));
+  const xem = await m.get('action=chatApi&key=' + KEY + '&viec=xem&phien=' + ph); const moc = xem.tin[xem.tin.length - 1].luc;
+  await new Promise((r) => setTimeout(r, 5));
+  const tl = await m.get('action=chatApi&key=' + KEY + '&viec=traLoi&phien=' + ph + '&nv=CRM&noiDung=' + encodeURIComponent('Dạ shop chào mẹ'));
+  assert.strictEqual(tl.ok, true);
+  assert.ok(hook.map((y) => JSON.parse(y.body)).some((b) => b.su === 'tin_nv' && b.tin.noiDung === 'Dạ shop chào mẹ'), 'webhook tin nhân viên');
+  const moi = await m.get('action=chatApi&key=' + KEY + '&viec=xem&phien=' + ph + '&sau=' + moc);
+  assert.deepStrictEqual(moi.tin.map((t) => t.noiDung), ['Dạ shop chào mẹ'], 'chỉ tin sau mốc');
+  assert.ok((await m.get('action=chatDoc&phien=' + ph)).tin.some((t) => t.tu === 'nv' && t.nv === 'CRM'), 'khách thấy tin từ CRM');
+});
+
 /* ---------- Đối tác (affiliate) ---------- */
 test('đối tác: đăng ký → chờ duyệt (link chưa chạy) → shop duyệt → link ghi lượt bấm', async () => {
   const m = taoMay();

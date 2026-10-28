@@ -21,10 +21,10 @@ Lưu ý: KHÔNG ghi khoá vào repo (repo công khai).
 | viec | Tham số thêm | Trả về |
 |---|---|---|
 | `ds` | – | `{ok, ds:[{phien, ten, sdt, trang, soTin, chuaDoc, cuoi, cuoiTu, luc}]}` – 200 cuộc chat mới nhất |
-| `xem` | `phien` | `{ok, tin:[{ma, luc, tu, noiDung, nv, dk?}]}` – đánh dấu đã đọc |
+| `xem` | `phien`, `sau` (tuỳ chọn, mili giây) | `{ok, tin:[{ma, luc, tu, noiDung, nv, dk?}]}` – đánh dấu đã đọc; có `sau` thì chỉ trả tin mới hơn mốc đó |
 | `traLoi` | `phien`, `noiDung`, `nv` (tên NV), `dinhKem` (JSON, tuỳ chọn) | `{ok, tin}` – khách thấy trong vài giây |
 
-- `tu`: `khach` | `nv` | `he-thong`
+- `tu`: `khach` | `nv` | `he-thong` | `tu-dong`
 - `luc`: mốc thời gian, tính bằng mili giây
 - `dk` / `dinhKem` (đính kèm), một trong các dạng:
   - `{"loai":"anh"|"video","url":"/chat-tep/YYYYMM/ten.jpg"}` – tệp nằm ở `https://huongchatkids.vn` + url
@@ -33,11 +33,19 @@ Lưu ý: KHÔNG ghi khoá vào repo (repo công khai).
 
 ## 3. Web đẩy ra (webhook)
 
-Khi khách gửi tin, web POST JSON tới `CHAT_WEBHOOK`:
+Web POST JSON tới `CHAT_WEBHOOK`, header `x-hck-chat-key: <CHAT_API_KEY>` (phần mềm kiểm tra khoá, sai thì bỏ qua).
+
+Khách gửi tin (`tinThem` = tin tự trả lời đi kèm, có thể rỗng):
 
 ```json
 { "su": "tin_moi", "phien": "c...", "khach": { "ten": "", "sdt": "", "trang": "product.html?id=..." },
-  "tin": { "ma": "m...", "luc": 1792..., "tu": "khach", "noiDung": "...", "dk": { } } }
+  "tin": { "ma": "m...", "luc": 1792..., "tu": "khach", "noiDung": "...", "dk": { } }, "tinThem": [] }
+```
+
+Nhân viên trả lời (từ trang Quản trị hoặc từ chính phần mềm qua `traLoi`) – dùng `tin.ma` để bỏ trùng:
+
+```json
+{ "su": "tin_nv", "phien": "c...", "tin": { "ma": "m...", "luc": 1792..., "tu": "nv", "noiDung": "...", "nv": "adminhck" } }
 ```
 
 ## 4. Dữ liệu
