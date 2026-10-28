@@ -3316,12 +3316,27 @@ window.PRODUCTS = [
     "weight": "Chai 500ml",
     "origin": "Hàn Quốc",
     "tags": [],
-    "image": "img/hiskin-micellar-h.jpg",
-    "thumb": "img/thumb/hiskin-micellar-h.jpg",
+    "image": "img/hiskin-micellar-bia.jpg",
+    "thumb": "img/thumb/hiskin-micellar-bia.jpg",
     "images": [
-      "img/hiskin-micellar-h.jpg",
+      "img/hiskin-micellar-bia.jpg",
       "img/hiskin-micellar-2.jpg",
-      "img/hiskin-micellar-3.jpg"
+      "img/hiskin-micellar-3.jpg",
+      "img/hiskin-micellar-4.jpg",
+      "img/hiskin-micellar-5.jpg",
+      "img/hiskin-micellar-6.jpg",
+      "img/hiskin-micellar-7.jpg",
+      "img/hiskin-micellar-8.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 chai",
+        "price": 750000
+      },
+      {
+        "label": "2 chai",
+        "price": 1500000
+      }
     ],
     "desc": "Nước tẩy trang HISKIN Cleansing Micellar Water 500ml (Hàn Quốc), dạng nước, chứa chiết xuất trà xanh, nước biển và Glycerin 4%. Theo nhà sản xuất: ứng dụng công nghệ Micellar giúp làm sạch lớp trang điểm, kem chống nắng, bụi bẩn và bã nhờn mà không cần chà xát mạnh; Glycerin 4% hỗ trợ duy trì độ ẩm, hạn chế cảm giác khô căng sau khi làm sạch; chiết xuất trà xanh và nước biển mang lại cảm giác tươi mát, dễ chịu. Kết cấu nền nước không gây nhờn, dùng được hằng ngày, phù hợp mọi loại da kể cả da nhạy cảm. Hạn sử dụng sau mở nắp: 12 tháng. Phù hợp với người thường xuyên trang điểm, dùng kem chống nắng hoặc cần làm sạch bụi bẩn, dầu thừa mỗi ngày.",
     "highlights": [
