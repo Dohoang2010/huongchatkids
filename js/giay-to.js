@@ -20,7 +20,7 @@
     'combo-vangsua-d3k2': CANXI.concat(D3K2),
     '22644617070': [['Công bố – Nước hồng sâm táo lê', d('1nHFLxBPYGt3M1jLIdb3X1nhbIlB_c7x1')], ['Công bố – Nước hồng sâm việt quất nho', d('1MgwNxK8jpwYmhHbhxNoybfclUXMIoQGp')]],   // hồng sâm ChuChu
     '26156646705': [['Tự công bố – Lộc nhung (gạc Sumo)', d('11Udd6KVfbBdhzqF31tUFsctbE5r2Hpy2')], ['Kiểm nghiệm gạc Sumo', d('11mTRcwk3_apGvACcXx3mJLb1Cjk3OTvd')]],
-    'gac-canxi-sumo': [['Tự công bố – Gạc canxi', d('1cVy-fs-PzPWI6-ZcPXQwIChDTif7LS4F')], ['Phiếu kiểm nghiệm gạc canxi', d('14nvRknoXGw0x2zIwIQ8n9pnnvrGhhRWC')], ['Kiểm nghiệm gạc canxi (Hàn Quốc)', d('1MIbvRWbHd9FLJmDlojC6krPBwUbP9HbP')]],
+    'gac-canxi-sumo': [['Tự công bố – Gạc canxi', d('1BUuD82ufxPC2CWO0G-eHXNVECao2AnZa')], ['Phiếu kiểm nghiệm gạc canxi', d('1aTM4B6cGAvVSCDE3lI7hDaMR_QToLMrW')], ['Kiểm nghiệm gạc canxi (Hàn Quốc)', d('1GeDg89Suhd9Vwm5WNLun48CwWhGr5rug')], ['Thông báo thay đổi bao bì gạc canxi', d('1ypQbfNnRDRG_7W-UYa53dB2Bfh6GKu7T')]],
     '57413220644': [['Hồ sơ sản phẩm – Mặt nạ thạch lô hội CURE', d('1DxT5dZMer27LAw894NbGwEurmp-eo5DI')]],
     '48112514210': [['Hồ sơ sản phẩm – Super Collagen Alpha', d('1xTnzJM8bauG3NzDcItQFtybEcOTW4A63')], ['Giấy tờ sản phẩm – Collagen', d('1u78GGb1mrWu2R3AFmrApuT8AiFdk47No')], ['Kiểm nghiệm dinh dưỡng collagen', d('1aKxE3K7tbVQyIyh9ARfQGv9sBCvXk69R')]],
     'hexacare': [['Phiếu công bố mỹ phẩm – Hexacare Soothing (dịu nhẹ)', d('1Ax4Z_7F5iyNccMTRvsTToZEQULCCM_hW')], ['Phiếu công bố mỹ phẩm – Hexacare Extra-Gentle', d('1lhQ-Vxf-rjiRYHbzHQGx-1Js9nfvEM32')], ['Phiếu công bố mỹ phẩm – Hexacare Regulating (điều tiết)', d('1_gbjKMYn9rK6jKZQfS69MrP1PU3ugvTr')], ['Phiếu công bố mỹ phẩm – Hexacare bé gái 3–12 tuổi', d('1SWqP6cn-Nodl8Co8vtxF01El2_WFzcwI')]],
