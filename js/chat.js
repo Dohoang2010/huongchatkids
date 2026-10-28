@@ -34,6 +34,7 @@
   const sauCung = () => tin.reduce((m, x) => Math.max(m, x.tam ? 0 : x.luc || 0), 0);
   const luu = () => store.set(KT, tin.filter((x) => !x.tam).slice(-200));
   const gioVN = (t) => { const d = new Date(t + 7 * 36e5); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); };
+  const tk = () => { const x = MC.Session && MC.Session.get(); return (x && x.token) || ''; };   // đã đăng nhập: máy chủ gom mọi cuộc chat cùng SĐT
   const khach = () => { const c = (MC.Customer && MC.Customer.get()) || {}, s = MC.Session && MC.Session.get(), k = (s && s.kh) || {}; return { ten: k.ten || c.name || '', sdt: (MC.Session && MC.Session.phone()) || c.phone || '' }; };
 
   /* ---- Hiển thị đính kèm ---- */
@@ -129,7 +130,7 @@
   async function docMoi() {
     if (!phien) return;
     try {
-      const r = await loyaltyApi('chatDoc', { phien, sau: sauCung() }, 15000);
+      const r = await loyaltyApi('chatDoc', { phien, sau: sauCung(), token: tk() }, 15000);
       if (r && r.ok && r.tin && r.tin.length) {
         const co = new Set(tin.map((x) => x.ma));
         r.tin.forEach((x) => { if (!co.has(x.ma)) { x.daXem = mo; tin.push(x); } });
@@ -156,7 +157,7 @@
       }
       if (dk && dk.loai === 'sp') { const p = (window.PRODUCTS || []).find((x) => x.id === dk.id); if (p) dk = Object.assign({ ten: p.name, gia: p.price, anh: p.thumb || p.image || '' }, dk); }   // kèm tên cho nhân viên / CRM
       const td = tuDong || (dk ? traLoiTuDong(dk.loai, dk) : '');
-      const r = await loyaltyApi('chatGui', { phien, noiDung: nd, dinhKem: dk ? JSON.stringify(dk) : '', tuDong: String(td || '').slice(0, 1800), ten: k.ten, sdt: k.sdt, trang: location.pathname.split('/').pop() + location.search }, 20000);
+      const r = await loyaltyApi('chatGui', { phien, noiDung: nd, dinhKem: dk ? JSON.stringify(dk) : '', tuDong: String(td || '').slice(0, 1800), ten: k.ten, sdt: k.sdt, token: tk(), trang: location.pathname.split('/').pop() + location.search }, 20000);
       tin = tin.filter((x) => x !== tam);
       if (r && r.ok) (r.tin || []).forEach((x) => { x.daXem = true; tin.push(x); }); else baoLoi((r && r.msg) || 'Chưa gửi được, mẹ thử lại nhé');
     } catch (e) {
@@ -234,6 +235,7 @@
     o.addEventListener('paste', (e) => { const f = [...(e.clipboardData || {}).files || []][0]; if (f) { e.preventDefault(); chonTep(f); } });
     document.getElementById('chatForm').addEventListener('submit', (e) => { e.preventDefault(); const v = o.value; o.value = ''; caoO(); gui(v); });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { docMoi(); lap(); } else clearTimeout(hen); });
+    if (!phien && tk()) { phien = taoPhien(); store.set(KP, phien); }   // đã đăng nhập ở máy mới → tải lại tin cũ
     veTin(); chamDo(); if (phien) { docMoi(); lap(); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(dung, 0)); else dung();

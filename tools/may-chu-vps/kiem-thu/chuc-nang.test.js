@@ -201,6 +201,27 @@ test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin m�
   assert.ok((await m.get('action=chatDoc&phien=' + ph)).tin.some((t) => t.tu === 'nv' && t.nv === 'CRM'), 'khách thấy tin từ CRM');
 });
 
+test('chat: cùng SĐT nhiều máy → 1 cuộc chat; trả lời ở phiên cũ tới máy mới; khách đăng nhập thấy đủ, người lạ không đọc được', async () => {
+  const m = taoMay(); const A = 'cmaycu0000000001', B = 'cmaymoi000000001', L = 'cnguoila00000001';
+  await m.get('action=chatGui&phien=' + A + '&noiDung=tin%20may%20cu&sdt=' + SDT);
+  await m.get('action=chatGui&phien=' + B + '&noiDung=tin%20may%20moi&sdt=' + SDT);
+  await m.get('action=chatGui&phien=' + L + '&noiDung=khach%20khac&sdt=' + SDT2);
+  const ds = (await m.qt('action=qtChatDs')).ds;
+  assert.strictEqual(ds.filter((c) => c.sdt === SDT).length, 1, 'cùng SĐT = 1 cuộc chat');
+  assert.strictEqual(ds.find((c) => c.sdt === SDT).phien, B, 'mã phiên = máy khách nhắn gần nhất');
+  const xem = await m.qt('action=qtChatXem&phien=' + A);
+  assert.ok(['tin may cu', 'tin may moi'].every((t) => xem.tin.some((x) => x.noiDung === t)), 'xem đủ tin 2 máy');
+  assert.ok(!xem.tin.some((x) => x.noiDung === 'khach khac'));
+  const tl = await m.qt('action=qtChatTraLoi&phien=' + A + '&noiDung=' + encodeURIComponent('Dạ shop trả lời'));
+  assert.ok((await m.get('action=chatDoc&phien=' + B)).tin.some((x) => x.noiDung === 'Dạ shop trả lời'), 'trả lời ở phiên cũ → máy mới thấy');
+  assert.ok(tl.ok);
+  assert.ok(!(await m.get('action=chatDoc&phien=' + L)).tin.some((x) => /may cu|may moi/.test(x.noiDung)), 'người lạ không đọc được');
+  const xt = await dangNhapOtp(m, SDT);
+  const C = 'cmaythu3000000001', doc = await m.get('action=chatDoc&phien=' + C + '&token=' + encodeURIComponent(xt.token));
+  assert.ok(['tin may cu', 'tin may moi', 'Dạ shop trả lời'].every((t) => doc.tin.some((x) => x.noiDung === t)), 'đăng nhập ở máy thứ 3 thấy đủ lịch sử');
+  assert.ok(!(await m.get('action=chatDoc&phien=' + C + '&token=sai')).tin.length, 'token sai không thấy gì');
+});
+
 /* ---------- Đối tác (affiliate) ---------- */
 test('đối tác: đăng ký → chờ duyệt (link chưa chạy) → shop duyệt → link ghi lượt bấm', async () => {
   const m = taoMay();

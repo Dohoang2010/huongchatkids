@@ -3862,7 +3862,8 @@ function apiChatGui(p) {
   if (dk && dk.loai === 'sp') dk.moi = false;
   if (!nd && !dk) return { ok: false, msg: 'Mẹ nhập nội dung nhé' };
   if (!demGioiHan('chat_' + phien, 40, 600)) return { ok: false, msg: 'Mẹ gửi nhanh quá, chờ một chút rồi gửi tiếp nhé' };
-  var sdt = chuanSdt(p.sdt), kh = { ten: String(p.ten || '').slice(0, 60), sdt: sdtHopLe(sdt) ? sdt : '', trang: String(p.trang || '').slice(0, 120) };
+  var phKh = p.token ? phienKhach(p.token) : null;   // khách đã đăng nhập: dùng đúng SĐT tài khoản
+  var sdt = chuanSdt(phKh && phKh.sdt ? phKh.sdt : p.sdt), kh = { ten: String(p.ten || '').slice(0, 60), sdt: sdtHopLe(sdt) ? sdt : '', trang: String(p.trang || '').slice(0, 120) };
   return voiKhoa(function () {
     var ds = chatDocHet_().filter(function (r) { return String(r[1]) === phien; });
     var cuoi = ds.length ? new Date(ds[ds.length - 1][0]).getTime() : 0;
@@ -3888,16 +3889,28 @@ function apiChatGui(p) {
 /* Khách đọc tin mới (sau mã thời gian 'sau') */
 function apiChatDoc(p) {
   var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
-  var sau = Number(p.sau) || 0;
-  var tin = chatDocHet_().filter(function (r) { return String(r[1]) === phien && new Date(r[0]).getTime() > sau; }).map(chatTin_);
+  var sau = Number(p.sau) || 0, v = chatDocHet_(), ph = p.token ? phienKhach(p.token) : null;
+  /* Khách đã đăng nhập: đọc mọi phiên chat của SĐT mình (đổi máy / trình duyệt vẫn thấy đủ). Chưa đăng nhập: chỉ phiên của trình duyệt này */
+  var bo = ph && ph.sdt ? chatBoPhienSdt_(v, ph.sdt) : {}; bo[phien] = 1;
+  var tin = v.filter(function (r) { return bo[String(r[1])] && new Date(r[0]).getTime() > sau; }).map(chatTin_);
   return { ok: true, tin: tin, gio: chatGio_() };
 }
+/* Gom chat theo SĐT: cùng 1 khách (cùng số) dù chat từ nhiều máy / trình duyệt → 1 cuộc chat */
+function chatBoPhienSdt_(v, sdt) { var bo = {}; sdt = chuanSdt(sdt); if (!sdt) return bo; v.forEach(function (r) { if (r[6] && chuanSdt(r[6]) === sdt) bo[String(r[1])] = 1; }); return bo; }
+function chatSdtCuaPhien_(v, phien) { var sdt = ''; v.forEach(function (r) { if (String(r[1]) === phien && r[6]) sdt = chuanSdt(r[6]); }); return sdt; }
+function chatNhom_(v, phien) { var sdt = chatSdtCuaPhien_(v, phien), bo = sdt ? chatBoPhienSdt_(v, sdt) : {}; bo[phien] = 1; return bo; }
+/* Phiên khách nhắn gần nhất trong nhóm → tin nhân viên gửi vào đó để khách thấy */
+function chatPhienMoiNhat_(v, bo, macDinh) { var ph = macDinh; v.forEach(function (r) { if (bo[String(r[1])] && String(r[3]) === 'khach') ph = String(r[1]); }); return ph; }
 /* Danh sách cuộc chat (mới nhất trước) */
 function chatDs_() {
   var m = {};
-  chatDocHet_().forEach(function (r, i) {
+  var v = chatDocHet_(), sdtPhien = {};
+  v.forEach(function (r) { if (r[6] && r[1]) sdtPhien[String(r[1])] = chuanSdt(r[6]); });
+  v.forEach(function (r, i) {
     var ph = String(r[1]); if (!ph) return;
-    var c = m[ph] || (m[ph] = { phien: ph, ten: '', sdt: '', trang: '', soTin: 0, chuaDoc: 0, cuoi: '', cuoiTu: '', luc: 0 });
+    var khoa = sdtPhien[ph] ? 's' + sdtPhien[ph] : ph;   // cùng SĐT → 1 cuộc chat
+    var c = m[khoa] || (m[khoa] = { phien: ph, ten: '', sdt: '', trang: '', soTin: 0, chuaDoc: 0, cuoi: '', cuoiTu: '', luc: 0 });
+    if (String(r[3]) === 'khach') c.phien = ph;   // mã phiên = phiên khách nhắn gần nhất
     c.soTin++; if (r[5]) c.ten = String(r[5]); if (r[6]) c.sdt = chuanSdt(r[6]); if (r[7]) c.trang = String(r[7]);
     if (String(r[3]) === 'khach' && !r[9]) c.chuaDoc++;
     if (String(r[3]) !== 'he-thong') { c.cuoi = (String(r[4]) || chatMoTaDK_(chatDinhKem_(String(r[10] || '')))).slice(0, 120); c.cuoiTu = String(r[3]); }
@@ -3907,14 +3920,15 @@ function chatDs_() {
 }
 function chatXem_(phien) {
   var sh = sheetChat_(), n = sh.getLastRow(); if (n < 2) return [];
-  var tu = Math.max(2, n - 4999), v = sh.getRange(tu, 1, n - tu + 1, H_CHAT.length).getValues(), tin = [];
-  v.forEach(function (r, i) { if (String(r[1]) !== phien) return; tin.push(chatTin_(r)); if (String(r[3]) === 'khach' && !r[9]) sh.getRange(tu + i, 10).setValue('x'); });
+  var tu = Math.max(2, n - 4999), v = sh.getRange(tu, 1, n - tu + 1, H_CHAT.length).getValues(), tin = [], bo = chatNhom_(v, phien);
+  v.forEach(function (r, i) { if (!bo[String(r[1])]) return; tin.push(chatTin_(r)); if (String(r[3]) === 'khach' && !r[9]) sh.getRange(tu + i, 10).setValue('x'); });
   return tin;
 }
 function chatTraLoi_(phien, nd, nv, dinhKem) {
   nd = String(nd || '').slice(0, 2000).trim(); var dk = chatDinhKem_(dinhKem); if (!nd && !dk) return { ok: false, msg: 'Chưa có nội dung' };
+  var v = chatDocHet_(); phien = chatPhienMoiNhat_(v, chatNhom_(v, phien), phien);   // trả lời ở cuộc chat cũ vẫn tới máy khách đang dùng
   var tin = voiKhoa(function () { return chatThem_(phien, 'nv', nd, {}, nv, dk); });
-  chatWebhook_({ su: 'tin_nv', phien: phien, tin: tin });
+  chatWebhook_({ su: 'tin_nv', phien: phien, sdt: chatSdtCuaPhien_(v, phien), tin: tin });
   return { ok: true, tin: tin };
 }
 function apiQtChatDs(p) { if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' }; return { ok: true, ds: chatDs_() }; }
