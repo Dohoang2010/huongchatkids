@@ -187,6 +187,9 @@ test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin m�
   const h1 = hook.map((y) => JSON.parse(y.body)).find((b) => b.su === 'tin_moi');
   assert.ok(h1 && h1.phien === ph && h1.tin.noiDung === 'Shop ơi' && h1.tinThem.length >= 1, 'webhook tin khách + tin tự trả lời');
   assert.strictEqual(hook[0].headers['x-hck-chat-key'], KEY, 'webhook kèm khoá');
+  await m.get('action=chatGui&phien=' + ph + '&dinhKem=' + encodeURIComponent(JSON.stringify({ loai: 'sp', id: '123', ten: 'Nước ép <b>Lotte</b>', gia: 448000, anh: 'javascript:x' })));
+  const dkSp = hook.map((y) => JSON.parse(y.body)).filter((b) => b.su === 'tin_moi').pop().tin.dk;
+  assert.deepStrictEqual([dkSp.ten, dkSp.gia, dkSp.anh], ['Nước ép bLotte/b', 448000, undefined], 'thẻ sản phẩm kèm tên + giá, bỏ ảnh lạ');
   const ds = await m.get('action=chatApi&key=' + KEY + '&viec=ds'); assert.ok(ds.ds.some((c) => c.phien === ph && c.ten === 'Mẹ Na'));
   const xem = await m.get('action=chatApi&key=' + KEY + '&viec=xem&phien=' + ph); const moc = xem.tin[xem.tin.length - 1].luc;
   await new Promise((r) => setTimeout(r, 5));

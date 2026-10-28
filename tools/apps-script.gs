@@ -3828,7 +3828,14 @@ var H_CHAT = ['Thời gian', 'Mã phiên', 'Mã tin', 'Người gửi', 'Nội d
 function chatDinhKem_(v) {
   var d = null; try { d = typeof v === 'string' ? JSON.parse(v || 'null') : v; } catch (e) { return null; } if (!d || typeof d !== 'object') return null;
   if ((d.loai === 'anh' || d.loai === 'video') && /^\/chat-tep\/\d{6}\/[a-z0-9-]+\.(jpg|png|webp|gif|mp4|mov|webm)$/.test(String(d.url || ''))) return { loai: d.loai, url: String(d.url) };
-  if (d.loai === 'sp' && /^[\w-]{1,60}$/.test(String(d.id || ''))) return { loai: 'sp', id: String(d.id), bt: String(d.bt || '').slice(0, 80), moi: !!d.moi };
+  if (d.loai === 'sp' && /^[\w-]{1,60}$/.test(String(d.id || ''))) {
+    /* ten / gia / anh: web gửi kèm để phần mềm chat (CRM) hiện tên sản phẩm, không cần tra mã */
+    var sp = { loai: 'sp', id: String(d.id), bt: String(d.bt || '').slice(0, 80), moi: !!d.moi }, anh = String(d.anh || '');
+    if (d.ten) sp.ten = String(d.ten).replace(/[<>]/g, '').slice(0, 150);
+    if (Number(d.gia) > 0) sp.gia = Math.round(Number(d.gia));
+    if (/^(img\/|https:\/\/)[^\s"'<>]{1,250}$/.test(anh)) sp.anh = anh;
+    return sp;
+  }
   if (d.loai === 'don' && /^[\w-]{3,40}$/.test(String(d.ma || ''))) return { loai: 'don', ma: String(d.ma), tong: Math.max(0, Math.round(Number(d.tong) || 0)), tt: String(d.tt || '').slice(0, 40), sp: String(d.sp || '').slice(0, 200), ngay: String(d.ngay || '').slice(0, 20) };
   return null;
 }

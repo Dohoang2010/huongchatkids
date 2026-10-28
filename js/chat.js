@@ -154,6 +154,7 @@
         if (!r0.ok || !j.ok) throw new Error(j.msg || 'Chưa gửi được tệp, mẹ thử lại nhé');
         dk = { loai: j.loai, url: j.url };
       }
+      if (dk && dk.loai === 'sp') { const p = (window.PRODUCTS || []).find((x) => x.id === dk.id); if (p) dk = Object.assign({ ten: p.name, gia: p.price, anh: p.thumb || p.image || '' }, dk); }   // kèm tên cho nhân viên / CRM
       const td = tuDong || (dk ? traLoiTuDong(dk.loai, dk) : '');
       const r = await loyaltyApi('chatGui', { phien, noiDung: nd, dinhKem: dk ? JSON.stringify(dk) : '', tuDong: String(td || '').slice(0, 1800), ten: k.ten, sdt: k.sdt, trang: location.pathname.split('/').pop() + location.search }, 20000);
       tin = tin.filter((x) => x !== tam);

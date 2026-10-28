@@ -24,7 +24,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-chat.js": {
-   "v": "57b31fa8",
+   "v": "2efc8e04",
    "can": [],
    "ngay": false
   },

@@ -64,7 +64,8 @@
     if (!chon) return; noiDung = String(noiDung || '').trim(); if (!noiDung && !dinhKem) return;
     const nut = $('#chGui'); nut.disabled = true;
     try {
-      const r = await A.api('qtChatTraLoi', { phien: chon, noiDung, dinhKem: dinhKem ? JSON.stringify(dinhKem) : '' });
+      if (dinhKem && dinhKem.loai === 'sp') { const p = sp(dinhKem.id); if (p) dinhKem = Object.assign({ ten: p.name, gia: p.price, anh: p.thumb || p.image || '' }, dinhKem); }   // kèm tên cho CRM
+    const r = await A.api('qtChatTraLoi', { phien: chon, noiDung, dinhKem: dinhKem ? JSON.stringify(dinhKem) : '' });
       if (!r || !r.ok) throw new Error((r && r.msg) || 'Chưa gửi được');
       tin.push(r.tin); veTin(); taiDs();
     } catch (e) { A.toast(e.message, 'err'); } finally { nut.disabled = !chon; }
