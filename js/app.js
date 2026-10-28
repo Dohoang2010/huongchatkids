@@ -798,7 +798,7 @@
           <div class="qb__summary" id="qbSummary" aria-live="polite"></div>
           <div class="form-error hide" id="qbError" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block btn--stack" type="submit" id="qbSubmit"><span>ĐẶT HÀNG · <span id="qbTotal"></span></span><small>Không cần tài khoản · Kiểm tra hàng trước khi thanh toán</small></button>
-          <div class="qb__trust"><span>${I.check}Chính hãng, tem phụ tiếng Việt</span><span>${I.check}Đổi trả 7 ngày</span><span>${I.check}Giao dự kiến ${deliveryEstimate()}</span></div>
+          <div class="qb__trust"><span>${I.check}Chính hãng, tem phụ tiếng Việt</span><span>${I.check}Đổi trả trong 24h</span><span>${I.check}Giao dự kiến ${deliveryEstimate()}</span></div>
           <p class="qb__privacy">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
         </form>
         <div class="qb__alt"><p>Hoặc đặt hàng qua</p><div class="row ${p.shopeeUrl ? 'row--4' : ''}">

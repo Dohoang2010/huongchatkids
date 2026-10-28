@@ -63,7 +63,7 @@
 <script src="js/data.js?v=20261026a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261028a" defer></script>
+<script src="js/app.js?v=20261028b" defer></script>
 <script src="js/chat.js?v=20261028b" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function render() {
     const list = filtered(); const pages = Math.max(1, Math.ceil(list.length / PER)); S.page = Math.min(S.page, pages);
     const t = titleText(); $('#title').textContent = t; document.title = t + ' – ' + SITE.name;
-    $('#subtitle').textContent = S.km ? (window.GIO_VANG || []).filter((g) => !g.tat).map((g) => `⏰ ${g.ten} ${g.tu}–${g.den} mỗi ngày giảm ${g.giam}%${MC.gioVangChay(g) ? ' (đang diễn ra)' : ''}`).concat(['🎁 Mua kèm quà tặng', '💰 Combo tiết kiệm']).join(' · ') : S.age.length === 1 ? `Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ${ageLabel(S.age[0])}` : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả 7 ngày';
+    $('#subtitle').textContent = S.km ? (window.GIO_VANG || []).filter((g) => !g.tat).map((g) => `⏰ ${g.ten} ${g.tu}–${g.den} mỗi ngày giảm ${g.giam}%${MC.gioVangChay(g) ? ' (đang diễn ra)' : ''}`).concat(['🎁 Mua kèm quà tặng', '💰 Combo tiết kiệm']).join(' · ') : S.age.length === 1 ? `Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ${ageLabel(S.age[0])}` : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả trong 24h';
     $('#crumb').innerHTML = DM ? `<a href="index.html">Trang chủ</a><span>›</span>${laGoc() ? `<span>${esc(DM.nhan)}</span>` : `<a href="${linkGoc(DM)}">${esc(DM.nhan)}</a><span>›</span><span>${esc(t)}</span>`}`
       : `<a href="index.html">Trang chủ</a><span>›</span><a href="collections.html">Sản phẩm</a>${t !== 'Tất cả sản phẩm' ? `<span>›</span><span>${esc(t)}</span>` : ''}`;
     renderHero(); renderKM();

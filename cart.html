@@ -23,7 +23,7 @@
 <script src="js/data.js?v=20261026a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261028a" defer></script>
+<script src="js/app.js?v=20261028b" defer></script>
 <script src="js/chat.js?v=20261028b" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="summary-line"><span>Phí vận chuyển</span><span class="${ship === 0 ? 'free' : ''}">${shipText(ship)}</span></div>
         <div class="summary-line total"><span>${ship === null ? 'Tổng (chưa gồm ship)' : 'Tổng cộng'}</span><b>${fmt(total)}</b></div>
         <a class="btn btn--primary btn--lg btn--block mt-16" href="checkout.html">${I.zap}Đặt hàng · ${fmt(total)}</a>
-        <div class="qb__trust"><span>${I.check}Kiểm tra hàng trước khi thanh toán</span><span>${I.check}Đổi trả 7 ngày</span></div>
+        <div class="qb__trust"><span>${I.check}Kiểm tra hàng trước khi thanh toán</span><span>${I.check}Đổi trả trong 24h</span></div>
         <div class="divider"></div>
         <p class="fs-13 text-muted" style="text-align:center">Cần tư vấn thêm? <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> hoặc <a class="fw-700" style="color:var(--zalo)" href="${SITE.zalo}" target="_blank">Chat Zalo</a></p>
       </div></div>`;

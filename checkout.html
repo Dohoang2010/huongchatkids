@@ -23,7 +23,7 @@
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261028a" defer></script>
+<script src="js/app.js?v=20261028b" defer></script>
 <script src="js/chat.js?v=20261028b" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="divider"></div>
         <div id="summary"></div>
         <button class="btn btn--primary btn--lg btn--block btn--stack mt-16" type="submit" id="coSubmit"><span>${I.zap} ĐẶT HÀNG · <span id="coTotal"></span></span><small>Kiểm tra hàng trước khi thanh toán · Giao dự kiến ${deliveryEstimate()}</small></button>
-        <div class="qb__trust"><span>${I.check}Chính hãng 100%</span><span>${I.check}Đổi trả 7 ngày</span><span>${I.check}Bảo mật thông tin</span></div>
+        <div class="qb__trust"><span>${I.check}Chính hãng 100%</span><span>${I.check}Đổi trả trong 24h</span><span>${I.check}Bảo mật thông tin</span></div>
         <div class="form-error hide mt-8" id="coError" style="text-align:center" role="alert"></div>
         <div class="divider"></div>
         <p class="fs-13 text-muted" style="text-align:center">Gặp khó khăn khi đặt hàng? <button class="fw-700 text-primary" type="button" data-callback>Để chuyên gia dinh dưỡng gọi lại</button> hoặc <a class="fw-700" style="color:var(--zalo)" href="${SITE.zalo}" target="_blank">đặt qua Zalo</a></p>

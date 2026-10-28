@@ -24,17 +24,38 @@ window.POLICIES = [
 <h3>Tra cứu đơn hàng</h3>
 <p>Vào mục <a href="account.html">Tài khoản → Đơn hàng gần đây</a> trên thiết bị đã đặt, hoặc nhắn mã đơn cho Zalo {zalo} để được cập nhật trạng thái.</p>` },
 
-  { key: 'thanh-toan', group: 'support', icon: '💳', title: 'Chính sách thanh toán', summary: 'Thanh toán khi nhận hàng, hoàn tiền khi trả hàng', html: `
+  { key: 'thanh-toan', group: 'support', icon: '💳', title: 'Chính sách thanh toán', summary: 'Thanh toán khi nhận hàng hoặc chuyển khoản, hoàn tiền khi trả hàng', html: `
 <h3>Phương thức thanh toán: Thanh toán khi nhận hàng</h3>
 <p>Hương Chất Kids thực hiện chính sách thanh toán khi nhận hàng. Cam kết tuân thủ nghiêm ngặt các biện pháp bảo mật thông tin của khách hàng khi thực hiện nhận hàng.</p>
+<h3>Chuyển khoản ngân hàng</h3>
+<p>Ngoài ra, khi đặt hàng trên website, quý khách có thể chọn chuyển khoản qua mã VietQR hiện ngay sau khi đặt hàng (đã điền sẵn số tiền và nội dung), vào tài khoản duy nhất của Hương Chất Kids: <b>{bankFull}</b> – số tài khoản <b>{bankAccount}</b> – chủ tài khoản <b>{bankHolder}</b>.</p>
 <p>Trường hợp khách hàng hoàn trả hàng, Hương Chất Kids hoàn trả lại tiền đã nhận.</p>` },
 
-  { key: 'giao-hang', group: 'support', icon: '🚚', title: 'Chính sách giao hàng', summary: 'Phương thức và thời gian giao hàng', html: `
-<p>Sau khi nhận xác nhận được đơn hàng của quý khách, Hương Chất Kids sẽ nhanh chóng vận chuyển đến tay khách hàng trong thời gian sớm nhất có thể. Nhằm tạo điều kiện thuận lợi cho việc giao hàng và hàng hóa được gửi đến khách hàng sớm nhất, quý khách vui lòng cung cấp chi tiết số nhà, tên đường, phường, thôn, ấp, tổ, khu, bản, xã, tỉnh … một cách chi tiết và chính xác. Chúng tôi có quyền hủy bỏ các đơn đặt hàng không rõ ràng hoặc không chịu trách nhiệm đối với những trường hợp giao hàng chậm trễ hay thất lạc v.v.. do Quý khách cung cấp thông tin không chính xác.</p>
-<h3>Các phương thức giao hàng</h3>
-<ul><li>Giao hàng thông qua bưu điện;</li><li>Giao hàng thông qua đơn vị vận chuyển Giao Hàng Tiết Kiệm.</li></ul>
-<h3>Thời gian giao hàng</h3>
-<ul><li>Giao hàng trong vòng 1 ngày kể từ thời điểm đặt hàng đối với các địa chỉ ở nội thành thành phố Hà Nội.</li><li>Đối với các khu vực ngoại thành thành phố Hà Nội, giao hàng trong vòng 2 ngày kể từ thời điểm đặt hàng.</li><li>Những khu vực khác tùy điều kiện thời tiết và kho xử lý, thời gian giao hàng dự kiến từ 05 - 07 ngày kể từ thời điểm đặt hàng.</li></ul>` },
+  { key: 'giao-hang', group: 'support', icon: '🚚', title: 'Chính sách giao hàng', summary: 'Khu vực, thời gian, phí ship, freeship từ {freeship}, đồng kiểm', html: `
+<h3>Phạm vi & thời gian giao</h3>
+<table class="ptable"><tr><th>Khu vực</th><th>Thời gian dự kiến</th><th>Ghi chú</th></tr>
+<tr><td>Nội thành Hà Nội</td><td>Trong ngày (đơn xác nhận trước 16h), muộn nhất ngày làm việc tiếp theo</td><td>Có <b>hoả tốc 2–4 giờ</b>, phụ thu {expressFee}</td></tr>
+<tr><td>Ngoại thành Hà Nội, TP.HCM, các thành phố lớn</td><td>1–2 ngày làm việc</td><td>Qua đơn vị vận chuyển</td></tr>
+<tr><td>Các tỉnh khác</td><td>2–3 ngày làm việc; vùng sâu, hải đảo 3–5 ngày</td><td>Có thể chậm hơn vào dịp lễ, Tết, mưa bão</td></tr></table>
+<p>Thời gian trên tính từ khi đơn được xác nhận và (với đơn chuyển khoản) đã nhận thanh toán. Chúng tôi chủ động thông báo nếu dự kiến giao chậm hơn.</p>
+<h3>Phí vận chuyển</h3>
+<p>Giao tiêu chuẩn qua <b>J&amp;T Express</b>, <b>đồng giá toàn quốc</b>, tính theo số thùng / kiện. Web tự tính và hiển thị rõ trước khi mẹ bấm Đặt hàng.</p>
+<table class="ptable"><tr><th>Hàng</th><th>1 thùng</th><th>2 thùng</th><th>3 thùng</th><th>4 thùng</th></tr>
+<tr><td>Hàng khác (mỗi kiện dưới 3kg)</td><td>30.000₫</td><td colspan="3">mỗi kiện 3kg tiếp theo +30.000₫</td></tr>
+<tr><td>Nước ép, sữa Lotte (thùng ~4kg)</td><td>30.000₫</td><td>60.000₫</td><td>130.000₫</td><td>130.000₫</td></tr>
+<tr><td>Nước gạc hươu non, gạc canxi Sumo</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
+<tr><td>Hồng sâm ChuChu</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
+<tr><td>Sữa tươi Norco</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr></table>
+<p>Đơn có nhiều loại hàng: cộng phí của từng loại. Mua chưa đủ 1 thùng (VD hộp 10 gói) tính như hàng khác. <b>Kiện hoàn / đổi:</b> 150% phí ship lượt đi.</p>
+<ul><li>Không thu thêm phí thu hộ (COD) – mẹ chỉ trả tiền hàng và phí ship ở trên.</li><li><b>Miễn phí vận chuyển</b> cho đơn từ <b>{freeship}</b> (tính trên giá trị sau giảm giá).</li><li>Hoả tốc nội thành Hà Nội: phụ thu {expressFee}.</li></ul>
+<h3>Đóng gói</h3>
+<p>Sản phẩm được bọc chống sốc, thùng nước ép/hồng sâm đóng thùng carton riêng, dán niêm phong của Hương Chất Kids. Hàng lạnh/nhạy nhiệt (nếu có) được đóng túi giữ nhiệt.</p>
+<h3>Kiểm tra hàng khi nhận (đồng kiểm)</h3>
+<p>Mẹ có quyền <b>mở kiện kiểm tra ngoại quan, số lượng, tem phụ và hạn dùng trước khi thanh toán COD</b>, có sự chứng kiến của nhân viên giao hàng. Nếu hàng móp, rách, thiếu, sai: mẹ từ chối nhận, không mất phí; chúng tôi giao lại hoặc hoàn tiền trong 3 ngày làm việc.</p>
+<h3>Giao không thành công</h3>
+<ul><li>Đơn vị vận chuyển liên hệ tối đa 3 lần trong 3 ngày. Nếu không liên lạc được, hàng được hoàn về kho; chúng tôi liên hệ mẹ để giao lại (miễn phí lần 2 nếu do lỗi vận chuyển).</li><li>Với đơn đã thanh toán trước mà mẹ không nhận, tiền hàng được hoàn lại sau khi trừ phí vận chuyển thực tế (nếu có), thông báo rõ trước khi trừ.</li></ul>
+<h3>Trách nhiệm</h3>
+<p>Theo Điều 34 Luật Bảo vệ quyền lợi người tiêu dùng 2023 và Điều 33 Nghị định 52/2013/NĐ-CP, chúng tôi chịu trách nhiệm về hàng hoá cho đến khi mẹ nhận và xác nhận; rủi ro hư hỏng, mất mát trong quá trình vận chuyển do Hương Chất Kids và đơn vị vận chuyển chịu.</p>` },
 
   { key: 'doi-tra', group: 'support', icon: '🔄', title: 'Chính sách đổi trả hàng', summary: 'Đồng kiểm khi nhận, liên hệ trong 24h để được hỗ trợ', html: `
 <p>Hương Chất Kids trân trọng sự tin tưởng của khách hàng khi đặt mua sản phẩm.</p>
@@ -127,12 +148,12 @@ window.POLICIES = [
     ['Bé mấy tháng thì dùng được sản phẩm?', 'Mỗi sản phẩm ghi rõ độ tuổi ở trang chi tiết (mục "Phù hợp cho bé"). Nước ép Lotte táo & củ dền dùng từ 6 tháng; hồng sâm ChuChu, canxi Calciumore, rong biển thường từ 1 tuổi; vitamin D3K2 từ sơ sinh. Chưa chắc thì nhắn Zalo để được tư vấn theo tuổi và cân nặng của bé.'],
     ['Liều dùng bao nhiêu là đủ, có dùng chung nhiều sản phẩm được không?', 'Theo hướng dẫn trên bao bì từng sản phẩm. Không dùng cùng lúc nhiều sản phẩm có cùng công dụng (ví dụ hai loại canxi). Sau khi đặt hàng, chuyên viên tư vấn sẽ gọi hướng dẫn liều dùng cụ thể.'],
     ['Mẹ đang cho con bú có dùng nghệ nano Curcumin được không?', 'Sản phẩm dành cho người lớn; mẹ đang mang thai hoặc cho con bú nên hỏi ý kiến bác sĩ trước khi dùng.'],
-    ['Có được kiểm tra hàng trước khi thanh toán không?', 'Có. Với đơn COD, mẹ kiểm tra ngoại quan, tem phụ, hạn dùng, số lượng trước khi trả tiền; hàng lỗi, móp rách được từ chối nhận không mất phí.'],
+    ['Có được kiểm tra hàng trước khi thanh toán không?', 'Có. Mẹ được mở niêm phong kiện hàng để kiểm tra khi nhận (không mở seal riêng của sản phẩm); hàng hư hỏng, giao sai sản phẩm hoặc số lượng thì mẹ từ chối nhận. Xem Chính sách kiểm hàng.'],
     ['Giá trên web và trên Shopee có giống nhau không?', 'Giá cơ bản giống nhau. Trên web mẹ được thêm ưu đãi mua từ 2 giảm 3%, ưu đãi theo hạng khách hàng và miễn phí vận chuyển cho đơn từ {freeship}.'],
     ['Hạn sử dụng còn bao lâu?', 'Tối thiểu 6 tháng với nước ép, hồng sâm và 12 tháng với vitamin, canxi tại thời điểm giao. Hàng cận date (nếu có) luôn ghi rõ ở tên phân loại và giảm giá riêng.'],
     ['Đặt xong bao lâu thì nhận được hàng?', 'Nội thành Hà Nội: trong ngày (xác nhận trước 16h), hoả tốc 2–4 giờ. Tỉnh khác: 1–3 ngày làm việc. Xem Chính sách giao hàng.'],
     ['Tôi muốn xuất hoá đơn VAT?', 'Ghi thông tin công ty vào ô ghi chú khi đặt hàng hoặc báo khi xác nhận đơn. Hoá đơn điện tử gửi qua email trong 3 ngày làm việc.'],
-    ['Tôi muốn đổi ý sau khi đặt hàng?', 'Huỷ hoặc đổi đơn miễn phí trước khi hàng được gửi đi; sau đó vẫn đổi được sang sản phẩm khác trong 7 ngày nếu hàng còn nguyên (mẹ chịu phí ship).'],
+    ['Tôi muốn đổi ý sau khi đặt hàng?', 'Mẹ huỷ hoặc đổi đơn miễn phí trước khi hàng được gửi đi bằng cách nhắn Zalo hoặc gọi hotline. Hàng đã nhận bị hư hỏng, sai mô tả thì mẹ liên hệ shop trong tối đa 24h để được hỗ trợ đổi trả.'],
     ['Thông tin của tôi có bị chia sẻ cho ai không?', 'Không. Chỉ đơn vị vận chuyển nhận tên, SĐT, địa chỉ để giao hàng. Xem Chính sách bảo mật.'],
   ] },
 
