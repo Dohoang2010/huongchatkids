@@ -7,15 +7,17 @@
   var LOTTE_LE = [['Tự công bố – Nước ép Lê, Hoa chuông & Hồng sâm (Lotte cam)', d('1j9HUj9j6QCXJ_E9yOl1N4SBi-kkdLOQI')], ['Kiểm nghiệm – Lotte cam (26/06/2026)', d('1a9kMZLMIrQxZDBtbaCYmuCEOMIQOF1ns')]];
   var LOTTE_NHO = [['Tự công bố – Nước ép Mận, Nho & Táo (Lotte hồng)', d('1nOIDkMVvhZKnoNmRJBoH-egx3rSBjF0I')], ['Kiểm nghiệm – Lotte hồng (26/06/2026)', d('1itUKRci2nbT-YRjqZk5n9usqZ5AO2dO4')]];
   var LOTTE_TAO = [['Tự công bố – Nước ép Táo & Củ dền (Lotte xanh)', d('1KVrC_vhKJUDsSHdZoMX79xAy4O1TcEm9')], ['Kiểm nghiệm – Lotte xanh (26/03/2026)', d('1da9SYsMK2UMuIKfNE5WZZPzpBGmx9kck')]];
+  var D3K2 = [['Hồ sơ sản phẩm – Vitamin D3K2 Pure Vitality', d('1A1NsS7F69NaQJcW3sz1R1ZhP0qFwQl0B')]];
   var CANXI = [['Công bố TPCN – Canxi Calciumore', d('1e20B2pwxUNdZwoVAwX4MLy5Lnw82l5gj')], ['Công bố sản phẩm – Calciumore', d('11B1UXbkjMRLTIcyKUoOcNw164CxjFlAc')]];
   window.GIAY_TO = {
     '23660586997': LOTTE_LE,                     // Lotte cam
     '25632276959': LOTTE_NHO,                    // Lotte hồng
     '41353214697': LOTTE_TAO,                    // Lotte xanh
     '22686115682': LOTTE_LE.concat(LOTTE_NHO, LOTTE_TAO), // Lotte organic (3 vị)
-    'combo-lottexanh-d3k2': LOTTE_TAO,
+    'combo-lottexanh-d3k2': LOTTE_TAO.concat(D3K2),
+    '42878618667': D3K2,                           // Vitamin D3K2 Pure Vitality
     '26060839019': CANXI,                          // váng sữa canxi Calciumore
-    'combo-vangsua-d3k2': CANXI,
+    'combo-vangsua-d3k2': CANXI.concat(D3K2),
     '22644617070': [['Công bố – Nước hồng sâm táo lê', d('1nHFLxBPYGt3M1jLIdb3X1nhbIlB_c7x1')], ['Công bố – Nước hồng sâm việt quất nho', d('1MgwNxK8jpwYmhHbhxNoybfclUXMIoQGp')]],   // hồng sâm ChuChu
     '26156646705': [['Tự công bố – Lộc nhung (gạc Sumo)', d('11Udd6KVfbBdhzqF31tUFsctbE5r2Hpy2')], ['Kiểm nghiệm gạc Sumo', d('11mTRcwk3_apGvACcXx3mJLb1Cjk3OTvd')]],
     'gac-canxi-sumo': [['Tự công bố – Gạc canxi', d('1cVy-fs-PzPWI6-ZcPXQwIChDTif7LS4F')], ['Phiếu kiểm nghiệm gạc canxi', d('14nvRknoXGw0x2zIwIQ8n9pnnvrGhhRWC')], ['Kiểm nghiệm gạc canxi (Hàn Quốc)', d('1MIbvRWbHd9FLJmDlojC6krPBwUbP9HbP')]],
