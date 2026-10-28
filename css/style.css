@@ -864,6 +864,7 @@ body { padding-bottom: 0; }
 .pdp__ages svg { width: 16px; height: 16px; color: var(--teal-600); }
 .pdp__ages a { text-decoration: underline; }
 .pdp__price { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 14px 0; padding: 14px 16px; background: var(--primary-50); border-radius: 12px; }
+.pdp__vat { margin: -8px 0 12px; font-size: 13px; color: var(--muted); }
 .pdp__price b { font-size: 28px; color: var(--price); font-family: var(--font-head); }
 .pdp__price s { font-size: 15px; }
 .pdp__price .badge { font-size: 12px; }
