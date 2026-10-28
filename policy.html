@@ -18,9 +18,9 @@
 <main id="app"><div class="container" id="policyPage"></div></main>
 <script src="js/data.js?v=20261026a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
-<script src="js/policies.js?v=20261022b" defer></script>
+<script src="js/policies.js?v=20261028a" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261026a" defer></script>
+<script src="js/app.js?v=20261028a" defer></script>
 <script src="js/chat.js?v=20261028b" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!cur) {
     /* Trang tổng: 2 nhóm nút */
     $('#policyPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Trung tâm hỗ trợ</span></nav>
-      <h1 class="page-title">Trung tâm hỗ trợ</h1><p class="text-muted fs-14 mb-16">Cập nhật ngày 21/09/2026 · Cần hỗ trợ ngay? Gọi <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> (${SITE.workingHours})</p>
+      <h1 class="page-title">Trung tâm hỗ trợ</h1><p class="text-muted fs-14 mb-16">Cập nhật ngày 28/10/2026 · Cần hỗ trợ ngay? Gọi <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> (${SITE.workingHours})</p>
       ${groups.map((g) => `<section class="pgroup"><div class="section-head"><div><h2>${g.title}</h2><p>${g.desc}</p></div></div><div class="pgrid">${POLICIES.filter((p) => p.group === g.key).map((p) => btn(p, false)).join('')}</div></section>`).join('')}
       <div class="callout mt-16"><span class="emoji">👩‍⚕️</span><div><b>Chưa tìm thấy câu trả lời?</b>Nhắn Zalo hoặc để lại số, chuyên viên tư vấn gọi lại trong giờ làm việc.</div><div class="flex gap-8"><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button></div></div>`;
     return;
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#policyPage').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="policy.html">Hỗ trợ khách hàng</a><span>›</span><span>${esc(cur.title)}</span></nav>
     <div class="policy">
       <aside class="policy__nav" aria-label="Các mục hỗ trợ">${groups.map((g) => `<h4>${g.title}</h4>${POLICIES.filter((p) => p.group === g.key).map((p) => `<a class="${p.key === cur.key ? 'is-active' : ''}" href="${hrefOf(p)}">${p.icon} ${esc(p.title)}</a>`).join('')}`).join('')}</aside>
-      <article class="policy__body"><div class="policy__head"><span class="policy__icon">${cur.icon}</span><div><h1>${esc(cur.title)}</h1><p class="text-muted fs-14">${esc(fill(cur.summary))} · Cập nhật 21/09/2026</p></div></div>${body}
+      <article class="policy__body"><div class="policy__head"><span class="policy__icon">${cur.icon}</span><div><h1>${esc(cur.title)}</h1><p class="text-muted fs-14">${esc(fill(cur.summary))} · Cập nhật 28/10/2026</p></div></div>${body}
         <div class="policy__foot">${prev ? `<a class="btn btn--ghost" href="${hrefOf(prev)}">${I.chevronL}${esc(prev.title)}</a>` : '<span></span>'}${next ? `<a class="btn btn--ghost" href="${hrefOf(next)}">${esc(next.title)}${I.chevronR}</a>` : ''}</div>
         <div class="callout mt-16"><span class="emoji">💬</span><div><b>Cần giải đáp thêm?</b>Gọi ${SITE.hotline} (${SITE.workingHours}), nhắn Zalo hoặc email ${SITE.email}.</div><div class="flex gap-8"><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại tôi</button></div></div>
       </article>

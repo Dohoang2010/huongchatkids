@@ -2,7 +2,7 @@
    NỘI DUNG HỖ TRỢ & CHÍNH SÁCH – Hương Chất Kids
    Mỗi mục: key (dùng trong URL policy.html?p=key), group, title, icon, summary, html.
    Placeholder {hotline} {zalo} {email} {address} {company} {freeship} {shipFee} {expressFee} {hours}
-   được thay tự động từ SITE. Cập nhật ngày 21/09/2026.
+   được thay tự động từ SITE. Cập nhật ngày 28/10/2026.
    ===================================================================== */
 window.POLICIES = [
   /* ===================== HỖ TRỢ KHÁCH HÀNG ===================== */
@@ -24,79 +24,57 @@ window.POLICIES = [
 <h3>Tra cứu đơn hàng</h3>
 <p>Vào mục <a href="account.html">Tài khoản → Đơn hàng gần đây</a> trên thiết bị đã đặt, hoặc nhắn mã đơn cho Zalo {zalo} để được cập nhật trạng thái.</p>` },
 
-  { key: 'thanh-toan', group: 'support', icon: '💳', title: 'Phương thức thanh toán', summary: 'Thanh toán khi nhận hàng hoặc chuyển khoản VietQR, hoá đơn VAT', html: `
-<p>Giá bán hiển thị bằng <b>Đồng Việt Nam (₫)</b>, đã bao gồm thuế giá trị gia tăng, chưa bao gồm phí vận chuyển (xem <a href="policy.html?p=giao-hang">Chính sách giao hàng</a>). Mẹ chọn một trong <b>2 hình thức</b> sau:</p>
-<h3>1. Thanh toán khi nhận hàng (COD)</h3>
-<ul><li>Áp dụng toàn quốc. Mẹ trả tiền mặt cho nhân viên giao hàng sau khi <b>kiểm tra hàng</b> (ngoại quan, tem phụ, hạn dùng, số lượng).</li><li>Được từ chối nhận nếu hàng sai, móp rách, không đúng đơn – không mất phí.</li></ul>
-<h3>2. Chuyển khoản ngân hàng / VietQR</h3>
-<table class="ptable"><tr><th>Ngân hàng</th><td>{bankFull}</td></tr><tr><th>Số tài khoản</th><td><b>{bankAccount}</b></td></tr><tr><th>Chủ tài khoản</th><td>{bankHolder}</td></tr><tr><th>Nội dung chuyển khoản</th><td><b>TÊN MẸ_thanhtoan_MÃ ĐƠN</b> (ví dụ: NGUYEN THU HA_thanhtoan_HCK260921123)</td></tr></table>
-<ul><li>Ngay sau khi bấm Đặt hàng, màn hình hiện <b>mã VietQR</b> đã điền sẵn số tiền và nội dung – mẹ mở app ngân hàng/ví bất kỳ, quét và xác nhận, không cần gõ tay. Mã QR cũng xem lại được tại <a href="policy.html?p=tra-cuu">Tra cứu đơn hàng</a>.</li><li>Đây là <b>số tài khoản duy nhất</b> của Hương Chất Kids. Chúng tôi không bao giờ nhắn số tài khoản khác hay yêu cầu chuyển cho cá nhân; nếu nhận được yêu cầu như vậy, mẹ gọi hotline {hotline} để xác minh.</li><li>Đơn được giao ngay khi nhận được tiền (thường trong vài phút với chuyển khoản nhanh 24/7).</li></ul>
-<h3>Hoá đơn giá trị gia tăng</h3>
-<p>Hoá đơn điện tử được xuất theo Nghị định 123/2020/NĐ-CP khi mẹ yêu cầu (ghi thông tin xuất hoá đơn ở ô ghi chú hoặc báo khi xác nhận đơn). Hoá đơn được gửi qua email trong vòng 3 ngày làm việc kể từ khi giao hàng thành công.</p>
-<h3>An toàn thanh toán</h3>
-<ul><li>Website <b>không lưu</b> thông tin thẻ hay tài khoản ngân hàng của khách hàng.</li><li>Mọi giao dịch chuyển khoản đều qua ngân hàng được Ngân hàng Nhà nước cấp phép.</li><li>Nếu chuyển nhầm hoặc chuyển thừa, chúng tôi hoàn lại trong 1–3 ngày làm việc sau khi đối chiếu.</li></ul>` },
+  { key: 'thanh-toan', group: 'support', icon: '💳', title: 'Chính sách thanh toán', summary: 'Thanh toán khi nhận hàng, hoàn tiền khi trả hàng', html: `
+<h3>Phương thức thanh toán: Thanh toán khi nhận hàng</h3>
+<p>Hương Chất Kids thực hiện chính sách thanh toán khi nhận hàng. Cam kết tuân thủ nghiêm ngặt các biện pháp bảo mật thông tin của khách hàng khi thực hiện nhận hàng.</p>
+<p>Trường hợp khách hàng hoàn trả hàng, Hương Chất Kids hoàn trả lại tiền đã nhận.</p>` },
 
-  { key: 'giao-hang', group: 'support', icon: '🚚', title: 'Chính sách giao hàng', summary: 'Khu vực, thời gian, phí ship, freeship từ {freeship}, đồng kiểm', html: `
-<h3>Phạm vi & thời gian giao</h3>
-<table class="ptable"><tr><th>Khu vực</th><th>Thời gian dự kiến</th><th>Ghi chú</th></tr>
-<tr><td>Nội thành Hà Nội</td><td>Trong ngày (đơn xác nhận trước 16h), muộn nhất ngày làm việc tiếp theo</td><td>Có <b>hoả tốc 2–4 giờ</b>, phụ thu {expressFee}</td></tr>
-<tr><td>Ngoại thành Hà Nội, TP.HCM, các thành phố lớn</td><td>1–2 ngày làm việc</td><td>Qua đơn vị vận chuyển</td></tr>
-<tr><td>Các tỉnh khác</td><td>2–3 ngày làm việc; vùng sâu, hải đảo 3–5 ngày</td><td>Có thể chậm hơn vào dịp lễ, Tết, mưa bão</td></tr></table>
-<p>Thời gian trên tính từ khi đơn được xác nhận và (với đơn chuyển khoản) đã nhận thanh toán. Chúng tôi chủ động thông báo nếu dự kiến giao chậm hơn.</p>
-<h3>Phí vận chuyển</h3>
-<p>Giao tiêu chuẩn qua <b>J&amp;T Express</b>, <b>đồng giá toàn quốc</b>, tính theo số thùng / kiện. Web tự tính và hiển thị rõ trước khi mẹ bấm Đặt hàng.</p>
-<table class="ptable"><tr><th>Hàng</th><th>1 thùng</th><th>2 thùng</th><th>3 thùng</th><th>4 thùng</th></tr>
-<tr><td>Hàng khác (mỗi kiện dưới 3kg)</td><td>30.000₫</td><td colspan="3">mỗi kiện 3kg tiếp theo +30.000₫</td></tr>
-<tr><td>Nước ép, sữa Lotte (thùng ~4kg)</td><td>30.000₫</td><td>60.000₫</td><td>130.000₫</td><td>130.000₫</td></tr>
-<tr><td>Nước gạc hươu non, gạc canxi Sumo</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
-<tr><td>Hồng sâm ChuChu</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr>
-<tr><td>Sữa tươi Norco</td><td>50.000₫</td><td>80.000₫</td><td>130.000₫</td><td></td></tr></table>
-<p>Đơn có nhiều loại hàng: cộng phí của từng loại. Mua chưa đủ 1 thùng (VD hộp 10 gói) tính như hàng khác. <b>Kiện hoàn / đổi:</b> 150% phí ship lượt đi.</p>
-<ul><li>Không thu thêm phí thu hộ (COD) – mẹ chỉ trả tiền hàng và phí ship ở trên.</li><li><b>Miễn phí vận chuyển</b> cho đơn từ <b>{freeship}</b> (tính trên giá trị sau giảm giá).</li><li>Hoả tốc nội thành Hà Nội: phụ thu {expressFee}.</li></ul>
-<h3>Đóng gói</h3>
-<p>Sản phẩm được bọc chống sốc, thùng nước ép/hồng sâm đóng thùng carton riêng, dán niêm phong của Hương Chất Kids. Hàng lạnh/nhạy nhiệt (nếu có) được đóng túi giữ nhiệt.</p>
-<h3>Kiểm tra hàng khi nhận (đồng kiểm)</h3>
-<p>Mẹ có quyền <b>mở kiện kiểm tra ngoại quan, số lượng, tem phụ và hạn dùng trước khi thanh toán COD</b>, có sự chứng kiến của nhân viên giao hàng. Nếu hàng móp, rách, thiếu, sai: mẹ từ chối nhận, không mất phí; chúng tôi giao lại hoặc hoàn tiền trong 3 ngày làm việc.</p>
-<h3>Giao không thành công</h3>
-<ul><li>Đơn vị vận chuyển liên hệ tối đa 3 lần trong 3 ngày. Nếu không liên lạc được, hàng được hoàn về kho; chúng tôi liên hệ mẹ để giao lại (miễn phí lần 2 nếu do lỗi vận chuyển).</li><li>Với đơn đã thanh toán trước mà mẹ không nhận, tiền hàng được hoàn lại sau khi trừ phí vận chuyển thực tế (nếu có), thông báo rõ trước khi trừ.</li></ul>
-<h3>Trách nhiệm</h3>
-<p>Theo Điều 34 Luật Bảo vệ quyền lợi người tiêu dùng 2023 và Điều 33 Nghị định 52/2013/NĐ-CP, chúng tôi chịu trách nhiệm về hàng hoá cho đến khi mẹ nhận và xác nhận; rủi ro hư hỏng, mất mát trong quá trình vận chuyển do Hương Chất Kids và đơn vị vận chuyển chịu.</p>` },
+  { key: 'giao-hang', group: 'support', icon: '🚚', title: 'Chính sách giao hàng', summary: 'Phương thức và thời gian giao hàng', html: `
+<p>Sau khi nhận xác nhận được đơn hàng của quý khách, Hương Chất Kids sẽ nhanh chóng vận chuyển đến tay khách hàng trong thời gian sớm nhất có thể. Nhằm tạo điều kiện thuận lợi cho việc giao hàng và hàng hóa được gửi đến khách hàng sớm nhất, quý khách vui lòng cung cấp chi tiết số nhà, tên đường, phường, thôn, ấp, tổ, khu, bản, xã, tỉnh … một cách chi tiết và chính xác. Chúng tôi có quyền hủy bỏ các đơn đặt hàng không rõ ràng hoặc không chịu trách nhiệm đối với những trường hợp giao hàng chậm trễ hay thất lạc v.v.. do Quý khách cung cấp thông tin không chính xác.</p>
+<h3>Các phương thức giao hàng</h3>
+<ul><li>Giao hàng thông qua bưu điện;</li><li>Giao hàng thông qua đơn vị vận chuyển Giao Hàng Tiết Kiệm.</li></ul>
+<h3>Thời gian giao hàng</h3>
+<ul><li>Giao hàng trong vòng 1 ngày kể từ thời điểm đặt hàng đối với các địa chỉ ở nội thành thành phố Hà Nội.</li><li>Đối với các khu vực ngoại thành thành phố Hà Nội, giao hàng trong vòng 2 ngày kể từ thời điểm đặt hàng.</li><li>Những khu vực khác tùy điều kiện thời tiết và kho xử lý, thời gian giao hàng dự kiến từ 05 - 07 ngày kể từ thời điểm đặt hàng.</li></ul>` },
 
-  { key: 'doi-tra', group: 'support', icon: '🔄', title: 'Chính sách đổi trả & hoàn tiền', summary: 'Đổi trả miễn phí 7 ngày, hoàn tiền 3–5 ngày làm việc', html: `
-<h3>Trường hợp được đổi / trả</h3>
-<p>Trong <b>7 ngày</b> kể từ ngày nhận hàng, mẹ được đổi hoặc trả <b>miễn phí</b> khi:</p>
-<ul><li>Giao sai sản phẩm, sai phân loại (vị, quy cách), thiếu số lượng so với đơn.</li><li>Sản phẩm lỗi do nhà sản xuất: bao bì phồng, rò rỉ, vón cục, mùi lạ, thiếu tem phụ.</li><li>Bao bì móp, rách, bể vỡ do vận chuyển.</li><li>Hạn sử dụng khi giao còn dưới 3 tháng (trừ hàng cận date đã ghi rõ và giảm giá riêng).</li><li>Sản phẩm không đúng mô tả, hình ảnh, thông tin công bố trên website.</li></ul>
-<h3>Trường hợp không áp dụng</h3>
-<ul><li>Sản phẩm đã mở nắp/mở gói, đã sử dụng (trừ trường hợp lỗi nhà sản xuất được phát hiện sau khi mở).</li><li>Quá 7 ngày kể từ ngày nhận hàng.</li><li>Sản phẩm hư hỏng do bảo quản không đúng hướng dẫn sau khi nhận.</li><li>Mẹ đổi ý sau khi đã nhận hàng và sản phẩm còn nguyên: chúng tôi vẫn hỗ trợ <b>đổi sang sản phẩm khác</b> trong 7 ngày, mẹ chịu phí vận chuyển.</li></ul>
-<h3>Cách thực hiện</h3>
-<ol><li>Chụp ảnh/quay video sản phẩm và tem phụ, gửi Zalo <b>{zalo}</b> hoặc email <b>{email}</b> kèm mã đơn trong vòng 7 ngày.</li><li>Chúng tôi phản hồi <b>trong 24 giờ làm việc</b> và hướng dẫn: gửi hàng đổi mới tới tận nơi hoặc thu hồi hàng cũ.</li><li>Hương Chất Kids chịu toàn bộ phí vận chuyển hai chiều với các trường hợp lỗi thuộc về chúng tôi.</li></ol>
-<h3>Hoàn tiền</h3>
-<ul><li>Hoàn <b>100% giá trị sản phẩm</b> (và phí vận chuyển đã trả nếu lỗi do chúng tôi).</li><li>Hình thức: chuyển khoản vào tài khoản mẹ cung cấp hoặc hoàn về ví điện tử đã thanh toán.</li><li>Thời gian: trong <b>3–5 ngày làm việc</b> kể từ khi nhận lại hàng hoặc xác nhận lỗi qua ảnh/video (không cần trả hàng với hàng bể vỡ).</li></ul>
-<h3>Bảo hành chất lượng</h3>
-<p>Sản phẩm là thực phẩm, không có bảo hành theo nghĩa hàng điện máy; chúng tôi bảo đảm chất lượng đến hết hạn sử dụng ghi trên bao bì khi bảo quản đúng hướng dẫn. Chính sách này tuân thủ Điều 30–31 Luật Bảo vệ quyền lợi người tiêu dùng 2023 về trách nhiệm đổi, trả, hoàn tiền đối với hàng hoá có khuyết tật.</p>
-<h3>Khiếu nại</h3>
-<p>Nếu chưa hài lòng với cách giải quyết, mẹ gửi khiếu nại tới email {email}; chúng tôi trả lời bằng văn bản trong 7 ngày làm việc. Mẹ cũng có quyền khiếu nại tới Sở Công Thương Hà Nội hoặc Hội Bảo vệ người tiêu dùng theo quy định.</p>` },
+  { key: 'doi-tra', group: 'support', icon: '🔄', title: 'Chính sách đổi trả hàng', summary: 'Đồng kiểm khi nhận, liên hệ trong 24h để được hỗ trợ', html: `
+<p>Hương Chất Kids trân trọng sự tin tưởng của khách hàng khi đặt mua sản phẩm.</p>
+<p>Hương Chất Kids đảm bảo sản phẩm được bán tại Hương Chất Kids có nguồn gốc rõ ràng. Trong trường hợp khách hàng nhận hàng nhưng hàng có khiếm khuyết, hư hỏng không như mô tả thì Hương Chất Kids cam kết bảo vệ khách hàng bằng chính sách đổi trả hàng như sau:</p>
+<p>Quý khách vui lòng đồng kiểm và có thể từ chối tại thời điểm nhận hàng nếu sản phẩm giao đến bị hư hỏng/ không đảm bảo chất lượng/ giao sai sản phẩm hoặc số lượng. Ngoài ra quý khách cần liên hệ Hương Chất Kids tối đa <b>24h</b> kể từ khi nhận hàng để được hỗ trợ.</p>
+<h3>Các thông tin cần thiết khi yêu cầu đổi trả</h3>
+<p>Để bảo vệ quyền lợi khách hàng, Hương Chất Kids có cơ sở làm việc với các bộ phận liên quan khi có tranh chấp xảy ra, Hương Chất Kids khuyến khích quý khách chuẩn bị các bằng chứng sau để cung cấp khi có yêu cầu:</p>
+<ul><li>Video mở kiện hàng từ lúc bắt đầu mở kiện hàng đến kiểm tra sản phẩm bên trong thùng hàng.</li><li>Hình chụp tem kiện hàng có thể hiện mã đơn hàng.</li><li>Hình ảnh thể hiện hàng hóa hư hỏng hoặc tình trạng hàng hóa lúc nhận hàng.</li><li>Tình trạng ngoại quan (băng keo, seal, hình dạng thùng hàng) đặc biệt các vị trí nghi ngờ có tác động đến sản phẩm.</li></ul>
+<p>Để hạn chế phát sinh rủi ro trong quá trình vận chuyển hàng hóa trả về nhà bán, quý khách lưu ý đóng gói và bàn giao cho nhân viên thu hồi như khi nhận hàng.</p>` },
 
-  { key: 'bao-mat', group: 'support', icon: '🔒', title: 'Chính sách bảo mật thông tin', summary: 'Thu thập gì, dùng để làm gì, quyền của mẹ (NĐ 13/2023)', html: `
-<p>Chính sách này được xây dựng theo <b>Nghị định 13/2023/NĐ-CP</b> về bảo vệ dữ liệu cá nhân và Điều 68–73 Nghị định 52/2013/NĐ-CP về thương mại điện tử.</p>
-<h3>1. Mục đích và phạm vi thu thập</h3>
-<p>Khi mẹ đặt hàng, yêu cầu gọi lại hoặc đăng ký nhận ưu đãi, chúng tôi thu thập: <b>họ tên, số điện thoại, địa chỉ nhận hàng</b>; <b>email</b> (nếu cần hoá đơn); <b>nội dung ghi chú</b> mẹ cung cấp (ví dụ độ tuổi, cân nặng của bé để tư vấn). Chúng tôi <b>không</b> thu thập thông tin thẻ ngân hàng, mật khẩu ví, hay dữ liệu định vị.</p>
-<p>Mục đích: xác nhận và giao đơn hàng, xuất hoá đơn, tư vấn sử dụng sản phẩm, xử lý đổi trả/khiếu nại, và (nếu mẹ đồng ý) gửi thông tin ưu đãi, nhắc lịch bổ sung dinh dưỡng cho bé.</p>
-<h3>2. Phạm vi sử dụng</h3>
-<ul><li>Chỉ nhân viên bán hàng, tư vấn và kế toán của Hương Chất Kids được truy cập để thực hiện các mục đích trên.</li><li>Chia sẻ cho <b>đơn vị vận chuyển</b> (tên, SĐT, địa chỉ) để giao hàng; cho <b>cơ quan nhà nước có thẩm quyền</b> khi có yêu cầu bằng văn bản theo pháp luật.</li><li>Không bán, cho thuê, trao đổi dữ liệu cá nhân cho bất kỳ bên thứ ba nào khác.</li></ul>
-<h3>3. Thời gian lưu trữ</h3>
-<p>Dữ liệu đơn hàng được lưu tối đa <b>24 tháng</b> kể từ giao dịch cuối để phục vụ đổi trả, hoá đơn, chăm sóc sau bán; sau đó được xoá hoặc ẩn danh, trừ trường hợp pháp luật về kế toán yêu cầu lưu lâu hơn.</p>
-<h3>4. Dữ liệu lưu trên thiết bị của mẹ</h3>
-<p>Website lưu giỏ hàng và thông tin giao hàng gần nhất <b>trên trình duyệt của mẹ</b> (localStorage) để lần sau điền sẵn. Dữ liệu này không được gửi về máy chủ cho tới khi mẹ bấm Đặt hàng, và mẹ có thể xoá bất cứ lúc nào tại <a href="account.html">Tài khoản → Xoá thông tin đã lưu</a>. Website không dùng cookie theo dõi quảng cáo của bên thứ ba.</p>
-<h3>5. Quyền của mẹ (chủ thể dữ liệu)</h3>
-<ul><li>Được biết, truy cập, chỉnh sửa, yêu cầu xoá dữ liệu cá nhân của mình.</li><li>Rút lại sự đồng ý nhận tin nhắn ưu đãi bất kỳ lúc nào (nhắn "DUNG" tới Zalo hoặc gọi hotline).</li><li>Khiếu nại về việc xử lý dữ liệu tới chúng tôi hoặc cơ quan có thẩm quyền (Cục An ninh mạng và phòng, chống tội phạm sử dụng công nghệ cao – Bộ Công an).</li></ul>
-<p>Yêu cầu gửi tới email <b>{email}</b> hoặc hotline {hotline}; chúng tôi xử lý trong <b>72 giờ</b> kể từ khi nhận yêu cầu hợp lệ.</p>
-<h3>6. Bảo mật</h3>
-<p>Dữ liệu được lưu trên hệ thống có mật khẩu, phân quyền và mã hoá đường truyền (HTTPS). Khi phát hiện sự cố rò rỉ, chúng tôi thông báo cho mẹ và cơ quan chức năng trong 72 giờ theo quy định.</p>
-<h3>7. Dữ liệu trẻ em</h3>
-<p>Thông tin về bé (tuổi, cân nặng) chỉ được ghi nhận khi mẹ chủ động cung cấp để tư vấn, được xử lý như dữ liệu cá nhân nhạy cảm với sự đồng ý của cha mẹ/người giám hộ theo Điều 20 Nghị định 13/2023/NĐ-CP.</p>
-<h3>8. Đơn vị chịu trách nhiệm</h3>
-<p>{company} – {address} – Hotline {hotline} – Email {email}.</p>` },
+  { key: 'kiem-hang', group: 'support', icon: '📦', title: 'Chính sách kiểm hàng', summary: 'Được mở niêm phong kiểm tra hàng khi nhận', html: `
+<p>Nhằm đáp ứng nhu cầu và bảo vệ tối đa quyền lợi Khách hàng khi sử dụng dịch vụ của Hương Chất Kids. Hương Chất Kids đã triển khai chính sách hỗ trợ việc xem và kiểm tra hàng hóa khi giao hàng. Khách hàng khi nhận hàng từ nhân viên vận chuyển có thể mở niêm phong để kiểm tra hàng hóa.</p>
+<p><b>Lưu ý:</b> việc kiểm tra sẽ không bao gồm việc mở seal (niêm phong) riêng của sản phẩm gây ảnh hưởng đến chất lượng sản phẩm.</p>
+<p>Trong trường hợp nhân viên vận chuyển yêu cầu quý khách ký vào biên bản xác nhận khách hàng đã nhận đủ và nguyên vẹn tất cả sản phẩm (biên bản đồng kiểm). Hương Chất Kids khuyến khích quý khách sử dụng tối đa quyền lợi trên trước khi ký xác nhận để được hỗ trợ tốt nhất.</p>` },
+
+  { key: 'bao-mat', group: 'support', icon: '🔒', title: 'Chính sách bảo mật thông tin', summary: 'Thu thập gì, dùng để làm gì, lưu ở đâu, cam kết bảo mật', html: `
+<p>Bảo mật thông tin khách hàng là một trong các tiêu chí hoạt động quan trọng của Hương Chất Kids.</p>
+<h3>1. Hương Chất Kids thu thập những thông tin gì?</h3>
+<p>Hương Chất Kids thu dữ liệu chủ yếu trên website bao gồm:</p>
+<ul><li>Họ tên</li><li>Email</li><li>Số điện thoại</li><li>Địa chỉ giao hàng</li></ul>
+<p>Trong khi đăng ký tài khoản khách hàng và khi thực hiện lệnh đặt hàng. Đây là những thông tin mà Hương Chất Kids cần khách hàng cung cấp để chúng tôi liên hệ nhằm giao sản phẩm và phục vụ cho khách hàng.</p>
+<h3>2. Hương Chất Kids làm gì với những thông tin của bạn?</h3>
+<p>Hương Chất Kids sử dụng thông tin khách hàng cung cấp nhằm mục đích:</p>
+<ul><li>Liên hệ lại để tư vấn cho khách hàng;</li><li>Giao hàng hóa đến tận nơi cho khách hàng;</li><li>Giải đáp các thắc mắc và yêu cầu của khách hàng;</li><li>Liên hệ chăm sóc khách hàng.</li></ul>
+<p>Hương Chất Kids không sử dụng thông tin do khách hàng cung cấp tại website ngoài các mục đích nêu trên.</p>
+<h3>3. Thông tin được lưu trữ tại đâu?</h3>
+<p>Thông tin do khách hàng cung cấp được lưu trữ bởi ban quản trị và được bảo mật trên máy chủ của Hương Chất Kids.</p>
+<p>Thông tin của đơn vị thu thập và quản lý thông tin:</p>
+<table class="ptable"><tr><th colspan="2">ĐỖ VĂN HOÀNG</th></tr><tr><th>Mã số doanh nghiệp</th><td>0316333076</td></tr><tr><th>Địa chỉ thường trú</th><td>Thôn Tân Dân Thứa, Lương Tài, Bắc Ninh.</td></tr><tr><th>Mã số thuế cá nhân</th><td>027096008342</td></tr><tr><th>Số điện thoại</th><td>0934617765</td></tr><tr><th>Email</th><td>huongchatkids@gmail.com</td></tr></table>
+<h3>4. Thông tin được chỉnh sửa bằng cách nào?</h3>
+<p>Dữ liệu thông tin của khách hàng sẽ được quản lý bởi ban quản trị Hương Chất Kids.</p>
+<p>Khách hàng có quyền tự kiểm tra, cập nhật, điều chỉnh hoặc hủy bỏ thông tin do mình cung cấp bằng cách đăng nhập vào tài khoản cá nhân và thực hiện việc cập nhật;</p>
+<p>Khách hàng có quyền gửi các khiếu nại đến ban quản trị của website liên quan đến nội dung bảo mật thông tin. Ban quản trị sẽ tiếp nhận, xem xét và có những biện pháp xử lý khiếu nại kịp thời.</p>
+<h3>5. Đối tượng được tiếp cận với thông tin</h3>
+<p>Ban quản trị sẽ không cung cấp thông tin cá nhân của bạn cho bất kỳ bên thứ ba nào, trừ một số đối tượng sau đây:</p>
+<ul><li>Theo yêu cầu pháp lý: Có thể tiết lộ thông tin nếu cơ quan nhà nước có thẩm quyền yêu cầu và nhận thấy việc tiết lộ như vậy là cần thiết và đúng quy định của pháp luật;</li><li>Chuyển giao kinh doanh: Trong trường hợp thành lập công ty hoặc tổ chức thì Công ty/tổ chức được thành lập từ Chủ sở hữu Website có quyền truy cập thông tin như chính chủ sở hữu hiện tại.</li></ul>
+<h3>6. Cam kết bảo mật thông tin</h3>
+<p>Thông tin do khách hàng cung cấp trên website rất quan trọng với Hương Chất Kids và được Hương Chất Kids cam kết bảo mật tuyệt đối theo chính sách bảo vệ thông tin của Hương Chất Kids. Việc sử dụng thông tin của mỗi khách hàng chỉ thực hiện khi có sự đồng ý của khách hàng hoặc theo sự cho phép của pháp luật.</p>
+<p>Hương Chất Kids không bán, trao đổi, hoặc sử dụng các hình thức thương mại khác với những thông tin của khách hàng cho bất cứ bên thứ ba nào khác.</p>
+<p>Hương Chất Kids từ chối cung cấp dịch vụ pháp lý và ngừng xử lý các yêu cầu có liên quan nếu nhận thấy các thông tin khách hàng cung cấp không chính xác hoặc có mục đích không chính đáng.</p>` },
 
   { key: 'dieu-khoan', group: 'support', icon: '📜', title: 'Điều khoản sử dụng', summary: 'Quy định chung khi mua hàng trên website', html: `
 <h3>1. Phạm vi áp dụng</h3>
@@ -130,6 +108,8 @@ window.POLICIES = [
 <ul><li>Nước ép hoa quả – rau củ hữu cơ Lotte (Pasteur Hàn Quốc), dùng được từ 6 tháng.</li><li>Hồng sâm trẻ em ChuChu, gạc hươu non Sumo Kids.</li><li>Vitamin D3K2 Pure Vitality (New Zealand), canxi hữu cơ Calciumore.</li><li>Rong biển rắc cơm Sung Gyung, Busan; nghệ nano Korea365 cho mẹ.</li></ul>
 <h3>Cách chúng tôi làm việc</h3>
 <ul><li>Nhập khẩu chính ngạch, đầy đủ tem phụ tiếng Việt và số công bố; hoá đơn VAT theo yêu cầu.</li><li>Tư vấn 1:1 miễn phí qua Zalo/điện thoại trước và sau khi mua: bé mấy tháng dùng được, liều bao nhiêu, kết hợp thế nào.</li><li>Bán trên website này và gian hàng Shopee chính thức với cùng chính sách.</li></ul>
+<h3>Chủ sở hữu website</h3>
+<table class="ptable"><tr><th colspan="2">ĐỖ VĂN HOÀNG</th></tr><tr><th>Địa chỉ thường trú</th><td>Thôn Tân Dân Thứa, Lương Tài, Bắc Ninh.</td></tr><tr><th>Mã số thuế cá nhân</th><td>027096008342</td></tr><tr><th>Số điện thoại</th><td>0934617765</td></tr><tr><th>Email</th><td>huongchatkids@gmail.com</td></tr></table>
 <h3>Thông tin liên hệ</h3>
 <ul><li>Địa chỉ: {address}</li><li>Hotline: {hotline} ({hours}) · Zalo: <a href="{zaloLink}" target="_blank" rel="noopener">Hương Chất Kids</a></li><li>Email: {email}</li></ul>
 <div class="note">Thông tin pháp nhân (tên doanh nghiệp/hộ kinh doanh, mã số thuế, số giấy chứng nhận đăng ký kinh doanh, cơ quan cấp) sẽ được công bố tại đây và chân trang theo Điều 29 Nghị định 52/2013/NĐ-CP sau khi hoàn tất thủ tục thông báo website với Bộ Công Thương (online.gov.vn).</div>` },

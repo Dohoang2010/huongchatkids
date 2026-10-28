@@ -115,7 +115,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-theme.js": {
-   "v": "e0eeebbf",
+   "v": "f1c80884",
    "can": [],
    "ngay": false
   },

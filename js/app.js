@@ -597,8 +597,8 @@
     </div>`;
     /* Cột footer lấy từ THEME.footer nếu trang quản trị có cấu hình, không thì dùng mặc định */
     const COT_MAC_DINH = [{ title: 'Hỗ trợ khách hàng', links: [
-      ['Hướng dẫn mua hàng', 'policy.html?p=mua-hang'], ['Phương thức thanh toán', 'policy.html?p=thanh-toan'],
-      ['Chính sách giao hàng', 'policy.html?p=giao-hang'], ['Chính sách đổi trả & hoàn tiền', 'policy.html?p=doi-tra'],
+      ['Hướng dẫn mua hàng', 'policy.html?p=mua-hang'], ['Chính sách thanh toán', 'policy.html?p=thanh-toan'],
+      ['Chính sách giao hàng', 'policy.html?p=giao-hang'], ['Chính sách đổi trả hàng', 'policy.html?p=doi-tra'], ['Chính sách kiểm hàng', 'policy.html?p=kiem-hang'],
       ['Chính sách bảo mật', 'policy.html?p=bao-mat'], ['Điều khoản sử dụng', 'policy.html?p=dieu-khoan']] }];
     const cotFooter = () => ((window.THEME && window.THEME.footer && window.THEME.footer.length ? window.THEME.footer : COT_MAC_DINH)
       .filter((c) => c && c.title)
