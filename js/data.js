@@ -2079,7 +2079,7 @@ window.PRODUCTS = [
     "rating": 5,
     "reviews": 1,
     "sold": 10,
-    "stock": 50,
+    "stock": 0,
     "cosmetic": true,
     "shape": "bottle",
     "color": "#1E88E5",
