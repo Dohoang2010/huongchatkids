@@ -162,7 +162,7 @@ window.TRANG_DM = [
     mau: { nen: '#FFF9F3', phu: '#FFE3D3', nhan: '#F26A3D', chu: '#292524' },
     gioiThieu: 'Các sản phẩm đang có quà tặng, giờ vàng giảm giá hoặc combo tiết kiệm trên huongchatkids.vn. Quà và mức giảm được web tự áp khi mẹ thêm sản phẩm vào giỏ.',
     seoTieuDe: 'Ưu đãi, quà tặng và khuyến mãi đang diễn ra – Hương Chất Kids' },
-  { key: 'be', slug: 'danh-cho-be', ten: 'Sản phẩm dành cho bé', nhan: 'Dành cho bé', icon: '🧸', loc: { cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien'], them: ['hexacare'] },
+  { key: 'be', slug: 'danh-cho-be', ten: 'Sản phẩm dành cho bé', nhan: 'Dành cho bé', icon: '🧸', loc: { cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien'], them: ['hexacare-be-gai'] },
     mau: { nen: '#F1F8FC', phu: '#B8DDF2', nhan: '#4D94C4', chu: '#243746' },
     gioiThieu: 'Nước ép, sữa, hồng sâm, vitamin, canxi và rong biển nhập khẩu từ Hàn Quốc, Úc, New Zealand. Mỗi sản phẩm ghi rõ độ tuổi nhà sản xuất khuyến nghị, mẹ chọn theo tuổi của con hoặc nhắn chuyên gia dinh dưỡng để được tư vấn miễn phí.',
     con: 'danhMuc', theoTuoi: true, seoTieuDe: 'Dinh dưỡng cho bé chính hãng Hàn Quốc theo độ tuổi – Hương Chất Kids' },
@@ -4175,13 +4175,11 @@ window.PRODUCTS = [
   },
   {
     "id": "hexacare",
-    "name": "Dung Dịch Vệ Sinh Hexacare Pháp 200ml – 4 Loại: Điều Tiết Hằng Ngày pH 3.6, Ngăn Ngừa Kháng Viêm pH 5.0, Dịu Nhẹ Da Nhạy Cảm pH 4.5, Lành Tính Cho Bé Gái pH 4.5",
+    "name": "Dung Dịch Vệ Sinh Hexacare Pháp 200ml – 3 Loại: Điều Tiết Hằng Ngày pH 3.6, Ngăn Ngừa Kháng Viêm pH 5.0, Dịu Nhẹ Da Nhạy Cảm pH 4.5",
     "short": "Dung dịch vệ sinh Hexacare (Pháp) 200ml",
     "brand": "hexacare",
     "cat": "cho-me",
     "ages": [
-      "3-6y",
-      "6-12y",
       "12-18y"
     ],
     "needs": [
@@ -4241,32 +4239,82 @@ window.PRODUCTS = [
         "label": "Dịu nhẹ da nhạy cảm – pH 4.5 · 2 chai",
         "price": 390000,
         "oldPrice": 0
-      },
-      {
-        "label": "Lành tính cho bé gái – pH 4.5 · 1 chai",
-        "price": 195000,
-        "oldPrice": 0
-      },
-      {
-        "label": "Lành tính cho bé gái – pH 4.5 · 2 chai",
-        "price": 390000,
-        "oldPrice": 0
       }
     ],
     "chon2": [
       "Loại",
       "Số chai"
     ],
-    "desc": "Dung dịch vệ sinh Hexacare – sản xuất tại Pháp, chai 200ml, giá bán lẻ 195.000đ/chai. Có 4 loại theo nhu cầu:\n\n1. Dung dịch vệ sinh điều tiết hằng ngày – pH 3.6 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: làm sạch và duy trì độ ẩm tự nhiên; pH 3.6 hỗ trợ bảo vệ vùng kín, hạn chế tình trạng viêm nhiễm; hỗ trợ khử mùi, mang lại cảm giác sạch thoáng, tươi mát; phù hợp sử dụng hằng ngày.\n\n2. Dung dịch vệ sinh ngăn ngừa kháng viêm – pH 5.0 (200ml). Đối tượng: phụ nữ, kể cả trong thai kỳ và chu kỳ kinh nguyệt; trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: cấp ẩm, làm dịu tình trạng khô rát và khó chịu; pH 5.0 hỗ trợ hệ lợi khuẩn bảo vệ vùng kín; hỗ trợ làm dịu và chăm sóc vùng da đang nhạy cảm; hương hoa cúc La Mã nhẹ nhàng.\n\n3. Dung dịch vệ sinh dịu nhẹ cho da nhạy cảm – pH 4.5 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên, đặc biệt phù hợp với làn da nhạy cảm. Công dụng: làm sạch dịu nhẹ và dưỡng ẩm; pH 4.5 hỗ trợ bảo vệ môi trường vùng kín; hỗ trợ hạn chế cảm giác khô rát; hỗ trợ khử mùi, tạo cảm giác sạch và thoải mái.\n\n4. Dung dịch vệ sinh lành tính dành cho bé gái – pH 4.5 (200ml). Đối tượng: bé gái từ 3–12 tuổi. Công dụng: làm sạch nhẹ nhàng, không gây khô da; duy trì độ pH sinh lý phù hợp cho bé; hỗ trợ bảo vệ vùng kín và hạn chế tình trạng khó chịu.",
+    "desc": "Dung dịch vệ sinh Hexacare – sản xuất tại Pháp, chai 200ml, giá bán lẻ 195.000đ/chai. Có 3 loại theo nhu cầu:\n\n1. Dung dịch vệ sinh điều tiết hằng ngày – pH 3.6 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: làm sạch và duy trì độ ẩm tự nhiên; pH 3.6 hỗ trợ bảo vệ vùng kín, hạn chế tình trạng viêm nhiễm; hỗ trợ khử mùi, mang lại cảm giác sạch thoáng, tươi mát; phù hợp sử dụng hằng ngày.\n\n2. Dung dịch vệ sinh ngăn ngừa kháng viêm – pH 5.0 (200ml). Đối tượng: phụ nữ, kể cả trong thai kỳ và chu kỳ kinh nguyệt; trẻ vị thành niên từ 12 tuổi trở lên. Công dụng: cấp ẩm, làm dịu tình trạng khô rát và khó chịu; pH 5.0 hỗ trợ hệ lợi khuẩn bảo vệ vùng kín; hỗ trợ làm dịu và chăm sóc vùng da đang nhạy cảm; hương hoa cúc La Mã nhẹ nhàng.\n\n3. Dung dịch vệ sinh dịu nhẹ cho da nhạy cảm – pH 4.5 (200ml). Đối tượng: phụ nữ và trẻ vị thành niên từ 12 tuổi trở lên, đặc biệt phù hợp với làn da nhạy cảm. Công dụng: làm sạch dịu nhẹ và dưỡng ẩm; pH 4.5 hỗ trợ bảo vệ môi trường vùng kín; hỗ trợ hạn chế cảm giác khô rát; hỗ trợ khử mùi, tạo cảm giác sạch và thoải mái.\n\nLoại dành cho bé gái 3–12 tuổi (pH 4.5) mẹ xem ở sản phẩm Dung dịch vệ sinh Hexacare bé gái.",
     "highlights": [
       "Điều tiết hằng ngày pH 3.6 – làm sạch, giữ ẩm tự nhiên, hỗ trợ khử mùi (phụ nữ & trẻ từ 12 tuổi)",
       "Ngăn ngừa kháng viêm pH 5.0 – cấp ẩm, làm dịu khô rát, hương hoa cúc La Mã (dùng được cả thai kỳ & kỳ kinh nguyệt)",
       "Dịu nhẹ cho da nhạy cảm pH 4.5 – làm sạch dịu nhẹ, dưỡng ẩm, hỗ trợ hạn chế khô rát",
-      "Lành tính cho bé gái pH 4.5 – làm sạch nhẹ nhàng, không gây khô da (bé gái 3–12 tuổi)",
       "Sản xuất tại Pháp – chai 200ml"
     ],
     "usage": "Dùng ngoài. Lấy lượng vừa đủ, làm sạch nhẹ nhàng vùng kín bên ngoài rồi rửa lại bằng nước sạch. Tránh tiếp xúc với mắt. Chọn đúng loại theo độ tuổi và nhu cầu; làm theo hướng dẫn in trên bao bì."
   },
+  {
+    "id": "hexacare-be-gai",
+    "name": "Dung Dịch Vệ Sinh Hexacare Cho Bé Gái 3–12 Tuổi pH 4.5 – Chiết Xuất Xô Thơm – Sản Xuất Tại Pháp 200ml",
+    "short": "Dung dịch vệ sinh Hexacare bé gái 200ml",
+    "brand": "hexacare",
+    "cat": "cho-me",
+    "ages": [
+      "3-6y",
+      "6-12y"
+    ],
+    "needs": [],
+    "price": 195000,
+    "oldPrice": 0,
+    "rating": 0,
+    "reviews": 0,
+    "sold": 0,
+    "stock": 50,
+    "priority": 2,
+    "shape": "bottle",
+    "color": "#F48FB1",
+    "weight": "200ml/chai",
+    "origin": "Pháp",
+    "family": true,
+    "cosmetic": true,
+    "tags": [
+      "Mới"
+    ],
+    "image": "img/hexacare-be-gai-bia.jpg",
+    "thumb": "img/thumb/hexacare-be-gai-bia.jpg",
+    "images": [
+      "img/hexacare-be-gai-bia.jpg",
+      "img/hexacare-be-gai-2.jpg",
+      "img/hexacare-be-gai-3.jpg",
+      "img/hexacare-be-gai-4.jpg",
+      "img/hexacare-be-gai-5.jpg",
+      "img/hexacare-be-gai-6.jpg"
+    ],
+    "variants": [
+      {
+        "label": "1 chai",
+        "price": 195000,
+        "oldPrice": 0
+      },
+      {
+        "label": "2 chai",
+        "price": 390000,
+        "oldPrice": 0
+      }
+    ],
+    "desc": "Dung dịch vệ sinh Hexacare dành cho bé gái – sản xuất tại Pháp, chai 200ml có vòi bơm.\n\nĐối tượng: bé gái từ 3–12 tuổi.\n\nTheo nhà sản xuất: làm sạch nhẹ nhàng, không gây khô da; độ pH 4.5 duy trì độ pH sinh lý phù hợp cho bé; hỗ trợ bảo vệ vùng kín và hạn chế cảm giác khó chịu. Có chiết xuất lá xô thơm (Sauge), sản phẩm được kiểm nghiệm dưới sự giám sát phụ khoa theo nhãn.\n\nBé từ 12 tuổi trở lên, mẹ chọn Hexacare loại Điều tiết hằng ngày pH 3.6 hoặc Dịu nhẹ da nhạy cảm pH 4.5.",
+    "highlights": [
+      "Dành riêng cho bé gái 3–12 tuổi",
+      "pH 4.5 phù hợp vùng kín của bé (theo nhà sản xuất)",
+      "Làm sạch nhẹ nhàng, không gây khô da",
+      "Chiết xuất lá xô thơm",
+      "Sản xuất tại Pháp – chai 200ml có vòi bơm"
+    ],
+    "usage": "Dùng ngoài. Ấn vòi lấy lượng vừa đủ, tạo bọt với nước, thoa nhẹ vùng bên ngoài rồi rửa lại bằng nước sạch, lau khô bằng khăn mềm. Không dùng bên trong. Tránh tiếp xúc với mắt.",
+    "slug": "dung-dich-ve-sinh-hexacare-be-gai"
+  },
+
   {
     "id": "zinc-purevitality",
     "slug": "kem-zinc-pure-vitality",
@@ -5281,8 +5329,8 @@ window.POSTS = [
       "- Rửa bên ngoài 1 lần mỗi ngày khi tắm và sau khi đi vệ sinh nặng, luôn theo chiều từ trước ra sau.",
       "- Nếu mẹ muốn dùng dung dịch, chọn loại dành riêng cho bé gái. Hexacare loại Lành tính cho bé gái pH 4.5 dành cho bé 3–12 tuổi, theo nhà sản xuất làm sạch nhẹ nhàng, không gây khô da. Dùng lượng vừa đủ ở bên ngoài rồi rửa lại bằng nước sạch.",
       "- Dạy bé tự lau đúng chiều và thay quần lót cotton mỗi ngày.",
-      "![Dung dịch vệ sinh Hexacare cho bé gái](img/hexacare-2.jpg)",
-      "[[sp:hexacare]]",
+      "![Dung dịch vệ sinh Hexacare cho bé gái](img/hexacare-be-gai-bia.jpg)",
+      "[[sp:hexacare-be-gai]]",
       "## Từ 12 tuổi trở lên",
       "Khi bé bắt đầu dậy thì và có kinh, nhu cầu thay đổi. Theo nhà sản xuất, Hexacare có loại Điều tiết hằng ngày pH 3.6 và loại Dịu nhẹ cho da nhạy cảm pH 4.5 dành cho trẻ từ 12 tuổi. Mẹ chọn đúng loại theo tuổi, không dùng chung chai của mẹ cho bé nhỏ.",
       "## Sai lầm mẹ hay mắc",
@@ -6576,6 +6624,10 @@ window.QUA_TANG = {
         {
           "id": "hexacare",
           "bat": true
+        },
+        {
+          "id": "hexacare-be-gai",
+          "bat": true
         }
       ],
       "quaTang": [
@@ -6700,6 +6752,10 @@ window.QUA_TANG = {
         {
           "id": "hexacare",
           "bat": true
+        },
+        {
+          "id": "hexacare-be-gai",
+          "bat": true
         }
       ],
       "quaTang": [
@@ -6823,6 +6879,10 @@ window.QUA_TANG = {
         },
         {
           "id": "hexacare",
+          "bat": true
+        },
+        {
+          "id": "hexacare-be-gai",
           "bat": true
         }
       ],
@@ -7127,6 +7187,10 @@ window.QUA_TANG = {
         },
         {
           "id": "hexacare",
+          "bat": true
+        },
+        {
+          "id": "hexacare-be-gai",
           "bat": true
         },
         {

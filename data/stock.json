@@ -345,9 +345,7 @@
         "Ngăn ngừa kháng viêm – pH 5.0 · 1 chai": true,
         "Ngăn ngừa kháng viêm – pH 5.0 · 2 chai": true,
         "Dịu nhẹ da nhạy cảm – pH 4.5 · 1 chai": true,
-        "Dịu nhẹ da nhạy cảm – pH 4.5 · 2 chai": true,
-        "Lành tính cho bé gái – pH 4.5 · 1 chai": true,
-        "Lành tính cho bé gái – pH 4.5 · 2 chai": true
+        "Dịu nhẹ da nhạy cảm – pH 4.5 · 2 chai": true
       }
     },
     "combo-vangsua-d3k2": {
@@ -566,6 +564,13 @@
     },
     "binh-giu-nhiet-hck": true,
     "sp1793071810793": true,
+    "hexacare-be-gai": {
+      "in": true,
+      "variants": {
+        "1 chai": true,
+        "2 chai": true
+      }
+    },
     "hiskin-micellar": {
       "in": true,
       "variants": {
