@@ -96,3 +96,31 @@ document.addEventListener('click', function (e) {
     o.querySelector('.gt-khung').src = xem(x[1]); o.querySelector('.gt-mo').href = tuyetDoi(x[1]);
   });
 });
+
+/* Tổ chức chịu trách nhiệm về hàng hóa (đứng tên công bố / nhập khẩu) – đọc từ hồ sơ công bố ngày 29/10/2026.
+   Hương Chất Kids là đơn vị phân phối. Sản phẩm không có ở đây → "Theo nhãn phụ và hồ sơ công bố" (product.html). */
+(function () {
+  var HOAN = 'Công ty TNHH Đầu tư Xuất nhập khẩu Hoan TT', TY = 'Công ty TNHH Dịch vụ và Thương mại TY', D3 = 'Công ty CP Đầu tư Thương mại 3DO',
+    NEMOS = 'Công ty TNHH Nemos Việt Nam', THAIAN = 'Công ty TNHH Công nghệ và Thương mại Thái An', KOVI = 'Công ty TNHH XNK và Thương mại Nhật Minh Kovi',
+    HSH = 'Công ty TNHH Xuất nhập khẩu HSH Thăng Long', GBS = 'Công ty CP Xuất nhập khẩu và Phân phối Global Beauty Solutions', ZION = 'Công ty TNHH Zion and The Beauty Vietnam',
+    VJ = 'Công ty TNHH V&J Partner', FOODS1 = 'Công ty CP Foods 1 Việt Nam', DAILONG = 'Công ty CP Sản xuất và Thương mại Đại Long';
+  window.CHIU_TRACH_NHIEM = {
+    '23660586997': HOAN, '25632276959': HOAN, '41353214697': HOAN, '22686115682': HOAN, 'combo-lottexanh-d3k2': HOAN + ' (nước ép) · ' + TY + ' (D3K2)',
+    '42878618667': TY, 'zinc-purevitality': TY, '26060839019': D3, 'combo-vangsua-d3k2': D3 + ' (váng sữa) · ' + TY + ' (D3K2)',
+    '48112514210': D3, '57413220644': D3, '41002695070': D3, '22644617070': HSH, '24015583018': HSH,
+    '26156646705': GBS, 'gac-canxi-sumo': GBS, 'avca-body-tone-up': 'Công ty TNHH Sản xuất Đầu tư và Thương mại Dịch vụ Nguyệt Phong',
+    '28902157429': HOAN, 'men-sysy': HOAN, '26523206270': HOAN, '13899935993': HOAN, '19682441455': HOAN, '27355720019': HOAN,
+    '27734205778': NEMOS, 'hiskin-micellar': NEMOS, '24764883120': NEMOS, '25678530796': NEMOS, '28806784125': NEMOS,
+    'ngu-coc-bap-thien-ma-kitea': KOVI, 'drvita-ecm-serum': KOVI, 'daycell-nad-white-cream': KOVI,
+    '56857599724': 'Công ty TNHH Đầu tư Thương mại và Du lịch Phúc Khang', 'hexacare': 'Công ty CP Hexa Vietnam',
+    'muoi-xuyen-tieu': FOODS1, 'bo-xuyen-tieu': FOODS1, 'lotte-hau-an': VJ, 'suaxanh-lotte': VJ,
+    'cap-kem-nen-eclat': ZION, '51013054442': ZION, '45462512687': 'Công ty CP Xuất nhập khẩu Thực phẩm Quyên Điệp',
+    '49061985399': 'Công ty CP Thương mại và Đầu tư Quốc tế Hayoon Korea', '28467224687': 'Công ty TNHH Tinh Hoa MSC',
+    '57903449970': 'Công ty TNHH JV Global', '24767149051': 'Công ty CP Clastive Nhật Việt',
+    '24015142248': THAIAN, '26800350417': THAIAN, '26900366084': THAIAN, '29006040615': THAIAN, '24329101823': THAIAN,
+    '27809051612': 'Công ty CP Thương mại Tổng hợp 18', 'mien-ga-cf': 'Công ty CP Thực phẩm và Thương mại CF',
+    'lon-den-khoi-mo': 'Hộ kinh doanh Trần Thị Yến', 'goi-xa-boryeong-mud': 'Công ty CP Kinh doanh Thương mại Cara',
+    'com-vang-noi-oi': DAILONG, 'com-chay-phomai': DAILONG + ' (vị phô mai) · Công ty TNHH TM-DV-SX Thực phẩm Nhật Quỳnh (vị BBQ)',
+    '43532388498': 'Công ty TNHH Thực phẩm Aqua Meat',
+  };
+})();
