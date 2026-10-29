@@ -162,7 +162,7 @@ window.TRANG_DM = [
     mau: { nen: '#FFF9F3', phu: '#FFE3D3', nhan: '#F26A3D', chu: '#292524' },
     gioiThieu: 'Các sản phẩm đang có quà tặng, giờ vàng giảm giá hoặc combo tiết kiệm trên huongchatkids.vn. Quà và mức giảm được web tự áp khi mẹ thêm sản phẩm vào giỏ.',
     seoTieuDe: 'Ưu đãi, quà tặng và khuyến mãi đang diễn ra – Hương Chất Kids' },
-  { key: 'be', slug: 'danh-cho-be', ten: 'Sản phẩm dành cho bé', nhan: 'Dành cho bé', icon: '🧸', loc: { cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien'] },
+  { key: 'be', slug: 'danh-cho-be', ten: 'Sản phẩm dành cho bé', nhan: 'Dành cho bé', icon: '🧸', loc: { cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien'], them: ['hexacare'] },
     mau: { nen: '#F1F8FC', phu: '#B8DDF2', nhan: '#4D94C4', chu: '#243746' },
     gioiThieu: 'Nước ép, sữa, hồng sâm, vitamin, canxi và rong biển nhập khẩu từ Hàn Quốc, Úc, New Zealand. Mỗi sản phẩm ghi rõ độ tuổi nhà sản xuất khuyến nghị, mẹ chọn theo tuổi của con hoặc nhắn chuyên gia dinh dưỡng để được tư vấn miễn phí.',
     con: 'danhMuc', theoTuoi: true, seoTieuDe: 'Dinh dưỡng cho bé chính hãng Hàn Quốc theo độ tuổi – Hương Chất Kids' },

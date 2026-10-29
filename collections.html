@@ -60,7 +60,7 @@
   </div>
 </div></main>
 
-<script src="js/data.js?v=20261029d" defer></script>
+<script src="js/data.js?v=20261029e" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
 <script src="js/app.js?v=20261029a" defer></script>
@@ -91,7 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* size / màu lấy từ phân loại sản phẩm ("Màu · 36" hoặc "Size 36") – chỉ dùng ở trang Thời trang */
   const thuocTinh = (p) => { const size = new Set(), mau = new Set(); (p.variants || []).forEach((v) => { const l = String(v.label || ''), m = l.split(' · ');
     if (m.length === 2 && /^\d{2,3}$/.test(m[1].trim())) { mau.add(m[0].trim()); size.add(m[1].trim()); } else if (/^Size\s/i.test(l)) size.add(l.replace(/^Size\s*/i, '').trim()); }); return { size: [...size], mau: [...mau] }; };
-  const phamVi = () => (DM && DM.loc && DM.loc.cat ? PRODUCTS.filter((p) => DM.loc.cat.includes(p.cat)) : PRODUCTS);
+  const laPhamViDM = () => !!(DM && DM.loc && DM.loc.them && String([...S.cat].sort()) === String([...(DM.loc.cat || [])].sort()));   // loc.them: sản phẩm khác danh mục vẫn hiện trong mục
+  const phamVi = () => (DM && DM.loc && DM.loc.cat ? PRODUCTS.filter((p) => DM.loc.cat.includes(p.cat) || (DM.loc.them || []).includes(p.id)) : PRODUCTS);
   const giaTri = (k) => [...new Set(phamVi().flatMap((p) => thuocTinh(p)[k]))].sort((a, b) => (Number(a) || 0) - (Number(b) || 0) || a.localeCompare(b, 'vi'));
   S.size = url.getAll('size').filter((v) => giaTri('size').includes(v)); S.mau = url.getAll('mau').filter((v) => giaTri('mau').includes(v));
   const CT = url.get('ct') && MC.ctDangChay().find((x) => x.c.id === url.get('ct'));
@@ -121,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const q = S.q.trim().toLowerCase();
     let list = PRODUCTS.filter((p) => {
       if (S.age.length && !S.age.some((a) => p.ages.includes(a))) return false;
-      if (S.cat.length && !S.cat.includes(p.cat)) return false;
+      if (S.cat.length && !S.cat.includes(p.cat) && !(laPhamViDM() && DM.loc.them.includes(p.id))) return false;
       if (S.need.length && !S.need.some((n) => p.needs.includes(n))) return false;
       if (S.brand.length && !S.brand.includes(p.brand)) return false;
       if (S.price.length && !S.price.some((k) => { const r = PRICE_RANGES.find((x) => x.key === k); return p.price >= r.min && p.price < r.max; })) return false;
@@ -186,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const goc = laGoc();
     $('#dmIntro').innerHTML = goc && DM.gioiThieu ? `<p>${esc(DM.gioiThieu)}</p>` : '';
     if (!$('#dmAnh').children.length) {
-      const l = DM.loc || {}, ds = PRODUCTS.filter((p) => (!l.cat || l.cat.includes(p.cat)) && (!l.tag || (p.tags || []).includes(l.tag)) && (!l.km || MC.dangKhuyenMai(p)) && !p.isCombo).sort(MC.rankDefault).slice(0, 3);
+      const l = DM.loc || {}, ds = PRODUCTS.filter((p) => (!l.cat || l.cat.includes(p.cat) || (l.them || []).includes(p.id)) && (!l.tag || (p.tags || []).includes(l.tag)) && (!l.km || MC.dangKhuyenMai(p)) && !p.isCombo).sort(MC.rankDefault).slice(0, 3);
       $('#dmAnh').innerHTML = ds.map((p, i) => `<img src="${MC.productThumb(p)}" alt="" width="180" height="180" ${i ? 'loading="lazy"' : ''}>`).join('');
     }
     let o = [];
