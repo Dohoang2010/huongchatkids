@@ -4796,10 +4796,10 @@ window.BANNERS = [
   {
     "hienTu": "2026-10-29T00:00:00+07:00",
     "anh": {
-      "pc": "img/banner/hexacare-be-gai-pc.jpg",
-      "mb": "img/banner/hexacare-be-gai-mb.jpg"
+      "pc": "img/banner/hexacare-be-gai-v2-pc.jpg",
+      "mb": "img/banner/hexacare-be-gai-v2-mb.jpg"
     },
-    "nen": "#FDEFF4",
+    "nen": "#E91E63",
     "link": "product.html?id=hexacare-be-gai",
     "alt": "Mới: Dung dịch vệ sinh Hexacare cho bé gái 3–12 tuổi, sản xuất tại Pháp, pH 4.5, chiết xuất xô thơm – 195.000đ chai 200ml"
   },
@@ -4878,7 +4878,7 @@ window.BANNERS = [
       "pc": "img/banner/do-chi-so-v2-pc.jpg",
       "mb": "img/banner/do-chi-so-v2-mb.jpg"
     },
-    "nen": "#FDEFF4",
+    "nen": "#E91E63",
     "link": "do-chi-so-cho-be.html",
     "alt": "Đo chỉ số con miễn phí theo chuẩn WHO – chiều cao, cân nặng, BMI, chế độ ăn và vận động theo tuổi"
   },
