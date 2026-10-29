@@ -180,9 +180,12 @@ select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csv
 @media (min-width: 768px) { .grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid--5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 768px) { .grid--5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .grid--6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (min-width: 768px) { .grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .grid--4 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .grid--6 { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 @media (min-width: 1100px) { .grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .grid--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .row-scroll { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 16px 12px; margin: 0 -16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .row-scroll::-webkit-scrollbar { display: none; }
 .row-scroll > * { flex: 0 0 62%; scroll-snap-align: start; }

@@ -12,7 +12,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261029a">
+  <link rel="stylesheet" href="css/style.css?v=20261029b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -72,7 +72,7 @@
   <!-- CATEGORIES -->
   <section data-khoi="danh-muc" class="section section--soft"><div class="container">
     <div class="section-head"><div><h2>Danh mục sản phẩm</h2><p>Dinh dưỡng Hàn Quốc chính hãng – tem phụ tiếng Việt, hoá đơn VAT</p></div><a class="link" href="collections.html">Xem tất cả <span class="icon-16" data-icon="arrowR"></span></a></div>
-    <div class="grid grid--4" id="catGrid"></div>
+    <div class="grid grid--5" id="catGrid"></div>
   </div></section>
 
   <!-- VỀ HƯƠNG CHẤT KIDS -->
@@ -281,7 +281,16 @@ TỰ ÁP</i></a>`; }
   $('#ageGrid').innerHTML = AGES.map((a) => { const list = PRODUCTS.filter((p) => p.ages.includes(a.key)); const href = list.length === 1 ? MC.spUrl(list[0]) : 'collections.html?age=' + a.key; return `<a class="age-card" href="${href}" style="background:${a.color}"><span class="emoji">${a.emoji}</span><b>${a.label}</b><small>${list.length === 1 ? esc(MC.shortName(list[0])) : a.desc + ' · ' + list.length + ' sản phẩm'}</small></a>`; }).join('');
 
   /* Categories */
-  $('#catGrid').innerHTML = CATEGORIES.map((c) => `<a class="cat-tile" href="collections.html?cat=${c.key}" style="background:${c.color}">${c.image ? `<img class="cat-tile__img" src="${c.image}" alt="" loading="lazy">` : `<span class="icon">${c.icon}</span>`}<h3>${c.label}</h3><p>${c.desc}</p><span class="link">Xem ${PRODUCTS.filter((p) => p.cat === c.key).length} sản phẩm ${I.arrowR}</span></a>`).join('');
+  /* 5 nhóm lớn (trùng menu): mỗi ô gom nhiều danh mục, mở trang danh mục có từ khoá (TRANG_DM) */
+  const anhDM = (k) => (CATEGORIES.find((c) => c.key === k) || {}).image;
+  const NHOM_TC = [
+    { ten: 'Dành cho bé', mo: 'Nước ép, sữa, hồng sâm, vitamin, canxi, rong biển theo tuổi', cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien'], link: 'danh-cho-be', mau: '#E8F2FF', anh: anhDM('nuoc-ep') },
+    { ten: 'Beauty', mo: 'Chống nắng, serum, mặt nạ, collagen, chăm sóc cho mẹ', cat: ['cho-me'], link: 'beauty', mau: '#F3E9FF', anh: anhDM('cho-me') },
+    { ten: 'Thời trang', mo: 'Đồ lót MaBelle mỏng nhẹ, an toàn cho da', cat: ['thoi-trang'], link: 'thoi-trang', mau: '#FDEBF1', anh: anhDM('thoi-trang') },
+    { ten: 'Foods – Đồ ăn vặt', mo: 'Táo đỏ, granola, bò xuyên tiêu, cơm cháy, lợn gác bếp', cat: ['thuc-pham', 'do-an'], link: 'thuc-pham', mau: '#FFF3E6', anh: anhDM('do-an') || anhDM('thuc-pham') },
+    { ten: 'Lưu niệm', mo: 'Quà lưu niệm độc quyền Hương Chất Kids', cat: ['luu-niem'], link: 'collections.html?cat=luu-niem', mau: '#FFF8E1', anh: anhDM('luu-niem') },
+  ];
+  $('#catGrid').innerHTML = NHOM_TC.map((c) => `<a class="cat-tile" href="${c.link}" style="background:${c.mau}">${c.anh ? `<img class="cat-tile__img" src="${c.anh}" alt="" loading="lazy">` : ''}<h3>${c.ten}</h3><p>${c.mo}</p><span class="link">Xem ${PRODUCTS.filter((p) => !p.an && c.cat.includes(p.cat)).length} sản phẩm ${I.arrowR}</span></a>`).join('');
 
   /* Flash sale: chỉ sản phẩm có giảm giá thật; đếm ngược tới hạn thật trong SITE.flashSaleEnd */
   // Flash sale chỉ hiện đúng những sản phẩm được gắn nhãn "Sản phẩm hot" trong js/data.js
