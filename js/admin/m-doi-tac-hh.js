@@ -33,7 +33,11 @@
   }
   function veBangSp(b) {
     const m = dl.sp || {}, hq = dl.hieuQua || {};
-    const tatCa = Object.keys(m).map((id) => ({ id, r: m[id], p: timSp(id), hq: hq[id] || { don: 0, tien: 0, hh: 0 } }));
+    /* Sản phẩm đã xoá khỏi web: ẩn khỏi bảng + tự loại bỏ (không còn hoa hồng) */
+    const conBan = new Set(SP().map((p) => String(p.id))), daXoa = Object.keys(m).filter((id) => conBan.size && !conBan.has(id));
+    const canLoai = daXoa.filter((id) => !m[id].tat);
+    if (sua() && canLoai.length) { canLoai.forEach((id) => { m[id].tat = true; }); A.api('qtAffSpLuu', { ids: canLoai.join(','), viec: 'loai', pt: '' }).catch(() => {}); }
+    const tatCa = Object.keys(m).filter((id) => !daXoa.includes(id)).map((id) => ({ id, r: m[id], p: timSp(id), hq: hq[id] || { don: 0, tien: 0, hh: 0 } }));
     const dang = tatCa.filter((x) => !x.r.tat), loai = tatCa.filter((x) => x.r.tat);
     const ds = (S.loc === 'loai' ? loai : S.loc === 'tat' ? tatCa : dang).filter((x) => !S.q || (x.p.name + ' ' + x.id).toLowerCase().includes(S.q.toLowerCase()));
     $('#pageAct').innerHTML = sua() ? '<button class="btn btn--primary" id="hhThemMo">+ Thêm sản phẩm</button>' : '';

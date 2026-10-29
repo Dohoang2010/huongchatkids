@@ -59,7 +59,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-doi-tac-hh.js": {
-   "v": "8cecb1cb",
+   "v": "9ae4f620",
    "can": [],
    "ngay": false
   },
