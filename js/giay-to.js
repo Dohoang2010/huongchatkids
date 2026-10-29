@@ -64,6 +64,7 @@
     'lon-den-khoi-mo': [['Hồ sơ tự công bố – Lợn đen khói mơ Vua Đỉnh Vị', d('10TnqxWU8Mv8YAei_by0dqy0-dW7RVEaM')]],
     'goi-xa-boryeong-mud': [['Công bố – Dầu gội bùn khoáng MUD+', d('1GLBzR6vgj6yenXYR6YEUkKnbiHkjQx0T')], ['Công bố – Dầu xả bùn khoáng MUD+', d('1IHyds8csjHAepXd1r7hXpXvfcXowXLVW')], ['Báo cáo kiểm nghiệm – Viện Nghiên cứu & Thử nghiệm Hàn Quốc', d('1SUL-18W7PA3pXX_KwFyyA-XoiW8_CGLI')], ['Giấy chứng nhận lưu hành tự do (CFS)', d('1jMX2lgPACUkasZZPbKTALQzDGObQ9_Yh')]],
     'com-vang-noi-oi': [['Hồ sơ pháp lý – Cơm vàng Nội Ơi', d('1L4bCF0Naa_CuhKwKAkEc9Ng1kkOtO49a')]],
+    '43532388498': [['Hồ sơ pháp lý – Ngũ cốc Fuwasaku Trái cây & Hạt', d('1TjTcFYbNuH7UQiSkW1mLUv_h9MmBTlpa')]],   // granola Fuwa-Saku
     'men-sysy': [['Hồ sơ công bố – Men Sysy nâu', d('1g2ieGmkDIBvhOmt1--L4PXCx7BOQ5l_5')], ['Hồ sơ công bố – Men Sysy xanh', d('1VDnvPXcEcRjr5iFR5BvT0Rj4UXHX2AQA')]],
   };
 })();
