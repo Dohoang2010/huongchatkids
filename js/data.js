@@ -3597,7 +3597,7 @@ window.PRODUCTS = [
     "rating": 5,
     "reviews": 0,
     "sold": 0,
-    "stock": 0,
+    "stock": 50,
     "cosmetic": true,
     "shape": "bottle",
     "color": "#8B6B4E",
