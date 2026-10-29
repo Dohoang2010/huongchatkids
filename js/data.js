@@ -3597,7 +3597,7 @@ window.PRODUCTS = [
     "rating": 5,
     "reviews": 0,
     "sold": 0,
-    "stock": 50,
+    "stock": 0,
     "cosmetic": true,
     "shape": "bottle",
     "color": "#8B6B4E",
@@ -4628,7 +4628,7 @@ window.PRODUCTS = [
     "thumb": "img/thumb/lon-den-khoi-mo.jpg"
   },
   {
-    "rating": 0,
+    "rating": 5,
     "reviews": 0,
     "sold": 0,
     "stock": 50,
@@ -4660,13 +4660,11 @@ window.PRODUCTS = [
     "variants": [
       {
         "label": "1 hũ 100g",
-        "price": 48000,
-        "oldPrice": 0
+        "price": 48000
       },
       {
         "label": "3 hũ",
-        "price": 144000,
-        "oldPrice": 0
+        "price": 144000
       }
     ],
     "desc": "Muối chấm và rắc xuyên tiêu của Chef Hải: vị cay nồng, tê nhẹ, mặn vừa và thơm mùi tiêu rang, chấm đâu cũng \"bắt vị\" mà không gắt. Hoà quyện nhiều loại tiêu và thảo mộc: muối, mắc khén, tiêu xanh, ớt bột sấy. Chấm hoa quả chua (xoài, cóc, ổi), thịt luộc, đồ nướng, hải sản hay rắc vào món xào đều ngon.",
