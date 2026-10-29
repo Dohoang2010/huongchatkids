@@ -66,6 +66,7 @@
     'com-vang-noi-oi': [['Hồ sơ pháp lý – Cơm vàng Nội Ơi', d('1L4bCF0Naa_CuhKwKAkEc9Ng1kkOtO49a')]],
     '43532388498': [['Hồ sơ pháp lý – Ngũ cốc Fuwasaku Trái cây & Hạt', d('1TjTcFYbNuH7UQiSkW1mLUv_h9MmBTlpa')]],   // granola Fuwa-Saku
     'com-chay-phomai': [['Tự công bố – Cơm sấy vị BBQ', d('1B7Z5y_TKixp8ipZf0LdPfz7cfGueEz5m')], ['Kiểm nghiệm – Cơm sấy vị BBQ', d('1dPr1hNRY4Wqi02OjU866UBTQvIqlCvdf')]],   // cơm cháy phô mai & BBQ (chưa có giấy vị phô mai)
+    'zinc-purevitality': [['Giấy tiếp nhận đăng ký bản công bố – Pure Vitality Zinc (Cục ATTP)', 'img/giay-to/kem-zinc-pure-vitality.pdf']],
     'men-sysy': [['Hồ sơ công bố – Men Sysy nâu', d('1g2ieGmkDIBvhOmt1--L4PXCx7BOQ5l_5')], ['Hồ sơ công bố – Men Sysy xanh', d('1VDnvPXcEcRjr5iFR5BvT0Rj4UXHX2AQA')]],
   };
 })();
