@@ -200,28 +200,63 @@ test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin m�
   assert.ok(hook.map((y) => JSON.parse(y.body)).some((b) => b.su === 'tin_nv' && b.tin.noiDung === 'Dạ shop chào mẹ'), 'webhook tin nhân viên');
   const moi = await m.get('action=chatApi&key=' + KEY + '&viec=xem&phien=' + ph + '&sau=' + moc);
   assert.deepStrictEqual(moi.tin.map((t) => t.noiDung), ['Dạ shop chào mẹ'], 'chỉ tin sau mốc');
-  assert.ok((await m.get('action=chatDoc&phien=' + ph)).tin.some((t) => t.tu === 'nv' && t.nv === 'CRM'), 'khách thấy tin từ CRM');
+  const docCrm = (await m.get('action=chatDoc&phien=' + ph)).tin;
+  assert.ok(docCrm.some((t) => t.tu === 'nv' && t.noiDung === 'Dạ shop chào mẹ'), 'khách thấy tin từ CRM');
+  assert.ok(docCrm.every((t) => !('nv' in t)), 'khách không nhận tên / tài khoản nhân viên');
+  assert.ok(!JSON.stringify(docCrm).includes('"CRM"'), 'không lộ tên nhân viên trong dữ liệu trả về');
+  assert.ok(xem.tin.every((t) => 'nv' in t), 'CRM vẫn thấy trường nhân viên');
 });
 
-test('chat: cùng SĐT nhiều máy → 1 cuộc chat; trả lời ở phiên cũ tới máy mới; khách đăng nhập thấy đủ, người lạ không đọc được', async () => {
-  const m = taoMay(); const A = 'cmaycu0000000001', B = 'cmaymoi000000001', L = 'cnguoila00000001';
-  await m.get('action=chatGui&phien=' + A + '&noiDung=tin%20may%20cu&ten=Me%20Bin&sdt=' + SDT);
-  await m.get('action=chatGui&phien=' + B + '&noiDung=tin%20may%20moi&ten=Me%20Bin&sdt=' + SDT);
+test('chat: khách ĐĂNG NHẬP nhiều máy → 1 cuộc chat; khách chưa đăng nhập gõ trùng SĐT không ghép, không nhận trả lời của người khác', async () => {
+  const m = taoMay(); const A = 'cmaycu0000000001', B = 'cmaymoi000000001', L = 'cnguoila00000001', G = 'cgiamao00000001';
+  const xt = await dangNhapOtp(m, SDT), tk = encodeURIComponent(xt.token);
+  await m.get('action=chatGui&phien=' + A + '&noiDung=tin%20may%20cu&ten=Me%20Bin&sdt=' + SDT + '&token=' + tk);
+  await m.get('action=chatGui&phien=' + B + '&noiDung=tin%20may%20moi&ten=Me%20Bin&token=' + tk);
   await m.get('action=chatGui&phien=' + L + '&noiDung=khach%20khac&ten=Me%20Khac&sdt=' + SDT2);
   const ds = (await m.qt('action=qtChatDs')).ds;
-  assert.strictEqual(ds.filter((c) => c.sdt === SDT).length, 1, 'cùng SĐT = 1 cuộc chat');
+  assert.strictEqual(ds.filter((c) => c.sdt === SDT).length, 1, 'cùng SĐT đã xác minh = 1 cuộc chat');
   assert.strictEqual(ds.find((c) => c.sdt === SDT).phien, B, 'mã phiên = máy khách nhắn gần nhất');
+  assert.strictEqual(ds.find((c) => c.sdt === SDT).xacMinh, true);
   const xem = await m.qt('action=qtChatXem&phien=' + A);
   assert.ok(['tin may cu', 'tin may moi'].every((t) => xem.tin.some((x) => x.noiDung === t)), 'xem đủ tin 2 máy');
   assert.ok(!xem.tin.some((x) => x.noiDung === 'khach khac'));
   const tl = await m.qt('action=qtChatTraLoi&phien=' + A + '&noiDung=' + encodeURIComponent('Dạ shop trả lời'));
-  assert.ok((await m.get('action=chatDoc&phien=' + B)).tin.some((x) => x.noiDung === 'Dạ shop trả lời'), 'trả lời ở phiên cũ → máy mới thấy');
   assert.ok(tl.ok);
+  assert.ok((await m.get('action=chatDoc&phien=' + B + '&token=' + tk)).tin.some((x) => x.noiDung === 'Dạ shop trả lời'), 'trả lời ở phiên cũ → máy mới thấy');
   assert.ok(!(await m.get('action=chatDoc&phien=' + L)).tin.some((x) => /may cu|may moi/.test(x.noiDung)), 'người lạ không đọc được');
-  const xt = await dangNhapOtp(m, SDT);
-  const C = 'cmaythu3000000001', doc = await m.get('action=chatDoc&phien=' + C + '&token=' + encodeURIComponent(xt.token));
+  const C = 'cmaythu3000000001', doc = await m.get('action=chatDoc&phien=' + C + '&token=' + tk);
   assert.ok(['tin may cu', 'tin may moi', 'Dạ shop trả lời'].every((t) => doc.tin.some((x) => x.noiDung === t)), 'đăng nhập ở máy thứ 3 thấy đủ lịch sử');
   assert.ok(!(await m.get('action=chatDoc&phien=' + C + '&token=sai')).tin.length, 'token sai không thấy gì');
+  // kẻ gian chưa đăng nhập gõ SĐT của khách: cuộc chat riêng, trả lời cho khách không chạy sang máy kẻ gian
+  await m.get('action=chatGui&phien=' + G + '&noiDung=' + encodeURIComponent('cho xem don cua toi') + '&ten=Me%20Bin&sdt=' + SDT);
+  const ds2 = (await m.qt('action=qtChatDs')).ds.filter((c) => c.sdt === SDT);
+  assert.strictEqual(ds2.length, 2, 'phiên chưa xác minh tách riêng');
+  assert.strictEqual(ds2.find((c) => c.phien === G).xacMinh, false);
+  await m.qt('action=qtChatTraLoi&phien=' + A + '&noiDung=' + encodeURIComponent('Đơn của mẹ đang giao'));
+  assert.ok(!(await m.get('action=chatDoc&phien=' + G)).tin.some((x) => /đang giao|Dạ shop trả lời|tin may/.test(x.noiDung)), 'kẻ gian không nhận tin của khách thật');
+  assert.ok(!(await m.get('action=chatDoc&phien=' + B + '&token=' + tk)).tin.some((x) => x.noiDung === 'cho xem don cua toi'), 'khách thật không thấy tin kẻ gian');
+});
+
+test('chat: thẻ đơn chỉ nhận đơn thật của khách đã đăng nhập; CRM hỏi khách đã đặt đơn chưa', async () => {
+  const m = taoMay(); const ph = 'cthedon000000001', ph2 = 'cthedon000000002', KEY = 'khoa-chat-thu-nghiem-0123456789';
+  m.kho.thuocTinh.set('CHAT_API_KEY', KEY);
+  await datDon(m, SDT, { code: 'HCKCHAT00001', total: 448000 });
+  const tk = encodeURIComponent((await dangNhapOtp(m, SDT)).token);
+  const gia = encodeURIComponent(JSON.stringify({ loai: 'don', ma: 'HCKCHAT00001', tong: 1, tt: 'Đã giao', sp: 'giả' }));
+  const g = await m.get('action=chatGui&phien=' + ph + '&ten=Me%20Bin&token=' + tk + '&dinhKem=' + gia);
+  assert.ok(g.ok, JSON.stringify(g));
+  const dk = g.tin[0].dk; assert.strictEqual(dk.ma, 'HCKCHAT00001'); assert.strictEqual(dk.tong, 448000, 'tiền lấy từ đơn thật');
+  assert.notStrictEqual(dk.sp, 'giả');
+  const la = encodeURIComponent(JSON.stringify({ loai: 'don', ma: 'HCKKHAC00001', tong: 1 }));
+  assert.strictEqual((await m.get('action=chatGui&phien=' + ph + '&ten=Me%20Bin&token=' + tk + '&dinhKem=' + la)).ok, false, 'đơn không thuộc khách → từ chối');
+  assert.strictEqual((await m.get('action=chatGui&phien=' + ph2 + '&ten=Me%20Bin&sdt=' + SDT + '&dinhKem=' + gia)).ok, false, 'chưa đăng nhập không gửi thẻ đơn');
+  const kh = (await m.get('action=chatApi&key=' + KEY + '&viec=khach&phien=' + ph)).khach;
+  assert.strictEqual(kh.xacMinh, true); assert.strictEqual(kh.daDatDon, true); assert.ok(kh.soDon >= 1);
+  assert.strictEqual(kh.donGanNhat.ma, 'HCKCHAT00001');
+  await m.get('action=chatGui&phien=' + ph2 + '&ten=Me%20Bin&sdt=' + SDT + '&noiDung=chao');
+  const kh2 = (await m.get('action=chatApi&key=' + KEY + '&viec=khach&phien=' + ph2)).khach;
+  assert.deepStrictEqual([kh2.xacMinh, kh2.sdtTuNhap, kh2.donHang], [false, SDT, undefined], 'chưa xác minh: không ghép đơn');
+  assert.strictEqual((await m.get('action=chatApi&key=sai&viec=khach&phien=' + ph)).ok, false, 'cần khoá CRM');
 });
 
 /* ---------- Đối tác (affiliate) ---------- */

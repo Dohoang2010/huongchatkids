@@ -67,7 +67,7 @@
     const b = document.getElementById('chatTin'); if (!b) return;
     const chao = CHAT_CFG.chao.map((t) => ({ tu: 'nv', noiDung: t }));
     b.innerHTML = chao.concat(tin).map((x) => { const toi = x.tu === 'khach';
-      return `<div class="chat-m chat-m--${toi ? 'toi' : x.tu === 'he-thong' ? 'ht' : 'shop'}${x.tam ? ' is-tam' : ''}">${x.dk ? theDK(x.dk, toi) : ''}${x.noiDung ? `<div class="chat-m__b">${esc(x.noiDung).replace(/\n/g, '<br>')}</div>` : ''}${x.luc ? `<small>${x.tam ? 'Đang gửi…' : (x.tu === 'tu-dong' ? 'Trả lời tự động · ' : x.tu === 'nv' && x.nv ? esc(x.nv) + ' · ' : '') + gioVN(x.luc)}</small>` : ''}</div>`; }).join('')
+      return `<div class="chat-m chat-m--${toi ? 'toi' : x.tu === 'he-thong' ? 'ht' : 'shop'}${x.tam ? ' is-tam' : ''}">${x.dk ? theDK(x.dk, toi) : ''}${x.noiDung ? `<div class="chat-m__b">${esc(x.noiDung).replace(/\n/g, '<br>')}</div>` : ''}${x.luc ? `<small>${x.tam ? 'Đang gửi…' : (x.tu === 'tu-dong' ? 'Trả lời tự động · ' : '') + gioVN(x.luc)}</small>` : ''}</div>`; }).join('')
       + (!tin.length ? `<div class="chat-nhanh">${CHAT_CFG.nhanh.map(([, t], k) => `<button type="button" data-chat-nhanh="${k}">${esc(t)}</button>`).join('')}</div>` : '');
     b.scrollTop = b.scrollHeight;
     b.querySelectorAll('img,video').forEach((m) => m.addEventListener(m.tagName === 'IMG' ? 'load' : 'loadedmetadata', () => { b.scrollTop = b.scrollHeight; }, { once: true }));

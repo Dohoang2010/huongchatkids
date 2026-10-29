@@ -20,12 +20,15 @@ Lưu ý: KHÔNG ghi khoá vào repo (repo công khai).
 
 | viec | Tham số thêm | Trả về |
 |---|---|---|
-| `ds` | – | `{ok, ds:[{phien, ten, sdt, trang, soTin, chuaDoc, cuoi, cuoiTu, luc}]}` – 200 cuộc chat mới nhất |
+| `ds` | – | `{ok, ds:[{phien, ten, sdt, trang, soTin, chuaDoc, cuoi, cuoiTu, luc, xacMinh}]}` – 200 cuộc chat mới nhất |
 | `xem` | `phien`, `sau` (tuỳ chọn, mili giây) | `{ok, tin:[{ma, luc, tu, noiDung, nv, dk?}]}` – đánh dấu đã đọc; có `sau` thì chỉ trả tin mới hơn mốc đó |
 | `webhook` | `url` (https của phần mềm) | `{ok, webhook}` – phần mềm tự đăng ký địa chỉ nhận tin |
-| `traLoi` | `phien`, `noiDung`, `nv` (tên NV), `dinhKem` (JSON, tuỳ chọn) | `{ok, tin}` – khách thấy trong vài giây |
+| `traLoi` | `phien`, `noiDung`, `nv` (tên NV), `dinhKem` (JSON, tuỳ chọn) | `{ok, tin}` – khách thấy trong vài giây (khách chỉ thấy nội dung + giờ, **không** thấy `nv`) |
+| `khach` | `phien` | `{ok, khach}` – khách của cuộc chat, lấy từ nguồn đơn thật. Đã xác minh: `{xacMinh:true, sdt, ten, hang, daDatDon, soDon, tongChiTieu, donGanNhat, donHang:[{ma, ngay, tong, trangThai, sanPham, thanhToan}]}` (10 đơn mới nhất). Chưa xác minh: `{xacMinh:false, sdtTuNhap, ten, daDatDon:null}` – không kèm đơn |
 
 - `tu`: `khach` | `nv` | `he-thong` | `tu-dong`
+- `xacMinh`: khách chat khi **đã đăng nhập** (SĐT tài khoản). Chỉ cuộc chat đã xác minh mới gom theo SĐT (nhiều máy → 1 cuộc chat) và mới ghép với đơn hàng. Chưa đăng nhập: SĐT do khách tự gõ, mỗi trình duyệt là 1 cuộc chat riêng – CRM đừng tự ghép vào hồ sơ khách theo số này
+- Thẻ đơn (`loai:"don"`) khách gửi: máy chủ chỉ nhận đơn của chính khách đã đăng nhập, số liệu lấy lại từ đơn thật
 - `luc`: mốc thời gian, tính bằng mili giây
 - `dk` / `dinhKem` (đính kèm), một trong các dạng:
   - `{"loai":"anh"|"video","url":"/chat-tep/YYYYMM/ten.jpg"}` – tệp nằm ở `https://huongchatkids.vn` + url
@@ -39,19 +42,20 @@ Web POST JSON tới `CHAT_WEBHOOK`, header `x-hck-chat-key: <CHAT_API_KEY>` (ph�
 Khách gửi tin (`tinThem` = tin tự trả lời đi kèm, có thể rỗng):
 
 ```json
-{ "su": "tin_moi", "phien": "c...", "khach": { "ten": "", "sdt": "", "trang": "product.html?id=..." },
+{ "su": "tin_moi", "phien": "c...", "khach": { "ten": "", "sdt": "", "trang": "product.html?id=...", "xacMinh": true },
   "tin": { "ma": "m...", "luc": 1792..., "tu": "khach", "noiDung": "...", "dk": { } }, "tinThem": [] }
 ```
 
 Nhân viên trả lời (từ trang Quản trị hoặc từ chính phần mềm qua `traLoi`) – dùng `tin.ma` để bỏ trùng:
 
 ```json
-{ "su": "tin_nv", "phien": "c...", "tin": { "ma": "m...", "luc": 1792..., "tu": "nv", "noiDung": "...", "nv": "adminhck" } }
+{ "su": "tin_nv", "phien": "c...", "sdt": "09...", "xacMinh": true, "tin": { "ma": "m...", "luc": 1792..., "tu": "nv", "noiDung": "...", "nv": "adminhck" } }
 ```
 
 ## 4. Dữ liệu
 
 - Tin nhắn: sheet / bảng **Chat** trong PostgreSQL trên VPS, mỗi dòng 1 tin.
 - Ảnh và video khách gửi: thư mục `/var/lib/hck-api/chat-tep/` trên VPS. Tối đa 25MB mỗi tệp; máy chủ kiểm tra đúng là ảnh hoặc video mới lưu.
-- Khách chỉ đọc được phiên chat của chính mình (mã phiên ngẫu nhiên lưu trong trình duyệt).
+- Khách chỉ đọc được phiên chat của chính mình (mã phiên ngẫu nhiên lưu trong trình duyệt); đã đăng nhập thì đọc thêm các phiên đã xác minh cùng SĐT.
+- Dữ liệu trả cho khách (`chatGui`, `chatDoc`) đi qua `chatTinKhach_` – chỉ `ma, luc, tu, noiDung, dk`; tên / tài khoản nhân viên không bao giờ ra khỏi máy chủ phía khách.
 - Tin đầu tiên của mỗi phiên được báo qua Zalo bot của shop. Hệ thống cũng tự trả lời 1 câu theo giờ làm việc (8:00 – 22:00).

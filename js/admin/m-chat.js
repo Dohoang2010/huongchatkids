@@ -30,7 +30,7 @@
     const b = $('#chDs'); if (!b) return;
     b.innerHTML = ds.length ? ds.map((c) => `<button class="ch-dong ${c.phien === chon ? 'is-on' : ''}" data-ch="${esc(c.phien)}">
       <span class="ch-ava">${esc((c.ten || 'K').trim().slice(0, 1).toUpperCase())}</span>
-      <span class="ch-dong__tt"><b>${esc(c.ten || 'Khách chưa đăng nhập')}${c.sdt ? ` <small>${esc(c.sdt)}</small>` : ''}</b><small>${c.cuoiTu === 'nv' ? 'Bạn: ' : ''}${esc(c.cuoi || '')}</small></span>
+      <span class="ch-dong__tt"><b>${esc(c.ten || 'Khách chưa đăng nhập')}${c.sdt ? ` <small>${esc(c.sdt)}${c.xacMinh ? ' ✓' : ' · chưa đăng nhập'}</small>` : ''}</b><small>${c.cuoiTu === 'nv' ? 'Bạn: ' : ''}${esc(c.cuoi || '')}</small></span>
       <span class="ch-dong__p"><small>${gio(c.luc)}</small>${c.chuaDoc ? `<i>${c.chuaDoc}</i>` : ''}</span></button>`).join('')
       : A.trong('Chưa có cuộc chat nào', 'Khi khách nhắn ở góc phải website, tin sẽ hiện ở đây.', '💬');
   }
