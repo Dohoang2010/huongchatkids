@@ -103,9 +103,9 @@ document.addEventListener('click', function (e) {
   var HOAN = 'Công ty TNHH Đầu tư Xuất nhập khẩu Hoan TT', TY = 'Công ty TNHH Dịch vụ và Thương mại TY', D3 = 'Công ty CP Đầu tư Thương mại 3DO',
     NEMOS = 'Công ty TNHH Nemos Việt Nam', THAIAN = 'Công ty TNHH Công nghệ và Thương mại Thái An', KOVI = 'Công ty TNHH XNK và Thương mại Nhật Minh Kovi',
     HSH = 'Công ty TNHH Xuất nhập khẩu HSH Thăng Long', GBS = 'Công ty CP Xuất nhập khẩu và Phân phối Global Beauty Solutions', ZION = 'Công ty TNHH Zion and The Beauty Vietnam',
-    VJ = 'Công ty TNHH V&J Partner', FOODS1 = 'Công ty CP Foods 1 Việt Nam', DAILONG = 'Công ty CP Sản xuất và Thương mại Đại Long';
+    VJ = 'Công ty TNHH V&J Partner', VIKOTRA = 'Công ty CP Thương mại Vikotra', FOODS1 = 'Công ty CP Foods 1 Việt Nam', DAILONG = 'Công ty CP Sản xuất và Thương mại Đại Long';
   window.CHIU_TRACH_NHIEM = {
-    '23660586997': HOAN, '25632276959': HOAN, '41353214697': HOAN, '22686115682': HOAN, 'combo-lottexanh-d3k2': HOAN + ' (nước ép) · ' + TY + ' (D3K2)',
+    '23660586997': VIKOTRA, '25632276959': VIKOTRA, '41353214697': VIKOTRA, '22686115682': VIKOTRA, 'combo-lottexanh-d3k2': VIKOTRA + ' (nước ép) · ' + TY + ' (D3K2)',   // nước ép Lotte 3 màu: hồ sơ mới 2026
     '42878618667': TY, 'zinc-purevitality': TY, '26060839019': D3, 'combo-vangsua-d3k2': D3 + ' (váng sữa) · ' + TY + ' (D3K2)',
     '48112514210': D3, '57413220644': D3, '41002695070': D3, '22644617070': HSH, '24015583018': HSH,
     '26156646705': GBS, 'gac-canxi-sumo': GBS, 'avca-body-tone-up': 'Công ty TNHH Sản xuất Đầu tư và Thương mại Dịch vụ Nguyệt Phong',
