@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T02:06:25.588Z",
+  "updatedAt": "2026-10-29T02:06:36.863Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -208,7 +208,7 @@
       }
     },
     "24465090622": {
-      "in": true,
+      "in": false,
       "variants": {
         "1 chai": true,
         "2 chai": true
