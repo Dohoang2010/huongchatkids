@@ -30,6 +30,7 @@
     'lotte-hau-an': [['Tự công bố – Nước uống Bareun Mokjang Lactic (Lotte Háu Ăn)', d('1rb0x3yLKeQzhiwphZFECzEu79INSWY_b')], ['Bảng thành phần, hàm lượng vitamin', d('1vdFrzcpC1vfK-dWYDWpwPWrfdcLz4gng')]],
     '41002695070': [['Công bố – Rong biển tẩm gia vị Sung Gyung 300g, 500g', d('1tycZUrNeZJ3h0Dh-T4qaCWG2HRywUpqL')]],   // rong vụn Sung Gyung
     '56857599724': [['Phiếu công bố mỹ phẩm – Bột đánh trắng răng Akiko', d('17x51-vXVBqyvPoRMpJmajlefTxL0rBeO')]],
+    'kem-exosome-toneup': [['Phiếu công bố mỹ phẩm – Premiere Look EXOPLUS Tone Up Cream (số 249933/24/CBMP-QLD)', 'img/giay-to/kem-exosome-toneup-cong-bo.pdf']],
     'hiskin-micellar': [['Phiếu công bố mỹ phẩm – Hiskin Cleansing Micellar Water', 'img/giay-to/hiskin-micellar-cong-bo.pdf']],
     'avca-body-tone-up': [['Hồ sơ công bố – AVCA Body Tone-Up Serum', d('16VgNDpOb7fgB5-7PGm1avTVf09RKbLWb')], ['Giấy chứng nhận lưu hành tự do (CFS)', d('1Xo_Tj37pKs2UVyLd4I0m3_AcU2nxK2Hm')]],
     '28902157429': [['Hồ sơ công bố – Men Arravite tím nhạt', d('1CMs5KxWK6Jvr8q1_BaEPpvGMa6NgHcWn')], ['Hồ sơ công bố – Men Arravite tím đậm', d('1baL2A4PRbFobmSppMcbz1JajemyBcYkj')], ['Phiếu kiểm nghiệm – Men 10 tỷ lợi khuẩn', d('1tH7retWrFDEStG7sNAiEhhd67h39YOkL')]],   // men phụ khoa Arravite
@@ -109,7 +110,7 @@ document.addEventListener('click', function (e) {
     '23660586997': VIKOTRA, '25632276959': VIKOTRA, '41353214697': VIKOTRA, '22686115682': VIKOTRA, 'combo-lottexanh-d3k2': VIKOTRA + ' (nước ép) · ' + TY + ' (D3K2)',   // nước ép Lotte 3 màu: hồ sơ mới 2026
     '42878618667': TY, 'zinc-purevitality': TY, '26060839019': D3, 'combo-vangsua-d3k2': D3 + ' (váng sữa) · ' + TY + ' (D3K2)',
     '48112514210': D3, '57413220644': D3, '41002695070': D3, '22644617070': HSH, '24015583018': HSH,
-    '26156646705': GBS, 'gac-canxi-sumo': GBS, 'avca-body-tone-up': 'Công ty TNHH Sản xuất Đầu tư và Thương mại Dịch vụ Nguyệt Phong',
+    '26156646705': GBS, 'gac-canxi-sumo': GBS, 'kem-exosome-toneup': GBS, 'avca-body-tone-up': 'Công ty TNHH Sản xuất Đầu tư và Thương mại Dịch vụ Nguyệt Phong',
     '28902157429': HOAN, 'men-sysy': HOAN, '26523206270': HOAN, '13899935993': HOAN, '19682441455': HOAN, '27355720019': HOAN,
     '27734205778': NEMOS, 'hiskin-micellar': NEMOS, '24764883120': NEMOS, '25678530796': NEMOS, '28806784125': NEMOS,
     'ngu-coc-bap-thien-ma-kitea': KOVI, 'drvita-ecm-serum': KOVI, 'daycell-nad-white-cream': KOVI,

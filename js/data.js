@@ -2010,6 +2010,7 @@ window.PRODUCTS = [
   },
   {
     "id": "50002678694",
+    "giaDung": true,
     "name": "Thảm Ngải Cứu Đông Y Toả Nhiệt – Thư Giãn Lưng, Vai Gáy, Tay Chân, Hỗ Trợ Ngủ Ngon, Lưu Thông Khí Huyết, Có Điều Khiển",
     "short": "Thảm ngải cứu toả nhiệt 150×60cm",
     "brand": "khac",
