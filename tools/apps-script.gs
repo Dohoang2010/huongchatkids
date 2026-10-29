@@ -3914,18 +3914,30 @@ function chatXm_(r) { return String(r[11] || '') === 'x' && !!r[6]; }
 function chatBoPhienSdt_(v, sdt) { var bo = {}; sdt = chuanSdt(sdt); if (!sdt) return bo; v.forEach(function (r) { if (chatXm_(r) && chuanSdt(r[6]) === sdt) bo[String(r[1])] = 1; }); return bo; }
 function chatSdtCuaPhien_(v, phien) { var sdt = ''; v.forEach(function (r) { if (String(r[1]) === phien && chatXm_(r)) sdt = chuanSdt(r[6]); }); return sdt; }
 function chatSdtNhap_(v, phien) { var sdt = ''; v.forEach(function (r) { if (String(r[1]) === phien && r[6]) sdt = chuanSdt(r[6]); }); return sdt; }
-function chatNhom_(v, phien) { var sdt = chatSdtCuaPhien_(v, phien), bo = sdt ? chatBoPhienSdt_(v, sdt) : {}; bo[phien] = 1; return bo; }
+/* Gom cuộc chat cho NHÂN VIÊN (danh sách, xem, trả lời) – chủ shop dặn 29/10/2026: cùng tên + cùng SĐT → 1 cuộc chat.
+   Phiên đã đăng nhập cùng SĐT luôn gộp; phiên chưa đăng nhập gộp vào nếu trùng SĐT và trùng tên (không phân biệt dấu / hoa thường).
+   Phía KHÁCH vẫn chỉ đọc phiên của mình + phiên đã xác minh cùng SĐT (chatBoPhienSdt_). */
+function chatKhoa_(v) {
+  var ph = {}, tenXm = {}, khoa = {};
+  v.forEach(function (r) { var id = String(r[1]); if (!id) return; var x = ph[id] || (ph[id] = { sdt: '', ten: '', xm: false });
+    if (r[6]) x.sdt = chuanSdt(r[6]); if (r[5]) x.ten = khongDau_(r[5]); if (chatXm_(r)) x.xm = true; });
+  Object.keys(ph).forEach(function (id) { var x = ph[id]; if (x.xm && x.sdt) (tenXm[x.sdt] = tenXm[x.sdt] || {})[x.ten] = 1; });
+  Object.keys(ph).forEach(function (id) { var x = ph[id];
+    khoa[id] = !x.sdt ? id : x.xm || (tenXm[x.sdt] && tenXm[x.sdt][x.ten]) ? 's' + x.sdt : 's' + x.sdt + '|' + x.ten; });
+  return { khoa: khoa, xm: ph };
+}
+function chatNhom_(v, phien) { var k = chatKhoa_(v).khoa, bo = {}, mk = k[phien]; Object.keys(k).forEach(function (id) { if (mk && k[id] === mk) bo[id] = 1; }); bo[phien] = 1; return bo; }
 /* Phiên khách nhắn gần nhất trong nhóm → tin nhân viên gửi vào đó để khách thấy */
 function chatPhienMoiNhat_(v, bo, macDinh) { var ph = macDinh; v.forEach(function (r) { if (bo[String(r[1])] && String(r[3]) === 'khach') ph = String(r[1]); }); return ph; }
 /* Danh sách cuộc chat (mới nhất trước) */
 function chatDs_() {
   var m = {};
-  var v = chatDocHet_(), sdtPhien = {};
-  v.forEach(function (r) { if (chatXm_(r) && r[1]) sdtPhien[String(r[1])] = chuanSdt(r[6]); });
+  var v = chatDocHet_(), gom = chatKhoa_(v);
   v.forEach(function (r, i) {
     var ph = String(r[1]); if (!ph) return;
-    var khoa = sdtPhien[ph] ? 's' + sdtPhien[ph] : ph;   // cùng SĐT đã xác minh → 1 cuộc chat
-    var c = m[khoa] || (m[khoa] = { phien: ph, ten: '', sdt: '', trang: '', soTin: 0, chuaDoc: 0, cuoi: '', cuoiTu: '', luc: 0, xacMinh: !!sdtPhien[ph] });
+    var khoa = gom.khoa[ph] || ph;   // cùng tên + cùng SĐT (hoặc cùng SĐT đã đăng nhập) → 1 cuộc chat
+    var c = m[khoa] || (m[khoa] = { phien: ph, ten: '', sdt: '', trang: '', soTin: 0, chuaDoc: 0, cuoi: '', cuoiTu: '', luc: 0, xacMinh: false });
+    if (gom.xm[ph] && gom.xm[ph].xm) c.xacMinh = true;
     if (String(r[3]) === 'khach') c.phien = ph;   // mã phiên = phiên khách nhắn gần nhất
     c.soTin++; if (r[5]) c.ten = String(r[5]); if (r[6]) c.sdt = chuanSdt(r[6]); if (r[7]) c.trang = String(r[7]);
     if (String(r[3]) === 'khach' && !r[9]) c.chuaDoc++;

@@ -207,7 +207,7 @@ test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin m�
   assert.ok(xem.tin.every((t) => 'nv' in t), 'CRM vẫn thấy trường nhân viên');
 });
 
-test('chat: khách ĐĂNG NHẬP nhiều máy → 1 cuộc chat; khách chưa đăng nhập gõ trùng SĐT không ghép, không nhận trả lời của người khác', async () => {
+test('chat: khách ĐĂNG NHẬP nhiều máy → 1 cuộc chat; chưa đăng nhập trùng tên + SĐT thì gộp, khác tên thì tách', async () => {
   const m = taoMay(); const A = 'cmaycu0000000001', B = 'cmaymoi000000001', L = 'cnguoila00000001', G = 'cgiamao00000001';
   const xt = await dangNhapOtp(m, SDT), tk = encodeURIComponent(xt.token);
   await m.get('action=chatGui&phien=' + A + '&noiDung=tin%20may%20cu&ten=Me%20Bin&sdt=' + SDT + '&token=' + tk);
@@ -227,14 +227,30 @@ test('chat: khách ĐĂNG NHẬP nhiều máy → 1 cuộc chat; khách chưa đ
   const C = 'cmaythu3000000001', doc = await m.get('action=chatDoc&phien=' + C + '&token=' + tk);
   assert.ok(['tin may cu', 'tin may moi', 'Dạ shop trả lời'].every((t) => doc.tin.some((x) => x.noiDung === t)), 'đăng nhập ở máy thứ 3 thấy đủ lịch sử');
   assert.ok(!(await m.get('action=chatDoc&phien=' + C + '&token=sai')).tin.length, 'token sai không thấy gì');
-  // kẻ gian chưa đăng nhập gõ SĐT của khách: cuộc chat riêng, trả lời cho khách không chạy sang máy kẻ gian
-  await m.get('action=chatGui&phien=' + G + '&noiDung=' + encodeURIComponent('cho xem don cua toi') + '&ten=Me%20Bin&sdt=' + SDT);
+  // người khác tên chưa đăng nhập gõ SĐT của khách: cuộc chat riêng, trả lời cho khách không chạy sang máy đó
+  await m.get('action=chatGui&phien=' + G + '&noiDung=' + encodeURIComponent('cho xem don cua toi') + '&ten=Ke%20Gian&sdt=' + SDT);
   const ds2 = (await m.qt('action=qtChatDs')).ds.filter((c) => c.sdt === SDT);
   assert.strictEqual(ds2.length, 2, 'phiên chưa xác minh tách riêng');
   assert.strictEqual(ds2.find((c) => c.phien === G).xacMinh, false);
   await m.qt('action=qtChatTraLoi&phien=' + A + '&noiDung=' + encodeURIComponent('Đơn của mẹ đang giao'));
   assert.ok(!(await m.get('action=chatDoc&phien=' + G)).tin.some((x) => /đang giao|Dạ shop trả lời|tin may/.test(x.noiDung)), 'kẻ gian không nhận tin của khách thật');
   assert.ok(!(await m.get('action=chatDoc&phien=' + B + '&token=' + tk)).tin.some((x) => x.noiDung === 'cho xem don cua toi'), 'khách thật không thấy tin kẻ gian');
+  // cùng tên (khác dấu / hoa thường) + cùng SĐT, chưa đăng nhập → gộp vào cuộc chat của khách
+  const D = 'cmaykhach4000001'; await m.get('action=chatGui&phien=' + D + '&noiDung=tin%20may%204&ten=' + encodeURIComponent('mẹ bin') + '&sdt=' + SDT);
+  const ds3 = (await m.qt('action=qtChatDs')).ds.filter((c) => c.sdt === SDT);
+  assert.strictEqual(ds3.length, 2, 'cùng tên + SĐT gộp, khác tên vẫn riêng');
+  assert.strictEqual(ds3.find((c) => c.phien === D).xacMinh, true);
+  assert.ok((await m.qt('action=qtChatXem&phien=' + A)).tin.some((x) => x.noiDung === 'tin may 4'), 'nhân viên xem chung 1 cuộc chat');
+  await m.qt('action=qtChatTraLoi&phien=' + A + '&noiDung=' + encodeURIComponent('Dạ shop trả lời máy 4'));
+  assert.ok((await m.get('action=chatDoc&phien=' + D)).tin.some((x) => x.noiDung === 'Dạ shop trả lời máy 4'), 'trả lời tới máy khách đang nhắn');
+});
+test('chat: khách chưa đăng nhập cùng tên + SĐT ở 2 máy → 1 cuộc chat', async () => {
+  const m = taoMay(); const A = 'cguest0000000001', B = 'cguest0000000002';
+  await m.get('action=chatGui&phien=' + A + '&noiDung=may%201&ten=' + encodeURIComponent('Sếp Hoàng') + '&sdt=' + SDT2);
+  await m.get('action=chatGui&phien=' + B + '&noiDung=may%202&ten=' + encodeURIComponent('Sếp Hoàng') + '&sdt=' + SDT2);
+  const ds = (await m.qt('action=qtChatDs')).ds.filter((c) => c.sdt === SDT2);
+  assert.strictEqual(ds.length, 1); assert.strictEqual(ds[0].phien, B); assert.strictEqual(ds[0].xacMinh, false);
+  assert.ok(!(await m.get('action=chatDoc&phien=' + B)).tin.some((x) => x.noiDung === 'may 1'), 'phía khách chưa đăng nhập vẫn chỉ đọc máy mình');
 });
 
 test('chat: thẻ đơn chỉ nhận đơn thật của khách đã đăng nhập; CRM hỏi khách đã đặt đơn chưa', async () => {
