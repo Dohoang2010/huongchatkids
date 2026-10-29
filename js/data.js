@@ -64,7 +64,6 @@ window.SITE = {
       '48112514210': 500,    // collagen 90 gói
       '50002678694': 3000,   // thảm ngải cứu
       '27809051612': 1000,   // cặp dầu gội & xả 400ml
-      '24465090622': 450,    // sữa tắm 300ml
       '24767149051': 200,    // NMN 60 viên
       'suaxanh-lotte': 3500, // sữa xanh Lotte – thùng 24 hộp 125ml
       'men-sysy': 350,
@@ -208,7 +207,6 @@ window.BRANDS = [
   { key: 'chera', label: 'Grace By Chera', origin: 'Hàn Quốc', color: '#F48FB1' },
   { key: 'clastive', label: 'Clastive', origin: 'Nhật Bản', color: '#455A64' },
   { key: 'kousa', label: 'Kousa', origin: 'Hàn Quốc', color: '#4FC3F7' },
-  { key: 'glutanex', label: 'Glutanex', origin: 'Hàn Quốc', color: '#1E88E5' },
   { key: 'rvblab', label: 'RVB LAB', origin: 'Ý', color: '#C2185B' },
   { key: 'meso', label: 'Meso', origin: 'Đan Mạch', color: '#C9A227' },
   { key: 'dermoioniq', label: 'Dermo Ioniq', origin: 'Pháp', color: '#00897B' },
@@ -241,7 +239,7 @@ window.NAV = [
     { title: 'Chăm sóc da', links: [['Kem chống nắng Hiskin 5in1 SPF50+', 'product.html?id=27734205778'], ['Serum RVB LAB Hyalu C+ 30ml', 'product.html?id=24015142248'], ['Kem dưỡng RVB LAB Hyalu C+ 30ml', 'product.html?id=26800350417'], ['Mặt nạ trẻ hoá NMN Kousa', 'product.html?id=24015583018'], ['Mặt nạ thạch lô hội Cure', 'product.html?id=57413220644']] },
     { title: 'Bộ chăm sóc chuyên sâu', links: [['Combo dưỡng da Hyalu C+', 'product.html?id=26900366084'], ['Cặp Meso bạc RVB LAB', 'product.html?id=29006040615'], ['Bộ đôi Meso Retinol siêu vi', 'product.html?id=28806784125'], ['Combo Meso vàng siêu vi', 'product.html?id=24329101823'], ['Cặp tái tạo phục hồi da Dermo Ioniq', 'product.html?id=25678530796']] },
     { title: 'Sức khoẻ & cơ thể', links: [['Viên uống Pure NMN 12000mg+', 'product.html?id=24767149051'], ['Men vi sinh phụ khoa Arravite', 'product.html?id=28902157429'], ['Super Collagen Alpha 90 gói', 'product.html?id=48112514210'], ['Nghệ nano Curcumin 365 Plus', 'product.html?id=49061985399'], ['Thảm ngải cứu trị liệu', 'product.html?id=50002678694']] },
-    { title: 'Tắm gội & làm đẹp', links: [['Sữa tắm dưỡng trắng Glutanex 300ml', 'product.html?id=24465090622'], ['Cặp dầu gội & xả Arganicare', 'product.html?id=27809051612'], ['Xịt phun sương Grace By Chera', 'product.html?id=51013054442'], ['Son filler RVB LAB Lip Explosion', 'product.html?id=57556697426'], ['Bột trắng răng Akiko Nhật Bản', 'product.html?id=56857599724']] } ] },
+    { title: 'Tắm gội & làm đẹp', links: [['Cặp dầu gội & xả Arganicare', 'product.html?id=27809051612'], ['Xịt phun sương Grace By Chera', 'product.html?id=51013054442'], ['Son filler RVB LAB Lip Explosion', 'product.html?id=57556697426'], ['Bột trắng răng Akiko Nhật Bản', 'product.html?id=56857599724']] } ] },
   { label: 'Thời trang', short: 'Thời trang', tiny: 'Thời trang', link: 'collections.html?cat=thoi-trang', columns: [
     { title: 'Áo lót MaBelle', links: [['Áo ngực chống từ MaBelle 5192', 'product.html?id=mabelle-5192'], ['Áo ngực chống hằn MaBelle 5790', 'product.html?id=mabelle-5790'], ['Áo ngực có gọng MaBelle 5038', 'product.html?id=mabelle-5038'], ['Áo lót liền mạch không gọng MaBelle 5997', 'product.html?id=mabelle-5997'], ['Áo lót không gọng MaBelle 5992', 'product.html?id=mabelle-5992']] },
     { title: 'Quần lót MaBelle', links: [['Quần lót su đúc kháng khuẩn MaBelle 6999', 'product.html?id=mabelle-6999'], ['Xem tất cả thời trang', 'collections.html?cat=thoi-trang']] } ] },
@@ -2062,61 +2060,6 @@ window.PRODUCTS = [
       "Thư giãn, hỗ trợ ngủ ngon"
     ],
     "usage": "Trải thảm, cắm điện và chọn mức nhiệt vừa với cơ thể, nằm 20–30 phút mỗi lần. Không dùng khi da có vết thương hở; rút điện sau khi dùng."
-  },
-  {
-    "id": "24465090622",
-    "name": "Sữa Tắm Dưỡng Trắng Body Glutanex 300ml Dưỡng Trắng Da Tức Thì Đem Lại Một Làn Da Trắng Sáng Và Ẩm Mượt Mềm Mại",
-    "short": "Sữa tắm dưỡng trắng Glutanex 300ml",
-    "brand": "glutanex",
-    "cat": "cho-me",
-    "ages": [],
-    "needs": [
-      "cho-me",
-      "lam-dep"
-    ],
-    "price": 1290000,
-    "oldPrice": 0,
-    "rating": 5,
-    "reviews": 1,
-    "sold": 10,
-    "stock": 0,
-    "cosmetic": true,
-    "shape": "bottle",
-    "color": "#1E88E5",
-    "weight": "Chai 300ml",
-    "origin": "Hàn Quốc",
-    "tags": [],
-    "image": "img/24465090622-h.jpg",
-    "thumb": "img/thumb/24465090622-h.jpg",
-    "images": [
-      "img/24465090622-h.jpg",
-      "img/24465090622-2.jpg",
-      "img/24465090622-3.jpg",
-      "img/24465090622-4.jpg",
-      "img/24465090622-5.jpg"
-    ],
-    "shopeeId": "24465090622",
-    "shopeeUrl": "https://shopee.vn/product/1192937802/24465090622",
-    "shopeeCategory": "Sắc Đẹp › Tắm & chăm sóc cơ thể › Xà phòng & sữa tắm",
-    "variants": [
-      {
-        "label": "1 chai",
-        "price": 1290000,
-        "oldPrice": 0
-      },
-      {
-        "label": "2 chai",
-        "price": 2580000,
-        "oldPrice": 0
-      }
-    ],
-    "desc": "Sữa tắm dưỡng trắng body Glutanex 300ml (Hàn Quốc) với glutathione, niacinamide, hyaluronic acid cùng chiết xuất rau má, hà thủ ô, hắc mai biển. Theo nhà sản xuất: làm sạch dịu nhẹ, dưỡng ẩm và giúp da sáng mịn hơn.",
-    "highlights": [
-      "Glutathione + Niacinamide + HA",
-      "Làm sạch dịu nhẹ, dưỡng ẩm",
-      "Chai 300ml dùng cho cả nhà"
-    ],
-    "usage": "Lấy lượng vừa đủ, tạo bọt và massage khắp cơ thể 1–2 phút rồi rửa sạch với nước."
   },
   {
     "id": "57556697426",
@@ -5291,8 +5234,7 @@ window.POSTS = [
     "image": "img/27734205778.jpg",
     "sanPham": [
       "27734205778",
-      "57903449970",
-      "24465090622"
+      "57903449970"
     ],
     "excerpt": "Thay đổi nội tiết, thiếu ngủ, ít uống nước khiến da mẹ sau sinh xỉn và khô. Gợi ý chu trình đơn giản cho da mặt, da body và lưu ý khi đang cho con bú.",
     "body": [
@@ -5309,9 +5251,7 @@ window.POSTS = [
       "![Kem Cell Happy Co 5in1 cho da mặt](img/57903449970-2.jpg)",
       "[[sp:57903449970]]",
       "## Da body khô ráp",
-      "Tắm nước ấm vừa, không quá nóng, tắm nhanh 5–10 phút. Sữa tắm Glutanex theo nhà sản xuất có glutathione, niacinamide, HA, làm sạch dịu nhẹ và dưỡng ẩm. Lấy lượng vừa đủ, massage 1–2 phút rồi xả sạch, lau khô và thoa dưỡng thể khi da còn hơi ẩm.",
-      "![Sữa tắm Glutanex 300ml](img/24465090622-2.jpg)",
-      "[[sp:24465090622]]",
+      "Tắm nước ấm vừa, không quá nóng, tắm nhanh 5–10 phút. Chọn sữa tắm dịu nhẹ, massage 1–2 phút rồi xả sạch, lau khô và thoa dưỡng thể khi da còn hơi ẩm.",
       "## Lưu ý an toàn khi đang cho con bú",
       "- Luôn thử sản phẩm mới trên vùng da nhỏ ở cổ tay hoặc sau tai trong 24 giờ trước khi dùng rộng.",
       "- Không thoa sản phẩm lên vùng ngực bé bú; rửa tay sạch trước khi bế, cho bé bú.",
@@ -6578,10 +6518,6 @@ window.QUA_TANG = {
           "bat": true
         },
         {
-          "id": "24465090622",
-          "bat": true
-        },
-        {
           "id": "57556697426",
           "bat": true
         },
@@ -6706,10 +6642,6 @@ window.QUA_TANG = {
           "bat": true
         },
         {
-          "id": "24465090622",
-          "bat": true
-        },
-        {
           "id": "57556697426",
           "bat": true
         },
@@ -6831,10 +6763,6 @@ window.QUA_TANG = {
         },
         {
           "id": "50002678694",
-          "bat": true
-        },
-        {
-          "id": "24465090622",
           "bat": true
         },
         {
@@ -7139,10 +7067,6 @@ window.QUA_TANG = {
         },
         {
           "id": "50002678694",
-          "bat": true
-        },
-        {
-          "id": "24465090622",
           "bat": true
         },
         {
