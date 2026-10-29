@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T01:49:56.880Z",
+  "updatedAt": "2026-10-29T02:06:25.588Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -441,7 +441,7 @@
       }
     },
     "goi-xa-boryeong-mud": {
-      "in": false,
+      "in": true,
       "variants": {
         "Gội + xả 500ml": true
       }
