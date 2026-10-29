@@ -48,7 +48,7 @@ window.SITE = {
     hoanDoi: 1.5,
     dongGoi: 100,                                          // gram thùng/hộp đóng gói cộng thêm mỗi đơn
     /* Cân nặng ước tính (gram) cho 1 đơn vị = phân loại đầu tiên. Phân loại khác quy đổi theo tỉ lệ giá (2 hộp ≈ 2 lần). */
-    gramTheoDanhMuc: { 'nuoc-ep': 1100, 'sua': 1000, 'hong-sam': 450, 'vitamin': 200, 'tang-can': 400, 'rong-bien': 500, 'thuc-pham': 600, 'do-an': 400, 'cho-me': 350 },
+    gramTheoDanhMuc: { 'nuoc-ep': 1100, 'sua': 1000, 'hong-sam': 450, 'vitamin': 200, 'tang-can': 400, 'rong-bien': 500, 'cham-soc-be': 300, 'thuc-pham': 600, 'do-an': 400, 'cho-me': 350 },
     gramTheoSP: {
       '26523206270': 12500,  // sữa tươi Norco – 1 thùng 12 hộp 1L
       '26060839019': 700,    // váng sữa Calciumore 30 gói
@@ -123,6 +123,7 @@ window.CATEGORIES = [
   { key: 'vitamin',   label: 'Vitamin & canxi',            icon: '💊', color: '#E0F5F2', desc: 'D3K2 nhỏ giọt, canxi Calciumore', tpcn: true, image: 'img/thumb/42878618667.jpg' },
   { key: 'tang-can',  label: 'Ăn ngon, tăng cân & tiêu hoá', icon: '🍯', color: '#EEF8E6', desc: 'Gạc hươu Sumo, men vi sinh Biostime', tpcn: true, image: 'img/thumb/26156646705.jpg' },
   { key: 'rong-bien', label: 'Rong biển & ăn dặm',        icon: '🍙', color: '#FFF8E1', desc: 'Sung Gyung, Busan – rắc cơm, trộn cơm', tpcn: false, image: 'img/thumb/45462512687.jpg' },
+  { key: 'cham-soc-be', label: 'Chăm sóc bé',              icon: '🛁', color: '#FDEBF3', desc: 'Dung dịch vệ sinh Hexacare cho bé gái', tpcn: false, image: 'img/thumb/hexacare-be-gai-bia.jpg' },
   { key: 'thuc-pham', label: 'Thực phẩm gia đình',        icon: '🍎', color: '#FFEBEE', desc: 'Táo đỏ Hotan, granola Nhật Bản', tpcn: false, image: 'img/thumb/28467224687.jpg' },
   { key: 'do-an',     label: 'Đồ ăn & ăn vặt',            icon: '🍱', color: '#FFF1E0', desc: 'Bò xuyên tiêu, cơm cháy, lợn đen gác bếp', tpcn: false, image: 'img/thumb/bo-xuyen-tieu.jpg' },
   { key: 'thoi-trang', label: 'Thời trang', icon: '👗', color: '#FDEBF1', desc: 'Đồ lót MaBelle mỏng nhẹ, an toàn cho da', tpcn: false, image: 'img/thumb/mabelle-6999-h.jpg' },
@@ -162,7 +163,7 @@ window.TRANG_DM = [
     mau: { nen: '#FFF9F3', phu: '#FFE3D3', nhan: '#F26A3D', chu: '#292524' },
     gioiThieu: 'Các sản phẩm đang có quà tặng, giờ vàng giảm giá hoặc combo tiết kiệm trên huongchatkids.vn. Quà và mức giảm được web tự áp khi mẹ thêm sản phẩm vào giỏ.',
     seoTieuDe: 'Ưu đãi, quà tặng và khuyến mãi đang diễn ra – Hương Chất Kids' },
-  { key: 'be', slug: 'danh-cho-be', ten: 'Sản phẩm dành cho bé', nhan: 'Dành cho bé', icon: '🧸', loc: { cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien'], them: ['hexacare-be-gai'] },
+  { key: 'be', slug: 'danh-cho-be', ten: 'Sản phẩm dành cho bé', nhan: 'Dành cho bé', icon: '🧸', loc: { cat: ['nuoc-ep', 'sua', 'hong-sam', 'vitamin', 'tang-can', 'rong-bien', 'cham-soc-be'] },
     mau: { nen: '#F1F8FC', phu: '#B8DDF2', nhan: '#4D94C4', chu: '#243746' },
     gioiThieu: 'Nước ép, sữa, hồng sâm, vitamin, canxi và rong biển nhập khẩu từ Hàn Quốc, Úc, New Zealand. Mỗi sản phẩm ghi rõ độ tuổi nhà sản xuất khuyến nghị, mẹ chọn theo tuổi của con hoặc nhắn chuyên gia dinh dưỡng để được tư vấn miễn phí.',
     con: 'danhMuc', theoTuoi: true, seoTieuDe: 'Dinh dưỡng cho bé chính hãng Hàn Quốc theo độ tuổi – Hương Chất Kids' },
@@ -229,8 +230,8 @@ window.BRANDS = [
 /* Menu chính (desktop mega menu + menu mobile). links: [nhãn, đường dẫn]; needs/ages: key trong NEEDS/AGES */
 /* ===ADMIN:NAV=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.NAV = [
-  { label: 'Dành cho bé', short: 'Dành cho bé', tiny: 'Cho bé', link: 'collections.html?cat=nuoc-ep,sua,hong-sam,vitamin,tang-can,rong-bien', columns: [
-    { title: 'Danh mục cho bé', links: [['🧃 Nước ép & nước dinh dưỡng', 'collections.html?cat=nuoc-ep'], ['🥛 Sữa cho bé', 'collections.html?cat=sua'], ['🌿 Hồng sâm & đề kháng', 'collections.html?cat=hong-sam'], ['💊 Vitamin & canxi', 'collections.html?cat=vitamin'], ['🍯 Ăn ngon, tăng cân & tiêu hoá', 'collections.html?cat=tang-can'], ['🍙 Rong biển & ăn dặm', 'collections.html?cat=rong-bien']] },
+  { label: 'Dành cho bé', short: 'Dành cho bé', tiny: 'Cho bé', link: 'collections.html?cat=nuoc-ep,sua,hong-sam,vitamin,tang-can,rong-bien,cham-soc-be', columns: [
+    { title: 'Danh mục cho bé', links: [['🧃 Nước ép & nước dinh dưỡng', 'collections.html?cat=nuoc-ep'], ['🥛 Sữa cho bé', 'collections.html?cat=sua'], ['🌿 Hồng sâm & đề kháng', 'collections.html?cat=hong-sam'], ['💊 Vitamin & canxi', 'collections.html?cat=vitamin'], ['🍯 Ăn ngon, tăng cân & tiêu hoá', 'collections.html?cat=tang-can'], ['🍙 Rong biển & ăn dặm', 'collections.html?cat=rong-bien'], ['🛁 Chăm sóc bé', 'collections.html?cat=cham-soc-be']] },
     { title: 'Mẹ hay chọn', links: [['Nước ép Lotte hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép Lotte Tăng Cân', 'product.html?id=25632276959'], ['Vitamin D3K2 Pure Vitality', 'product.html?id=42878618667'], ['Canxi Calciumore (váng sữa)', 'product.html?id=26060839019'], ['Hồng sâm ChuChu', 'product.html?id=22644617070'], ['Gạc hươu non Sumo', 'product.html?id=26156646705'], ['Rong biển Sung Gyung', 'product.html?id=41002695070']] },
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'tieu-hoa', 'tri-nao'] },
     { title: 'Theo độ tuổi', ages: ['6-12m', '1-3y', '3-6y', '6-12y', '12-18y'] } ] },
@@ -4259,7 +4260,7 @@ window.PRODUCTS = [
     "name": "Dung Dịch Vệ Sinh Hexacare Cho Bé Gái 3–12 Tuổi pH 4.5 – Chiết Xuất Xô Thơm – Sản Xuất Tại Pháp 200ml",
     "short": "Dung dịch vệ sinh Hexacare bé gái 200ml",
     "brand": "hexacare",
-    "cat": "cho-me",
+    "cat": "cham-soc-be",
     "ages": [
       "3-6y",
       "6-12y"
