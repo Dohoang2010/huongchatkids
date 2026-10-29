@@ -157,6 +157,8 @@ test('chat: khách gửi → tự trả lời + báo shop; nhân viên trả l�
   const m = taoMay(); const ph = 'cthunghiem000001';
   assert.strictEqual((await m.get('action=chatGui&phien=abc&noiDung=xin chao')).ok, false, 'phiên không hợp lệ');
   assert.strictEqual((await m.get('action=chatGui&phien=' + ph + '&noiDung=')).ok, false, 'tin rỗng');
+  assert.strictEqual((await m.get('action=chatGui&phien=' + ph + '&noiDung=chao')).code, 'CAN_THONG_TIN', 'chưa có tên + SĐT thì không chat được');
+  assert.strictEqual((await m.get('action=chatGui&phien=' + ph + '&noiDung=chao&ten=A&sdt=' + SDT)).code, 'CAN_THONG_TIN', 'tên quá ngắn');
   const g = await m.get('action=chatGui&phien=' + ph + '&noiDung=' + encodeURIComponent('Shop ơi bé 2 tuổi uống gì để tăng cân?') + '&ten=Mẹ Bin&sdt=' + SDT);
   assert.strictEqual(g.ok, true, JSON.stringify(g));
   let doc = await m.get('action=chatDoc&phien=' + ph);
@@ -171,7 +173,7 @@ test('chat: khách gửi → tự trả lời + báo shop; nhân viên trả l�
   const ds = await m.qt('action=qtChatDs'); assert.strictEqual(ds.ok, true);
   assert.ok(ds.ds.some((c) => c.phien === ph && c.sdt === SDT));
   // giới hạn 40 tin / 10 phút mỗi phiên
-  const kq = []; for (let i = 0; i < 42; i++) kq.push(await m.get('action=chatGui&phien=cthunghiem000002&noiDung=tin' + i));
+  const kq = []; for (let i = 0; i < 42; i++) kq.push(await m.get('action=chatGui&phien=cthunghiem000002&ten=Me%20Thu&sdt=' + SDT2 + '&noiDung=tin' + i));
   assert.ok(kq.slice(0, 40).every((x) => x.ok)); assert.strictEqual(kq[41].ok, false, 'tin thứ 42 bị chặn');
 });
 
@@ -183,11 +185,11 @@ test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin m�
   assert.strictEqual((await m.get('action=chatApi&key=' + KEY + '&viec=webhook&url=' + encodeURIComponent('https://crm.example.com/hook'))).webhook, 'https://crm.example.com/hook');
   const hook = []; datGoiChoThu((ds) => ds.map((y) => { if (/crm\.example/.test(y.url)) hook.push(y); return { ma: 200, noiDung: '{}', dau: {} }; }));
   assert.strictEqual((await m.get('action=chatApi&key=sai&viec=ds')).ok, false, 'sai khoá');
-  await m.get('action=chatGui&phien=' + ph + '&noiDung=' + encodeURIComponent('Shop ơi') + '&ten=Mẹ Na');
+  await m.get('action=chatGui&phien=' + ph + '&noiDung=' + encodeURIComponent('Shop ơi') + '&ten=Mẹ Na&sdt=' + SDT);
   const h1 = hook.map((y) => JSON.parse(y.body)).find((b) => b.su === 'tin_moi');
   assert.ok(h1 && h1.phien === ph && h1.tin.noiDung === 'Shop ơi' && h1.tinThem.length >= 1, 'webhook tin khách + tin tự trả lời');
   assert.strictEqual(hook[0].headers['x-hck-chat-key'], KEY, 'webhook kèm khoá');
-  await m.get('action=chatGui&phien=' + ph + '&dinhKem=' + encodeURIComponent(JSON.stringify({ loai: 'sp', id: '123', ten: 'Nước ép <b>Lotte</b>', gia: 448000, anh: 'javascript:x' })));
+  await m.get('action=chatGui&phien=' + ph + '&ten=' + encodeURIComponent('Mẹ Na') + '&sdt=' + SDT + '&dinhKem=' + encodeURIComponent(JSON.stringify({ loai: 'sp', id: '123', ten: 'Nước ép <b>Lotte</b>', gia: 448000, anh: 'javascript:x' })));
   const dkSp = hook.map((y) => JSON.parse(y.body)).filter((b) => b.su === 'tin_moi').pop().tin.dk;
   assert.deepStrictEqual([dkSp.ten, dkSp.gia, dkSp.anh], ['Nước ép bLotte/b', 448000, undefined], 'thẻ sản phẩm kèm tên + giá, bỏ ảnh lạ');
   const ds = await m.get('action=chatApi&key=' + KEY + '&viec=ds'); assert.ok(ds.ds.some((c) => c.phien === ph && c.ten === 'Mẹ Na'));
@@ -203,9 +205,9 @@ test('chat API cho CRM: khoá, webhook có khoá + tin nhân viên, lấy tin m�
 
 test('chat: cùng SĐT nhiều máy → 1 cuộc chat; trả lời ở phiên cũ tới máy mới; khách đăng nhập thấy đủ, người lạ không đọc được', async () => {
   const m = taoMay(); const A = 'cmaycu0000000001', B = 'cmaymoi000000001', L = 'cnguoila00000001';
-  await m.get('action=chatGui&phien=' + A + '&noiDung=tin%20may%20cu&sdt=' + SDT);
-  await m.get('action=chatGui&phien=' + B + '&noiDung=tin%20may%20moi&sdt=' + SDT);
-  await m.get('action=chatGui&phien=' + L + '&noiDung=khach%20khac&sdt=' + SDT2);
+  await m.get('action=chatGui&phien=' + A + '&noiDung=tin%20may%20cu&ten=Me%20Bin&sdt=' + SDT);
+  await m.get('action=chatGui&phien=' + B + '&noiDung=tin%20may%20moi&ten=Me%20Bin&sdt=' + SDT);
+  await m.get('action=chatGui&phien=' + L + '&noiDung=khach%20khac&ten=Me%20Khac&sdt=' + SDT2);
   const ds = (await m.qt('action=qtChatDs')).ds;
   assert.strictEqual(ds.filter((c) => c.sdt === SDT).length, 1, 'cùng SĐT = 1 cuộc chat');
   assert.strictEqual(ds.find((c) => c.sdt === SDT).phien, B, 'mã phiên = máy khách nhắn gần nhất');

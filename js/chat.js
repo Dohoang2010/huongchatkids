@@ -35,7 +35,20 @@
   const luu = () => store.set(KT, tin.filter((x) => !x.tam).slice(-200));
   const gioVN = (t) => { const d = new Date(t + 7 * 36e5); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); };
   const tk = () => { const x = MC.Session && MC.Session.get(); return (x && x.token) || ''; };   // đã đăng nhập: máy chủ gom mọi cuộc chat cùng SĐT
-  const khach = () => { const c = (MC.Customer && MC.Customer.get()) || {}, s = MC.Session && MC.Session.get(), k = (s && s.kh) || {}; return { ten: k.ten || c.name || '', sdt: (MC.Session && MC.Session.phone()) || c.phone || '' }; };
+  /* Họ tên + SĐT bắt buộc trước khi chat: đã đăng nhập → lấy từ tài khoản; chưa → khách tự nhập (lưu KK trên máy) */
+  const KK = 'mc_chat_kh';
+  const khach = () => { const s = MC.Session && MC.Session.get(), k = (s && s.kh) || {}, n = store.get(KK, {}) || {};
+    return s ? { ten: String(k.ten || n.ten || '').trim(), sdt: MC.Session.phone(), dn: true } : { ten: String(n.ten || '').trim(), sdt: n.sdt || '', dn: false }; };
+  const duKh = () => { const k = khach(); return k.ten.length >= 2 && MC.phoneOk(k.sdt); };
+  function veKh() {
+    const box = document.getElementById('chatBox'), f = document.getElementById('chatKh'); if (!box || !f) return;
+    const du = duKh(); box.classList.toggle('chat-box--kh', !du); f.hidden = du; if (du) return;
+    const k = khach(), c = (MC.Customer && MC.Customer.get()) || {};
+    f.innerHTML = `<b>Chào mẹ 👋</b><p>${k.dn ? 'Mẹ cho Hương xin họ tên để tiện xưng hô nhé.' : 'Mẹ nhập họ tên và số điện thoại để bắt đầu chat với Hương nhé. Hương dùng số này để gọi lại tư vấn khi cần.'}</p>
+      <label>Họ tên<input name="ten" maxlength="60" autocomplete="name" required value="${esc(k.ten || c.name || '')}"></label>
+      <label>Số điện thoại<input name="sdt" type="tel" inputmode="tel" maxlength="13" autocomplete="tel" required ${k.dn ? 'readonly' : ''} value="${esc(k.sdt || c.phone || '')}"></label>
+      <small class="chat-kh__loi" aria-live="polite"></small><button type="submit">Bắt đầu chat</button>`;
+  }
 
   /* ---- Hiển thị đính kèm ---- */
   function theDK(dk, toi) {
@@ -143,6 +156,7 @@
   const baoLoi = (msg) => { tin.push({ ma: 'loi' + Date.now(), tu: 'he-thong', noiDung: msg, luc: Date.now(), daXem: true }); };
   async function gui(nd, dk, tamDK, tuDong) {
     nd = String(nd || '').trim(); if ((!nd && !dk) || dangGui) return;
+    if (!duKh()) { veKh(); return; }
     if (!phien) { phien = taoPhien(); store.set(KP, phien); }
     dangGui = true;
     const tam = { ma: 'tam' + Date.now(), tu: 'khach', noiDung: nd, luc: Date.now(), tam: true, dk: tamDK || dk };
@@ -159,7 +173,7 @@
       const td = tuDong || (dk ? traLoiTuDong(dk.loai, dk) : '');
       const r = await loyaltyApi('chatGui', { phien, noiDung: nd, dinhKem: dk ? JSON.stringify(dk) : '', tuDong: String(td || '').slice(0, 1800), ten: k.ten, sdt: k.sdt, token: tk(), trang: location.pathname.split('/').pop() + location.search }, 20000);
       tin = tin.filter((x) => x !== tam);
-      if (r && r.ok) (r.tin || []).forEach((x) => { x.daXem = true; tin.push(x); }); else baoLoi((r && r.msg) || 'Chưa gửi được, mẹ thử lại nhé');
+      if (r && r.ok) (r.tin || []).forEach((x) => { x.daXem = true; tin.push(x); }); else if (r && r.code === 'CAN_THONG_TIN') { store.set(KK, {}); veKh(); } else baoLoi((r && r.msg) || 'Chưa gửi được, mẹ thử lại nhé');
     } catch (e) {
       tin = tin.filter((x) => x !== tam);
       baoLoi(/Failed to fetch|NetworkError|không phản hồi|kết nối/i.test(e.message) ? 'Mạng đang chập chờn, tin chưa gửi được. Mẹ thử lại hoặc nhắn Zalo cho Hương nhé.' : e.message);
@@ -190,7 +204,7 @@
   function moKhung(bat) {
     mo = bat; const k = document.getElementById('chatBox'); if (!k) return;
     k.classList.toggle('is-mo', bat); document.body.classList.toggle('chat-dang-mo', bat);
-    if (bat) { tin.forEach((x) => { x.daXem = true; }); luu(); veTin(); chamDo(); docMoi(); setTimeout(() => { const i = document.getElementById('chatO'); if (i && window.innerWidth > 768) i.focus(); }, 150); }
+    if (bat) { veKh(); tin.forEach((x) => { x.daXem = true; }); luu(); veTin(); chamDo(); docMoi(); setTimeout(() => { const i = document.getElementById('chatO'); if (i && window.innerWidth > 768) i.focus(); }, 150); }
     else { bang = ''; veBang(); }
     lap();
   }
@@ -203,6 +217,7 @@
       <section class="chat-box" id="chatBox" aria-label="Chat với Hương Chất Kids">
         <header class="chat-dau"><img src="${esc(SITE.logo || 'img/logo.png')}" alt="" onerror="this.style.display='none'"><div><b>${esc(CHAT_CFG.ten)}</b><small><i class="chat-cham"></i>${esc(CHAT_CFG.phuDe)}</small></div>
           <button type="button" class="chat-dong" data-chat-dong aria-label="Thu nhỏ khung chat">×</button></header>
+        <form class="chat-kh" id="chatKh" hidden></form>
         <div class="chat-tin" id="chatTin"></div>
         <div class="chat-bang" id="chatBang" hidden></div>
         <div class="chat-cong">
@@ -227,6 +242,12 @@
       if (n) { const c = CHAT_CFG.nhanh[Number(n.dataset.chatNhanh)]; if (c[2] === '#don') return moBang('don'); gui(c[2], null, null, c[3] ? traLoiTuDong(c[3]) : ''); }
     });
     w.addEventListener('input', (e) => { if (e.target.id === 'chatTimSP') veDsSP(e.target.value); });
+    document.getElementById('chatKh').addEventListener('submit', (e) => {
+      e.preventDefault(); const f = e.target, ten = f.ten.value.trim().replace(/\s+/g, ' '), sdt = f.sdt.value.replace(/[\s.-]/g, '');
+      const loi = ten.length < 2 ? 'Mẹ nhập họ tên giúp Hương nhé' : !MC.phoneOk(sdt) ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : '';
+      if (loi) { f.querySelector('.chat-kh__loi').textContent = loi; return; }
+      store.set(KK, { ten, sdt }); veKh(); const i = document.getElementById('chatO'); if (i) i.focus();
+    });
     document.getElementById('chatTep').addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; chonTep(f); });
     const o = document.getElementById('chatO');
     const caoO = () => { o.style.height = 'auto'; o.style.height = Math.min(110, o.scrollHeight) + 'px'; };

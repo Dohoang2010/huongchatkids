@@ -3864,6 +3864,8 @@ function apiChatGui(p) {
   if (!demGioiHan('chat_' + phien, 40, 600)) return { ok: false, msg: 'Mẹ gửi nhanh quá, chờ một chút rồi gửi tiếp nhé' };
   var phKh = p.token ? phienKhach(p.token) : null;   // khách đã đăng nhập: dùng đúng SĐT tài khoản
   var sdt = chuanSdt(phKh && phKh.sdt ? phKh.sdt : p.sdt), kh = { ten: String(p.ten || '').slice(0, 60), sdt: sdtHopLe(sdt) ? sdt : '', trang: String(p.trang || '').slice(0, 120) };
+  /* Bắt buộc họ tên + SĐT (đăng nhập: SĐT tài khoản) – CRM / quản trị luôn biết đang chat với ai */
+  if (!kh.sdt || String(kh.ten).trim().length < 2) return { ok: false, code: 'CAN_THONG_TIN', msg: 'Mẹ nhập họ tên và số điện thoại để chat với Hương nhé' };
   return voiKhoa(function () {
     var ds = chatDocHet_().filter(function (r) { return String(r[1]) === phien; });
     var cuoi = ds.length ? new Date(ds[ds.length - 1][0]).getTime() : 0;
