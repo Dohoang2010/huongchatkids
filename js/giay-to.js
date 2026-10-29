@@ -33,6 +33,35 @@
     'avca-body-tone-up': [['Hồ sơ công bố – AVCA Body Tone-Up Serum', d('16VgNDpOb7fgB5-7PGm1avTVf09RKbLWb')], ['Giấy chứng nhận lưu hành tự do (CFS)', d('1Xo_Tj37pKs2UVyLd4I0m3_AcU2nxK2Hm')]],
     '28902157429': [['Hồ sơ công bố – Men Arravite tím nhạt', d('1CMs5KxWK6Jvr8q1_BaEPpvGMa6NgHcWn')], ['Hồ sơ công bố – Men Arravite tím đậm', d('1baL2A4PRbFobmSppMcbz1JajemyBcYkj')], ['Phiếu kiểm nghiệm – Men 10 tỷ lợi khuẩn', d('1tH7retWrFDEStG7sNAiEhhd67h39YOkL')]],   // men phụ khoa Arravite
     '27734205778': [['Hồ sơ công bố – Kem chống nắng Hiskin', d('14FAjmcSe9J-y0ghuyKpymYT_uvMPdW-M')], ['Thông tin sản phẩm Hiskin', d('1O7auvkLH8324ddJ3o41skV6q9Irx64Gx')]],
+    /* ---- Thư mục tổng "GT SẢN PHẨM HCG" (29/10/2026) ---- */
+    'cap-kem-nen-eclat': [['Hồ sơ công bố – Éclat du Teint After Care Sun Cream', d('1bX_k19W5DHkaCPAqNq_piZIc1GpMcYmy')], ['Hồ sơ công bố – Glow Pot No.17 Max Mirror BB', d('1mUwbqU97IB9toQGZET7-Xx9z8tP_ARZT')]],
+    '45462512687': [['Hồ sơ công bố – Rong biển trộn cơm', d('1nPCsT1jNNZDLyJXygJeU8d4YrkJn3A_3')]],   // rong biển Busan
+    '49061985399': [['Công bố – Nghệ 365 Plus', d('10RkZt066vYyVn9j47CH-Lf2UB13JF7cL')], ['Kết quả thử nghiệm – Nghệ tép', d('1C_f42crqJgiTphPZtXzZgVsAzBezihLu')]],
+    '28467224687': [['Hồ sơ công bố – Táo đỏ Hoàng gia', d('1kAyO_2H7gXorIz8MJsg39ycose-4rItb')], ['Kiểm định – Táo đỏ Hoàng gia', d('1YBFmrjyby9fm702T9_PaEwtgV9LkLqZ8')]],
+    '26523206270': [['Hồ sơ công bố – Sữa Norco', d('1lFvPQVwYrQk2Z-0ShEm-EJXYAf_xCaKF')], ['Kiểm nghiệm – Sữa nước Norco', d('1sfP23_KTynyRMF33JQIC7-ucTNUVmNXV')], ['Đính chính hạn sử dụng – Sữa Norco', d('1_enCaZtMPJyEp-20SEHJEgmrWsSMWJmn')]],
+    '13899935993': [['Hồ sơ công bố – Lotte Kid Dê 760g', d('132pOglbMO0Gcap4rpQo80dhPjJqeAOyv')], ['Kiểm nghiệm – Lotte Kid Goat A+ (COA)', d('1cowT-pO1fzrLzGH2E8Ys2Kc6HQX6i2BK')]],
+    '19682441455': [['Hồ sơ công bố – Biostime Dê số 1', d('1M7LgvFQl---ZhUuBxfFJthVjKpZeSjzW')], ['Hồ sơ công bố – Biostime Dê số 2', d('1ZDxWF3EujfuYab9h9vYSQBZgNGwm0frN')], ['Hồ sơ công bố – Biostime Dê số 3', d('1aN052ZueCDmUS3q31rJok9P4DM30TjqQ')], ['Kiểm nghiệm – Dê số 1', d('1QzrFmdOnlNFSJIB9HvQJndW2gvwRwLjY')], ['Kiểm nghiệm – Dê số 2', d('1xZ-DqiD8N4_IJctuFXZwqdCPj7_7Jpnv')], ['Kiểm nghiệm – Dê số 3', d('1x77i-UEQ-GO6Qa9sA6pPJlpOF2U0d1bH')]],
+    '57903449970': [['Phiếu công bố – Cell Happy Co Inorganic Tone-up Sun Cream', d('1zoF2sRT6VNMqxFPYdEPwP0iMDLNDx52r')], ['Kiểm nghiệm SPF – Cell Happy Co', d('1EsZy12wc3uiffT_melW21sy6HcJ2bz9A')]],
+    '27355720019': [['Tự công bố – Nước hồng sâm Kid', d('1Qw-yIaKEnLKVu5UebM3BgqxluO3s0Qd9')]],
+    '51013054442': [['Hồ sơ công bố – Grace By Chera Snow White Tone-Up Booster', d('1ysfPXz_ighCfmzI9aAsyBh0vcrjZDksQ')]],
+    '24767149051': [['Bản công bố – Pure NMN 12000mg+', d('1lTbFz0nSYaoJaPEtKis-7aESwQqWaDvk')], ['Phiếu kiểm nghiệm – NMN Pure', d('1t43-S_vqrspMN4vuCPyzAzzMFUeIRz-5')], ['Giấy chứng nhận lưu hành tự do (CFS) – NMN Pure', d('1ZZOzqdG_wS8mryWxlZTapo7oHvX55wad')], ['Công bố – NMN Regene', d('1kY4j-YBDyTldzLfa1oyW9i17KcElQyu4')], ['Phiếu kiểm nghiệm – NMN Regene', d('1Xo7Mk4CYf0mexkgkAn-wrMmkSbWip2aG')]],
+    '57556697426': [['Hồ sơ công bố – Lip Explosion (filler không tiêm)', d('1ZtMazNydB84wVjuPtHBkaAtsyg80EBwX')]],
+    '24015142248': [['Giấy phép lưu hành – Hyalu C+ Tinh chất làm trắng, căng bóng', d('1UcMIhV8R-FN4Lk5MK1kT6xmQQTd18g_1')]],
+    'drvita-ecm-serum': [['Phiếu công bố – DayCell Dr.Vita ECM Serum', d('1iomp2baGHoGOJM1D4EJfmRBf3N4q4QdO')], ['Báo cáo thử nghiệm kích ứng da', d('1xvYd8vP3sN8tHF-z1PzkpZgJObOrhau6')]],
+    'daycell-nad-white-cream': [['Phiếu công bố – DayCell Medi Lab NAD+ White Cream', d('19Z2uXWpMIH5vIsC3rrrUj1GQxAmLQcM6')], ['Báo cáo thử nghiệm kích ứng da', d('1O-AqIuCkyo4KHAF0T0PeMPEB5tkZOyFs')]],
+    '24764883120': [['Công bố – Peel Anubis', d('1A9IVoqyczmxycaAKjZ2XMm1nmSIRtNIJ')], ['Giấy công bố – Peel Anubis', d('1ObveHPX4jlSNM7Uo5Nm5xn-BjKAzr08P')]],
+    '24015583018': [['Công bố – Mặt nạ NMN', d('1gTGvbTtBKVgQnvMtYHJYMEKDOYYjDoHk')]],
+    '26800350417': [['Giấy phép lưu hành – Hyalu C+ Kem dưỡng', d('1vEPrZST0zDHfTsXoGLIBZ8I1Nx1FuBOG')]],
+    '25678530796': [['Công bố – The Concentrate Smoothing & Plumping (tím)', d('1CKIOePXVLMA8dDIXES8tWNfkZCt1tiCA')], ['Công bố – The Concentrate Illuminator & Rebalancing (xanh)', d('1_LcjgmeNIqWGKe-80L49s09UdeDeTicy')], ['Công bố – Dermo-Active Cream (đen)', d('15Pdc2x_4VwIgh6XyWUnLcLxSoih9CwuN')], ['Công bố – The Cream Soothing & Restorative (vàng)', d('1S0b7NtO_MU96hBXzy-oW06gndVx6A7Wi')]],
+    '29006040615': [['Hồ sơ công bố – Meso Fill serum Fill&Peel', d('1uONrpaF3nXrA4Uzr-ZTLYO_EP7i0HoHL')], ['Hồ sơ công bố – Meso Fill kem Plump&Lift', d('13L-DW65D0chk9b7tY_JDCLv3uAgyBi_2')]],
+    '27809051612': [['Hồ sơ công bố – Arganicare Biotin Shampoo', d('1OjI3wZKC5HFZ5bb1p9kUKGJda6-aSCJH')], ['Hồ sơ công bố – Arganicare Biotin Conditioner', d('1PRDxYGdSMl8w6V9uhSZoQsst8-81PpRX')], ['Giấy chứng nhận lưu hành tự do (CFS)', d('1YUgxi4B3hZfcZe_8DogAYHksU7jUnImL')], ['Kiểm nghiệm dầu gội', d('12n8MJ97cbdtJtS9k7L2Q6YVFIOmhaokp')]],
+    '24329101823': [['Phiếu công bố – Meso Fill kem chống nắng SPF50', d('1AVLRLIoACnHXbmJUofzNYyttualpxIDk')], ['Phiếu công bố – Sữa rửa mặt Double Cleansing 2 in 1', d('15jC56oSjB5Rs57YjwNH-MStgw81T6pMS')], ['Phiếu công bố – Meso Fill kem mắt', d('1h8rkIsz55rPNOqJXSxB4M7Mmg4dd-Jex')]],   // combo Meso vàng
+    '26900366084': [['Giấy phép lưu hành – Hyalu C+ Kem dưỡng', d('1vEPrZST0zDHfTsXoGLIBZ8I1Nx1FuBOG')], ['Giấy phép lưu hành – Hyalu C+ Tinh chất', d('1UcMIhV8R-FN4Lk5MK1kT6xmQQTd18g_1')], ['Giấy phép lưu hành – Hyalu C+ Dung dịch cân bằng (toner)', d('1geJkyqauzOPnGXTsOxV1E5FlR2pdkrmC')]],
+    '28806784125': [['Công bố – Retinol Dream', d('12UmmAjACaWDWKGzc98zQE_6jzdvLuFGq')], ['Công bố – 3D Eye Cream', d('1-wdgOmDUmUcJBjVWPtYDV_bVf6wOHtZJ')], ['Giấy chứng nhận lưu hành tự do', d('1IqbX2jRJCU6WH9dM4mNvc--SGvw1ubVO')]],
+    'suaxanh-lotte': [['Hồ sơ tự công bố – Sữa Pasteur Organic', d('1Tzt_2p6jnAnOtDFU3Aiz3DfSZNdHi9tR')], ['Phiếu kiểm nghiệm', d('13OJ2Yz7chUZHfTLvB-OZzO-iLyBlfe84')], ['Chứng nhận hữu cơ – nhà máy Pasteur', d('1QH67ZapPF8sFLdSldf_F0YK44gegIQ6T')]],
+    'mien-ga-cf': [['Tự công bố – Miến gà', d('11JziccowLxVJf7GntD_q_ZmrsdePvSyf')]],
+    'bo-xuyen-tieu': [['Tự công bố – Bò xuyên tiêu', d('1EA6EHN7wAOTc4DjEQPmlPrSZ2tq0Y_IT')], ['Giấy kiểm nghiệm', d('1RYtYnIhgLmAj4gkZeIbrCkzgGKQnnSZr')], ['Kết quả kiểm nghiệm', d('1OGFy6dNtbI7Rarljy5f7AbbOBwq2pR7o')]],
+    'lon-den-khoi-mo': [['Hồ sơ tự công bố – Lợn đen khói mơ Vua Đỉnh Vị', d('10TnqxWU8Mv8YAei_by0dqy0-dW7RVEaM')]],
     'men-sysy': [['Hồ sơ công bố – Men Sysy nâu', d('1g2ieGmkDIBvhOmt1--L4PXCx7BOQ5l_5')], ['Hồ sơ công bố – Men Sysy xanh', d('1VDnvPXcEcRjr5iFR5BvT0Rj4UXHX2AQA')]],
   };
 })();
