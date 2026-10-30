@@ -95,6 +95,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   <meta property="og:type" content="${loai || 'website'}"><meta property="og:site_name" content="Hương Chất Kids">
   <meta property="og:title" content="${esc(tieuDe)}"><meta property="og:description" content="${esc(moTa)}">
   <meta property="og:url" content="${esc(url)}">${anhOg ? `<meta property="og:image" content="${esc(tuyetDoi(anhOg))}">` : ''}
+  <meta name="twitter:card" content="${anhOg ? 'summary_large_image' : 'summary'}"><meta name="twitter:title" content="${esc(tieuDe)}"><meta name="twitter:description" content="${esc(moTa)}">${anhOg ? `<meta name="twitter:image" content="${esc(tuyetDoi(anhOg))}">` : ''}
   ${them || ''}`;
   }
 
@@ -320,12 +321,13 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     else if (t) { ten = 'Sản phẩm cho bé ' + t.label; moTa = 'Sản phẩm phù hợp bé ' + t.label + '. '; canon += '?age=' + encodeURIComponent(t.key); }
     else if (tag && !cat.length && !need.length && !age.length && !brand.length) { ten = tag; canon += '?tag=' + encodeURIComponent(tag); }
     const loc = goc || (!q && !km && (c || b || n || t || tag || (!cat.length && !need.length && !age.length && !brand.length)));
-    moTa = goc ? gon(DM.gioiThieu || DM.ten, 158) : gon(moTa + ds.length + ' sản phẩm chính hãng tại Hương Chất Kids: ' + ds.slice(0, 4).map((p) => p.short || p.name).join(', ') + '. Giao nhanh, chuyên gia dinh dưỡng tư vấn miễn phí.', 158);
+    moTa = goc ? gon(DM.seoMoTa || DM.gioiThieu || DM.ten, 160) : gon(moTa + ds.length + ' sản phẩm chính hãng tại Hương Chất Kids: ' + ds.slice(0, 4).map((p) => p.short || p.name).join(', ') + '. Giao nhanh, chuyên gia dinh dưỡng tư vấn miễn phí.', 158);
     const tieuDe = goc && DM.seoTieuDe ? DM.seoTieuDe : ten === 'Tất cả sản phẩm' ? 'Tất cả sản phẩm dinh dưỡng cho bé – Hương Chất Kids' : ten + ' – Hương Chất Kids';
     let html = mau('collections.html');
-    html = thayDauSEO(html, dauTrang({ tieuDe, moTa, url: canon, them: (loc ? '' : '<meta name="robots" content="noindex, follow">\n  ') +
+    html = thayDauSEO(html, dauTrang({ tieuDe, moTa, url: canon, anhOg: ds[0] && (ds[0].image || (ds[0].images || [])[0] || ds[0].thumb), them: (loc ? '' : '<meta name="robots" content="noindex, follow">\n  ') +
       ld(danhSachSP(d, ds, canon)) + '\n  ' + ld(vun(DM && !goc ? [['Trang chủ', GOC + '/'], [DM.nhan, GOC + '/' + DM.slug], [ten, canon]] : [['Trang chủ', GOC + '/'], [goc ? DM.nhan : ten, canon]])) }));
     html = html.replace(/(<h1 class="page-title" id="title">)[^<]*(<\/h1>)/, (m, a, z) => a + esc(ten) + z);
+    html = html.replace(/(<h2 class="sr-only" id="dsTieuDe">)[^<]*(<\/h2>)/, (m, a, z) => a + esc('Danh sách ' + ten.toLowerCase()) + z);
     html = chen(html, 'grid', ds.slice(0, 12).map((p, i) => the(d, p, i < 4)).join(''));   // trang đầu 12 sản phẩm như collections.html (PER = 12); 4 ảnh đầu tải ngay
     /* đường dẫn + hàng chọn độ tuổi dựng sẵn (giống collections.html) để trang không bị xô */
     html = html.replace(/(<nav class="breadcrumb" id="crumb">)(<\/nav>)/, (m, a, z) => a + '<a href="index.html">Trang chủ</a><span>›</span>' + (DM ? (goc ? '<span>' + esc(DM.nhan) + '</span>' : '<a href="/' + esc(DM.slug) + '">' + esc(DM.nhan) + '</a><span>›</span><span>' + esc(ten) + '</span>')
@@ -339,7 +341,13 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       const l = DM.loc || {}, anh3 = spHien(d).filter((p) => (!l.cat || l.cat.includes(p.cat)) && (!l.tag || (p.tags || []).includes(l.tag)) && (!l.km || dangKM(d, p)) && !p.isCombo)
         .sort((a, b) => me(a) - me(b) || (Number(b.priority) || 0) - (Number(a.priority) || 0) || (Number(b.sold) || 0) - (Number(a.sold) || 0) || thuTu.indexOf(a) - thuTu.indexOf(b)).slice(0, 3);
       html = chen(html, 'dmAnh', anh3.map((p, i) => '<img src="' + esc(anh(p.thumb || p.image || '')) + '" alt="" width="180" height="180"' + (i ? ' loading="lazy"' : '') + '>').join(''));
-      if (goc && DM.con === 'danhMuc') html = chen(html, 'dmCon', d.danhMuc.filter((c) => (!l.cat || l.cat.includes(c.key)) && spHien(d).some((p) => p.cat === c.key))
+      const oDm = (href, hinh, ten, n) => '<a class="dm-o" href="' + esc(href) + '">' + hinh + '<span><b>' + esc(ten) + '</b><small>' + n + ' sản phẩm</small></span></a>';
+      const hinhDm = (c, ic) => c && c.image ? '<img src="' + esc(anh(c.image)) + '" alt="" width="44" height="44" loading="lazy">' : '<span class="dm-o__ic">' + esc(ic || '') + '</span>';
+      /* trang tất cả sản phẩm: 5 nhóm lớn như menu (giống collections.html) */
+      if (goc && DM.key === 'san-pham') { const nhom = dsDm(d).filter((t) => t.loc && t.loc.cat), daGom = nhom.flatMap((t) => t.loc.cat);
+        html = chen(html, 'dmCon', nhom.map((t) => [t, spHien(d).filter((p) => t.loc.cat.includes(p.cat)).length]).filter((x) => x[1]).map(([t, n]) => oDm('/' + t.slug, hinhDm(d.danhMuc.find((c) => c.key === t.loc.cat[0]), t.icon), t.nhan, n))
+          .concat(d.danhMuc.filter((c) => !daGom.includes(c.key)).map((c) => [c, spHien(d).filter((p) => p.cat === c.key).length]).filter((x) => x[1]).map(([c, n]) => oDm('collections.html?cat=' + c.key + '&dm=san-pham', hinhDm(c, c.icon), c.key === 'luu-niem' ? 'Lưu niệm' : c.label, n))).join('')); }
+      else if (goc && DM.con === 'danhMuc') html = chen(html, 'dmCon', d.danhMuc.filter((c) => (!l.cat || l.cat.includes(c.key)) && spHien(d).some((p) => p.cat === c.key))
         .map((c) => '<a class="dm-o" href="collections.html?cat=' + esc(c.key) + '&amp;dm=' + esc(DM.key) + '">' + (c.image ? '<img src="' + esc(anh(c.image)) + '" alt="" width="44" height="44" loading="lazy">' : '<span class="dm-o__ic">' + esc(c.icon || '') + '</span>')
           + '<span><b>' + esc(c.label) + '</b><small>' + spHien(d).filter((p) => p.cat === c.key).length + ' sản phẩm</small></span></a>').join(''));
     }
