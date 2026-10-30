@@ -648,8 +648,8 @@ window.PRODUCTS = [
         "oldPrice": 0
       },
       {
-        "label": "1 lọ d3k2 + 1 hộp váng sữa canxi giảm 5%",
-        "price": 2726000
+        "label": "1 lọ D3K2 + 1 hộp váng sữa canxi",
+        "price": 2870000
       }
     ],
     "desc": "Vitamin D3 + K2 Pure Vitality (New Zealand) dạng nhỏ giọt 30ml, hương táo NZ. Theo nhà sản xuất, D3 hỗ trợ hấp thu canxi, K2 hỗ trợ đưa canxi vào xương, hỗ trợ phát triển xương răng và đề kháng cho bé. Có chứng nhận HACCP, GMP. Mua 2 lọ tiết kiệm hơn.",
@@ -1098,8 +1098,8 @@ window.PRODUCTS = [
         "oldPrice": 0
       },
       {
-        "label": "1 hộp váng sữa canxi+1 d3k2 giảm 5%",
-        "price": 2726000
+        "label": "1 hộp váng sữa canxi + 1 lọ D3K2",
+        "price": 2870000
       },
       {
         "label": "30 gói (không hộp)",
@@ -1621,7 +1621,7 @@ window.PRODUCTS = [
       "de-khang",
       "tang-can"
     ],
-    "price": 635000,
+    "price": 775000,
     "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
@@ -1645,11 +1645,6 @@ window.PRODUCTS = [
     ],
     "variants": [
       {
-        "label": "Date 12/2026 · Mua 1 tặng 1 (2 thùng)",
-        "price": 635000,
-        "oldPrice": 0
-      },
-      {
         "label": "Date 03/2027 · Thùng 24 hộp",
         "price": 775000,
         "oldPrice": 0
@@ -1661,11 +1656,11 @@ window.PRODUCTS = [
       "Isomalto-oligosaccharide (chất xơ hoà tan) – thức ăn cho lợi khuẩn đường ruột",
       "Bổ sung 7 loại vitamin A, B2, B6, C, E, Niacin, axit folic",
       "Dùng cho bé từ 1 tuổi · hộp 125ml, thùng 24 hộp",
-      "Date 12/2026: mua 1 tặng 1 (2 thùng) 635.000đ · Date 03/2027: 775.000đ/thùng"
+      "Date 03/2027 · 775.000đ/thùng 24 hộp"
     ],
     "usage": "Lắc nhẹ trước khi uống. Bé từ 1 tuổi dùng 1 – 2 hộp mỗi ngày, ngon hơn khi uống lạnh. Bảo quản nơi khô mát, tránh ánh nắng; hộp đã mở nên dùng hết trong ngày. Dùng theo hướng dẫn của nhà sản xuất.",
     "seoTitle": "Lotte Háu Ăn – nước uống lợi khuẩn Bareun Mokjang Hàn Quốc thùng 24 hộp | Hương Chất Kids",
-    "seoDesc": "Lotte Háu Ăn Bareun Mokjang Lactic: 4,5% dịch nuôi cấy lợi khuẩn, chất xơ Isomalto-oligosaccharide, 7 vitamin, cho bé từ 1 tuổi. Thùng 24 hộp 125ml, date 12/2026 mua 1 tặng 1."
+    "seoDesc": "Lotte Háu Ăn Bareun Mokjang Lactic: 4,5% dịch nuôi cấy lợi khuẩn, chất xơ Isomalto-oligosaccharide, 7 vitamin, cho bé từ 1 tuổi. Thùng 24 hộp 125ml, date 03/2027."
   },
   {
     "id": "43532388498",
@@ -3924,7 +3919,7 @@ window.PRODUCTS = [
       "d3k2",
       "organic"
     ],
-    "price": 2726000,
+    "price": 2870000,
     "oldPrice": 0,
     "rating": 5,
     "reviews": 0,
@@ -3954,8 +3949,8 @@ window.PRODUCTS = [
     ],
     "variants": [
       {
-        "label": "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%",
-        "price": 2726000,
+        "label": "1 hộp váng sữa 90 gói + 1 D3K2",
+        "price": 2870000,
         "oldPrice": 0
       },
       {
@@ -6336,7 +6331,7 @@ window.QUA_TANG = {
             "2 hộp váng sữa": 2,
             "3 hộp váng sữa": 3,
             "4 hộp váng sữa": 4,
-            "1 hộp váng sữa canxi+1 d3k2 giảm 5%": 0
+            "1 hộp váng sữa canxi + 1 lọ D3K2": 0
           }
         }
       ],
@@ -6511,7 +6506,7 @@ window.QUA_TANG = {
             "2 hộp váng sữa": 2,
             "3 hộp váng sữa": 3,
             "4 hộp váng sữa": 4,
-            "1 hộp váng sữa canxi+1 d3k2 giảm 5%": 0
+            "1 hộp váng sữa canxi + 1 lọ D3K2": 0
           }
         }
       ],
@@ -7234,6 +7229,60 @@ window.QUA_TANG = {
       ]
     },
     {
+      "id": "ct-combo-vangsua-d3k2",
+      "ten": "Combo váng sữa canxi + D3K2 tự giảm 5%",
+      "batDau": "2026-10-30T00:00",
+      "ketThuc": "2027-12-31T23:59",
+      "kieu": "soLuong",
+      "donVi": "combo",
+      "chiGiam": 5,
+      "tenGiam": "Combo váng sữa + D3K2 giảm 5%",
+      "nhuongHang": true,
+      "moTa": "Combo 1 hộp váng sữa canxi Calciumore + 1 lọ D3K2 tự giảm 5% (không dùng chung mã giảm giá)",
+      "bac": [
+        {
+          "muc": 1,
+          "soQua": 1
+        }
+      ],
+      "muc": 1,
+      "soQua": 1,
+      "sanPhamChinh": [
+        {
+          "id": "26060839019",
+          "bat": true,
+          "heSo": {
+            "1 hộp 90 gói": 0,
+            "2 hộp váng sữa": 0,
+            "1 hộp váng sữa canxi + 1 lọ D3K2": 1,
+            "30 gói (không hộp)": 0,
+            "3 hộp váng sữa": 0,
+            "4 hộp váng sữa": 0
+          }
+        },
+        {
+          "id": "42878618667",
+          "bat": true,
+          "heSo": {
+            "1 lọ": 0,
+            "2 lọ": 0,
+            "1 lọ D3K2 + 1 hộp váng sữa canxi": 1
+          }
+        },
+        {
+          "id": "combo-vangsua-d3k2",
+          "bat": true,
+          "heSo": {
+            "1 hộp váng sữa 90 gói + 1 D3K2": 1,
+            "2 hộp váng sữa 180 gói · TẶNG 1 D3K2": 0,
+            "3 hộp váng sữa 270 gói · TẶNG 2 D3K2": 0,
+            "4 hộp váng sữa 360 gói · TẶNG 3 D3K2": 0
+          }
+        }
+      ],
+      "quaTang": []
+    },
+    {
       "id": "ct-2110-food-1tr",
       "ten": "Food · Đơn từ 1 triệu giảm 5%",
       "batDau": "2026-10-21T00:00",
@@ -7331,7 +7380,7 @@ window.QUA_TANG = {
             "3 hộp váng sữa": 3,
             "4 hộp váng sữa": 4,
             "30 gói (không hộp)": 0,
-            "1 hộp váng sữa canxi+1 d3k2 giảm 5%": 0
+            "1 hộp váng sữa canxi + 1 lọ D3K2": 0
           }
         }
       ],

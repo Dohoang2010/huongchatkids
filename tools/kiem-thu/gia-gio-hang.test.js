@@ -53,7 +53,8 @@ test('mã giảm giá: %, có trần, số tiền cố định, freeship, đơn 
 test('mã giảm giá KHÔNG áp dụng cho combo (giá combo đã giảm sẵn); mã freeship vẫn dùng được', () => {
   const { MC, W } = taoWeb({ gio: gio('10:00'), truocApp: (w) => { w.GIO_VANG = []; w.COUPONS = {
     G10: { type: 'percent', value: 10, loai: 'shop' }, MIN: { type: 'fixed', value: 50000, min: 300000, loai: 'shop' }, SHIP: { type: 'ship', value: 0, loai: 'shop' },
-    SPCB: { type: 'percent', value: 10, loai: 'sanpham', sanPham: [] } }; } });
+    SPCB: { type: 'percent', value: 10, loai: 'sanpham', sanPham: [] } };
+    w.QUA_TANG = Object.assign({}, w.QUA_TANG, { chuongTrinh: (w.QUA_TANG.chuongTrinh || []).filter((c) => !(Number(c.chiGiam) > 0)) }); } });
   const cb = W.PRODUCTS.find((p) => p.isCombo && !(p.variants || []).length) || W.PRODUCTS.find((p) => p.isCombo);
   assert.ok(cb, 'dữ liệu có combo');
   W.COUPONS.SPCB.sanPham = [cb.id, KHAC];
@@ -326,4 +327,24 @@ test('quà giới hạn suất: tatCaSP tính cả hoá đơn, giuHang vẫn gi�
   assert.ok(!W.MC.hangKhongUuDai || !W.MC.hangKhongUuDai([l]).size, 'giuHang: sản phẩm vẫn nhận ưu đãi hạng');
   const W2 = moi({ 'ct-thu-2tr': 0 });
   assert.notStrictEqual((W2.MC.giftFor([dong(W2, KHAC, 1, 0)], {}) || {}).chuongTrinh, 'ct-thu-2tr', 'hết suất thì không tặng');
+});
+
+/* ---------- Chương trình chỉ giảm % theo phân loại (combo váng sữa + D3K2 tự giảm 5%, 30/10/2026) ---------- */
+test('giảm tự động theo phân loại: chỉ đúng phân loại combo, không cộng dồn với mã giảm giá', () => {
+  const MA = 'COMBO5', SP = KHAC;
+  const { MC, W } = taoWeb({ gio: gio('10:00'), truocApp: (w) => { w.SU_KIEN = null; w.GIO_VANG = [];
+    w.COUPONS = { G10: { type: 'percent', value: 10, loai: 'shop' } };
+    const p = w.PRODUCTS.find((x) => x.id === SP), nhan = p.variants.map((v) => v.label);
+    w.QUA_TANG = Object.assign({}, w.QUA_TANG, { chuongTrinh: [{ id: MA, ten: 'Combo giảm 5%', batDau: '2026-01-01T00:00', ketThuc: '2027-12-31T23:59', kieu: 'soLuong', donVi: 'combo',
+      chiGiam: 5, bac: [{ muc: 1, soQua: 1 }], muc: 1, soQua: 1, quaTang: [],
+      sanPhamChinh: [{ id: SP, bat: true, heSo: Object.fromEntries(nhan.map((l, i) => [l, i === 1 ? 1 : 0])) }] }] }); } });
+  const combo = dong(W, SP, 1, 1), thuong = dong(W, SP, 1, 0);
+  const g = MC.giamNganh([combo], {}); assert.ok(g, 'phân loại combo được giảm');
+  assert.strictEqual(g.tien, Math.round(combo.total * 0.05)); assert.strictEqual(g.chuongTrinh, MA);
+  assert.strictEqual(MC.giamNganh([thuong], {}), null, 'phân loại khác (hệ số 0) không giảm');
+  assert.strictEqual(MC.giamNganh([combo, thuong], {}).tien, Math.round(combo.total * 0.05), 'chỉ giảm trên dòng combo');
+  const ma = MC.applyCoupon('G10', combo.total, [combo]);
+  assert.strictEqual(ma.ok, true, 'combo vẫn nhận mã (không phải combo giảm sẵn)');
+  assert.strictEqual(MC.giamNganh([combo], { coMa: true }), null, 'đã nhập mã thì bỏ giảm tự động');
+  assert.match(MC.quaBienThe(combo.p, combo.variantLabel, 1), /Tự giảm 5%/);
 });

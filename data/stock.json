@@ -28,7 +28,7 @@
       "variants": {
         "1 lọ": true,
         "2 lọ": true,
-        "1 lọ d3k2 + 1 hộp váng sữa canxi giảm 5%": true
+        "1 lọ D3K2 + 1 hộp váng sữa canxi": true
       }
     },
     "45462512687": {
@@ -76,7 +76,7 @@
       "variants": {
         "1 hộp 90 gói": true,
         "2 hộp váng sữa": true,
-        "1 hộp váng sữa canxi+1 d3k2 giảm 5%": true,
+        "1 hộp váng sữa canxi + 1 lọ D3K2": true,
         "30 gói (không hộp)": true,
         "3 hộp váng sữa": true,
         "4 hộp váng sữa": true
@@ -351,7 +351,7 @@
     "combo-vangsua-d3k2": {
       "in": true,
       "variants": {
-        "1 hộp váng sữa 90 gói + 1 D3K2 · giảm 5%": true,
+        "1 hộp váng sữa 90 gói + 1 D3K2": true,
         "2 hộp váng sữa 180 gói · TẶNG 1 D3K2": true,
         "3 hộp váng sữa 270 gói · TẶNG 2 D3K2": true,
         "4 hộp váng sữa 360 gói · TẶNG 3 D3K2": true
@@ -558,7 +558,6 @@
     "lotte-hau-an": {
       "in": true,
       "variants": {
-        "Date 12/2026 · Mua 1 tặng 1 (2 thùng)": true,
         "Date 03/2027 · Thùng 24 hộp": true
       }
     },

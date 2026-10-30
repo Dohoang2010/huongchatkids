@@ -1817,14 +1817,24 @@
   }
   /* Phân loại "2 hộp 180 gói" tính là 2 hộp nếu trang quản trị chưa đặt hệ số */
   const heSoMacDinh = (label, donVi) => { const m = String(label || '').match(/^(\d+)\s*([^\s\d·(]+)/); return m && donVi && m[2].toLowerCase() === String(donVi).toLowerCase() ? Number(m[1]) : 1; };
+  /* Dòng giỏ có tính vào chương trình không. Combo giảm sẵn: chỉ khi chương trình ghi hệ số > 0 cho đúng phân loại đó.
+     Chương trình chỉ giảm % theo số lượng (vd combo váng sữa + D3K2 tự giảm 5%): phân loại có hệ số 0 không được giảm */
+  function dongTinh(x, l) {
+    if (!l.p || !x.chinh.has(l.p.id)) return false;
+    const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || '';
+    if (laComboGiam(l.p)) return Number(hs[k]) > 0;
+    return !(x.soLuong && Number(x.c.chiGiam) > 0 && hs[k] != null && !(Number(hs[k]) > 0));
+  }
+  /* Dòng được chương trình CHỈ GIẢM % theo phân loại (hệ số > 0) – không coi là "combo giảm sẵn" (nhận mã như thường, nhập mã thì bỏ giảm tự động) */
+  const laDongGiamTD = (l) => !!l.p && ctDangChay().some((x) => Number(x.c.chiGiam) > 0 && x.chinh.has(l.p.id) && Number((x.heSo[l.p.id] || {})[l.variantLabel || '']) > 0);
   /* Mức khách đã đạt của 1 chương trình: tổng tiền hoặc tổng số lượng các sản phẩm chính trong giỏ */
   function ctDat(x, lines) {
     /* kiểu 'bo': phải mua đủ MỖI sản phẩm chính – số bộ = sản phẩm có số lượng ít nhất */
     if (x.bo) { const dem = {}; x.chinh.forEach((id) => { dem[id] = 0; });
-      (lines || []).forEach((l) => { if (!l.p || !x.chinh.has(l.p.id) || laComboGiam(l.p)) return; const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || ''; dem[l.p.id] += l.qty * (hs[k] != null ? Number(hs[k]) || 0 : 1); });
+      (lines || []).forEach((l) => { if (!dongTinh(x, l)) return; const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || ''; dem[l.p.id] += l.qty * (hs[k] != null ? Number(hs[k]) || 0 : 1); });
       return Math.floor(Math.min(...Object.values(dem))); }
     return (lines || []).reduce((s, l) => {
-      if (!l.p || !x.chinh.has(l.p.id) || laComboGiam(l.p)) return s;
+      if (!dongTinh(x, l)) return s;
       if (!x.soLuong) return s + l.total;
       const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || '';
       return s + l.qty * (hs[k] != null ? Number(hs[k]) || 0 : heSoMacDinh(k, x.donVi));
@@ -1837,7 +1847,7 @@
     return Math.min(...(x.c.quaTang || []).map((g) => { if (!g.id) return Number(g.gia) || Infinity; const p = byId(g.id); return p ? Math.min(...(p.variants && p.variants.length ? p.variants.filter((v) => (g.bienThe || {})[v.label] !== false).map((v) => v.price) : [p.price]), Infinity) : Infinity; }), Infinity);
   }
   /* Tiền hàng các sản phẩm chính của chương trình trong giỏ */
-  const ctTien = (x, lines) => (lines || []).reduce((s, l) => s + (l.p && x.chinh.has(l.p.id) && !laComboGiam(l.p) ? l.total : 0), 0);
+  const ctTien = (x, lines) => (lines || []).reduce((s, l) => s + (dongTinh(x, l) ? l.total : 0), 0);
   /* nhuongHang (chương trình 21/10/2026, không dùng song song với ưu đãi đang có – web chọn mức lợi nhất cho khách):
      khách có ưu đãi hạng / sinh nhật mà số tiền được giảm trên các sản phẩm đó lớn hơn giá trị chương trình → bỏ chương trình, giữ ưu đãi hạng */
   function ctNhuong(x, dat, lines) {
@@ -1871,7 +1881,7 @@
   function ctChoSP(p) { return p ? ctDangChay().filter((x) => x.chinh.has(p.id)) : []; }
   /* Sản phẩm KHÔNG nhận thêm ưu đãi (chủ shop 21/10/2026): combo (giá đã giảm sẵn) + sản phẩm đang được tặng quà
      (đủ mốc chương trình quà theo sản phẩm – vd Calciumore 2–4 hộp tặng D3K2; nước ép Lotte mua thùng tặng gói)
-     + phân loại đã kèm quà / giảm sẵn trong tên (vd "3 hộp tặng 2 lọ d3k2", "1 hộp váng sữa + 1 d3k2 giảm 5%").
+     + phân loại đã kèm quà / giảm sẵn trong tên (vd "3 hộp tặng 2 lọ d3k2").
      Hai nhóm:
      A – combo / phân loại đã kèm quà hoặc giảm sẵn trong tên: KHÔNG nhận mã, voucher, hạng, sinh nhật, giới thiệu, mua 2 giảm 3%, mốc quà theo đơn.
      B – sản phẩm đủ mốc chương trình quà (vd Calciumore 2 / 3 / 4 hộp tặng 1 / 2 / 3 lọ D3K2): khi đơn GIỮ quà thì không cộng hạng, sinh nhật,
@@ -1880,8 +1890,8 @@
   function hangKhongUuDai(lines, opts) {
     const ls = lines || [], loai = new Set(), chiA = !!(opts && opts.chiA);
     const bienTheUuDai = (l) => /tặng|\+.*giảm|giảm.*\+/i.test(String(l.variantLabel || ''));
-    ls.forEach((l, i) => { if (l.p && (l.p.isCombo || bienTheUuDai(l))) loai.add(i); });
-    if (!chiA) ctDangChay().forEach((x) => { if (!x.c.giuHang && ctHieuLuc(x, ls)) ls.forEach((l, i) => { if (l.p && x.chinh.has(l.p.id)) loai.add(i); }); });
+    ls.forEach((l, i) => { if (l.p && (l.p.isCombo || bienTheUuDai(l)) && !laDongGiamTD(l)) loai.add(i); });
+    if (!chiA) ctDangChay().forEach((x) => { if (!x.c.giuHang && ctHieuLuc(x, ls)) ls.forEach((l, i) => { if (dongTinh(x, l)) loai.add(i); }); });
     const cfg = QT();
     if (!chiA && cfg && !suKienDangChay() && (cfg.thung || []).length && !(cfg.thungChiKhachMoi && laVip())) {
       const tk = String(cfg.tuKhoaThung || 'thùng').toLowerCase(), laThung = (l) => !!l.p && laNuocLotte(l.p) && !l.p.isCombo && String(l.variantLabel || '').toLowerCase().includes(tk);
@@ -1908,6 +1918,7 @@
     const l = { p, id: p.id, qty, variantLabel: label || '', price: gia, total: gia * qty };
     for (const x of ds) {
       const dat = ctDat(x, [l]), b = [...x.bac].reverse().find((y) => dat >= y.muc);
+      if (b && Number(x.c.chiGiam) > 0) { if (!x.soLuong) continue; return `<div class="qua-bt">🏷️ <b>Tự giảm ${Number(x.c.chiGiam)}% khi thanh toán</b><small>Không dùng chung mã giảm giá / voucher</small></div>`; }
       if (b) return `<div class="qua-bt">🎁 <b>Tặng ${b.soQua} ${esc(x.ten)}</b><small>Áp mã giảm giá / voucher thì đơn không kèm quà</small></div>`;
     }
     return '';
