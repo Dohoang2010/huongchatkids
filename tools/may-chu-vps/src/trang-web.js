@@ -184,7 +184,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const tieuDe = p.seoTitle || [ngan + ' – chính hãng, giá tốt | Hương Chất Kids', ngan + ' chính hãng | Hương Chất Kids', ngan + ' | Hương Chất Kids', ngan].find((t) => t.length <= 65) || ngan.slice(0, 47).replace(/[\s,–&(-]+[^\s]*$/, '') + ' | Hương Chất Kids';
     const gia = Number((p.variants && p.variants[0] && p.variants[0].price) || p.price) || 0;
     /* mô tả: tên ngắn + giá trước, rồi nội dung, cuối là lời mời – vừa 160 ký tự */
-    const dauMt = ngan + ' chính hãng' + (gia ? ', giá ' + gia.toLocaleString('vi-VN') + 'đ' : '') + '. ', duoiMt = ' Freeship từ 3 triệu, đặt ngay!';
+    const tenMt = tieuDe.replace(/( – chính hãng, giá tốt| chính hãng)? [|–] Hương Chất Kids$/, '').replace(/ chính hãng$/, ''), dauMt = tenMt + ' chính hãng' + (gia ? ', giá ' + gia.toLocaleString('vi-VN') + 'đ' : '') + '. ', duoiMt = ' Freeship từ 3 triệu, đặt ngay!';
     const giuaMt = gon(p.desc, 160 - dauMt.length - duoiMt.length);
     const moTa = p.seoDesc ? gon(p.seoDesc, 160) : gon(dauMt + (giuaMt.length >= 30 ? giuaMt : '') + duoiMt, 160);
     const dau = dauTrang({ tieuDe, moTa, url, anhOg: p.image || (p.images || [])[0], loai: 'product',
