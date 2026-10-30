@@ -556,9 +556,9 @@
       }
     },
     "lotte-hau-an": {
-      "in": false,
+      "in": true,
       "variants": {
-        "Date 03/2027 · Thùng 24 hộp": false
+        "Date 03/2027 · Thùng 24 hộp": true
       }
     },
     "binh-giu-nhiet-hck": true,
