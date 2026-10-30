@@ -224,7 +224,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const moTa = gon(b.seoDesc || b.excerpt || (b.body || []).join(' '), 158), t = ngayBai(b) || Date.now();
     const bv = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: gon(b.title, 110), description: moTa, url, mainEntityOfPage: url,
       datePublished: iso(t), dateModified: iso(t), inLanguage: 'vi', articleSection: b.cat || undefined,
-      author: { '@type': 'Organization', name: 'Hương Chất Kids', url: GOC + '/' },
+      author: { '@type': 'Organization', name: 'Hương Chất Kids', url: GOC + '/gioi-thieu.html' },
       publisher: { '@type': 'Organization', name: 'Hương Chất Kids', logo: { '@type': 'ImageObject', url: GOC + '/img/logo-192.png' } } };
     if (b.image) bv.image = [tuyetDoi(b.image)];
     let html = thayDauSEO(mau('blog.html'), dauTrang({ tieuDe, moTa, url, anhOg: b.image, loai: 'article',
@@ -233,7 +233,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     /* nội dung bài cho JavaScript của trang (data.js bản gọn không kèm nội dung bài) */
     html = html.replace('<script src="js/data.js', `<script>window.BAI_DAY_DU=${json({ id: b.id, body: b.body || [] })};</script>\n<script src="js/data.js`);
     html = chen(html, 'blogPage', `<nav class="breadcrumb"><a href="/">Trang chủ</a><span>›</span><a href="/cam-nang">Cẩm nang chăm con</a><span>›</span><a href="/blog.html?cat=${encodeURIComponent(b.cat || '')}">${esc(b.cat)}</a></nav>
-      <article class="post"><h1>${esc(b.title)}</h1><div class="post-card__meta mb-12"><span class="badge badge--soft">${esc(b.cat)}</span><span>${esc(b.date)}</span></div>
+      <article class="post"><h1>${esc(b.title)}</h1><div class="post-card__meta mb-12"><span class="badge badge--soft">${esc(b.cat)}</span><span>${esc(b.date)}${b.read ? ' · ' + esc(b.read) + ' đọc' : ''} · Tác giả: <a href="/gioi-thieu.html">Hương Chất Kids</a></span></div>
       ${b.image ? `<div class="post__hero" style="background:${esc(b.color || '#FFE9EF')}"><img src="${esc(anh(b.image))}" alt=""></div>` : ''}<div class="post__body">${mucLuc(b.body)}${veNoiDung(d, b.body)}</div></article>`);
     return doiAnhHtml(html);
   }
