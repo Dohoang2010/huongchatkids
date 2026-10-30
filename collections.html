@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const nhom = DM_DS.filter((d) => d.loc && d.loc.cat), daGom = nhom.flatMap((d) => d.loc.cat), wt = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
       o = nhom.map((d) => { const ds = PRODUCTS.filter((p) => d.loc.cat.includes(p.cat)), c = CATEGORIES.find((x) => x.key === d.loc.cat[0]) || {};
         return [wt ? 'collections.html?dm=' + d.key : '/' + d.slug, c.image ? `<img src="${c.image}" alt="" width="44" height="44" loading="lazy">` : `<span class="dm-o__ic">${d.icon}</span>`, d.nhan, ds.length]; })
-        .concat(CATEGORIES.filter((c) => !daGom.includes(c.key)).map((c) => [linkCon('cat=' + c.key), c.image ? `<img src="${c.image}" alt="" width="44" height="44" loading="lazy">` : `<span class="dm-o__ic">${c.icon}</span>`, c.label, PRODUCTS.filter((p) => p.cat === c.key).length]))
+        .concat(CATEGORIES.filter((c) => !daGom.includes(c.key)).map((c) => [linkCon('cat=' + c.key), c.image ? `<img src="${c.image}" alt="" width="44" height="44" loading="lazy">` : `<span class="dm-o__ic">${c.icon}</span>`, c.key === 'luu-niem' ? 'Lưu niệm' : c.label, PRODUCTS.filter((p) => p.cat === c.key).length]))
         .filter((x) => x[3] > 0);
     } else if (goc && DM.con === 'danhMuc') o =CATEGORIES.filter((c) => (!DM.loc.cat || DM.loc.cat.includes(c.key)) && PRODUCTS.some((p) => p.cat === c.key))
       .map((c) => [linkCon('cat=' + c.key), c.image ? `<img src="${c.image}" alt="" width="44" height="44" loading="lazy">` : `<span class="dm-o__ic">${c.icon}</span>`, c.label, PRODUCTS.filter((p) => p.cat === c.key).length]);
