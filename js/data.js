@@ -508,6 +508,7 @@ window.PRODUCTS = [
   {
     "id": "22686115682",
     "slug": "nuoc-ep-lotte-organic-hoa-qua-rau-cu",
+    "seoTitle": "Nước ép Lotte Organic hoa quả rau củ cho bé | Hương Chất Kids",
     "name": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
     "short": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
     "brand": "lotte",
@@ -975,7 +976,7 @@ window.PRODUCTS = [
     "usage": "Uống trực tiếp, mỗi ngày 1 túi. Bảo quản nơi khô mát, tránh ánh nắng và nhiệt độ cao; đã mở túi thì bảo quản lạnh và dùng hết sớm. Hạn sử dụng 2 năm kể từ ngày sản xuất (xem trên bao bì).",
     "importer": "Công ty CP Xuất nhập khẩu và Phân phối Global Beauty Solutions",
     "congBo": "01/GLOBAL BEAUTY SOLUTIONS/2024",
-    "seoTitle": "Gạc nhung hươu canxi Sumo Hàn Quốc – hộp 10 gói 80ml | Hương Chất Kids",
+    "seoTitle": "Gạc nhung hươu canxi Sumo hộp 10 gói | Hương Chất Kids",
     "seoDesc": "Nước gạc nhung hươu canxi Sumo (Byplay) Hàn Quốc: 100mg canxi mỗi gói, nhung hươu New Zealand, kẽm, vitamin D3 – cho bé từ 1 tuổi. Chính hãng, có công bố. Hộp 10 gói, thùng 30 / 40 gói."
   },
   {
@@ -1664,7 +1665,7 @@ window.PRODUCTS = [
       "Date 03/2027 · 775.000đ/thùng 24 hộp"
     ],
     "usage": "Lắc nhẹ trước khi uống. Bé từ 1 tuổi dùng 1 – 2 hộp mỗi ngày, ngon hơn khi uống lạnh. Bảo quản nơi khô mát, tránh ánh nắng; hộp đã mở nên dùng hết trong ngày. Dùng theo hướng dẫn của nhà sản xuất.",
-    "seoTitle": "Lotte Háu Ăn – nước uống lợi khuẩn Bareun Mokjang Hàn Quốc thùng 24 hộp | Hương Chất Kids",
+    "seoTitle": "Lotte Háu Ăn nước uống lợi khuẩn thùng 24 hộp | Hương Chất Kids",
     "seoDesc": "Lotte Háu Ăn Bareun Mokjang Lactic: 4,5% dịch nuôi cấy lợi khuẩn, chất xơ Isomalto-oligosaccharide, 7 vitamin, cho bé từ 1 tuổi. Thùng 24 hộp 125ml, date 03/2027."
   },
   {
@@ -2234,7 +2235,7 @@ window.PRODUCTS = [
       "Nhập khẩu Hàn Quốc, chai 100ml dùng lâu"
     ],
     "usage": "Sau bước làm sạch và toner, lấy một lượng vừa đủ thoa đều lên mặt và cổ, vỗ nhẹ cho thẩm thấu; dùng sáng và tối. Ban ngày dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
-    "seoTitle": "Tinh chất DayCell Dr.VITA ECM Anti Aging Serum 100ml Hàn Quốc | Hương Chất Kids",
+    "seoTitle": "Tinh chất DayCell Dr.VITA ECM Serum 100ml | Hương Chất Kids",
     "seoDesc": "Serum DayCell Dr.VITA ECM Anti Aging 100ml: ECM Complex 50.000 PPM, 43,9% nước collagen, 26 peptide – dưỡng ẩm, săn chắc, chăm sóc nếp nhăn theo nhà sản xuất. Chính hãng Hàn Quốc."
   },
   {
@@ -2294,7 +2295,7 @@ window.PRODUCTS = [
       "Kết cấu kem mỏng, dưỡng ẩm cho da mềm mịn – nhập khẩu Hàn Quốc"
     ],
     "usage": "Sau bước serum, lấy một lượng vừa đủ thoa đều lên mặt, massage nhẹ cho thẩm thấu; dùng sáng và tối. Ban ngày dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
-    "seoTitle": "Kem DayCell Medi Lab NAD+ White Cream 50ml Hàn Quốc | Hương Chất Kids",
+    "seoTitle": "Kem DayCell NAD+ White Cream 50ml Hàn Quốc | Hương Chất Kids",
     "seoDesc": "Kem dưỡng DayCell Medi Lab NAD+ White Cream 50ml: NAD+, NMN, MadeWhite, Tranexamic Acid, Glutathione – dưỡng ẩm, dưỡng trắng, hỗ trợ làm mờ nám và tàn nhang (theo công bố). Chính hãng Hàn Quốc."
   },
   {
@@ -2357,7 +2358,7 @@ window.PRODUCTS = [
       "Serum body mỏng nhẹ, không bết dính, dùng toàn thân – hàng nội địa Hàn Quốc 250ml"
     ],
     "usage": "Sau khi tắm, lau khô người, nhấn vòi lấy lượng vừa đủ thoa đều lên vùng da toàn thân, massage nhẹ cho thẩm thấu. Dùng hằng ngày; ban ngày ra nắng nên dùng kèm kem chống nắng. Thử trước trên vùng da nhỏ; ngưng dùng nếu da kích ứng. Dùng theo hướng dẫn của nhà sản xuất.",
-    "seoTitle": "Serum body nâng tone AVCA Intense Brightening 250ml Hàn Quốc | Hương Chất Kids",
+    "seoTitle": "Serum body nâng tone AVCA 250ml Hàn Quốc | Hương Chất Kids",
     "seoDesc": "AVCA Intense Brightening Body Tone-Up Serum 250ml: nâng tone ngay khi thoa, Niacinamide, Glutathione liposome, 8 loại Hyaluronic Acid, Ceramide – dưỡng sáng, cấp ẩm toàn thân. Hàng nội địa Hàn Quốc."
   },
   {
@@ -2430,7 +2431,7 @@ window.PRODUCTS = [
       "Size 45–65kg · set 3 cái (túi), set 5 / 8 cái (hộp)"
     ],
     "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, dùng nước giặt nhẹ, không ngâm thuốc tẩy, không vắt mạnh. Phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
-    "seoTitle": "Quần lót su đúc kháng khuẩn MaBelle 6999 – mỏng nhẹ, tàng hình | Hương Chất Kids",
+    "seoTitle": "Quần lót su đúc MaBelle 6999 mỏng nhẹ | Hương Chất Kids",
     "seoDesc": "Quần lót nữ su đúc MaBelle 6999: liền mạch không đường may, sợi mát lạnh, co giãn 4 chiều, kháng khuẩn, đã kiểm định Formaldehyde & amin thơm. Size 45–65kg, 118.000đ/cái, set 3/5/8 cái."
   },
   {
@@ -2847,7 +2848,7 @@ window.PRODUCTS = [
       "Size 34 / 36 / 38 · 5 màu đen, da, đỏ, trắng, đá"
     ],
     "usage": "Nên giặt tay hoặc cho vào túi giặt khi giặt máy, không vắt mạnh để giữ form mút; phơi nơi thoáng mát, tránh nắng gắt. Đồ lót không đổi trả khi đã bóc tem, mở túi (trừ hàng lỗi do nhà sản xuất).",
-    "seoTitle": "Áo lót liền mạch không gọng MaBelle 5997 – chính hãng | Hương Chất Kids",
+    "seoTitle": "Áo lót liền mạch không gọng MaBelle 5997 | Hương Chất Kids",
     "seoDesc": "Áo lót liền mạch không gọng MaBelle 5997: Liền mạch không gọng, nhẹ, không hằn; Mút 3cm có hạt massage, quả áo tròn đều – theo nhà sản xuất; Bản lưng ôm nách và mỡ lưng, dây chỉnh trước tiện lợi. Giá 330.000đ/chiếc."
   },
   {
@@ -3522,7 +3523,7 @@ window.PRODUCTS = [
       "Pha nóng hoặc pha lạnh tùy theo sở thích – hợp bữa sáng, bữa phụ"
     ],
     "usage": "Pha nóng: cho 01 gói ngũ cốc vào cốc, thêm khoảng 80–100ml nước nóng, khuấy đều và thưởng thức. Pha lạnh: cho 01 gói ngũ cốc vào khoảng 40ml nước, khuấy đều cho bột hòa tan, thêm đá lạnh và thưởng thức. Có thể điều chỉnh lượng nước tùy theo khẩu vị đậm hoặc nhạt.",
-    "seoTitle": "Ngũ cốc bắp thiên ma Kitea Hàn Quốc 900g (50 gói) – Hương Chất Kids",
+    "seoTitle": "Ngũ cốc bắp thiên ma Kitea 900g (50 gói) | Hương Chất Kids",
     "seoDesc": "Ngũ cốc bắp thiên ma Kitea Hàn Quốc hộp 900g 50 gói, giá 449.000đ. Thơm béo, ngọt dịu, pha nóng hoặc lạnh, tiện cho bữa sáng, bữa phụ của cả nhà.",
     "seoKey": "ngũ cốc bắp thiên ma, ngũ cốc thiên ma Kitea, trà ngũ cốc thiên ma Hàn Quốc, ngũ cốc Hàn Quốc 50 gói"
   },
@@ -4712,7 +4713,7 @@ window.PRODUCTS = [
       "Tiện mang đi làm, đi học, đi chơi"
     ],
     "usage": "Rửa sạch bình và nắp trước lần dùng đầu. Rửa tay bằng nước ấm, không ngâm lâu, không dùng máy rửa bát, không cho vào lò vi sóng. Không đựng đồ uống có ga.",
-    "seoTitle": "Bình giữ nhiệt Hương Chất Kids – quà độc quyền website | Hương Chất Kids",
+    "seoTitle": "Bình giữ nhiệt Hương Chất Kids – quà độc quyền website",
     "seoDesc": "Bình giữ nhiệt Hương Chất Kids in logo và nhân vật thú cưng, nắp bật vòi hút – độc quyền huongchatkids.vn, giá 199.000đ."
   }
 ];

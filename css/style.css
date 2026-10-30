@@ -2882,3 +2882,5 @@ body[data-dm="khuyen-mai"] .dm-hero__anh img { max-width: 92px; border-width: 3p
 .gt-tab button.is-on { background: var(--primary, #F0537A); border-color: var(--primary, #F0537A); color: #fff; }
 .gt-khung { flex: 1; width: 100%; border: 0; background: #f3f4f6; }
 .gt-mo { padding: 10px 16px; font-size: 13px; text-align: right; }
+/* H1 trang chủ: dòng giới thiệu nhỏ trên banner (SEO cần H1 nhìn thấy được) */
+.hero__h1 { margin: 0 0 10px; font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--muted); }

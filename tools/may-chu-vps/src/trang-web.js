@@ -155,11 +155,14 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
   function schemaSP(p, d, url, dg) {
     const hieu = d.hieu.find((b) => b.key === p.brand);
     const gia = (p.variants && p.variants.length ? p.variants.map((v) => Number(v.price) || 0) : [Number(p.price) || 0]).filter((g) => g > 0);
-    const conHang = p.stock == null || Number(p.stock) > 0;
+    const conHang = !hetHang(p);   // theo tồn kho thật (data/stock.json)
     const offer = gia.length > 1 && Math.min(...gia) !== Math.max(...gia)
       ? { '@type': 'AggregateOffer', priceCurrency: 'VND', lowPrice: Math.min(...gia), highPrice: Math.max(...gia), offerCount: gia.length }
       : { '@type': 'Offer', priceCurrency: 'VND', price: gia[0] || 0, priceValidUntil: iso(Date.now() + 30 * 864e5) };
-    Object.assign(offer, { availability: 'https://schema.org/' + (conHang ? 'InStock' : 'OutOfStock'), url, itemCondition: 'https://schema.org/NewCondition', seller: { '@type': 'Organization', name: 'Hương Chất Kids' } });
+    Object.assign(offer, { availability: 'https://schema.org/' + (conHang ? 'InStock' : 'OutOfStock'), url, itemCondition: 'https://schema.org/NewCondition', seller: { '@type': 'Organization', name: 'Hương Chất Kids' },
+      shippingDetails: { '@type': 'OfferShippingDetails', shippingRate: { '@type': 'MonetaryAmount', value: Number(d.site.shipFee) || 25000, currency: 'VND' },
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'VN' },
+        deliveryTime: { '@type': 'ShippingDeliveryTime', handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' }, transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3, unitCode: 'DAY' } } } });
     const o = { '@context': 'https://schema.org', '@type': 'Product', name: p.name, sku: String(p.id), url,
       image: [...new Set([p.image, ...(p.images || [])].filter(Boolean))].slice(0, 6).map(tuyetDoi),
       description: gon(p.seoDesc || p.desc, 500), offers: offer };
@@ -176,9 +179,14 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const d = duLieu(), id = d.theoSlug[slug]; if (id == null) return null;
     const p = d.sp.find((x) => String(x.id) === String(id)); if (!p || p.an) return null;
     const url = GOC + '/' + slug, dg = await danhGia(String(p.id));
-    const tieuDe = p.seoTitle || ((p.short || p.name) + ' – chính hãng, giá tốt | Hương Chất Kids');
+    /* tiêu đề ≤ 65 ký tự (Google cắt phần dài hơn): bớt dần đuôi */
+    const ngan = p.short || p.name;
+    const tieuDe = p.seoTitle || [ngan + ' – chính hãng, giá tốt | Hương Chất Kids', ngan + ' chính hãng | Hương Chất Kids', ngan + ' | Hương Chất Kids', ngan].find((t) => t.length <= 65) || ngan.slice(0, 47).replace(/[\s,–&(-]+[^\s]*$/, '') + ' | Hương Chất Kids';
     const gia = Number((p.variants && p.variants[0] && p.variants[0].price) || p.price) || 0;
-    const moTa = gon(p.seoDesc || (p.name + (gia ? ' giá ' + gia.toLocaleString('vi-VN') + 'đ' : '') + '. ' + (p.desc || '')), 158);
+    /* mô tả: tên ngắn + giá trước, rồi nội dung, cuối là lời mời – vừa 160 ký tự */
+    const dauMt = ngan + ' chính hãng' + (gia ? ', giá ' + gia.toLocaleString('vi-VN') + 'đ' : '') + '. ', duoiMt = ' Freeship từ 3 triệu, đặt ngay!';
+    const giuaMt = gon(p.desc, 160 - dauMt.length - duoiMt.length);
+    const moTa = p.seoDesc ? gon(p.seoDesc, 160) : gon(dauMt + (giuaMt.length >= 30 ? giuaMt : '') + duoiMt, 160);
     const dau = dauTrang({ tieuDe, moTa, url, anhOg: p.image || (p.images || [])[0], loai: 'product',
       them: (gia ? `<meta property="product:price:amount" content="${gia}"><meta property="product:price:currency" content="VND">\n  ` : '') + schemaSP(p, d, url, dg) });
     const anhChinh = anh((p.images || [])[0] || p.image || '');   // ảnh lớn đầu trang (MC.productImage) – báo trình duyệt tải ngay, không chờ JS
@@ -351,7 +359,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
         .map((c) => '<a class="dm-o" href="collections.html?cat=' + esc(c.key) + '&amp;dm=' + esc(DM.key) + '">' + (c.image ? '<img src="' + esc(anh(c.image)) + '" alt="" width="44" height="44" loading="lazy">' : '<span class="dm-o__ic">' + esc(c.icon || '') + '</span>')
           + '<span><b>' + esc(c.label) + '</b><small>' + spHien(d).filter((p) => p.cat === c.key).length + ' sản phẩm</small></span></a>').join(''));
     }
-    html = html.replace(/(<p class="text-muted fs-14 mb-16" id="subtitle">)(<\/p>)/, (m, a, z) => thamSo.get('km') ? m : a + esc(age.length === 1 ? 'Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ' + ((d.tuoi.find((t) => t.key === age[0]) || {}).label || age[0]) : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả 7 ngày') + z);
+    html = html.replace(/(<p class="text-muted fs-14 mb-16" id="subtitle">)(<\/p>)/, (m, a, z) => thamSo.get('km') ? m : a + esc(age.length === 1 ? 'Chuyên gia dinh dưỡng đã chọn lọc sản phẩm phù hợp cho bé ' + ((d.tuoi.find((t) => t.key === age[0]) || {}).label || age[0]) : 'Hàng chính hãng · Freeship từ 3 triệu · Đổi trả trong 24h') + z);
     /* bộ lọc bên trái, bộ lọc đang chọn, số sản phẩm – dựng sẵn giống collections.html (renderFilters / renderActive) */
     { const tatCa = spHien(d), S = { age, cat, need, brand, price: lay('price') };
       let KHOANG = []; try { const mm = mau('collections.html').match(/const PRICE_RANGES = (\[[^;]*\]);/); if (mm) KHOANG = vm.runInNewContext(mm[1], {}, { timeout: 200 }); } catch { /* bỏ qua */ }

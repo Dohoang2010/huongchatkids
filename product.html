@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261029b">
+  <link rel="stylesheet" href="css/style.css?v=20261030a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -18,7 +18,7 @@
 <main id="app"><div class="container" id="pdp"></div></main>
 <div class="sticky-buy" id="stickyBuy"></div>
 
-<script src="js/data.js?v=20261030b" defer></script>
+<script src="js/data.js?v=20261030c" defer></script>
 <script src="js/giay-to.js?v=20261029n" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Sữa / sản phẩm dinh dưỡng cho bé dưới 12 tháng: luôn kèm câu "Sữa mẹ là thức ăn tốt nhất…" (quy định quảng cáo sản phẩm dinh dưỡng cho trẻ nhỏ) */
   const suaMe = !p.cosmetic && (p.formula || p.cat === 'sua' || (p.ages || []).some((a) => a === '0-6m' || a === '6-12m'));
   const CAU_SUA_ME = 'Sữa mẹ là thức ăn tốt nhất cho sức khoẻ và sự phát triển toàn diện của trẻ nhỏ.';
-  document.title = p.seoTitle || ((p.short || p.name) + ' – ' + SITE.name);
+  { const n = p.short || p.name; document.title = p.seoTitle || [n + ' – chính hãng, giá tốt | Hương Chất Kids', n + ' chính hãng | Hương Chất Kids', n + ' | Hương Chất Kids', n].find((t) => t.length <= 65) || n.slice(0, 47).replace(/[\s,–&(-]+[^\s]*$/, '') + ' | Hương Chất Kids'; }   // giống máy chủ (trang-web.js)
   /* SEO phía trình duyệt (máy chủ VPS đã chèn sẵn khi trả trang): mô tả riêng + canonical về link có từ khoá */
   (() => { const moTa = (p.seoDesc || p.desc || '').replace(/\s+/g, ' ').slice(0, 158); const m = document.querySelector('meta[name=description]'); if (m && moTa) m.setAttribute('content', moTa);
     const s = (window.SP_SLUG || {})[p.id]; if (!s) return; let c = document.querySelector('link[rel=canonical]'); if (!c) { c = document.createElement('link'); c.rel = 'canonical'; document.head.appendChild(c); } c.href = 'https://huongchatkids.vn/' + s;
