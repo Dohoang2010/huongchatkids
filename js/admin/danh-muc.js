@@ -130,7 +130,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-users.js": {
-   "v": "3adf5a30",
+   "v": "98a450dc",
    "can": [],
    "ngay": false
   },

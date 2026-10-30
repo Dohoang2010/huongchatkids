@@ -98,17 +98,14 @@
   /* ---------------- Vai trò & phân quyền ---------------- */
   function veQuyen(el) {
     const q = (data && data.quyenTheoVaiTro) || {};
-    const tatCa = [...new Set(Object.values(q).flat().filter((x) => x !== '*'))].sort();
     el.innerHTML = `<div class="card">
       <p class="muted">Vai trò quyết định mục nào hiện ra và thao tác nào làm được.
-      <b>Apps Script cũng kiểm tra quyền này</b> trước khi trả dữ liệu — không chỉ ẩn nút trên giao diện.</p>
+      <b>Máy chủ cũng kiểm tra quyền này</b> trước khi trả dữ liệu — không chỉ ẩn nút trên giao diện.</p>
       ${Object.keys(TEN_VT).map((k) => `<div class="vt">
         <div class="vt__h"><b>${esc(TEN_VT[k])}</b> <code>${esc(k)}</code></div>
         <p class="muted">${esc(MO_VT[k])}</p>
         <div class="vt__q">${(q[k] || []).map((x) => A.badge(x === '*' ? 'Toàn quyền' : x, x === '*' ? 'tag--hot' : '')).join(' ') || '<span class="muted">—</span>'}</div>
-      </div>`).join('')}
-      ${tatCa.length ? `<h4>Danh sách quyền trong hệ thống</h4><div class="vt__q">${tatCa.map((x) => A.badge(x)).join(' ')}</div>` : ''}
-      <div class="box-note">Muốn thêm/đổi vai trò: sửa biến <code>VAI_TRO_QT</code> trong Apps Script và <code>VAI_TRO</code> trong <code>js/admin/core.js</code> cho khớp.</div></div>`;
+      </div>`).join('')}</div>`;
   }
 
   /* ---------------- Sự kiện ---------------- */
