@@ -160,6 +160,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
       ? { '@type': 'AggregateOffer', priceCurrency: 'VND', lowPrice: Math.min(...gia), highPrice: Math.max(...gia), offerCount: gia.length }
       : { '@type': 'Offer', priceCurrency: 'VND', price: gia[0] || 0, priceValidUntil: iso(Date.now() + 30 * 864e5) };
     Object.assign(offer, { availability: 'https://schema.org/' + (conHang ? 'InStock' : 'OutOfStock'), url, itemCondition: 'https://schema.org/NewCondition', seller: { '@type': 'Organization', name: 'Hương Chất Kids' },
+      hasMerchantReturnPolicy: { '@type': 'MerchantReturnPolicy', applicableCountry: 'VN', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 1 },   // đổi trả trong 24h
       shippingDetails: { '@type': 'OfferShippingDetails', shippingRate: { '@type': 'MonetaryAmount', value: Number(d.site.shipFee) || 25000, currency: 'VND' },
         shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'VN' },
         deliveryTime: { '@type': 'ShippingDeliveryTime', handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' }, transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3, unitCode: 'DAY' } } } });
