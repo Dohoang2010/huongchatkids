@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T02:06:36.863Z",
+  "updatedAt": "2026-10-31T03:07:56.000Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -508,13 +508,13 @@
       "in": true,
       "variants": {
         "Ghi · 34": true,
-        "Ghi · 36": true,
+        "Ghi · 36": false,
         "Ghi · 38": true,
         "Đen · 34": true,
         "Đen · 36": true,
         "Đen · 38": true,
         "Da · 34": true,
-        "Da · 36": true,
+        "Da · 36": false,
         "Da · 38": true
       }
     },
