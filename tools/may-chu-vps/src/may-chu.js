@@ -210,6 +210,7 @@ const mayChu = http.createServer(async (req, res) => {
     }
     if (/^\/(js|css)\//.test(duongDan) && nenTep.tra(req, res, duongDan)) return;
     if (duongDan === '/sitemap.xml') return tra(res, 200, 'application/xml', trangWeb.sitemap(), { 'Cache-Control': 'public, max-age=600' });
+    if (duongDan === '/google-merchant.xml') return tra(res, 200, 'application/xml', trangWeb.googleMerchant(), { 'Cache-Control': 'public, max-age=600' });
     if (duongDan === '' || duongDan === '/index.html') return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangChu(), 'index.html'), HTML_TS);
     if (duongDan === '/collections.html') { const moi = trangWeb.chuyenDanhMuc(url.searchParams); if (moi) return chuyen(moi);
       return tra(res, 200, 'text/html', trangWeb.hoanThien(trangWeb.trangDanhMuc(url.searchParams), 'collections.html'), HTML_TS); }

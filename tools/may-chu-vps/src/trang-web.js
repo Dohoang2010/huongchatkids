@@ -412,6 +412,21 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ds.join('\n') + '\n</urlset>\n';
   }
 
+  /* ================= Danh sách sản phẩm cho Google Merchant Center (/google-merchant.xml) ================= */
+  function googleMerchant() {
+    const d = duLieu(), the = (k, v) => v ? `<g:${k}>${esc(v)}</g:${k}>` : '';
+    const ds = spHien(d).map((p) => {
+      const gia = Number(p.price) || Number(((p.variants || [])[0] || {}).price) || 0; if (!gia) return '';
+      const hieu = d.hieu.find((b) => b.key === p.brand), anhs = [...new Set([p.image, ...(p.images || [])].filter(Boolean))].map(tuyetDoi);
+      return `<item>${the('id', String(p.id))}<title>${esc(gon(p.name, 150))}</title><description>${esc(gon(p.desc || p.name, 5000))}</description><link>${esc(GOC + spLink(d, p))}</link>`
+        + the('image_link', anhs[0]) + anhs.slice(1, 10).map((u) => the('additional_image_link', u)).join('')
+        + the('availability', hetHang(p) ? 'out_of_stock' : 'in_stock') + the('price', gia + ' VND') + the('condition', 'new')
+        + (hieu && hieu.key !== 'khac' ? the('brand', hieu.label) : '') + the('identifier_exists', 'no') + '</item>';
+    }).filter(Boolean);
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0"><channel><title>Hương Chất Kids</title><link>' + GOC + '/</link><description>Sản phẩm Hương Chất Kids</description>\n'
+      + ds.join('\n') + '\n</channel></rss>\n';
+  }
+
   function chuyenDanhMuc(thamSo) {
     const d = duLieu(), khoa = [...new Set([...thamSo.keys()])];
     if (khoa.some((k) => !['cat', 'tag', 'km', 'dm', 'sort', 'page'].includes(k))) return null;
@@ -429,7 +444,7 @@ function taoTrangWeb({ thuMuc, bc, ghi, webp }) {
     const q = con.toString(); return '/' + slug + (q ? '?' + q : '');
   }
 
-  return { trangSP, trangBaiTheoSlug, trangBlog, trangChu, trangDanhMuc, trangDichTheoSlug, chuyenDanhMuc, dataGon, sitemap, chuyenTuLinkCu, hoanThien, trangKhac, doiAnhHtml, mau };
+  return { trangSP, trangBaiTheoSlug, trangBlog, trangChu, trangDanhMuc, trangDichTheoSlug, chuyenDanhMuc, dataGon, sitemap, googleMerchant,chuyenTuLinkCu, hoanThien, trangKhac, doiAnhHtml, mau };
 }
 
 module.exports = { taoTrangWeb };
