@@ -801,8 +801,8 @@
           <div class="qb__trust"><span>${I.check}Chính hãng, tem phụ tiếng Việt</span><span>${I.check}Đổi trả trong 24h</span><span>${I.check}Giao dự kiến ${deliveryEstimate()}</span></div>
           <p class="qb__privacy">Thông tin chỉ dùng để giao hàng và tư vấn, không chia sẻ cho bên thứ ba. <a href="policy.html?p=bao-mat" target="_blank">Chính sách bảo mật</a></p>
         </form>
-        <div class="qb__alt"><p>Hoặc đặt hàng qua</p><div class="row ${p.shopeeUrl ? 'row--4' : ''}">
-          <a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-zalo-copy="${esc(shortName(p))}${p.variants ? ' – ' + esc(p.variants[QB.variant || 0].label) : ''}">Đặt qua Zalo</a>${shopeeBtn(p.shopeeUrl)}
+        <div class="qb__alt"><p>Hoặc đặt hàng qua</p><div class="row ${p.shopeeUrl || SITE.shopee ? 'row--4' : ''}">
+          <a class="btn btn--zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-zalo-copy="${esc(shortName(p))}${p.variants ? ' – ' + esc(p.variants[QB.variant || 0].label) : ''}">Đặt qua Zalo</a>${shopeeBtn(p.shopeeUrl || SITE.shopee)}
           <a class="btn btn--ghost" href="tel:${SITE.hotlineTel}">${I.phoneCall}Gọi đặt</a>
           <button class="btn btn--ghost" type="button" data-callback="${p.id}">${I.headset}Gọi lại tôi</button>
         </div></div>

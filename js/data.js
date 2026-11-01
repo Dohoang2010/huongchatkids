@@ -19,7 +19,7 @@ window.SITE = {
   zalo: 'https://zalo.me/2560253151670008554',
   zaloQr: 'img/zalo-qr-oa.png',     // mã QR Zalo OA của shop hiện ở footer & modal gọi lại
   messenger: '',                      // điền link m.me/... nếu có fanpage; để trống sẽ ẩn nút Messenger
-  shopee: 'https://shopee.vn/shop/837223358',
+  shopee: 'https://shopee.vn/huongchatkids',
   shopeeSale: { days: [15, 25], doubleDays: true, label: 'Siêu ưu đãi ngày {d}' },  // ngày sale Shopee: 15, 25 hằng tháng + ngày đôi (1/1, 2/2 … 12/12) → nút Shopee tự gắn tag; xem trước: thêm ?demo_date=2026-09-09 vào URL
   bctUrl: '',   // điền link xác nhận trên online.gov.vn sau khi thông báo website với Bộ Công Thương → footer tự hiện logo
   address: '15 Lý Nam Đế, Hoàn Kiếm, Hà Nội',
