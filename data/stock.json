@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-31T03:07:56.000Z",
+  "updatedAt": "2026-11-02T04:03:54.667Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -56,12 +56,12 @@
       }
     },
     "26156646705": {
-      "in": true,
+      "in": false,
       "variants": {
-        "10 gói": true,
-        "20 gói": true,
-        "30 gói": true,
-        "Thùng 40 gói": true
+        "10 gói": false,
+        "20 gói": false,
+        "30 gói": false,
+        "Thùng 40 gói": false
       }
     },
     "23660586997": {
@@ -508,13 +508,13 @@
       "in": true,
       "variants": {
         "Ghi · 34": true,
-        "Ghi · 36": false,
+        "Ghi · 36": true,
         "Ghi · 38": true,
         "Đen · 34": true,
         "Đen · 36": true,
         "Đen · 38": true,
         "Da · 34": true,
-        "Da · 36": false,
+        "Da · 36": true,
         "Da · 38": true
       }
     },
