@@ -6270,7 +6270,7 @@ window.POSTS = [
 window.QUA_TANG = {
   "enabled": true,
   "ketHop": {
-    "hangMa": true,
+    "hangMa": false,
     "quaMa": false,
     "quaHang": true,
     "quaShip": true
