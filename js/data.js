@@ -858,7 +858,7 @@ window.PRODUCTS = [
     "rating": 5,
     "reviews": 32,
     "sold": 161,
-    "stock": 50,
+    "stock": 0,
     "shape": "box",
     "color": "#8D6E63",
     "weight": "Gói",
@@ -882,22 +882,26 @@ window.PRODUCTS = [
       {
         "label": "10 gói",
         "price": 390000,
-        "oldPrice": 0
+        "oldPrice": 0,
+        "oos": true
       },
       {
         "label": "20 gói",
         "price": 780000,
-        "oldPrice": 0
+        "oldPrice": 0,
+        "oos": true
       },
       {
         "label": "30 gói",
         "price": 1150000,
-        "oldPrice": 0
+        "oldPrice": 0,
+        "oos": true
       },
       {
         "label": "Thùng 40 gói",
         "price": 1490000,
-        "oldPrice": 0
+        "oldPrice": 0,
+        "oos": true
       }
     ],
     "desc": "Gạc hươu non Sumo chiết xuất nhung hươu Hàn Quốc dạng gói uống. Theo nhà sản xuất, sản phẩm hỗ trợ bé tăng cân, ăn ngon miệng và bổ sung canxi cho bé chậm lớn.",
@@ -4317,7 +4321,6 @@ window.PRODUCTS = [
     "usage": "Dùng ngoài. Ấn vòi lấy lượng vừa đủ, tạo bọt với nước, thoa nhẹ vùng bên ngoài rồi rửa lại bằng nước sạch, lau khô bằng khăn mềm. Không dùng bên trong. Tránh tiếp xúc với mắt.",
     "slug": "dung-dich-ve-sinh-hexacare-be-gai"
   },
-
   {
     "id": "zinc-purevitality",
     "slug": "kem-zinc-pure-vitality",
