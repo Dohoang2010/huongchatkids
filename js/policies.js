@@ -12,7 +12,7 @@ window.POLICIES = [
 <ol><li>Chọn sản phẩm → bấm <b>Mua ngay</b>.</li><li>Chọn phân loại (vị, số gói/thùng) và số lượng.</li><li>Điền họ tên, số điện thoại, địa chỉ; chọn hình thức thanh toán (mặc định: thanh toán khi nhận hàng).</li><li>Bấm <b>Đặt hàng</b>. Màn hình hiện <b>mã đơn hàng</b> – mẹ chụp lại hoặc lưu để tra cứu.</li></ol>
 <p>Lần mua sau, thông tin giao hàng được điền sẵn trên chính thiết bị đó.</p>
 <h3>2. Thêm vào giỏ – thanh toán một lần</h3>
-<p>Bấm biểu tượng giỏ trên thẻ sản phẩm để gom nhiều sản phẩm, rồi bấm <b>Thanh toán</b>. Ưu đãi <b>mua từ 2 sản phẩm giảm 3%</b> và mã giảm giá được áp dụng tại bước này.</p>
+<p>Bấm biểu tượng giỏ trên thẻ sản phẩm để gom nhiều sản phẩm, rồi bấm <b>Thanh toán</b>. Mã giảm giá và ưu đãi được áp dụng tại bước này.</p>
 <h3>3. Đặt qua Zalo</h3>
 <p>Nhắn tên sản phẩm + số lượng cho Zalo <b>{zalo}</b> (bấm nút <em>Đặt qua Zalo</em> trên trang sản phẩm, tên sản phẩm được tự động sao chép để mẹ dán vào). Chuyên viên tư vấn xác nhận và lên đơn giúp mẹ.</p>
 <h3>4. Gọi điện / yêu cầu gọi lại</h3>
@@ -149,7 +149,7 @@ window.POLICIES = [
     ['Liều dùng bao nhiêu là đủ, có dùng chung nhiều sản phẩm được không?', 'Theo hướng dẫn trên bao bì từng sản phẩm. Không dùng cùng lúc nhiều sản phẩm có cùng công dụng (ví dụ hai loại canxi). Sau khi đặt hàng, chuyên viên tư vấn sẽ gọi hướng dẫn liều dùng cụ thể.'],
     ['Mẹ đang cho con bú có dùng nghệ nano Curcumin được không?', 'Sản phẩm dành cho người lớn; mẹ đang mang thai hoặc cho con bú nên hỏi ý kiến bác sĩ trước khi dùng.'],
     ['Có được kiểm tra hàng trước khi thanh toán không?', 'Có. Mẹ được mở niêm phong kiện hàng để kiểm tra khi nhận (không mở seal riêng của sản phẩm); hàng hư hỏng, giao sai sản phẩm hoặc số lượng thì mẹ từ chối nhận. Xem Chính sách kiểm hàng.'],
-    ['Giá trên web và trên Shopee có giống nhau không?', 'Giá cơ bản giống nhau. Trên web mẹ được thêm ưu đãi mua từ 2 giảm 3%, ưu đãi theo hạng khách hàng và miễn phí vận chuyển cho đơn từ {freeship}.'],
+    ['Giá trên web và trên Shopee có giống nhau không?', 'Giá cơ bản giống nhau. Trên web mẹ được thêm ưu đãi theo hạng khách hàng và miễn phí vận chuyển cho đơn từ {freeship}.'],
     ['Hạn sử dụng còn bao lâu?', 'Tối thiểu 6 tháng với nước ép, hồng sâm và 12 tháng với vitamin, canxi tại thời điểm giao. Hàng cận date (nếu có) luôn ghi rõ ở tên phân loại và giảm giá riêng.'],
     ['Đặt xong bao lâu thì nhận được hàng?', 'Nội thành Hà Nội: trong ngày (xác nhận trước 16h), hoả tốc 2–4 giờ. Tỉnh khác: 1–3 ngày làm việc. Xem Chính sách giao hàng.'],
     ['Tôi muốn xuất hoá đơn VAT?', 'Ghi thông tin công ty vào ô ghi chú khi đặt hàng hoặc báo khi xác nhận đơn. Hoá đơn điện tử gửi qua email trong 3 ngày làm việc.'],

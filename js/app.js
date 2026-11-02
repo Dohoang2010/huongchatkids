@@ -201,10 +201,10 @@
     },
     count() { return this.items().reduce((s, i) => s + i.qty, 0); },
     subtotal() { return this.lines().reduce((s, l) => s + l.total, 0); },
-    /* Ưu đãi "mua từ 2 giảm 3%": tính theo từng dòng có số lượng ≥ 2 */
+    /* Ưu đãi "mua từ 2 giảm 3%": đã bỏ từ 02/11/2026 (MULTI_RATE = 0) – giữ hàm để bật lại khi cần */
     multiDiscount() { const ls = this.lines(), kh = hangKhongUuDai(ls); return ls.reduce((s, l) => s + (l.qty >= 2 && !kh.co(l) ? Math.round(l.total * MULTI_RATE) : 0), 0); },
   };
-  const MULTI_RATE = 0.03;
+  const MULTI_RATE = 0;
   const Customer = { key: 'mc_customer', get() { return store.get(this.key, null); }, set(v) { store.set(this.key, v); if (v && v.phone) AFF.noiSdt(v.phone); }, clear() { store.set(this.key, null); } };
   const Wish = { key: 'mc_wish', get() { return store.get(this.key, []); }, has(id) { return this.get().includes(id); }, toggle(id) { const w = this.get(); const i = w.indexOf(id); if (i > -1) w.splice(i, 1); else w.push(id); store.set(this.key, w); return i === -1; } };
 
@@ -571,7 +571,7 @@
           <div class="mega mega--wide"><div><h4>Danh mục</h4><ul>${CATEGORIES.slice(0, Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>&nbsp;</h4><ul>${CATEGORIES.slice(Math.ceil(CATEGORIES.length / 2)).map((c) => `<li><a href="collections.html?cat=${c.key}">${c.icon} ${c.label}</a></li>`).join('')}</ul></div>
           <div><h4>Theo độ tuổi</h4><div class="age-list">${AGES.map((a) => `<a href="collections.html?age=${a.key}">${a.emoji} ${a.label}</a>`).join('')}</div></div>
-          <div class="mega__promo">🎁 Mua từ 2 sản phẩm giảm thêm 3% – tự động áp dụng <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
+          <div class="mega__promo">🎁 Freeship đơn từ ${fmt(SITE.freeshipFrom)} <a class="fw-700" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem sản phẩm hot →</a></div></div></li>
         ${(() => { const sk = suKienHien(); return sk ? `<li class="navbar__item"><a class="navbar__link navbar__link--sk" href="index.html?tab=${sk.id}">${sk.icon ? sk.icon + ' ' : ''}${esc(sk.nhan)}</a></li>` : ''; })()}
         <li class="navbar__item"><a class="navbar__link navbar__link--km" href="${dmLink('collections.html?km=1')}">Khuyến mãi</a></li>
         ${NAV.map(navItem).join('')}
@@ -882,7 +882,7 @@
     $('#qbPrice').innerHTML = `<b>${fmt(price)}</b>${listPrice(old, price) ? `<s>${fmt(old)}</s>` : ''}`;
     $('#qbTotal').textContent = fmt(k.total);
     $('#qbQty').value = QB.qty;
-    $('#qbHint').innerHTML = QB.qty >= 2 ? `🎉 Đã giảm 3% khi mua từ 2` : `Mua từ 2 giảm thêm 3%`;
+    $('#qbHint').innerHTML = '';
     const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); if (g && g.soQua && !QB.quaVi) QB.quaVi = (g.vi || [])[0] || '';
     const gw = $('#qbGift'); if (gw) gw.innerHTML = g && g.hoacGiam ? giftBox(g, false) : giftBox(g, true, QB.quaVi);   // chọn giảm thay quà làm ở trang thanh toán
     $('#qbSummary').innerHTML = `<div class="summary-line"><span>Tạm tính (${QB.qty} sản phẩm)</span><span>${fmt(k.sub)}</span></div>${k.multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="free">−${fmt(k.multi)}</span></div>` : ''}${k.dungHang ? `<div class="summary-line"><span>${k.hang.laSinhNhat ? 'Ưu đãi sinh nhật 🎂' : 'Ưu đãi hạng ' + esc(k.hang.label)} (−${k.pct}%)</span><span class="free">−${fmt(k.hangAmt)}</span></div>` : ''}${k.gn ? `<div class="summary-line"><span>${esc(k.gn.ten)}</span><span class="free">−${fmt(k.gn.tien)}</span></div>` : ''}${k.coupon ? `<div class="summary-line"><span>Mã ${k.cr.code}</span><span class="free">−${fmt(k.coupon)}</span></div>` : ''}${k.dungGT ? `<div class="summary-line"><span>Giảm giá giới thiệu (−${QB.gtCfg.giam}%)</span><span class="free">−${fmt(k.gtAmt)}</span></div>` : ''}${k.giamDiem ? `<div class="summary-line"><span>Giảm bằng điểm (${k.diemDung.toLocaleString('vi-VN')} điểm)</span><span class="free">−${fmt(k.giamDiem)}</span></div>` : ''}${g && g.soQua ? `<div class="summary-line"><span>Quà tặng</span><span class="free">🎁 ${esc(g.moTa)}</span></div>` : ''}${ghiChuKhongUuDai(qbLines(), { coQua: !!((giftFor(qbLines(), qbQuaOpts(k)) || {}).soQua) })}<div class="summary-line"><span>Phí vận chuyển${k.ship ? ` <small class="text-muted">(${esc(ghnInfo(qbTinh(), qbLines()))})</small>` : ''}</span><span class="${k.ship === 0 ? 'free' : ''}">${shipText(k.ship)}</span></div>`;
