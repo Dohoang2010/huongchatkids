@@ -2926,3 +2926,6 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 @media (min-width: 768px) { .ud-bang { left: 20px; right: auto; bottom: 90px; width: 340px; } }
 @media (min-width: 992px) { .ud__nut { width: 58px; height: 58px; } .ud__may { left: 70px; } .ud--phai .ud__may { right: 70px; } }
 @media (prefers-reduced-motion: reduce) { .ud--rung { animation: none; } }
+
+/* Bản đồ cửa hàng (trang Giới thiệu) */
+.about__map { display: block; width: 100%; height: 320px; border: 0; border-radius: 12px; margin-top: 16px; }

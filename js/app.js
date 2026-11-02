@@ -610,7 +610,7 @@
         <div class="footer__info">
           <a class="logo" href="index.html">${SITE.logo ? `<img class="logo__img" src="${SITE.logo}" alt="" width="44" height="44">` : `<span class="logo__mark">🍼</span>`}<span>${SITE.name}<small>${SITE.slogan}</small></span></a>
           <b>${SITE.company}</b>
-          <p>${I.mapPin}<span>${SITE.address}</span></p>
+          <p>${I.mapPin}<span><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SITE.mapQuery || SITE.address)}" target="_blank" rel="noopener">${SITE.address} · Xem bản đồ ↗</a></span></p>
           <p>${I.phoneCall}<span>Hotline: <b>${SITE.hotline}</b> (${SITE.workingHours})</span></p>
           <p>${I.mail}<span>${SITE.email}</span></p>
           ${SITE.taxCode ? `<p>${I.file}<span>MST: ${SITE.taxCode}</span></p>` : ''}

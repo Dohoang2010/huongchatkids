@@ -23,6 +23,7 @@ window.SITE = {
   shopeeSale: { days: [15, 25], doubleDays: true, label: 'Siêu ưu đãi ngày {d}' },  // ngày sale Shopee: 15, 25 hằng tháng + ngày đôi (1/1, 2/2 … 12/12) → nút Shopee tự gắn tag; xem trước: thêm ?demo_date=2026-09-09 vào URL
   bctUrl: '',   // điền link xác nhận trên online.gov.vn sau khi thông báo website với Bộ Công Thương → footer tự hiện logo
   address: '15 Lý Nam Đế, Hoàn Kiếm, Hà Nội',
+  mapQuery: 'Hương Chất Kids, 15 Lý Nam Đế, Hoàn Kiếm, Hà Nội',   // tên + địa chỉ cửa hàng trên Google Maps (chân trang + trang Giới thiệu)
   email: 'huongchatkids@gmail.com',
   company: 'HƯƠNG CHẤT KIDS',        // tên pháp nhân đầy đủ khi có GPKD, VD: CÔNG TY TNHH ...
   taxCode: '',                        // mã số thuế – để trống sẽ ẩn dòng MST ở footer
