@@ -4811,12 +4811,12 @@ window.BANNERS = [
     "hienTu": "2026-11-01T08:30:00+07:00",
     "anTu": "2027-01-01T00:00:00+07:00",
     "anh": {
-      "pc": "img/banner/canxi-chi-web-0111-pc.jpg",
-      "mb": "img/banner/canxi-chi-web-0111-mb.jpg"
+      "pc": "img/banner/canxi-chi-web-0111b-pc.jpg",
+      "mb": "img/banner/canxi-chi-web-0111b-mb.jpg"
     },
     "nen": "#6E1224",
     "link": "product.html?id=26060839019",
-    "alt": "Từ 01/11/2026 Canxi Calciumore chỉ bán trên web huongchatkids.vn, dừng bán trên Shopee và TikTok Shop – khách quen Shopee nhập mã KHSP, khách quen TikTok Shop nhập mã KHTT giảm 5% canxi (1 lần/khách, đến 31/12/2026)"
+    "alt": "Từ 01/11/2026 Canxi Calciumore chỉ bán trên website huongchatkids.vn, dừng bán trên Shopee và TikTok Shop"
   },
   {
     "hienTu": "2026-10-24T00:00:00+07:00",
