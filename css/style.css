@@ -2911,13 +2911,13 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 .ud-tab { position: fixed; z-index: 56; left: 0; width: 22px; height: 46px; border: 0; border-radius: 0 12px 12px 0; padding: 3px 2px; cursor: pointer; background: linear-gradient(#FFF3C4, #FFC93C); box-shadow: 0 4px 12px rgba(217, 139, 0, .35); }
 .ud-tab svg { width: 18px; height: 18px; }
 .ud-tab--phai { left: auto; right: 0; border-radius: 12px 0 0 12px; }
-.ud-bang { position: fixed; z-index: 99; left: 8px; right: 8px; bottom: calc(var(--bottom-nav-h) + 8px); background: #fff; border-radius: 18px; padding: 6px 16px 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, .2);
-  max-height: 70vh; overflow-y: auto; opacity: 0; pointer-events: none; transform: translateY(14px); transition: opacity .2s, transform .2s; }
+.ud-bang { position: fixed; z-index: 99; left: 8px; right: 8px; bottom: calc(var(--bottom-nav-h) + 30px); background: #fff; border-radius: 18px; padding: 6px 16px 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, .2);
+  opacity: 0; pointer-events: none; transform: translateY(14px); transition: opacity .2s, transform .2s; }
 .ud-bang.is-mo { opacity: 1; pointer-events: auto; transform: none; }
 .ud-bang__dau { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line, #eee); position: sticky; top: -6px; background: #fff; }
 .ud-bang__dau b { font-family: var(--font-head); font-size: 16px; }
 .ud-bang__dau button { border: 0; background: none; font-size: 14px; width: 30px; height: 30px; cursor: pointer; color: var(--muted, #888); }
-.ud-bang ul { list-style: none; margin: 0; padding: 0; }
+.ud-bang ul { list-style: none; margin: 0; padding: 0; overflow-y: auto; overscroll-behavior: contain; }
 .ud-bang li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--line, #eee); font-size: 13.5px; line-height: 1.4; }
 .ud-bang__ic { font-size: 20px; width: 26px; text-align: center; flex: none; }
 .ud-bang__chu { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }

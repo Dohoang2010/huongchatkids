@@ -108,6 +108,9 @@
     clearInterval(dem);
     if (!mo) return;
     anMay(); datBang(); theo('mo');
+    /* Chỉ thấy 3 dòng rưỡi – nửa dòng dưới gợi ý khách kéo xuống xem tiếp */
+    const ul = bang.querySelector('ul'), li = ul.children;
+    ul.style.maxHeight = li.length > 3 ? [...li].slice(0, 3).reduce((t, x) => t + x.offsetHeight, 0) + li[3].offsetHeight / 2 + 'px' : '';
     const f = ds.find((x) => x.het), o = bang.querySelector('[data-ud-dem]');
     if (f && o) dem = setInterval(() => { o.textContent = hhmm(f.het() - Date.now()); }, 1000);
   }
