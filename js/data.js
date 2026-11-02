@@ -4799,6 +4799,17 @@ window.FEEDBACKS = [
 /* ===ADMIN:BANNERS=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.BANNERS = [
   {
+    "hienTu": "2026-11-02T00:00:00+07:00",
+    "anTu": "2027-03-01T00:00:00+07:00",
+    "anh": {
+      "pc": "img/banner/de-khang-0211-pc.jpg",
+      "mb": "img/banner/de-khang-0211-mb.jpg"
+    },
+    "nen": "#0E3B36",
+    "link": "collections.html?q=%C4%91%E1%BB%81%20kh%C3%A1ng",
+    "alt": "Mùa giao mùa – chăm đề kháng cho con yêu: Hồng sâm ChuChu, nước ép Lê & Hoa chuông Lotte, Vitamin D3K2 và Kẽm Pure Vitality hỗ trợ tăng sức đề kháng theo nhà sản xuất"
+  },
+  {
     "hienTu": "2026-10-29T00:00:00+07:00",
     "anh": {
       "pc": "img/banner/hexacare-be-gai-v2-pc.jpg",
