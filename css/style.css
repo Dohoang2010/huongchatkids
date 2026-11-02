@@ -2884,3 +2884,45 @@ body[data-dm="khuyen-mai"] .dm-hero__anh img { max-width: 92px; border-width: 3p
 .gt-mo { padding: 10px 16px; font-size: 13px; text-align: right; }
 /* H1 trang chủ: dòng giới thiệu nhỏ trên banner (SEO cần H1 nhìn thấy được) */
 .hero__h1 { margin: 0 0 10px; font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--muted); }
+
+/* ===== Icon ưu đãi hôm nay (js/uu-dai-nhanh.js) ===== */
+.ud { position: fixed; z-index: 56; left: 12px; top: 70%; touch-action: none; }
+.ud[hidden], .ud-tab[hidden] { display: none; }
+body.dang-go .ud, body.dang-go .ud-tab { display: none; }
+.ud__nut { position: relative; width: 52px; height: 52px; border-radius: 50%; border: 2px solid #FFE082; cursor: grab; padding: 7px; display: grid; place-items: center;
+  background: radial-gradient(circle at 32% 28%, #FFFDF2 0%, #FFF3C4 38%, #FFD54F 100%); box-shadow: 0 8px 22px rgba(217, 139, 0, .45), inset 0 -3px 6px rgba(184, 116, 0, .25); touch-action: none; user-select: none; }
+.ud__nut::after { content: ""; position: absolute; top: 5px; left: 11px; width: 22px; height: 10px; border-radius: 50%; background: linear-gradient(#fff, rgba(255, 255, 255, 0)); opacity: .8; pointer-events: none; }
+.ud__nut svg { width: 100%; height: 100%; filter: drop-shadow(0 1px 1px rgba(150, 90, 0, .35)); }
+.ud__nut b { position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: #E8344F; color: #fff; font-size: 12px; line-height: 16px; text-align: center; border: 2px solid #fff; }
+.ud--keo .ud__nut { cursor: grabbing; transform: scale(1.08); }
+.ud__an { position: absolute; top: -8px; left: -8px; width: 20px; height: 20px; border-radius: 50%; border: 0; background: rgba(40, 40, 40, .55); color: #fff; font-size: 10px; line-height: 20px; padding: 0; cursor: pointer; opacity: .75; }
+.ud--phai .ud__an { left: auto; right: -8px; top: auto; bottom: -6px; }
+@media (hover: hover) { .ud__an { opacity: 0; transition: opacity .15s; } .ud:hover .ud__an, .ud__an:focus-visible { opacity: 1; } }
+.ud__may { position: absolute; left: 62px; top: 50%; transform: translateY(-50%) scale(.9); transform-origin: left center; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  width: max-content; max-width: min(240px, calc(100vw - 150px)); background: #fff; border: 1.5px solid #FFD54F; border-radius: 14px; padding: 8px 30px 8px 12px; font-size: 13.5px; font-weight: 600; color: var(--ink, #222); box-shadow: 0 8px 22px rgba(0, 0, 0, .12); }
+.ud__may::before { content: ""; position: absolute; left: -7px; top: 50%; width: 12px; height: 12px; background: #fff; border-left: 1.5px solid #FFD54F; border-bottom: 1.5px solid #FFD54F; transform: translateY(-50%) rotate(45deg); }
+.ud__may span { cursor: pointer; }
+.ud__may button { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: 0; background: none; color: var(--muted, #888); cursor: pointer; font-size: 11px; }
+.ud--phai .ud__may { left: auto; right: 62px; transform-origin: right center; }
+.ud--phai .ud__may::before { left: auto; right: -7px; transform: translateY(-50%) rotate(-135deg); }
+.ud--may .ud__may { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
+.ud--rung { animation: udRung .9s ease-in-out; }
+@keyframes udRung { 0%, 100% { transform: rotate(0); } 15% { transform: rotate(-14deg) scale(1.06); } 30% { transform: rotate(12deg) scale(1.06); } 45% { transform: rotate(-9deg); } 60% { transform: rotate(6deg); } 75% { transform: rotate(-3deg); } }
+.ud-tab { position: fixed; z-index: 56; left: 0; width: 22px; height: 46px; border: 0; border-radius: 0 12px 12px 0; padding: 3px 2px; cursor: pointer; background: linear-gradient(#FFF3C4, #FFC93C); box-shadow: 0 4px 12px rgba(217, 139, 0, .35); }
+.ud-tab svg { width: 18px; height: 18px; }
+.ud-tab--phai { left: auto; right: 0; border-radius: 12px 0 0 12px; }
+.ud-bang { position: fixed; z-index: 99; left: 8px; right: 8px; bottom: calc(var(--bottom-nav-h) + 8px); background: #fff; border-radius: 18px; padding: 6px 16px 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, .2);
+  max-height: 70vh; overflow-y: auto; opacity: 0; pointer-events: none; transform: translateY(14px); transition: opacity .2s, transform .2s; }
+.ud-bang.is-mo { opacity: 1; pointer-events: auto; transform: none; }
+.ud-bang__dau { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line, #eee); position: sticky; top: -6px; background: #fff; }
+.ud-bang__dau b { font-family: var(--font-head); font-size: 16px; }
+.ud-bang__dau button { border: 0; background: none; font-size: 14px; width: 30px; height: 30px; cursor: pointer; color: var(--muted, #888); }
+.ud-bang ul { list-style: none; margin: 0; padding: 0; }
+.ud-bang li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--line, #eee); font-size: 13.5px; line-height: 1.4; }
+.ud-bang__ic { font-size: 20px; width: 26px; text-align: center; flex: none; }
+.ud-bang__chu { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.ud-bang__nut { flex: none; border: 0; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; text-decoration: none; background: linear-gradient(#FFE082, #FFC107); color: #5a3a00; }
+.ud-bang__tat { display: block; text-align: center; padding-top: 10px; font-weight: 600; font-size: 13.5px; color: var(--primary, #F0537A); text-decoration: none; }
+@media (min-width: 768px) { .ud-bang { left: 20px; right: auto; bottom: 90px; width: 340px; } }
+@media (min-width: 992px) { .ud__nut { width: 58px; height: 58px; } .ud__may { left: 70px; } .ud--phai .ud__may { right: 70px; } }
+@media (prefers-reduced-motion: reduce) { .ud--rung { animation: none; } }

@@ -2686,7 +2686,7 @@ function apiQtBaoCaoBan(p) {
   var kq = { ok: true, tu: Utilities.formatDate(tu, tz, 'yyyy-MM-dd'), den: Utilities.formatDate(den, tz, 'yyyy-MM-dd'),
     tong: { phien: 0, khach: 0, xemSP: 0, gio: 0, thanhToan: 0, mua: 0, don: 0, doanhThu: 0, donCoNguon: 0 }, nguon: [], baiDang: [], chuongTrinh: [], sanPham: [] };
   var them = function (m, k, ten) { return m[k] || (m[k] = { ten: ten || k, phien: 0, xemSP: 0, gio: 0, thanhToan: 0, mua: 0, don: 0, doanhThu: 0 }); };
-  var theoNguon = {}, theoBai = {}, sp = {}, khach = {};
+  var theoNguon = {}, theoBai = {}, sp = {}, khach = {}, uuDai = {};
   var spCua = function (id) { return sp[id] || (sp[id] = { id: id, xem: 0, gio: 0, don: 0, sl: 0, doanhThu: 0 }); };
 
   /* --- Phễu: theo phiên (sheet Truy cập) --- */
@@ -2703,6 +2703,7 @@ function apiQtBaoCaoBan(p) {
       } else if (su === 'gio') { ph.gio++; if (v[i][9]) spCua(String(v[i][9])).gio++; }
       else if (su === 'thanhtoan') ph.thanhToan++;
       else if (su === 'mua') ph.mua++;
+      else if (su === 'uudai') { var kud = String(v[i][9] || 'mo').slice(0, 40); uuDai[kud] = (uuDai[kud] || 0) + 1; }   // icon ưu đãi (js/uu-dai-nhanh.js): 'mo' = mở bảng, còn lại = ưu đãi được bấm
     }
   }
   Object.keys(phien).forEach(function (sid) {
@@ -2752,6 +2753,7 @@ function apiQtBaoCaoBan(p) {
   kq.nguon = xep(theoNguon); kq.baiDang = xep(theoBai).slice(0, 50);
   kq.chuongTrinh = Object.keys(ct).map(function (k) { return ct[k]; }).sort(function (a, b) { return b.doanhThu - a.doanhThu; });
   kq.sanPham = Object.keys(sp).map(function (k) { var x = sp[k]; x.tyLe = x.xem ? Math.round(x.don / x.xem * 1000) / 10 : null; return x; }).sort(function (a, b) { return b.xem - a.xem || b.don - a.don; }).slice(0, 60);
+  kq.uuDai = Object.keys(uuDai).map(function (k) { return { ten: k, so: uuDai[k] }; }).sort(function (a, b) { return b.so - a.so; });
   kq.tong.tyLe = kq.tong.phien ? Math.round(kq.tong.don / kq.tong.phien * 1000) / 10 : 0;
   return kq;
 }

@@ -34,7 +34,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-thong-ke-ban.js": {
-   "v": "14a133a7",
+   "v": "6edefec5",
    "can": [],
    "ngay": false
   },

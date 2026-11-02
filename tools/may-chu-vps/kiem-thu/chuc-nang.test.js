@@ -334,6 +334,8 @@ test('báo cáo bán hàng: phễu theo lượt vào, đơn gắn đúng nguồn
   await su('s2', 'xem', { trang: 'product.html?id=41353214697' });
   // Phiên 3 (Google): vào trang chủ rồi đi
   await su('s3', 'xem', { nguon: 'Google', cd: '' });
+  // Icon ưu đãi: mở bảng 2 lần, bấm giờ vàng 1 lần (không làm đổi phễu)
+  await su('s3', 'uudai', { ct: 'mo' }); await su('s1', 'uudai', { ct: 'mo' }); await su('s1', 'uudai', { ct: 'gio-vang' });
   // Đơn từ phiên 1: mã giảm giá + quà chương trình
   await datDon(m, SDT, { code: 'HCKBC0000001', coupon: 'HUONG20', qua: { soQua: 1, ten: 'mặt nạ', chuongTrinh: 'ct-2010-5tr' }, items: [{ id: '41353214697', short: 'Nước ép Lotte Tăng Cao', qty: 2, price: 448000 }], total: 896000,
     theoDoi: { nguon: 'Facebook', cd: 'bai-20-10', vid: 'vs1', trangVao: 'index.html' } });
@@ -356,6 +358,7 @@ test('báo cáo bán hàng: phễu theo lượt vào, đơn gắn đúng nguồn
   assert.deepStrictEqual([bai.phien, bai.don, bai.doanhThu], [2, 1, 896000]);
   const ct = Object.fromEntries(r.chuongTrinh.map((x) => [x.ten, x.don]));
   assert.strictEqual(ct['Mã giảm giá HUONG20'], 1); assert.strictEqual(ct['Quà tặng: ct-2010-5tr'], 1); assert.strictEqual(ct['Không dùng ưu đãi nào'], 2);
+  assert.deepStrictEqual(r.uuDai, [{ ten: 'mo', so: 2 }, { ten: 'gio-vang', so: 1 }], 'đếm lượt bấm icon ưu đãi');
   const sp = r.sanPham.find((x) => x.id === '41353214697');
   assert.deepStrictEqual([sp.xem, sp.gio, sp.don, sp.sl, sp.doanhThu], [2, 1, 1, 2, 896000]);
   // đơn huỷ không tính doanh thu
