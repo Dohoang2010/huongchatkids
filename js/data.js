@@ -1245,14 +1245,15 @@ window.PRODUCTS = [
         "oldPrice": 0
       }
     ],
-    "desc": "Lotte xanh (dòng Tăng Cao) – Nước ép hữu cơ LOTTE Táo và Củ dền: bổ sung canxi, hỗ trợ phát triển chiều cao (theo nhà sản xuất). Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
+    "desc": "Lotte xanh – Nước ép hữu cơ LOTTE Táo và Củ dền: bổ sung canxi, hỗ trợ phát triển chiều cao (theo nhà sản xuất). Nước dinh dưỡng Lotte Xanh Hàn Quốc, theo nhà sản xuất hỗ trợ phát triển chiều cao ở trẻ nhỏ và tuổi dậy thì.",
     "highlights": [
       "Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm",
       "Táo & củ dền hữu cơ, chứng nhận Organic, HACCP",
       "Bổ sung canxi, sắt, axit folic"
     ],
     "usage": "Bé 6–12 tháng: 1/2–1 gói/ngày, cho uống bằng thìa hoặc bình; bé trên 1 tuổi: 1 gói/ngày. Theo hướng dẫn trên bao bì.",
-    "slug": "nuoc-ep-lotte-tang-cao"
+    "slug": "nuoc-ep-lotte-huu-co-tao-cu-den",
+    "slugCu": "nuoc-ep-lotte-tang-cao"
   },
   {
     "id": "28467224687",
@@ -3999,8 +4000,9 @@ window.PRODUCTS = [
   },
   {
     "id": "combo-lottexanh-d3k2",
-    "name": "Combo Nước Ép Lotte Tăng Cao (Xanh) + Vitamin D3K2 Pure Vitality – Hỗ Trợ Bé Phát Triển Chiều Cao",
-    "short": "Combo nước ép Lotte Tăng cao + D3K2",
+    "name": "Combo Nước Ép Hữu Cơ Lotte Táo & Củ Dền (Xanh) + Vitamin D3K2 Pure Vitality – Bổ Sung Canxi, Vitamin D3K2 Cho Bé",
+    "short": "Combo nước ép Lotte Táo & Củ dền + D3K2",
+    "slugCu": "combo-nuoc-ep-lotte-tang-cao-d3k2",
     "brand": "lotte",
     "cat": "nuoc-ep",
     "ages": [
@@ -4044,17 +4046,17 @@ window.PRODUCTS = [
     ],
     "variants": [
       {
-        "label": "1 thùng Lotte Tăng cao 30 gói + 1 D3K2",
+        "label": "1 thùng Lotte Táo & Củ dền 30 gói + 1 D3K2",
         "price": 1707000,
         "oldPrice": 0
       }
     ],
-    "desc": "Bộ đôi hỗ trợ phát triển chiều cao: nước ép Lotte Tăng cao vị Xanh (táo & củ dền hữu cơ Hàn Quốc) bé dễ uống, ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
+    "desc": "Bộ đôi hỗ trợ phát triển chiều cao: nước ép Lotte xanh (táo & củ dền hữu cơ Hàn Quốc) bé dễ uống, ngon miệng, kết hợp vitamin D3K2 Pure Vitality (New Zealand) hỗ trợ hấp thu canxi và đưa canxi vào xương.",
     "highlights": [
       "Mua trọn bộ 1 chạm, không phải chọn từng món",
       "Nước ép hữu cơ Hàn Quốc, bé dễ uống",
       "Thùng 30 gói dùng được khoảng 1 tháng",
-      "D3K2 hỗ trợ hấp thu canxi, dùng cùng nước ép tăng cao"
+      "D3K2 hỗ trợ hấp thu canxi, dùng cùng nước ép Lotte xanh"
     ],
     "usage": "Nước ép: 1 gói/ngày, uống lạnh càng ngon. D3K2: nhỏ giọt theo độ tuổi, dùng buổi sáng sau ăn."
   },
@@ -4725,7 +4727,7 @@ window.PRODUCTS = [
 ];
 /* ===/ADMIN:PRODUCTS=== */
 
-/* Đường dẫn sản phẩm có từ khoá: huongchatkids.vn/<slug> (vd /nuoc-ep-lotte-tang-cao).
+/* Đường dẫn sản phẩm có từ khoá: huongchatkids.vn/<slug> (vd /nuoc-ep-lotte-huu-co-tao-cu-den).
    slug = p.slug (sửa ở Quản trị › Sản phẩm › SEO) hoặc tự tạo từ tên ngắn; trùng nhau / trùng tên trang có sẵn thì thêm mã sản phẩm.
    Máy chủ VPS đọc cùng bảng này để trả trang sản phẩm + chuyển link cũ product.html?id=… sang link mới. */
 window.taoSlug = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70).replace(/-+$/, '');
@@ -5095,7 +5097,7 @@ window.POSTS = [
       "[[sp:42878618667]]",
       "[[sp:26060839019]]",
       "[[sp:41353214697]]",
-      "Canxi Calciumore và nước ép Lotte Tăng Cao là thực phẩm bổ sung, không phải thuốc, chỉ đi kèm chứ không thay được bữa ăn đa dạng. Mẹ dùng đúng liều trên bao bì, không dùng cùng lúc quá nhiều loại có canxi.",
+      "Canxi Calciumore và nước ép Lotte xanh (Táo & Củ dền) là thực phẩm bổ sung, không phải thuốc, chỉ đi kèm chứ không thay được bữa ăn đa dạng. Mẹ dùng đúng liều trên bao bì, không dùng cùng lúc quá nhiều loại có canxi.",
       "Nếu con chậm tăng cân, đứng cân nhiều tháng liền, thấp hơn hẳn bạn cùng tuổi hoặc biếng ăn kéo dài, mẹ nên đưa con đi khám bác sĩ dinh dưỡng."
     ]
   },
@@ -6103,7 +6105,7 @@ window.POSTS = [
   },
   {
     "id": "nuoc-ep-lotte-chon-loai-nao",
-    "title": "Nước ép Lotte Nho Mận, Tăng cao hay Đề kháng – mẹ chọn loại nào cho con?",
+    "title": "Nước ép Lotte hồng, xanh hay cam – mẹ chọn loại nào cho con?",
     "cat": "Dinh dưỡng",
     "date": "05/10/2026",
     "read": "5 phút",
@@ -6123,9 +6125,9 @@ window.POSTS = [
       "## Dòng Hữu cơ Nho và Mận – Ăn Ngon (mận, nho, táo)",
       "Theo nhà sản xuất, dòng này dùng 99,94% nguyên liệu hữu cơ, có mận hỗ trợ nhuận tràng. Phù hợp bé biếng ăn, đi ngoài khó, cần bữa phụ ngọt tự nhiên thay bánh kẹo.",
       "[[sp:25632276959]]",
-      "## Dòng Tăng Cao (táo, củ dền)",
+      "## Lotte xanh – Táo & Củ dền",
       "Dùng được cho bé từ 6 tháng – hợp giai đoạn ăn dặm. Nhà sản xuất bổ sung canxi, sắt và axit folic. Đây là lựa chọn của nhiều mẹ có con đang tuổi lớn nhanh hoặc bước vào dậy thì.",
-      "![Nước ép Lotte Tăng Cao vị táo & củ dền](img/41353214697-2.jpg)",
+      "![Nước ép Lotte xanh vị táo & củ dền](img/41353214697-2.jpg)",
       "[[sp:41353214697]]",
       "## Dòng Đề Kháng – Khoẻ Mạnh (lê, rễ cát cánh)",
       "Dùng cho bé từ 12 tháng. Theo nhà sản xuất, lê và rễ cát cánh hữu cơ kết hợp hồng sâm cô đặc và lợi khuẩn EPS, hợp với bé hay ốm vặt khi giao mùa, đi nhà trẻ.",
