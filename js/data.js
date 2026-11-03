@@ -296,7 +296,6 @@ window.THEME = {
   },
   "khoi": [
     { "key": "hero", "ten": "Banner lớn đầu trang", "bat": true },
-    { "key": "sao-chia-se", "ten": "Mẹ nổi tiếng tin chọn (3 ảnh)", "bat": true },
     { "key": "suc-khoe", "ten": "Nút Đo chỉ số cho bé", "bat": true },
     { "key": "flash", "ten": "Flash sale", "bat": true },
     { "key": "noi-bat", "ten": "Mẹ tin dùng nhất", "bat": true },
@@ -4754,6 +4753,9 @@ window.FEEDBACKS = [
   { image: "img/feedback/fb-06.jpg", thumb: "img/feedback/thumb/fb-06.jpg" },
   { image: "img/feedback/fb-07.jpg", thumb: "img/feedback/thumb/fb-07.jpg" },
   { image: "img/feedback/fb-08.jpg", thumb: "img/feedback/thumb/fb-08.jpg" },
+  { image: "img/feedback/sao-1.jpg", thumb: "img/feedback/thumb/sao-1.jpg", name: "Hoà Minzy", kol: true },
+  { image: "img/feedback/sao-2.jpg", thumb: "img/feedback/thumb/sao-2.jpg", name: "Đông Nhi", kol: true },
+  { image: "img/feedback/sao-3.jpg", thumb: "img/feedback/thumb/sao-3.jpg", name: "Phan Minh Huyền", kol: true },
   { image: "img/feedback/fb-47.jpg", thumb: "img/feedback/thumb/fb-47.jpg", name: "Hoà Minzy", kol: true },
   { image: "img/feedback/fb-48.jpg", thumb: "img/feedback/thumb/fb-48.jpg", name: "Hoà Minzy", kol: true },
   { image: "img/feedback/fb-49.jpg", thumb: "img/feedback/thumb/fb-49.jpg", name: "Đông Nhi", kol: true },
