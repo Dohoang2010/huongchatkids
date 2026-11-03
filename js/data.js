@@ -4081,7 +4081,7 @@ window.PRODUCTS = [
     ],
     "price": 986000,
     "oldPrice": 0,
-    "rating": 0,
+    "rating": 5,
     "reviews": 0,
     "sold": 0,
     "stock": 50,
@@ -4106,21 +4106,19 @@ window.PRODUCTS = [
       {
         "label": "Men Baby (nâu) · từ 0 tháng",
         "price": 986000,
-        "oldPrice": 0,
         "oos": true
       },
       {
         "label": "Men Kids (xanh) · từ 24 tháng",
         "price": 986000,
-        "oldPrice": 0,
         "oos": true
       },
       {
-        "label": "30 gói nhỏ Men Kids (xanh) · từ 24 tháng",
+        "label": "20 gói nhỏ Men Kids (xanh) · từ 24 tháng",
         "price": 399000
       },
       {
-        "label": "30 gói nhỏ Men Baby (nâu) · từ 0 tháng",
+        "label": "20 gói nhỏ Men Baby (nâu) · từ 0 tháng",
         "price": 399000
       }
     ],
