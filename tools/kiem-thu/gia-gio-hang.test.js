@@ -263,9 +263,9 @@ test('phí ship theo bảng J&T: thùng Lotte 30/60/130/130k, gạc hươu · Ch
 test('tìm kiếm không dấu / sai chính tả nhẹ và link sản phẩm có từ khoá', () => {
   const { MC, W } = taoWeb({ gio: gio('10:00') });
   const ids = (q) => MC.timSP(q, W.PRODUCTS).ds.map((p) => p.id);
-  assert.ok(ids('nuoc ep lotte tang cao').includes(LOTTE), 'không dấu');
+  assert.ok(ids('nuoc ep lotte tao cu den').includes(LOTTE), 'không dấu');
   assert.ok(ids('Nước ép Lotte').includes(LOTTE), 'có dấu');
-  assert.ok(ids('lote tang cao').includes(LOTTE), 'gõ thiếu chữ');
+  assert.ok(ids('lote cu den').includes(LOTTE), 'gõ thiếu chữ');
   assert.strictEqual(ids('xyzkhongcosanphamnay').length, 0);
   assert.strictEqual(MC.spUrl(LOTTE), '/' + W.SP_SLUG[LOTTE]);
   assert.strictEqual(MC.spUrl(LOTTE, 'aff=ABC'), '/' + W.SP_SLUG[LOTTE] + '?aff=ABC');

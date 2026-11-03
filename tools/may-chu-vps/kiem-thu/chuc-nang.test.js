@@ -435,3 +435,15 @@ test('Zalo ZBS: chưa bật thì không gửi; bật nhưng mã kết nối lỗ
   assert.deepStrictEqual(await m.get('action=zaloXacNhanDon&ma=HCK2610207978&sdt=' + SDT), { ok: true, trung: true }, 'mỗi mã đơn chỉ gửi 1 lần');
   assert.strictEqual((await m.get('action=zaloXacNhanDon&ma=XYZ&sdt=' + SDT)).ok, false);
 });
+
+test('CRM: 2 đơn cùng ngày + cùng tiền (1 huỷ, 1 đã giao) → khớp đơn còn hiệu lực', async () => {
+  const m = taoMay();
+  const crm = { ok: true, donHang: [
+    { ma: '875574747', ngay: '2026-10-31T05:03:36.000Z', tien: 1333680, trangThai: 'Đã giao' },
+    { ma: '875556656', ngay: '2026-10-31T04:29:27.044Z', tien: 1333680, trangThai: 'Đã huỷ' },
+    { ma: '875554326', ngay: '2026-10-31T04:24:53.762Z', tien: 225000, trangThai: 'Đã giao' }] };
+  const d = await m.bc.goiHam('timDonCRM', [crm, 'HCK2610318847', 1333680, new Date('2026-10-31T04:25:00Z')]);
+  assert.strictEqual(d && d.ma, '875574747');
+  crm.donHang[1].trangThai = 'Đang giao';
+  assert.strictEqual(await m.bc.goiHam('timDonCRM', [crm, 'HCK2610318847', 1333680, new Date('2026-10-31T04:25:00Z')]), null, 'trùng mà đều còn hiệu lực → không đoán');
+});

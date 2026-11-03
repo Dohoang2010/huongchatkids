@@ -3241,7 +3241,7 @@ function ngayCRM(x) {
 function soNgay_(ddmmyyyy) { var m = String(ddmmyyyy).match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? Date.UTC(+m[3], m[2] - 1, +m[1]) / 864e5 : NaN; }
 /* Tìm đơn CRM khớp đơn web:
    1) mã CRM = / chứa mã web; 2) mã web nằm ở bất kỳ trường nào của đơn CRM (ghi chú, mã ngoài…);
-   3) không có mã → cùng ngày (lệch ≤ 1 ngày) + cùng số tiền (±1.000đ) và chỉ có đúng 1 đơn như vậy */
+   3) không có mã → cùng ngày (lệch ≤ 1 ngày) + cùng số tiền (±1.000đ) và chỉ có đúng 1 đơn như vậy (trùng thì bỏ đơn huỷ) */
 function timDonCRM(crm, ma, tong, ngay) {
   var ds = (crm && crm.donHang) || []; var m = String(ma || '').toUpperCase();
   for (var i = 0; i < ds.length; i++) { var x = String(ds[i].ma || '').toUpperCase(); if (m && x && (x === m || x.indexOf(m) > -1 || m.indexOf(x) > -1)) return ds[i]; }
@@ -3252,6 +3252,7 @@ function timDonCRM(crm, ma, tong, ngay) {
     var tien = Number(d.tien != null ? d.tien : d.tong) || 0, tong2 = Number(d.tong) || 0, nd = soNgay_(ngayCRM(d.ngay));
     return !isNaN(nd) && Math.abs(nd - ng) <= 1 && (Math.abs(tien - Number(tong || 0)) < 1000 || Math.abs(tong2 - Number(tong || 0)) < 1000);
   });
+  if (hop.length > 1) hop = hop.filter(function (d) { return ttTuCRM(d.trangThai) !== 'Đã huỷ'; });   // trùng tiền + ngày: đơn huỷ thường là bản cũ đã lên lại
   return hop.length === 1 ? hop[0] : null;
 }
 var TT_CUOI = ['Đã huỷ', 'Đã hoàn hàng'];
