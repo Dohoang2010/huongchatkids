@@ -71,7 +71,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-marketing.js": {
-   "v": "e5b63581",
+   "v": "054eebb9",
    "can": [
     "m-qua-tang.js"
    ],

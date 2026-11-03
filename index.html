@@ -12,7 +12,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261103c">
+  <link rel="stylesheet" href="css/style.css?v=20261103d">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -298,6 +298,12 @@ TỰ ÁP</i></a>`; }
   const flash = PRODUCTS.filter((p) => (p.tags || []).includes('Sản phẩm hot')).sort(MC.rankDefault);
   $('#flashRow').innerHTML = flash.map((p) => productCard(p)).join('');
   MC.autoScrollRow($('#flashRow'));
+  /* Giao diện khối (Quản trị › Flash Sale): màu nền, biểu tượng, trang trí, tiêu đề */
+  const FG = SITE.flashGd || {}, fsTen = FG.tieuDe || 'Flash sale';
+  if (FG.mau1) $('.flash').style.background = `linear-gradient(135deg, ${FG.mau1} 0%, ${FG.mau2 || FG.mau1} 100%)`;
+  if (FG.icon) $('.flash__title .bolt').textContent = FG.icon;
+  if (FG.tieuDe) $('.flash__title h2').textContent = FG.tieuDe;
+  if (FG.trangTri !== undefined && FG.trangTri !== '🔥') { $('.flash').classList.add('flash--diu'); $$('.flames i').forEach((i) => { i.textContent = FG.trangTri; }); if (!FG.trangTri) $('.flames').style.display = 'none'; }
   if (SITE.flashSaleEnd === 'daily') {
     // Ưu đãi trong hôm nay: đếm ngược tới 24:00, qua ngày mới tự đếm lại
     const endOfToday = () => { const e = new Date(); e.setHours(24, 0, 0, 0); return e.getTime(); };
@@ -315,7 +321,7 @@ TỰ ÁP</i></a>`; }
       if (!end || now >= end) { clearInterval(t); if (khoi) khoi.style.display = 'none'; return; }
       const sap = now < start, moc = sap ? start : end, d = moc - now;
       const ngay = Math.floor(d / 864e5), h = Math.floor(d % 864e5 / 36e5), m = Math.floor(d % 36e5 / 6e4), s = Math.floor(d % 6e4 / 1e3);
-      if (tieuDe) tieuDe.textContent = sap ? 'Flash sale sắp diễn ra' : 'Flash sale';
+      if (tieuDe) tieuDe.textContent = sap ? fsTen + ' sắp diễn ra' : fsTen;
       $('#countdown').innerHTML = `${sap ? `Bắt đầu ${hien(start)} · còn` : `Kết thúc ${hien(end)} · còn`} ${ngay ? `<b>${ngay}</b><i style="margin-right:4px">ngày</i>` : ''}<b>${String(h).padStart(2, '0')}</b><i>:</i><b>${String(m).padStart(2, '0')}</b><i>:</i><b>${String(s).padStart(2, '0')}</b>`;
     };
     capNhat(); t = setInterval(capNhat, 1000);

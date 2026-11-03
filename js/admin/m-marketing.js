@@ -35,6 +35,29 @@
     }
     A.doiDuLieu();
   }
+  /* Giao diện khối Flash sale trang chủ – CAUHINH.flashGd = { mau1, mau2, icon, trangTri, tieuDe } (thiếu = như mặc định) */
+  const FG_MAU = [['Hồng cam (mặc định)', '', ''], ['Đỏ Tết', '#C62828', '#FF7043'], ['Cam vàng', '#EF6C00', '#FFB300'], ['Xanh ngọc', '#00897B', '#26C6DA'],
+    ['Xanh dương', '#1E63D6', '#4FC3F7'], ['Tím', '#7B1FA2', '#E040FB'], ['Xanh lá', '#2E7D32', '#9CCC65'], ['Đen sang', '#1F1F2E', '#6D4C41']];
+  const FG_ICON = ['⚡', '🔥', '🎁', '🛍️', '⭐', '🌸', '🎄', '🧧', '💖'];
+  const FG_TT = [['🔥', 'Lửa'], ['✨', 'Lấp lánh'], ['🌸', 'Hoa'], ['❄️', 'Tuyết'], ['🎈', 'Bóng bay'], ['💖', 'Tim'], ['🎁', 'Quà'], ['', 'Không']];
+  const fgDoc = () => Object.assign({ mau1: '', mau2: '', icon: '⚡', trangTri: '🔥', tieuDe: '' }, (A.D.CAUHINH || {}).flashGd || {});
+  function fgLuu(o) { const C = (A.D.CAUHINH = A.D.CAUHINH || {}); C.flashGd = Object.assign(fgDoc(), o); A.doiDuLieu(); }
+  function veGd() {
+    const g = fgDoc(), nen = g.mau1 ? `linear-gradient(135deg,${g.mau1},${g.mau2 || g.mau1})` : 'linear-gradient(135deg,#FF3D71 0%,#F0537A 45%,#FF8A5C 100%)';
+    const chip = (dk, html, data) => `<button type="button" class="btn btn--sm ${dk ? 'btn--primary' : 'btn--light'}" ${data}>${html}</button>`;
+    return `<div class="card"><h3>🎨 Giao diện Flash sale</h3>
+      <div style="background:${nen};color:#fff;border-radius:14px;padding:14px 18px;font-weight:800;font-size:18px;text-transform:uppercase;margin-bottom:12px">${esc(g.icon)} ${esc(g.tieuDe || 'Flash sale hôm nay')} <span style="font-size:16px">${g.trangTri ? esc(g.trangTri.repeat(3)) : ''}</span></div>
+      <p class="muted" style="margin:0 0 6px">Màu nền</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">${FG_MAU.map(([ten, a, b]) => chip(g.mau1 === a && (!a || g.mau2 === b), `<i style="display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:4px;background:${a ? `linear-gradient(135deg,${a},${b})` : 'linear-gradient(135deg,#FF3D71,#FF8A5C)'}"></i>${ten}`, `data-fg-mau="${a}|${b}"`)).join('')}</div>
+      <div class="row row-2"><label>Màu tự chọn – đầu<input type="color" id="fgMau1" value="${g.mau1 || '#FF3D71'}"></label><label>Màu tự chọn – cuối<input type="color" id="fgMau2" value="${g.mau2 || g.mau1 || '#FF8A5C'}"></label></div>
+      <p class="muted" style="margin:10px 0 6px">Biểu tượng cạnh tiêu đề</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${FG_ICON.map((x) => chip(g.icon === x, x, `data-fg-icon="${x}"`)).join('')}</div>
+      <p class="muted" style="margin:10px 0 6px">Trang trí bay quanh tiêu đề</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${FG_TT.map(([x, ten]) => chip(g.trangTri === x, `${x} ${ten}`, `data-fg-tt="${x}"`)).join('')}</div>
+      <div class="row row-2" style="margin-top:10px"><label>Tiêu đề (để trống = "Flash sale hôm nay")<input id="fgTieuDe" value="${esc(g.tieuDe)}" maxlength="40" placeholder="Flash sale hôm nay"></label>
+        <label>&nbsp;<button type="button" class="btn btn--light" data-fg-mac>↺ Về giao diện mặc định</button></label></div>
+    </div>`;
+  }
   function veFlash(el) {
     const fs = fsDoc();
     const chon = ds().filter((p) => (p.tags || []).includes('Sản phẩm hot'));
@@ -56,6 +79,7 @@
         <p>${fsTrangThai(fs)}</p>
         <p class="hint">Trước giờ bắt đầu: trang chủ hiện "Flash sale sắp diễn ra" và đếm ngược tới giờ mở. Trong khung giờ: đếm ngược tới lúc kết thúc. Hết giờ: khối Flash sale tự ẩn khỏi trang chủ.</p>` : ''}
       </div>
+      ${veGd()}
       <div class="card"><h3>Đang chạy flash sale (${chon.length})</h3>
         ${chon.length ? `<div class="plist">${chon.map((p) => the(p, true)).join('')}</div>` : '<p class="muted">Chưa chọn sản phẩm nào.</p>'}</div>
       <div class="card"><h3>Chọn thêm sản phẩm</h3>
@@ -182,6 +206,13 @@
 
   /* ---------------- Sự kiện ---------------- */
   document.addEventListener('click', async (e) => {
+    const fg = e.target.closest('[data-fg-mau],[data-fg-icon],[data-fg-tt],[data-fg-mac]');
+    if (fg) { const d = fg.dataset;
+      if (d.fgMau !== undefined) { const [a, b] = d.fgMau.split('|'); fgLuu({ mau1: a, mau2: b }); }
+      else if (d.fgIcon !== undefined) fgLuu({ icon: d.fgIcon });
+      else if (d.fgTt !== undefined) fgLuu({ trangTri: d.fgTt });
+      else { delete (A.D.CAUHINH || {}).flashGd; A.doiDuLieu(); }
+      A.veTrang(); return; }
     const fs = e.target.closest('[data-fs]');
     if (fs) { const p = ds()[Number(fs.dataset.fs)];
       const tags = (p.tags || []).filter((x) => x !== 'Sản phẩm hot');
@@ -210,6 +241,8 @@
   });
   document.addEventListener('change', (e) => {
     if (e.target.id === 'fsMode') { fsLuu(e.target.value); A.veTrang(); return; }
+    if (e.target.id === 'fgMau1' || e.target.id === 'fgMau2') { fgLuu({ mau1: $('#fgMau1').value, mau2: $('#fgMau2').value }); A.veTrang(); return; }
+    if (e.target.id === 'fgTieuDe') { fgLuu({ tieuDe: e.target.value.trim() }); A.veTrang(); return; }
     if (e.target.id === 'fsBD' || e.target.id === 'fsKT') { fsLuu('khoang'); A.veTrang(); return; }
     if (e.target.closest('#maBody')) { thuMa(); A.doiDuLieu(); }
     if (e.target.closest('#qtThung') || e.target.closest('#hangBody') || (e.target.id || '').startsWith('qt')) { thuQua(); A.doiDuLieu(); }

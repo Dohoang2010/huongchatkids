@@ -2938,3 +2938,7 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 .pdp__sao-luoi img { display: block; width: 104px; height: 104px; object-fit: cover; border-radius: 10px; }
 .pdp__sao-luoi span { display: block; margin-top: 4px; font-size: 12px; font-weight: 600; }
 .pdp__sao p { margin-top: 8px; font-size: 11.5px; color: var(--muted); }
+/* Flash sale đổi trang trí (Quản trị › Flash Sale): bỏ ánh lửa, giữ chữ nhấp nháy */
+.flash--diu .flash__title::before { display: none; }
+.flash--diu .flash__title h2 { animation: flashBlink 1s ease-in-out infinite alternate; text-shadow: 0 2px 6px rgba(0, 0, 0, .28); }
+.flash--diu .flames i { filter: drop-shadow(0 0 6px rgba(255, 255, 255, .85)); }
