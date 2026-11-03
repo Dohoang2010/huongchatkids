@@ -2942,3 +2942,29 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 .flash--diu .flash__title::before { display: none; }
 .flash--diu .flash__title h2 { animation: flashBlink 1s ease-in-out infinite alternate; text-shadow: 0 2px 6px rgba(0, 0, 0, .28); }
 .flash--diu .flames i { filter: drop-shadow(0 0 6px rgba(255, 255, 255, .85)); }
+/* Flash sale gọn (03/11/2026): thẻ nhỏ hơn, bỏ hãng / độ tuổi / đánh giá, nút thấp */
+.flash { padding: 12px 12px 10px; }
+@media (min-width: 768px) { .flash { padding: 16px 20px 12px; } }
+.flash__head { margin-bottom: 8px; }
+.flash__title h2 { font-size: 17px; }
+.flash__title .bolt { font-size: 21px; }
+@media (min-width: 768px) { .flash__title h2 { font-size: 20px; } }
+.flash .countdown b { min-width: 30px; height: 30px; font-size: 14px; }
+.flash .row-scroll { gap: 8px; margin: 0 -12px; padding: 2px 12px 4px; }
+.flash .row-scroll > * { flex-basis: 40%; }
+@media (min-width: 560px) { .flash .row-scroll > * { flex-basis: 27%; } }
+@media (min-width: 768px) { .flash .row-scroll { gap: 10px; margin: 0 -20px; padding-inline: 20px; } .flash .row-scroll > * { flex-basis: 20%; } }
+@media (min-width: 1100px) { .flash .row-scroll > * { flex-basis: calc(100% / 7 - 9px); } }
+.flash .pcard__brand, .flash .pcard__age, .flash .pcard__meta { display: none; }
+.flash .pcard__body { padding: 8px 8px 8px; gap: 2px; }
+.flash .pcard__name { font-size: 12.5px; line-height: 1.35; min-height: 2.7em; }
+.flash .pcard__price b { font-size: 14.5px; }
+.flash .pcard__price s { font-size: 11px; }
+.flash .pcard__actions { padding-top: 6px; gap: 4px; }
+.flash .pcard__actions .btn { min-height: 34px; font-size: 12.5px; padding: 0 6px; }
+.flash .pcard__actions .btn svg { width: 14px; height: 14px; }
+.flash .pcard__actions .btn--icon { flex: 0 0 34px; width: 34px; }
+.flash .badge { font-size: 10.5px; padding: 2px 6px; }
+.flash__more { margin-top: 8px; }
+.flash__more .btn { min-height: 34px; padding: 0 16px; font-size: 13px; }
+@media (max-width: 559px) { .flash .pcard__actions .btn--icon { display: none; } .flash .countdown { font-size: 12px; } }
