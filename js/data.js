@@ -119,7 +119,7 @@ window.AGES = [
 
 /* tpcn: true → hiện cảnh báo "không phải là thuốc" theo quy định quảng cáo TPCN. image: ảnh đại diện ô danh mục trang chủ (bỏ trống sẽ dùng icon) */
 window.CATEGORIES = [
-  { key: 'nuoc-ep',   label: 'Nước ép & nước dinh dưỡng', icon: '🧃', color: '#FFF3D6', desc: 'Lotte Organic – ăn ngon, tăng cân, đề kháng', tpcn: false, image: 'img/thumb/22686115682.jpg' },
+  { key: 'nuoc-ep',   label: 'Nước ép & nước dinh dưỡng', icon: '🧃', color: '#FFF3D6', desc: 'Lotte Organic – ăn ngon, tiêu hoá, đề kháng', tpcn: false, image: 'img/thumb/22686115682.jpg' },
   { key: 'sua',       label: 'Sữa cho bé',                icon: '🥛', color: '#EAF0FF', desc: 'Biostime, Lotte Kid A+, sữa tươi Norco', tpcn: false, image: 'img/thumb/13899935993.jpg' },
   { key: 'hong-sam',  label: 'Hồng sâm & đề kháng',       icon: '🌿', color: '#FFE9EF', desc: 'ChuChu, Rich Kid, sâm Pinkfong', tpcn: true, image: 'img/thumb/22644617070.jpg' },
   { key: 'vitamin',   label: 'Vitamin & canxi',            icon: '💊', color: '#E0F5F2', desc: 'D3K2 nhỏ giọt, canxi Calciumore', tpcn: true, image: 'img/thumb/42878618667.jpg' },
@@ -239,7 +239,7 @@ window.BRANDS = [
 window.NAV = [
   { label: 'Dành cho bé', short: 'Dành cho bé', tiny: 'Cho bé', link: 'collections.html?cat=nuoc-ep,sua,hong-sam,vitamin,tang-can,rong-bien,cham-soc-be', columns: [
     { title: 'Danh mục cho bé', links: [['🧃 Nước ép & nước dinh dưỡng', 'collections.html?cat=nuoc-ep'], ['🥛 Sữa cho bé', 'collections.html?cat=sua'], ['🌿 Hồng sâm & đề kháng', 'collections.html?cat=hong-sam'], ['💊 Vitamin & canxi', 'collections.html?cat=vitamin'], ['🍯 Ăn ngon, tăng cân & tiêu hoá', 'collections.html?cat=tang-can'], ['🍙 Rong biển & ăn dặm', 'collections.html?cat=rong-bien'], ['🛁 Chăm sóc bé', 'collections.html?cat=cham-soc-be']] },
-    { title: 'Mẹ hay chọn', links: [['Nước ép Lotte hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Nước ép Lotte Tăng Cân', 'product.html?id=25632276959'], ['Vitamin D3K2 Pure Vitality', 'product.html?id=42878618667'], ['Canxi Calciumore (váng sữa)', 'product.html?id=26060839019'], ['Hồng sâm ChuChu', 'product.html?id=22644617070'], ['Gạc hươu non Sumo', 'product.html?id=26156646705'], ['Rong biển Sung Gyung', 'product.html?id=41002695070']] },
+    { title: 'Mẹ hay chọn', links: [['Nước ép Lotte hoa quả & rau củ Organic', 'product.html?id=22686115682'], ['Lotte hữu cơ Nho và Mận', 'product.html?id=25632276959'], ['Vitamin D3K2 Pure Vitality', 'product.html?id=42878618667'], ['Canxi Calciumore (váng sữa)', 'product.html?id=26060839019'], ['Hồng sâm ChuChu', 'product.html?id=22644617070'], ['Gạc hươu non Sumo', 'product.html?id=26156646705'], ['Rong biển Sung Gyung', 'product.html?id=41002695070']] },
     { title: 'Theo nhu cầu', needs: ['tang-chieu-cao', 'tang-can', 'de-khang', 'tieu-hoa', 'tri-nao'] },
     { title: 'Theo độ tuổi', ages: ['6-12m', '1-3y', '3-6y', '6-12y', '12-18y'] } ] },
   { label: 'Beauty', short: 'Beauty', tiny: 'Beauty', link: 'collections.html?cat=cho-me', columns: [
@@ -296,6 +296,7 @@ window.THEME = {
   },
   "khoi": [
     { "key": "hero", "ten": "Banner lớn đầu trang", "bat": true },
+    { "key": "sao-chia-se", "ten": "Mẹ nổi tiếng tin chọn (3 ảnh)", "bat": true },
     { "key": "suc-khoe", "ten": "Nút Đo chỉ số cho bé", "bat": true },
     { "key": "flash", "ten": "Flash sale", "bat": true },
     { "key": "noi-bat", "ten": "Mẹ tin dùng nhất", "bat": true },
@@ -1607,14 +1608,15 @@ window.PRODUCTS = [
         "oldPrice": 0
       }
     ],
-    "desc": "Lotte hồng (dòng Tăng Cân) – Nước ép hữu cơ LOTTE Nho và Mận: bổ sung lợi khuẩn, giúp con ăn ngon miệng (theo nhà sản xuất). Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Tăng Cân – Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
+    "desc": "Lotte hồng – Nước ép hữu cơ LOTTE Nho và Mận: bổ sung lợi khuẩn, giúp con ăn ngon miệng (theo nhà sản xuất). Nước ép mận, nho và táo hữu cơ Lotte (Pasteur Prune & Grape & Apple Juice) dòng Ăn Ngon, túi 80ml có nắp vặn, nhà sản xuất Food Well Co., Ltd (Daegu, Hàn Quốc). Theo nhà sản xuất: 99,94% nguyên liệu hữu cơ, lợi khuẩn EPS Lactobacillus, hỗ trợ bé ăn ngon, cân bằng tiêu hoá, giảm táo bón. Có bản tự công bố sản phẩm tại Việt Nam.",
     "highlights": [
       "99,94% nguyên liệu hữu cơ, chứng nhận HACCP & Organic",
       "Mận hỗ trợ nhuận tràng, giảm táo bón",
       "Đã công bố ATTP tại Việt Nam (xem ảnh cuối)"
     ],
     "usage": "Bé từ 1 tuổi: 1 gói/ngày sau ăn. Hạn dùng 12 tháng, đã mở gói dùng ngay.",
-    "slug": "nuoc-ep-lotte-tang-can-tu-nhien"
+    "slug": "nuoc-ep-lotte-huu-co-nho-va-man",
+    "slugCu": "nuoc-ep-lotte-tang-can-tu-nhien"
   },
   {
     "id": "lotte-hau-an",
@@ -4735,6 +4737,7 @@ window.taoSlug = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/
     var s = window.taoSlug(p.slug || p.short || p.name) || window.taoSlug(String(p.id));
     if (bySlug[s] || TRANG.indexOf(s) > -1) s = s + '-' + window.taoSlug(String(p.id));
     bySlug[s] = p.id; byId[p.id] = s;
+    if (p.slugCu && !bySlug[p.slugCu]) bySlug[p.slugCu] = p.id;   // link cũ (đổi slug) vẫn mở được
   });
   window.SP_SLUG = byId; window.SP_THEO_SLUG = bySlug;
 })();
@@ -6098,7 +6101,7 @@ window.POSTS = [
   },
   {
     "id": "nuoc-ep-lotte-chon-loai-nao",
-    "title": "Nước ép Lotte Tăng cân, Tăng cao hay Đề kháng – mẹ chọn loại nào cho con?",
+    "title": "Nước ép Lotte Nho Mận, Tăng cao hay Đề kháng – mẹ chọn loại nào cho con?",
     "cat": "Dinh dưỡng",
     "date": "05/10/2026",
     "read": "5 phút",
@@ -6115,7 +6118,7 @@ window.POSTS = [
     "excerpt": "Ba dòng nước ép hữu cơ Lotte có thành phần và độ tuổi dùng khác nhau. Chuyên gia dinh dưỡng Hương Chất Kids giúp mẹ chọn đúng loại theo nhu cầu của bé.",
     "body": [
       "Nước ép hữu cơ Lotte (Hàn Quốc) là món bé dễ uống nhất trong nhóm dinh dưỡng bổ sung: gói nhỏ có ống hút hoặc nắp vặn, vị trái cây tự nhiên. Nhưng mỗi dòng có thành phần riêng, mẹ nên chọn theo điều bé đang cần.",
-      "## Dòng Tăng Cân – Ăn Ngon (mận, nho, táo)",
+      "## Dòng Hữu cơ Nho và Mận – Ăn Ngon (mận, nho, táo)",
       "Theo nhà sản xuất, dòng này dùng 99,94% nguyên liệu hữu cơ, có mận hỗ trợ nhuận tràng. Phù hợp bé biếng ăn, đi ngoài khó, cần bữa phụ ngọt tự nhiên thay bánh kẹo.",
       "[[sp:25632276959]]",
       "## Dòng Tăng Cao (táo, củ dền)",
@@ -6267,6 +6270,7 @@ window.POSTS = [
     var s = window.taoSlug(p.id) || window.taoSlug(p.title);
     if (spTheoSlug[s] != null || bySlug[s] || TRANG.indexOf(s) > -1) s = 'cam-nang-' + s;
     bySlug[s] = p.id; byId[p.id] = s;
+    if (p.slugCu && !bySlug[p.slugCu]) bySlug[p.slugCu] = p.id;   // link cũ (đổi slug) vẫn mở được
   });
   window.BAI_SLUG = byId; window.BAI_THEO_SLUG = bySlug;
 })();
@@ -6289,7 +6293,7 @@ window.QUA_TANG = {
   },
   "ten": "gói nước ép Lotte",
   "vi": [
-    "Hồng – Tăng cân tự nhiên",
+    "Hồng – Hữu cơ Nho và Mận",
     "Cam – Đề kháng"
   ],
   "donTu": {
@@ -6428,7 +6432,7 @@ window.QUA_TANG = {
       ],
       "quaTang": [
         {
-          "ten": "Hồng – Tăng cân tự nhiên",
+          "ten": "Hồng – Hữu cơ Nho và Mận",
           "gia": 44800
         },
         {
@@ -8281,7 +8285,7 @@ window.MUA_KEM = {
       ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'hong-sam': [
-      ['25632276959', 'Nước ép tăng cân uống xen với hồng sâm'],
+      ['25632276959', 'Lotte hữu cơ Nho và Mận uống xen với hồng sâm'],
       ['42878618667', 'Thêm D3K2 hỗ trợ bé phát triển chiều cao'],
       ['26156646705', 'Gạc hươu hỗ trợ bé tăng cân'],
       ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
@@ -8294,20 +8298,20 @@ window.MUA_KEM = {
     ],
     'tang-can': [
       ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ'],
-      ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
+      ['25632276959', 'Lotte hữu cơ Nho và Mận cho bé'],
       ['13899935993', 'Sữa dê dễ hấp thu, hỗ trợ tăng cân'],
       ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'rong-bien': [
       ['41002695070', 'Đổi vị rong biển cho bé đỡ ngán'],
       ['45462512687', 'Đổi vị rong biển cho bé đỡ ngán'],
-      ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
+      ['25632276959', 'Lotte hữu cơ Nho và Mận cho bé'],
       ['22644617070', 'Hồng sâm hỗ trợ bé ăn ngon, phục hồi sức khoẻ']
     ],
     'thuc-pham': [
       ['43532388498', 'Ăn sáng nhanh cùng sữa chua, sữa tươi'],
       ['28467224687', 'Táo đỏ – món ăn vặt tốt cho cả nhà'],
-      ['25632276959', 'Nước ép tăng cân tự nhiên cho bé'],
+      ['25632276959', 'Lotte hữu cơ Nho và Mận cho bé'],
       ['41002695070', 'Rắc cơm hỗ trợ bé ăn ngon miệng hơn']
     ],
     'do-an': [

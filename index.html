@@ -12,7 +12,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261102d">
+  <link rel="stylesheet" href="css/style.css?v=20261103a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -35,6 +35,17 @@
     </div>
     <div id="reorderStrip"></div>
     <div class="dv-cum"><div id="voucherStrip"></div><div id="ddMini"></div><div class="trust" id="trust"></div></div>
+  </div></section>
+
+  <!-- NGƯỜI NỔI TIẾNG CHIA SẺ (3 ảnh thiết kế) -->
+  <section data-khoi="sao-chia-se" class="section sao"><div class="container">
+    <div class="section-head"><div><h2>Mẹ nổi tiếng tin chọn 🌟</h2><p>Hoà Minzy, Đông Nhi, Phan Minh Huyền chia sẻ – bấm ảnh xem lớn</p></div><a class="link" href="product.html?id=25632276959" data-sp="25632276959">Xem sản phẩm →</a></div>
+    <div class="sao__luoi" id="saoLuoi">
+      <button type="button" data-sao="1" aria-label="Xem lớn chia sẻ của Hoà Minzy"><img src="img/feedback/thumb/sao-1.jpg" alt="Hoà Minzy chia sẻ về nước ép Lotte hữu cơ Nho và Mận" loading="lazy" width="560" height="560"></button>
+      <button type="button" data-sao="2" aria-label="Xem lớn chia sẻ của Đông Nhi"><img src="img/feedback/thumb/sao-2.jpg" alt="Đông Nhi chia sẻ về nước ép Lotte hữu cơ Nho và Mận" loading="lazy" width="560" height="560"></button>
+      <button type="button" data-sao="3" aria-label="Xem lớn chia sẻ của Phan Minh Huyền"><img src="img/feedback/thumb/sao-3.jpg" alt="Phan Minh Huyền chia sẻ về nước ép Lotte hữu cơ Nho và Mận" loading="lazy" width="560" height="560"></button>
+    </div>
+    <p class="fb-note">Cảm nhận cá nhân của từng gia đình, kết quả có thể khác nhau. Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</p>
   </div></section>
 
   <!-- NÚT ĐO CHỈ SỐ CHO BÉ (công cụ ở trang riêng do-chi-so-cho-be.html) -->
@@ -174,7 +185,7 @@
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261103b" defer></script>
+<script src="js/data.js?v=20261103c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
 <script src="js/app.js?v=20261103a" defer></script>
@@ -360,6 +371,11 @@ TỰ ÁP</i></a>`; }
   /* Thẻ bấm vào mở thẳng trang sản phẩm trên Shopee (phần đánh giá nằm ngay trên trang đó) */
   $('#reviewGrid').innerHTML = [...rated].sort((a, b) => b.reviews - a.reviews).slice(0, 4).map((p) => `<a class="review-card review-card--shopee" href="${p.shopeeUrl || MC.spUrl(p)}" ${p.shopeeUrl ? 'target="_blank" rel="noopener"' : ''} aria-label="Xem ${p.reviews} đánh giá của ${esc(MC.shortName(p))} trên Shopee"><div class="flex items-center gap-12"><img src="${MC.productThumb(p)}" alt="" width="56" height="56" style="border-radius:12px;object-fit:cover"><div><b class="fs-14">${esc(MC.shortName(p))}</b><div class="stars">${MC.starRow(p.rating)}</div></div></div><p><b style="font-size:22px;font-family:var(--font-head);color:var(--price)">${p.rating.toFixed(1)}</b><span class="text-muted"> / 5 · ${p.reviews.toLocaleString('vi-VN')} đánh giá</span><br><span class="text-muted fs-13">Đã bán ${p.sold.toLocaleString('vi-VN')} trên Shopee</span></p><div class="prod prod--shopee">${I.external} Xem đánh giá trên Shopee</div></a>`).join('');
   if (SITE.showReviews) $('#reviewGrid').insertAdjacentHTML('beforeend', REVIEWS.map((r) => `<div class="review-card"><div class="stars">${MC.starRow(r.stars)}</div><p>"${esc(r.text)}"</p><div class="who"><div><b>${esc(r.name)} · ${esc(r.child)}</b><small>${esc(r.city)}</small></div></div></div>`).join(''));
+
+  /* 3 ảnh người nổi tiếng đầu trang: bấm xem lớn */
+  const saoTen = ['Hoà Minzy', 'Đông Nhi', 'Phan Minh Huyền'];
+  $('#saoLuoi').addEventListener('click', (e) => { const b = e.target.closest('[data-sao]'); if (b) openFb({ image: 'img/feedback/sao-' + b.dataset.sao + '.jpg', name: saoTen[b.dataset.sao - 1] }); });
+  const spSao = $('[data-sp="25632276959"]'); if (spSao) spSao.href = MC.spUrl('25632276959');
 
   /* Feedback thực tế: ẩn mục nếu chưa có ảnh */
   const fbAll = (window.FEEDBACKS || []).filter((f) => f && f.image);
