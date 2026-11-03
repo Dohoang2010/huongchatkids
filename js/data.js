@@ -4751,6 +4751,10 @@ window.FEEDBACKS = [
   { image: "img/feedback/fb-06.jpg", thumb: "img/feedback/thumb/fb-06.jpg" },
   { image: "img/feedback/fb-07.jpg", thumb: "img/feedback/thumb/fb-07.jpg" },
   { image: "img/feedback/fb-08.jpg", thumb: "img/feedback/thumb/fb-08.jpg" },
+  { image: "img/feedback/fb-47.jpg", thumb: "img/feedback/thumb/fb-47.jpg", name: "Hoà Minzy", kol: true },
+  { image: "img/feedback/fb-48.jpg", thumb: "img/feedback/thumb/fb-48.jpg", name: "Hoà Minzy", kol: true },
+  { image: "img/feedback/fb-49.jpg", thumb: "img/feedback/thumb/fb-49.jpg", name: "Đông Nhi", kol: true },
+  { image: "img/feedback/fb-50.jpg", thumb: "img/feedback/thumb/fb-50.jpg", name: "Đông Nhi", kol: true },
   { image: "img/feedback/fb-09.jpg", thumb: "img/feedback/thumb/fb-09.jpg", name: "Salim", kol: true },
   { image: "img/feedback/fb-10.jpg", thumb: "img/feedback/thumb/fb-10.jpg" },
   { image: "img/feedback/fb-11.jpg", thumb: "img/feedback/thumb/fb-11.jpg" },
@@ -4784,15 +4788,10 @@ window.FEEDBACKS = [
   { image: "img/feedback/fb-39.jpg", thumb: "img/feedback/thumb/fb-39.jpg", name: "Huỳnh Trí Bảo Family", kol: true },
   { image: "img/feedback/fb-40.jpg", thumb: "img/feedback/thumb/fb-40.jpg", name: "Hồ Bích Trâm", kol: true },
   { image: "img/feedback/fb-41.jpg", thumb: "img/feedback/thumb/fb-41.jpg", name: "Hoyer Family", kol: true },
-  { image: "img/feedback/fb-42.jpg", thumb: "img/feedback/thumb/fb-42.jpg", name: "Nguyễn Quốc Vũ", kol: true },
   { image: "img/feedback/fb-43.jpg", thumb: "img/feedback/thumb/fb-43.jpg", name: "Phan Minh Huyền", kol: true },
   { image: "img/feedback/fb-44.jpg", thumb: "img/feedback/thumb/fb-44.jpg", name: "Hồ Bích Trâm", kol: true },
   { image: "img/feedback/fb-45.jpg", thumb: "img/feedback/thumb/fb-45.jpg", name: "Phan Minh Huyền", kol: true },
   { image: "img/feedback/fb-46.jpg", thumb: "img/feedback/thumb/fb-46.jpg", name: "Hoyer Family", kol: true },
-  { image: "img/feedback/fb-47.jpg", thumb: "img/feedback/thumb/fb-47.jpg", name: "Hoà Minzy", kol: true },
-  { image: "img/feedback/fb-48.jpg", thumb: "img/feedback/thumb/fb-48.jpg", name: "Hoà Minzy", kol: true },
-  { image: "img/feedback/fb-49.jpg", thumb: "img/feedback/thumb/fb-49.jpg", name: "Đông Nhi", kol: true },
-  { image: "img/feedback/fb-50.jpg", thumb: "img/feedback/thumb/fb-50.jpg", name: "Đông Nhi", kol: true },
   { image: "img/feedback/fb-51.jpg", thumb: "img/feedback/thumb/fb-51.jpg", name: "Nước dinh dưỡng Lotte", kol: true }
 ];
 
