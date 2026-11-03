@@ -295,9 +295,11 @@
     return { fee, gram, moTa: moTa.join(' + ') };
   }
   /* Phí ship của đơn (đồng giá toàn quốc – không cần biết tỉnh). ctx: { lines } */
+  /* Khách vào từ link của đối tác (CTV) đã duyệt – lượt bấm còn hạn (xem AFF) → freeship mặc định */
+  const affShip = () => { const v = store.get('mc_aff', null); return !!(v && v.lb && Date.now() - v.luc < (v.ngay || 7) * 864e5); };
   function shipFee(subtotal, method = 'standard', ctx = {}) {
     if (method === 'express') return SITE.expressFee || 35000;
-    if (subtotal >= SITE.freeshipFrom || subtotal === 0) return 0;
+    if (subtotal >= SITE.freeshipFrom || subtotal === 0 || affShip()) return 0;
     if (!SITE.shipping) return SITE.shipFee;
     return ghnQuote(ctx.lines || Cart.lines()).fee;
   }
@@ -676,8 +678,8 @@
       body.innerHTML = `<div class="drawer__empty"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p class="mt-8">Mẹ chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary mt-16" href="collections.html">Xem sản phẩm</a></div>`;
       foot.innerHTML = ''; return;
     }
-    const remain = SITE.freeshipFrom - sub;
-    body.innerHTML = `<div class="freeship-bar mt-12">${remain > 0 ? `Mua thêm <b>${fmt(remain)}</b> để được <b>freeship</b>` : `🎉 Đơn hàng được <b>miễn phí vận chuyển</b>`}<div class="bar"><i style="width:${Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>` +
+    const remain = affShip() ? 0 : SITE.freeshipFrom - sub;
+    body.innerHTML = `<div class="freeship-bar mt-12">${remain > 0 ? `Mua thêm <b>${fmt(remain)}</b> để được <b>freeship</b>` : `🎉 Đơn hàng được <b>miễn phí vận chuyển</b>`}<div class="bar"><i style="width:${remain > 0 ? Math.min(100, sub / SITE.freeshipFrom * 100) : 100}%"></i></div></div>` +
       lines.map((l) => `<div class="cart-item"><img src="${productThumb(l.p)}" alt=""><div><div class="name">${esc(shortName(l.p))}</div>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${listPrice(l.oldPrice, l.price) ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div>
         <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div><button class="remove" type="button" data-remove="${l.id}" data-variant="${l.variant}">Xoá</button></div></div>
         <div class="total">${fmt(l.total)}</div></div>`).join('');
@@ -2231,7 +2233,7 @@
     },
   };
 
-  window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
+  window.MC = { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, ageRange, productThumb, shortName, addrShow, hoursNote, MULTI_RATE, shopeeSale, shopeeBtn, vietqrPayload, payBox, payQrSvg, openPayQR, transferInfo, stripVN, store, phoneOk, I, starRow, productImage, productCard, Cart, Customer, Wish, submitOrder, shipFee, affShip, applyCoupon, maShipTuDong, deliveryEstimate, toast, openQuickBuy, openCallback, openCart, renderDrawer, countdown, orderSuccessHTML, syncStock, applyStock, rankDefault, isForMom, autoScrollRow,
     tierOf, tierByKey, tierNext, tierDiscount, tierBadge, tiers, phoneKey, maHetHan, ketHop, maChoQua, ViMa, GT, DD, openModal, closeModal, sinhNhat, taoMaDon, anEmail, AFF, voucherTicket, maCongKhai, maTotNhat, chipMaDaLuu, daMuaTruoc, vcIcon, maskPhone, addrParse, addrStore, addrFull, loyaltyApi, goiNhanh, taiKhoanNap, Session, saveSession, refreshProfile, couponsFor, openOtp,
     spUrl, baiUrl, hetHang, chayHang, beDaLuu, hopTuoiBe, hangKhongUuDai, baseUuDai, ghiChuKhongUuDai, quaBienThe, giamNganh, timSP, boDau, giftFor, giftNote, giftBox, laComboGiam, suKienDangChay, suKienHien, gioVangChay, gioVangCua, gioVangNhan, dangKhuyenMai, ctDangChay, ctMoTa, trackSu, laNuocLotte, laVip, hangCho, traHang, HangSdt, openLogin, openDoiMk, moiDoiMk, tinhTuDiaChi, ghnQuote, ghnInfo, shipText, shipFrom };
 })();

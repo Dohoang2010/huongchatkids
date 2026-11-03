@@ -348,3 +348,13 @@ test('giảm tự động theo phân loại: chỉ đúng phân loại combo, kh
   assert.strictEqual(MC.giamNganh([combo], { coMa: true }), null, 'đã nhập mã thì bỏ giảm tự động');
   assert.match(MC.quaBienThe(combo.p, combo.variantLabel, 1), /Tự giảm 5%/);
 });
+
+test('khách vào từ link đối tác (CTV) còn hạn → freeship mặc định; hết hạn → tính phí như thường', () => {
+  const luc = Date.parse(gio('10:00'));
+  const aff = (truoc) => taoWeb({ gio: gio('10:00'), localStorage: { mc_aff: JSON.stringify({ ma: 'MEBI', lb: 'LB1', luc: luc - truoc, ngay: 7 }) } });
+  const a = aff(3600e3);
+  assert.strictEqual(a.MC.shipFee(300000, 'standard', { tinh: 'Hà Nội', lines: [dong(a.W, LOTTE)] }), 0, 'link CTV → freeship');
+  assert.ok(a.MC.shipFee(300000, 'express') > 0, 'giao nhanh vẫn tính phí');
+  const b = aff(8 * 864e5);
+  assert.ok(b.MC.shipFee(300000, 'standard', { tinh: 'Hà Nội', lines: [dong(b.W, LOTTE)] }) > 0, 'lượt bấm quá 7 ngày → hết freeship');
+});

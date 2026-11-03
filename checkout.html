@@ -23,7 +23,7 @@
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261103a" defer></script>
+<script src="js/app.js?v=20261103b" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ds = goiYMuaKem();
     box.classList.toggle('hide', !ds.length);
     if (!ds.length) { box.innerHTML = ''; return; }
-    const conFree = SITE.freeshipFrom - (sub - multi);
+    const conFree = MC.affShip() ? 0 : SITE.freeshipFrom - (sub - multi);
     const hint = qua && qua.goiY ? `🎁 ${esc(qua.goiY)}`
       : conFree > 0 && conFree <= 1000000 ? `🚚 Mua thêm <b>${fmt(conFree)}</b> để được miễn phí vận chuyển`
       : 'Mẹ thường mua cùng các sản phẩm trong đơn – thêm vào đơn chỉ 1 chạm.';
