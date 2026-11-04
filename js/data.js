@@ -4711,7 +4711,7 @@ window.PRODUCTS = [
       "img/binh-giu-nhiet-hck-3.jpg",
       "img/binh-giu-nhiet-hck-4.jpg"
     ],
-    "desc": "Bình giữ nhiệt Hương Chất Kids – sản phẩm độc quyền, chỉ bán trên huongchatkids.vn. Thân bình màu kem, in logo Hương Chất Kids và cả nhà thú cưng đáng yêu, đáy viền vàng. Nắp bật, vòi hút gập gọn, tiện cho mẹ mang đi làm, bé mang đi học. Ngoài mua lẻ 199.000đ, bình còn là quà tặng khi mẹ mua 1 thùng nước dinh dưỡng Lotte hoặc hoá đơn từ 2 triệu, không tính Canxi váng sữa (theo chương trình, số suất có hạn).",
+    "desc": "Bình giữ nhiệt Hương Chất Kids – sản phẩm độc quyền, chỉ bán trên huongchatkids.vn. Thân bình màu kem, in logo Hương Chất Kids và cả nhà thú cưng đáng yêu, đáy viền vàng. Nắp bật, vòi hút gập gọn, tiện cho mẹ mang đi làm, bé mang đi học. Ngoài mua lẻ 199.000đ, bình còn là quà tặng khi mẹ mua 3 hộp 10 gói hoặc 1 thùng nước dinh dưỡng Lotte, hoặc hoá đơn từ 2 triệu, không tính Canxi váng sữa (theo chương trình, số suất có hạn).",
     "highlights": [
       "Sản phẩm độc quyền – chỉ có trên huongchatkids.vn",
       "In logo Hương Chất Kids và nhân vật thú cưng ngộ nghĩnh",
@@ -4854,7 +4854,7 @@ window.BANNERS = [
     },
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
-    "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 1 thùng nước dinh dưỡng Lotte hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên",
+    "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 3 hộp 10 gói hoặc 1 thùng nước dinh dưỡng Lotte, hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên",
     "anTu": "2027-01-01T00:00:00+07:00"
   },
   {
@@ -7494,18 +7494,18 @@ window.QUA_TANG = {
     },
     {
       "id": "ct-2410-binh-lotte",
-      "ten": "Quà độc quyền web · Mua 1 thùng nước dinh dưỡng Lotte tặng bình giữ nhiệt (50 suất)",
-      "moTa": "Mua 1 thùng nước dinh dưỡng Lotte tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
-      "lyDo": "Mua thùng nước dinh dưỡng Lotte",
+      "ten": "Quà độc quyền web · Mua 3 hộp 10 gói hoặc 1 thùng nước dinh dưỡng Lotte tặng bình giữ nhiệt (50 suất)",
+      "moTa": "Mua 3 hộp 10 gói hoặc 1 thùng nước dinh dưỡng Lotte (được chọn mix vị) tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
+      "lyDo": "Mua 3 hộp 10 gói hoặc 1 thùng nước dinh dưỡng Lotte",
       "kieu": "soLuong",
-      "donVi": "thùng",
+      "donVi": "hộp",
       "bac": [
         {
-          "muc": 1,
+          "muc": 3,
           "soQua": 1
         }
       ],
-      "muc": 1,
+      "muc": 3,
       "soQua": 1,
       "batDau": "2026-10-24T00:00",
       "ketThuc": "2026-12-31T23:59",
@@ -7524,37 +7524,37 @@ window.QUA_TANG = {
           "id": "22686115682",
           "bat": true,
           "heSo": {
-            "Xanh – Táo & Củ dền · 10 gói": 0,
-            "Xanh – Táo & Củ dền · Thùng 30 gói": 1,
-            "Hồng – Nho & Mận · 10 gói": 0,
-            "Hồng – Nho & Mận · Thùng 30 gói": 1,
-            "Cam – Lê & Hoa chuông · 10 gói": 0,
-            "Cam – Lê & Hoa chuông · Thùng 30 gói": 1,
-            "Mix vị · Thùng 30 gói": 1
+            "Xanh – Táo & Củ dền · 10 gói": 1,
+            "Xanh – Táo & Củ dền · Thùng 30 gói": 3,
+            "Hồng – Nho & Mận · 10 gói": 1,
+            "Hồng – Nho & Mận · Thùng 30 gói": 3,
+            "Cam – Lê & Hoa chuông · 10 gói": 1,
+            "Cam – Lê & Hoa chuông · Thùng 30 gói": 3,
+            "Mix vị · Thùng 30 gói": 3
           }
         },
         {
           "id": "23660586997",
           "bat": true,
           "heSo": {
-            "Hộp 10 gói": 0,
-            "Thùng 30 gói (3 hộp)": 1
+            "Hộp 10 gói": 1,
+            "Thùng 30 gói (3 hộp)": 3
           }
         },
         {
           "id": "41353214697",
           "bat": true,
           "heSo": {
-            "Hộp 10 gói": 0,
-            "Thùng 30 gói (3 hộp)": 1
+            "Hộp 10 gói": 1,
+            "Thùng 30 gói (3 hộp)": 3
           }
         },
         {
           "id": "25632276959",
           "bat": true,
           "heSo": {
-            "Hộp 10 gói": 0,
-            "Thùng 30 gói (3 hộp)": 1
+            "Hộp 10 gói": 1,
+            "Thùng 30 gói (3 hộp)": 3
           }
         }
       ]

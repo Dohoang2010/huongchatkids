@@ -358,3 +358,17 @@ test('khách vào từ link đối tác (CTV) còn hạn → freeship mặc đ�
   const b = aff(8 * 864e5);
   assert.ok(b.MC.shipFee(300000, 'standard', { tinh: 'Hà Nội', lines: [dong(b.W, LOTTE)] }) > 0, 'lượt bấm quá 7 ngày → hết freeship');
 });
+
+test('Bình giữ nhiệt: 1–2 hộp Lotte 10 gói không tặng; đủ 3 hộp (được mix vị) hoặc 1 thùng thì tặng', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const CT = 'ct-2410-binh-lotte', XANH = '41353214697', HONG = '25632276959', ct = (ls) => (MC.giftFor(ls, {}) || {}).chuongTrinh;
+  assert.notStrictEqual(ct([dong(W, XANH, 1, bt(W, XANH, /Hộp 10 gói/))]), CT, '1 hộp');
+  assert.notStrictEqual(ct([dong(W, XANH, 2, bt(W, XANH, /Hộp 10 gói/))]), CT, '2 hộp');
+  assert.strictEqual(ct([dong(W, XANH, 3, bt(W, XANH, /Hộp 10 gói/))]), CT, '3 hộp');
+  assert.strictEqual(ct([dong(W, XANH, 1, bt(W, XANH, /Hộp 10 gói/)), dong(W, HONG, 2, bt(W, HONG, /Hộp 10 gói/))]), CT, '3 hộp khác vị');
+  assert.strictEqual(ct([dong(W, XANH, 1, bt(W, XANH, /Thùng 30 gói/))]), CT, '1 thùng');
+  ['22686115682', '23660586997', XANH, HONG].forEach((id) => W.PRODUCTS.find((p) => p.id === id).variants.forEach((v) => {
+    const hs = W.QUA_TANG.chuongTrinh.find((c) => c.id === CT).sanPhamChinh.find((x) => x.id === id).heSo[v.label];
+    assert.strictEqual(hs, /10 gói/.test(v.label) ? 1 : 3, v.label);
+  }));
+});
