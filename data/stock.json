@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-02T04:03:54.667Z",
+  "updatedAt": "2026-11-04T04:09:36.227Z",
   "source": "admin",
   "note": "true = con hang, false = het hang",
   "items": {
@@ -97,7 +97,7 @@
       }
     },
     "28467224687": {
-      "in": true,
+      "in": false,
       "variants": {
         "1 gói": true,
         "2 gói": true
@@ -326,8 +326,8 @@
       "variants": {
         "Men Baby (nâu) · từ 0 tháng": false,
         "Men Kids (xanh) · từ 24 tháng": false,
-        "30 gói nhỏ Men Kids (xanh) · từ 24 tháng": true,
-        "30 gói nhỏ Men Baby (nâu) · từ 0 tháng": true
+        "20 gói nhỏ Men Kids (xanh) · từ 24 tháng": true,
+        "20 gói nhỏ Men Baby (nâu) · từ 0 tháng": true
       }
     },
     "mien-ga-cf": {
