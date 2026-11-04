@@ -1263,15 +1263,15 @@ window.PRODUCTS = [
     "cat": "thuc-pham",
     "ages": [],
     "needs": [
-      "an-vat",
-      "cho-me"
+      "cho-me",
+      "an-vat"
     ],
     "price": 299000,
     "oldPrice": 0,
     "rating": 4.9,
     "reviews": 0,
     "sold": 60,
-    "stock": 50,
+    "stock": 0,
     "shape": "box",
     "color": "#C62828",
     "weight": "Gói 1kg",
