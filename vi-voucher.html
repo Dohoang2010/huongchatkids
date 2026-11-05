@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Ví voucher – Hương Chất Kids</title>
-  <meta name="description" content="Voucher giảm giá của mẹ tại Hương Chất Kids: nhận từ điểm danh ngày đôi và chuỗi ngày liên tiếp.">
+  <meta name="description" content="Voucher giảm giá của bạn tại Hương Chất Kids: nhận từ điểm danh ngày đôi và chuỗi ngày liên tiếp.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,12 +15,12 @@
 <body>
 <div class="dau-cho" aria-hidden="true"></div>
 <main id="app"><div class="container vvp" id="vvp"></div></main>
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
-<script src="js/uu-dai-nhanh.js?v=20261102b" defer></script>
+<script src="js/uu-dai-nhanh.js?v=20261105c" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
   const { $, esc, fmt, toast, Session, openLogin, DD, store, byId, CATEGORIES } = { ...MC, CATEGORIES: window.CATEGORIES };
@@ -54,13 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
     goc.innerHTML = `<div class="vvp-dau"><div><h1 class="page-title">🎟️ Ví voucher của tôi</h1><p class="text-muted fs-14">Voucher nhận từ điểm danh hằng ngày – mỗi đơn dùng 1 voucher, chọn ở bước thanh toán.</p></div>
       <a class="btn btn--outline" href="diem-danh.html">📅 Điểm danh nhận thêm</a></div>
       <div class="vvp-tk"><div><b>${d.dem.AVAILABLE || 0}</b><small>Còn hiệu lực</small></div><div><b>${d.sapHet}</b><small>Sắp hết hạn</small></div><div><b>${d.dem.USED || 0}</b><small>Đã dùng</small></div><div><b>${(d.dem.EXPIRED || 0) + (d.dem.REVOKED || 0)}</b><small>Hết hạn / thu hồi</small></div></div>
-      ${!d.dungDuoc && d.dem.AVAILABLE ? '<p class="vvp-luu">🔐 Mẹ đang đăng nhập bằng mật khẩu mặc định. Để dùng voucher khi thanh toán, mẹ đăng nhập bằng mã OTP hoặc đặt mật khẩu riêng ở trang <a href="account.html">Tài khoản</a>.</p>' : ''}
+      ${!d.dungDuoc && d.dem.AVAILABLE ? '<p class="vvp-luu">🔐 Bạn đang đăng nhập bằng mật khẩu mặc định. Để dùng voucher khi thanh toán, bạn đăng nhập bằng mã OTP hoặc đặt mật khẩu riêng ở trang <a href="account.html">Tài khoản</a>.</p>' : ''}
       <div class="tabs mb-16 vvp-tabs" role="tablist">${TAB.map(([k, t]) => `<button class="tab ${k === tab ? 'is-active' : ''}" type="button" role="tab" aria-selected="${k === tab}" data-tab="${k}">${t} (${d.dem[k] || 0})</button>`).join('')}</div>
       ${ds.length ? `<div class="vvp-ds">${ds.map(the).join('')}</div>` : `<div class="card card--pad text-center vvp-trong"><div class="vvp-trong__ic">🎟️</div><h3>${tab === 'AVAILABLE' ? 'Chưa có voucher còn hiệu lực' : 'Không có voucher nào ở mục này'}</h3><p class="text-muted fs-14">${tab === 'AVAILABLE' ? 'Điểm danh mỗi ngày: ngày đôi và chuỗi 10 / 20 / 30 ngày liên tiếp được tặng voucher.' : ''}</p>${tab === 'AVAILABLE' ? '<a class="btn btn--primary" href="diem-danh.html">Đi điểm danh</a>' : ''}</div>`}`;
   }
   function tai() {
     if (!Session.get()) {
-      goc.innerHTML = `<div class="card card--pad text-center vvp-trong"><div class="vvp-trong__ic">🔐</div><h3>Đăng nhập để xem ví voucher</h3><p class="text-muted fs-14">Voucher gắn với tài khoản (số điện thoại) của mẹ.</p><button class="btn btn--primary btn--lg" type="button" id="vvLogin">Đăng nhập</button></div>`;
+      goc.innerHTML = `<div class="card card--pad text-center vvp-trong"><div class="vvp-trong__ic">🔐</div><h3>Đăng nhập để xem ví voucher</h3><p class="text-muted fs-14">Voucher gắn với tài khoản (số điện thoại) của bạn.</p><button class="btn btn--primary btn--lg" type="button" id="vvLogin">Đăng nhập</button></div>`;
       $('#vvLogin').addEventListener('click', () => openLogin().then((s) => { if (s) tai(); })); return;
     }
     const cu = DD.viCu();

@@ -15,13 +15,13 @@
 <body>
 <div class="dau-cho" aria-hidden="true"></div>
 <main id="app"><div class="container ddp" id="ddp"></div></main>
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
-<script src="js/uu-dai-nhanh.js?v=20261102b" defer></script>
-<script src="js/diem-danh-ui.js?v=20261016b" defer></script>
+<script src="js/uu-dai-nhanh.js?v=20261105c" defer></script>
+<script src="js/diem-danh-ui.js?v=20261105c" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
   const { $, esc, toast, Session, openLogin, DD } = MC; const UI = window.DDUI;
@@ -56,9 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const nut = e.target.closest('[data-dd-nut]'); if (!nut || dangGui) return;
     dangGui = true; nut.disabled = true; nut.classList.add('is-loading'); nut.innerHTML = '<span class="ddp-spin"></span> Đang điểm danh…';
     DD.diemDanh().then((r) => {
-      if (r && r.loi === 'token') { Session.clear(); toast('Phiên đăng nhập đã hết hạn, mẹ đăng nhập lại nhé', { type: 'err' }); return tai(); }
-      if (!r || !r.ok) { toast((r && r.msg) || 'Chưa điểm danh được, mẹ thử lại nhé', { type: 'err' }); return tai(); }
-      if (r.moi) { UI.chucMung(r); } else toast('Hôm nay mẹ đã điểm danh rồi – hẹn mẹ ngày mai nhé!', { type: 'ok' });
+      if (r && r.loi === 'token') { Session.clear(); toast('Phiên đăng nhập đã hết hạn, bạn đăng nhập lại nhé', { type: 'err' }); return tai(); }
+      if (!r || !r.ok) { toast((r && r.msg) || 'Chưa điểm danh được, bạn thử lại nhé', { type: 'err' }); return tai(); }
+      if (r.moi) { UI.chucMung(r); } else toast('Hôm nay bạn đã điểm danh rồi – hẹn bạn ngày mai nhé!', { type: 'ok' });
       thang = ''; tai();
     }).catch((e2) => { toast(e2.message, { type: 'err' }); tai(); })
       .finally(() => { dangGui = false; });

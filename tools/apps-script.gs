@@ -145,7 +145,7 @@ function doPost(e) {
     /* C2 – chống spam đơn ảo: tối đa 8 đơn / số / 10 phút và 150 đơn / 10 phút toàn shop */
     if (!demGioiHan('gh_don', 150, 600) || (sdt && !demGioiHan('gh_don_' + sdt, 8, 600))) {
       canhBao_('tan-suat-don', '⚠️ Có quá nhiều đơn gửi lên trong 10 phút (có thể bot spam đơn ảo). Đơn vượt giới hạn đã bị chặn – kiểm tra bảng Đơn hàng.');
-      return ContentService.createTextOutput(JSON.stringify({ ok: false, code: 'RATE_LIMITED', msg: 'Hệ thống đang bận, mẹ gọi hotline ' + HOTLINE + ' để đặt hàng nhé' })).setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(JSON.stringify({ ok: false, code: 'RATE_LIMITED', msg: 'Hệ thống đang bận, bạn gọi hotline ' + HOTLINE + ' để đặt hàng nhé' })).setMimeType(ContentService.MimeType.JSON);
     }
     /* Đơn đã nhận rồi (web gửi lại khi mạng chập chờn) → trả ok, không ghi thêm, không gửi lại mail / Zalo */
     if (order.code && donDaNhan_(String(order.code))) return ContentService.createTextOutput(JSON.stringify({ ok: true, trung: true })).setMimeType(ContentService.MimeType.JSON);
@@ -394,18 +394,18 @@ function luuOtp(sdt, ma, kenh) {
   s.appendRow(["'" + sdt, ma, het, 0, new Date(), kenh]);
 }
 function kiemTraOtp(sdt, ma) {
-  var s = sheetOtp(); var n = s.getLastRow(); if (n < 2) return { ok: false, msg: 'Mã đã hết hạn, mẹ bấm gửi lại mã nhé' };
+  var s = sheetOtp(); var n = s.getLastRow(); if (n < 2) return { ok: false, msg: 'Mã đã hết hạn, bạn bấm gửi lại mã nhé' };
   var v = s.getRange(2, 1, n - 1, 6).getValues();
   for (var i = 0; i < v.length; i++) {
     if (chuanSdt(v[i][0]) !== sdt) continue;
     var dong = i + 2;
-    if (Number(v[i][3]) >= OTP_SAI_TOI_DA) return { ok: false, msg: 'Nhập sai quá nhiều lần, mẹ bấm gửi lại mã mới nhé' };
-    if (new Date(v[i][2]).getTime() < Date.now()) return { ok: false, msg: 'Mã đã hết hạn, mẹ bấm gửi lại mã nhé' };
+    if (Number(v[i][3]) >= OTP_SAI_TOI_DA) return { ok: false, msg: 'Nhập sai quá nhiều lần, bạn bấm gửi lại mã mới nhé' };
+    if (new Date(v[i][2]).getTime() < Date.now()) return { ok: false, msg: 'Mã đã hết hạn, bạn bấm gửi lại mã nhé' };
     if (String(v[i][1]) !== String(ma)) { s.getRange(dong, 4).setValue(Number(v[i][3]) + 1); return { ok: false, msg: 'Mã OTP không đúng' }; }
     s.getRange(dong, 2, 1, 3).setValues([['', new Date(0), OTP_SAI_TOI_DA]]);  // dùng 1 lần rồi huỷ
     return { ok: true };
   }
-  return { ok: false, msg: 'Mẹ bấm gửi mã OTP trước nhé' };
+  return { ok: false, msg: 'Bạn bấm gửi mã OTP trước nhé' };
 }
 /* kieu: 'otp' | 'mk' (mật khẩu riêng) | 'mkMacDinh' – dùng điểm chỉ cho phép phiên otp / mk */
 function luuPhien(sdt, kieu) {
@@ -504,7 +504,7 @@ function gtCauHinh() {
 /* Chạy trong khoá tập lệnh; flush trước khi nhả khoá để lần gọi sau đọc được dữ liệu mới */
 function voiKhoa(fn) {
   var lock = LockService.getScriptLock();
-  try { lock.waitLock(20000); } catch (e) { return { ok: false, code: 'BUSY', msg: 'Máy chủ đang bận, mẹ thử lại sau vài giây nhé' }; }
+  try { lock.waitLock(20000); } catch (e) { return { ok: false, code: 'BUSY', msg: 'Máy chủ đang bận, bạn thử lại sau vài giây nhé' }; }
   try { return fn(); } finally { try { SpreadsheetApp.flush(); } catch (e2) {} lock.releaseLock(); }
 }
 function gtLoi(code, msg) { return { ok: false, valid: false, code: code, message: msg, msg: msg }; }
@@ -635,7 +635,7 @@ function apiGtCauHinh() {
 }
 function apiGtKiemTra(p) {
   var cache = CacheService.getScriptCache(); var k = 'gtkt_' + chuanSdt(p.sdt || '') + '_' + chuanSdt(p.ref || '');
-  var dem = Number(cache.get(k) || 0); if (dem >= 20) return gtLoi('RATE_LIMIT', 'Mẹ thử lại sau ít phút nhé');
+  var dem = Number(cache.get(k) || 0); if (dem >= 20) return gtLoi('RATE_LIMIT', 'Bạn thử lại sau ít phút nhé');
   cache.put(k, String(dem + 1), 3600);
   return gtXetMa(p.ref, p.sdt);
 }
@@ -656,13 +656,13 @@ function apiGtGiuCho(p) {
   var ref = '';
   if (dungGT) {   // đọc CRM bên ngoài khoá (chậm), trong khoá chỉ kiểm tra lại dữ liệu sheet
     var r0 = gtTimDong(sdt); ref = chuanSdt(p.ref || (r0 ? r0.v[1] : ''));
-    if (!ref) return gtLoi('INVALID_REFERRAL_CODE', 'Mẹ nhập mã giới thiệu trước nhé');
+    if (!ref) return gtLoi('INVALID_REFERRAL_CODE', 'Bạn nhập mã giới thiệu trước nhé');
     var xet = gtXetMa(ref, sdt, cfg, maDon); if (!xet.ok) return xet;
-    if (cfg.canXacThuc && !cuaToi) return gtLoi('REQUIRE_OTP', 'Mẹ xác thực số điện thoại (mã OTP) để nhận ưu đãi giới thiệu nhé.');
+    if (cfg.canXacThuc && !cuaToi) return gtLoi('REQUIRE_OTP', 'Bạn xác thực số điện thoại (mã OTP) để nhận ưu đãi giới thiệu nhé.');
     if (giaTriUD < (Number(cfg.donToiThieu) || 0)) return gtLoi('MIN_ORDER', 'Ưu đãi giới thiệu áp dụng cho đơn từ ' + tien(cfg.donToiThieu) + (giaTriUD < giaTri ? ' (không tính combo / sản phẩm đang có quà)' : '') + '.');
   }
-  if (muonDiem > 0 && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH', msg: 'Mẹ xác thực mã OTP (hoặc đăng nhập bằng mật khẩu riêng) để dùng điểm nhé.' };
-  if (maVc && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH_VC', msg: 'Mẹ đăng nhập (mã OTP hoặc mật khẩu riêng) đúng số điện thoại đặt hàng để dùng voucher nhé.' };
+  if (muonDiem > 0 && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH', msg: 'Bạn xác thực mã OTP (hoặc đăng nhập bằng mật khẩu riêng) để dùng điểm nhé.' };
+  if (maVc && !(cuaToi && ph.manh)) return { ok: false, code: 'REQUIRE_AUTH_VC', msg: 'Bạn đăng nhập (mã OTP hoặc mật khẩu riêng) đúng số điện thoại đặt hàng để dùng voucher nhé.' };
   return voiKhoa(function () {
     var gcS = sheetGC(); var gc = docGiuCho(); var maGiu = '';
     /* Đơn này đã giữ chỗ trước đó (khách bấm lại) → trả chỗ cũ rồi tính lại */
@@ -707,7 +707,7 @@ function apiGtGiuCho(p) {
 }
 /* Ví điểm của khách đang đăng nhập */
 function apiDiemCuaToi(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var so = docSoDiem(), gc = docGiuCho(), cfg = gtCauHinh(); var vi = viDiem(ph.sdt, so, gc);
   var ls = [];
   for (var i = so.length - 1; i >= 0 && ls.length < 100; i--) if (chuanSdt(so[i][2]) === ph.sdt)
@@ -719,7 +719,7 @@ function apiDiemCuaToi(p) {
 }
 /* Bảng giới thiệu của khách đang đăng nhập (không lộ thông tin người được giới thiệu) */
 function apiGtCuaToi(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var s = sheetGT(); var n = s.getLastRow(); var v = n < 2 ? [] : s.getRange(2, 1, n - 1, H_GT.length).getValues();
   var ds = [], daMua = 0, tongDiem = 0, cuaToi = null;
   v.forEach(function (r) {
@@ -883,13 +883,13 @@ function chuanNgaySinhBe_(v) {
 }
 /* Khách đang đăng nhập lưu tên bé (sửa lúc nào cũng được) và ngày sinh bé (không bắt buộc; đã lưu thì muốn sửa phải nhắn shop) */
 function apiSnbLuu(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var ten = tenBe_(p.tenBe), tho = String(p.ngaySinh || '').trim(), ngay = tho ? chuanNgaySinhBe_(tho) : '';
   if (tho && !ngay) return { ok: false, msg: 'Ngày sinh của bé chưa đúng (bé từ 0 đến 19 tuổi)' };
-  if (!demGioiHan('snb_' + ph.sdt, 15, 3600)) return { ok: false, msg: 'Mẹ thử lại sau ít phút nhé' };
+  if (!demGioiHan('snb_' + ph.sdt, 15, 3600)) return { ok: false, msg: 'Bạn thử lại sau ít phút nhé' };
   return voiKhoa(function () {
     var cu = snbTim_(ph.sdt), cuNgay = cu ? cu.ngay : '';
-    if (cuNgay && ngay && ngay !== cuNgay) return { ok: false, daCo: true, tenBe: cu.ten, ngaySinhBe: cuNgay, msg: 'Ngày sinh của bé đã lưu, muốn sửa mẹ nhắn shop qua Zalo / hotline ' + HOTLINE + ' nhé.' };
+    if (cuNgay && ngay && ngay !== cuNgay) return { ok: false, daCo: true, tenBe: cu.ten, ngaySinhBe: cuNgay, msg: 'Ngày sinh của bé đã lưu, muốn sửa bạn nhắn shop qua Zalo / hotline ' + HOTLINE + ' nhé.' };
     var ngayMoi = cuNgay || ngay;
     if (cu && cu.ten === ten && cuNgay === ngayMoi) return { ok: true, tenBe: ten, ngaySinhBe: ngayMoi };
     snbGhi_(ph.sdt, ten, ngayMoi, 'khách', 'Khách tự điền');
@@ -992,12 +992,12 @@ function soDo_(v, min, max) { var n = parseFloat(String(v == null ? '' : v).repl
 function apiLeadTuVan(p) {
   var sk = String(p.nguon || '') === 'suc-khoe';
   var ten = oChu_(p.ten, 60), sdt = chuanSdt(p.sdt), tinhTrang = oChu_(p.tinhTrang, 600);
-  if (!ten && !sk) return { ok: false, msg: 'Mẹ nhập họ tên giúp shop nhé' };
+  if (!ten && !sk) return { ok: false, msg: 'Bạn nhập họ tên giúp shop nhé' };
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' };
-  if (!tinhTrang && !sk) return { ok: false, msg: 'Mẹ chọn hoặc ghi tình trạng mong muốn của bé nhé' };
+  if (!tinhTrang && !sk) return { ok: false, msg: 'Bạn chọn hoặc ghi tình trạng mong muốn của bé nhé' };
   var tenBe = sk ? oChu_(p.tenBe, 30) : '', nsBe = sk ? chuanNgaySinhBe_(p.ngaySinh) : '', gt = sk ? ({ 1: 'Bé trai', 2: 'Bé gái' }[String(p.gioiTinh)] || '') : '';
   var danhGia = sk ? oChu_(p.danhGia, 1500) : '';
-  if (!demGioiHan('lead_' + sdt, 5, 3600)) return { ok: false, msg: 'Shop đã nhận thông tin của mẹ rồi, chuyên gia sẽ gọi sớm nhé' };
+  if (!demGioiHan('lead_' + sdt, 5, 3600)) return { ok: false, msg: 'Shop đã nhận thông tin của bạn rồi, chuyên gia sẽ gọi sớm nhé' };
   var tuoi = oChu_(p.tuoi, 40), cao = soDo_(p.cao, 30, 220), nang = soDo_(p.nang, 1, 150);
   var bai = oChu_(p.bai, 200), link = /^https:\/\/[^\s]+$/.test(String(p.link || '')) ? oChu_(p.link, 300) : '';
   voiKhoa(function () {
@@ -1020,12 +1020,12 @@ function apiLeadTuVan(p) {
   return { ok: true };
 }
 function apiSnLuu(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var ngay = chuanNgaySinh_(p.ngaySinh); if (!ngay) return { ok: false, msg: 'Ngày sinh chưa đúng (dd/mm/yyyy)' };
-  if (!demGioiHan('sn_' + ph.sdt, 10, 3600)) return { ok: false, msg: 'Mẹ thử lại sau ít phút nhé' };
+  if (!demGioiHan('sn_' + ph.sdt, 10, 3600)) return { ok: false, msg: 'Bạn thử lại sau ít phút nhé' };
   return voiKhoa(function () {
     var cu = snDoc_(ph.sdt);
-    if (cu) return cu === ngay ? { ok: true, ngaySinh: cu } : { ok: false, daCo: true, ngaySinh: cu, msg: 'Ngày sinh đã lưu, muốn sửa mẹ nhắn shop qua Zalo / hotline ' + HOTLINE + ' nhé.' };
+    if (cu) return cu === ngay ? { ok: true, ngaySinh: cu } : { ok: false, daCo: true, ngaySinh: cu, msg: 'Ngày sinh đã lưu, muốn sửa bạn nhắn shop qua Zalo / hotline ' + HOTLINE + ' nhé.' };
     snGhi_(ph.sdt, ngay, 'khách', 'Khách tự điền');
     ghiNhatKy('Sinh nhật', ph.sdt, 'Khách thêm ngày sinh ' + ngay);
     return { ok: true, ngaySinh: ngay };
@@ -1221,7 +1221,7 @@ var NGAY_LE = [
     mail: { gio: 8, tieuDe: '🌷 Hương Chất Kids chúc mừng ngày Phụ nữ Việt Nam 20/10 – quà 20.100 điểm đang chờ mẹ',
       loiChuc: [
         'Nhân ngày Phụ nữ Việt Nam 20/10, cả nhà Hương Chất Kids xin gửi tới {ten} lời chúc chân thành nhất: chúc mẹ luôn khoẻ mạnh, xinh đẹp, rạng rỡ và thật nhiều bình yên.',
-        'Cảm ơn mẹ đã luôn là người chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Hôm nay, mẹ hãy dành một chút thời gian cho riêng mình – vì mẹ xứng đáng được yêu thương và chiều chuộng nhất 💗',
+        'Cảm ơn bạn đã luôn là người chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Hôm nay, bạn hãy dành một chút thời gian cho riêng mình – vì bạn xứng đáng được yêu thương và chiều chuộng nhất 💗',
         'Hương cũng cảm ơn mẹ đã tin tưởng chọn sản phẩm tại shop. Nhân ngày đặc biệt này, Hương gửi mẹ vài món quà nhỏ dưới đây.'
       ],
       khuyenMai: [
@@ -1240,11 +1240,11 @@ function thuongLe_(sdt, dangKy) {   // dangKy = true: vừa tạo tài khoản m
     var r = voiKhoa(function () { return ghiDiem(sdt, 'EARN', le.thuongDangNhap, 'EVENT', "'" + le.ngay, '🌷 Quà ' + le.ten + (dangKy ? ' – tạo tài khoản mới' : ' – đăng nhập trong ngày lễ'), 'hệ thống', 'LE' + le.id + ':' + sdt); });
     if (!r || !r.ok || r.trung || r.khongDoi) return null;
     ghiNhatKy('Quà ngày lễ', sdt, 'Tặng ' + le.thuongDangNhap + ' điểm quà ' + le.ten);
-    return { ten: le.ten, diem: le.thuongDangNhap, soDu: r.soDu, thongBao: '🌷 Quà ' + le.ten + ': Hương tặng mẹ ' + le.thuongDangNhap.toLocaleString('vi-VN') + ' điểm thưởng!' };
+    return { ten: le.ten, diem: le.thuongDangNhap, soDu: r.soDu, thongBao: '🌷 Quà ' + le.ten + ': Hương tặng bạn ' + le.thuongDangNhap.toLocaleString('vi-VN') + ' điểm thưởng!' };
   } catch (e) { Logger.log('Quà ngày lễ lỗi: ' + e); return null; }
 }
 /* ===================== QUÀ TẠO TÀI KHOẢN MỚI =====================
-   Mẹ tạo tài khoản trên web (apiDangKy) trong khoảng tu → den (giờ Việt Nam): tặng ngay QUA_DANG_KY.diem điểm vào ví.
+   Bạn tạo tài khoản trên web (apiDangKy) trong khoảng tu → den (giờ Việt Nam): tặng ngay QUA_DANG_KY.diem điểm vào ví.
    Mỗi số điện thoại nhận 1 lần (khoá DK<id>:<sdt>, ghiDiem không ghi trùng). Điểm dùng như mọi điểm khác (quy định ví điểm giữ nguyên).
    Đổi số điểm / hạn: sửa ở đây (web đọc QUA_DANG_KY trong js/data.js để hiện thông báo – sửa cả 2 nơi). */
 var QUA_DANG_KY = { id: '2026', diem: 50000, tu: '2026-10-21', den: '2026-12-31', ten: 'Quà tạo tài khoản mới' };
@@ -1255,7 +1255,7 @@ function thuongDangKy_(sdt) {
     var r = voiKhoa(function () { return ghiDiem(sdt, 'EARN', Number(q.diem), 'EVENT', "'DK" + q.id, '🎁 ' + q.ten + ' – tặng ' + Number(q.diem).toLocaleString('vi-VN') + ' điểm', 'hệ thống', 'DK' + q.id + ':' + sdt); });
     if (!r || !r.ok || r.trung || r.khongDoi) return null;
     ghiNhatKy('Quà tạo tài khoản', sdt, 'Tặng ' + q.diem + ' điểm');
-    return { ten: q.ten, diem: Number(q.diem), soDu: r.soDu, thongBao: '🎁 Chào mừng mẹ đến với ' + TEN_SHOP + '! Hương tặng mẹ ' + Number(q.diem).toLocaleString('vi-VN') + ' điểm thưởng vào ví điểm.' };
+    return { ten: q.ten, diem: Number(q.diem), soDu: r.soDu, thongBao: '🎁 Chào mừng bạn đến với ' + TEN_SHOP + '! Hương tặng bạn ' + Number(q.diem).toLocaleString('vi-VN') + ' điểm thưởng vào ví điểm.' };
   } catch (e) { Logger.log('Quà tạo tài khoản lỗi: ' + e); return null; }
 }
 /* Gộp quà ngày lễ + quà tạo tài khoản (cùng lúc) thành 1 thông báo cho web */
@@ -1331,7 +1331,7 @@ function cauHinhCongKhai_(cfg) {
 function apiDdCauHinh() { return { ok: true, cauHinh: cauHinhCongKhai_(ddCauHinh()), homNay: ngayDD_() }; }
 /* Tổng quan trang điểm danh: p.thang = 'yyyy-MM' (tuỳ chọn, mặc định tháng này; không cho xem tháng tương lai) */
 function apiDdTongQuan(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var cfg = ddCauHinh(), homNay = ngayDD_(), thangNay = homNay.slice(0, 7);
   var thang = /^\d{4}-\d{2}$/.test(String(p.thang || '')) && String(p.thang) <= thangNay ? String(p.thang) : thangNay;
   var dd = docDD_(), daDD = ngayDaDD_(dd, ph.sdt, thang);
@@ -1348,8 +1348,8 @@ function apiDdTongQuan(p) {
     diem: { soDu: vi.soDu, khaDung: vi.khaDung }, trongChuongTrinh: trongChuongTrinh_(cfg, homNay) };
 }
 function apiDdDiemDanh(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
-  if (!demGioiHan('dd_' + ph.sdt, 20, 600)) return { ok: false, code: 'RATE_LIMIT', msg: 'Mẹ thao tác nhanh quá, thử lại sau ít phút nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
+  if (!demGioiHan('dd_' + ph.sdt, 20, 600)) return { ok: false, code: 'RATE_LIMIT', msg: 'Bạn thao tác nhanh quá, thử lại sau ít phút nhé' };
   var r = diemDanh_(ph.sdt, 'nut'), q = thuongLe_(ph.sdt); if (q && r) r.quaLe = q;
   return r;
 }
@@ -1369,7 +1369,7 @@ function apiDdSauDangNhap(p) {
 /* Trang tài khoản gọi 1 lần lấy đủ: hồ sơ, điểm, giới thiệu, điểm danh, voucher, đối tác (thay 6 lần gọi riêng –
    mỗi lần ~1,5 giây chờ khởi động + mở lại bảng tính). CHỈ ĐỌC. Phần nào lỗi thì bỏ trống, web tự gọi riêng phần đó. */
 function apiTaiKhoan(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var ds = [['hoSo', apiHoSo], ['diemCuaToi', apiDiemCuaToi], ['gtCuaToi', apiGtCuaToi], ['ddTongQuan', apiDdTongQuan], ['vcCuaToi', apiVcCuaToi], ['affTuKhach', apiAffTuKhach]], kq = {};
   MEMO_ = {};
   try {
@@ -1378,7 +1378,7 @@ function apiTaiKhoan(p) {
   return { ok: true, kq: kq };
 }
 function apiVcCuaToi(p) {
-  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  var ph = phienKhach(p.token); if (!ph) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var now = Date.now(), ds = [];
   docVC_().forEach(function (r) { if (chuanSdt(r[1]) === ph.sdt) ds.push(vcRa_(r, now)); });
   ds.reverse();
@@ -1676,7 +1676,7 @@ function kiemMkMoi(mk, mk2, cfg) {
   if (mk2 != null && mk !== String(mk2)) return { ok: false, code: 'PASSWORD_MISMATCH', msg: 'Hai mật khẩu không khớp.' };
   if (mk.length < toiThieu) return { ok: false, code: 'PASSWORD_INVALID', msg: 'Mật khẩu cần ít nhất ' + toiThieu + ' ký tự.' };
   if (mk.length > 100) return { ok: false, code: 'PASSWORD_INVALID', msg: 'Mật khẩu quá dài (tối đa 100 ký tự).' };
-  if (mk === MK_MAC_DINH) return { ok: false, code: 'PASSWORD_INVALID', msg: 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé.' };
+  if (mk === MK_MAC_DINH) return { ok: false, code: 'PASSWORD_INVALID', msg: 'Bạn chọn mật khẩu khác mật khẩu mặc định nhé.' };
   return { ok: true };
 }
 function guiMailDoiMk(sdt, ten, cfg) {
@@ -1695,9 +1695,9 @@ function apiQmkGui(p) {
   var cfg = qmkCauHinh(); var email = chuanEmail(p.email); var may = String(p.may || '').replace(/[^\w-]/g, '').slice(0, 40);
   if (!emailHopLe(email)) return { ok: false, code: 'EMAIL_INVALID', msg: 'Email chưa đúng định dạng.' };
   var c = CacheService.getScriptCache(); var cd = Number(c.get('qmk_cd_' + email) || 0);
-  if (cd && Date.now() - cd < Number(cfg.choGuiLaiGiay) * 1000) return { ok: false, code: 'RATE_LIMITED', choGiay: Math.ceil((Number(cfg.choGuiLaiGiay) * 1000 - (Date.now() - cd)) / 1000), msg: 'Mẹ chờ một chút rồi gửi lại mã nhé.' };
+  if (cd && Date.now() - cd < Number(cfg.choGuiLaiGiay) * 1000) return { ok: false, code: 'RATE_LIMITED', choGiay: Math.ceil((Number(cfg.choGuiLaiGiay) * 1000 - (Date.now() - cd)) / 1000), msg: 'Bạn chờ một chút rồi gửi lại mã nhé.' };
   if (!demGioiHan('qmk_ht', Number(cfg.heThongToiDa15p)) || (may && !demGioiHan('qmk_m_' + may, Number(cfg.mayToiDa15p))) || !demGioiHan('qmk_e_' + email, Number(cfg.guiToiDa15p)))
-    return { ok: false, code: 'RATE_LIMITED', msg: 'Mẹ đã yêu cầu quá nhiều lần. Vui lòng thử lại sau 15 phút hoặc gọi hotline ' + HOTLINE + '.' };
+    return { ok: false, code: 'RATE_LIMITED', msg: 'Bạn đã yêu cầu quá nhiều lần. Vui lòng thử lại sau 15 phút hoặc gọi hotline ' + HOTLINE + '.' };
   c.put('qmk_cd_' + email, String(Date.now()), 900);
   /* p.loai = 'doiTac': quên mật khẩu tài khoản ĐỐI TÁC (email trong sheet Đối tác), còn lại: tài khoản khách */
   var laDT = p.loai === 'doiTac'; var kenh = laDT ? 'email-doi-tac' : 'email';
@@ -1720,7 +1720,7 @@ function apiQmkGui(p) {
     var v = { ten: ds[0].ten || 'quý khách', otp: kq.otp, phut: cfg.otpPhut, shop: TEN_SHOP, hotline: HOTLINE };
     MailApp.sendEmail(email, dien(cfg.tieuDeOtp, v), dien(cfg.noiDungOtp, v), { name: TEN_SHOP });
     qmkNhatKy(anEmail(email), 'OTP_SENT', ds.length + ' tài khoản (' + ds.map(function (x) { return anSdt(x.sdt); }).join(', ') + ')');
-  } catch (e) { Logger.log('Gửi OTP email lỗi: ' + e); qmkNhatKy(anEmail(email), 'PASSWORD_RESET_FAILED', 'gửi email lỗi'); return { ok: false, code: 'SEND_FAILED', msg: 'Chưa gửi được email, mẹ thử lại sau ít phút nhé.' }; }
+  } catch (e) { Logger.log('Gửi OTP email lỗi: ' + e); qmkNhatKy(anEmail(email), 'PASSWORD_RESET_FAILED', 'gửi email lỗi'); return { ok: false, code: 'SEND_FAILED', msg: 'Chưa gửi được email, bạn thử lại sau ít phút nhé.' }; }
   return traLoi;
 }
 function qmkTimDong(ma) {
@@ -1766,7 +1766,7 @@ function apiQmkDatLai(p) {
     if (new Date(r.v[12]).getTime() < Date.now()) { sheetQMK().getRange(r.dong, 5).setValue(QMK.EXPIRED); return { ok: false, code: 'RESET_TOKEN_EXPIRED', msg: 'Phiên đặt lại mật khẩu đã hết hạn.' }; }
     var ds = String(r.v[2]).split(',').filter(String).map(chuanSdt);
     var k = p.k != null && p.k !== '' ? Number(p.k) : (ds.length === 1 ? 0 : -1);
-    if (!(k >= 0 && k < ds.length)) return { ok: false, code: 'CHOOSE_ACCOUNT', msg: 'Mẹ chọn tài khoản (số điện thoại) cần đặt lại mật khẩu nhé.' };
+    if (!(k >= 0 && k < ds.length)) return { ok: false, code: 'CHOOSE_ACCOUNT', msg: 'Bạn chọn tài khoản (số điện thoại) cần đặt lại mật khẩu nhé.' };
     var sdt = ds[k]; var email = chuanEmail(r.v[1]); var laDT = String(r.v[3]) === 'email-doi-tac';
     if (!(laDT ? timDTTheoEmail(email) : timTheoEmail(email)).some(function (x) { return x.sdt === sdt; })) return hong;   // email đã bị đổi khỏi tài khoản trong lúc chờ
     var dx = laDT ? luuMkDoiTac(sdt, String(p.mk)) : (luuMatKhau(sdt, String(p.mk)), huyMoiPhien(sdt));
@@ -1959,7 +1959,7 @@ function apiAffTuKhach(p) {
   var tt = String(dt.v[10]), ma = String(dt.v[0]), kq = { ok: true, la: true, ma: ma, tt: tt, duocVao: tt === DTT.DUYET && ph.manh };
   if (String(p.vao) !== '1') return kq;
   if (tt !== DTT.DUYET) return { ok: false, msg: tt === DTT.CHO ? 'Đăng ký đối tác đang chờ shop duyệt.' : 'Tài khoản đối tác đang ' + tt.toLowerCase() + '. Liên hệ shop ' + HOTLINE + '.' };
-  if (!ph.manh) return { ok: false, canMk: true, msg: 'Mẹ đăng nhập bằng OTP hoặc mật khẩu riêng để vào thẳng trang đối tác nhé.' };
+  if (!ph.manh) return { ok: false, canMk: true, msg: 'Bạn đăng nhập bằng OTP hoặc mật khẩu riêng để vào thẳng trang đối tác nhé.' };
   var token = taoToken(); sheetPDT().appendRow([token, ma, new Date(Date.now() + 30 * 864e5), new Date()]);
   var hs = null; try { hs = apiAffHoSo({ token: token }); } catch (e) { Logger.log(e); }
   return { ok: true, token: token, ma: ma, hoSo: hs && hs.ok ? hs : null };
@@ -2369,14 +2369,14 @@ function vpsChuyenTiep_(e, laPost) {
   if (vpsLaVps_()) return null;
   var ch = PropertiesService.getScriptProperties().getProperty('VPS_CHUYEN'); if (!ch) return null;
   var p = (e && e.parameter) || {}, cb = p.callback || '';
-  if (ch === 'bao-tri') return traVe({ ok: false, code: 'BAO_TRI', msg: 'Hệ thống đang nâng cấp trong vài phút, mẹ thử lại sau ít phút nhé' }, cb);
+  if (ch === 'bao-tri') return traVe({ ok: false, code: 'BAO_TRI', msg: 'Hệ thống đang nâng cấp trong vài phút, bạn thử lại sau ít phút nhé' }, cb);
   try {
     var r = UrlFetchApp.fetch(ch + '?' + (e.queryString || ''), laPost
       ? { method: 'post', payload: e.postData.contents, contentType: e.postData.type || 'text/plain', muteHttpExceptions: true, followRedirects: true }
       : { muteHttpExceptions: true, followRedirects: true });
     var loai = /^[A-Za-z_$][\w$]*\(/.test(r.getContentText()) ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
     return ContentService.createTextOutput(r.getContentText()).setMimeType(loai);
-  } catch (err) { return traVe({ ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau ít phút nhé' }, cb); }
+  } catch (err) { return traVe({ ok: false, msg: 'Máy chủ đang bận, bạn thử lại sau ít phút nhé' }, cb); }
 }
 
 /* ===================== API CHO WEBSITE (JSONP) ===================== */
@@ -2540,7 +2540,7 @@ function doGet(e) {
     return traVe({ ok: true, ten: TEN_SHOP, msg: 'Máy chủ nhận đơn đang chạy.' }, cb);
   } catch (err) {
     Logger.log('doGet lỗi: ' + err);
-    return traVe({ ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau ít phút nhé' }, cb);
+    return traVe({ ok: false, msg: 'Máy chủ đang bận, bạn thử lại sau ít phút nhé' }, cb);
   }
 }
 
@@ -2580,10 +2580,10 @@ function apiDangNhap(p) {
   var sdt = chuanSdt(p.sdt);
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng' };
   var cache = CacheService.getScriptCache(); var k = 'dn_' + sdt; var dem = Number(cache.get(k) || 0);
-  if (dem >= 10) return { ok: false, msg: 'Mẹ nhập sai nhiều lần, thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
+  if (dem >= 10) return { ok: false, msg: 'Bạn nhập sai nhiều lần, thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
   var d = docKH(sdt);
   var co = !!d.dong || !!d.kh.ten || Number(d.kh.soDon) > 0;
-  if (!co) return { ok: false, chuaMua: true, msg: 'Số này chưa mua hàng tại shop. Mẹ cứ đặt hàng không cần đăng nhập nhé, lần sau đăng nhập bằng mật khẩu ' + MK_MAC_DINH };
+  if (!co) return { ok: false, chuaMua: true, msg: 'Số này chưa mua hàng tại shop. Bạn cứ đặt hàng không cần đăng nhập nhé, lần sau đăng nhập bằng mật khẩu ' + MK_MAC_DINH };
   var tk = timTK(sdt); var dung = tk && tk.hash ? kiemMk(p.mk, tk) : String(p.mk) === MK_MAC_DINH;
   if (!dung) { cache.put(k, String(dem + 1), 3600); return { ok: false, msg: tk && tk.hash ? 'Mật khẩu chưa đúng. Quên mật khẩu thì bấm nhận mã OTP nhé' : 'Mật khẩu chưa đúng (mật khẩu mặc định là ' + MK_MAC_DINH + ')' }; }
   cache.remove(k);
@@ -2609,20 +2609,20 @@ function apiDangKyGoc(p) {
   var sdt = chuanSdt(p.sdt);
   if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' };
   var ten = String(p.ten || '').trim();
-  if (ten.length < 2) return { ok: false, msg: 'Mẹ nhập họ tên nhé' };
+  if (ten.length < 2) return { ok: false, msg: 'Bạn nhập họ tên nhé' };
 
   var cache = CacheService.getScriptCache(); var k = 'dk_' + sdt;
   var dem = Number(cache.get(k) || 0);
-  if (dem >= 3) return { ok: false, msg: 'Mẹ thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
+  if (dem >= 3) return { ok: false, msg: 'Bạn thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
   cache.put(k, String(dem + 1), 3600);
 
   var lock = LockService.getScriptLock();
-  try { lock.waitLock(8000); } catch (err) { return { ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau vài giây' }; }
+  try { lock.waitLock(8000); } catch (err) { return { ok: false, msg: 'Máy chủ đang bận, bạn thử lại sau vài giây' }; }
   try {
     var d = docKH(sdt);
     if (d.dong || d.kh.ten || Number(d.kh.soDon) > 0) {
       return { ok: false, daCo: true,
-        msg: 'Số này đã có tài khoản tại shop rồi. Mẹ bấm Đăng nhập (mật khẩu mặc định ' + MK_MAC_DINH + ') hoặc Nhận mã OTP nếu quên mật khẩu nhé.' };
+        msg: 'Số này đã có tài khoản tại shop rồi. Bạn bấm Đăng nhập (mật khẩu mặc định ' + MK_MAC_DINH + ') hoặc Nhận mã OTP nếu quên mật khẩu nhé.' };
     }
     var cat = function (v, n) { return String(v || '').trim().slice(0, n); };
     capNhatKhachHang(sdt, {
@@ -3670,10 +3670,10 @@ function apiNhatKy(p) {
 
 function apiDoiMatKhau(p) {
   var ph = phienKhach(p.token, true); var sdt = ph ? ph.sdt : '';
-  if (!sdt) return { ok: false, loi: 'token', code: 'RESET_TOKEN_INVALID', msg: 'Phiên đã hết hạn, mẹ đăng nhập lại nhé' };
+  if (!sdt) return { ok: false, loi: 'token', code: 'RESET_TOKEN_INVALID', msg: 'Phiên đã hết hạn, bạn đăng nhập lại nhé' };
   var cfg = qmkCauHinh(); var mk = String(p.mkMoi || '');
   var kt = kiemMkMoi(mk, p.mkMoi2 != null ? p.mkMoi2 : mk, cfg); if (!kt.ok) return kt;
-  if (!demGioiHan('doimk_' + sdt, 10)) return { ok: false, code: 'RATE_LIMITED', msg: 'Mẹ thử lại sau 15 phút nhé.' };
+  if (!demGioiHan('doimk_' + sdt, 10)) return { ok: false, code: 'RATE_LIMITED', msg: 'Bạn thử lại sau 15 phút nhé.' };
   luuMatKhau(sdt, mk);
   /* datLai = '1': quên mật khẩu qua OTP số điện thoại → đăng xuất MỌI máy (kể cả máy này). Còn lại: giữ máy đang dùng, đăng xuất máy khác */
   var datLai = String(p.datLai) === '1' && ph.kieu === 'otp';
@@ -3690,11 +3690,11 @@ function apiGuiOtp(p) {
   var cache = CacheService.getScriptCache();
   var k = 'otp_' + sdt;
   var dem = Number(cache.get(k) || 0);
-  if (dem >= OTP_MOI_GIO) return { ok: false, msg: 'Mẹ đã xin mã quá nhiều lần, thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
+  if (dem >= OTP_MOI_GIO) return { ok: false, msg: 'Bạn đã xin mã quá nhiều lần, thử lại sau 1 giờ hoặc gọi hotline ' + HOTLINE + ' nhé' };
   cache.put(k, String(dem + 1), 3600);
 
   var lock = LockService.getScriptLock();
-  try { lock.waitLock(8000); } catch (err) { return { ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau vài giây' }; }
+  try { lock.waitLock(8000); } catch (err) { return { ok: false, msg: 'Máy chủ đang bận, bạn thử lại sau vài giây' }; }
   try {
     var ma = taoMaOtp();
     var dong = timDongKH(sdt);
@@ -3703,7 +3703,7 @@ function apiGuiOtp(p) {
     // Số ĐÃ có hồ sơ thì chỉ dùng email đã lưu, tránh người lạ chuyển mã sang email của họ.
     if (!dong && !emailKhach && emailHopLe(p.email)) emailKhach = String(p.email).trim();
     var gui = guiMaOtp(sdt, ma, emailKhach);
-    if (gui.kenh === 'khong') return { ok: false, code: 'NO_EMAIL', msg: 'Tài khoản này chưa có email để nhận mã. Mẹ nhắn Zalo ' + HOTLINE + ' để shop hỗ trợ đăng nhập nhé.' };
+    if (gui.kenh === 'khong') return { ok: false, code: 'NO_EMAIL', msg: 'Tài khoản này chưa có email để nhận mã. Bạn nhắn Zalo ' + HOTLINE + ' để shop hỗ trợ đăng nhập nhé.' };
     luuOtp(sdt, ma, gui.kenh);
     return { ok: true, kenh: gui.kenh, emailAn: gui.emailAn || '', hetHanGiay: OTP_PHUT * 60 };
   } finally { lock.releaseLock(); }
@@ -3722,7 +3722,7 @@ function apiXacThuc(p) {
 
 function apiHoSo(p) {
   var sdt = sdtTheoToken(p.token);
-  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };
+  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn xác thực lại nhé' };
   var d = docKH(sdt);
   return { ok: true, kh: d.kh, donHang: d.don, quaLe: thuongLe_(sdt) };
 }
@@ -3731,7 +3731,7 @@ function apiHoSo(p) {
 function anhKhHopLe_(v) { var u = String(v || ''); return /^\/chat-tep\/\d{6}\/[a-z0-9-]+\.(jpg|png|webp)$/.test(u) ? u : ''; }
 function apiDoiAnh(p) {
   var sdt = sdtTheoToken(p.token);
-  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };
+  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn xác thực lại nhé' };
   var anh = anhKhHopLe_(p.anh); if (p.anh && !anh) return { ok: false, msg: 'Ảnh không hợp lệ' };
   var s = sheetKH(); var dong = timDongKH(sdt);
   if (!dong) { s.appendRow(["'" + sdt, '', '', '', '', '', 0, 0, HANG[0].label, '', new Date(), '']); dong = s.getLastRow(); }
@@ -3741,7 +3741,7 @@ function apiDoiAnh(p) {
 }
 function apiCapNhat(p) {
   var sdt = sdtTheoToken(p.token);
-  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };
+  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, bạn xác thực lại nhé' };
   var s = sheetKH(); var dong = timDongKH(sdt);
   var cat = function (v, n) { return String(v || '').slice(0, n); };
   if (!dong) { s.appendRow(["'" + sdt, '', '', '', '', '', 0, 0, HANG[0].label, '', new Date(), '']); dong = s.getLastRow(); }
@@ -3792,12 +3792,12 @@ function dgDaMua_(sdt, tenSP) {
 }
 function khongDau_(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, ' ').trim(); }
 function apiDgGui(p) {
-  var sdt = sdtTheoToken(p.token); if (!sdt) return { ok: false, loi: 'token', msg: 'Mẹ đăng nhập để gửi đánh giá nhé' };
-  if (!demGioiHan('dg_' + sdt, 15, 3600)) return { ok: false, msg: 'Mẹ gửi nhiều quá, thử lại sau ít phút nhé' };
+  var sdt = sdtTheoToken(p.token); if (!sdt) return { ok: false, loi: 'token', msg: 'Bạn đăng nhập để gửi đánh giá nhé' };
+  if (!demGioiHan('dg_' + sdt, 15, 3600)) return { ok: false, msg: 'Bạn gửi nhiều quá, thử lại sau ít phút nhé' };
   var id = String(p.id || '').slice(0, 60), sao = Math.round(Number(p.sao) || 0), nd = String(p.noiDung || '').trim().slice(0, 1500);
   if (!/^[\w-]{1,60}$/.test(id)) return { ok: false, msg: 'Sản phẩm không hợp lệ' };
-  if (sao < 1 || sao > 5) return { ok: false, msg: 'Mẹ chọn số sao (1–5) nhé' };
-  if (nd.length < 10) return { ok: false, msg: 'Mẹ viết thêm vài dòng cảm nhận (ít nhất 10 ký tự) nhé' };
+  if (sao < 1 || sao > 5) return { ok: false, msg: 'Bạn chọn số sao (1–5) nhé' };
+  if (nd.length < 10) return { ok: false, msg: 'Bạn viết thêm vài dòng cảm nhận (ít nhất 10 ký tự) nhé' };
   if (khachBiKhoa(sdt)) return { ok: false, msg: 'Tài khoản đang bị khoá' };
   var anh = dgAnh_(p.anh), tenSP = String(p.tenSP || '').slice(0, 160);
   var kh = docKH(sdt).kh, ten = String(p.ten || '').trim().slice(0, 40) || dgTenAn_(kh.ten, sdt);
@@ -3810,7 +3810,7 @@ function apiDgGui(p) {
     else sh.appendRow(hang);
     ghiNhatKy('Đánh giá', sdt, (dong ? 'Sửa' : 'Viết') + ' đánh giá ' + sao + '★ cho ' + (tenSP || id) + (daMua ? ' (đã mua)' : ' (chờ duyệt)'));
     try { zaloBotGuiTin('⭐ Đánh giá ' + sao + '★ – ' + (tenSP || id) + '\n' + ten + ' (' + sdt + ')' + (daMua ? ' · đã mua' : ' · CHỜ DUYỆT') + '\n' + nd.slice(0, 300) + (anh.length ? '\n[' + anh.length + ' ảnh]' : '') + '\nQuản trị › Đánh giá sản phẩm'); } catch (z) { Logger.log(z); }
-    return { ok: true, trangThai: hang[9], daMua: daMua, msg: hang[9] === DG_TT.HIEN ? 'Cảm ơn mẹ đã đánh giá! Đánh giá đã hiện trên trang sản phẩm.' : 'Cảm ơn mẹ! Đánh giá sẽ hiện sau khi shop xem qua (thường trong ngày).' };
+    return { ok: true, trangThai: hang[9], daMua: daMua, msg: hang[9] === DG_TT.HIEN ? 'Cảm ơn bạn đã đánh giá! Đánh giá đã hiện trên trang sản phẩm.' : 'Cảm ơn bạn! Đánh giá sẽ hiện sau khi shop xem qua (thường trong ngày).' };
   });
 }
 function apiQtDgDs(p) {
@@ -3887,13 +3887,13 @@ function apiChatGui(p) {
   var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
   var nd = String(p.noiDung || '').replace(/\s+$/, '').slice(0, 1000).trim(), dk = chatDinhKem_(p.dinhKem);
   if (dk && dk.loai === 'sp') dk.moi = false;
-  if (!nd && !dk) return { ok: false, msg: 'Mẹ nhập nội dung nhé' };
-  if (!demGioiHan('chat_' + phien, 40, 600)) return { ok: false, msg: 'Mẹ gửi nhanh quá, chờ một chút rồi gửi tiếp nhé' };
+  if (!nd && !dk) return { ok: false, msg: 'Bạn nhập nội dung nhé' };
+  if (!demGioiHan('chat_' + phien, 40, 600)) return { ok: false, msg: 'Bạn gửi nhanh quá, chờ một chút rồi gửi tiếp nhé' };
   var phKh = p.token ? phienKhach(p.token) : null;   // khách đã đăng nhập: dùng đúng SĐT tài khoản
   var sdt = chuanSdt(phKh && phKh.sdt ? phKh.sdt : p.sdt), kh = { ten: String(p.ten || '').slice(0, 60), sdt: sdtHopLe(sdt) ? sdt : '', trang: String(p.trang || '').slice(0, 120), xacMinh: !!(phKh && phKh.sdt) };
-  if (dk && dk.loai === 'don') { dk = chatDonThat_(dk, kh.xacMinh ? kh.sdt : ''); if (!nd && !dk) return { ok: false, msg: 'Mẹ đăng nhập để gửi thông tin đơn hàng nhé' }; }
+  if (dk && dk.loai === 'don') { dk = chatDonThat_(dk, kh.xacMinh ? kh.sdt : ''); if (!nd && !dk) return { ok: false, msg: 'Bạn đăng nhập để gửi thông tin đơn hàng nhé' }; }
   /* Bắt buộc họ tên + SĐT (đăng nhập: SĐT tài khoản) – CRM / quản trị luôn biết đang chat với ai */
-  if (!kh.sdt || String(kh.ten).trim().length < 2) return { ok: false, code: 'CAN_THONG_TIN', msg: 'Mẹ nhập họ tên và số điện thoại để chat với Hương nhé' };
+  if (!kh.sdt || String(kh.ten).trim().length < 2) return { ok: false, code: 'CAN_THONG_TIN', msg: 'Bạn nhập họ tên và số điện thoại để chat với Hương nhé' };
   return voiKhoa(function () {
     var ds = chatDocHet_().filter(function (r) { return String(r[1]) === phien; });
     var cuoi = ds.length ? new Date(ds[ds.length - 1][0]).getTime() : 0;

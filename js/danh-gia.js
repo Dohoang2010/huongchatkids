@@ -23,12 +23,12 @@
     box.innerHTML = `<div class="dg-dau">
         <div class="dg-diem">${tong ? `<b>${kq.tb.toFixed(1)}</b><div class="stars">${starRow(kq.tb)}</div><small>${tong} đánh giá trên website</small>` : '<b>–</b><small>Chưa có đánh giá trên website</small>'}</div>
         <div class="dg-phan">${thanh}</div>
-        <div class="dg-viet"><p>${cua ? (cua.trangThai === 'cho' ? 'Đánh giá của mẹ đang chờ shop duyệt.' : 'Mẹ đã đánh giá sản phẩm này.') : 'Mẹ đã dùng sản phẩm? Chia sẻ cảm nhận để các mẹ khác tham khảo nhé.'}</p>
+        <div class="dg-viet"><p>${cua ? (cua.trangThai === 'cho' ? 'Đánh giá của bạn đang chờ shop duyệt.' : 'Bạn đã đánh giá sản phẩm này.') : 'Bạn đã dùng sản phẩm? Chia sẻ cảm nhận để các mẹ khác tham khảo nhé.'}</p>
           <button class="btn btn--primary" type="button" data-dg-mo>${cua ? 'Sửa đánh giá của tôi' : 'Viết đánh giá'}</button></div></div>
       <form class="dg-form ${mo ? '' : 'hide'}" id="dgForm" novalidate>
-        ${s ? '' : '<p class="dg-chu">Mẹ cần <b>đăng nhập</b> để gửi đánh giá (đánh giá của khách đã mua hàng sẽ có nhãn "Đã mua hàng").</p>'}
+        ${s ? '' : '<p class="dg-chu">Bạn cần <b>đăng nhập</b> để gửi đánh giá (đánh giá của khách đã mua hàng sẽ có nhãn "Đã mua hàng").</p>'}
         <div class="dg-chon-sao" role="radiogroup" aria-label="Chọn số sao">${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="${n <= sao ? 'is-on' : ''}" data-dg-sao="${n}" aria-label="${n} sao">★</button>`).join('')}<span id="dgNhan">${NHAN[sao]}</span></div>
-        <textarea class="input" name="noiDung" rows="4" maxlength="1500" placeholder="Bé / mẹ dùng thấy thế nào? Vị, hiệu quả sau bao lâu, giao hàng, đóng gói… (ít nhất 10 ký tự)"></textarea>
+        <textarea class="input" name="noiDung" rows="4" maxlength="1500" placeholder="Bé / bạn dùng thấy thế nào? Vị, hiệu quả sau bao lâu, giao hàng, đóng gói… (ít nhất 10 ký tự)"></textarea>
         <div class="dg-anh">${anh.map((a, i) => `<span class="dg-anh__o"><img src="${esc(a.xem)}" alt="">${a.dang ? '<i>…</i>' : ''}<button type="button" data-dg-bo-anh="${i}" aria-label="Bỏ ảnh">×</button></span>`).join('')}${anh.length < 4 ? '<button type="button" class="dg-anh__them" data-dg-them-anh>+ Thêm ảnh</button>' : ''}<input type="file" id="dgTep" accept="image/*" multiple hidden></div>
         <label class="field mt-8"><span>Tên hiển thị (không bắt buộc)</span><input class="input" name="ten" maxlength="40" placeholder="Để trống = tự hiện kiểu “Mẹ Hà”"></label>
         <div class="form-error hide mt-8" id="dgLoi" role="alert"></div>
@@ -80,13 +80,13 @@
     let s = Session.get();
     if (!s) { s = await openLogin({ title: 'Đăng nhập để gửi đánh giá' }); if (!s) return; }
     const noiDung = f.noiDung.value.trim();
-    if (noiDung.length < 10) return loi('Mẹ viết thêm vài dòng cảm nhận (ít nhất 10 ký tự) nhé');
-    if (anh.some((a) => a.dang)) return loi('Ảnh đang tải lên, mẹ chờ một chút nhé');
+    if (noiDung.length < 10) return loi('Bạn viết thêm vài dòng cảm nhận (ít nhất 10 ký tự) nhé');
+    if (anh.some((a) => a.dang)) return loi('Ảnh đang tải lên, bạn chờ một chút nhé');
     const id = $('#dgWeb').dataset.id, p = MC.byId(id); dangGui = true;
     const btn = f.querySelector('[type=submit]'); btn.disabled = true; btn.textContent = 'Đang gửi…';
     try {
       const r = await loyaltyApi('dgGui', { token: s.token, id, sao, noiDung, ten: f.ten.value.trim(), anh: JSON.stringify(anh.map((a) => a.url).filter(Boolean)), tenSP: p ? (p.short || p.name) : '' }, 25000);
-      if (!r || !r.ok) throw new Error((r && r.msg) || 'Chưa gửi được, mẹ thử lại nhé');
+      if (!r || !r.ok) throw new Error((r && r.msg) || 'Chưa gửi được, bạn thử lại nhé');
       toast(r.msg, { type: 'ok' }); mo = false; kq = null; ve(); await tai(id);
     } catch (e) { loi(e.message); btn.disabled = false; btn.textContent = 'Gửi đánh giá'; }
     dangGui = false;

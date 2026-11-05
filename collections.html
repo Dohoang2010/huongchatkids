@@ -61,12 +61,12 @@
   </div>
 </div></main>
 
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
-<script src="js/uu-dai-nhanh.js?v=20261102b" defer></script>
+<script src="js/uu-dai-nhanh.js?v=20261105c" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productCard, brandOf, ageLabel, esc } = MC;
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
       o.push(the(Number(x.c.chiGiam) > 0 || x.c.hoacGiam ? '💰' : '🎁', x.chinh.size + ' sản phẩm áp dụng', tenCt(x), MC.ctMoTa(x), esc(han), 'Xem sản phẩm áp dụng', linkCon('ct=' + encodeURIComponent(x.c.id))));
     });
     const ma = (MC.maCongKhai ? MC.maCongKhai() : []).filter((c) => c.loai !== 'sanpham' || (c.sanPham || []).length);
-    box.innerHTML = `<div class="km-ds__dau"><h2>Chương trình đang diễn ra</h2><p>Các chương trình không cộng dồn, web tự chọn mức có lợi nhất cho mẹ.</p></div>
+    box.innerHTML = `<div class="km-ds__dau"><h2>Chương trình đang diễn ra</h2><p>Các chương trình không cộng dồn, web tự chọn mức có lợi nhất cho bạn.</p></div>
       <div class="km-day"><button class="km-day__nut km-day__nut--trai" type="button" data-km-cuon="-1" aria-label="Xem chương trình trước">‹</button><div class="km-luoi" id="kmLuoi">${o.join('')}</div><button class="km-day__nut km-day__nut--phai" type="button" data-km-cuon="1" aria-label="Xem chương trình tiếp">›</button></div>
       ${ma.length ? `<div class="km-ds__dau"><h2>Mã giảm giá</h2><p>Nhập mã ở giỏ hàng hoặc bấm Lưu trong Ví voucher, web tự áp mã lợi nhất khi thanh toán.</p></div>
       <div class="km-ma">${ma.map((c) => `<div class="km-ma__o"><b>${esc(c.ma)}</b><span>${esc(c.desc || c.ten || '')}</span><small>${c.hetHan ? 'HSD ' + ngayVN(c.hetHan) : 'Không thời hạn'}${c.min ? ' · Đơn từ ' + fmt(c.min) : ''}</small></div>`).join('')}
@@ -251,12 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#count').textContent = `${list.length} sản phẩm`;
     renderActive();
     const babyAge = S.age.length === 1 && ['0-6m', '6-12m'].includes(S.age[0]);
-    $('#callout').innerHTML = babyAge ? `<div class="callout"><span class="emoji">👩‍⚕️</span><div><b>Bé dưới 1 tuổi: mẹ nên hỏi chuyên gia dinh dưỡng trước khi dùng thực phẩm bổ sung</b>Ở tuổi này sữa mẹ/sữa công thức là chính; thường chỉ cần vitamin D3 và một số sản phẩm ghi rõ "từ 6 tháng". Chuyên gia dinh dưỡng ${SITE.name} tư vấn miễn phí.</div><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại cho tôi</button></div>` : (list.length && list.length <= 2 ? `<div class="callout"><span class="emoji">💬</span><div><b>Chưa thấy sản phẩm mẹ cần?</b>Nhắn Zalo hoặc để lại số, chuyên gia dinh dưỡng sẽ gợi ý sản phẩm phù hợp với bé.</div><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a></div>` : '');
+    $('#callout').innerHTML = babyAge ? `<div class="callout"><span class="emoji">👩‍⚕️</span><div><b>Bé dưới 1 tuổi: bạn nên hỏi chuyên gia dinh dưỡng trước khi dùng thực phẩm bổ sung</b>Ở tuổi này sữa mẹ/sữa công thức là chính; thường chỉ cần vitamin D3 và một số sản phẩm ghi rõ "từ 6 tháng". Chuyên gia dinh dưỡng ${SITE.name} tư vấn miễn phí.</div><button class="btn btn--teal btn--sm" type="button" data-callback>${I.headset}Gọi lại cho tôi</button></div>` : (list.length && list.length <= 2 ? `<div class="callout"><span class="emoji">💬</span><div><b>Chưa thấy sản phẩm bạn cần?</b>Nhắn Zalo hoặc để lại số, chuyên gia dinh dưỡng sẽ gợi ý sản phẩm phù hợp với bé.</div><a class="btn btn--zalo btn--sm" href="${SITE.zalo}" target="_blank" rel="noopener">Chat Zalo</a></div>` : '');
     const slice = list.slice((S.page - 1) * PER, S.page * PER);
     // Ở mục "Tất cả sản phẩm": hết phần hàng cho bé thì chèn một vạch ngăn trước phần hàng cho mẹ
     const sepAt = S.sort === 'best' && !S.cat.length && !S.q ? slice.findIndex((p) => MC.isForMom(p)) : -1;
     const sep = `<div class="grid__sep"><b>💖 Beauty &amp; thời trang cho mẹ</b><span>Mỹ phẩm, chăm sóc sức khoẻ và đồ lót cho mẹ</span></div>`;
-    $('#grid').innerHTML = slice.length ? slice.map((p, i) => (i === sepAt ? sep : '') + productCard(p)).join('') : `<div class="empty" style="grid-column:1/-1"><div class="emoji">🔍</div><h3>Chưa tìm thấy sản phẩm phù hợp</h3><p>Mẹ thử bỏ bớt bộ lọc, hoặc để chuyên gia dinh dưỡng tư vấn trực tiếp nhé.</p><div class="flex gap-8 mt-16" style="justify-content:center;flex-wrap:wrap"><button class="btn btn--ghost" type="button" id="emptyReset">Xoá bộ lọc</button><button class="btn btn--teal" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div></div>`;
+    $('#grid').innerHTML = slice.length ? slice.map((p, i) => (i === sepAt ? sep : '') + productCard(p)).join('') : `<div class="empty" style="grid-column:1/-1"><div class="emoji">🔍</div><h3>Chưa tìm thấy sản phẩm phù hợp</h3><p>Bạn thử bỏ bớt bộ lọc, hoặc để chuyên gia dinh dưỡng tư vấn trực tiếp nhé.</p><div class="flex gap-8 mt-16" style="justify-content:center;flex-wrap:wrap"><button class="btn btn--ghost" type="button" id="emptyReset">Xoá bộ lọc</button><button class="btn btn--teal" type="button" data-callback>${I.headset}Chuyên gia dinh dưỡng gọi lại</button></div></div>`;
     $('#pagination').innerHTML = pages > 1 ? `<button type="button" data-page="${S.page - 1}" ${S.page === 1 ? 'disabled' : ''}>‹</button>` + Array.from({ length: pages }, (_, i) => `<button type="button" class="${i + 1 === S.page ? 'is-active' : ''}" data-page="${i + 1}">${i + 1}</button>`).join('') + `<button type="button" data-page="${S.page + 1}" ${S.page === pages ? 'disabled' : ''}>›</button>` : '';
     syncUrl();
   }

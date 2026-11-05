@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- ADMIN:SEO (trang quản trị ghi đè khối này) -->
   <title>Giỏ hàng – Hương Chất Kids</title>
-  <meta name="description" content="Giỏ hàng của mẹ tại Hương Chất Kids.">
+  <meta name="description" content="Giỏ hàng của bạn tại Hương Chất Kids.">
   <!-- /ADMIN:SEO -->
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,13 +17,13 @@
 <div class="dau-cho" aria-hidden="true"></div>
 <main id="app"><div class="container">
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Giỏ hàng</span></nav>
-  <h1 class="page-title">Giỏ hàng của mẹ</h1>
+  <h1 class="page-title">Giỏ hàng của bạn</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lines = Cart.lines(); const sub = Cart.subtotal(); const multi = Cart.multiDiscount(); const coupon = store.get('mc_coupon', '') || MC.maTotNhat(sub - multi, lines); const c = coupon ? applyCoupon(coupon, sub - multi, lines) : null;
     const gn = c && c.ok && c.discount > 0 ? null : MC.giamNganh(lines);   // chương trình chỉ giảm % (vd Food từ 1 triệu −5%)
     const discount = (c && c.ok ? c.discount : 0) + (gn ? gn.tien : 0); const ship = c && c.ok && c.freeship ? 0 : shipFee(sub - multi - discount); const total = Math.max(0, sub - multi - discount) + (ship || 0);
-    if (!lines.length) { $('#cartPage').innerHTML = `<div class="empty card" style="grid-column:1/-1"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p>Mẹ chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div><section class="section" style="grid-column:1/-1"><div class="section-head"><div><h2>Mẹ tin dùng nhất</h2></div></div><div class="grid grid--4">${[...PRODUCTS].sort((a, b) => b.sold - a.sold).slice(0, 4).map((p) => productCard(p)).join('')}</div></section>`; return; }
+    if (!lines.length) { $('#cartPage').innerHTML = `<div class="empty card" style="grid-column:1/-1"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p>Bạn chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div><section class="section" style="grid-column:1/-1"><div class="section-head"><div><h2>Mẹ tin dùng nhất</h2></div></div><div class="grid grid--4">${[...PRODUCTS].sort((a, b) => b.sold - a.sold).slice(0, 4).map((p) => productCard(p)).join('')}</div></section>`; return; }
     $('#cartPage').innerHTML = `
       <div class="card card--pad cart-table">
         <div class="freeship-bar mb-12">${sub >= SITE.freeshipFrom || MC.affShip() ? '🎉 Đơn hàng được <b>miễn phí vận chuyển</b>' : `Mua thêm <b>${fmt(SITE.freeshipFrom - sub)}</b> để được <b>freeship</b>`}<div class="bar"><i style="width:${MC.affShip() ? 100 : Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="checkout__side"><div class="card card--pad">
         <h3>Tóm tắt đơn hàng</h3>
         <div class="coupon"><input class="input" id="couponInput" placeholder="Nhập mã giảm giá (nếu có)" aria-label="Mã giảm giá" value="${esc(coupon)}"><button class="btn btn--dark" type="button" id="applyCoupon">Áp dụng</button></div>${MC.chipMaDaLuu(sub - multi, lines, coupon)}
-        <div class="coupon-hint">${c && c.ok ? `<span class="text-teal fw-600">✓ ${c.desc}</span>` : c ? `<span class="text-red">${c.msg}</span>` : `<span class="text-muted">Có mã giảm giá của shop thì mẹ nhập vào đây nhé.</span>`}</div>
+        <div class="coupon-hint">${c && c.ok ? `<span class="text-teal fw-600">✓ ${c.desc}</span>` : c ? `<span class="text-red">${c.msg}</span>` : `<span class="text-muted">Có mã giảm giá của shop thì bạn nhập vào đây nhé.</span>`}</div>
         <div class="divider"></div>
         <div class="summary-line"><span>Tạm tính (${Cart.count()} sản phẩm)</span><span>${fmt(sub)}</span></div>
         ${multi ? `<div class="summary-line"><span>Mua từ 2 giảm 3%</span><span class="text-teal">−${fmt(multi)}</span></div>` : ''}

@@ -176,7 +176,7 @@
     save(items) { store.set(this.key, items); updateCartBadges(); document.dispatchEvent(new CustomEvent('cart:change')); },
     add(id, qty = 1, variant = null) {
       const p = byId(id); if (!p) return;
-      if (chayHang(p, variant)) { toast('Sản phẩm này đang cháy hàng – mẹ chọn phân loại / sản phẩm khác nhé'); return false; }
+      if (chayHang(p, variant)) { toast('Sản phẩm này đang cháy hàng – bạn chọn phân loại / sản phẩm khác nhé'); return false; }
       const items = this.items();
       const vKey = variant != null ? String(variant) : '';
       const line = items.find((i) => i.id === id && (i.variant ?? '') === vKey);
@@ -390,7 +390,7 @@
         ${b.holder ? `<div class="paybox__row"><span>Chủ tài khoản</span><b>${esc(b.holder)}</b></div>` : ''}
         <div class="paybox__row"><span>Số tiền</span><b class="text-price">${fmt(order.total)}</b><button class="btn btn--ghost btn--sm" type="button" data-copy="${Math.round(order.total)}">Sao chép</button></div>
         <div class="paybox__row"><span>Nội dung</span><b>${esc(info)}</b><button class="btn btn--ghost btn--sm" type="button" data-copy="${esc(info)}">Sao chép</button></div>
-        <p class="paybox__note">Sau khi chuyển, mẹ chụp màn hình giao dịch gửi Zalo <b>${SITE.hotline}</b> để được giao sớm nhất. ${SITE.name} chỉ dùng duy nhất số tài khoản này – không chuyển cho số khác.</p>
+        <p class="paybox__note">Sau khi chuyển, bạn chụp màn hình giao dịch gửi Zalo <b>${SITE.hotline}</b> để được giao sớm nhất. ${SITE.name} chỉ dùng duy nhất số tài khoản này – không chuyển cho số khác.</p>
       </div></div>`;
   }
   function openPayQR(order) {
@@ -494,7 +494,7 @@
         <a class="pcard__name" href="${spUrl(p)}" title="${esc(p.name)}">${esc(shortName(p))}</a>
         <div class="pcard__meta">${p.reviews > 0 ? `<span class="star">${I.star}${p.rating.toFixed(1)} <span class="text-muted">(${p.reviews})</span></span>` : ''}${p.reviews > 0 && p.sold > 0 ? '<span>·</span>' : ''}${p.sold > 0 ? `<span>Đã bán ${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'k' : p.sold}</span>` : ''}${!p.reviews && !p.sold ? `<span class="text-teal fw-600">${I.check} Chính hãng</span>` : ''}</div>
         <div class="pcard__price"><b>${p.variants && p.variants.length > 1 ? '<small>từ</small> ' : ''}${fmt(p.price)}</b>${listPrice(p.oldPrice, p.price) ? `<s>${fmt(p.oldPrice)}</s>` : p.giaGoc ? `<s>${fmt(p.giaGoc)}</s>` : ''}</div>
-        <div class="pcard__age">${hopTuoiBe(p) ? `<span class="pcard__hop" title="Hợp độ tuổi ${esc(beDaLuu().ten ? 'bé ' + beDaLuu().ten : 'của bé')} (theo thông tin mẹ đã lưu)">💗 Hợp tuổi ${esc(beDaLuu().ten ? 'bé ' + beDaLuu().ten : 'bé')}</span>` : p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
+        <div class="pcard__age">${hopTuoiBe(p) ? `<span class="pcard__hop" title="Hợp độ tuổi ${esc(beDaLuu().ten ? 'bé ' + beDaLuu().ten : 'của bé')} (theo thông tin bạn đã lưu)">💗 Hợp tuổi ${esc(beDaLuu().ten ? 'bé ' + beDaLuu().ten : 'bé')}</span>` : p.ages && p.ages.length ? `<span>${I.user}${ageRange(p.ages)}${p.family ? ' & cả nhà' : ''}</span>` : `<span>${p.family ? '👨‍👩‍👧 Cả gia đình' : 'Dành cho mẹ'}</span>`}</div>
         <div class="pcard__actions">
           <button class="btn btn--primary" type="button" data-buy="${p.id}" ${oos ? 'disabled' : ''}>${I.zap}Mua ngay</button>
           <button class="btn btn--outline btn--icon" type="button" data-add="${p.id}" aria-label="Thêm ${esc(shortName(p))} vào giỏ" ${oos ? 'disabled' : ''}>${I.cart}</button>
@@ -648,7 +648,7 @@
     <div class="drawer" id="cartDrawer" aria-hidden="true">
       <div class="drawer__backdrop" data-close-cart></div>
       <div class="drawer__panel" role="dialog" aria-label="Giỏ hàng">
-        <div class="drawer__head"><h3>🛒 Giỏ hàng của mẹ <span class="text-muted fs-14" data-cart-count-text></span></h3><button class="modal__close" type="button" data-close-cart aria-label="Đóng">${I.close}</button></div>
+        <div class="drawer__head"><h3>🛒 Giỏ hàng của bạn <span class="text-muted fs-14" data-cart-count-text></span></h3><button class="modal__close" type="button" data-close-cart aria-label="Đóng">${I.close}</button></div>
         <div class="drawer__body" id="drawerBody"></div>
         <div class="drawer__foot" id="drawerFoot"></div>
       </div>
@@ -675,7 +675,7 @@
     const body = $('#drawerBody'), foot = $('#drawerFoot'); if (!body) return;
     const lines = Cart.lines(); const sub = Cart.subtotal();
     if (!lines.length) {
-      body.innerHTML = `<div class="drawer__empty"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p class="mt-8">Mẹ chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary mt-16" href="collections.html">Xem sản phẩm</a></div>`;
+      body.innerHTML = `<div class="drawer__empty"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p class="mt-8">Bạn chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary mt-16" href="collections.html">Xem sản phẩm</a></div>`;
       foot.innerHTML = ''; return;
     }
     const remain = affShip() ? 0 : SITE.freeshipFrom - sub;
@@ -784,9 +784,9 @@
         ${p.variants ? (manyVariants ? `<label class="field mb-12"><span class="fs-13 fw-600">Phân loại</span><select class="input" id="qbVariantSel" aria-label="Chọn phân loại">${p.variants.map((v, i) => `<option value="${i}" ${i === QB.variant ? 'selected' : ''} ${v.oos ? 'disabled' : ''}>${esc(v.label)} – ${v.oos ? 'tạm hết' : fmt(v.price)}</option>`).join('')}</select></label>` : `<div class="qb__variants" id="qbVariants" role="group" aria-label="Phân loại">${p.variants.map((v, i) => `<button type="button" class="chip chip--sm ${i === QB.variant ? 'is-active' : ''} ${v.oos ? 'chip--oos' : ''}" data-qb-variant="${i}" aria-pressed="${i === QB.variant}" ${v.oos ? 'disabled' : ''}>${esc(v.label)} · ${v.oos ? 'tạm hết' : fmt(v.price)}</button>`).join('')}</div>`) : ''}
         <div class="qb__row"><div class="qty" role="group" aria-label="Số lượng"><button type="button" data-qb-minus aria-label="Giảm số lượng">−</button><input type="number" id="qbQty" value="${QB.qty}" min="1" max="99" inputmode="numeric" aria-label="Số lượng"><button type="button" data-qb-plus aria-label="Tăng số lượng">+</button></div><span class="qb__hint" id="qbHint"></span></div>
         <form class="qb__form" id="qbForm" novalidate>
-          ${LOY().enabled && !Session.get() ? `<div class="qb__lookup" id="qbLookup"><div class="qb__lookup-t">🔎 <b>Mẹ đã từng mua tại shop?</b> Nhập số điện thoại để điền nhanh thông tin</div><div class="coupon"><input class="input" id="qbLookupPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại đã mua" aria-label="Số điện thoại đã mua" value="${esc(c.phone || '')}" autocomplete="tel"><button class="btn btn--dark" type="button" id="qbLookupBtn">Tra cứu</button></div><div class="qb__lookup-msg hide" id="qbLookupMsg" role="status"></div></div>` : ''}
-          ${known ? `<div class="qb__saved" id="qbSaved">👋 Chào ${esc(c.name || 'mẹ')}, thông tin giao hàng đã điền sẵn từ lần trước <button type="button" data-qb-clear>Sửa</button></div>` : ''}
-          <div class="grid-2 ${known ? 'hide' : ''}" id="qbFields1"><input class="input" name="name" placeholder="Họ tên mẹ / ba *" aria-label="Họ tên" value="${esc(c.name || '')}" required autocomplete="name"><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại *" aria-label="Số điện thoại" value="${esc(c.phone || '')}" required autocomplete="tel"></div>
+          ${LOY().enabled && !Session.get() ? `<div class="qb__lookup" id="qbLookup"><div class="qb__lookup-t">🔎 <b>Bạn đã từng mua tại shop?</b> Nhập số điện thoại để điền nhanh thông tin</div><div class="coupon"><input class="input" id="qbLookupPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại đã mua" aria-label="Số điện thoại đã mua" value="${esc(c.phone || '')}" autocomplete="tel"><button class="btn btn--dark" type="button" id="qbLookupBtn">Tra cứu</button></div><div class="qb__lookup-msg hide" id="qbLookupMsg" role="status"></div></div>` : ''}
+          ${known ? `<div class="qb__saved" id="qbSaved">👋 Chào ${esc(c.name || 'bạn')}, thông tin giao hàng đã điền sẵn từ lần trước <button type="button" data-qb-clear>Sửa</button></div>` : ''}
+          <div class="grid-2 ${known ? 'hide' : ''}" id="qbFields1"><input class="input" name="name" placeholder="Họ tên *" aria-label="Họ tên" value="${esc(c.name || '')}" required autocomplete="name"><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại *" aria-label="Số điện thoại" value="${esc(c.phone || '')}" required autocomplete="tel"></div>
           <input class="input ${known ? 'hide' : ''}" id="qbFields2" name="address" placeholder="Địa chỉ nhận hàng (số nhà, đường, phường, quận, tỉnh) *" aria-label="Địa chỉ nhận hàng" value="${esc(addrShow(c.address))}" required autocomplete="street-address">
           <input class="input ${known ? 'hide' : ''}" id="qbFields3" name="email" type="email" placeholder="Email nhận xác nhận đơn (không bắt buộc)" aria-label="Email nhận xác nhận đơn" value="${esc(c.email || '')}" autocomplete="email">
           ${known ? `<div class="qb__savedinfo" id="qbSavedInfo"><b>${esc(c.name || '')}</b> · ${esc(c.phone)}<br>${esc(addrShow(c.address))}</div>` : ''}
@@ -831,7 +831,7 @@
     const dc = addrFull({ tinh: kh.tinh || '', xa: kh.xa || '', chiTiet: kh.diaChi || '' });
     if (dc) f.elements.address.value = dc;
     const t = tierOf(Number(kh.tongChiTieu) || 0);
-    qbLookupMsg(`✓ Đã điền thông tin của <b>${esc(kh.ten || 'mẹ')}</b>${t.discount ? ` · hạng ${tierBadge(t)} giảm ${t.discount}% đơn này` : ''}${dc ? '' : '. Mẹ nhập thêm địa chỉ nhận hàng nhé'}`, 'ok');
+    qbLookupMsg(`✓ Đã điền thông tin của <b>${esc(kh.ten || 'bạn')}</b>${t.discount ? ` · hạng ${tierBadge(t)} giảm ${t.discount}% đơn này` : ''}${dc ? '' : '. Bạn nhập thêm địa chỉ nhận hàng nhé'}`, 'ok');
     qbRefresh(); qbTaiVi(); if (QB.gt.ma && QB.gtCfg.bat) qbGtXet(QB.gt.ma);
     (dc ? $('#qbSubmit') : f.elements.address).focus();
   }
@@ -846,8 +846,8 @@
     traHang(sdt).then((v) => {
       xong();
       const f = $('#qbForm'); qbShowFields(); f.elements.phone.value = sdt;
-      if (!v) { qbRefresh(); qbLookupMsg('Chưa tra cứu được lúc này – mẹ cứ điền thông tin bên dưới và đặt hàng nhé', 'info'); f.elements.name.focus(); return; }
-      if (!v.co) { qbRefresh(); qbLookupMsg('Số này chưa có đơn tại shop – mẹ điền tên và địa chỉ bên dưới nhé 💕', 'info'); f.elements.name.focus(); return; }
+      if (!v) { qbRefresh(); qbLookupMsg('Chưa tra cứu được lúc này – bạn cứ điền thông tin bên dưới và đặt hàng nhé', 'info'); f.elements.name.focus(); return; }
+      if (!v.co) { qbRefresh(); qbLookupMsg('Số này chưa có đơn tại shop – bạn điền tên và địa chỉ bên dưới nhé 💕', 'info'); f.elements.name.focus(); return; }
       qbDienTuTraCuu(v, true);
       qbGreet(sdt);
       (!f.elements.name.value.trim() ? f.elements.name : !f.elements.address.value.trim() ? f.elements.address : $('#qbSubmit')).focus();
@@ -865,7 +865,7 @@
     const v = HangSdt.get(sdt); if (!v || !v.co) return;
     const t = hangCho(sdt) || tierOf(0);
     const coDiaChi = !!(v.diaChi || v.tinh);
-    qbLookupMsg(`👋 Chào <b>${esc(v.ten || v.tenAn || 'mẹ')}</b> – ${coDiaChi ? 'đã điền thông tin giao hàng lần trước' : 'mẹ nhập địa chỉ nhận hàng nhé'}${t.discount ? ` · hạng ${tierBadge(t)} <b>giảm ${t.discount}%</b> đơn này` : ''}`, 'ok');
+    qbLookupMsg(`👋 Chào <b>${esc(v.ten || v.tenAn || 'bạn')}</b> – ${coDiaChi ? 'đã điền thông tin giao hàng lần trước' : 'bạn nhập địa chỉ nhận hàng nhé'}${t.discount ? ` · hạng ${tierBadge(t)} <b>giảm ${t.discount}%</b> đơn này` : ''}`, 'ok');
     qbRefresh();
   }
   /* Khách tự gõ SĐT vào ô số điện thoại (không dùng ô tra cứu) → vẫn tự áp hạng */
@@ -878,7 +878,7 @@
   window.addEventListener('mc:ma-gh', () => { if (QB.id && document.getElementById('qbForm')) qbRefresh(); });
   function qbRefresh() {
     { const het = chayHang(byId(QB.id), QB.variant), sb = $('#qbSubmit');
-      if (sb) { sb.disabled = het; const nho = sb.querySelector('small'); if (nho) { if (nho.dataset.goc == null) nho.dataset.goc = nho.textContent; nho.textContent = het ? 'Phân loại này đang cháy hàng – mẹ chọn phân loại khác nhé' : nho.dataset.goc; } }
+      if (sb) { sb.disabled = het; const nho = sb.querySelector('small'); if (nho) { if (nho.dataset.goc == null) nho.dataset.goc = nho.textContent; nho.textContent = het ? 'Phân loại này đang cháy hàng – bạn chọn phân loại khác nhé' : nho.dataset.goc; } }
       $$('#quickBuy .btn--zalo').forEach((a) => { a.classList.toggle('is-disabled', het); a.setAttribute('aria-disabled', het ? 'true' : 'false'); }); }
     const { price, old } = qbPrice(); const k = qbCalc();
     $('#qbPrice').innerHTML = `<b>${fmt(price)}</b>${listPrice(old, price) ? `<s>${fmt(old)}</s>` : ''}`;
@@ -894,13 +894,13 @@
         : G2.ok ? `<span class="text-muted">✓ Mã hợp lệ, nhưng ${k.base < (Number(QB.gtCfg.donToiThieu) || 0) ? `đơn từ ${fmt(QB.gtCfg.donToiThieu)} mới được giảm` : 'đơn đang được áp dụng ưu đãi tốt nhất'}.</span>`
         : G2.msg ? `<span class="text-red">✕ ${esc(G2.msg)}</span>` : `<span class="text-muted">Nhập SĐT người giới thiệu để giảm ${QB.gtCfg.giam || 5}% cho đơn đầu tiên.</span>`; };
     /* Ô chung: đang dùng SĐT → trạng thái mã giới thiệu; còn lại → trạng thái mã giảm giá */
-    const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = QB.gt.ma ? qbGtHint(k) : k.boMa ? `<span class="text-teal fw-600">✓ Đơn đang được áp dụng ưu đãi tốt nhất cho mẹ</span>` : k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`)
+    const hint = $('#qbCouponHint'); if (hint) hint.innerHTML = QB.gt.ma ? qbGtHint(k) : k.boMa ? `<span class="text-teal fw-600">✓ Đơn đang được áp dụng ưu đãi tốt nhất cho bạn</span>` : k.cr ? (k.cr.ok ? `<span class="text-teal fw-600">✓ ${k.cr.desc}</span>` : `<span class="text-red">${k.cr.msg}</span>`)
       : QB.gtCfg.bat ? `<span class="text-muted">Được bạn bè giới thiệu? Nhập SĐT người giới thiệu để giảm ${QB.gtCfg.giam}% đơn đầu tiên.</span>` : '';
     const dw = $('#qbDiem'); if (dw) {
       const v = QB.vi;
       dw.innerHTML = !v || !(v.khaDung > 0) ? ''
-        : !v.dungDuoc ? `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Mẹ có <b>${v.khaDung.toLocaleString('vi-VN')}</b> điểm</span></div><p class="fs-13 text-muted">Xác thực OTP để dùng điểm (bảo vệ điểm của mẹ). <button type="button" class="text-primary fw-700" data-qb-diem-otp>Xác thực ngay</button></p></div>`
-        : `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Mẹ có <b>${v.khaDung.toLocaleString('vi-VN')}</b> điểm</span></div><label class="diem-co__chk"><input type="checkbox" id="qbDiemDung" ${QB.diemMuon > 0 ? 'checked' : ''}> Dùng ${k.diemToiDa.toLocaleString('vi-VN')} điểm giảm ${fmt(k.diemToiDa * k.gtd)}</label></div>`;
+        : !v.dungDuoc ? `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Bạn có <b>${v.khaDung.toLocaleString('vi-VN')}</b> điểm</span></div><p class="fs-13 text-muted">Xác thực OTP để dùng điểm (bảo vệ điểm của bạn). <button type="button" class="text-primary fw-700" data-qb-diem-otp>Xác thực ngay</button></p></div>`
+        : `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Bạn có <b>${v.khaDung.toLocaleString('vi-VN')}</b> điểm</span></div><label class="diem-co__chk"><input type="checkbox" id="qbDiemDung" ${QB.diemMuon > 0 ? 'checked' : ''}> Dùng ${k.diemToiDa.toLocaleString('vi-VN')} điểm giảm ${fmt(k.diemToiDa * k.gtd)}</label></div>`;
     }
     const ml = $("#qbMaLuu"); if (ml) ml.innerHTML = chipMaDaLuu(k.sub - k.multi, qbLines(), QB.coupon).replace(/data-coupon=/g, "data-qb-ma=");
     $$('#qbVariants [data-qb-variant]').forEach((b) => { const on = Number(b.dataset.qbVariant) === QB.variant; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); });
@@ -914,7 +914,7 @@
     $$('.input', form).forEach((i) => i.classList.remove('is-invalid'));
     const bad = [];
     if (!name) bad.push('name'); if (!phoneOk(phone)) bad.push('phone'); if (address.length < 10) bad.push('address');
-    if (bad.length) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = !phoneOk(phone) && name && address.length >= 10 ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : 'Mẹ vui lòng điền đủ họ tên, số điện thoại và địa chỉ nhé'; err.classList.remove('hide'); form.elements[bad[0]].focus(); return; }
+    if (bad.length) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = !phoneOk(phone) && name && address.length >= 10 ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : 'Bạn vui lòng điền đủ họ tên, số điện thoại và địa chỉ nhé'; err.classList.remove('hide'); form.elements[bad[0]].focus(); return; }
     Customer.set({ ...(Customer.get() || {}), name, phone, address, payment, email });
     const btn = $('#qbSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang gửi đơn…</span>';
     const p = byId(QB.id); const { price, label } = qbPrice(); const k = qbCalc();
@@ -928,17 +928,17 @@
       try {
         res = await GT.giuCho({ sdt: sdtDat, token: ss && phoneKey(ss.sdt) === sdtDat ? ss.token : '', maDon: code, ref: k.dungGT ? QB.gt.ma : '', dungGT: k.dungGT ? '1' : '0',
           diem: k.diemDung, giaTri: k.base, giaTriUuDai: k.baseA, giamKhac: (k.dungHang ? k.hangAmt : 0) + k.coupon, tongDon: k.total });
-      } catch (e2) { return loiGiu(e2.message + ' – mẹ bấm Đặt hàng lại giúp shop nhé.'); }
+      } catch (e2) { return loiGiu(e2.message + ' – bạn bấm Đặt hàng lại giúp shop nhé.'); }
       if (!res || !res.ok) {
         if (res && res.code === 'REQUIRE_AUTH') { QB.diemMuon = 0; if (QB.vi) QB.vi = { ...QB.vi, dungDuoc: false }; }
         else if (res && k.dungGT && res.code !== 'BUSY') QB.gt = { ...QB.gt, ok: false, msg: res.message || res.msg };
-        return loiGiu((res && (res.msg || res.message)) || 'Chưa giữ được ưu đãi, mẹ thử lại nhé');
+        return loiGiu((res && (res.msg || res.message)) || 'Chưa giữ được ưu đãi, bạn thử lại nhé');
       }
       QB.daGiu = !!res.maGiu;
       if ((k.dungGT ? k.gtAmt : 0) !== (res.giamGT || 0) || k.diemDung !== (res.diem || 0)) {
         if (k.dungGT && !res.giamGT) QB.gt = { ...QB.gt, ok: false, msg: 'Ưu đãi giới thiệu không còn áp dụng được cho đơn này.' };
         QB.diemMuon = res.diem || 0; qbTaiVi();
-        return loiGiu('Ưu đãi vừa được cập nhật theo dữ liệu mới nhất. Mẹ kiểm tra lại tổng tiền rồi bấm Đặt hàng lần nữa nhé.');
+        return loiGiu('Ưu đãi vừa được cập nhật theo dữ liệu mới nhất. Bạn kiểm tra lại tổng tiền rồi bấm Đặt hàng lần nữa nhé.');
       }
       maGiu = res.maGiu || '';
     }
@@ -956,7 +956,7 @@
     setTimeout(() => $('#quickBuy .qb__success h3')?.focus(), 100);
   }
   function orderSuccessHTML(order, inModal) {
-    const payNote = order.payment === 'bank' ? `<span><i>2</i><p>Mẹ chuyển khoản <b>${fmt(order.total)}</b> theo mã QR ở trên (số tiền và nội dung đã điền sẵn). Đơn được giao ngay khi nhận được tiền.</p></span>` : `<span><i>2</i><p>Mẹ thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</p></span>`;
+    const payNote = order.payment === 'bank' ? `<span><i>2</i><p>Bạn chuyển khoản <b>${fmt(order.total)}</b> theo mã QR ở trên (số tiền và nội dung đã điền sẵn). Đơn được giao ngay khi nhận được tiền.</p></span>` : `<span><i>2</i><p>Bạn thanh toán <b>${fmt(order.total)}</b> khi nhận hàng, được kiểm tra hàng trước khi trả tiền.</p></span>`;
     const items = (order.items || []).map((it) => `<li>${esc(it.short || it.name)}${it.variant ? ` – ${esc(it.variant)}` : ''} <b>× ${it.qty || 1}</b></li>`).join('')
       + (order.qua && order.qua.soQua ? `<li class="li-gift">🎁 Quà tặng: ${esc(order.qua.moTa || order.qua.ten)}</li>` : '')
       + (order.gioiThieu && order.gioiThieu.giam ? `<li class="li-gift">🤝 Giảm giới thiệu ${order.gioiThieu.phanTram || ''}%: −${fmt(order.gioiThieu.giam)}</li>` : '')
@@ -965,7 +965,7 @@
       <div class="modal__body"><div class="qb__success">
         <div class="check">${I.check}</div>
         <h3 tabindex="-1">Cảm ơn ${esc(order.customer.name)}! 💗</h3>
-        <p>Đơn hàng của mẹ đã được ghi nhận.</p>
+        <p>Đơn hàng của bạn đã được ghi nhận.</p>
         <div class="code">Mã đơn: ${order.code}</div>
         ${items ? `<ul class="qb__items">${items}</ul>` : ''}
         ${order.payment === 'bank' ? payBox(order) : ''}
@@ -977,9 +977,9 @@
   /* ---------------- Callback modal (chỉ cần SĐT) ---------------- */
   function openCallback(pid) {
     const c = Customer.get() || {}; const p = pid ? byId(pid) : null;
-    $('#callbackContent').innerHTML = `<div class="modal__head"><h3>${I.headset}Chuyên gia dinh dưỡng gọi lại cho mẹ</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
-      <div class="modal__body"><p class="fs-14 text-muted mb-12">Mẹ chỉ cần để lại số điện thoại, chuyên gia dinh dưỡng sẽ gọi tư vấn ${p ? `về <b class="text-primary">${esc(p.short || p.name)}</b>` : 'sản phẩm phù hợp với bé'} — miễn phí, thường trong <b>10 phút</b> ${hoursNote()}.</p>
-      <form id="cbForm" class="qb__form" novalidate><label class="sr-only" for="cbPhone">Số điện thoại của mẹ</label><div class="input-group">${I.phone}<input class="input" id="cbPhone" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" value="${esc(c.phone || '')}" required autofocus></div>
+    $('#callbackContent').innerHTML = `<div class="modal__head"><h3>${I.headset}Chuyên gia dinh dưỡng gọi lại cho bạn</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
+      <div class="modal__body"><p class="fs-14 text-muted mb-12">Bạn chỉ cần để lại số điện thoại, chuyên gia dinh dưỡng sẽ gọi tư vấn ${p ? `về <b class="text-primary">${esc(p.short || p.name)}</b>` : 'sản phẩm phù hợp với bé'} — miễn phí, thường trong <b>10 phút</b> ${hoursNote()}.</p>
+      <form id="cbForm" class="qb__form" novalidate><label class="sr-only" for="cbPhone">Số điện thoại của bạn</label><div class="input-group">${I.phone}<input class="input" id="cbPhone" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại của bạn" value="${esc(c.phone || '')}" required autofocus></div>
       <div class="form-error hide" id="cbError" role="alert"></div>
       <button class="btn btn--teal btn--lg btn--block" type="submit">${I.phoneCall}Gọi lại cho tôi</button>
       <p class="fs-13 text-muted" style="text-align:center">Hoặc gọi ngay <a class="fw-700 text-primary" href="tel:${SITE.hotlineTel}">${SITE.hotline}</a> · ${SITE.workingHours}</p></form>
@@ -991,7 +991,7 @@
       Customer.set({ ...(Customer.get() || {}), phone });
       const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang gửi…';
       await submitOrder({ type: 'callback', customer: { phone }, items: p ? [{ id: p.id, name: p.name }] : [], total: 0 });
-      $('#callbackContent').innerHTML = `<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Đã nhận yêu cầu!</h3><p>Chuyên gia dinh dưỡng sẽ gọi số <b>${esc(phone)}</b> ${hoursNote()}. Mẹ để ý điện thoại nhé 💗</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Đóng</button></div></div></div>`;
+      $('#callbackContent').innerHTML = `<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Đã nhận yêu cầu!</h3><p>Chuyên gia dinh dưỡng sẽ gọi số <b>${esc(phone)}</b> ${hoursNote()}. Bạn để ý điện thoại nhé 💗</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Đóng</button></div></div></div>`;
     });
   }
 
@@ -1064,7 +1064,7 @@
       q = q.trim().toLowerCase();
       if (!q) { box.innerHTML = `<div class="search__hint">Tìm kiếm phổ biến<div class="chips">${hot.map((h) => `<a class="chip chip--sm" href="collections.html?q=${encodeURIComponent(h)}">${h}</a>`).join('')}</div></div>`; box.classList.add('is-open'); return; }
       const kq = timSP(q), res = kq.ds.slice(0, 6);
-      box.innerHTML = res.length ? (kq.ganDung ? `<div class="search__hint">Không có sản phẩm khớp đủ "${esc(q)}" – gợi ý gần đúng:</div>` : "") + res.map((p) => `<a href="${spUrl(p)}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Mẹ thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
+      box.innerHTML = res.length ? (kq.ganDung ? `<div class="search__hint">Không có sản phẩm khớp đủ "${esc(q)}" – gợi ý gần đúng:</div>` : "") + res.map((p) => `<a href="${spUrl(p)}"><img src="${productThumb(p)}" alt=""><span><div class="name">${esc(shortName(p))}</div><div class="price">${fmt(p.price)}</div></span></a>`).join('') + `<a class="all" href="collections.html?q=${encodeURIComponent(q)}">Xem tất cả kết quả cho "${esc(q)}" →</a>` : `<div class="search__hint">Không tìm thấy "${esc(q)}". Bạn thử từ khoá khác hoặc <a class="text-primary fw-600" href="${SITE.zalo}" target="_blank">chat Zalo</a> để được tư vấn.</div>`;
       box.classList.add('is-open');
     };
     input.addEventListener('input', debounce(() => render(input.value), 120));
@@ -1098,7 +1098,7 @@
       else if (t.dataset.qbMa !== undefined) { QB.gt = { ma: '', ok: false, msg: '' }; QB.coupon = t.dataset.qbMa; const inp = $('#qbCoupon'); if (inp) inp.value = QB.coupon; qbRefresh(); }
       else if (t.dataset.copy !== undefined) { try { navigator.clipboard?.writeText(t.dataset.copy); toast('Đã sao chép: ' + t.dataset.copy); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.payQr !== undefined) { const o = store.get('mc_orders', []).find((x) => x.code === t.dataset.payQr); if (o) openPayQR(o); }
-      else if (t.dataset.zaloCopy !== undefined) { try { navigator.clipboard?.writeText(`Mình muốn đặt: ${t.dataset.zaloCopy}${AFF.get() ? ' · Mã ĐT: ' + AFF.get().ma : ''}`); toast('Đã sao chép tên sản phẩm – mẹ dán vào Zalo là xong'); } catch (err) { /* bỏ qua */ } }
+      else if (t.dataset.zaloCopy !== undefined) { try { navigator.clipboard?.writeText(`Mình muốn đặt: ${t.dataset.zaloCopy}${AFF.get() ? ' · Mã ĐT: ' + AFF.get().ma : ''}`); toast('Đã sao chép tên sản phẩm – bạn dán vào Zalo là xong'); } catch (err) { /* bỏ qua */ } }
       else if (t.dataset.wish !== undefined) { e.preventDefault(); const on = Wish.toggle(t.dataset.wish); t.classList.toggle('is-on', on); toast(on ? 'Đã thêm vào yêu thích 💗' : 'Đã bỏ yêu thích'); }
       else if (t.dataset.reorder !== undefined) { const o = store.get('mc_last_order'); if (o && o.items) { o.items.forEach((it) => { const p = byId(it.id); if (p) Cart.add(it.id, it.qty || 1, it.variant && p.variants ? p.variants.findIndex((v) => v.label === it.variant) : null); }); location.href = 'checkout.html'; } }
     });
@@ -1402,7 +1402,7 @@
       const sc = document.createElement('script');
       let tid = 0;
       const done = (fn, arg) => { clearTimeout(tid); try { delete window[cb]; } catch { window[cb] = undefined; } sc.remove(); fn(arg); };
-      tid = setTimeout(() => done(reject, new Error('Máy chủ không phản hồi, mẹ thử lại sau ít phút nhé')), timeout);
+      tid = setTimeout(() => done(reject, new Error('Máy chủ không phản hồi, bạn thử lại sau ít phút nhé')), timeout);
       window[cb] = (data) => { done(resolve, data || {}); try { const q = data && (data.quaLe || (data.diemDanh && data.diemDanh.quaLe)); if (q) baoQuaLe(q); } catch {} };
       sc.onerror = () => done(reject, new Error('Không kết nối được máy chủ của shop'));
       const q = new URLSearchParams({ ...params, action, callback: cb });
@@ -1589,9 +1589,9 @@
     const b = e.target.closest('[data-luu-ma]'); if (!b) return;
     e.preventDefault(); const m = b.dataset.luuMa;
     if (!(window.COUPONS || {})[m]) return;
-    if (ViMa.co(m)) { toast(`Mã ${m} đã có trong ví – web tự áp khi mẹ thanh toán`, { type: 'ok' }); return; }
+    if (ViMa.co(m)) { toast(`Mã ${m} đã có trong ví – web tự áp khi bạn thanh toán`, { type: 'ok' }); return; }
     ViMa.luu(m); $$(`[data-luu-ma="${m}"]`).forEach((x) => { x.classList.add('is-on'); x.textContent = x.dataset.daLuu || 'Đã lưu'; });
-    toast(`Đã lưu mã ${m} – web tự áp khi mẹ thanh toán 🎉`, { type: 'ok' });
+    toast(`Đã lưu mã ${m} – web tự áp khi bạn thanh toán 🎉`, { type: 'ok' });
   });
 
   /* ---------------- Modal xác thực OTP ---------------- */
@@ -1604,17 +1604,17 @@
       const head = `<div class="modal__head"><h3>🔐 ${esc(opts.title || 'Xác thực số điện thoại')}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>`;
 
       const buocSdt = (loi) => {
-        box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 text-muted mb-12">${esc(opts.desc || 'Để bảo mật thông tin, shop gửi mã OTP về số điện thoại của mẹ. Nhập đúng mã là xem được địa chỉ đã lưu, lịch sử đơn và ưu đãi theo hạng.')}</p>
-          <form id="otpForm1" class="qb__form" novalidate><label class="sr-only" for="otpPhone">Số điện thoại</label><div class="input-group">${I.phone}<input class="input" id="otpPhone" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" value="${esc(sdt)}" required></div>
+        box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 text-muted mb-12">${esc(opts.desc || 'Để bảo mật thông tin, shop gửi mã OTP về số điện thoại của bạn. Nhập đúng mã là xem được địa chỉ đã lưu, lịch sử đơn và ưu đãi theo hạng.')}</p>
+          <form id="otpForm1" class="qb__form" novalidate><label class="sr-only" for="otpPhone">Số điện thoại</label><div class="input-group">${I.phone}<input class="input" id="otpPhone" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại của bạn" value="${esc(sdt)}" required></div>
           <div class="form-error ${loi ? '' : 'hide'}" id="otpErr1" role="alert">${esc(loi || '')}</div>
           <button class="btn btn--primary btn--lg btn--block" type="submit">Gửi mã OTP</button>
-          <p class="fs-13 text-muted" style="text-align:center">Mã chỉ dùng cho số điện thoại của mẹ và có hiệu lực ${Number(LOY().otpPhut) || 10} phút.</p></form></div>`;
+          <p class="fs-13 text-muted" style="text-align:center">Mã chỉ dùng cho số điện thoại của bạn và có hiệu lực ${Number(LOY().otpPhut) || 10} phút.</p></form></div>`;
         $('#otpForm1').addEventListener('submit', (e) => {
           e.preventDefault(); const v = phoneKey(e.target.phone.value); const err = $('#otpErr1');
           if (!phoneOk(v)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); return; }
           sdt = v; const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang gửi mã…';
           loyaltyApi('guiOtp', opts.email ? { sdt, email: opts.email } : { sdt }).then((res) => {
-            if (!res || !res.ok) { buocSdt((res && res.msg) || 'Chưa gửi được mã, mẹ thử lại sau ít phút nhé'); return; }
+            if (!res || !res.ok) { buocSdt((res && res.msg) || 'Chưa gửi được mã, bạn thử lại sau ít phút nhé'); return; }
             buocMa(res);
           }).catch((e2) => buocSdt(e2.message));
         });
@@ -1642,7 +1642,7 @@
           loyaltyApi('xacThuc', { sdt, ma, ddSau: 1 }).then((res) => {
             if (!res || !res.ok) { buocMa(info, (res && res.msg) || 'Mã OTP không đúng hoặc đã hết hạn'); return; }
             const s = saveSession(res); clearInterval(timer); DD.baoSauDangNhap(res);
-            box.innerHTML = `${head}<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Xác thực thành công</h3><p>Chào ${esc((s.kh && s.kh.ten) || 'mẹ')} 👋 ${s.kh && Number(s.kh.tongChiTieu) ? `Hạng hiện tại: <b>${esc(tierOf(Number(s.kh.tongChiTieu)).label)}</b>` : 'Cảm ơn mẹ đã tin tưởng shop.'}</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Tiếp tục</button></div></div></div>`;
+            box.innerHTML = `${head}<div class="modal__body"><div class="qb__success"><div class="check">${I.check}</div><h3>Xác thực thành công</h3><p>Chào ${esc((s.kh && s.kh.ten) || 'bạn')} 👋 ${s.kh && Number(s.kh.tongChiTieu) ? `Hạng hiện tại: <b>${esc(tierOf(Number(s.kh.tongChiTieu)).label)}</b>` : 'Cảm ơn bạn đã tin tưởng shop.'}</p><div class="actions"><button class="btn btn--primary btn--block" type="button" data-close-modal>Tiếp tục</button></div></div></div>`;
             xong = true; resolve(s); if (typeof opts.onDone === 'function') opts.onDone(s);
             setTimeout(() => { const m = $('#otpModal'); if (m && m.classList.contains('is-open')) closeModal('#otpModal'); }, 1600);
           }).catch((e2) => buocMa(info, e2.message));
@@ -1655,7 +1655,7 @@
       /* autoSend: đã có số hợp lệ (VD từ ô tra cứu) → gửi mã luôn, bỏ bước nhập số */
       if (opts.autoSend && phoneOk(sdt)) {
         box.innerHTML = `${head}<div class="modal__body"><p class="fs-14 text-muted" style="text-align:center;padding:24px 0">Đang gửi mã OTP tới ${esc(maskPhone(sdt))}…</p></div>`;
-        loyaltyApi('guiOtp', opts.email ? { sdt, email: opts.email } : { sdt }).then((res) => (res && res.ok ? buocMa(res) : buocSdt((res && res.msg) || 'Chưa gửi được mã, mẹ thử lại sau ít phút nhé'))).catch((e2) => buocSdt(e2.message));
+        loyaltyApi('guiOtp', opts.email ? { sdt, email: opts.email } : { sdt }).then((res) => (res && res.ok ? buocMa(res) : buocSdt((res && res.msg) || 'Chưa gửi được mã, bạn thử lại sau ít phút nhé'))).catch((e2) => buocSdt(e2.message));
       } else buocSdt();
       openModal('#otpModal');
     });
@@ -1672,25 +1672,25 @@
       let xong = false; const dong = (v) => { if (xong) return; xong = true; resolve(v || null); };
       const sdt0 = phoneKey(opts.phone || (Customer.get() || {}).phone || '');
       box.innerHTML = `<div class="modal__head"><h3>👤 ${esc(opts.title || 'Đăng nhập tài khoản')}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
-        <div class="modal__body"><p class="fs-14 text-muted mb-12">Tài khoản là <b>số điện thoại mẹ đã mua hàng</b>. Chưa đổi mật khẩu thì mật khẩu là <b>${MK_MAC_DINH}</b>.</p>
+        <div class="modal__body"><p class="fs-14 text-muted mb-12">Tài khoản là <b>số điện thoại bạn đã mua hàng</b>. Chưa đổi mật khẩu thì mật khẩu là <b>${MK_MAC_DINH}</b>.</p>
         <form id="loginForm" class="qb__form" novalidate autocomplete="on">
           <label class="sr-only" for="loginPhone">Số điện thoại</label><input class="input" id="loginPhone" name="username" type="tel" inputmode="numeric" autocomplete="username" placeholder="Số điện thoại" value="${esc(sdt0)}">
           <label class="sr-only" for="loginPass">Mật khẩu</label><input class="input" id="loginPass" name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu (mặc định: ${MK_MAC_DINH})">
           <div class="form-error hide" id="loginErr" role="alert"></div>
           <button class="btn btn--primary btn--lg btn--block" type="submit">Đăng nhập</button>
-          <p class="fs-13 text-muted" style="text-align:center"><a class="text-primary fw-700" href="quen-mat-khau.html">Quên mật khẩu?</a> · Đăng nhập bằng <button type="button" class="text-primary fw-600" id="loginOtp">mã OTP</button> · Chưa mua lần nào? Mẹ cứ đặt hàng, không cần tài khoản.</p>
+          <p class="fs-13 text-muted" style="text-align:center"><a class="text-primary fw-700" href="quen-mat-khau.html">Quên mật khẩu?</a> · Đăng nhập bằng <button type="button" class="text-primary fw-600" id="loginOtp">mã OTP</button> · Chưa mua lần nào? Bạn cứ đặt hàng, không cần tài khoản.</p>
         </form></div>`;
       $('#loginForm').addEventListener('submit', (e) => {
         e.preventDefault(); const sdt = phoneKey($('#loginPhone').value); const mk = $('#loginPass').value; const err = $('#loginErr'); err.classList.add('hide');
         if (!phoneOk(sdt)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); return; }
-        if (!mk) { err.textContent = `Mẹ nhập mật khẩu nhé (mặc định là ${MK_MAC_DINH})`; err.classList.remove('hide'); $('#loginPass').focus(); return; }
+        if (!mk) { err.textContent = `Bạn nhập mật khẩu nhé (mặc định là ${MK_MAC_DINH})`; err.classList.remove('hide'); $('#loginPass').focus(); return; }
         const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang đăng nhập…';
         loyaltyApi('dangNhap', { sdt, mk, ddSau: 1 }).then((res) => {
           btn.disabled = false; btn.textContent = 'Đăng nhập';
-          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa đăng nhập được, mẹ thử lại nhé'; err.classList.remove('hide'); return; }
+          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa đăng nhập được, bạn thử lại nhé'; err.classList.remove('hide'); return; }
           const s = saveSession(res); if (s) Session.patch({ macDinh: !!res.macDinh }); DD.baoSauDangNhap(res);
           store.set('mc_doimk_hoan', 0);
-          toast(`Chào ${(res.kh && res.kh.ten) || 'mẹ'} 👋 đã đăng nhập`, { type: 'ok' });
+          toast(`Chào ${(res.kh && res.kh.ten) || 'bạn'} 👋 đã đăng nhập`, { type: 'ok' });
           dong(Session.get()); closeModal('#otpModal');
         }).catch((e2) => { btn.disabled = false; btn.textContent = 'Đăng nhập'; err.textContent = e2.message; err.classList.remove('hide'); });
       });
@@ -1705,8 +1705,8 @@
     const s = Session.get(); const box = $('#otpContent'); if (!s || !box) return Promise.resolve(false);
     return new Promise((resolve) => {
       let xong = false; const dong = (v) => { if (xong) return; xong = true; resolve(v); };
-      box.innerHTML = `<div class="modal__head"><h3>🔑 ${goiY ? 'Mẹ đổi mật khẩu cho an toàn nhé' : 'Đổi mật khẩu'}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
-        <div class="modal__body">${goiY ? `<p class="fs-14 text-muted mb-12">Tài khoản <b>${esc(maskPhone(s.sdt))}</b> đang dùng mật khẩu mặc định <b>${MK_MAC_DINH}</b>. Đặt mật khẩu riêng để chỉ mẹ xem được địa chỉ và lịch sử đơn.</p>` : ''}
+      box.innerHTML = `<div class="modal__head"><h3>🔑 ${goiY ? 'Bạn đổi mật khẩu cho an toàn nhé' : 'Đổi mật khẩu'}</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
+        <div class="modal__body">${goiY ? `<p class="fs-14 text-muted mb-12">Tài khoản <b>${esc(maskPhone(s.sdt))}</b> đang dùng mật khẩu mặc định <b>${MK_MAC_DINH}</b>. Đặt mật khẩu riêng để chỉ bạn xem được địa chỉ và lịch sử đơn.</p>` : ''}
         <form id="doiMkForm" class="qb__form" novalidate>
           <input type="text" name="username" autocomplete="username" value="${esc(phoneKey(s.sdt))}" hidden>
           <input class="input" id="mkMoi" type="password" autocomplete="new-password" placeholder="Mật khẩu mới (ít nhất 8 ký tự)" aria-label="Mật khẩu mới">
@@ -1717,13 +1717,13 @@
         </form></div>`;
       $('#doiMkForm').addEventListener('submit', (e) => {
         e.preventDefault(); const a = $('#mkMoi').value, b = $('#mkMoi2').value; const err = $('#doiMkErr'); err.classList.add('hide');
-        const loi = a.length < 8 ? 'Mật khẩu cần ít nhất 8 ký tự' : a === MK_MAC_DINH ? 'Mẹ chọn mật khẩu khác mật khẩu mặc định nhé' : a !== b ? 'Hai lần nhập mật khẩu chưa giống nhau' : '';
+        const loi = a.length < 8 ? 'Mật khẩu cần ít nhất 8 ký tự' : a === MK_MAC_DINH ? 'Bạn chọn mật khẩu khác mật khẩu mặc định nhé' : a !== b ? 'Hai lần nhập mật khẩu chưa giống nhau' : '';
         if (loi) { err.textContent = loi; err.classList.remove('hide'); return; }
         const btn = $('button[type=submit]', e.target); btn.disabled = true; btn.textContent = 'Đang lưu…';
         loyaltyApi('doiMatKhau', { token: s.token, mkMoi: a, mkMoi2: b }).then((res) => {
           btn.disabled = false; btn.textContent = 'Lưu mật khẩu';
-          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, mẹ thử lại nhé'; err.classList.remove('hide'); if (res && res.loi === 'token') Session.clear(); return; }
-          Session.patch({ macDinh: false }); toast('Đã đổi mật khẩu – các thiết bị khác đã được đăng xuất, lần sau mẹ đăng nhập bằng mật khẩu mới nhé', { type: 'ok' });
+          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, bạn thử lại nhé'; err.classList.remove('hide'); if (res && res.loi === 'token') Session.clear(); return; }
+          Session.patch({ macDinh: false }); toast('Đã đổi mật khẩu – các thiết bị khác đã được đăng xuất, lần sau bạn đăng nhập bằng mật khẩu mới nhé', { type: 'ok' });
           dong(true); closeModal('#otpModal');
         }).catch((e2) => { btn.disabled = false; btn.textContent = 'Lưu mật khẩu'; err.textContent = e2.message; err.classList.remove('hide'); });
       });
@@ -1760,7 +1760,7 @@
   /* Ghi chú quà hiện trên trang sản phẩm */
   function giftNote(p) {
     if (laComboGiam(p)) return COMBO_KHONG_QUA;
-    const moi = ctChoSP(p).map((x) => `<b>${esc(ctMoTa(x))}</b>${x.vi.length > 1 ? " (mẹ chọn " + esc(x.vi.join(" / ")) + ")" : ""}.`).join("<br>");
+    const moi = ctChoSP(p).map((x) => `<b>${esc(ctMoTa(x))}</b>${x.vi.length > 1 ? " (bạn chọn " + esc(x.vi.join(" / ")) + ")" : ""}.`).join("<br>");
     return [moi, giftNoteCu(p)].filter(Boolean).join('<br>');
   }
   function giftNoteCu(p) {
@@ -1769,10 +1769,10 @@
     const t = hangCho(sdtDangDung()); const vip = !!(t && t.discount > 0);
     if (laNuocLotte(p)) {
       if (vip && cfg.thungChiKhachMoi) return '';
-      return `Mua ${(cfg.thung || []).map((b) => `${b.tu} thùng tặng <b>${b.soQua} ${cfg.ten}</b>`).join(', ')} – mẹ chọn vị ${vi}.`;
+      return `Mua ${(cfg.thung || []).map((b) => `${b.tu} thùng tặng <b>${b.soQua} ${cfg.ten}</b>`).join(', ')} – bạn chọn vị ${vi}.`;
     }
-    if (vip && (cfg.donTu || {}).chiKhachMoi) return `Hạng ${esc(t.label)} của mẹ đã được <b>giảm ${t.discount}%</b> mọi đơn (chương trình tặng ${(cfg.donTu || {}).soQua} ${cfg.ten} dành cho khách chưa lên hạng).`;
-    return `Đơn hàng từ <b>${fmt((cfg.donTu || {}).muc || 0)}</b> được tặng <b>${(cfg.donTu || {}).soQua} ${cfg.ten}</b> (mẹ chọn vị ${vi}).`;
+    if (vip && (cfg.donTu || {}).chiKhachMoi) return `Hạng ${esc(t.label)} của bạn đã được <b>giảm ${t.discount}%</b> mọi đơn (chương trình tặng ${(cfg.donTu || {}).soQua} ${cfg.ten} dành cho khách chưa lên hạng).`;
+    return `Đơn hàng từ <b>${fmt((cfg.donTu || {}).muc || 0)}</b> được tặng <b>${(cfg.donTu || {}).soQua} ${cfg.ten}</b> (bạn chọn vị ${vi}).`;
   }
   /* Tính quà cho giỏ hàng hiện tại */
   /* Số điện thoại đang dùng ở ô thanh toán / mua nhanh, để biết khách đã lên hạng chưa */
@@ -2020,16 +2020,16 @@
     if (!g) return '';
     /* Quà có lựa chọn "hoặc giảm %": giỏ hàng chỉ báo, trang thanh toán cho khách chọn 1 trong 2 */
     if (g.soQua && g.hoacGiam && g.giamTien) {
-      if (!chonVi) return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)} hoặc giảm ${g.hoacGiam}% (−${fmt(g.giamTien)})</b><p>${esc(g.lyDo)} · mẹ chọn ở bước thanh toán${g.goiY ? ' · ' + esc(g.goiY) : ''}</p></div></div>`;
+      if (!chonVi) return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)} hoặc giảm ${g.hoacGiam}% (−${fmt(g.giamTien)})</b><p>${esc(g.lyDo)} · bạn chọn ở bước thanh toán${g.goiY ? ' · ' + esc(g.goiY) : ''}</p></div></div>`;
       const giam = chonGiam === 'giam', vi = g.vi || [];
-      return `<div class="giftbox"><span class="giftbox__ico">${giam ? '💸' : '🎁'}</span><div><b>${giam ? `Đơn này chọn giảm ${g.hoacGiam}% (−${fmt(g.giamTien)}) thay quà` : `Đơn này được tặng ${esc(g.moTa)}`}</b><p>${esc(g.lyDo)} · mẹ chọn nhận quà hoặc giảm ${g.hoacGiam}%${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>
+      return `<div class="giftbox"><span class="giftbox__ico">${giam ? '💸' : '🎁'}</span><div><b>${giam ? `Đơn này chọn giảm ${g.hoacGiam}% (−${fmt(g.giamTien)}) thay quà` : `Đơn này được tặng ${esc(g.moTa)}`}</b><p>${esc(g.lyDo)} · bạn chọn nhận quà hoặc giảm ${g.hoacGiam}%${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>
         <div class="giftbox__vi"><label class="chip chip--pick ${giam ? '' : 'is-on'}"><input type="radio" name="quaHoacGiam" value="qua" ${giam ? '' : 'checked'}>🎁 Nhận ${esc(g.ten)}</label><label class="chip chip--pick ${giam ? 'is-on' : ''}"><input type="radio" name="quaHoacGiam" value="giam" ${giam ? 'checked' : ''}>💸 Giảm ${g.hoacGiam}% (−${fmt(g.giamTien)})</label></div>
         ${!giam && vi.length > 1 ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : ''}</div></div>`;
     }
     if (!g.soQua) return g.goiY ? `<div class="giftbox giftbox--hint"><span class="giftbox__ico">🎁</span><div><b>Quà tặng của shop</b><p>${esc(g.goiY)}</p></div></div>` : '';
     const vi = g.vi || [];
     return `<div class="giftbox"><span class="giftbox__ico">🎁</span><div><b>Đơn này được tặng ${esc(g.moTa)}</b><p>${esc(g.lyDo)}${g.goiY ? ' · ' + esc(g.goiY) : ''}</p>
-      ${chonVi && vi.length ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : (vi.length > 1 ? `<p class="fs-13 text-muted">Mẹ chọn ${/vị|gói|Xanh|Hồng/i.test(vi.join(' ')) ? 'vị' : 'quà'} khi thanh toán.</p>` : '')}</div></div>`;
+      ${chonVi && vi.length ? `<div class="giftbox__vi">${vi.map((v, i) => `<label class="chip chip--pick ${(viDangChon || vi[0]) === v ? 'is-on' : ''}"><input type="radio" name="giftVi" value="${esc(v)}" ${(viDangChon || vi[0]) === v ? 'checked' : ''}>${esc(v)}</label>`).join('')}</div>` : (vi.length > 1 ? `<p class="fs-13 text-muted">Bạn chọn ${/vị|gói|Xanh|Hồng/i.test(vi.join(' ')) ? 'vị' : 'quà'} khi thanh toán.</p>` : '')}</div></div>`;
   }
 
   /* =====================================================================

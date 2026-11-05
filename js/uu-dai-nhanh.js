@@ -49,7 +49,7 @@
     <rect x="21" y="13" width="6" height="28" fill="url(#udN)"/><path d="M10 15h14v3H11q-1-1.5-1-3z" fill="#fff" opacity=".55"/><path d="M12 24h5v12h-3q-2-5-2-12z" fill="#fff" opacity=".35"/></svg>`;
   /* ---- Giao diện ---- */
   const ds = dsUuDai(), so = ds.filter((x) => x.dem !== false).length, nong = ds.some((x) => x.nong);
-  const may = (ds.find((x) => x.nong && x.may) || {}).may || (so ? `Hôm nay có ${so} ưu đãi cho mẹ nè 🎁` : 'Xem ưu đãi hôm nay cho mẹ 🎁');
+  const may = (ds.find((x) => x.nong && x.may) || {}).may || (so ? `Hôm nay có ${so} ưu đãi cho bạn nè 🎁` : 'Xem ưu đãi hôm nay cho bạn 🎁');
   const goc = document.createElement('div');
   goc.className = 'ud';
   goc.innerHTML = `<button class="ud__nut" type="button" aria-label="Ưu đãi hôm nay" aria-expanded="false">${HOP}${so ? `<b>${so > 9 ? '9+' : so}</b>` : ''}</button>

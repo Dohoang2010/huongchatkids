@@ -16,15 +16,15 @@
 <body>
 <div class="dau-cho" aria-hidden="true"></div>
 <main id="app"><div class="container" id="acc"></div></main>
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
-<script src="js/uu-dai-nhanh.js?v=20261102b" defer></script>
+<script src="js/uu-dai-nhanh.js?v=20261105c" defer></script>
 <script src="js/chon-ngay.js?v=20261016b" defer></script>
-<script src="js/diem-danh-ui.js?v=20261016b" defer></script>
+<script src="js/diem-danh-ui.js?v=20261105c" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, esc, store, Customer, byId, productCard, Wish, toast, phoneOk, phoneKey, maskPhone,
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ${hien}
       <div class="field"><label for="beTen">Tên bé</label><input class="input" id="beTen" name="tenBe" maxlength="30" value="${esc(kh.tenBe || (b && b.name) || '')}" placeholder="VD: Na, Bin…"></div>
       ${kh.ngaySinhBe ? '' : `<div class="field mt-8"><label for="beNgay">Ngày sinh bé <small class="text-muted">(không bắt buộc)</small></label><input class="input" id="beNgay" name="ngaySinh" type="date" max="${homNay}" value="${esc(goiY)}">
-        <small class="be-goi">${goiY ? `Gợi ý từ lần đo chỉ số: ${beNgay(goiY)}. Mẹ sửa nếu chưa đúng.` : ''}${sn.be.bat ? ` Thêm ngày sinh để tháng sinh nhật bé mọi đơn được giảm ${sn.giam}%.` : ''}</small></div>`}
+        <small class="be-goi">${goiY ? `Gợi ý từ lần đo chỉ số: ${beNgay(goiY)}. Bạn sửa nếu chưa đúng.` : ''}${sn.be.bat ? ` Thêm ngày sinh để tháng sinh nhật bé mọi đơn được giảm ${sn.giam}%.` : ''}</small></div>`}
       <button class="btn btn--primary btn--block btn--sm mt-8" type="submit">Lưu thông tin bé</button>
     </form>`;
   };
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const f = e.target, s = Session.get(); if (!s) return;
     const tenBe = f.tenBe.value.trim(), ngay = f.ngaySinh ? f.ngaySinh.value : '';
-    if (ngay) { const [y, m, d] = ngay.split('-'); if (!confirm(`Lưu ngày sinh bé ${d}/${m}/${y}?\n\n• Ngày sinh bé chỉ lưu 1 lần, muốn sửa mẹ cần nhắn shop.\n• Tháng sinh nhật bé mọi đơn được giảm, 1 lần mỗi năm – đổi ngày sinh không được nhận thêm lần nữa.`)) return; }
+    if (ngay) { const [y, m, d] = ngay.split('-'); if (!confirm(`Lưu ngày sinh bé ${d}/${m}/${y}?\n\n• Ngày sinh bé chỉ lưu 1 lần, muốn sửa bạn cần nhắn shop.\n• Tháng sinh nhật bé mọi đơn được giảm, 1 lần mỗi năm – đổi ngày sinh không được nhận thêm lần nữa.`)) return; }
     const nut = f.querySelector('[type=submit]'); nut.disabled = true; nut.textContent = 'Đang lưu…';
     let r; try { r = await loyaltyApi('snbLuu', { token: s.token, tenBe, ngaySinh: ngay }); } catch (err) { r = { ok: false, msg: err.message }; }
     if (r && r.loi === 'token') { Session.clear(); render(); return; }
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const SN = () => (SITE.loyalty || {}).sinhNhat || {};
   const snHTML = (kh) => kh.ngaySinh ? `${esc(kh.ngaySinh.split('-').reverse().join('/'))}${MC.sinhNhat().dangThang ? ' <span class="badge badge--hot">🎂 Tháng sinh nhật</span>' : ''}<small class="sn-ghi">Ưu đãi sinh nhật 1 lần mỗi năm · ngày sinh không đổi để nhận lại</small>`
     : SN().bat ? `<button type="button" class="text-primary fw-700" data-sn-them>+ Thêm để nhận ưu đãi sinh nhật</button>` : '<span class="text-muted">—</span>';
-  const snBang = () => { const sn = MC.sinhNhat(); return sn.be.dangThang && !sn.dangMe ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật ${esc(sn.be.ten ? 'bé ' + sn.be.ten : 'bé')}!</b> Cả tháng sinh nhật bé, mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật bé áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
-    : sn.dangMe ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật mẹ!</b> Cả tháng này mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi mẹ thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
+  const snBang = () => { const sn = MC.sinhNhat(); return sn.be.dangThang && !sn.dangMe ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật ${esc(sn.be.ten ? 'bé ' + sn.be.ten : 'bé')}!</b> Cả tháng sinh nhật bé, mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi bạn thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật bé áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
+    : sn.dangMe ? `<div class="sn-bang">🎂 <div><b>Chúc mừng sinh nhật bạn!</b> Cả tháng này mọi đơn hàng được giảm <b>${sn.giam}%</b> – web tự áp khi bạn thanh toán (đăng nhập đúng số này). <small>Ưu đãi sinh nhật áp dụng 1 lần mỗi năm.</small></div><a class="btn btn--primary btn--sm" href="collections.html">Mua sắm ngay</a></div>`
     : sn.bat && !sn.ngaySinh ? `<div class="sn-bang sn-bang--goi">🎁 <div><b>Thêm ngày sinh để nhận quà sinh nhật:</b> trong tháng sinh nhật mọi đơn được giảm <b>${sn.giam}%</b>, kèm email chúc mừng đúng ngày sinh. <small>Ngày sinh chỉ lưu 1 lần – ưu đãi 1 lần mỗi năm.</small></div><button class="btn btn--outline btn--sm" type="button" data-sn-them>Thêm ngày sinh</button></div>` : ''; };
   document.addEventListener('click', async (e) => {
     if (!e.target.closest('[data-sn-them]')) return;
@@ -102,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.addEventListener('click', async (e) => {
     if (e.target.id !== 'snLuu') return;
-    const v = ($('#snNgay') || {}).value; if (!v) { toast('Mẹ chọn ngày sinh nhé', { type: 'err' }); return; }
+    const v = ($('#snNgay') || {}).value; if (!v) { toast('Bạn chọn ngày sinh nhé', { type: 'err' }); return; }
     const [y, m, d] = v.split('-');
-    if (!confirm(`Lưu ngày sinh ${d}/${m}/${y}?\n\n• Ngày sinh chỉ lưu 1 lần, muốn sửa mẹ cần nhắn shop.\n• Ưu đãi sinh nhật áp dụng 1 lần mỗi năm trong tháng sinh nhật – đổi ngày sinh không được nhận thêm lần nữa.\n• Đúng ngày sinh, shop gửi email chúc mừng kèm ưu đãi (nếu mẹ đã có email).`)) return;
+    if (!confirm(`Lưu ngày sinh ${d}/${m}/${y}?\n\n• Ngày sinh chỉ lưu 1 lần, muốn sửa bạn cần nhắn shop.\n• Ưu đãi sinh nhật áp dụng 1 lần mỗi năm trong tháng sinh nhật – đổi ngày sinh không được nhận thêm lần nữa.\n• Đúng ngày sinh, shop gửi email chúc mừng kèm ưu đãi (nếu bạn đã có email).`)) return;
     const s = Session.get(); if (!s) return;
     e.target.disabled = true; e.target.textContent = 'Đang lưu…';
     let r; try { r = await loyaltyApi('snLuu', { token: s.token, ngaySinh: v }); } catch (err) { r = { ok: false, msg: err.message }; }
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="acc-vc__tk"><div><b>${r.dem.AVAILABLE || 0}</b><small>Còn hiệu lực</small></div><div><b>${r.sapHet}</b><small>Sắp hết hạn</small></div><div><b>${r.dem.USED || 0}</b><small>Đã dùng</small></div></div>
         ${con.length ? `<div class="acc-vc__ds">${con.slice(0, 3).map((v) => `<div class="ddp-vc"><b>${fmt(v.giaTri)}</b><div><span>${esc(NGUON_VC[v.nguon] || v.nguonTen)}${v.sapHet ? ' · ⏰ sắp hết hạn' : ''}</span><small>${v.donToiThieu ? 'Đơn từ ' + fmt(v.donToiThieu) + ' · ' : ''}HSD ${new Date(v.hetHan).toLocaleDateString('vi-VN')}</small></div></div>`).join('')}</div>`
           : '<p class="text-muted fs-14">Chưa có voucher còn hiệu lực. Điểm danh ngày đôi và đủ chuỗi 10 / 20 / 30 ngày liên tiếp để nhận voucher.</p>'}
-        ${!r.dungDuoc && con.length ? '<p class="fs-13 text-muted">🔐 Để dùng voucher khi thanh toán, mẹ xác thực OTP hoặc đặt mật khẩu riêng.</p>' : ''}
+        ${!r.dungDuoc && con.length ? '<p class="fs-13 text-muted">🔐 Để dùng voucher khi thanh toán, bạn xác thực OTP hoặc đặt mật khẩu riêng.</p>' : ''}
         <div class="acc-vc__cuoi flex gap-8 wrap"><a class="btn btn--outline btn--sm" href="vi-voucher.html">Xem tất cả voucher</a>${con.length ? '<a class="btn btn--primary btn--sm" href="checkout.html">Dùng khi thanh toán</a>' : ''}</div>`;
     };
     const cu = MC.DD.viCu(); if (cu) ve(cu);   // hiện ngay bản lần trước, máy chủ trả lời thì vẽ lại
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="diem-vi__so"><small>Điểm khả dụng</small><b>${n0(v.khaDung)}</b><span>điểm · 1 điểm = ${fmt(v.giaTriDiem)}</span></div>
       <div class="diem-vi__ct"><div><small>Đang giữ cho đơn</small><b>${n0(v.dangGiu)}</b></div><div><small>Tổng đã nhận</small><b>${n0(v.tongNhan)}</b></div><div><small>Tổng đã dùng</small><b>${n0(v.tongDung)}</b></div><div><small>Tiết kiệm nhờ điểm</small><b>${fmt(v.tietKiem)}</b></div></div>
     </div>
-    ${!v.dungDuoc && v.khaDung ? '<p class="fs-13 text-muted mt-8">🔐 Mẹ đang đăng nhập bằng mật khẩu mặc định. Để dùng điểm khi thanh toán, mẹ xác thực mã OTP hoặc đặt mật khẩu riêng (nút bên phải).</p>' : ''}
+    ${!v.dungDuoc && v.khaDung ? '<p class="fs-13 text-muted mt-8">🔐 Bạn đang đăng nhập bằng mật khẩu mặc định. Để dùng điểm khi thanh toán, bạn xác thực mã OTP hoặc đặt mật khẩu riêng (nút bên phải).</p>' : ''}
     ${v.khaDung ? `<p class="fs-13 mt-8">💡 Dùng điểm ở bước <a class="text-primary fw-600" href="checkout.html">Thanh toán</a> – trừ thẳng vào tiền hàng.</p>` : ''}
     <h4 class="fs-14 mt-16 mb-8">Lịch sử điểm</h4>
     ${(v.lichSu || []).length ? `<div class="diem-ls">${v.lichSu.map((x) => `<div class="diem-ls__it"><div><b>${esc(x.loai === 'EARN' && /^Điểm danh/.test(x.noiDung || '') ? 'Điểm danh hằng ngày' : (LOAI_DIEM[x.loai] || x.loai))}</b><small>${esc(x.ngay)}${x.noiDung ? ' · ' + esc(x.noiDung) : ''}</small></div><div class="diem-ls__so ${x.diem > 0 ? 'is-cong' : 'is-tru'}">${x.diem > 0 ? '+' : ''}${n0(x.diem)}<small>Số dư ${n0(x.soDu)}</small></div></div>`).join('')}</div>`
@@ -155,19 +155,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const gtHTML = (g) => {
     const c = g.cauHinh || {};
     return `${c.bat ? '' : '<p class="text-red fs-14 mb-8">Chương trình giới thiệu đang tạm dừng.</p>'}
-      <p class="fs-14">Bạn bè nhập mã của mẹ được <b>giảm ${c.giam}%</b> cho đơn hàng đầu tiên. Đơn giao thành công, mẹ nhận <b>${c.thuong}% giá trị đơn</b> thành điểm (1 điểm = ${fmt(c.giaTriDiem || 1)}) để trừ tiền khi mua hàng.</p>
-      <div class="gt-ma"><small>Mã giới thiệu của mẹ</small><b>${esc(g.ma)}</b></div>
+      <p class="fs-14">Bạn bè nhập mã của bạn được <b>giảm ${c.giam}%</b> cho đơn hàng đầu tiên. Đơn giao thành công, bạn nhận <b>${c.thuong}% giá trị đơn</b> thành điểm (1 điểm = ${fmt(c.giaTriDiem || 1)}) để trừ tiền khi mua hàng.</p>
+      <div class="gt-ma"><small>Mã giới thiệu của bạn</small><b>${esc(g.ma)}</b></div>
       <div class="gt-nut"><button class="btn btn--primary btn--sm" type="button" data-gt-copy="ma">📋 Copy mã</button><button class="btn btn--outline btn--sm" type="button" data-gt-copy="link">🔗 Copy link</button><button class="btn btn--teal btn--sm" type="button" data-gt-share>📤 Chia sẻ</button></div>
       <div class="gt-tk"><div><b>${n0(g.soNguoi)}</b><small>Người đã giới thiệu</small></div><div><b>${n0(g.daMua)}</b><small>Đã mua hàng</small></div><div><b>${n0(g.tongDiem)}</b><small>Điểm đã nhận</small></div></div>
-      ${(g.ds || []).length ? `<div class="diem-ls mt-12">${g.ds.map((x) => `<div class="diem-ls__it"><div><b>Khách ${esc(x.khach)}</b><small>${esc(x.ngay)}</small></div><div class="diem-ls__so"><span class="badge ${TT_GT[x.trangThai] || 'badge--soft'}">${esc(x.trangThai === 'Đã liên kết' ? 'Chưa mua' : x.trangThai)}</span>${x.diem ? `<small>+${n0(x.diem)} điểm</small>` : ''}</div></div>`).join('')}</div>` : '<p class="text-muted fs-14 mt-12">Chưa có ai dùng mã của mẹ. Bấm Chia sẻ để gửi cho bạn bè qua Zalo, Facebook nhé!</p>'}
-      ${g.cuaToi ? `<p class="fs-13 text-muted mt-8">Mẹ được giới thiệu bởi ${esc(g.cuaToi.nguoiGT)}.</p>` : ''}`;
+      ${(g.ds || []).length ? `<div class="diem-ls mt-12">${g.ds.map((x) => `<div class="diem-ls__it"><div><b>Khách ${esc(x.khach)}</b><small>${esc(x.ngay)}</small></div><div class="diem-ls__so"><span class="badge ${TT_GT[x.trangThai] || 'badge--soft'}">${esc(x.trangThai === 'Đã liên kết' ? 'Chưa mua' : x.trangThai)}</span>${x.diem ? `<small>+${n0(x.diem)} điểm</small>` : ''}</div></div>`).join('')}</div>` : '<p class="text-muted fs-14 mt-12">Chưa có ai dùng mã của bạn. Bấm Chia sẻ để gửi cho bạn bè qua Zalo, Facebook nhé!</p>'}
+      ${g.cuaToi ? `<p class="fs-13 text-muted mt-8">Bạn được giới thiệu bởi ${esc(g.cuaToi.nguoiGT)}.</p>` : ''}`;
   };
   function taiDiemGT() {
     if (!$('#diemCard')) return;
     const ve = ([v, g]) => {
       const dc = $('#diemCard'), gc = $('#gtCard'); if (!dc || !gc) return;
       if ((v && v.loi === 'token') || (g && g.loi === 'token')) { Session.clear(); render(); return; }
-      dc.innerHTML = v && v.ok ? diemHTML(v) : `<p class="text-muted fs-14">${esc((v && v.msg) || 'Chưa tải được ví điểm, mẹ tải lại trang sau ít phút nhé.')}</p>`;
+      dc.innerHTML = v && v.ok ? diemHTML(v) : `<p class="text-muted fs-14">${esc((v && v.msg) || 'Chưa tải được ví điểm, bạn tải lại trang sau ít phút nhé.')}</p>`;
       gtDaTai = g && g.ok ? g : null;
       gc.innerHTML = gtDaTai ? gtHTML(gtDaTai) : `<p class="text-muted fs-14">${esc((g && g.msg) || 'Chưa tải được thông tin giới thiệu.')}</p>`;
       const h = location.hash.slice(1); if (h === 'diem' || h === 'gioi-thieu') document.getElementById(h)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return `<div class="tier-prog">
       <div class="tier-prog__head"><div><span class="text-muted fs-13">Tổng đã chi tiêu</span><b class="tier-prog__sum">${fmt(spent)}</b></div>${tierBadge(cur)}</div>
       <div class="tier-prog__bar"><i style="width:${pct}%;background:${cur.color}"></i></div>
-      <p class="fs-13 ${next ? '' : 'text-teal fw-600'}">${next ? `Mua thêm <b>${fmt(Math.max(0, next.min - spent))}</b> để lên hạng ${next.icon} <b>${esc(next.label)}</b> – ${esc(next.desc || '')}` : '🎉 Mẹ đang ở hạng cao nhất của shop, cảm ơn mẹ rất nhiều!'}</p>
+      <p class="fs-13 ${next ? '' : 'text-teal fw-600'}">${next ? `Mua thêm <b>${fmt(Math.max(0, next.min - spent))}</b> để lên hạng ${next.icon} <b>${esc(next.label)}</b> – ${esc(next.desc || '')}` : '🎉 Bạn đang ở hạng cao nhất của shop, cảm ơn bạn rất nhiều!'}</p>
       ${gon ? '<details class="tier-gon__xem"><summary>Xem quyền lợi các hạng</summary>' : ''}<div class="tier-ladder tier-ladder--2">${list.map((t) => `<div class="tier-ladder__col ${t.key === cur.key ? 'is-on' : ''} ${spent >= t.min ? 'is-done' : ''}"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>${gon ? '</details>' : ''}
     </div>`;
   }
@@ -202,14 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const pct = !biet ? 0 : next ? Math.max(4, Math.min(100, Math.round((spent - tu) / Math.max(1, den - tu) * 100))) : 100;
     const C = 2 * Math.PI * 44; const offset = (C * (1 - pct / 100)).toFixed(1);
     const conThieu = next ? Math.max(0, next.min - spent) : 0;
-    const loi = !biet ? `Xác thực số điện thoại để xem mẹ đang ở hạng nào và còn bao nhiêu để lên hạng.`
+    const loi = !biet ? `Xác thực số điện thoại để xem bạn đang ở hạng nào và còn bao nhiêu để lên hạng.`
       : next ? `Mua thêm <b>${fmt(conThieu)}</b> để lên hạng <b>${next.icon} ${esc(next.label)}</b> – giảm <b>${next.discount}%</b> mọi đơn.`
-      : `🎉 Mẹ đang ở hạng cao nhất – giảm <b>${cur.discount}%</b> mọi đơn. Cảm ơn mẹ!`;
+      : `🎉 Bạn đang ở hạng cao nhất – giảm <b>${cur.discount}%</b> mọi đơn. Cảm ơn bạn!`;
     return `<div class="memcol">
       <div class="memcard memcard--${biet ? cur.key : 'khoa'}">
         <div class="memcard__top"><span class="memcard__brand">${esc(SITE.name)}</span><span class="memcard__type">THẺ THÀNH VIÊN</span></div>
         <div class="memcard__tier"><span class="memcard__ico">${biet ? cur.icon : '🔒'}</span><div><small>Hạng hiện tại</small><b>${biet ? esc(cur.label) : 'Chưa xác thực'}</b></div></div>
-        <div class="memcard__foot"><div><small>Chủ thẻ</small><b>${esc(o.ten || 'Mẹ của bé')}</b></div><div style="text-align:right"><small>${o.sdt ? 'SĐT' : 'Ưu đãi'}</small><b>${o.sdt ? esc(maskPhone(o.sdt)) : biet && cur.discount ? '−' + cur.discount + '%' : '—'}</b></div></div>
+        <div class="memcard__foot"><div><small>Chủ thẻ</small><b>${esc(o.ten || 'Khách hàng')}</b></div><div style="text-align:right"><small>${o.sdt ? 'SĐT' : 'Ưu đãi'}</small><b>${o.sdt ? esc(maskPhone(o.sdt)) : biet && cur.discount ? '−' + cur.discount + '%' : '—'}</b></div></div>
         <i class="memcard__chip"></i><i class="memcard__shine"></i>
       </div>
       <div class="memring">
@@ -229,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const quaDk = () => { const q = window.QUA_DANG_KY, nay = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 10); if (!q || !(q.diem > 0) || nay < q.tu || nay > q.den) return ''; const [y, m, d] = q.den.split('-'); return `<div class="dangky__perk dangky__perk--qua"><i>🎁</i><span><b>Tạo tài khoản tặng ngay ${Number(q.diem).toLocaleString('vi-VN')} điểm</b> (= ${Number(q.diem).toLocaleString('vi-VN')}đ trừ khi mua hàng) – đến hết ${d}/${m}/${y}</span></div>`; };
     $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Thông tin khách hàng</span></nav>
       <h1 class="page-title">Thông tin khách hàng</h1>
-      ${GT.ref() ? `<div class="qb__saved mb-16">🤝 Mẹ được giới thiệu bởi <b>${esc(maskPhone(GT.ref()))}</b> – đăng ký hoặc đặt hàng để được giảm giá cho đơn hàng đầu tiên (mã đã điền sẵn).</div>` : ''}
-      <p class="text-muted fs-14 mb-16">${esc(SITE.name)} không bắt buộc đăng ký – mẹ chỉ cần số điện thoại. Để xem hồ sơ, hạng và lịch sử đơn, mẹ xác thực mã OTP gửi về số của mình.</p>
+      ${GT.ref() ? `<div class="qb__saved mb-16">🤝 Bạn được giới thiệu bởi <b>${esc(maskPhone(GT.ref()))}</b> – đăng ký hoặc đặt hàng để được giảm giá cho đơn hàng đầu tiên (mã đã điền sẵn).</div>` : ''}
+      <p class="text-muted fs-14 mb-16">${esc(SITE.name)} không bắt buộc đăng ký – bạn chỉ cần số điện thoại. Để xem hồ sơ, hạng và lịch sử đơn, bạn xác thực mã OTP gửi về số của mình.</p>
       <div class="checkout">
         <div class="flex flex-col gap-16">
           <div class="card card--pad tier-intro"><div class="tier-hero">
@@ -238,20 +238,20 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <h3>🎖️ Hạng khách hàng & ưu đãi</h3>
               <div class="tier-ladder tier-ladder--2">${tiers().map((t) => `<div class="tier-ladder__col"><span class="ico">${t.icon}</span><b>${esc(t.label)}</b><small>${t.min ? 'từ ' + fmt(t.min) : 'khởi đầu'}</small><em>${t.discount ? 'giảm ' + t.discount + '%' : '—'}</em></div>`).join('')}</div>
-              <p class="fs-13 text-muted mt-12">Hạng xét theo tổng tiền mẹ đã mua tại shop. Ưu đãi hạng tự động trừ vào đơn ngay khi mẹ xác thực số điện thoại ở bước thanh toán.</p>
+              <p class="fs-13 text-muted mt-12">Hạng xét theo tổng tiền bạn đã mua tại shop. Ưu đãi hạng tự động trừ vào đơn ngay khi bạn xác thực số điện thoại ở bước thanh toán.</p>
             </div>
           </div></div>
-          ${donLocal().length ? `<div class="card card--pad"><h3>📦 Đơn đã đặt trên máy này</h3>${donLocal().map(donLocalHTML).join('')}<p class="fs-13 text-muted mt-12">Đây là các đơn lưu trên trình duyệt này. Xác thực OTP để xem đầy đủ lịch sử đơn của mẹ ở mọi thiết bị.</p></div>` : ''}
+          ${donLocal().length ? `<div class="card card--pad"><h3>📦 Đơn đã đặt trên máy này</h3>${donLocal().map(donLocalHTML).join('')}<p class="fs-13 text-muted mt-12">Đây là các đơn lưu trên trình duyệt này. Xác thực OTP để xem đầy đủ lịch sử đơn của bạn ở mọi thiết bị.</p></div>` : ''}
           ${wishHTML()}
         </div>
         <div class="checkout__side"><div class="card card--pad">
           <h3>👤 Đăng nhập</h3>
-          <p class="fs-14 text-muted">Tài khoản là <b>số điện thoại mẹ đã mua hàng</b>, mật khẩu mặc định là <b>1</b> (nếu mẹ chưa đổi). Đăng nhập để xem hạng, tổng chi tiêu, lịch sử đơn và sửa địa chỉ.</p>
+          <p class="fs-14 text-muted">Tài khoản là <b>số điện thoại bạn đã mua hàng</b>, mật khẩu mặc định là <b>1</b> (nếu bạn chưa đổi). Đăng nhập để xem hạng, tổng chi tiêu, lịch sử đơn và sửa địa chỉ.</p>
           <button class="btn btn--primary btn--lg btn--block mt-12" type="button" id="btnLogin">Đăng nhập</button>
           <p class="fs-13 text-muted mt-8" style="text-align:center"><a class="text-primary fw-700" href="quen-mat-khau.html">Quên mật khẩu?</a> · Đăng nhập bằng <button type="button" class="text-primary fw-600" id="btnOtp">mã OTP</button></p>
           <div class="divider"></div>
           <div id="dkWrap">
-            <h3>✨ Mẹ chưa có tài khoản</h3>
+            <h3>✨ Bạn chưa có tài khoản</h3>
             <p class="fs-14 text-muted">Đăng ký 30 giây – chỉ cần điền thông tin, không cần mã OTP.</p>
             ${quaDk()}
             <div class="dangky__perk"><i>🎁</i><span>Khách mới: đơn từ ${fmt(((window.QUA_TANG || {}).donTu || {}).muc || 0)} được tặng ${((window.QUA_TANG || {}).donTu || {}).soQua || 0} ${esc((window.QUA_TANG || {}).ten || '')}</span></div>
@@ -306,14 +306,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   async function luuAnhKh(anh) {
     const r = await loyaltyApi('doiAnh', { token: (Session.get() || {}).token, anh });
-    if (!r || !r.ok) { if (r && r.loi === 'token') { Session.clear(); renderKhach(); } throw new Error((r && r.msg) || 'Chưa lưu được ảnh, mẹ thử lại nhé'); }
+    if (!r || !r.ok) { if (r && r.loi === 'token') { Session.clear(); renderKhach(); } throw new Error((r && r.msg) || 'Chưa lưu được ảnh, bạn thử lại nhé'); }
     Session.patch({ kh: r.kh }); renderHoSo();
   }
   async function taiAnhKh(f) {
-    if (!/^image\//.test(f.type)) return toast('Mẹ chọn tệp ảnh nhé', { type: 'error' });
+    if (!/^image\//.test(f.type)) return toast('Bạn chọn tệp ảnh nhé', { type: 'error' });
     const nut = $('#khAnhNut'); if (nut) nut.textContent = 'Đang tải ảnh…';
     try {
-      let blob; try { blob = await anhVuong(f); } catch { throw new Error('Không đọc được ảnh này, mẹ chọn ảnh JPG hoặc PNG nhé'); }
+      let blob; try { blob = await anhVuong(f); } catch { throw new Error('Không đọc được ảnh này, bạn chọn ảnh JPG hoặc PNG nhé'); }
       const phien = 'cav' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
       const r = await fetch(apiGoc() + '/chat-tep?phien=' + phien, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: blob });
       const j = await r.json(); if (!r.ok || !j.ok || j.loai !== 'anh') throw new Error(j.msg || 'Chưa tải được ảnh');
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const don = s.donHang || []; const ma = couponsFor(kh);
     const dc = { tinh: kh.tinh || '', xa: kh.xa || '', chiTiet: kh.diaChi || '' };
     $('#acc').innerHTML = `<nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><span>Thông tin khách hàng</span></nav>
-      <div class="flex justify-between items-center wrap gap-8 mb-16"><h1 class="page-title" style="margin:0">Chào ${esc(kh.ten || 'mẹ')} 👋</h1><div class="flex gap-8 items-center wrap"><span id="dtNut"></span><button class="btn btn--ghost btn--sm" type="button" id="btnOut">Thoát khỏi máy này</button></div></div>
+      <div class="flex justify-between items-center wrap gap-8 mb-16"><h1 class="page-title" style="margin:0">Chào ${esc(kh.ten || 'bạn')} 👋</h1><div class="flex gap-8 items-center wrap"><span id="dtNut"></span><button class="btn btn--ghost btn--sm" type="button" id="btnOut">Thoát khỏi máy này</button></div></div>
       <div class="checkout">
         <div class="flex flex-col gap-16">
           ${snBang()}
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${donLocal().length ? `<div class="divider"></div><h4 class="fs-14 text-muted mb-8">Đơn vừa đặt trên máy này</h4>${donLocal().slice(0, 3).map(donLocalHTML).join('')}` : ''}
           </div>
 
-          <div class="card card--pad"><h3>🎟️ Mã giảm giá mẹ đang dùng được</h3>
+          <div class="card card--pad"><h3>🎟️ Mã giảm giá bạn đang dùng được</h3>
             ${cur.discount ? `<div class="voucher voucher--tier"><div class="voucher__l">${cur.icon}<b>Ưu đãi hạng ${esc(cur.label)}</b></div><div class="voucher__r"><b>−${cur.discount}%</b><small>Tự động áp dụng, không cần nhập mã</small></div></div>` : ''}
             ${ma.length ? ma.map((c2) => `<div class="voucher"><div class="voucher__l">🎟️<b>${esc(c2.ma)}</b></div><div class="voucher__r"><b>${esc(c2.desc)}</b><small>${c2.min ? 'Đơn từ ' + fmt(c2.min) : 'Mọi đơn hàng'}${c2.donDau ? ' · chỉ cho đơn đầu tiên' : ''}</small></div><button class="btn btn--outline btn--sm" type="button" data-copy-coupon="${esc(c2.ma)}">Chép mã</button></div>`).join('') : '<p class="text-muted fs-14">Hiện chưa có mã nào phù hợp.</p>'}
           </div>
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div class="checkout__side"><div class="card card--pad">
-          <h3>📍 Thông tin của mẹ</h3>
+          <h3>📍 Thông tin của ${kh.gioiTinh === 'Nam' ? 'bố' : kh.gioiTinh === 'Nữ' ? 'mẹ' : 'bạn'}</h3>
           <div class="kh-anh">
             <label class="kh-anh__o" for="khAnhTep" title="Đổi ảnh đại diện">${kh.anh ? `<img src="${esc(gocApi() + kh.anh)}" alt="Ảnh đại diện">` : `<span>${esc((String(kh.ten || '').trim().split(/\s+/).pop() || '🙂').charAt(0).toUpperCase())}</span>`}<i aria-hidden="true">📷</i></label>
             <div class="kh-anh__nut">
@@ -405,10 +405,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Đang lưu…';
       loyaltyApi('capNhat', { token: s.token, ten: f.ten.value.trim(), tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email: f.email.value.trim(), gioiTinh: (f.querySelector('[name=gioiTinh]:checked') || {}).value || '' })
         .then((res) => {
-          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, mẹ thử lại nhé'; err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Lưu lại'; if (res && res.loi === 'token') { Session.clear(); renderKhach(); } return; }
+          if (!res || !res.ok) { err.textContent = (res && res.msg) || 'Chưa lưu được, bạn thử lại nhé'; err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Lưu lại'; if (res && res.loi === 'token') { Session.clear(); renderKhach(); } return; }
           Session.patch({ kh: res.kh });
           Customer.set({ ...(Customer.get() || {}), name: res.kh.ten || '', phone: phoneKey(res.kh.sdt), email: res.kh.email || '', address: addrStore({ tinh: res.kh.tinh, xa: res.kh.xa, chiTiet: res.kh.diaChi }) });
-          toast('Đã cập nhật thông tin của mẹ', { type: 'ok' }); renderHoSo();
+          toast('Đã cập nhật thông tin của bạn', { type: 'ok' }); renderHoSo();
         }).catch((e2) => { err.textContent = e2.message; err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Lưu lại'; });
     });
   }
@@ -421,11 +421,11 @@ document.addEventListener('DOMContentLoaded', () => {
     f.addEventListener('submit', (e) => {
       e.preventDefault(); const err = $('#dkErr'); err.classList.add('hide');
       const ten = f.ten.value.trim(); const sdt = phoneKey(f.sdt.value); const email = f.email.value.trim();
-      if (!ten) { err.textContent = 'Mẹ nhập họ tên nhé'; err.classList.remove('hide'); f.ten.focus(); return; }
+      if (!ten) { err.textContent = 'Bạn nhập họ tên nhé'; err.classList.remove('hide'); f.ten.focus(); return; }
       if (!phoneOk(sdt)) { err.textContent = 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)'; err.classList.remove('hide'); f.sdt.focus(); return; }
       const ref = phoneKey(f.ref.value || '');
       if (ref && !phoneOk(ref)) { err.textContent = 'Mã giới thiệu là số điện thoại 10 số của người giới thiệu'; err.classList.remove('hide'); f.ref.focus(); return; }
-      if (ref && ref === sdt) { err.textContent = 'Mẹ không thể dùng mã giới thiệu của chính mình'; err.classList.remove('hide'); f.ref.focus(); return; }
+      if (ref && ref === sdt) { err.textContent = 'Bạn không thể dùng mã giới thiệu của chính mình'; err.classList.remove('hide'); f.ref.focus(); return; }
       const gt = f.querySelector('[name=gioiTinh]:checked');
       const hoSo = { sdt, ten, tinh: f.tinh.value, xa: f.xa.value, diaChi: f.diaChi.value.trim(), email, ...(gt ? { gioiTinh: gt.value } : {}), ...(ref ? { ref } : {}) };
       const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Đang tạo tài khoản…';
@@ -434,20 +434,20 @@ document.addEventListener('DOMContentLoaded', () => {
         err.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Tạo tài khoản';
       };
       loyaltyApi('dangKy', hoSo).then((res) => {
-        if (!res || !res.ok) { loi((res && res.msg) || 'Chưa tạo được tài khoản, mẹ thử lại sau ít phút nhé', res && res.daCo); return; }
-        if (!res.kh) { loi('Shop đang cập nhật hệ thống, mẹ thử lại sau ít phút hoặc gọi ' + SITE.hotline + ' nhé'); return; }
+        if (!res || !res.ok) { loi((res && res.msg) || 'Chưa tạo được tài khoản, bạn thử lại sau ít phút nhé', res && res.daCo); return; }
+        if (!res.kh) { loi('Shop đang cập nhật hệ thống, bạn thử lại sau ít phút hoặc gọi ' + SITE.hotline + ' nhé'); return; }
         const kh = res.kh || {};
         Customer.set({ ...(Customer.get() || {}), name: kh.ten || ten, phone: sdt, email: kh.email || email,
           address: addrStore({ tinh: kh.tinh || hoSo.tinh, xa: kh.xa || hoSo.xa, chiTiet: kh.diaChi || hoSo.diaChi }) });
         store.set('mc_hang_sdt', null);   // xoá bộ nhớ tạm để lần sau tra lại hạng cho đúng
         if (res.gioiThieu && res.gioiThieu.ok) store.set(GT.refKey, { ma: ref, luc: Date.now() });   // thanh toán tự áp mã
-        toast('Đã tạo tài khoản cho mẹ 🎉', { type: 'ok' });
+        toast('Đã tạo tài khoản cho bạn 🎉', { type: 'ok' });
         f.outerHTML = `<div class="card card--pad" style="background:var(--teal-50,#F1FAF8);border:1px solid var(--teal-200,#B9E3DC)">
-          <h3>🎉 Đã tạo tài khoản cho mẹ</h3>
-          ${res.quaLe ? `<p class="fs-14 mt-8 fw-700" style="color:var(--primary)">🎁 Hương đã tặng mẹ ${Number(res.quaLe.diem || 0).toLocaleString('vi-VN')} điểm vào ví điểm – mẹ dùng để trừ tiền khi mua hàng nhé.</p>` : ''}
-          <p class="fs-14">Từ giờ mẹ đặt hàng chỉ cần 1 chạm, địa chỉ tự điền sẵn. Ưu đãi theo hạng sẽ tự trừ vào đơn khi mẹ nhập số điện thoại này.</p>
-          ${res.gioiThieu ? (res.gioiThieu.ok ? `<p class="fs-14 mt-8 text-teal fw-600">🤝 Đã liên kết mã giới thiệu ${esc(maskPhone(ref))} – đơn hàng đầu tiên của mẹ được giảm ${res.gioiThieu.discountPercent || ''}%, web tự áp khi thanh toán.</p>` : `<p class="fs-14 mt-8 text-red">Mã giới thiệu chưa dùng được: ${esc(res.gioiThieu.message || res.gioiThieu.msg || '')}</p>`) : ''}
-          <p class="fs-14 mt-8">Muốn xem hồ sơ, lịch sử đơn và tổng chi tiêu thì mẹ đăng nhập bằng số <b>${esc(sdt)}</b>, mật khẩu mặc định là <b>${esc(res.mkMacDinh || '1')}</b>.</p>
+          <h3>🎉 Đã tạo tài khoản cho bạn</h3>
+          ${res.quaLe ? `<p class="fs-14 mt-8 fw-700" style="color:var(--primary)">🎁 Hương đã tặng bạn ${Number(res.quaLe.diem || 0).toLocaleString('vi-VN')} điểm vào ví điểm – bạn dùng để trừ tiền khi mua hàng nhé.</p>` : ''}
+          <p class="fs-14">Từ giờ bạn đặt hàng chỉ cần 1 chạm, địa chỉ tự điền sẵn. Ưu đãi theo hạng sẽ tự trừ vào đơn khi bạn nhập số điện thoại này.</p>
+          ${res.gioiThieu ? (res.gioiThieu.ok ? `<p class="fs-14 mt-8 text-teal fw-600">🤝 Đã liên kết mã giới thiệu ${esc(maskPhone(ref))} – đơn hàng đầu tiên của bạn được giảm ${res.gioiThieu.discountPercent || ''}%, web tự áp khi thanh toán.</p>` : `<p class="fs-14 mt-8 text-red">Mã giới thiệu chưa dùng được: ${esc(res.gioiThieu.message || res.gioiThieu.msg || '')}</p>`) : ''}
+          <p class="fs-14 mt-8">Muốn xem hồ sơ, lịch sử đơn và tổng chi tiêu thì bạn đăng nhập bằng số <b>${esc(sdt)}</b>, mật khẩu mặc định là <b>${esc(res.mkMacDinh || '1')}</b>.</p>
           <div class="flex gap-8 mt-12"><button class="btn btn--primary btn--block" type="button" id="dkVaoLogin">Đăng nhập ngay</button><a class="btn btn--ghost" href="collections.html">Mua sắm</a></div></div>`;
       }).catch((e2) => loi(e2.message));
     });
@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!r || !r.ok || !r.la || !$('#dtNut')) return;
       const the = $('#dtMoi');
       if (r.tt === 'Đã duyệt') { $('#dtNut').innerHTML = `<button class="btn btn--primary btn--sm" type="button" id="btnDT" data-vao="${r.duocVao ? 1 : ''}">💼 Trang đối tác</button>`; the?.remove(); return; }
-      if (the) the.innerHTML = `<div><h3>💼 Đối tác bán hàng · mã ${esc(r.ma)}</h3><p class="fs-14 text-muted">${r.tt === 'Chờ duyệt' ? 'Đăng ký của mẹ đang chờ shop duyệt. Shop sẽ liên hệ khi tài khoản được mở.' : 'Tài khoản đối tác đang ' + esc(String(r.tt).toLowerCase()) + '. Mẹ liên hệ shop để được hỗ trợ nhé.'}</p></div>`;
+      if (the) the.innerHTML = `<div><h3>💼 Đối tác bán hàng · mã ${esc(r.ma)}</h3><p class="fs-14 text-muted">${r.tt === 'Chờ duyệt' ? 'Đăng ký của bạn đang chờ shop duyệt. Shop sẽ liên hệ khi tài khoản được mở.' : 'Tài khoản đối tác đang ' + esc(String(r.tt).toLowerCase()) + '. Bạn liên hệ shop để được hỗ trợ nhé.'}</p></div>`;
     }).catch(() => {});
   }
   const render = () => { if (Session.get()) { renderHoSo(); taiDiemGT(); taiDoiTac(); ganDiemDanh(); } else renderKhach(); ganFormDangKy(); };
@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.closest('[data-gt-share]') && gtDaTai) {
       const text = GT.noiDung(gtDaTai.cauHinh, gtDaTai.ma); const url = GT.link(gtDaTai.ma);
       if (navigator.share) navigator.share({ title: SITE.name, text: text.replace(url, '').trim(), url }).catch(() => {});
-      else navigator.clipboard?.writeText(text).then(() => toast('Đã chép nội dung giới thiệu – mẹ dán vào Zalo / Facebook để gửi bạn bè nhé', { type: 'ok' }), () => toast(text));
+      else navigator.clipboard?.writeText(text).then(() => toast('Đã chép nội dung giới thiệu – bạn dán vào Zalo / Facebook để gửi bạn bè nhé', { type: 'ok' }), () => toast(text));
     }
     const cp = e.target.closest('[data-copy-coupon]');
     if (cp) { const ma = cp.dataset.copyCoupon; navigator.clipboard?.writeText(ma); store.set('mc_coupon', ma); toast('Đã chép mã ' + ma + ' – mã sẽ tự điền ở bước thanh toán', { type: 'ok' }); }

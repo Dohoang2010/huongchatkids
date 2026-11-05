@@ -172,20 +172,20 @@
   <!-- ZALO SUBSCRIBE -->
   <section data-khoi="zalo" class="section"><div class="container">
     <div class="subscribe">
-      <div><h2>Nhận ưu đãi & kiến thức chăm con qua Zalo</h2><p>Để lại số điện thoại để nhận ưu đãi dành riêng cho mẹ, kiến thức chăm con và nhắc lịch bổ sung vitamin cho bé.</p></div>
-      <form id="subForm"><label class="sr-only" for="subPhone">Số điện thoại của mẹ</label><input class="input" id="subPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại của mẹ" required><button class="btn" type="submit">Nhận ưu đãi</button></form>
+      <div><h2>Nhận ưu đãi & kiến thức chăm con qua Zalo</h2><p>Để lại số điện thoại để nhận ưu đãi dành riêng cho bạn, kiến thức chăm con và nhắc lịch bổ sung vitamin cho bé.</p></div>
+      <form id="subForm"><label class="sr-only" for="subPhone">Số điện thoại của bạn</label><input class="input" id="subPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại của bạn" required><button class="btn" type="submit">Nhận ưu đãi</button></form>
     </div>
   </div></section>
 </main>
 
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
-<script src="js/uu-dai-nhanh.js?v=20261102b" defer></script>
+<script src="js/uu-dai-nhanh.js?v=20261105c" defer></script>
 <script src="js/chon-ngay.js?v=20261016b" defer></script>
-<script src="js/diem-danh-ui.js?v=20261016b" defer></script>
+<script src="js/diem-danh-ui.js?v=20261105c" defer></script>
 <script src="js/su-kien.js?v=20261019b" defer></script>
 <script type="module">
 /* Vẽ lại trang chủ SAU khi trình duyệt đã hiện bản máy chủ dựng sẵn (banner, sản phẩm…) – khách thấy trang sớm hơn */
@@ -259,14 +259,14 @@ TỰ ÁP</i></a>`; }
   try {
   const last = store.get('mc_last_order'); const cust = Customer.get();
   if (last && last.items && last.items.length && last.type !== 'callback') {
-    $('#reorderStrip').innerHTML = `<div class="reorder"><span class="emoji">🔁</span><div><b>Chào ${esc(cust?.name || 'mẹ')}, bé sắp hết ${esc(String(last.items[0].name || (byId(last.items[0].id) || {}).short || 'sản phẩm cũ').split(' ').slice(0, 4).join(' '))}…?</b><small>Mua lại đơn ${last.code} chỉ với 1 chạm – thông tin giao hàng đã lưu sẵn.</small></div><button class="btn btn--primary btn--sm" type="button" data-reorder>${I.refresh}Mua lại ngay</button></div>`;
+    $('#reorderStrip').innerHTML = `<div class="reorder"><span class="emoji">🔁</span><div><b>Chào ${esc(cust?.name || 'bạn')}, bé sắp hết ${esc(String(last.items[0].name || (byId(last.items[0].id) || {}).short || 'sản phẩm cũ').split(' ').slice(0, 4).join(' '))}…?</b><small>Mua lại đơn ${last.code} chỉ với 1 chạm – thông tin giao hàng đã lưu sẵn.</small></div><button class="btn btn--primary btn--sm" type="button" data-reorder>${I.refresh}Mua lại ngay</button></div>`;
   }
 
   } catch (e) { console.error('Trang chủ – mua lại đơn:', e); }
   /* Mã giảm giá cho mẹ: vé mã công khai, bấm "Lưu" → web tự áp mã lợi nhất khi thanh toán */
   try {
   const dsMa = MC.maCongKhai().filter((c) => !(c.donDau && MC.daMuaTruoc((Customer.get() || {}).phone)));
-  const vstripDau = `<div class="vstrip__h"><span class="vstrip__ic">🎟️</span><div><b>Mã giảm giá cho mẹ</b><small>Bấm <b>Lưu</b> – web tự áp mã lợi nhất khi mẹ thanh toán</small></div><a class="vstrip__vi" href="vi-voucher.html">Ví voucher ›</a></div>`;
+  const vstripDau = `<div class="vstrip__h"><span class="vstrip__ic">🎟️</span><div><b>Mã giảm giá cho bạn</b><small>Bấm <b>Lưu</b> – web tự áp mã lợi nhất khi bạn thanh toán</small></div><a class="vstrip__vi" href="vi-voucher.html">Ví voucher ›</a></div>`;
   const veVstrip = (them = '') => { if (!dsMa.length && !them) return; $('#voucherStrip').innerHTML = `<section class="vstrip" aria-label="Mã giảm giá">${vstripDau}${dsMa.length ? `<div class="vstrip__row">${dsMa.map(MC.voucherTicket).join('')}</div>` : ''}${them}</section>`; };
   veVstrip();
 
@@ -415,7 +415,7 @@ TỰ ÁP</i></a>`; }
   $('#brandRow').innerHTML = BRANDS.map((b) => `<a href="collections.html?brand=${b.key}">${b.label}</a>`).join('');
 
   /* Subscribe */
-  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn mẹ!<br><small>Shop sẽ nhắn ưu đãi và kiến thức chăm con qua Zalo ${esc(v)}.</small></div>`; });
+  $('#subForm').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.querySelector('input').value.trim(); if (!phoneOk(v)) { toast('Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)', { type: 'error' }); return; } Customer.set({ ...(Customer.get() || {}), phone: v }); e.target.outerHTML = `<div class="subscribe__done">🎉 Cảm ơn bạn!<br><small>Shop sẽ nhắn ưu đãi và kiến thức chăm con qua Zalo ${esc(v)}.</small></div>`; });
 }; requestAnimationFrame(() => setTimeout(lam, 0)); setTimeout(lam, 250);   // tab ẩn không có khung hình → tối đa 0,25 giây
 });
 </script>

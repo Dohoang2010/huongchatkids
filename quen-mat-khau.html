@@ -15,12 +15,12 @@
 <body>
 <div class="dau-cho" aria-hidden="true"></div>
 <main id="app"><div class="container"><div class="qmk" id="qmk"></div></div></main>
-<script src="js/data.js?v=20261104a"></script>
+<script src="js/data.js?v=20261105c"></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js"></script>
-<script src="js/app.js?v=20261103b"></script>
+<script src="js/app.js?v=20261105c"></script>
 <script src="js/chat.js?v=20261029b" defer></script>
-<script src="js/uu-dai-nhanh.js?v=20261102b" defer></script>
+<script src="js/uu-dai-nhanh.js?v=20261105c" defer></script>
 <script>
 /* QUÊN MẬT KHẨU – email OTP (ưu tiên) hoặc OTP số điện thoại → mật khẩu mới nhập 2 lần.
    Máy chủ: Apps Script qmkGui / qmkXacThuc / qmkDatLai (xem tools/apps-script.gs, phần QUÊN MẬT KHẨU).
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ganOtp(); demCho(); if (!XEM) $('#otp6 input').focus();
     } else if (st.buoc === 'mk') {
       const nhieu = st.taiKhoan.length > 1;
-      box.innerHTML = khung('Đặt lại mật khẩu', st.kenh === 'sdt' ? `Tạo mật khẩu mới cho tài khoản <b>${esc(maskPhone(st.sdt || ''))}</b>.` : 'Tạo mật khẩu mới cho tài khoản của mẹ.', `
+      box.innerHTML = khung('Đặt lại mật khẩu', st.kenh === 'sdt' ? `Tạo mật khẩu mới cho tài khoản <b>${esc(maskPhone(st.sdt || ''))}</b>.` : 'Tạo mật khẩu mới cho tài khoản của bạn.', `
         <form id="fMk" class="qmk__form" novalidate>
           ${nhieu ? `<div class="field"><span>Email này dùng cho ${st.taiKhoan.length} tài khoản – chọn tài khoản cần đặt lại</span>${st.taiKhoan.map((t) => `<label class="qmk__tk"><input type="radio" name="tk" value="${t.k}" ${st.k === t.k ? 'checked' : ''}> <b>${esc(t.sdt)}</b> ${t.ten ? `<small>${esc(t.ten)}</small>` : ''}</label>`).join('')}</div>` : ''}
           <label class="field"><span>Mật khẩu mới</span><div class="qmk__mk"><input class="input" id="mk1" type="password" autocomplete="new-password" placeholder="Ít nhất ${st.min} ký tự"><button type="button" class="qmk__mat" data-mat="mk1" aria-label="Hiện mật khẩu">👁</button></div></label>
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </form>`);
       ganMk(); if (!XEM) $('#mk1').focus();
     } else if (st.buoc === 'xong') {
-      box.innerHTML = khung('Đổi mật khẩu thành công!', '', `<div class="qmk__xong"><div class="qmk__tick">✓</div><p>Bạn đã đặt lại mật khẩu thành công.${st.sdtAn ? ` Tài khoản <b>${esc(st.sdtAn)}</b>.` : ''}</p><p class="qmk__note">Để an toàn, mọi thiết bị đang đăng nhập đã được đăng xuất. Mẹ đăng nhập lại bằng mật khẩu mới nhé.</p>
+      box.innerHTML = khung('Đổi mật khẩu thành công!', '', `<div class="qmk__xong"><div class="qmk__tick">✓</div><p>Bạn đã đặt lại mật khẩu thành công.${st.sdtAn ? ` Tài khoản <b>${esc(st.sdtAn)}</b>.` : ''}</p><p class="qmk__note">Để an toàn, mọi thiết bị đang đăng nhập đã được đăng xuất. Bạn đăng nhập lại bằng mật khẩu mới nhé.</p>
         <a class="btn btn--primary btn--lg btn--block" href="${VE_DN}">Đăng nhập</a></div>`);
     } else if (st.buoc === 'hethan') {
       box.innerHTML = khung('Phiên đặt lại mật khẩu đã hết hạn.', 'Vì lý do an toàn, mỗi lần đặt lại chỉ có hiệu lực trong thời gian ngắn và dùng được 1 lần.', `<button class="btn btn--primary btn--lg btn--block" type="button" id="btnMoi">Yêu cầu mã OTP mới</button>`);
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loyaltyApi('qmkGui', { email, may, ...(DT ? { loai: 'doiTac' } : {}) }).then((r) => {
       if (r && r.ok) { Object.assign(st, { maYc: r.maYc, emailAn: r.emailAn, cho: r.choGiay || 60, phut: Math.round((r.hetHanGiay || st.phut * 60) / 60), buoc: 'otp', loi: '' }); ve(); toast(r.msg, { type: 'ok' }); return; }
       if (r && r.code === 'RATE_LIMITED' && r.choGiay && st.maYc) { st.cho = r.choGiay; st.buoc = 'otp'; ve(); }
-      nut(b, false, f ? 'Gửi mã OTP' : 'Gửi lại OTP'); baoLoi((r && r.msg) || 'Chưa gửi được mã, mẹ thử lại nhé.');
+      nut(b, false, f ? 'Gửi mã OTP' : 'Gửi lại OTP'); baoLoi((r && r.msg) || 'Chưa gửi được mã, bạn thử lại nhé.');
     }).catch((e2) => { nut(b, false, f ? 'Gửi mã OTP' : 'Gửi lại OTP'); baoLoi(e2.message); });
   }
   function demCho() {
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let dangXt = false;
   function xacThuc() {
     if (XEM || dangXt) return; const o = $$('#otp6 input'); const otp = o.map((x) => x.value).join('');
-    if (otp.length !== 6) { baoLoi('Mẹ nhập đủ 6 số nhé.'); return; }
+    if (otp.length !== 6) { baoLoi('Bạn nhập đủ 6 số nhé.'); return; }
     dangXt = true; const b = $('#btnOtp'); nut(b, true, 'Đang kiểm tra…');
     loyaltyApi('qmkXacThuc', { maYc: st.maYc, email: st.email, otp }).then((r) => {
       dangXt = false;
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---- Cách 2: OTP số điện thoại (luồng cũ) → đặt mật khẩu mới, đăng xuất mọi máy ---- */
   function quaSdt() {
     if (XEM) return;
-    openOtp({ title: 'Quên mật khẩu', desc: 'Nhập số điện thoại của tài khoản. Shop gửi mã OTP để xác nhận đúng chủ tài khoản, sau đó mẹ tạo mật khẩu mới.' }).then((s) => {
+    openOtp({ title: 'Quên mật khẩu', desc: 'Nhập số điện thoại của tài khoản. Shop gửi mã OTP để xác nhận đúng chủ tài khoản, sau đó bạn tạo mật khẩu mới.' }).then((s) => {
       if (!s) return; Object.assign(st, { kenh: 'sdt', sdt: s.sdt, token: s.token, taiKhoan: [], k: 0, buoc: 'mk', loi: '' }); ve();
     });
   }
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       goi.then((r) => {
         if (r && r.ok) { st.token = ''; st.sdtAn = r.sdtAn || (st.sdt ? maskPhone(st.sdt) : ''); if (DT) store.set('mc_dt_token', ''); else Session.clear(); st.buoc = 'xong'; ve(); return; }
         if (r && (r.code === 'RESET_TOKEN_EXPIRED' || r.code === 'RESET_TOKEN_INVALID' || r.loi === 'token')) { st.buoc = 'hethan'; ve(); return; }
-        nut(nutMk, false, 'Đổi mật khẩu'); baoLoi((r && r.msg) || 'Chưa đổi được mật khẩu, mẹ thử lại nhé.');
+        nut(nutMk, false, 'Đổi mật khẩu'); baoLoi((r && r.msg) || 'Chưa đổi được mật khẩu, bạn thử lại nhé.');
       }).catch((e2) => { nut(nutMk, false, 'Đổi mật khẩu'); baoLoi(e2.message); });
     });
   }

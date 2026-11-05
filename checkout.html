@@ -19,18 +19,18 @@
   <nav class="breadcrumb"><a href="index.html">Trang chủ</a><span>›</span><a href="cart.html">Giỏ hàng</a><span>›</span><span>Thanh toán</span></nav>
   <div id="checkoutPage"></div>
 </div></main>
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
           addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, ketHop, byId, isForMom, rankDefault, shipText, ghnInfo, hangCho, traHang, openLogin, GT, taoMaDon } = MC;
   let lines = Cart.lines();
-  if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Mẹ chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
+  if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Bạn chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
   const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
   let sub = Cart.subtotal(); let multi = Cart.multiDiscount();
   const { maTotNhat, chipMaDaLuu } = MC; if (!coupon) coupon = maTotNhat(sub - multi, lines);   // tự áp mã khách đã lưu ở trang chủ
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <form class="checkout" id="coForm" novalidate>
       <div class="flex flex-col gap-16">
         <div id="loyaltyBar"></div>
-        ${c.phone ? `<div class="qb__saved">👋 Chào ${esc(c.name || 'mẹ')}, thông tin giao hàng đã được điền sẵn từ lần mua trước <button type="button" id="clearInfo">Nhập lại</button></div>` : ''}
+        ${c.phone ? `<div class="qb__saved">👋 Chào ${esc(c.name || 'bạn')}, thông tin giao hàng đã được điền sẵn từ lần mua trước <button type="button" id="clearInfo">Nhập lại</button></div>` : ''}
         <div class="card card--pad"><h3><span class="num">1</span>Thông tin nhận hàng</h3>
           <div class="form-grid form-grid--2"><div class="field"><label>Họ tên <span>*</span></label><input class="input" name="name" placeholder="VD: Nguyễn Thu Hà" value="${esc(c.name || '')}" required autocomplete="name"></div><div class="field"><label>Số điện thoại <span>*</span></label><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="VD: 0912 345 678" value="${esc(c.phone || '')}" required autocomplete="tel"></div></div>
           <div class="form-grid form-grid--2 mt-12"><div class="field"><label>Tỉnh / Thành phố <span>*</span></label><select class="input" name="city" required>${tinhOptions(dc.tinh)}</select></div><div class="field"><label>Xã / Phường <span>*</span></label><select class="input" name="ward" required>${xaOptions(dc.tinh, dc.xa)}</select></div></div>
@@ -168,10 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#coTotal').textContent = fmt(k.total); $('#stickyTotal').textContent = fmt(k.total);
     const bandMa = !loy.combineWithCoupon && k.couponAmt > 0 && !k.dungMa;
     $('#couponHint').innerHTML = k.laSN ? `<span class="text-teal fw-600">🎂 Tháng sinh nhật: đơn được giảm ${k.pct}%</span>`
-      : k.boMa || bandMa ? `<span class="text-teal fw-600">✓ Đơn đang được áp dụng ưu đãi tốt nhất cho mẹ</span>`
+      : k.boMa || bandMa ? `<span class="text-teal fw-600">✓ Đơn đang được áp dụng ưu đãi tốt nhất cho bạn</span>`
       : k.r && k.r.ok ? `<span class="text-teal fw-600">✓ ${k.r.desc}</span>`
       : k.r ? `<span class="text-red">${k.r.msg}</span>`
-      : `<span class="text-muted">Có mã giảm giá của shop thì mẹ nhập vào đây nhé.</span>`;
+      : `<span class="text-muted">Có mã giảm giá của shop thì bạn nhập vào đây nhé.</span>`;
     renderGT(k); renderDiem(k); renderVc(k);
   };
   window.addEventListener('mc:ma-gh', () => renderSummary());   // máy chủ trả số lượt dùng của mã có giới hạn
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ds = (vcVi && vcVi.ds) || []; if (!ds.length) { box.innerHTML = ''; return; }
     if (k.laSN) { box.innerHTML = ''; return; }
     const base = sub - multi;
-    box.innerHTML = `<div class="co-vc"><h4>🎟️ Voucher của mẹ (${ds.length})</h4>${!vcVi.dungDuoc ? '<p class="fs-13 text-muted mb-8">🔐 Để dùng voucher, mẹ <button type="button" class="text-primary fw-700" data-vc-otp>xác thực mã OTP</button> (bảo vệ voucher của mẹ).</p>' : ''}
+    box.innerHTML = `<div class="co-vc"><h4>🎟️ Voucher của bạn (${ds.length})</h4>${!vcVi.dungDuoc ? '<p class="fs-13 text-muted mb-8">🔐 Để dùng voucher, bạn <button type="button" class="text-primary fw-700" data-vc-otp>xác thực mã OTP</button> (bảo vệ voucher của bạn).</p>' : ''}
       <div class="co-vc__ds">${ds.map((v) => { const g = MC.DD.giam(v, base, lines), on = v.ma === vcChon;
         return `<button type="button" class="co-vc__it ${on ? 'is-on' : ''} ${g.ok && vcVi.dungDuoc ? '' : 'is-off'}" data-vc="${esc(v.ma)}" ${g.ok && vcVi.dungDuoc ? '' : 'aria-disabled="true"'}><b>−${fmt(v.giaTri)}</b><span>${esc(v.ten)}<small>${g.ok ? (v.donToiThieu ? 'Đơn từ ' + fmt(v.donToiThieu) + ' · ' : '') + 'HSD ' + new Date(v.hetHan).toLocaleDateString('vi-VN') : esc(g.msg)}</small></span><i class="co-vc__chon" aria-hidden="true"></i></button>`; }).join('')}</div>
       </div>`;
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!$('#gtInput')) box.innerHTML = `<div class="gt-co"><h4>🤝 Mã giới thiệu</h4><div class="coupon"><input class="input" id="gtInput" type="tel" inputmode="numeric" placeholder="SĐT người giới thiệu" aria-label="Mã giới thiệu (số điện thoại người giới thiệu)" value="${esc(gt.ma)}"><button class="btn btn--dark" type="button" id="gtApply">Áp dụng</button></div><div class="coupon-hint" id="gtHint" aria-live="polite"></div></div>`;
     const lyDo = !k.dungGT && gt.ok ? ((sub - multi) < (Number(gtCfg.donToiThieu) || 0) ? `đơn từ ${fmt(gtCfg.donToiThieu)} mới được giảm` : 'đơn đang được áp dụng ưu đãi tốt nhất') : '';
     $('#gtHint').innerHTML = gt.dangXet ? '<span class="text-muted">Đang kiểm tra mã…</span>'
-      : gt.ok && k.dungGT ? `<span class="text-teal fw-600">✓ Mã giới thiệu hợp lệ${gt.tenAn ? ` (${esc(gt.tenAn)})` : ''}. Mẹ được giảm ${gtCfg.giam}% cho đơn hàng đầu tiên.</span>`
+      : gt.ok && k.dungGT ? `<span class="text-teal fw-600">✓ Mã giới thiệu hợp lệ${gt.tenAn ? ` (${esc(gt.tenAn)})` : ''}. Bạn được giảm ${gtCfg.giam}% cho đơn hàng đầu tiên.</span>`
       : gt.ok ? `<span class="text-muted">✓ Mã hợp lệ, nhưng ${lyDo}.</span>`
       : gt.msg ? `<span class="text-red">✕ ${esc(gt.msg)}</span>`
       : `<span class="text-muted">Được bạn bè giới thiệu? Nhập số điện thoại người giới thiệu để giảm ${gtCfg.giam}% đơn đầu tiên.</span>`;
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     GT.kiemTra(ma, sdt).then((r) => {
       if (gt.ma !== ma) return;
       gt = { ma, ok: !!(r && r.ok), msg: (r && (r.message || r.msg)) || '', tenAn: (r && r.tenAn) || '', code: r && r.code, sdt, dangXet: false };
-      if (gt.ok && sdt) toast(`✓ Mã giới thiệu hợp lệ – mẹ được giảm ${gtCfg.giam}% cho đơn đầu tiên`, { type: 'ok' });
+      if (gt.ok && sdt) toast(`✓ Mã giới thiệu hợp lệ – bạn được giảm ${gtCfg.giam}% cho đơn đầu tiên`, { type: 'ok' });
       renderSummary();
     }).catch((e2) => { if (gt.ma === ma) { gt = { ma, ok: false, msg: e2.message, sdt, dangXet: false }; renderSummary(); } });
   };
@@ -236,8 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
       box.dataset.kieu = kieu;
       box.innerHTML = kieu === 'an' ? ''
         : kieu === 'moi-xac-thuc' ? `<div class="diem-co diem-co--goi"><span>⭐ Có điểm thưởng?</span><button type="button" class="text-primary fw-700" data-diem-otp>Xác thực để dùng điểm</button></div>`
-        : kieu === 'can-otp' ? `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Mẹ có <b id="diemCoSo"></b> điểm</span></div><p class="fs-13 text-muted">Để bảo vệ điểm của mẹ, cần xác thực mã OTP (hoặc đăng nhập bằng mật khẩu riêng) mới dùng được điểm.</p><button type="button" class="btn btn--outline btn--sm mt-8" data-diem-otp>🔐 Xác thực OTP để dùng điểm</button></div>`
-        : `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Mẹ có <b id="diemCoSo"></b> điểm</span></div>
+        : kieu === 'can-otp' ? `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Bạn có <b id="diemCoSo"></b> điểm</span></div><p class="fs-13 text-muted">Để bảo vệ điểm của bạn, cần xác thực mã OTP (hoặc đăng nhập bằng mật khẩu riêng) mới dùng được điểm.</p><button type="button" class="btn btn--outline btn--sm mt-8" data-diem-otp>🔐 Xác thực OTP để dùng điểm</button></div>`
+        : `<div class="diem-co"><div class="diem-co__h"><h4>⭐ Điểm thưởng</h4><span>Bạn có <b id="diemCoSo"></b> điểm</span></div>
             <label class="diem-co__chk"><input type="checkbox" id="diemDung"> Dùng điểm để giảm tiền hàng</label>
             <div class="diem-co__nhap"><input class="input" id="diemSo" type="number" min="0" step="1000" inputmode="numeric" aria-label="Số điểm muốn dùng"><button class="btn btn--ghost btn--sm" type="button" id="diemMax">Dùng tối đa</button></div>
             <div class="coupon-hint" id="diemHint" aria-live="polite"></div></div>`;
@@ -307,16 +307,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const s = Session.get(); const sdt = phoneNow();
     if (s && phoneKey(s.sdt) === sdt && sdt) {
       const t = tierOf(Session.spent()); const kh = Session.kh() || {};
-      bar.innerHTML = `<div class="loybar loybar--on"><div class="loybar__l">${tierBadge(t)}<div><b>Chào ${esc(kh.ten || 'mẹ')} 👋</b><p>Đã chi tiêu ${fmt(Number(kh.tongChiTieu) || 0)} · ${t.discount ? `đơn này được giảm <b>${t.discount}%</b> theo hạng` : 'mua thêm để lên hạng Silver (giảm 5%)'}</p></div></div><div class="loybar__r"><a class="btn btn--ghost btn--sm" href="account.html">Xem hồ sơ</a><button class="btn btn--ghost btn--sm" type="button" id="loyOut">Thoát</button></div></div>`;
+      bar.innerHTML = `<div class="loybar loybar--on"><div class="loybar__l">${tierBadge(t)}<div><b>Chào ${esc(kh.ten || 'bạn')} 👋</b><p>Đã chi tiêu ${fmt(Number(kh.tongChiTieu) || 0)} · ${t.discount ? `đơn này được giảm <b>${t.discount}%</b> theo hạng` : 'mua thêm để lên hạng Silver (giảm 5%)'}</p></div></div><div class="loybar__r"><a class="btn btn--ghost btn--sm" href="account.html">Xem hồ sơ</a><button class="btn btn--ghost btn--sm" type="button" id="loyOut">Thoát</button></div></div>`;
       return;
     }
     if (traCuu.co && traCuu.sdt === sdt) {
       const th = hangCho(sdt) || tierOf(0);
-      bar.innerHTML = `<div class="loybar ${th.discount ? 'loybar--on' : ''}"><div class="loybar__l">${th.discount ? tierBadge(th) : '<span class="loybar__ico">👋</span>'}<div><b>Chào ${esc(traCuu.ten || 'mẹ')}, cảm ơn mẹ đã quay lại</b><p>${th.discount ? `Hạng ${esc(th.label)} – <b>đơn này đã được giảm ${th.discount}%</b>. ` : ''}Đã điền thông tin giao hàng lần trước, mẹ kiểm tra lại giúp shop nhé.</p></div></div><div class="loybar__r"><button class="btn btn--primary btn--sm" type="button" id="loyOtp">Đăng nhập</button></div></div>`;
+      bar.innerHTML = `<div class="loybar ${th.discount ? 'loybar--on' : ''}"><div class="loybar__l">${th.discount ? tierBadge(th) : '<span class="loybar__ico">👋</span>'}<div><b>Chào ${esc(traCuu.ten || 'bạn')}, cảm ơn bạn đã quay lại</b><p>${th.discount ? `Hạng ${esc(th.label)} – <b>đơn này đã được giảm ${th.discount}%</b>. ` : ''}Đã điền thông tin giao hàng lần trước, bạn kiểm tra lại giúp shop nhé.</p></div></div><div class="loybar__r"><button class="btn btn--primary btn--sm" type="button" id="loyOtp">Đăng nhập</button></div></div>`;
       return;
     }
     /* Chưa đăng nhập: gợi ý đăng nhập cho khách cũ (mật khẩu mặc định) – khách mới vẫn đặt hàng bình thường */
-    bar.innerHTML = s ? '' : `<div class="loybar loybar--hint"><div class="loybar__l"><span class="loybar__ico">💡</span><div><b>Mẹ đã từng mua ở ${esc(SITE.name)}?</b><p>Đăng nhập bằng <b>số điện thoại</b>, mật khẩu mặc định là <b>1</b> – thông tin giao hàng tự điền. Chưa mua lần nào thì mẹ cứ điền bên dưới, không cần tài khoản.</p></div></div><div class="loybar__r"><button class="btn btn--primary btn--sm" type="button" id="loyOtp">Đăng nhập</button></div></div>`;
+    bar.innerHTML = s ? '' : `<div class="loybar loybar--hint"><div class="loybar__l"><span class="loybar__ico">💡</span><div><b>Bạn đã từng mua ở ${esc(SITE.name)}?</b><p>Đăng nhập bằng <b>số điện thoại</b>, mật khẩu mặc định là <b>1</b> – thông tin giao hàng tự điền. Chưa mua lần nào thì bạn cứ điền bên dưới, không cần tài khoản.</p></div></div><div class="loybar__r"><button class="btn btn--primary btn--sm" type="button" id="loyOtp">Đăng nhập</button></div></div>`;
   };
   const kiemTraSdt = () => {
     if (!loy.enabled) return; const sdt = phoneNow();
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (kh.diaChi && !form.elements.address.value.trim()) form.elements.address.value = kh.diaChi;
     syncExpress(); renderLoyalty(); renderSummary(); taiVi(); taiVc();
     if (gt.ma && gt.sdt !== phoneNow()) xetGT(gt.ma);
-    toast('Đã điền thông tin đã lưu của mẹ', { type: 'ok' });
+    toast('Đã điền thông tin đã lưu của bạn', { type: 'ok' });
   };
 
   const syncExpress = () => { const cityName = form.elements.city.value; const ok = canExpress(cityName); const opt = $('#expressOpt'); opt.classList.toggle('is-disabled', !ok); opt.querySelector('input').disabled = !ok; opt.querySelector('small').textContent = ok ? 'Nội thành Hà Nội, đặt trước 16h' : (cityName ? `Chưa hỗ trợ tại ${cityName}` : 'Chỉ nội thành Hà Nội, đặt trước 16h'); if (!ok && shipMethod === 'express') { shipMethod = 'standard'; form.elements.ship.value = 'standard'; renderSummary(); } };
@@ -382,8 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'diemMax') { diemMuon = calc().diemToiDa; renderSummary(); }
     const vb = e.target.closest('[data-vc]'); if (vb) { if (vb.getAttribute('aria-disabled')) return; vcChon = vcChon === vb.dataset.vc ? '' : vb.dataset.vc; store.set('mc_vc_chon', vcChon); if (vcChon) { coupon = ''; store.set('mc_coupon', ''); const ci = $('#couponInput'); if (ci) ci.value = ''; } renderSummary(); return; }
     if (e.target.closest('[data-vc-login]')) { openLogin({ phone: phoneNow() }).then((s) => { if (s) { dienHoSo(); taiVi(); taiVc(); } }); return; }
-    if (e.target.closest('[data-vc-otp]')) { openOtp({ phone: phoneNow(), title: 'Xác thực để dùng voucher', desc: 'Shop gửi mã OTP về số điện thoại của mẹ. Nhập đúng mã là dùng được voucher cho đơn này.' }).then((s) => { if (s) { dienHoSo(); taiVi(); taiVc(); } }); return; }
-    if (e.target.closest('[data-diem-otp]')) openOtp({ phone: phoneNow(), title: 'Xác thực để dùng điểm', desc: 'Shop gửi mã OTP về số điện thoại của mẹ. Nhập đúng mã là dùng được điểm thưởng cho đơn này.' }).then((s) => { if (s) { dienHoSo(); taiVi(); } });
+    if (e.target.closest('[data-vc-otp]')) { openOtp({ phone: phoneNow(), title: 'Xác thực để dùng voucher', desc: 'Shop gửi mã OTP về số điện thoại của bạn. Nhập đúng mã là dùng được voucher cho đơn này.' }).then((s) => { if (s) { dienHoSo(); taiVi(); taiVc(); } }); return; }
+    if (e.target.closest('[data-diem-otp]')) openOtp({ phone: phoneNow(), title: 'Xác thực để dùng điểm', desc: 'Shop gửi mã OTP về số điện thoại của bạn. Nhập đúng mã là dùng được điểm thưởng cho đơn này.' }).then((s) => { if (s) { dienHoSo(); taiVi(); } });
     const up = e.target.closest('[data-upsell]');
     if (up) { const p = byId(up.dataset.upsell); if (p) { const vi = bienTheCon(p); Cart.add(p.id, 1, vi != null && vi > -1 ? vi : null); toast(`Đã thêm ${shortName(p)} vào đơn`, { type: 'ok' }); } }
   });
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault(); const fd = new FormData(form); const v = Object.fromEntries(fd.entries()); const err = $('#coError'); err.classList.add('hide');
     $$('.input', form).forEach((i) => i.classList.remove('is-invalid'));
     const bad = []; if (!v.name.trim()) bad.push('name'); if (!phoneOk(v.phone)) bad.push('phone'); if (!v.city) bad.push('city'); if (!v.ward) bad.push('ward'); if (v.address.trim().length < 5) bad.push('address');
-    if (bad.length) { bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = 'Mẹ kiểm tra lại các ô được đánh dấu đỏ nhé'; err.classList.remove('hide'); err.setAttribute('role', 'alert'); form.elements[bad[0]].scrollIntoView({ behavior: 'smooth', block: 'center' }); form.elements[bad[0]].focus(); return; }
+    if (bad.length) { bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = 'Bạn kiểm tra lại các ô được đánh dấu đỏ nhé'; err.classList.remove('hide'); err.setAttribute('role', 'alert'); form.elements[bad[0]].scrollIntoView({ behavior: 'smooth', block: 'center' }); form.elements[bad[0]].focus(); return; }
     const diaChi = { tinh: v.city, xa: v.ward, chiTiet: v.address.trim() };
     const fullAddress = addrFull(diaChi);
     Customer.set({ name: v.name.trim(), phone: phoneKey(v.phone), address: addrStore(diaChi), email: v.email, payment: v.payment });
@@ -407,19 +407,19 @@ document.addEventListener('DOMContentLoaded', () => {
         res = await GT.giuCho({ sdt: sdtDat, token: s && phoneKey(s.sdt) === sdtDat ? s.token : '', maDon: code, ref: k.dungGT ? gt.ma : '', dungGT: k.dungGT ? '1' : '0',
           diem: k.diemDung, giaTri: sub - multi, giaTriUuDai: k.baseA, giamKhac: (k.dungHang ? k.hangAmt : 0) + (k.dungMa ? k.couponAmt : 0), tongDon: k.total,
           maVc: k.dungVc ? k.vc.ma : '', tienVc: k.dungVc ? k.rv.tienApDung : 0 });
-      } catch (e2) { return loiGiu(e2.message + ' – mẹ bấm Đặt hàng lại giúp shop nhé.'); }
+      } catch (e2) { return loiGiu(e2.message + ' – bạn bấm Đặt hàng lại giúp shop nhé.'); }
       if (!res || !res.ok) {
         if (res && res.code === 'REQUIRE_AUTH') { diemMuon = 0; if (vi) vi = { ...vi, dungDuoc: false }; }
         else if (res && (res.code === 'REQUIRE_AUTH_VC' || /^VOUCHER_/.test(res.code || ''))) { vcChon = ''; store.set('mc_vc_chon', ''); taiVc(); }
         else if (res && k.dungGT && res.code !== 'BUSY') gt = { ...gt, ok: false, msg: res.message || res.msg };
-        return loiGiu((res && (res.msg || res.message)) || 'Chưa giữ được ưu đãi, mẹ thử lại nhé');
+        return loiGiu((res && (res.msg || res.message)) || 'Chưa giữ được ưu đãi, bạn thử lại nhé');
       }
       daGiu = !!res.maGiu;
       if ((k.dungGT ? k.gtAmt : 0) !== (res.giamGT || 0) || k.diemDung !== (res.diem || 0) || (k.dungVc ? k.vcAmt : 0) !== (res.giamVc || 0)) {
         if (k.dungVc && !res.giamVc) { vcChon = ''; store.set('mc_vc_chon', ''); } taiVc();
         if (k.dungGT && !res.giamGT) gt = { ...gt, ok: false, msg: 'Ưu đãi giới thiệu không còn áp dụng được cho đơn này.' };
         diemMuon = res.diem || 0; taiVi();
-        return loiGiu('Ưu đãi vừa được cập nhật theo dữ liệu mới nhất. Mẹ kiểm tra lại tổng tiền rồi bấm Đặt hàng lần nữa nhé.');
+        return loiGiu('Ưu đãi vừa được cập nhật theo dữ liệu mới nhất. Bạn kiểm tra lại tổng tiền rồi bấm Đặt hàng lần nữa nhé.');
       }
       maGiu = res.maGiu || '';
       btn.innerHTML = '<span>Đang xử lý đơn hàng…</span>';
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
       subtotal: sub, discount: multi + k.discount + k.giamDiem, ship: k.ship, total: k.total });
     io.disconnect(); $('#stickyOrder')?.remove();
     daDat = true; Cart.clear(); store.set('mc_coupon', ''); store.set('mc_vc_chon', ''); if (k.dungGT) GT.boRef();
-    if (k.diemDung) toast(`Mẹ đã dùng ${k.diemDung.toLocaleString('vi-VN')} điểm cho đơn hàng ${order.code}`, { type: 'ok' });
+    if (k.diemDung) toast(`Bạn đã dùng ${k.diemDung.toLocaleString('vi-VN')} điểm cho đơn hàng ${order.code}`, { type: 'ok' });
     if (Session.get()) refreshProfile();
     $('#checkoutPage').innerHTML = `<div class="success-page card">${orderSuccessHTML(order, false)}</div>`;
     MC.moiDoiMk();

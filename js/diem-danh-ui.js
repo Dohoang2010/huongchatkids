@@ -29,9 +29,9 @@
   function dangTai() { return `<div class="ddp-skel"><div></div><div></div><div></div></div><p class="text-muted fs-14 text-center">Đang tải dữ liệu điểm danh…</p>`; }
   function loi(msg) { return `<div class="card card--pad text-center ddp-loi"><div class="ddp-loi__ic">⚠️</div><h3>Chưa tải được dữ liệu</h3><p class="text-muted">${esc(msg)}</p><button class="btn btn--primary" type="button" data-dd-thu-lai>Thử lại</button></div>`; }
   function chuaDangNhap(cfg) {
-    if (!cfg || cfg.bat === false) return `<div class="card card--pad text-center"><h3>Chương trình điểm danh đang tạm dừng</h3><p class="text-muted">Mẹ quay lại sau nhé!</p></div>`;
+    if (!cfg || cfg.bat === false) return `<div class="card card--pad text-center"><h3>Chương trình điểm danh đang tạm dừng</h3><p class="text-muted">Bạn quay lại sau nhé!</p></div>`;
     return `${hero(cfg)}${quaTomTat(cfg)}
-      <div class="card card--pad text-center ddp-moi"><h3>Đăng nhập để điểm danh hôm nay</h3><p class="text-muted fs-14">Đăng nhập là tự điểm danh, không cần bấm thêm. Điểm và voucher được lưu vào tài khoản của mẹ.</p>
+      <div class="card card--pad text-center ddp-moi"><h3>Đăng nhập để điểm danh hôm nay</h3><p class="text-muted fs-14">Đăng nhập là tự điểm danh, không cần bấm thêm. Điểm và voucher được lưu vào tài khoản của bạn.</p>
       <button class="btn btn--primary btn--lg" type="button" id="ddLogin">Đăng nhập / Đăng ký</button></div>${theLeKhoi(cfg)}`;
   }
 
@@ -63,7 +63,7 @@
     return `<div class="card card--pad ddp-td"><h3>🔥 Chuỗi đăng nhập trong tháng</h3>
       <div class="ddp-td__so"><div><b>${so(c)}</b><small>ngày liên tiếp</small></div><div><b>${so(d.chuoiDaiNhat)}</b><small>chuỗi dài nhất</small></div><div><b>${so(d.soNgay)}</b><small>ngày đã điểm danh</small></div></div>
       <div class="ddp-bar"><div style="width:${Math.min(100, c / 30 * 100)}%"></div>${ds.map((m) => `<span class="${nhan['STREAK_' + m] ? 'is-on' : ''}" style="left:${m / 30 * 100}%"><i>${nhan['STREAK_' + m] ? '✓' : m}</i><small>${tien(cfg['m' + m])}</small></span>`).join('')}</div>
-      ${(d.sapDat || []).length ? `<p class="fs-14 mt-12">${(() => { const t = d.sapDat.find((x) => x.conLai > 0) || d.sapDat[0]; return t.conLai > 0 ? `Còn <b>${t.conLai} ngày</b> liên tiếp nữa để nhận voucher <b>${tien(t.giaTri)}</b> (mốc ${t.moc} ngày).` : `Mẹ đã đủ mốc ${t.moc} ngày – voucher sẽ vào ví khi điểm danh.`; })()}</p>` : `<p class="fs-14 mt-12 text-teal fw-600">🎉 Mẹ đã nhận đủ các mốc thưởng của tháng này!</p>`}
+      ${(d.sapDat || []).length ? `<p class="fs-14 mt-12">${(() => { const t = d.sapDat.find((x) => x.conLai > 0) || d.sapDat[0]; return t.conLai > 0 ? `Còn <b>${t.conLai} ngày</b> liên tiếp nữa để nhận voucher <b>${tien(t.giaTri)}</b> (mốc ${t.moc} ngày).` : `Bạn đã đủ mốc ${t.moc} ngày – voucher sẽ vào ví khi điểm danh.`; })()}</p>` : `<p class="fs-14 mt-12 text-teal fw-600">🎉 Bạn đã nhận đủ các mốc thưởng của tháng này!</p>`}
       <p class="fs-12 text-muted">Bỏ lỡ 1 ngày chuỗi tính lại từ đầu · sang tháng mới bắt đầu chuỗi mới · mỗi mốc nhận 1 lần/tháng.</p></div>`;
   }
   function thuong(d) {
@@ -92,7 +92,7 @@
     return `${opts.xemTruoc ? '<div class="ddp-xt">👁️ Xem trước – dữ liệu minh hoạ, chưa lưu</div>' : ''}
       <div class="ddq" style="--dd:${mauHop(cfg.mau)}">
         <div class="ddq-dau"><span class="ddq-dau__ic" aria-hidden="true">${esc(cfg.icon || '📅')}</span>
-          <div class="ddq-dau__tx"><h1>${esc(cfg.ten || 'Điểm danh mỗi ngày')}</h1><p>${daXong ? '🎉 Mẹ đã điểm danh hôm nay – quay lại ngày mai nhé!' : dangChay ? `Mỗi ngày đăng nhập nhận <b>${so(cfg.diemNgay)} điểm</b> · 1.000 điểm = 1.000đ` : 'Chương trình đang tạm dừng'}</p></div>
+          <div class="ddq-dau__tx"><h1>${esc(cfg.ten || 'Điểm danh mỗi ngày')}</h1><p>${daXong ? '🎉 Bạn đã điểm danh hôm nay – quay lại ngày mai nhé!' : dangChay ? `Mỗi ngày đăng nhập nhận <b>${so(cfg.diemNgay)} điểm</b> · 1.000 điểm = 1.000đ` : 'Chương trình đang tạm dừng'}</p></div>
           <div class="ddq-diem"><small>Điểm hiện có</small><b>${so((d.diem || {}).soDu)}</b></div>${nut}</div>
         <div class="ddq-cot">
           <div class="ddq-trai">${lich(d, cfg)}
@@ -215,7 +215,7 @@
       let r;
       try { r = await DD.diemDanh(); } catch (err) { r = { ok: false, msg: err.message }; }
       st.dangGui = false;
-      if (r && r.loi === 'token') { Session.clear(); toast('Phiên đăng nhập đã hết hạn, mẹ đăng nhập lại nhé', { type: 'err' }); return tai(); }
+      if (r && r.loi === 'token') { Session.clear(); toast('Phiên đăng nhập đã hết hạn, bạn đăng nhập lại nhé', { type: 'err' }); return tai(); }
       if (!r || !r.ok) { st.bao = { kieu: 'loi', html: esc((r && r.msg) || 'Chưa điểm danh được') + ' <button type="button" class="ddm-thu-lai" data-ddm-nut>Thử lại</button>' }; ve(); return; }
       const vc = (r.voucher || []).map((v) => `voucher <b>${tien(v.giaTri)}</b>`).join(', ');
       st.bao = r.moi ? { kieu: 'ok', html: `🎉 Điểm danh thành công! +${so(r.diem)} điểm${vc ? ' · nhận ' + vc + ' vào <a href="vi-voucher.html">Ví voucher</a>' : ''}` }

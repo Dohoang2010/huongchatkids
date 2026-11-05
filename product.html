@@ -18,14 +18,14 @@
 <main id="app"><div class="container" id="pdp"></div></main>
 <div class="sticky-buy" id="stickyBuy"></div>
 
-<script src="js/data.js?v=20261104a" defer></script>
+<script src="js/data.js?v=20261105c" defer></script>
 <script src="js/giay-to.js?v=20261029n" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261103b" defer></script>
+<script src="js/app.js?v=20261105c" defer></script>
 <script src="js/chat.js?v=20261029b" defer></script>
-<script src="js/uu-dai-nhanh.js?v=20261102b" defer></script>
-<script src="js/danh-gia.js?v=20261019c" defer></script>
+<script src="js/uu-dai-nhanh.js?v=20261105c" defer></script>
+<script src="js/danh-gia.js?v=20261105c" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, pct, listPrice, param, esc, byId, brandOf, ageLabel, I, starRow, productImage, productCard, Cart, toast, deliveryEstimate, openQuickBuy, giftNote } = MC;
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Sản phẩm mới đăng mà trình duyệt còn giữ bản trang/dữ liệu cũ (GitHub Pages cho nhớ 10 phút)
      → tự tải lại 1 lần với địa chỉ mới để lấy bản mới nhất, không bắt khách bấm Ctrl+F5 */
   if (!p && idTrang && !param('r')) { location.replace(`${location.pathname}?id=${encodeURIComponent(idTrang)}&r=${Date.now()}`); return; }
-  if (!p) { $('#pdp').innerHTML = `<div class="empty card" style="margin:24px 0"><div class="emoji">🔍</div><h3>Không tìm thấy sản phẩm</h3><p>Sản phẩm có thể đã ngừng bán. Mẹ xem các sản phẩm khác nhé.</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem tất cả sản phẩm</a></div>`; return; }
+  if (!p) { $('#pdp').innerHTML = `<div class="empty card" style="margin:24px 0"><div class="emoji">🔍</div><h3>Không tìm thấy sản phẩm</h3><p>Sản phẩm có thể đã ngừng bán. Bạn xem các sản phẩm khác nhé.</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem tất cả sản phẩm</a></div>`; return; }
   const b = brandOf(p); const d = pct(p); let qty = 1;
   // chọn sẵn phân loại còn hàng đầu tiên (phân loại hết hàng bị khoá)
   let variant = p.variants ? Math.max(0, p.variants.findIndex((v) => !v.oos)) : null;
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ${p.cosmetic ? '<div class="disclaimer">💄 Sản phẩm chăm sóc dùng ngoài, không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Hiệu quả tuỳ thuộc cơ địa từng người.</div>' : isTPCN ? '<div class="disclaimer">⚠️ Thực phẩm này không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh. Hiệu quả tuỳ thuộc cơ địa từng bé.' + (suaMe ? '<br>💛 ' + CAU_SUA_ME : '') + '</div>' : suaMe ? '<div class="disclaimer">💛 ' + CAU_SUA_ME + ' Sản phẩm dinh dưỡng dùng bổ sung theo độ tuổi, không thay thế sữa mẹ; đọc kỹ hướng dẫn trên bao bì.</div>' : '<div class="disclaimer">💛 Sản phẩm là thực phẩm bổ sung cho bữa ăn, không thay thế chế độ ăn đa dạng. Bé dưới 1 tuổi hoặc có tiền sử dị ứng nên hỏi ý kiến bác sĩ trước khi dùng.</div>'}</div>
       <div class="pdp__panel" id="panel-usage" role="tabpanel"><h3>Hướng dẫn sử dụng</h3><p>${esc(p.usage)}</p><h3>Bảo quản</h3><p>Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp. Sau khi mở, đậy kín và dùng theo thời hạn ghi trên bao bì (nước ép, hồng sâm đã mở gói nên dùng ngay).</p><h3>Lưu ý</h3><ul class="list"><li>Đọc kỹ hướng dẫn sử dụng trước khi dùng.</li><li>Không dùng cho bé dị ứng với bất kỳ thành phần nào của sản phẩm.</li><li>Tham khảo ý kiến chuyên gia dinh dưỡng Hương Chất Kids để được tư vấn liều dùng phù hợp với cân nặng, độ tuổi của bé.</li></ul></div>
       <div class="pdp__panel" id="panel-reviews" role="tabpanel"><div id="dgWeb" data-id="${esc(p.id)}"></div>${p.reviews ? `<div class="rating-summary mt-16"><div class="big"><b>${p.rating.toFixed(1)}</b><div class="stars">${starRow(p.rating)}</div><small>${p.reviews} đánh giá Shopee</small></div><div class="flex flex-col gap-8" style="justify-content:center"><p style="margin:0">Điểm trung bình <b>${p.rating.toFixed(2)}/5</b> từ <b>${p.reviews.toLocaleString('vi-VN')}</b> lượt đánh giá${p.sold ? ` · đã bán <b>${p.sold.toLocaleString('vi-VN')}</b>` : ''} trên gian hàng Shopee chính thức của ${SITE.name}.</p>${p.shopeeUrl ? `<a class="btn btn--shopee" style="align-self:flex-start" href="${p.shopeeUrl}" target="_blank" rel="noopener">Xem ${p.reviews} đánh giá trên Shopee ↗</a>` : ''}</div></div>` : ''}</div>
-      <div class="pdp__panel" id="panel-policy" role="tabpanel"><h3>Giao hàng</h3><p>Nội thành Hà Nội: giao trong ngày (đơn đặt trước 16h), có hoả tốc 2–4h phụ thu ${fmt(SITE.expressFee)}. TP.HCM và các tỉnh khác: 1–3 ngày làm việc qua đơn vị vận chuyển. Miễn phí vận chuyển cho đơn từ ${fmt(SITE.freeshipFrom)}. Chi tiết: <a class="text-primary fw-600" href="policy.html?p=giao-hang">Chính sách giao hàng</a>.</p><h3>Đổi trả</h3><p>Mẹ được mở niêm phong kiểm tra hàng khi nhận (không mở seal riêng của sản phẩm) và có thể từ chối nếu hàng hư hỏng, sai sản phẩm hoặc số lượng. Sau khi nhận, mẹ liên hệ shop trong tối đa 24h để được hỗ trợ đổi trả. Chi tiết: <a class="text-primary fw-600" href="policy.html?p=doi-tra">Chính sách đổi trả</a>.</p><h3>Cam kết chính hãng</h3><p>Sản phẩm nhập khẩu chính ngạch, có tem phụ tiếng Việt, hoá đơn VAT xuất theo yêu cầu. Hoàn tiền 100% và chịu toàn bộ chi phí nếu mẹ phát hiện hàng không chính hãng. Xem <a class="text-primary fw-600" href="policy.html?p=chinh-hang">cam kết chính hãng</a>.</p></div>
+      <div class="pdp__panel" id="panel-policy" role="tabpanel"><h3>Giao hàng</h3><p>Nội thành Hà Nội: giao trong ngày (đơn đặt trước 16h), có hoả tốc 2–4h phụ thu ${fmt(SITE.expressFee)}. TP.HCM và các tỉnh khác: 1–3 ngày làm việc qua đơn vị vận chuyển. Miễn phí vận chuyển cho đơn từ ${fmt(SITE.freeshipFrom)}. Chi tiết: <a class="text-primary fw-600" href="policy.html?p=giao-hang">Chính sách giao hàng</a>.</p><h3>Đổi trả</h3><p>Bạn được mở niêm phong kiểm tra hàng khi nhận (không mở seal riêng của sản phẩm) và có thể từ chối nếu hàng hư hỏng, sai sản phẩm hoặc số lượng. Sau khi nhận, bạn liên hệ shop trong tối đa 24h để được hỗ trợ đổi trả. Chi tiết: <a class="text-primary fw-600" href="policy.html?p=doi-tra">Chính sách đổi trả</a>.</p><h3>Cam kết chính hãng</h3><p>Sản phẩm nhập khẩu chính ngạch, có tem phụ tiếng Việt, hoá đơn VAT xuất theo yêu cầu. Hoàn tiền 100% và chịu toàn bộ chi phí nếu bạn phát hiện hàng không chính hãng. Xem <a class="text-primary fw-600" href="policy.html?p=chinh-hang">cam kết chính hãng</a>.</p></div>
     </div>
 
     <section class="section"><div class="section-head"><div><h2>Sản phẩm tương tự</h2></div><a class="link" href="collections.html?cat=${p.cat}">Xem thêm ${I.arrowR}</a></div><div class="row-scroll">${similar.map((x) => productCard(x)).join('')}</div></section>`);
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const het = MC.chayHang(p, variant);
     ['#btnBuy', '#btnAdd', '#stickyBuyBtn', '#stickyAdd'].forEach((s) => { const b = $(s); if (b) b.disabled = het; });
     $$('.pdp__info .btn--zalo').forEach((a) => { a.classList.toggle('is-disabled', het); a.setAttribute('aria-disabled', het ? 'true' : 'false'); });
-    const nho = $('#btnBuy small'); if (nho) { if (nho.dataset.goc == null) nho.dataset.goc = nho.textContent; nho.textContent = het ? 'Sản phẩm đang cháy hàng – mẹ xem sản phẩm khác nhé' : nho.dataset.goc; }
+    const nho = $('#btnBuy small'); if (nho) { if (nho.dataset.goc == null) nho.dataset.goc = nho.textContent; nho.textContent = het ? 'Sản phẩm đang cháy hàng – bạn xem sản phẩm khác nhé' : nho.dataset.goc; }
   };
   capNhatChay(); document.addEventListener('stock:change', capNhatChay);
   $('#pdp').addEventListener('click', (e) => { if (e.target.closest('[data-variant],[data-gt],[data-tang]')) setTimeout(capNhatChay, 0); });
