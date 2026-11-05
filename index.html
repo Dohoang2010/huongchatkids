@@ -12,7 +12,7 @@
   <meta property="og:type" content="website"><meta property="og:title" content="Hương Chất Kids – Dinh dưỡng Hàn Quốc chính hãng cho bé"><meta property="og:description" content="Nước ép Lotte, hồng sâm ChuChu, D3K2, váng sữa canxi… Mua nhanh không cần tài khoản, chuyên gia dinh dưỡng tư vấn miễn phí, freeship từ 3 triệu."><meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261103e">
+  <link rel="stylesheet" href="css/style.css?v=20261105a">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -50,7 +50,11 @@
   <section data-khoi="flash" class="section"><div class="container">
     <div class="flash">
       <div class="flash__head"><div class="flash__title"><span class="bolt">⚡</span><h2>Flash sale hôm nay</h2><span class="flames" aria-hidden="true"><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i></span></div><div class="countdown" id="countdown"></div></div>
-      <div class="row-scroll" id="flashRow"></div>
+      <div class="row-nav">
+        <button class="row-nav__btn row-nav__btn--prev" type="button" data-row-go="-1" aria-label="Xem sản phẩm trước"></button>
+        <div class="row-scroll" id="flashRow"></div>
+        <button class="row-nav__btn row-nav__btn--next" type="button" data-row-go="1" aria-label="Xem sản phẩm tiếp theo"></button>
+      </div>
       <div class="flash__more"><a class="btn btn--light" href="collections.html?tag=S%E1%BA%A3n%20ph%E1%BA%A9m%20hot">Xem tất cả sản phẩm hot</a></div>
     </div>
   </div></section>
@@ -297,7 +301,8 @@ TỰ ÁP</i></a>`; }
   // Flash sale chỉ hiện đúng những sản phẩm được gắn nhãn "Sản phẩm hot" trong js/data.js
   const flash = PRODUCTS.filter((p) => (p.tags || []).includes('Sản phẩm hot')).sort(MC.rankDefault);
   $('#flashRow').innerHTML = flash.map((p) => productCard(p)).join('');
-  MC.autoScrollRow($('#flashRow'));
+  const flashCtl = MC.autoScrollRow($('#flashRow'));
+  $$('[data-khoi="flash"] [data-row-go]').forEach((b) => { b.innerHTML = Number(b.dataset.rowGo) > 0 ? I.chevronR : I.chevronL; b.addEventListener('click', () => flashCtl && flashCtl.go(Number(b.dataset.rowGo))); });
   /* Giao diện khối (Quản trị › Flash Sale): màu nền, biểu tượng, trang trí, tiêu đề */
   const FG = SITE.flashGd || {}, fsTen = FG.tieuDe || 'Flash sale';
   if (FG.mau1) $('.flash').style.background = `linear-gradient(135deg, ${FG.mau1} 0%, ${FG.mau2 || FG.mau1} 100%)`;

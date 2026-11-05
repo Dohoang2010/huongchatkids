@@ -2968,3 +2968,9 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 .flash__more { margin-top: 8px; }
 .flash__more .btn { min-height: 34px; padding: 0 16px; font-size: 13px; }
 @media (max-width: 559px) { .flash .pcard__actions .btn--icon { display: none; } .flash .countdown { font-size: 12px; } }
+/* Nút ‹ › xem sản phẩm trong khối Flash sale */
+.flash .row-nav__btn { color: #F0537A; width: 34px; height: 34px; }
+.flash .row-nav__btn:hover { background: #F0537A; color: #fff; }
+.flash .row-nav__btn--prev { left: -6px; }
+.flash .row-nav__btn--next { right: -6px; }
+@media (min-width: 768px) { .flash .row-nav__btn { width: 40px; height: 40px; } .flash .row-nav__btn--prev { left: -10px; } .flash .row-nav__btn--next { right: -10px; } }
