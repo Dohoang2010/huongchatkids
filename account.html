@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#F0537A">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Quicksand:wght@600;700&display=optional"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=20261105a">
+  <link rel="stylesheet" href="css/style.css?v=20261105b">
   <link rel="icon" type="image/png" sizes="96x96" href="img/logo-96.png"><link rel="apple-touch-icon" href="img/logo-192.png">
 </head>
 <body>
@@ -295,6 +295,34 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /* ---------- Đã xác thực: hồ sơ đầy đủ ---------- */
+  /* ---------- Ảnh đại diện: cắt vuông giữa ảnh, thu về 480px, tải qua /api/chat-tep rồi lưu vào hồ sơ ---------- */
+  const apiGoc = () => String((SITE.loyalty || {}).endpoint || '').replace(/\/+$/, '');
+  const gocApi = () => { try { return new URL(apiGoc()).origin; } catch { return ''; } };
+  async function anhVuong(f) {
+    const bm = await createImageBitmap(f), n = Math.min(bm.width, bm.height), c = document.createElement('canvas'); c.width = c.height = 480;
+    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, 480, 480);
+    g.drawImage(bm, (bm.width - n) / 2, (bm.height - n) / 2, n, n, 0, 0, 480, 480);
+    return new Promise((ok) => c.toBlob(ok, 'image/jpeg', 0.85));
+  }
+  async function luuAnhKh(anh) {
+    const r = await loyaltyApi('doiAnh', { token: (Session.get() || {}).token, anh });
+    if (!r || !r.ok) { if (r && r.loi === 'token') { Session.clear(); renderKhach(); } throw new Error((r && r.msg) || 'Chưa lưu được ảnh, mẹ thử lại nhé'); }
+    Session.patch({ kh: r.kh }); renderHoSo();
+  }
+  async function taiAnhKh(f) {
+    if (!/^image\//.test(f.type)) return toast('Mẹ chọn tệp ảnh nhé', { type: 'error' });
+    const nut = $('#khAnhNut'); if (nut) nut.textContent = 'Đang tải ảnh…';
+    try {
+      let blob; try { blob = await anhVuong(f); } catch { throw new Error('Không đọc được ảnh này, mẹ chọn ảnh JPG hoặc PNG nhé'); }
+      const phien = 'cav' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      const r = await fetch(apiGoc() + '/chat-tep?phien=' + phien, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: blob });
+      const j = await r.json(); if (!r.ok || !j.ok || j.loai !== 'anh') throw new Error(j.msg || 'Chưa tải được ảnh');
+      await luuAnhKh(j.url); toast('Đã cập nhật ảnh đại diện', { type: 'ok' });
+    } catch (e) { toast(e.message || 'Chưa tải được ảnh', { type: 'error' }); if (Session.get()) renderHoSo(); }
+  }
+  document.addEventListener('change', (e) => { if (e.target.id === 'khAnhTep' && e.target.files[0]) taiAnhKh(e.target.files[0]); });
+  document.addEventListener('click', (e) => { if (e.target.id === 'khAnhXoa') luuAnhKh('').then(() => toast('Đã xoá ảnh đại diện')).catch((x) => toast(x.message, { type: 'error' })); });
+
   function renderHoSo() {
     const s = Session.get(); if (!s) { renderKhach(); return; }
     const kh = s.kh || {}; const spent = Number(kh.tongChiTieu) || 0; const cur = tierOf(spent);
@@ -328,6 +356,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div class="checkout__side"><div class="card card--pad">
           <h3>📍 Thông tin của mẹ</h3>
+          <div class="kh-anh">
+            <label class="kh-anh__o" for="khAnhTep" title="Đổi ảnh đại diện">${kh.anh ? `<img src="${esc(gocApi() + kh.anh)}" alt="Ảnh đại diện">` : `<span>${esc((String(kh.ten || '').trim().split(/\s+/).pop() || '🙂').charAt(0).toUpperCase())}</span>`}<i aria-hidden="true">📷</i></label>
+            <div class="kh-anh__nut">
+              <label class="btn btn--outline btn--sm" for="khAnhTep" id="khAnhNut">${kh.anh ? 'Đổi ảnh đại diện' : 'Tải ảnh đại diện'}</label>
+              ${kh.anh ? '<button class="kh-anh__xoa" type="button" id="khAnhXoa">Xoá ảnh</button>' : ''}
+              <input type="file" id="khAnhTep" accept="image/*" hidden>
+            </div>
+          </div>
           <div id="khView" class="kh-view">
             <div class="kh-row"><span>Họ tên</span><b>${esc(kh.ten || '—')}</b></div>
             <div class="kh-row"><span>Số điện thoại</span><b>${esc(kh.sdt || '')}</b></div>

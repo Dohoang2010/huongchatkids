@@ -62,7 +62,7 @@ var HEADERS = ['Thời gian', 'Mã đơn', 'Loại', 'Khách', 'Điện thoại'
                'Tiền hàng', 'Giảm', 'Ship', 'Tổng', 'Thanh toán', 'Mã giảm giá', 'Ghi chú', 'Email',
                'Hạng KH', 'Giảm theo hạng', 'Quà tặng', 'Trạng thái'];
 var H_KH = ['Điện thoại', 'Họ tên', 'Tỉnh/Thành', 'Xã/Phường', 'Địa chỉ cụ thể', 'Email',
-            'Tổng chi tiêu', 'Số đơn', 'Hạng', 'Đơn gần nhất', 'Tạo lúc', 'Ghi chú', 'Giới tính'];
+            'Tổng chi tiêu', 'Số đơn', 'Hạng', 'Đơn gần nhất', 'Tạo lúc', 'Ghi chú', 'Giới tính', 'Ảnh đại diện'];
 
 /* ===================== TIỆN ÍCH CHUNG ===================== */
 function ss() { return SpreadsheetApp.getActiveSpreadsheet(); }
@@ -328,6 +328,7 @@ function docKH(sdt) {
     var v = s.getRange(dong, 1, 1, H_KH.length).getValues()[0];
     kh.ten = String(v[1] || ''); kh.tinh = String(v[2] || ''); kh.xa = String(v[3] || '');
     kh.diaChi = String(v[4] || ''); kh.email = String(v[5] || ''); kh.gioiTinh = chuanGioiTinh_(v[12]);
+    kh.anh = anhKhHopLe_(v[13]);
   }
   var sn0 = null; try { sn0 = snTim_(sdt); } catch (e0) { Logger.log(e0); }
   kh.ngaySinh = (sn0 && sn0.ngay) || (crm && crm.kh ? chuanNgaySinh_(crm.kh.ngaySinh || crm.kh.sinhNhat || '') : '');
@@ -2450,6 +2451,7 @@ function doGet(e) {
     if (action === 'xacThuc')  return traVe(apiXacThuc(p), cb);
     if (action === 'hoSo')     return traVe(apiHoSo(p), cb);
     if (action === 'capNhat')  return traVe(apiCapNhat(p), cb);
+    if (action === 'doiAnh')   return traVe(apiDoiAnh(p), cb);
     if (action === 'dangNhap') return traVe(apiDangNhap(p), cb);
     if (action === 'dangKy')   return traVe(apiDangKy(p), cb);
     if (action === 'thongKe')  return traVe(apiThongKe(p), cb);
@@ -3068,7 +3070,7 @@ function baoLenh_(data) {
 }
 /* C2 – Giới hạn số yêu cầu mỗi 10 phút cho toàn hệ thống (Apps Script không biết IP người gọi).
    Vượt ngưỡng: tạm chặn lệnh đó + cảnh báo chủ shop. Ngưỡng rộng hơn nhiều so với lượng khách thật. */
-var GIOI_HAN_10P = { dgGui: 200, dgDs: 20000, dgTomTat: 20000, chatGui: 1500, chatDoc: 20000, chatApi: 6000, quaLe: 600, maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
+var GIOI_HAN_10P = { dgGui: 200, dgDs: 20000, dgTomTat: 20000, chatGui: 1500, chatDoc: 20000, chatApi: 6000, quaLe: 600, maKiemTra: 1500, taiKhoan: 600, ddSauDangNhap: 300, guiOtp: 40, xacThuc: 120, dangKy: 40, dangNhap: 150, capNhat: 100, doiAnh: 100, affDangKy: 15, affDangNhap: 80, affTuKhach: 300, affBam: 1500, affSdt: 600, affGanDon: 300,
   qtDangNhap: 40, qtDangNhap2: 40, qmkGui: 60, gtGiuCho: 200, ddDiemDanh: 600, ddTongQuan: 1500, vcCuaToi: 1500, qtVcThuHoi: 60, snLuu: 200, snbLuu: 200, leadTuVan: 120 };
 function chanTanSuat_(action) {
   var t = GIOI_HAN_10P[action]; if (!t || demGioiHan('gh_' + action, t, 600)) return null;
@@ -3725,6 +3727,18 @@ function apiHoSo(p) {
   return { ok: true, kh: d.kh, donHang: d.don, quaLe: thuongLe_(sdt) };
 }
 
+/* Ảnh đại diện khách: tệp đã tải qua /api/chat-tep (trang tài khoản thu về vuông 480px); anh rỗng = xoá ảnh */
+function anhKhHopLe_(v) { var u = String(v || ''); return /^\/chat-tep\/\d{6}\/[a-z0-9-]+\.(jpg|png|webp)$/.test(u) ? u : ''; }
+function apiDoiAnh(p) {
+  var sdt = sdtTheoToken(p.token);
+  if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };
+  var anh = anhKhHopLe_(p.anh); if (p.anh && !anh) return { ok: false, msg: 'Ảnh không hợp lệ' };
+  var s = sheetKH(); var dong = timDongKH(sdt);
+  if (!dong) { s.appendRow(["'" + sdt, '', '', '', '', '', 0, 0, HANG[0].label, '', new Date(), '']); dong = s.getLastRow(); }
+  s.getRange(dong, 14).setValue(anh);
+  var d = docKH(sdt);
+  return { ok: true, kh: d.kh, donHang: d.don };
+}
 function apiCapNhat(p) {
   var sdt = sdtTheoToken(p.token);
   if (!sdt) return { ok: false, loi: 'token', msg: 'Phiên đã hết hạn, mẹ xác thực lại nhé' };

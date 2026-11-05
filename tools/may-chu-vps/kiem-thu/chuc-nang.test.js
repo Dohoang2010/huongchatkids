@@ -447,3 +447,13 @@ test('CRM: 2 đơn cùng ngày + cùng tiền (1 huỷ, 1 đã giao) → khớp 
   crm.donHang[1].trangThai = 'Đang giao';
   assert.strictEqual(await m.bc.goiHam('timDonCRM', [crm, 'HCK2610318847', 1333680, new Date('2026-10-31T04:25:00Z')]), null, 'trùng mà đều còn hiệu lực → không đoán');
 });
+
+test('ảnh đại diện khách: lưu, xoá; từ chối đường dẫn lạ và phiên sai; sửa thông tin không mất ảnh', async () => {
+  const m = taoMay(); const dn = await dangNhapOtp(m, SDT); const U = '/chat-tep/202611/abc123-x1.jpg';
+  const doi = (anh, token = dn.token) => m.get('action=doiAnh&token=' + token + '&anh=' + encodeURIComponent(anh));
+  assert.strictEqual((await doi(U)).kh.anh, U);
+  assert.strictEqual((await m.get('action=capNhat&token=' + dn.token + '&ten=' + encodeURIComponent('Mẹ Thử'))).kh.anh, U, 'sửa thông tin giữ ảnh');
+  assert.strictEqual((await doi('https://la.example/x.jpg')).ok, false, 'không nhận đường dẫn ngoài');
+  assert.strictEqual((await doi(U, 'sai')).ok, false, 'phiên sai');
+  assert.strictEqual((await doi('')).kh.anh, '', 'xoá ảnh');
+});
