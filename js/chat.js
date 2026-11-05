@@ -13,14 +13,14 @@
     ten: 'Hương Chất Kids',
     phuDe: 'Chuyên gia tư vấn · thường trả lời trong vài phút',
     chao: [
-      'Chào mẹ, Hương Chất Kids rất vui được hỗ trợ mẹ!',
-      'Mẹ cần tư vấn dinh dưỡng cho bé theo độ tuổi, chọn mỹ phẩm cho mẹ hay hỗ trợ đơn hàng ạ? Mẹ cứ nhắn, gửi ảnh sản phẩm hoặc đơn hàng – chuyên gia của Hương trả lời ngay nhé.'
+      'Chào bạn, Hương Chất Kids rất vui được hỗ trợ bạn!',
+      'Bạn cần tư vấn dinh dưỡng cho bé theo độ tuổi, chọn mỹ phẩm cho bạn hay hỗ trợ đơn hàng ạ? Bạn cứ nhắn, gửi ảnh sản phẩm hoặc đơn hàng – chuyên gia của Hương trả lời ngay nhé.'
     ],
     /* [icon (không hiện), chữ trên nút, câu khách gửi, mã câu trả lời tự động – xem traLoiTuDong()] */
     nhanh: [
       ['', 'Tư vấn dinh dưỡng cho bé', 'Hương ơi, tư vấn giúp mình dinh dưỡng cho bé nhà mình với ạ.', 'dinh-duong'],
       ['', 'Bé chậm tăng cân, chiều cao', 'Bé nhà mình chậm tăng cân / chiều cao, Hương tư vấn giúp mình với ạ.', 'tang-can'],
-      ['', 'Mỹ phẩm cho mẹ', 'Hương tư vấn giúp mình mỹ phẩm phù hợp với da mình với ạ.', 'my-pham'],
+      ['', 'Mỹ phẩm cho bạn', 'Hương tư vấn giúp mình mỹ phẩm phù hợp với da mình với ạ.', 'my-pham'],
       ['', 'Hỗ trợ đơn hàng', '#don'],
       ['', 'Ưu đãi hôm nay', 'Hôm nay shop đang có ưu đãi gì vậy Hương?', 'uu-dai']
     ]
@@ -44,7 +44,7 @@
     const box = document.getElementById('chatBox'), f = document.getElementById('chatKh'); if (!box || !f) return;
     const du = duKh(); box.classList.toggle('chat-box--kh', !du); f.hidden = du; if (du) return;
     const k = khach(), c = (MC.Customer && MC.Customer.get()) || {};
-    f.innerHTML = `<b>Chào mẹ 👋</b><p>${k.dn ? 'Mẹ cho Hương xin họ tên để tiện xưng hô nhé.' : 'Mẹ nhập họ tên và số điện thoại để bắt đầu chat với Hương nhé. Hương dùng số này để gọi lại tư vấn khi cần.'}</p>
+    f.innerHTML = `<b>Chào bạn 👋</b><p>${k.dn ? 'Bạn cho Hương xin họ tên để tiện xưng hô nhé.' : 'Bạn nhập họ tên và số điện thoại để bắt đầu chat với Hương nhé. Hương dùng số này để gọi lại tư vấn khi cần.'}</p>
       <label>Họ tên<input name="ten" maxlength="60" autocomplete="name" required value="${esc(k.ten || c.name || '')}"></label>
       <label>Số điện thoại<input name="sdt" type="tel" inputmode="tel" maxlength="13" autocomplete="tel" required ${k.dn ? 'readonly' : ''} value="${esc(k.sdt || c.phone || '')}"></label>
       <small class="chat-kh__loi" aria-live="polite"></small><button type="submit">Bắt đầu chat</button>`;
@@ -88,7 +88,7 @@
       const gop = []; const co = new Set(); tuTk.concat(tuMay).forEach((d) => { if (d.ma && !co.has(d.ma)) { co.add(d.ma); gop.push(d); } });
       b.innerHTML = `<div class="chat-bang__dau"><b>Chọn đơn hàng cần hỗ trợ</b><button type="button" data-chat-bang="">×</button></div>
         <div class="chat-bang__ds">${gop.slice(0, 20).map((d, i) => `<div class="chat-bang__dong"><div><b>${esc(d.ma)}</b><small>${esc(d.ngay)}${d.tt ? ' · ' + esc(d.tt) : ''}</small><small class="chat-bang__sp">${esc(d.sp)}</small><span>${d.tong ? fmt(d.tong) : ''}</span></div><button type="button" class="chat-bang__gui" data-gui-don="${i}">Gửi</button></div>`).join('')
-          || `<p class="chat-bang__trong">Chưa thấy đơn hàng trên máy này${s ? '' : ' – mẹ <a href="account.html">đăng nhập</a> để xem đơn đã đặt'}. Mẹ có thể nhắn mã đơn hoặc số điện thoại đặt hàng nhé.</p>`}</div>`;
+          || `<p class="chat-bang__trong">Chưa thấy đơn hàng trên máy này${s ? '' : ' – bạn <a href="account.html">đăng nhập</a> để xem đơn đã đặt'}. Bạn có thể nhắn mã đơn hoặc số điện thoại đặt hàng nhé.</p>`}</div>`;
       b._don = gop;
     }
   }
@@ -104,13 +104,13 @@
   const nhanMa = (c) => (c.type === 'ship' ? 'Miễn phí vận chuyển' : c.type === 'percent' ? 'Giảm ' + c.value + '%' + (c.max ? ' (tối đa ' + fmt(c.max) + ')' : '') : 'Giảm ' + fmt(c.value));
   function traLoiTuDong(loai, x) {
     const gioLam = (() => { const h = new Date(Date.now() + 7 * 36e5).getUTCHours(); return h >= 8 && h < 22; })();
-    const cho = gioLam ? 'Chuyên gia của Hương sẽ trả lời mẹ chi tiết trong ít phút ạ.' : 'Hiện ngoài giờ tư vấn (8:00 – 22:00), Hương sẽ trả lời mẹ sớm nhất vào sáng mai ạ.';
-    if (loai === 'dinh-duong') return 'Dạ để tư vấn đúng cho bé, mẹ cho Hương xin vài thông tin nhé:\n1. Bé bao nhiêu tuổi (năm / tháng)?\n2. Cân nặng và chiều cao hiện tại của bé?\n3. Bé có biếng ăn, táo bón, hay ốm vặt hay đang uống sản phẩm gì không?\n\nMẹ cũng có thể dùng "Đo chỉ số con miễn phí" trên trang chủ để xem bé so với chuẩn WHO và nhận gợi ý theo tuổi. ' + cho;
+    const cho = gioLam ? 'Chuyên gia của Hương sẽ trả lời bạn chi tiết trong ít phút ạ.' : 'Hiện ngoài giờ tư vấn (8:00 – 22:00), Hương sẽ trả lời bạn sớm nhất vào sáng mai ạ.';
+    if (loai === 'dinh-duong') return 'Dạ để tư vấn đúng cho bé, bạn cho Hương xin vài thông tin nhé:\n1. Bé bao nhiêu tuổi (năm / tháng)?\n2. Cân nặng và chiều cao hiện tại của bé?\n3. Bé có biếng ăn, táo bón, hay ốm vặt hay đang uống sản phẩm gì không?\n\nMẹ cũng có thể dùng "Đo chỉ số con miễn phí" trên trang chủ để xem bé so với chuẩn WHO và nhận gợi ý theo tuổi. ' + cho;
     if (loai === 'tang-can') {
       const goiY = ['25632276959', '41353214697', '26060839019', '42878618667'].map(tenSP).filter(Boolean);
-      return 'Dạ Hương hiểu mẹ đang lo ạ. Mẹ cho Hương xin tuổi, cân nặng, chiều cao của bé và bé ăn ngủ thế nào để chuyên gia đánh giá bé đang ở mức nào so với chuẩn nhé.' + (goiY.length ? '\n\nCác mẹ có bé chậm tăng cân, chiều cao hay tham khảo: ' + goiY.join(', ') + ' – liều dùng theo tuổi bé, Hương sẽ tư vấn cụ thể ạ.' : '') + '\n\n' + cho;
+      return 'Dạ Hương hiểu bạn đang lo ạ. Bạn cho Hương xin tuổi, cân nặng, chiều cao của bé và bé ăn ngủ thế nào để chuyên gia đánh giá bé đang ở mức nào so với chuẩn nhé.' + (goiY.length ? '\n\nCác mẹ có bé chậm tăng cân, chiều cao hay tham khảo: ' + goiY.join(', ') + ' – liều dùng theo tuổi bé, Hương sẽ tư vấn cụ thể ạ.' : '') + '\n\n' + cho;
     }
-    if (loai === 'my-pham') return 'Dạ để chọn đúng sản phẩm cho da mẹ, mẹ cho Hương biết:\n1. Da mẹ thuộc loại dầu, khô, hỗn hợp hay nhạy cảm?\n2. Mẹ đang gặp vấn đề gì: mụn, thâm nám, lỗ chân lông, xỉn màu, lão hoá…?\n3. Mẹ có đang mang thai hoặc cho con bú không?\n\nMẹ có thể gửi ảnh da (ảnh/video ở nút bên dưới) để chuyên gia xem kỹ hơn nhé. ' + cho;
+    if (loai === 'my-pham') return 'Dạ để chọn đúng sản phẩm cho da bạn, bạn cho Hương biết:\n1. Da bạn thuộc loại dầu, khô, hỗn hợp hay nhạy cảm?\n2. Bạn đang gặp vấn đề gì: mụn, thâm nám, lỗ chân lông, xỉn màu, lão hoá…?\n3. Bạn có đang mang thai hoặc cho con bú không?\n\nMẹ có thể gửi ảnh da (ảnh/video ở nút bên dưới) để chuyên gia xem kỹ hơn nhé. ' + cho;
     if (loai === 'uu-dai') {
       const ds = [];
       try {
@@ -124,18 +124,18 @@
         if (gv.length) { ds.push('Giờ vàng:'); gv.forEach((g) => ds.push('• ' + g.ten + ' ' + g.tu + ' – ' + g.den + ' mỗi ngày: giảm ' + g.giam + '%')); }
       } catch { /* thiếu dữ liệu thì bỏ qua phần đó */ }
       if (SITE.freeshipFrom) ds.push('Freeship cho đơn từ ' + fmt(SITE.freeshipFrom) + '.');
-      return 'Dạ hôm nay Hương Chất Kids đang có các ưu đãi sau ạ:\n' + ds.join('\n') + '\n\nWeb tự áp ưu đãi có lợi nhất khi mẹ thanh toán. Mẹ cần tư vấn chọn sản phẩm cứ nhắn Hương nhé.';
+      return 'Dạ hôm nay Hương Chất Kids đang có các ưu đãi sau ạ:\n' + ds.join('\n') + '\n\nWeb tự áp ưu đãi có lợi nhất khi bạn thanh toán. Bạn cần tư vấn chọn sản phẩm cứ nhắn Hương nhé.';
     }
-    if (loai === 'anh' || loai === 'video') return 'Dạ Hương đã nhận ' + (loai === 'anh' ? 'ảnh' : 'video') + ' của mẹ. Mẹ mô tả thêm giúp Hương mẹ cần hỗ trợ gì (sản phẩm, tình trạng của bé / da, hay vấn đề đơn hàng) nhé. ' + cho;
+    if (loai === 'anh' || loai === 'video') return 'Dạ Hương đã nhận ' + (loai === 'anh' ? 'ảnh' : 'video') + ' của bạn. Bạn mô tả thêm giúp Hương bạn cần hỗ trợ gì (sản phẩm, tình trạng của bé / da, hay vấn đề đơn hàng) nhé. ' + cho;
     if (loai === 'sp') {
-      const p = MC.byId(x && x.id); if (!p) return 'Dạ Hương đã nhận sản phẩm mẹ gửi. ' + cho;
+      const p = MC.byId(x && x.id); if (!p) return 'Dạ Hương đã nhận sản phẩm bạn gửi. ' + cho;
       const v = (p.variants || []).filter((y) => !y.oos).map((y) => y.label + ': ' + fmt(y.price)).slice(0, 4);
       return 'Dạ đây là ' + MC.shortName(p) + (p.origin ? ' (' + p.origin + ')' : '') + ' ạ.\n'
         + 'Giá: ' + (v.length ? v.join(' · ') : fmt(p.price)) + (Number(p.stock) > 0 ? ' – còn hàng.' : ' – tạm hết hàng.') + '\n'
         + ((p.highlights || []).length ? 'Điểm nổi bật: ' + p.highlights.slice(0, 3).join('; ') + '.\n' : '')
-        + 'Mẹ cần tư vấn liều dùng, cách dùng theo tuổi bé hay muốn đặt luôn thì nhắn Hương nhé. Mẹ cũng có thể bấm "Mua ngay" trên thẻ sản phẩm để đặt nhanh. ' + cho;
+        + 'Bạn cần tư vấn liều dùng, cách dùng theo tuổi bé hay muốn đặt luôn thì nhắn Hương nhé. Bạn cũng có thể bấm "Mua ngay" trên thẻ sản phẩm để đặt nhanh. ' + cho;
     }
-    if (loai === 'don') return 'Dạ Hương đã nhận thông tin đơn ' + ((x && x.ma) || '') + '. Mẹ cần hỗ trợ gì cho đơn này ạ: kiểm tra tình trạng giao hàng, đổi địa chỉ, thêm / bớt sản phẩm hay đổi trả? ' + cho;
+    if (loai === 'don') return 'Dạ Hương đã nhận thông tin đơn ' + ((x && x.ma) || '') + '. Bạn cần hỗ trợ gì cho đơn này ạ: kiểm tra tình trạng giao hàng, đổi địa chỉ, thêm / bớt sản phẩm hay đổi trả? ' + cho;
     return '';
   }
 
@@ -166,17 +166,17 @@
       if (dk && dk.file) {   // tải tệp lên trước
         const r0 = await fetch(API() + '/chat-tep?phien=' + encodeURIComponent(phien), { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: dk.file });
         const j = await r0.json().catch(() => ({}));
-        if (!r0.ok || !j.ok) throw new Error(j.msg || 'Chưa gửi được tệp, mẹ thử lại nhé');
+        if (!r0.ok || !j.ok) throw new Error(j.msg || 'Chưa gửi được tệp, bạn thử lại nhé');
         dk = { loai: j.loai, url: j.url };
       }
       if (dk && dk.loai === 'sp') { const p = (window.PRODUCTS || []).find((x) => x.id === dk.id); if (p) dk = Object.assign({ ten: p.name, gia: p.price, anh: p.thumb || p.image || '' }, dk); }   // kèm tên cho nhân viên / CRM
       const td = tuDong || (dk ? traLoiTuDong(dk.loai, dk) : '');
       const r = await loyaltyApi('chatGui', { phien, noiDung: nd, dinhKem: dk ? JSON.stringify(dk) : '', tuDong: String(td || '').slice(0, 1800), ten: k.ten, sdt: k.sdt, token: tk(), trang: location.pathname.split('/').pop() + location.search }, 20000);
       tin = tin.filter((x) => x !== tam);
-      if (r && r.ok) (r.tin || []).forEach((x) => { x.daXem = true; tin.push(x); }); else if (r && r.code === 'CAN_THONG_TIN') { store.set(KK, {}); veKh(); } else baoLoi((r && r.msg) || 'Chưa gửi được, mẹ thử lại nhé');
+      if (r && r.ok) (r.tin || []).forEach((x) => { x.daXem = true; tin.push(x); }); else if (r && r.code === 'CAN_THONG_TIN') { store.set(KK, {}); veKh(); } else baoLoi((r && r.msg) || 'Chưa gửi được, bạn thử lại nhé');
     } catch (e) {
       tin = tin.filter((x) => x !== tam);
-      baoLoi(/Failed to fetch|NetworkError|không phản hồi|kết nối/i.test(e.message) ? 'Mạng đang chập chờn, tin chưa gửi được. Mẹ thử lại hoặc nhắn Zalo cho Hương nhé.' : e.message);
+      baoLoi(/Failed to fetch|NetworkError|không phản hồi|kết nối/i.test(e.message) ? 'Mạng đang chập chờn, tin chưa gửi được. Bạn thử lại hoặc nhắn Zalo cho Hương nhé.' : e.message);
     }
     if (tamDK && tamDK.tam) setTimeout(() => URL.revokeObjectURL(tamDK.tam), 60000);
     dangGui = false; luu(); veTin(); lap();
@@ -185,10 +185,10 @@
   async function chonTep(f) {
     if (!f) return;
     if (/^video\//.test(f.type)) {
-      if (f.size > 25 * 1048576) { baoLoi('Video quá dài (tối đa 25MB). Mẹ quay ngắn hơn hoặc gửi qua Zalo nhé.'); veTin(); return; }
+      if (f.size > 25 * 1048576) { baoLoi('Video quá dài (tối đa 25MB). Bạn quay ngắn hơn hoặc gửi qua Zalo nhé.'); veTin(); return; }
       return gui('', { loai: 'video', file: f }, { loai: 'video', tam: URL.createObjectURL(f) });
     }
-    if (!/^image\//.test(f.type)) { baoLoi('Mẹ chỉ gửi được ảnh hoặc video nhé.'); veTin(); return; }
+    if (!/^image\//.test(f.type)) { baoLoi('Bạn chỉ gửi được ảnh hoặc video nhé.'); veTin(); return; }
     let blob = f;
     try {
       const anh = await createImageBitmap(f); const tl = Math.min(1, 1600 / Math.max(anh.width, anh.height));
@@ -198,7 +198,7 @@
         blob = await new Promise((ok) => c.toBlob(ok, 'image/jpeg', 0.85));
       }
     } catch { /* trình duyệt không thu nhỏ được (vd ảnh HEIC) → gửi nguyên */ }
-    if (blob.size > 25 * 1048576) { baoLoi('Ảnh quá lớn, mẹ chụp lại hoặc gửi qua Zalo nhé.'); veTin(); return; }
+    if (blob.size > 25 * 1048576) { baoLoi('Ảnh quá lớn, bạn chụp lại hoặc gửi qua Zalo nhé.'); veTin(); return; }
     gui('', { loai: 'anh', file: blob }, { loai: 'anh', tam: URL.createObjectURL(blob) });
   }
   function moKhung(bat) {
@@ -244,7 +244,7 @@
     w.addEventListener('input', (e) => { if (e.target.id === 'chatTimSP') veDsSP(e.target.value); });
     document.getElementById('chatKh').addEventListener('submit', (e) => {
       e.preventDefault(); const f = e.target, ten = f.ten.value.trim().replace(/\s+/g, ' '), sdt = f.sdt.value.replace(/[\s.-]/g, '');
-      const loi = ten.length < 2 ? 'Mẹ nhập họ tên giúp Hương nhé' : !MC.phoneOk(sdt) ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : '';
+      const loi = ten.length < 2 ? 'Bạn nhập họ tên giúp Hương nhé' : !MC.phoneOk(sdt) ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : '';
       if (loi) { f.querySelector('.chat-kh__loi').textContent = loi; return; }
       store.set(KK, { ten, sdt }); veKh(); const i = document.getElementById('chatO'); if (i) i.focus();
     });

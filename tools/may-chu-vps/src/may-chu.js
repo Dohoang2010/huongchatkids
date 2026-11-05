@@ -155,8 +155,8 @@ async function nhanTepChat(req, res, url, cors) {
   const phien = String(url.searchParams.get('phien') || '');
   if (!/^c[a-z0-9]{12,40}$/.test(phien)) return traJson(res, 400, { ok: false, msg: 'Phiên chat không hợp lệ' }, cors);
   const ip = String(req.headers['x-real-ip'] || req.socket.remoteAddress || '');
-  if (!choPhepTep('p' + phien, 15) || !choPhepTep('i' + ip, 40)) return traJson(res, 429, { ok: false, msg: 'Mẹ gửi nhiều tệp quá, chờ ít phút rồi gửi tiếp nhé' }, cors);
-  let b; try { b = await docTep(req); } catch (e) { return traJson(res, 413, { ok: false, msg: 'Tệp quá lớn (tối đa 25MB) – mẹ quay video ngắn hơn hoặc gửi qua Zalo nhé' }, cors); }
+  if (!choPhepTep('p' + phien, 15) || !choPhepTep('i' + ip, 40)) return traJson(res, 429, { ok: false, msg: 'Bạn gửi nhiều tệp quá, chờ ít phút rồi gửi tiếp nhé' }, cors);
+  let b; try { b = await docTep(req); } catch (e) { return traJson(res, 413, { ok: false, msg: 'Tệp quá lớn (tối đa 25MB) – bạn quay video ngắn hơn hoặc gửi qua Zalo nhé' }, cors); }
   const lt = loaiTep(b); if (!lt) return traJson(res, 415, { ok: false, msg: 'Chỉ gửi được ảnh (JPG, PNG, WEBP) hoặc video (MP4, MOV, WEBM)' }, cors);
   const thang = new Date().toISOString().slice(0, 7).replace('-', '');
   const ten = phien.slice(-6) + '-' + Date.now().toString(36) + require('node:crypto').randomBytes(5).toString('hex') + '.' + lt[1];
@@ -284,7 +284,7 @@ const mayChu = http.createServer(async (req, res) => {
   } catch (e) {
     ghi('LỖI yêu cầu ' + req.method + ' ' + duongDan + ': ' + (e && e.message));
     const cb = url.searchParams.get('callback') || '';
-    const loi = { ok: false, msg: 'Máy chủ đang bận, mẹ thử lại sau ít phút nhé' };
+    const loi = { ok: false, msg: 'Máy chủ đang bận, bạn thử lại sau ít phút nhé' };
     if (!res.headersSent) {
       if (/^[A-Za-z_$][\w$]*$/.test(cb)) tra(res, 200, 'application/javascript', cb + '(' + JSON.stringify(loi) + ');', cors);
       else traJson(res, 500, loi, cors);

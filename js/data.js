@@ -4949,7 +4949,7 @@ window.BANNERS = [
   },
   {
     "title": "Khách mới\ngiảm ngay 5%",
-    "sub": "Nhập mã <b>HCK5</b> khi thanh toán – giảm 5% cho đơn hàng đầu tiên, áp dụng mọi sản phẩm. Bấm <b>Lưu mã</b>, web tự áp khi bạn đặt hàng.",
+    "sub": "Nhập mã <b>HCK5</b> khi thanh toán – giảm 5% cho đơn hàng đầu tiên, áp dụng mọi sản phẩm. Bấm <b>Lưu mã</b>, web tự áp khi mẹ đặt hàng.",
     "cta": "Lưu mã HCK5",
     "luuMa": "HCK5",
     "link": "collections.html",

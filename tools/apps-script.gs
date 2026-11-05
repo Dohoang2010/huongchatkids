@@ -238,7 +238,7 @@ function guiEmailXacNhan(order, c, items, thanhToan, quaText) {
     + '<div style="font-size:20px;font-weight:700">' + TEN_SHOP + '</div>'
     + '<div style="font-size:14px;opacity:.92">Mẹ nào cũng là siêu nhân</div></div>'
     + '<div style="border:1px solid #ECEFF3;border-top:0;border-radius:0 0 14px 14px;padding:24px">'
-    + '<h2 style="margin:0 0 6px;font-size:19px">Cảm ơn ' + (c.name || 'mẹ') + ' đã đặt hàng! 💗</h2>'
+    + '<h2 style="margin:0 0 6px;font-size:19px">Cảm ơn ' + (c.name || 'bạn') + ' đã đặt hàng! 💗</h2>'
     + '<p style="margin:0 0 16px;font-size:14px;color:#6B7280">Đơn hàng <b style="color:#1F2937">' + (order.code || '') + '</b> đã được tiếp nhận. '
     + 'Chuyên gia dinh dưỡng sẽ gọi số <b style="color:#1F2937">' + (c.phone || '') + '</b> để xác nhận trong giờ làm việc.</p>'
     + '<b style="font-size:15px">Sản phẩm</b><ul style="font-size:14px;padding-left:20px;margin:8px 0 16px">' + sp + '</ul>'
@@ -254,9 +254,9 @@ function guiEmailXacNhan(order, c, items, thanhToan, quaText) {
     + '<b>Thanh toán:</b> ' + (thanhToan === 'Chuyển khoản' ? 'Chuyển khoản ngân hàng' : 'Thanh toán khi nhận hàng (COD)') + '</div>'
     + ck
     + '<div style="margin-top:20px;padding-top:16px;border-top:1px solid #ECEFF3;font-size:13px;color:#6B7280;line-height:1.8">'
-    + 'Cần hỗ trợ, mẹ gọi <b style="color:#1F2937">' + HOTLINE + '</b> hoặc nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a>.<br>'
+    + 'Cần hỗ trợ, bạn gọi <b style="color:#1F2937">' + HOTLINE + '</b> hoặc nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a>.<br>'
     + 'Xem lại đơn, hạng và ưu đãi tại <a href="' + WEB + '/account.html" style="color:#F0537A">' + WEB + '/account.html</a><br>'
-    + 'Email này được gửi tự động, mẹ không cần trả lời.</div></div></div>';
+    + 'Email này được gửi tự động, bạn không cần trả lời.</div></div></div>';
 
   MailApp.sendEmail({ to: String(c.email).trim(), subject: 'Xác nhận đơn hàng ' + (order.code || '') + ' – ' + TEN_SHOP,
     htmlBody: html, name: TEN_SHOP, replyTo: EMAIL });
@@ -955,7 +955,7 @@ function guiMailSinhNhat_(epBuoc) {
   return kq;
 }
 function guiMotMailSinhNhat_(email, ten, be) {
-  var goi = be ? 'bé' + (be.ten ? ' ' + be.ten : '') : (ten ? ten.split(' ').slice(-1)[0] : 'mẹ');
+  var goi = be ? 'bé' + (be.ten ? ' ' + be.ten : '') : (ten ? ten.split(' ').slice(-1)[0] : 'bạn');
   var html = '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1F2937">'
     + '<div style="background:linear-gradient(135deg,#F0537A,#FF8FA8);color:#fff;border-radius:16px 16px 0 0;padding:28px 24px;text-align:center">'
     + '<div style="font-size:46px;line-height:1">🎂</div>'
@@ -963,17 +963,17 @@ function guiMotMailSinhNhat_(email, ten, be) {
     + '<div style="font-size:14px;opacity:.95;margin-top:6px">' + TEN_SHOP + ' – Mẹ nào cũng là siêu nhân</div></div>'
     + '<div style="border:1px solid #F3D5DE;border-top:0;border-radius:0 0 16px 16px;padding:24px;background:#fff">'
     + (be ? '<p style="margin:0 0 14px;font-size:15px;line-height:1.7">Hôm nay là sinh nhật của ' + goi + '. Cả nhà ' + TEN_SHOP + ' chúc ' + goi + ' luôn khoẻ mạnh, ăn ngon, ngủ ngoan, mau lớn và có thật nhiều niềm vui bên bố mẹ 💗</p>'
-      : '<p style="margin:0 0 14px;font-size:15px;line-height:1.7">Hôm nay là ngày đặc biệt của ' + (ten || 'mẹ') + '. Cả nhà ' + TEN_SHOP + ' chúc mẹ thật nhiều sức khoẻ, luôn xinh đẹp, rạng rỡ và có những phút giây hạnh phúc bên gia đình nhỏ 💗</p>')
+      : '<p style="margin:0 0 14px;font-size:15px;line-height:1.7">Hôm nay là ngày đặc biệt của ' + (ten || 'bạn') + '. Cả nhà ' + TEN_SHOP + ' chúc bạn thật nhiều sức khoẻ, luôn xinh đẹp, rạng rỡ và có những phút giây hạnh phúc bên gia đình nhỏ 💗</p>')
     + '<div style="margin:18px 0;padding:18px;border:2px dashed #F0537A;border-radius:14px;background:#FFF4F7;text-align:center">'
-    + '<div style="font-size:14px;color:#6B7280">Quà sinh nhật dành riêng cho ' + (be ? goi : 'mẹ') + '</div>'
+    + '<div style="font-size:14px;color:#6B7280">Quà sinh nhật dành riêng cho ' + (be ? goi : 'bạn') + '</div>'
     + '<div style="font-size:34px;font-weight:800;color:#F0537A;margin:6px 0">Giảm ' + SN_GIAM + '% mọi đơn</div>'
-    + '<div style="font-size:14px;line-height:1.6">Áp dụng cả tháng sinh nhật' + (be ? ' của bé' : '') + ' – web tự trừ khi mẹ thanh toán<br>(đăng nhập đúng số điện thoại đã lưu ngày sinh)</div>'
+    + '<div style="font-size:14px;line-height:1.6">Áp dụng cả tháng sinh nhật' + (be ? ' của bé' : '') + ' – web tự trừ khi bạn thanh toán<br>(đăng nhập đúng số điện thoại đã lưu ngày sinh)</div>'
     + '<a href="' + WEB + '" style="display:inline-block;margin-top:14px;background:#F0537A;color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:999px">Mua sắm ngay</a></div>'
     + '<div style="font-size:13px;color:#6B7280;line-height:1.7"><b style="color:#1F2937">Lưu ý:</b> ưu đãi sinh nhật áp dụng <b>1 lần mỗi năm</b> trong tháng sinh nhật; không dùng kèm voucher, mã giảm giá và quà tặng, điểm thưởng vẫn dùng được.</div>'
     + '<div style="margin-top:18px;padding-top:14px;border-top:1px solid #ECEFF3;font-size:13px;color:#6B7280;line-height:1.8">'
-    + 'Cần hỗ trợ, mẹ gọi <b style="color:#1F2937">' + HOTLINE + '</b> hoặc nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a>.<br>'
-    + 'Email này được gửi tự động, mẹ không cần trả lời.</div></div></div>';
-  MailApp.sendEmail({ to: email, subject: '🎂 ' + TEN_SHOP + ' chúc mừng sinh nhật ' + (be ? goi : (ten || 'mẹ')) + ' – quà giảm ' + SN_GIAM + '% cả tháng', htmlBody: html, name: TEN_SHOP, replyTo: EMAIL });
+    + 'Cần hỗ trợ, bạn gọi <b style="color:#1F2937">' + HOTLINE + '</b> hoặc nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a>.<br>'
+    + 'Email này được gửi tự động, bạn không cần trả lời.</div></div></div>';
+  MailApp.sendEmail({ to: email, subject: '🎂 ' + TEN_SHOP + ' chúc mừng sinh nhật ' + (be ? goi : (ten || 'bạn')) + ' – quà giảm ' + SN_GIAM + '% cả tháng', htmlBody: html, name: TEN_SHOP, replyTo: EMAIL });
 }
 /* CHẠY TAY khi cần thử: gửi ngay lượt hôm nay (bỏ qua giới hạn 1 lượt / ngày) */
 function thuGuiMailSinhNhat() { Logger.log(JSON.stringify(guiMailSinhNhat_(true))); }
@@ -1218,11 +1218,11 @@ function nhapBuDuLieu_(d) {
 var NGAY_LE = [
   { id: '2010', ngay: '2026-10-20', ten: '20/10', thuongDangNhap: 20100, dangKyTu: '2026-10-16',   // tạo tài khoản mới từ dangKyTu đến hết ngày lễ cũng nhận quà
     diemDanh: 50000,
-    mail: { gio: 8, tieuDe: '🌷 Hương Chất Kids chúc mừng ngày Phụ nữ Việt Nam 20/10 – quà 20.100 điểm đang chờ mẹ',
+    mail: { gio: 8, tieuDe: '🌷 Hương Chất Kids chúc mừng ngày Phụ nữ Việt Nam 20/10 – quà 20.100 điểm đang chờ bạn',
       loiChuc: [
-        'Nhân ngày Phụ nữ Việt Nam 20/10, cả nhà Hương Chất Kids xin gửi tới {ten} lời chúc chân thành nhất: chúc mẹ luôn khoẻ mạnh, xinh đẹp, rạng rỡ và thật nhiều bình yên.',
+        'Nhân ngày Phụ nữ Việt Nam 20/10, cả nhà Hương Chất Kids xin gửi tới {ten} lời chúc chân thành nhất: chúc bạn luôn khoẻ mạnh, xinh đẹp, rạng rỡ và thật nhiều bình yên.',
         'Cảm ơn bạn đã luôn là người chăm chút từng bữa ăn, giấc ngủ cho cả nhà. Hôm nay, bạn hãy dành một chút thời gian cho riêng mình – vì bạn xứng đáng được yêu thương và chiều chuộng nhất 💗',
-        'Hương cũng cảm ơn mẹ đã tin tưởng chọn sản phẩm tại shop. Nhân ngày đặc biệt này, Hương gửi mẹ vài món quà nhỏ dưới đây.'
+        'Hương cũng cảm ơn bạn đã tin tưởng chọn sản phẩm tại shop. Nhân ngày đặc biệt này, Hương gửi bạn vài món quà nhỏ dưới đây.'
       ],
       khuyenMai: [
         { icon: '🎁', tieu: 'Tặng 20.100 điểm thưởng', mo: 'Đăng nhập trên web trong ngày 20/10 (tài khoản tạo mới từ 16/10 đến hết 20/10 cũng được tặng) – điểm tự cộng vào ví, 1 điểm = 1đ, mỗi đơn dùng điểm giảm tối đa 10% tiền hàng.' },
@@ -1273,7 +1273,7 @@ function emailKhachDaMua_() {
   return Object.keys(ds).map(function (k) { return ds[k]; });
 }
 function htmlMailLe_(le, ten) {
-  var m = le.mail, goi = ten ? 'chị ' + ten.split(' ').slice(-1)[0] : 'mẹ';
+  var m = le.mail, goi = ten ? 'chị ' + ten.split(' ').slice(-1)[0] : 'bạn';
   return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:580px;margin:0 auto;color:#1F2937">'
     + '<div style="background:linear-gradient(135deg,#E8436E,#FF8FA8 60%,#FFC0D0);color:#fff;border-radius:18px 18px 0 0;padding:30px 24px;text-align:center">'
     + '<div style="font-size:44px;line-height:1">🌷💐🌸</div>'
@@ -1291,8 +1291,8 @@ function htmlMailLe_(le, ten) {
     + '<div style="font-size:13px;color:#6B7280;margin-top:8px"><a href="' + m.link + '" style="color:#E8436E">huongchatkids.vn</a> · quà điểm chỉ có trong ngày ' + le.ten + '</div></div>'
     + '<p style="margin:18px 0 0;font-size:15px;line-height:1.7">Chúc ' + goi + ' một ngày 20/10 thật trọn vẹn!<br><b>Hương và cả nhà ' + TEN_SHOP + '</b> 💗</p>'
     + '<div style="margin-top:18px;padding-top:14px;border-top:1px solid #ECEFF3;font-size:13px;color:#6B7280;line-height:1.8">'
-    + 'Cần hỗ trợ, mẹ nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a> hoặc gọi hotline trên web.<br>'
-    + 'Mẹ nhận email này vì đã mua hàng tại ' + TEN_SHOP + '. Email gửi tự động, mẹ không cần trả lời.</div></div></div>';
+    + 'Cần hỗ trợ, bạn nhắn <a href="' + ZALO_LINK + '" style="color:#0068FF">Zalo</a> hoặc gọi hotline trên web.<br>'
+    + 'Bạn nhận email này vì đã mua hàng tại ' + TEN_SHOP + '. Email gửi tự động, bạn không cần trả lời.</div></div></div>';
 }
 /* Chạy theo lịch (VPS: đúng 08:00 + lịch 30 phút dự phòng): tới giờ của ngày lễ thì gửi 1 lượt duy nhất */
 function guiMailLe_() {
@@ -3905,8 +3905,8 @@ function apiChatGui(p) {
     if (td) them.push(chatThem_(phien, 'tu-dong', td, {}, 'Trả lời tự động'));
     if (!ds.length || Date.now() - cuoi > 30 * 60000) {
       if (!td && (!coNv || Date.now() - cuoi > 30 * 60000)) them.push(chatThem_(phien, 'he-thong', chatGio_()
-        ? 'Hương đã nhận được tin nhắn của mẹ. Chuyên gia tư vấn sẽ trả lời mẹ trong ít phút. Mẹ để lại số điện thoại để Hương gọi lại khi cần nhé.'
-        : 'Hương đã nhận được tin nhắn của mẹ. Hiện ngoài giờ tư vấn (8:00 – 22:00), Hương sẽ trả lời mẹ sớm nhất vào sáng mai. Mẹ để lại số điện thoại để Hương gọi lại nhé.', {}));
+        ? 'Hương đã nhận được tin nhắn của bạn. Chuyên gia tư vấn sẽ trả lời bạn trong ít phút. Bạn để lại số điện thoại để Hương gọi lại khi cần nhé.'
+        : 'Hương đã nhận được tin nhắn của bạn. Hiện ngoài giờ tư vấn (8:00 – 22:00), Hương sẽ trả lời bạn sớm nhất vào sáng mai. Bạn để lại số điện thoại để Hương gọi lại nhé.', {}));
       try { zaloBotGuiTin('💬 Khách chat trên web' + (kh.ten ? ' – ' + kh.ten : '') + (kh.sdt ? ' (' + kh.sdt + ')' : '') + ':\n' + ((nd ? nd + ' ' : '') + chatMoTaDK_(dk)).slice(0, 300) + '\nTrả lời: Quản trị › Chat với khách'); } catch (z) { Logger.log(z); }
     }
     /* Khách gõ số điện thoại trong tin → ghi nhớ cho nhân viên gọi lại */
@@ -4084,7 +4084,7 @@ function zbsGuiThu_(sdt, loai) {
 }
 function zbsDuLieuDon_(o) {
   var cat = function (x, n) { x = String(x == null ? '' : x).replace(/\s+/g, ' ').trim(); return x.length > n ? x.slice(0, n - 1) + '…' : x; };
-  return { customer_name: cat(o.ten || 'mẹ', 30), order_code: cat(o.ma, 30), product: cat(o.sp, 200), total: cat(tien(o.tong), 20),
+  return { customer_name: cat(o.ten || 'bạn', 30), order_code: cat(o.ma, 30), product: cat(o.sp, 200), total: cat(tien(o.tong), 20),
     payment: o.tt === 'bank' ? 'Chuyển khoản' : 'Thanh toán khi nhận hàng', order_date: Utilities.formatDate(new Date(Number(o.luc) || Date.now()), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm') };
 }
 /* Web gọi sau khi đặt đơn xong: gửi tin xác nhận đơn vào Zalo khách. Chống lạm dụng: mỗi mã đơn 1 lần, mỗi số 3 tin / giờ, cả shop 300 tin / ngày */
