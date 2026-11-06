@@ -540,3 +540,13 @@ test('dấu tích chat: 1 tích là đã gửi; 2 tích khi bên kia đã đọc
   assert.strictEqual(await tichNv(), true, 'khách mở khung chat: 2 tích');
   assert.ok(!(await m.get('action=chatDoc&phien=' + P)).tin.some((t) => t.tu === 'nv' && 'nv' in t && t.nv), 'không lộ tên nhân viên');
 });
+
+test('mail + Zalo báo đơn: dòng Tổng ghi freeship hoặc số tiền ship đã gồm', async () => {
+  const m = taoMay(); const dongTong = () => JSON.stringify(m.daGui).match(/Tổng: [^\\"]*/g).pop();
+  await datDon(m, SDT, { ship: 0, total: 4960000 });
+  assert.match(dongTong(), /Tổng: 4\.960\.000đ \(freeship\)/);
+  await datDon(m, SDT, { ship: 30000, total: 478000 });
+  assert.match(dongTong(), /Tổng: 478\.000đ \(đã gồm 30\.000đ ship\)/);
+  await datDon(m, SDT, { ship: 130000, total: 1447000 });
+  assert.match(dongTong(), /đã gồm 130\.000đ ship/);
+});

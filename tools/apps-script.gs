@@ -177,7 +177,7 @@ function doPost(e) {
       + (items ? items + '\n' : '')
       + (quaText ? '🎁 Quà tặng: ' + quaText + '\n' : '')
       + (order.hangLabel ? 'Hạng ' + order.hangLabel + ' – đã giảm ' + tien(order.giamHang) + '\n' : '')
-      + 'Tổng: ' + tien(order.total) + (thanhToan ? ' (' + thanhToan + ')' : '')
+      + 'Tổng: ' + tien(order.total) + (order.type === 'callback' ? '' : Number(order.ship) > 0 ? ' (đã gồm ' + tien(order.ship) + ' ship)' : ' (freeship)') + (thanhToan ? ' (' + thanhToan + ')' : '')
       + (order.note ? '\nGhi chú: ' + order.note : '');
 
     if (EMAIL) MailApp.sendEmail(EMAIL, '🛒 ' + loai + ' ' + (order.code || '') + ' – ' + tien(order.total), text);
