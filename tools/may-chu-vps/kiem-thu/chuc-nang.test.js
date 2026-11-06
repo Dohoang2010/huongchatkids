@@ -509,3 +509,15 @@ test('gửi đơn trong chat: CRM có khách nhưng chưa có đơn vẫn thấy
   m.kho.thuocTinh.set('CRM_THU', JSON.stringify([{ ma: '875000001', ngay: homNay, tien: 2480000, trangThai: 'Đang giao' }, { ma: '875000002', ngay: '2026-01-02T03:00:00.000Z', tien: 225000, trangThai: 'Đã giao' }]));
   assert.deepStrictEqual(await dsMa(), ['HCKDONCHAT02', '875000002'], 'bỏ đơn CRM trùng, giữ đơn CRM cũ');
 });
+
+test('chat: cuộc chat cũ lúc chưa đăng nhập – shop nhắn thì chủ SĐT đăng nhập máy khác nhận được, không đọc tin khách gõ; người lạ không đọc được', async () => {
+  const m = taoMay(); const CU = 'cphiencuchuadn0001';
+  await m.get('action=chatGui&phien=' + CU + '&noiDung=' + encodeURIComponent('tin khach go') + '&ten=' + encodeURIComponent('Mẹ Thử') + '&sdt=' + SDT);
+  assert.strictEqual((await m.qt('action=qtChatTraLoi&phien=' + CU + '&noiDung=' + encodeURIComponent('alo day la test'))).ok, true);
+  const dn = await dangNhapOtp(m, SDT);
+  const doc = await m.get('action=chatDoc&phien=cmaykhachdn000001&token=' + dn.token);
+  assert.ok(doc.tin.some((t) => t.tu === 'nv' && t.noiDung === 'alo day la test'), 'đăng nhập máy khác nhận được tin shop');
+  assert.ok(!doc.tin.some((t) => t.noiDung === 'tin khach go'), 'không đọc tin gõ khi chưa xác minh');
+  assert.strictEqual((await m.get('action=chatDoc&phien=cmaychuadangnhap1')).tin.length, 0, 'người lạ không đọc được');
+  assert.ok((await m.get('action=chatDoc&phien=' + CU)).tin.some((t) => t.noiDung === 'alo day la test'), 'máy cũ vẫn thấy');
+});

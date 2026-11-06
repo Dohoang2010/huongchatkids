@@ -3932,7 +3932,9 @@ function apiChatDoc(p) {
   var sau = Number(p.sau) || 0, v = chatDocHet_(), ph = p.token ? phienKhach(p.token) : null;
   /* Khách đã đăng nhập: đọc mọi phiên chat của SĐT mình (đổi máy / trình duyệt vẫn thấy đủ). Chưa đăng nhập: chỉ phiên của trình duyệt này */
   var bo = ph && ph.sdt ? chatBoPhienSdt_(v, ph.sdt) : {}; bo[phien] = 1;
-  var tin = v.filter(function (r) { return bo[String(r[1])] && new Date(r[0]).getTime() > sau; }).map(function (r) { return chatTinKhach_(chatTin_(r)); });
+  /* Tin NHÂN VIÊN gửi cho SĐT này (cuộc chat cũ lúc chưa đăng nhập, ở máy khác): chủ SĐT đăng nhập vẫn nhận được; tin khách gõ ở đó thì không */
+  var boNv = {}; if (ph && ph.sdt) v.forEach(function (r) { if (r[6] && chuanSdt(r[6]) === ph.sdt) boNv[String(r[1])] = 1; });
+  var tin = v.filter(function (r) { var id = String(r[1]); return (bo[id] || (boNv[id] && String(r[3]) === 'nv')) && new Date(r[0]).getTime() > sau; }).map(function (r) { return chatTinKhach_(chatTin_(r)); });
   return { ok: true, tin: tin, gio: chatGio_() };
 }
 /* Gom chat theo SĐT ĐÃ XÁC MINH: cùng 1 khách đăng nhập dù chat từ nhiều máy / trình duyệt → 1 cuộc chat.

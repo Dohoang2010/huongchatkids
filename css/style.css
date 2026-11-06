@@ -2998,3 +2998,6 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 .slide--sang .fx-s { color: #E7C985; }
 .slide--sang .fx-bb { background: radial-gradient(circle at 30% 30%, rgba(242, 221, 168, .75) 0 25%, rgba(231, 201, 133, .25) 50%, transparent 72%); border-color: rgba(231, 201, 133, .35); }
 @media (max-width: 767px) { .slide--sang { padding: 18px 16px 30px; } .slide--sang .slide__badge { font-size: 10.5px; padding: 4px 10px; margin-bottom: 6px; } .slide--sang h2 { font-size: 20px; max-width: 100%; } .slide--sang p { font-size: 12px; line-height: 1.55; margin-top: 6px; max-width: 100%; } .slide--sang p b { padding: 0 5px; } .slide--sang .btn { margin-top: 8px; min-height: 36px; font-size: 13px; padding: 0 16px; flex: none; } .slide--sang .slide__stack { width: 92px; height: 78px; right: 2px; bottom: 12px; } .slide--sang .slide__sticker { width: 50px; height: 50px; font-size: 9.5px; } }
+/* Số tin shop nhắn trên nút Chat với Hương (giống số ở hộp quà) */
+.chat-nut b { background: #F0243F; color: #fff; }
+.chat-nut b[hidden] { display: none; }

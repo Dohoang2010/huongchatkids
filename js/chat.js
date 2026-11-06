@@ -72,7 +72,7 @@
     b.scrollTop = b.scrollHeight;
     b.querySelectorAll('img,video').forEach((m) => m.addEventListener(m.tagName === 'IMG' ? 'load' : 'loadedmetadata', () => { b.scrollTop = b.scrollHeight; }, { once: true }));
   }
-  function chamDo() { const n = tin.filter((x) => x.tu !== 'khach' && !x.daXem).length, d = document.getElementById('chatDo'); if (d) { d.textContent = n; d.hidden = !n; } }
+  function chamDo() { const n = tin.filter((x) => x.tu === 'nv' && !x.daXem).length, d = document.getElementById('chatDo'); if (d) { d.textContent = n > 9 ? '9+' : n; d.hidden = !n; } }
 
   /* ---- Bảng chọn sản phẩm / đơn hàng ---- */
   function veBang() {
@@ -151,8 +151,8 @@
       }
     } catch { /* mạng chập chờn – lần sau đọc lại */ }
   }
-  /* Đọc tin mới: 5 giây/lần khi mở khung, 60 giây/lần khi đóng (chỉ khi đã từng chat), dừng khi tab ẩn */
-  function lap() { clearTimeout(hen); if (!phien || document.hidden) return; hen = setTimeout(async () => { await docMoi(); lap(); }, mo ? 5000 : 60000); }
+  /* Đọc tin mới: 5 giây/lần khi mở khung, 30 giây/lần khi đóng (chỉ khi đã từng chat), dừng khi tab ẩn */
+  function lap() { clearTimeout(hen); if (!phien || document.hidden) return; hen = setTimeout(async () => { await docMoi(); lap(); }, mo ? 5000 : 30000); }
   const baoLoi = (msg) => { tin.push({ ma: 'loi' + Date.now(), tu: 'he-thong', noiDung: msg, luc: Date.now(), daXem: true }); };
   async function gui(nd, dk, tamDK, tuDong) {
     nd = String(nd || '').trim(); if ((!nd && !dk) || dangGui) return;
