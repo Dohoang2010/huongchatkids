@@ -708,7 +708,21 @@
   /* Dòng giỏ hàng giả lập để tính quà tặng cho đơn mua nhanh */
   function qbLines() { const p = byId(QB.id); if (!p) return []; const { price, label } = qbPrice(); return [{ p, id: p.id, qty: QB.qty, price, total: price * QB.qty, variantLabel: label }]; }
   /* Tỉnh nhận của đơn mua nhanh: đoán từ ô địa chỉ; gõ đủ địa chỉ mà không nhận ra tỉnh → tính như liên vùng */
-  function qbTinh() { const f = $('#qbForm'); const a = (f && f.elements.address ? f.elements.address.value : '') || addrShow((Customer.get() || {}).address); return tinhTuDiaChi(a) || (a.trim().length >= 10 ? 'Khác' : ''); }
+  /* Danh mục tỉnh / xã (65KB): chỉ nạp khi mở Mua nhanh */
+  let diaChiNap = null;
+  const napDiaChi = () => window.DIA_CHI ? Promise.resolve() : (diaChiNap = diaChiNap || new Promise((ok, loi) => {
+    const sc = document.createElement('script'); sc.src = 'js/diachi.js?v=20261008b'; sc.onload = ok; sc.onerror = () => { diaChiNap = null; loi(new Error('diachi')); }; document.head.appendChild(sc);
+  }));
+  const qbXaOpt = (tinh, xa) => { const t = (window.DIA_CHI || []).find((x) => x.t === tinh); return t ? `<option value="">Chọn xã / phường *</option>${t.x.map((x) => `<option ${x === xa ? 'selected' : ''}>${esc(x)}</option>`).join('')}` : '<option value="">Chọn tỉnh / thành trước</option>'; };
+  /* Điền tỉnh + xã vào form; tên không có trong danh mục (địa chỉ cũ) thì để trống cho khách chọn lại */
+  function qbDatDiaChi(tinh, xa) {
+    QB.dc = { tinh, xa };   // chưa nạp xong danh mục thì nhớ lại, nạp xong sẽ điền
+    const f = $('#qbForm'); if (!f || !window.DIA_CHI) return;
+    if (!window.DIA_CHI.some((x) => x.t === tinh)) tinh = '';
+    f.elements.city.innerHTML = `<option value="">Chọn tỉnh / thành *</option>${window.DIA_CHI.map((x) => `<option ${x.t === tinh ? 'selected' : ''}>${esc(x.t)}</option>`).join('')}`;
+    f.elements.ward.innerHTML = qbXaOpt(tinh, xa);
+  }
+  function qbTinh() { const f = $('#qbForm'); if (f && f.elements.city && f.elements.city.value) return f.elements.city.value; const a = (f && f.elements.address ? f.elements.address.value : '') || addrShow((Customer.get() || {}).address); return tinhTuDiaChi(a) || (a.trim().length >= 10 ? 'Khác' : ''); }
   function qbPhone() { const f = $('#qbForm'); const v = f && f.elements.phone ? f.elements.phone.value : ''; return v || (Customer.get() || {}).phone || ''; }
   function qbPrice() { const p = byId(QB.id); const v = QB.variant != null && p.variants ? p.variants[QB.variant] : null; return { price: v ? v.price : p.price, old: v ? v.oldPrice : p.oldPrice, label: v ? v.label : '' }; }
   function qbCalc() {
@@ -778,7 +792,7 @@
     const p = byId(id); if (!p) return;
     QB.id = id; QB.variant = opts.variant ?? (p.variants ? Math.max(0, p.variants.findIndex((v) => !v.oos)) : null); QB.qty = opts.qty || 1; QB.coupon = '';
     QB.gt = { ma: GT.ref(), ok: false, msg: '' }; QB.vi = null; QB.diemMuon = 0; QB.maDon = ''; QB.daGiu = false; { const l = qbLines(), s = l.reduce((a, x) => a + x.total, 0); QB.coupon = maTotNhat(s - (QB.qty >= 2 ? Math.round(s * MULTI_RATE) : 0), l); }
-    const c = Customer.get() || {}; const known = !!c.phone;
+    const c = Customer.get() || {}; const dcLuu = addrParse(c.address); const known = !!(c.phone && dcLuu.tinh && dcLuu.xa && dcLuu.chiTiet);
     const manyVariants = p.variants && p.variants.length > 4;
     $('#quickBuyContent').innerHTML = `
       <div class="modal__head"><h3>${I.zap}Mua nhanh · chỉ 30 giây</h3><button class="modal__close" type="button" data-close-modal aria-label="Đóng">${I.close}</button></div>
@@ -790,7 +804,10 @@
           ${LOY().enabled && !Session.get() ? `<div class="qb__lookup" id="qbLookup"><div class="qb__lookup-t">🔎 <b>Bạn đã từng mua tại shop?</b> Nhập số điện thoại để điền nhanh thông tin</div><div class="coupon"><input class="input" id="qbLookupPhone" type="tel" inputmode="numeric" placeholder="Số điện thoại đã mua" aria-label="Số điện thoại đã mua" value="${esc(c.phone || '')}" autocomplete="tel"><button class="btn btn--dark" type="button" id="qbLookupBtn">Tra cứu</button></div><div class="qb__lookup-msg hide" id="qbLookupMsg" role="status"></div></div>` : ''}
           ${known ? `<div class="qb__saved" id="qbSaved">👋 Chào ${esc(c.name || 'bạn')}, thông tin giao hàng đã điền sẵn từ lần trước <button type="button" data-qb-clear>Sửa</button></div>` : ''}
           <div class="grid-2 ${known ? 'hide' : ''}" id="qbFields1"><input class="input" name="name" placeholder="Họ tên *" aria-label="Họ tên" value="${esc(c.name || '')}" required autocomplete="name"><input class="input" name="phone" type="tel" inputmode="numeric" placeholder="Số điện thoại *" aria-label="Số điện thoại" value="${esc(c.phone || '')}" required autocomplete="tel"></div>
-          <input class="input ${known ? 'hide' : ''}" id="qbFields2" name="address" placeholder="Địa chỉ nhận hàng (số nhà, đường, phường, quận, tỉnh) *" aria-label="Địa chỉ nhận hàng" value="${esc(addrShow(c.address))}" required autocomplete="street-address">
+          <div class="qb__dc ${known ? 'hide' : ''}" id="qbFields2">
+            <div class="grid-2"><select class="input" name="city" aria-label="Tỉnh / Thành phố" required><option value="">Chọn tỉnh / thành *</option></select><select class="input" name="ward" aria-label="Xã / Phường" required><option value="">Chọn tỉnh / thành trước</option></select></div>
+            <input class="input" name="address" placeholder="Số nhà, tên đường, thôn/xóm *" aria-label="Địa chỉ cụ thể" value="${esc(dcLuu.chiTiet)}" required autocomplete="street-address">
+          </div>
           <input class="input ${known ? 'hide' : ''}" id="qbFields3" name="email" type="email" placeholder="Email nhận xác nhận đơn (không bắt buộc)" aria-label="Email nhận xác nhận đơn" value="${esc(c.email || '')}" autocomplete="email">
           ${known ? `<div class="qb__savedinfo" id="qbSavedInfo"><b>${esc(c.name || '')}</b> · ${esc(c.phone)}<br>${esc(addrShow(c.address))}</div>` : ''}
           <div class="pay-options pay-options--2" role="radiogroup" aria-label="Hình thức thanh toán">
@@ -818,6 +835,8 @@
     if (phoneOk(phoneKey(c.phone || ''))) qbPhoneTyped();   // khách cũ trên máy này: áp hạng ngay khi mở
     $('#qbLookupPhone')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qbLookup(); } });
     $('#qbGtInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qbGtXet(e.target.value); } });
+    QB.dc = { tinh: dcLuu.tinh || tinhTuDiaChi(dcLuu.chiTiet), xa: dcLuu.xa };
+    napDiaChi().then(() => qbDatDiaChi(QB.dc.tinh, QB.dc.xa)).catch(() => {});
     qbRefresh(); openModal('#quickBuy'); setTimeout(() => { if (!known) $('#qbForm input[name=name]').focus(); else $('#qbSubmit').focus(); }, 300);
     GT.cauHinh().then((cf) => { QB.gtCfg = cf || { bat: false }; if (!$('#qbForm')) return; $('#qbGtWrap')?.classList.toggle('hide', !QB.gtCfg.bat); if (QB.gt.ma && QB.gtCfg.bat) qbGtXet(QB.gt.ma); else qbRefresh(); });
     qbTaiVi();
@@ -831,12 +850,13 @@
     qbShowFields();
     if (kh.ten) f.elements.name.value = kh.ten;
     if (kh.sdt) f.elements.phone.value = phoneKey(kh.sdt);
-    const dc = addrFull({ tinh: kh.tinh || '', xa: kh.xa || '', chiTiet: kh.diaChi || '' });
-    if (dc) f.elements.address.value = dc;
+    if (kh.tinh || kh.xa) qbDatDiaChi(kh.tinh, kh.xa);
+    if (kh.diaChi) f.elements.address.value = kh.diaChi;
+    const dc = f.elements.city.value && f.elements.ward.value && f.elements.address.value.trim();
     const t = tierOf(Number(kh.tongChiTieu) || 0);
     qbLookupMsg(`✓ Đã điền thông tin của <b>${esc(kh.ten || 'bạn')}</b>${t.discount ? ` · hạng ${tierBadge(t)} giảm ${t.discount}% đơn này` : ''}${dc ? '' : '. Bạn nhập thêm địa chỉ nhận hàng nhé'}`, 'ok');
     qbRefresh(); qbTaiVi(); if (QB.gt.ma && QB.gtCfg.bat) qbGtXet(QB.gt.ma);
-    (dc ? $('#qbSubmit') : f.elements.address).focus();
+    (dc ? $('#qbSubmit') : !f.elements.city.value ? f.elements.city : !f.elements.ward.value ? f.elements.ward : f.elements.address).focus();
   }
   function qbLookup() {
     const inp = $('#qbLookupPhone'); const btn = $('#qbLookupBtn'); if (!inp) return;
@@ -853,15 +873,15 @@
       if (!v.co) { qbRefresh(); qbLookupMsg('Số này chưa có đơn tại shop – bạn điền tên và địa chỉ bên dưới nhé 💕', 'info'); f.elements.name.focus(); return; }
       qbDienTuTraCuu(v, true);
       qbGreet(sdt);
-      (!f.elements.name.value.trim() ? f.elements.name : !f.elements.address.value.trim() ? f.elements.address : $('#qbSubmit')).focus();
+      (!f.elements.name.value.trim() ? f.elements.name : !f.elements.city.value ? f.elements.city : !f.elements.ward.value ? f.elements.ward : !f.elements.address.value.trim() ? f.elements.address : $('#qbSubmit')).focus();
     });
   }
   /* Điền tên + địa chỉ đã lưu từ kết quả tra SĐT (không cần OTP). de = true: ghi đè ô đang có chữ */
   function qbDienTuTraCuu(v, de) {
     const f = $('#qbForm'); if (!f || !v) return;
-    const dc = addrFull({ tinh: v.tinh, xa: v.xa, chiTiet: v.diaChi });
     if (v.ten && (de || !f.elements.name.value.trim())) f.elements.name.value = v.ten;
-    if (dc && (de || !f.elements.address.value.trim())) f.elements.address.value = dc;
+    if ((v.tinh || v.xa) && (de || !f.elements.city.value)) qbDatDiaChi(v.tinh, v.xa);
+    if (v.diaChi && (de || !f.elements.address.value.trim())) f.elements.address.value = v.diaChi;
   }
   /* Khách cũ: chào + báo ưu đãi hạng đã trừ (không cần OTP); nút riêng để điền địa chỉ đã lưu (cần OTP) */
   function qbGreet(sdt) {
@@ -911,14 +931,16 @@
   }
   async function qbSubmit(form) {
     if (chayHang(byId(QB.id), QB.variant)) { toast('Sản phẩm này đang cháy hàng'); return; }
-    const fd = new FormData(form); const name = fd.get('name').trim(), phone = fd.get('phone').trim(), address = fd.get('address').trim(), payment = fd.get('payment') || 'cod';
+    await napDiaChi().catch(() => {});
+    const fd = new FormData(form); const name = fd.get('name').trim(), phone = fd.get('phone').trim(), chiTiet = fd.get('address').trim(), tinh = fd.get('city') || '', xa = fd.get('ward') || '', payment = fd.get('payment') || 'cod';
+    const diaChi = { tinh, xa, chiTiet }, address = addrFull(diaChi);
     const email = String(fd.get('email') || '').trim();
     const err = $('#qbError'); err.classList.add('hide');
     $$('.input', form).forEach((i) => i.classList.remove('is-invalid'));
     const bad = [];
-    if (!name) bad.push('name'); if (!phoneOk(phone)) bad.push('phone'); if (address.length < 10) bad.push('address');
-    if (bad.length) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = !phoneOk(phone) && name && address.length >= 10 ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : 'Bạn vui lòng điền đủ họ tên, số điện thoại và địa chỉ nhé'; err.classList.remove('hide'); form.elements[bad[0]].focus(); return; }
-    Customer.set({ ...(Customer.get() || {}), name, phone, address, payment, email });
+    if (!name) bad.push('name'); if (!phoneOk(phone)) bad.push('phone'); if (window.DIA_CHI && !tinh) bad.push('city'); if (window.DIA_CHI && !xa) bad.push('ward'); if (chiTiet.length < 5) bad.push('address');
+    if (bad.length) { $('#qbFields1')?.classList.remove('hide'); $('#qbFields2')?.classList.remove('hide'); $('#qbFields3')?.classList.remove('hide'); $('#qbSavedInfo')?.remove(); $('#qbSaved')?.remove(); bad.forEach((n) => form.elements[n].classList.add('is-invalid')); err.textContent = bad.length === 1 && bad[0] === 'phone' ? 'Số điện thoại chưa đúng (10 số, bắt đầu bằng 0)' : bad.includes('city') || bad.includes('ward') ? 'Bạn chọn đủ tỉnh / thành và xã / phường để shop giao đúng địa chỉ nhé' : 'Bạn vui lòng điền đủ họ tên, số điện thoại và địa chỉ nhé'; err.classList.remove('hide'); form.elements[bad[0]].focus(); return; }
+    Customer.set({ ...(Customer.get() || {}), name, phone, address: addrStore(diaChi), payment, email });
     const btn = $('#qbSubmit'); btn.disabled = true; btn.innerHTML = '<span>Đang gửi đơn…</span>';
     const p = byId(QB.id); const { price, label } = qbPrice(); const k = qbCalc();
     const g = giftFor(qbLines(), qbQuaOpts(qbCalc())); const ss = Session.get();
@@ -946,7 +968,7 @@
       maGiu = res.maGiu || '';
     }
     const uuDai = [k.gn ? `${k.gn.ten} (chương trình ${k.gn.chuongTrinh}): -${fmt(k.gn.tien)}` : '', k.dungGT ? `Giảm giới thiệu ${QB.gtCfg.giam}% (người giới thiệu ${QB.gt.ma}): -${fmt(k.gtAmt)}` : '', k.diemDung ? `Dùng ${k.diemDung} điểm: -${fmt(k.giamDiem)}` : '', maGiu ? `Mã giữ chỗ ${maGiu}` : ''].filter(Boolean).join(' | ');
-    const order = await submitOrder({ type: 'quick', code, customer: { name, phone: sdtDat, address, email }, payment,
+    const order = await submitOrder({ type: 'quick', code, customer: { name, phone: sdtDat, address, email, tinh, xa, diaChi: chiTiet }, payment,
       note: uuDai ? `[${uuDai}]` : '', gioiThieu: k.dungGT ? { ma: QB.gt.ma, giam: k.gtAmt, phanTram: QB.gtCfg.giam } : null, diem: k.diemDung ? { so: k.diemDung, giam: k.giamDiem } : null, maGiu,
       coupon: k.dungMa && k.cr && k.cr.ok ? k.cr.code : '',
       hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (ss && phoneKey(ss.sdt) === phoneKey(phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
@@ -2192,6 +2214,7 @@
     if (e.target.closest('[data-qb-gt]')) { if (QB.gt.ok) { GT.boRef(); $('#qbGtInput').value = ''; qbGtXet(''); } else qbGtXet($('#qbGtInput').value); }
     if (e.target.closest('[data-qb-diem-otp]')) openOtp({ phone: phoneKey(qbPhone()), title: 'Xác thực để dùng điểm' }).then((s) => { if (s) qbTaiVi(); });
   });
+  document.addEventListener('change', (e) => { if (e.target.name === 'city' && e.target.closest('#qbForm')) e.target.form.elements.ward.innerHTML = qbXaOpt(e.target.value, ''); });
   document.addEventListener('change', (e) => { if (e.target.id === 'qbDiemDung') { QB.diemMuon = e.target.checked ? qbCalc().diemToiDa : 0; qbRefresh(); } });
 
   /* ---------------- Đối tác (affiliate) – máy chủ: Apps Script, phần ĐỐI TÁC ----------------

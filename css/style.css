@@ -2982,3 +2982,5 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 .kh-anh__nut { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .kh-anh__nut label { cursor: pointer; }
 .kh-anh__xoa { background: none; border: 0; padding: 0; font-size: 13px; color: var(--muted); text-decoration: underline; cursor: pointer; }
+/* Mua nhanh: chọn tỉnh + xã + địa chỉ cụ thể */
+.qb__dc { display: grid; gap: 10px; }
