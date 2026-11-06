@@ -514,6 +514,7 @@ window.PRODUCTS = [
   },
   {
     "id": "22686115682",
+    "an": true,
     "slug": "nuoc-ep-lotte-organic-hoa-qua-rau-cu",
     "seoTitle": "Nước ép Lotte Organic hoa quả rau củ cho bé | Hương Chất Kids",
     "name": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
@@ -992,6 +993,7 @@ window.PRODUCTS = [
   },
   {
     "id": "23660586997",
+    "an": true,
     "name": "Nước Ép Hữu Cơ LOTTE Lê Và Hoa Chuông (Lotte cam) – Giúp Con Tăng Cường Sức Đề Kháng",
     "short": "Nước ép hữu cơ Lotte Lê & Hoa chuông (cam)",
     "brand": "lotte",
@@ -1197,6 +1199,7 @@ window.PRODUCTS = [
   },
   {
     "id": "41353214697",
+    "an": true,
     "name": "Nước Ép Hữu Cơ LOTTE Táo Và Củ Dền (Lotte xanh) – Bổ Sung Canxi, Hỗ Trợ Phát Triển Chiều Cao",
     "short": "Nước ép hữu cơ Lotte Táo & Củ dền (xanh)",
     "brand": "lotte",
@@ -1557,6 +1560,7 @@ window.PRODUCTS = [
   },
   {
     "id": "25632276959",
+    "an": true,
     "name": "Nước Ép Hữu Cơ LOTTE Nho Và Mận (Lotte hồng) – Bổ Sung Lợi Khuẩn, Giúp Con Ăn Ngon Miệng",
     "short": "Nước ép hữu cơ Lotte Nho & Mận (hồng)",
     "brand": "lotte",
@@ -4005,6 +4009,7 @@ window.PRODUCTS = [
   },
   {
     "id": "combo-lottexanh-d3k2",
+    "an": true,
     "name": "Combo Nước Ép Hữu Cơ Lotte Táo & Củ Dền (Xanh) + Vitamin D3K2 Pure Vitality – Bổ Sung Canxi, Vitamin D3K2 Cho Bé",
     "short": "Combo nước ép Lotte Táo & Củ dền + D3K2",
     "slugCu": "combo-nuoc-ep-lotte-tang-cao-d3k2",

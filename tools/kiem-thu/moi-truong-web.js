@@ -25,6 +25,8 @@ function taoWeb(o = {}) {
   W.window = W; W.self = W; W.globalThis = W; W.top = W;
   vm.createContext(W);
   vm.runInContext(fs.readFileSync(path.join(GOC, 'js/data.js'), 'utf8'), W, { filename: 'js/data.js' });
+  /* Bài kiểm thử tính giá không phụ thuộc việc chủ shop đang tạm ẩn sản phẩm nào (bài thử ẩn thì đặt lại trong truocApp) */
+  (W.PRODUCTS || []).forEach((p) => { delete p.an; });
   if (o.truocApp) o.truocApp(W);   // thay dữ liệu TRƯỚC khi app.js chạy (giờ vàng áp giá ngay lúc nạp)
   vm.runInContext(fs.readFileSync(path.join(GOC, 'js/app.js'), 'utf8'), W, { filename: 'js/app.js' });
   if (o.sua) o.sua(W);   // chỉnh dữ liệu cho bài kiểm thử (vd thêm chương trình quà giả)

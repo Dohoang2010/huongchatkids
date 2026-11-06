@@ -384,3 +384,12 @@ test('freeship theo sản phẩm: váng sữa canxi từ 1 hộp và combo + D3K
   assert.ok(phi([thuong, dong(W, CANXI, 1, W.PRODUCTS.find((p) => p.id === CANXI).variants.findIndex((v) => /30 gói/.test(v.label)))]) > 0, '30 gói không kéo theo freeship');
   assert.ok(MC.shipFee(1, 'express', { lines: [dong(W, CANXI, 1, 0)] }) > 0, 'giao nhanh vẫn tính phí');
 });
+
+test('ẩn sản phẩm: không còn trên web, chương trình lấy nó làm quà tự dừng', () => {
+  const an = ['22686115682', '23660586997', '41353214697', '25632276959', 'combo-lottexanh-d3k2'];
+  const { W, MC } = taoWeb({ gio: '2026-11-06T10:00:00+07:00', truocApp: (W) => W.PRODUCTS.forEach((p) => { if (an.includes(p.id)) p.an = true; }) });
+  an.forEach((id) => assert.ok(!W.PRODUCTS.some((p) => p.id === id), id));
+  const sumo = W.PRODUCTS.find((p) => p.id === '26156646705');
+  const l = { id: sumo.id, p: sumo, qty: 1, variantLabel: 'Thùng 40 gói', price: sumo.price };
+  assert.ok(!MC.giftFor([l], {}) || (MC.giftFor([l], {}).chuongTrinh || {}).id !== 'ct-2110-gac-sumo', 'hết quà hộp Lotte');
+});
