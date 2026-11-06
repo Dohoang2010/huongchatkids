@@ -2984,3 +2984,17 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 .kh-anh__xoa { background: none; border: 0; padding: 0; font-size: 13px; color: var(--muted); text-decoration: underline; cursor: pointer; }
 /* Mua nhanh: chọn tỉnh + xã + địa chỉ cụ thể */
 .qb__dc { display: grid; gap: 10px; }
+/* Banner canxi Calciumore: xanh đêm + vàng kim */
+.slide--sang { background: radial-gradient(circle at 76% 45%, rgba(214, 178, 110, .24), transparent 46%), linear-gradient(120deg, #081A36 0%, #0F2C55 52%, #1B4470 100%); }
+.slide--sang h2 { color: #FBF3DF; text-shadow: 0 2px 14px rgba(0, 0, 0, .35); }
+.slide--sang .slide__badge { background: rgba(231, 201, 133, .14); border: 1px solid rgba(231, 201, 133, .6); color: #F2DDA8; backdrop-filter: none; }
+.slide--sang p { color: #E6ECF4; opacity: 1; line-height: 1.6; }
+.slide--sang p b { background: rgba(231, 201, 133, .18); color: #F2DDA8; }
+.slide--sang .btn--light { background: linear-gradient(90deg, #E7C985, #C9A15A); color: #0B1E3F; border: 0; }
+.slide--sang .slide__sticker { background: linear-gradient(135deg, #F2DDA8, #C9A15A); color: #0B1E3F; }
+.slide--sang .slide__cap { color: #0F2C55; }
+.slide--sang .slide__stack span { border-color: #E7C985; }
+.slide--sang .fx-e, .slide--sang .fx-burst, .slide--sang .fx-chip { display: none; }
+.slide--sang .fx-s { color: #E7C985; }
+.slide--sang .fx-bb { background: radial-gradient(circle at 30% 30%, rgba(242, 221, 168, .75) 0 25%, rgba(231, 201, 133, .25) 50%, transparent 72%); border-color: rgba(231, 201, 133, .35); }
+@media (max-width: 767px) { .slide--sang { padding: 18px 16px 30px; } .slide--sang .slide__badge { font-size: 10.5px; padding: 4px 10px; margin-bottom: 6px; } .slide--sang h2 { font-size: 20px; max-width: 100%; } .slide--sang p { font-size: 12px; line-height: 1.55; margin-top: 6px; max-width: 100%; } .slide--sang p b { padding: 0 5px; } .slide--sang .btn { margin-top: 8px; min-height: 36px; font-size: 13px; padding: 0 16px; flex: none; } .slide--sang .slide__stack { width: 92px; height: 78px; right: 2px; bottom: 12px; } .slide--sang .slide__sticker { width: 50px; height: 50px; font-size: 9.5px; } }

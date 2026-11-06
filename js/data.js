@@ -4864,10 +4864,10 @@ window.BANNERS = [
   },
   {
     "title": "Canxi Calciumore\nmua 2 tặng D3K2",
-    "sub": "✅ 1 hộp canxi + 1 lọ D3K2 giảm 5% còn <b>2.726.000₫</b><br>✅ Mua 2 hộp tặng <b>1 lọ D3K2</b> · 3 hộp tặng <b>2 lọ</b> · 4 hộp tặng <b>3 lọ</b>",
+    "sub": "🚚 <b>Freeship</b> khi mua 1 hộp váng sữa<br>✦ 1 hộp + 1 lọ D3K2 giảm 5% còn <b>2.726.000₫</b><br>✦ Mua 2 – 3 – 4 hộp tặng <b>1 – 2 – 3 lọ D3K2</b>",
     "cta": "Mua ngay",
     "link": "product.html?id=26060839019",
-    "theme": "sky",
+    "theme": "sang",
     "badge": "🎁 Tiết kiệm đến 1.170.000₫",
     "images": [
       "img/thumb/26060839019.jpg",
