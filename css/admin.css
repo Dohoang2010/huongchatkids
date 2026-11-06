@@ -913,3 +913,6 @@ textarea.fb-chu{font:inherit;font-weight:400;font-size:14.5px;line-height:1.55;r
 .fb-xem__bl>div{background:#F0F2F5;border-radius:16px;padding:8px 12px;font-size:13.5px;max-width:calc(100% - 40px)}.fb-xem__bl b{font-size:13px}.fb-xem__bl p{margin:2px 0 0;line-height:1.35}
 .fb-xem__bl-anh{display:block;margin-top:6px;max-width:180px;border-radius:10px}
 .fb-xem__ghi{padding:10px 14px 12px;margin:0;font-size:12px;font-family:inherit}
+.ch-bang[hidden]{display:none}
+.ch-o__nut{display:flex;flex-direction:column;gap:6px;flex:none}
+.ch-bdon small{white-space:normal}

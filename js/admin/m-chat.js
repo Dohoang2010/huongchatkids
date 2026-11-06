@@ -12,7 +12,7 @@
     'Dạ sản phẩm này đang có ưu đãi, mẹ bấm "Đặt hàng ngay" ngay trong khung chat để đặt nhanh nhé ạ.',
     'Dạ Hương cảm ơn mẹ đã tin tưởng Hương Chất Kids ạ 🥰'
   ];
-  let ds = [], chon = '', tin = [], hen = 0, bangSP = false, dangTai = false;
+  let ds = [], chon = '', tin = [], hen = 0, bangSP = false, bangDon = false, dangTai = false;
   const GOC = () => { try { return new URL((SITE.loyalty || {}).endpoint || '').origin; } catch { return ''; } };
   const gio = (t) => { const d = new Date(t + 7 * 36e5); return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')} ${d.getUTCDate()}/${d.getUTCMonth() + 1}`; };
   const trongTrang = () => location.hash.startsWith('#' + R);
@@ -49,6 +49,18 @@
     $('#chDsSP').innerHTML = list.map((p) => `<div class="ch-bsp"><img src="${esc(p.thumb || p.image || '')}" alt=""><div><b>${esc(p.short || p.name)}</b><span>${fmt(p.price)}</span><small>${Number(p.stock) > 0 ? p.stock + ' còn hàng' : 'Hết hàng'} · ${p.sold || 0} đã bán</small></div>
       <button class="btn btn--ghost btn--sm" data-ch-sp="${esc(p.id)}" data-moi="1">🛒 Mời đặt hàng</button><button class="btn btn--primary btn--sm" data-ch-sp="${esc(p.id)}">Gửi</button></div>`).join('') || '<p class="muted">Không tìm thấy</p>';
   }
+  /* Bảng chọn đơn của khách: máy chủ chỉ trả đơn khi khách đã đăng nhập, tránh lộ đơn cho người tự gõ số điện thoại */
+  async function moBangDon() {
+    const b = $('#chBangDon'), dsEl = $('#chDsDon'); bangSP = false; veBangSP(); b.hidden = false; bangDon = true;
+    dsEl.innerHTML = '<p class="muted">Đang tải đơn…</p>';
+    try {
+      const r = await A.api('qtChatDon', { phien: chon }); if (!bangDon) return;
+      if (!r || !r.ok) throw new Error((r && r.msg) || 'Chưa tải được đơn');
+      dsEl.innerHTML = !r.xacMinh ? '<p class="muted">Khách chưa đăng nhập nên chưa gửi được đơn, để tránh lộ đơn cho người tự gõ số điện thoại. Mời khách đăng nhập rồi gửi lại nhé.</p>'
+        : r.don.map((d) => `<div class="ch-bsp ch-bdon"><div><b>📦 ${esc(d.ma)}</b><small>${esc(d.ngay || '')}${d.tt ? ' · ' + esc(d.tt) : ''}</small><small>${esc(d.sp || '')}</small><span>${d.tong ? fmt(d.tong) : ''}</span></div><button class="btn btn--primary btn--sm" data-ch-don="${esc(d.ma)}">Gửi</button></div>`).join('') || '<p class="muted">Khách chưa có đơn nào.</p>';
+    } catch (e) { dsEl.innerHTML = `<p class="muted">${esc(e.message)}</p>`; }
+  }
+  function dongBangDon() { bangDon = false; const b = $('#chBangDon'); if (b) b.hidden = true; }
   async function taiDs() {
     if (dangTai) return; dangTai = true;
     try { const r = await A.api('qtChatDs', {}); if (r && r.ok) { ds = r.ds || []; veDs(); const tong = ds.reduce((s, c) => s + (c.chuaDoc || 0), 0); document.title = (tong ? `(${tong}) ` : '') + 'Chat với khách – Quản trị'; } }
@@ -78,8 +90,9 @@
       <div class="card ch-trai"><div class="ch-trai__dau"><b>Cuộc chat</b><span class="muted">tự cập nhật 8 giây/lần</span></div><div id="chDs" class="ch-ds">${A.trong('Đang tải…', '', '⏳')}</div></div>
       <div class="card ch-phai"><div class="ch-dau" id="chDau"></div><div class="ch-tin" id="chTin"></div>
         <div class="ch-bang" id="chBangSP" hidden><div class="ch-bang__dau"><input id="chTimSP" placeholder="Tìm sản phẩm" autocomplete="off"><button class="icobtn" data-ch-dong-sp>✕</button></div><div id="chDsSP" class="ch-bang__ds"></div></div>
+        <div class="ch-bang" id="chBangDon" hidden><div class="ch-bang__dau"><b style="flex:1">Đơn hàng của khách</b><button class="icobtn" data-ch-dong-don>✕</button></div><div id="chDsDon" class="ch-bang__ds"></div></div>
         <div class="ch-mau">${MAU.map((m, i) => `<button data-ch-mau="${i}" title="${esc(m)}">${esc(m.slice(0, 28))}…</button>`).join('')}</div>
-        <div class="ch-o"><button class="btn btn--ghost btn--sm" id="chMoSP" title="Gửi sản phẩm">🛍️ Sản phẩm</button><textarea id="chO" rows="2" placeholder="Nhập câu trả lời… (Enter để gửi, Shift+Enter xuống dòng)"></textarea><button class="btn btn--primary" id="chGui">Gửi</button></div>
+        <div class="ch-o"><div class="ch-o__nut"><button class="btn btn--ghost btn--sm" id="chMoDon" title="Gửi đơn khách đã mua">📦 Đơn hàng</button><button class="btn btn--ghost btn--sm" id="chMoSP" title="Gửi sản phẩm">🛍️ Sản phẩm</button></div><textarea id="chO" rows="2" placeholder="Nhập câu trả lời… (Enter để gửi, Shift+Enter xuống dòng)"></textarea><button class="btn btn--primary" id="chGui">Gửi</button></div>
         <p class="muted ch-ghi">Khách nhận tin trong khung chat trên web sau vài giây. Mỗi tin khách mới cũng được báo qua Zalo bot của shop.</p></div>
     </div>`;
     veDs(); veTin(); taiDs().then(taiTin); lap();
@@ -87,10 +100,13 @@
 
   document.addEventListener('click', (e) => {
     if (!trongTrang()) return; const t = e.target;
-    const d = t.closest('[data-ch]'); if (d) { chon = d.dataset.ch; tin = []; history.replaceState(null, '', '#' + R + '/' + encodeURIComponent(chon)); veDs(); veTin(); taiTin(); return; }
+    const d = t.closest('[data-ch]'); if (d) { chon = d.dataset.ch; tin = []; dongBangDon(); history.replaceState(null, '', '#' + R + '/' + encodeURIComponent(chon)); veDs(); veTin(); taiTin(); return; }
     if (t.id === 'chTaiLai') { taiDs().then(taiTin); return; }
-    if (t.id === 'chGui') { const o = $('#chO'); const v = o.value; o.value = ''; gui(v); return; }
-    if (t.id === 'chMoSP') { bangSP = !bangSP; veBangSP(''); if (bangSP) setTimeout(() => $('#chTimSP')?.focus(), 30); return; }
+    if (t.id === 'chGui') { const o = $('#chO'); const v = o.value; if (!v.trim()) { o.focus(); return; } o.value = ''; gui(v); return; }
+    if (t.id === 'chMoDon') { if (!chon) return A.toast('Chọn cuộc chat trước nhé', 'err'); if (bangDon) dongBangDon(); else moBangDon(); return; }
+    if (t.closest('[data-ch-dong-don]')) { dongBangDon(); return; }
+    const gd = t.closest('[data-ch-don]'); if (gd) { dongBangDon(); gui('', { loai: 'don', ma: gd.dataset.chDon }); return; }
+    if (t.id === 'chMoSP') { dongBangDon(); bangSP = !bangSP; veBangSP(''); if (bangSP) setTimeout(() => $('#chTimSP')?.focus(), 30); return; }
     if (t.closest('[data-ch-dong-sp]')) { bangSP = false; veBangSP(); return; }
     const s = t.closest('[data-ch-sp]'); if (s) { bangSP = false; veBangSP(); gui(s.dataset.moi ? 'Dạ mẹ tham khảo sản phẩm này nhé, mẹ bấm "Đặt hàng ngay" để đặt nhanh ạ 💗' : '', { loai: 'sp', id: s.dataset.chSp, moi: !!s.dataset.moi }); return; }
     const m = t.closest('[data-ch-mau]'); if (m) { const o = $('#chO'); o.value = MAU[Number(m.dataset.chMau)]; o.focus(); }

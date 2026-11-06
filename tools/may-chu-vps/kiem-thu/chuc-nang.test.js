@@ -475,3 +475,23 @@ test('mở chat từ đơn: khách chỉ đặt hàng thì cảnh báo; khách �
   const dk = await m.get('action=dangKy&sdt=' + SDT2 + '&ten=' + encodeURIComponent('Mẹ Mới') + '&mk=Matkhau123&mk2=Matkhau123'); assert.strictEqual(dk.ok, true, JSON.stringify(dk));
   assert.strictEqual((await m.qt('action=qtChatMo&sdt=' + SDT2)).ok, true, 'khách tự đăng ký chưa có đơn vẫn mở được');
 });
+
+test('gửi đơn trong chat: chỉ đơn thật của khách đã đăng nhập; phiên tự gõ số không xem / nhận được đơn', async () => {
+  const m = taoMay(); const dat = await datDon(m, SDT, { code: 'HCKDONCHAT01' }); assert.strictEqual(dat.ok, true, JSON.stringify(dat));
+  const la = 'cphienlagoso00001';
+  await m.get('action=chatGui&phien=' + la + '&noiDung=chao&ten=' + encodeURIComponent('Mẹ Thử') + '&sdt=' + SDT);
+  const dk = (ma) => encodeURIComponent(JSON.stringify({ loai: 'don', ma, tong: 1 }));
+  const chua = await m.qt('action=qtChatDon&phien=' + la);
+  assert.deepStrictEqual([chua.ok, chua.xacMinh, chua.don.length], [true, false, 0], 'chưa đăng nhập: không trả đơn');
+  assert.strictEqual((await m.qt('action=qtChatTraLoi&phien=' + la + '&dinhKem=' + dk('HCKDONCHAT01'))).ok, false, 'không gửi đơn vào phiên chưa đăng nhập');
+  assert.strictEqual((await m.get('action=qtChatDon&token=sai&phien=' + la)).ok, false, 'nhân viên phải đăng nhập');
+  const dn = await dangNhapOtp(m, SDT); const mo = await m.qt('action=qtChatMo&sdt=' + SDT);
+  const don = await m.qt('action=qtChatDon&phien=' + mo.phien);
+  assert.ok(don.xacMinh && don.don.some((d) => d.ma === 'HCKDONCHAT01'), JSON.stringify(don));
+  const gui = await m.qt('action=qtChatTraLoi&phien=' + mo.phien + '&dinhKem=' + dk('HCKDONCHAT01')); assert.strictEqual(gui.ok, true, JSON.stringify(gui));
+  assert.notStrictEqual(gui.tin.dk.tong, 1, 'số tiền lấy từ đơn thật');
+  assert.strictEqual((await m.qt('action=qtChatTraLoi&phien=' + mo.phien + '&dinhKem=' + dk('HCKKHACMUA99'))).ok, false, 'đơn người khác');
+  const coDon = (r) => r.tin.some((t) => t.dk && t.dk.loai === 'don');
+  assert.ok(coDon(await m.get('action=chatDoc&phien=cmaydangnhap00001&token=' + dn.token)), 'khách đăng nhập nhận thẻ đơn');
+  assert.ok(!coDon(await m.get('action=chatDoc&phien=' + la)), 'phiên tự gõ số không thấy đơn');
+});

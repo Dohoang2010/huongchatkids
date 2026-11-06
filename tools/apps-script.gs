@@ -2444,6 +2444,7 @@ function doGet(e) {
     if (action === 'chatDoc')   return traVe(apiChatDoc(p), cb);
     if (action === 'qtChatDs')  return traVe(apiQtChatDs(p), cb);
     if (action === 'qtChatMo')  return traVe(apiQtChatMo(p), cb);
+    if (action === 'qtChatDon') return traVe(apiQtChatDon(p), cb);
     if (action === 'qtChatXem') return traVe(apiQtChatXem(p), cb);
     if (action === 'qtChatTraLoi') return traVe(apiQtChatTraLoi(p), cb);
     if (action === 'chatApi')   return traVe(apiChatApi(p), cb);
@@ -3970,9 +3971,16 @@ function chatXem_(phien) {
   v.forEach(function (r, i) { if (!bo[String(r[1])]) return; tin.push(chatTin_(r)); if (String(r[3]) === 'khach' && !r[9]) sh.getRange(tu + i, 10).setValue('x'); });
   return tin;
 }
+/* Phiên đã đăng nhập mới nhất trong nhóm chat + SĐT của phiên đó (chưa đăng nhập: rỗng) */
+function chatXmNhom_(v, phien) { var bo = chatNhom_(v, phien), kq = { phien: '', sdt: '' }; v.forEach(function (r) { if (bo[String(r[1])] && chatXm_(r)) kq = { phien: String(r[1]), sdt: chuanSdt(r[6]) }; }); return kq; }
 function chatTraLoi_(phien, nd, nv, dinhKem) {
   nd = String(nd || '').slice(0, 2000).trim(); var dk = chatDinhKem_(dinhKem); if (!nd && !dk) return { ok: false, msg: 'Chưa có nội dung' };
-  var v = chatDocHet_(); phien = chatPhienMoiNhat_(v, chatNhom_(v, phien), phien);   // trả lời ở cuộc chat cũ vẫn tới máy khách đang dùng
+  var v = chatDocHet_();
+  if (dk && dk.loai === 'don') {   // thẻ đơn: chỉ gửi vào phiên đã đăng nhập, số liệu lấy từ đơn thật của đúng SĐT đó
+    var xm = chatXmNhom_(v, phien); dk = chatDonThat_(dk, xm.sdt);
+    if (!dk) return { ok: false, msg: 'Chỉ gửi được đơn của chính khách đã đăng nhập' };
+    phien = xm.phien;
+  } else phien = chatPhienMoiNhat_(v, chatNhom_(v, phien), phien);   // trả lời ở cuộc chat cũ vẫn tới máy khách đang dùng
   var tin = voiKhoa(function () { return chatThem_(phien, 'nv', nd, {}, nv, dk); });
   var sdtXm = chatSdtCuaPhien_(v, phien);
   chatWebhook_({ su: 'tin_nv', phien: phien, sdt: sdtXm || chatSdtNhap_(v, phien), xacMinh: !!sdtXm, tin: tin });
@@ -3999,6 +4007,13 @@ function apiQtChatMo(p) {
   });
   var c = chatDs_().filter(function (x) { return x.sdt === sdt && x.xacMinh; })[0];
   return c ? { ok: true, phien: c.phien } : { ok: false, msg: 'Chưa mở được cuộc chat, bạn thử lại nhé' };
+}
+/* Danh sách đơn của khách trong cuộc chat (để nhân viên gửi thẻ đơn) – chỉ khi khách đã đăng nhập */
+function apiQtChatDon(p) {
+  if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
+  var xm = chatXmNhom_(chatDocHet_(), phien); if (!xm.sdt) return { ok: true, xacMinh: false, don: [] };
+  return { ok: true, xacMinh: true, don: (docKH(xm.sdt).don || []).slice(0, 30).map(function (d) { return { ma: String(d.ma), ngay: d.ngay, tong: d.tong, tt: d.trangThai, sp: String(d.sanPham || '').split('\n').filter(String).join(' · ') }; }) };
 }
 function apiQtChatDs(p) { if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' }; return { ok: true, ds: chatDs_() }; }
 function apiQtChatXem(p) {
