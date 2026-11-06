@@ -4865,7 +4865,7 @@ window.BANNERS = [
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
     "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 3 hộp 10 gói hoặc 1 thùng nước dinh dưỡng Lotte, hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên",
-    "anTu": "2027-01-01T00:00:00+07:00"
+    "anTu": "2026-11-06T00:00:00+07:00"
   },
   {
     "title": "Canxi Calciumore\nmua 2 tặng D3K2",
@@ -6296,7 +6296,7 @@ window.POSTS = [
    ===================================================================== */
 /* ===ADMIN:QUA_TANG=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.QUA_TANG = {
-  "enabled": true,
+  "enabled": false,
   "ketHop": {
     "hangMa": false,
     "quaMa": false,
