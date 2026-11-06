@@ -12,7 +12,7 @@ window.ADMIN_DANH_MUC = {
    "ngay": false
   },
   "m-orders.js": {
-   "v": "7e9df0d9",
+   "v": "353cac62",
    "can": [],
    "ngay": false
   },

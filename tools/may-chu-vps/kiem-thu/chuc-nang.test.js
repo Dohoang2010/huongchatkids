@@ -457,3 +457,21 @@ test('ảnh đại diện khách: lưu, xoá; từ chối đường dẫn lạ v
   assert.strictEqual((await doi(U, 'sai')).ok, false, 'phiên sai');
   assert.strictEqual((await doi('')).kh.anh, '', 'xoá ảnh');
 });
+
+test('mở chat từ đơn: khách chỉ đặt hàng thì cảnh báo; khách đã đăng nhập thì mở được, tin tới đúng tài khoản, không tạo trùng', async () => {
+  const m = taoMay(); await datDon(m, SDT);
+  assert.strictEqual((await m.get('action=qtChatMo&token=sai&sdt=' + SDT)).ok, false, 'nhân viên phải đăng nhập');
+  const chua = await m.qt('action=qtChatMo&sdt=' + SDT);
+  assert.deepStrictEqual([chua.ok, chua.chuaTk], [false, true], JSON.stringify(chua));
+  assert.strictEqual((await m.qt('action=qtChatMo&sdt=123')).chuaTk, undefined, 'số sai');
+  const dn = await dangNhapOtp(m, SDT);
+  const mo = await m.qt('action=qtChatMo&sdt=' + SDT + '&ten=' + encodeURIComponent('Mẹ Thử')); assert.strictEqual(mo.ok, true, JSON.stringify(mo));
+  assert.strictEqual((await m.qt('action=qtChatMo&sdt=' + SDT)).phien, mo.phien, 'mở lại đúng cuộc chat cũ');
+  assert.strictEqual((await m.qt('action=qtChatTraLoi&phien=' + mo.phien + '&noiDung=' + encodeURIComponent('Dạ shop hỏi thăm đơn ạ'))).ok, true);
+  const doc = await m.get('action=chatDoc&phien=cmaykhachmoi0001&token=' + dn.token);
+  assert.ok(doc.tin.some((t) => t.tu === 'nv' && /hỏi thăm/.test(t.noiDung)), 'khách đăng nhập thấy tin shop');
+  const la = await m.get('action=chatDoc&phien=cmaykhachkhac002');
+  assert.strictEqual(la.tin.length, 0, 'máy khác chưa đăng nhập không đọc được');
+  const dk = await m.get('action=dangKy&sdt=' + SDT2 + '&ten=' + encodeURIComponent('Mẹ Mới') + '&mk=Matkhau123&mk2=Matkhau123'); assert.strictEqual(dk.ok, true, JSON.stringify(dk));
+  assert.strictEqual((await m.qt('action=qtChatMo&sdt=' + SDT2)).ok, true, 'khách tự đăng ký chưa có đơn vẫn mở được');
+});

@@ -2443,6 +2443,7 @@ function doGet(e) {
     if (action === 'chatGui')   return traVe(apiChatGui(p), cb);
     if (action === 'chatDoc')   return traVe(apiChatDoc(p), cb);
     if (action === 'qtChatDs')  return traVe(apiQtChatDs(p), cb);
+    if (action === 'qtChatMo')  return traVe(apiQtChatMo(p), cb);
     if (action === 'qtChatXem') return traVe(apiQtChatXem(p), cb);
     if (action === 'qtChatTraLoi') return traVe(apiQtChatTraLoi(p), cb);
     if (action === 'chatApi')   return traVe(apiChatApi(p), cb);
@@ -3976,6 +3977,28 @@ function chatTraLoi_(phien, nd, nv, dinhKem) {
   var sdtXm = chatSdtCuaPhien_(v, phien);
   chatWebhook_({ su: 'tin_nv', phien: phien, sdt: sdtXm || chatSdtNhap_(v, phien), xacMinh: !!sdtXm, tin: tin });
   return { ok: true, tin: tin };
+}
+/* Khách đã có tài khoản để nhận tin shop (phải đăng nhập mới đọc được): có mật khẩu riêng, đã từng đăng nhập,
+   hoặc tự đăng ký (có hồ sơ, chưa có đơn). Khách chỉ đặt hàng không đăng nhập → false */
+function chatCoTaiKhoan_(sdt, v) {
+  if (Object.keys(chatBoPhienSdt_(v, sdt)).length) return true;
+  var tk = timTK(sdt); if (tk && tk.hash) return true;
+  var s = sheetPhien(), n = s.getLastRow();
+  if (n >= 2 && s.getRange(2, 2, n - 1, 1).getValues().some(function (r) { return chuanSdt(r[0]) === sdt; })) return true;
+  var d = docKH(sdt); return !!d.dong && !Number(d.kh.soDon);
+}
+/* Nhân viên mở cuộc chat với khách từ danh sách đơn: dùng cuộc chat đã xác minh của SĐT, chưa có thì tạo mới */
+function apiQtChatMo(p) {
+  if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
+  var sdt = chuanSdt(p.sdt); if (!sdtHopLe(sdt)) return { ok: false, msg: 'Số điện thoại của đơn không hợp lệ' };
+  var v = chatDocHet_();
+  if (!chatCoTaiKhoan_(sdt, v)) return { ok: false, chuaTk: true, msg: 'Khách này chưa tạo tài khoản nên chưa chat được. Bạn gọi điện hoặc nhắn Zalo cho khách nhé.' };
+  if (!Object.keys(chatBoPhienSdt_(v, sdt)).length) voiKhoa(function () {
+    chatThem_('cqt' + Utilities.getUuid().replace(/-/g, '').slice(0, 20), 'he-thong', 'Hương Chất Kids đã mở cuộc chat với bạn.',
+      { ten: String(docKH(sdt).kh.ten || p.ten || '').slice(0, 60), sdt: sdt, xacMinh: true });
+  });
+  var c = chatDs_().filter(function (x) { return x.sdt === sdt && x.xacMinh; })[0];
+  return c ? { ok: true, phien: c.phien } : { ok: false, msg: 'Chưa mở được cuộc chat, bạn thử lại nhé' };
 }
 function apiQtChatDs(p) { if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' }; return { ok: true, ds: chatDs_() }; }
 function apiQtChatXem(p) {

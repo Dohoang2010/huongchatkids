@@ -81,6 +81,7 @@
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}">Chi tiết</a>
               ${capNhat ? `<a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/sua" title="Sửa đơn">✏️ Sửa</a>` : ''}
               <a class="btn btn--ghost btn--sm" href="#/don-hang/${o.dong}/in" title="In đơn">🖨 In</a>
+              ${A.co('customer.view') ? `<button class="btn btn--ghost btn--sm" type="button" data-dh-chat="${esc(o.sdt)}" data-ten="${esc(o.khach || '')}" title="Chat với khách" aria-label="Chat với khách ${esc(o.khach || '')}">💬</button>` : ''}
             </div></td>
             <td class="dh-chuyen" data-nhan="Chuyển trạng thái">${capNhat ? chonTT(o) : ''}</td>
           </tr>`).join('')}</tbody></table></div>
@@ -331,6 +332,16 @@
   }
   document.addEventListener('click', async (e) => {
     const pg = e.target.closest('[data-dh-pg]'); if (pg) { S.trang = Number(pg.dataset.dhPg); return A.veTrang(); }
+    const chat = e.target.closest('[data-dh-chat]');
+    if (chat) {
+      chat.disabled = true;
+      try {
+        const r = await A.api('qtChatMo', { sdt: chat.dataset.dhChat, ten: chat.dataset.ten });
+        if (r && r.ok) { location.hash = '#/chat/' + encodeURIComponent(r.phien); return; }
+        A.toast((r && r.msg) || 'Chưa mở được cuộc chat', 'err');
+      } catch (x) { A.toast(x.message, 'err'); }
+      chat.disabled = false; return;
+    }
     if (e.target.id === 'dhIn') { window.print(); return; }
     if (e.target.id === 'dhXuat') return xuat();
     if (e.target.id === 'dhCRM') {
