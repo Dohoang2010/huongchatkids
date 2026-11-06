@@ -916,3 +916,4 @@ textarea.fb-chu{font:inherit;font-weight:400;font-size:14.5px;line-height:1.55;r
 .ch-bang[hidden]{display:none}
 .ch-o__nut{display:flex;flex-direction:column;gap:6px;flex:none}
 .ch-bdon small{white-space:normal}
+.ch-tich{font-style:normal;font-weight:700;letter-spacing:-2px;margin-left:2px}.ch-tich.is-doc{color:#1E88E5}

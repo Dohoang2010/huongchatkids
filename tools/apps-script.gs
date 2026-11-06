@@ -3842,7 +3842,7 @@ function apiQtDgDuyet(p) {
    - Gọi vào: action=chatApi&key=<CHAT_API_KEY>&viec=ds|xem|traLoi … (CHAT_API_KEY đặt trong Script Properties / env VPS)
    - Đẩy ra: có tin mới của khách → POST JSON tới CHAT_WEBHOOK (nếu đặt trong Script Properties). */
 var SHEET_CHAT = 'Chat';
-var H_CHAT = ['Thời gian', 'Mã phiên', 'Mã tin', 'Người gửi', 'Nội dung', 'Tên khách', 'SĐT', 'Trang', 'Nhân viên', 'Đã đọc', 'Đính kèm', 'Xác minh'];
+var H_CHAT = ['Thời gian', 'Mã phiên', 'Mã tin', 'Người gửi', 'Nội dung', 'Tên khách', 'SĐT', 'Trang', 'Nhân viên', 'Đã đọc', 'Đính kèm', 'Xác minh', 'Khách đọc'];
 /* Xác minh = 'x': khách gửi khi ĐÃ ĐĂNG NHẬP (SĐT tài khoản, đã qua OTP / mật khẩu). SĐT khách tự gõ khi chưa đăng nhập
    KHÔNG dùng để ghép cuộc chat / xem lịch sử / trả lời sang máy khác (người lạ gõ số người khác không đọc được tin của họ). */
 /* Đính kèm (JSON): {loai:'anh'|'video', url:'/chat-tep/…'} · {loai:'sp', id, moi:true = nhân viên mời đặt} · {loai:'don', ma, tong, tt, sp} */
@@ -3864,9 +3864,9 @@ function chatMoTaDK_(dk) { return !dk ? '' : dk.loai === 'anh' ? '[Ảnh]' : dk.
 function sheetChat_() { var sh = sheetPhu(SHEET_CHAT, H_CHAT); if (sh.getLastColumn() < H_CHAT.length) sh.getRange(1, H_CHAT.length).setValue(H_CHAT[H_CHAT.length - 1]); return sh; }
 function chatPhien_(v) { v = String(v || ''); return /^c[a-z0-9]{12,40}$/.test(v) ? v : ''; }
 function chatDocHet_() { var sh = sheetChat_(), n = sh.getLastRow(); if (n < 2) return []; var tu = Math.max(2, n - 4999); return sh.getRange(tu, 1, n - tu + 1, H_CHAT.length).getValues(); }
-function chatTin_(r) { var t = { ma: String(r[2]), luc: new Date(r[0]).getTime(), tu: String(r[3]), noiDung: String(r[4]), nv: String(r[8] || '') }; var dk = chatDinhKem_(String(r[10] || '')); if (dk) t.dk = dk; return t; }
+function chatTin_(r) { var t = { ma: String(r[2]), luc: new Date(r[0]).getTime(), tu: String(r[3]), noiDung: String(r[4]), nv: String(r[8] || '') }; var dk = chatDinhKem_(String(r[10] || '')); if (dk) t.dk = dk; if (t.tu === 'khach') t.daDoc = !!r[9]; if (t.tu === 'nv') t.daDoc = !!r[12]; return t; }
 /* Tin trả cho KHÁCH (chatGui / chatDoc): bỏ tên / tài khoản nhân viên – chỉ nội bộ (quản trị, CRM) mới thấy */
-function chatTinKhach_(t) { var x = { ma: t.ma, luc: t.luc, tu: t.tu, noiDung: t.noiDung }; if (t.dk) x.dk = t.dk; return x; }
+function chatTinKhach_(t) { var x = { ma: t.ma, luc: t.luc, tu: t.tu, noiDung: t.noiDung }; if (t.dk) x.dk = t.dk; if (t.tu === 'khach') x.daDoc = !!t.daDoc; return x; }
 function chatGio_() { var h = Number(Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'H')); return h >= 8 && h < 22; }
 function chatThem_(phien, tu, noiDung, kh, nv, dk) {
   var ma = 'm' + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
@@ -3935,7 +3935,14 @@ function apiChatDoc(p) {
   /* Tin NHÂN VIÊN gửi cho SĐT này (cuộc chat cũ lúc chưa đăng nhập, ở máy khác): chủ SĐT đăng nhập vẫn nhận được; tin khách gõ ở đó thì không */
   var boNv = {}; if (ph && ph.sdt) v.forEach(function (r) { if (r[6] && chuanSdt(r[6]) === ph.sdt) boNv[String(r[1])] = 1; });
   var tin = v.filter(function (r) { var id = String(r[1]); return (bo[id] || (boNv[id] && String(r[3]) === 'nv')) && new Date(r[0]).getTime() > sau; }).map(function (r) { return chatTinKhach_(chatTin_(r)); });
-  return { ok: true, tin: tin, gio: chatGio_() };
+  /* Khung chat đang mở (daXem): ghi khách đã đọc tin nhân viên → nhân viên thấy 2 dấu tích */
+  if (String(p.daXem) === '1') {
+    var sh = sheetChat_(), tuDong = Math.max(2, sh.getLastRow() - 4999);
+    v.forEach(function (r, i) { var id = String(r[1]); if (String(r[3]) === 'nv' && !r[12] && (bo[id] || boNv[id])) sh.getRange(tuDong + i, 13).setValue('x'); });
+  }
+  /* Tin khách chưa được nhân viên đọc → còn lại trên máy khách hiện 2 dấu tích */
+  var chuaDoc = v.filter(function (r) { return bo[String(r[1])] && String(r[3]) === 'khach' && !r[9]; }).map(function (r) { return String(r[2]); });
+  return { ok: true, tin: tin, chuaDoc: chuaDoc, gio: chatGio_() };
 }
 /* Gom chat theo SĐT ĐÃ XÁC MINH: cùng 1 khách đăng nhập dù chat từ nhiều máy / trình duyệt → 1 cuộc chat.
    Phiên chưa đăng nhập là 1 cuộc chat riêng (SĐT tự gõ chỉ để nhân viên gọi lại). */

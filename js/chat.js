@@ -67,7 +67,7 @@
     const b = document.getElementById('chatTin'); if (!b) return;
     const chao = CHAT_CFG.chao.map((t) => ({ tu: 'nv', noiDung: t }));
     b.innerHTML = chao.concat(tin).map((x) => { const toi = x.tu === 'khach';
-      return `<div class="chat-m chat-m--${toi ? 'toi' : x.tu === 'he-thong' ? 'ht' : 'shop'}${x.tam ? ' is-tam' : ''}">${x.dk ? theDK(x.dk, toi) : ''}${x.noiDung ? `<div class="chat-m__b">${esc(x.noiDung).replace(/\n/g, '<br>')}</div>` : ''}${x.luc ? `<small>${x.tam ? 'Đang gửi…' : (x.tu === 'tu-dong' ? 'Trả lời tự động · ' : '') + gioVN(x.luc)}</small>` : ''}</div>`; }).join('')
+      return `<div class="chat-m chat-m--${toi ? 'toi' : x.tu === 'he-thong' ? 'ht' : 'shop'}${x.tam ? ' is-tam' : ''}">${x.dk ? theDK(x.dk, toi) : ''}${x.noiDung ? `<div class="chat-m__b">${esc(x.noiDung).replace(/\n/g, '<br>')}</div>` : ''}${x.luc ? `<small>${x.tam ? 'Đang gửi…' : (x.tu === 'tu-dong' ? 'Trả lời tự động · ' : '') + gioVN(x.luc)}${toi && !x.tam ? ` <i class="chat-tich ${x.daDoc ? 'is-doc' : ''}" title="${x.daDoc ? 'Đã đọc' : 'Đã gửi'}">${x.daDoc ? '✓✓' : '✓'}</i>` : ''}</small>` : ''}</div>`; }).join('')
       + (!tin.length ? `<div class="chat-nhanh">${CHAT_CFG.nhanh.map(([, t], k) => `<button type="button" data-chat-nhanh="${k}">${esc(t)}</button>`).join('')}</div>` : '');
     b.scrollTop = b.scrollHeight;
     b.querySelectorAll('img,video').forEach((m) => m.addEventListener(m.tagName === 'IMG' ? 'load' : 'loadedmetadata', () => { b.scrollTop = b.scrollHeight; }, { once: true }));
@@ -143,11 +143,13 @@
   async function docMoi() {
     if (!phien) return;
     try {
-      const r = await loyaltyApi('chatDoc', { phien, sau: sauCung(), token: tk() }, 15000);
-      if (r && r.ok && r.tin && r.tin.length) {
-        const co = new Set(tin.map((x) => x.ma));
-        r.tin.forEach((x) => { if (!co.has(x.ma)) { x.daXem = mo; tin.push(x); } });
-        luu(); veTin(); chamDo();
+      const r = await loyaltyApi('chatDoc', { phien, sau: sauCung(), token: tk(), daXem: mo && !document.hidden ? 1 : '' }, 15000);
+      if (r && r.ok) {
+        const co = new Set(tin.map((x) => x.ma)), them = (r.tin || []).filter((x) => !co.has(x.ma)), chua = new Set(r.chuaDoc || []);
+        them.forEach((x) => { x.daXem = mo; tin.push(x); });
+        let doi = them.length > 0;
+        tin.forEach((x) => { if (x.tu === 'khach' && !x.tam && !x.daDoc && !chua.has(x.ma)) { x.daDoc = true; doi = true; } });
+        if (doi) { luu(); veTin(); chamDo(); }
       }
     } catch { /* mạng chập chờn – lần sau đọc lại */ }
   }

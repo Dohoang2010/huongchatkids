@@ -521,3 +521,22 @@ test('chat: cuộc chat cũ lúc chưa đăng nhập – shop nhắn thì chủ 
   assert.strictEqual((await m.get('action=chatDoc&phien=cmaychuadangnhap1')).tin.length, 0, 'người lạ không đọc được');
   assert.ok((await m.get('action=chatDoc&phien=' + CU)).tin.some((t) => t.noiDung === 'alo day la test'), 'máy cũ vẫn thấy');
 });
+
+test('dấu tích chat: 1 tích là đã gửi; 2 tích khi bên kia đã đọc; khung chat đóng thì chưa tính là đọc', async () => {
+  const m = taoMay(); const P = 'cphientich0000001';
+  const g = await m.get('action=chatGui&phien=' + P + '&noiDung=' + encodeURIComponent('hoi shop') + '&ten=' + encodeURIComponent('Mẹ Thử') + '&sdt=' + SDT);
+  const maK = g.tin[0].ma; assert.strictEqual(g.tin[0].daDoc, false, 'tin khách vừa gửi: 1 tích');
+  assert.ok((await m.get('action=chatDoc&phien=' + P)).chuaDoc.includes(maK), 'nhân viên chưa xem');
+  await m.qt('action=qtChatXem&phien=' + P);
+  assert.ok(!(await m.get('action=chatDoc&phien=' + P)).chuaDoc.includes(maK), 'nhân viên xem xong: 2 tích');
+  const tl = await m.qt('action=qtChatTraLoi&phien=' + P + '&noiDung=' + encodeURIComponent('shop tra loi'));
+  const tichNv = async () => (await m.qt('action=qtChatXem&phien=' + P)).tin.find((t) => t.ma === tl.tin.ma).daDoc;
+  assert.strictEqual(await tichNv(), false, 'tin shop vừa gửi: 1 tích');
+  await m.get('action=chatDoc&phien=' + P);
+  assert.strictEqual(await tichNv(), false, 'khung chat đóng: chưa đọc');
+  await m.get('action=chatDoc&phien=cmaykhacchuadn0001&daXem=1');
+  assert.strictEqual(await tichNv(), false, 'máy lạ không đánh dấu được');
+  await m.get('action=chatDoc&phien=' + P + '&daXem=1');
+  assert.strictEqual(await tichNv(), true, 'khách mở khung chat: 2 tích');
+  assert.ok(!(await m.get('action=chatDoc&phien=' + P)).tin.some((t) => t.tu === 'nv' && 'nv' in t && t.nv), 'không lộ tên nhân viên');
+});

@@ -3001,3 +3001,5 @@ body.dang-go .ud, body.dang-go .ud-tab { display: none; }
 /* Số tin shop nhắn trên nút Chat với Hương (giống số ở hộp quà) */
 .chat-nut b { background: #F0243F; color: #fff; }
 .chat-nut b[hidden] { display: none; }
+.chat-tich { font-style: normal; font-weight: 700; letter-spacing: -2px; margin-left: 2px; }
+.chat-tich.is-doc { color: #1E88E5; }
