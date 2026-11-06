@@ -2436,8 +2436,8 @@ body.sk-on #app > section[data-khoi] { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .chat-nut::after { animation: none; display: none; } }
 @media (max-width: 991px) { .floating { bottom: calc(var(--bottom-nav-h) + 80px); } body.dang-go .chat-nut { display: none; } }
 @media (min-width: 992px) {
-  .chat-nut { width: auto; height: 52px; padding: 0 20px 0 16px; border-radius: 999px; right: 24px; bottom: 24px; }
-  .chat-nut__chu { display: inline; }
+  .chat-nut { width: 54px; height: 54px; padding: 0; border-radius: 50%; right: 24px; bottom: 24px; }
+  .chat-nut__chu { display: none; }
   .floating { bottom: 92px; }
 }
 .chat-box { position: fixed; z-index: 120; display: flex; flex-direction: column; background: #fff; overflow: hidden;
