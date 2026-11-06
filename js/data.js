@@ -47,6 +47,11 @@ window.SITE = {
       { ten: 'Norco', ids: ['26523206270'], gia: [50000, 80000, 130000] },
     ],
     hangKhac: { kgMoiKien: 3, gia: 30000 },
+    /* Sản phẩm mua là freeship cả đơn (tru: phân loại không được) */
+    mienPhi: [
+      { id: '26060839019', tru: ['30 gói (không hộp)'], nhan: 'Freeship khi mua từ 1 hộp (trừ phân loại 30 gói)' },
+      { id: 'combo-vangsua-d3k2', nhan: 'Freeship khi mua combo này' },
+    ],
     hoanDoi: 1.5,
     dongGoi: 100,                                          // gram thùng/hộp đóng gói cộng thêm mỗi đơn
     /* Cân nặng ước tính (gram) cho 1 đơn vị = phân loại đầu tiên. Phân loại khác quy đổi theo tỉ lệ giá (2 hộp ≈ 2 lần). */

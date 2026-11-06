@@ -372,3 +372,15 @@ test('Bình giữ nhiệt: 1–2 hộp Lotte 10 gói không tặng; đủ 3 hộ
     assert.strictEqual(hs, /10 gói/.test(v.label) ? 1 : 3, v.label);
   }));
 });
+
+test('freeship theo sản phẩm: váng sữa canxi từ 1 hộp và combo + D3K2 miễn ship cả đơn; phân loại 30 gói thì không', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const CANXI = '26060839019', COMBO = 'combo-vangsua-d3k2', phi = (ls) => MC.shipFee(1, 'standard', { lines: ls });
+  W.PRODUCTS.find((p) => p.id === CANXI).variants.forEach((v, i) => assert.strictEqual(phi([dong(W, CANXI, 1, i)]) > 0, /30 gói/.test(v.label), v.label));
+  W.PRODUCTS.find((p) => p.id === COMBO).variants.forEach((v, i) => assert.strictEqual(phi([dong(W, COMBO, 1, i)]), 0, v.label));
+  const thuong = dong(W, LOTTE);
+  assert.ok(phi([thuong]) > 0, 'sản phẩm khác vẫn tính phí');
+  assert.strictEqual(phi([thuong, dong(W, CANXI, 1, 0)]), 0, 'có hộp canxi → miễn ship cả đơn');
+  assert.ok(phi([thuong, dong(W, CANXI, 1, W.PRODUCTS.find((p) => p.id === CANXI).variants.findIndex((v) => /30 gói/.test(v.label)))]) > 0, '30 gói không kéo theo freeship');
+  assert.ok(MC.shipFee(1, 'express', { lines: [dong(W, CANXI, 1, 0)] }) > 0, 'giao nhanh vẫn tính phí');
+});

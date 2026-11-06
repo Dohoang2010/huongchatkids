@@ -20,10 +20,10 @@
   <h1 class="page-title">Giỏ hàng của bạn</h1>
   <div class="checkout mt-16" id="cartPage"></div>
 </div></main>
-<script src="js/data.js?v=20261105d" defer></script>
+<script src="js/data.js?v=20261106a" defer></script>
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261105c" defer></script>
+<script src="js/app.js?v=20261106a" defer></script>
 <script src="js/chat.js?v=20261105d" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!lines.length) { $('#cartPage').innerHTML = `<div class="empty card" style="grid-column:1/-1"><div class="emoji">🧺</div><h3>Giỏ hàng đang trống</h3><p>Bạn chọn sản phẩm phù hợp với bé nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div><section class="section" style="grid-column:1/-1"><div class="section-head"><div><h2>Mẹ tin dùng nhất</h2></div></div><div class="grid grid--4">${[...PRODUCTS].sort((a, b) => b.sold - a.sold).slice(0, 4).map((p) => productCard(p)).join('')}</div></section>`; return; }
     $('#cartPage').innerHTML = `
       <div class="card card--pad cart-table">
-        <div class="freeship-bar mb-12">${sub >= SITE.freeshipFrom || MC.affShip() ? '🎉 Đơn hàng được <b>miễn phí vận chuyển</b>' : `Mua thêm <b>${fmt(SITE.freeshipFrom - sub)}</b> để được <b>freeship</b>`}<div class="bar"><i style="width:${MC.affShip() ? 100 : Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>
+        <div class="freeship-bar mb-12">${sub >= SITE.freeshipFrom || MC.mienShip(lines) ? '🎉 Đơn hàng được <b>miễn phí vận chuyển</b>' : `Mua thêm <b>${fmt(SITE.freeshipFrom - sub)}</b> để được <b>freeship</b>`}<div class="bar"><i style="width:${MC.mienShip(lines) ? 100 : Math.min(100, sub / SITE.freeshipFrom * 100)}%"></i></div></div>
         ${giftBox(giftFor(lines, MC.maChoQua(c)))}
         ${lines.map((l) => `<div class="cart-item"><a href="${MC.spUrl(l.id)}"><img src="${productThumb(l.p)}" alt=""></a><div><a class="name" href="${MC.spUrl(l.id)}">${esc(shortName(l.p))}</a>${l.variantLabel ? `<div class="variant">Phân loại: ${esc(l.variantLabel)}</div>` : ''}<div class="price">${fmt(l.price)}${listPrice(l.oldPrice, l.price) ? `<s>${fmt(l.oldPrice)}</s>` : ''}</div></div>
           <div class="ctrl"><div class="qty qty--sm"><button type="button" data-qty-minus="${l.id}" data-variant="${l.variant}">−</button><input type="number" value="${l.qty}" min="1" data-qty-input="${l.id}" data-variant="${l.variant}"><button type="button" data-qty-plus="${l.id}" data-variant="${l.variant}">+</button></div></div>
