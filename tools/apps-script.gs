@@ -3873,10 +3873,18 @@ function chatThem_(phien, tu, noiDung, kh, nv, dk) {
   sheetChat_().appendRow([new Date(), phien, ma, tu, noiDung, kh.ten || '', kh.sdt ? "'" + kh.sdt : '', kh.trang || '', nv || '', tu === 'khach' ? '' : 'x', dk ? JSON.stringify(dk) : '', kh.xacMinh ? 'x' : '']);
   var t = { ma: ma, luc: Date.now(), tu: tu, noiDung: noiDung, nv: nv || '' }; if (dk) t.dk = dk; return t;
 }
+/* Đơn của khách để gửi trong chat: đơn web (CRM có thể chưa có) + đơn CRM (mua ngoài web); đơn CRM trùng ngày + tiền với đơn web coi là một */
+function chatDsDon_(sdt) {
+  var web = tinhChiTieu(sdt).don;
+  var crm = (docKH(sdt).don || []).filter(function (d) {
+    return !web.some(function (w) { return w.ma === d.ma || (ngayCRM(d.ngay) === String(w.ngay).slice(0, 10) && Math.abs(w.tong - d.tong) < 1000); });
+  });
+  return web.concat(crm).slice(0, 30);
+}
 /* Thẻ đơn khách gửi: chỉ nhận đơn CỦA CHÍNH KHÁCH ĐÃ ĐĂNG NHẬP, số liệu lấy lại từ nguồn đơn thật (không tin dữ liệu trình duyệt gửi) */
 function chatDonThat_(dk, sdt) {
   if (!sdt) return null;
-  var o = null; try { o = (docKH(sdt).don || []).filter(function (d) { return String(d.ma) === dk.ma; })[0]; } catch (e) { Logger.log(e); }
+  var o = null; try { o = chatDsDon_(sdt).filter(function (d) { return String(d.ma) === dk.ma; })[0]; } catch (e) { Logger.log(e); }
   return o ? chatDinhKem_({ loai: 'don', ma: o.ma, tong: o.tong, tt: o.trangThai, sp: String(o.sanPham || '').split('\n').filter(String).join(' · '), ngay: o.ngay }) : null;
 }
 function chatWebhook_(goi) {
@@ -3993,7 +4001,7 @@ function chatCoTaiKhoan_(sdt, v) {
   var tk = timTK(sdt); if (tk && tk.hash) return true;
   var s = sheetPhien(), n = s.getLastRow();
   if (n >= 2 && s.getRange(2, 2, n - 1, 1).getValues().some(function (r) { return chuanSdt(r[0]) === sdt; })) return true;
-  var d = docKH(sdt); return !!d.dong && !Number(d.kh.soDon);
+  var d = docKH(sdt); return !!d.dong && !Number(d.kh.soDon) && !tinhChiTieu(sdt).don.length;
 }
 /* Nhân viên mở cuộc chat với khách từ danh sách đơn: dùng cuộc chat đã xác minh của SĐT, chưa có thì tạo mới */
 function apiQtChatMo(p) {
@@ -4013,7 +4021,7 @@ function apiQtChatDon(p) {
   if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' };
   var phien = chatPhien_(p.phien); if (!phien) return { ok: false, msg: 'Phiên chat không hợp lệ' };
   var xm = chatXmNhom_(chatDocHet_(), phien); if (!xm.sdt) return { ok: true, xacMinh: false, don: [] };
-  return { ok: true, xacMinh: true, don: (docKH(xm.sdt).don || []).slice(0, 30).map(function (d) { return { ma: String(d.ma), ngay: d.ngay, tong: d.tong, tt: d.trangThai, sp: String(d.sanPham || '').split('\n').filter(String).join(' · ') }; }) };
+  return { ok: true, xacMinh: true, don: chatDsDon_(xm.sdt).map(function (d) { return { ma: String(d.ma), ngay: d.ngay, tong: d.tong, tt: d.trangThai, sp: String(d.sanPham || '').split('\n').filter(String).join(' · ') }; }) };
 }
 function apiQtChatDs(p) { if (!coQuyen(p, 'customer.view')) return { ok: false, msg: 'Không có quyền hoặc phiên đã hết hạn' }; return { ok: true, ds: chatDs_() }; }
 function apiQtChatXem(p) {

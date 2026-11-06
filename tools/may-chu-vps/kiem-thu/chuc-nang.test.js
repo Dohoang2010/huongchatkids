@@ -495,3 +495,17 @@ test('gửi đơn trong chat: chỉ đơn thật của khách đã đăng nhập
   assert.ok(coDon(await m.get('action=chatDoc&phien=cmaydangnhap00001&token=' + dn.token)), 'khách đăng nhập nhận thẻ đơn');
   assert.ok(!coDon(await m.get('action=chatDoc&phien=' + la)), 'phiên tự gõ số không thấy đơn');
 });
+
+test('gửi đơn trong chat: CRM có khách nhưng chưa có đơn vẫn thấy đơn web; đơn CRM trùng không hiện 2 lần; chỉ đặt hàng thì chưa có tài khoản', async () => {
+  const m = taoMay(`crmKhachCache = function () { return { ok: true, co: true, kh: { tongChiTieu: 0, soDon: 0 }, donHang: JSON.parse(PropertiesService.getScriptProperties().getProperty('CRM_THU') || '[]') }; };`);
+  assert.strictEqual((await datDon(m, SDT, { code: 'HCKDONCHAT02', total: 2480000 })).ok, true);
+  assert.strictEqual((await m.qt('action=qtChatMo&sdt=' + SDT)).chuaTk, true, 'có đơn web, chưa đăng nhập → chưa có tài khoản');
+  await dangNhapOtp(m, SDT); const mo = await m.qt('action=qtChatMo&sdt=' + SDT); assert.strictEqual(mo.ok, true, JSON.stringify(mo));
+  const dsMa = async () => (await m.qt('action=qtChatDon&phien=' + mo.phien)).don.map((d) => d.ma);
+  assert.deepStrictEqual(await dsMa(), ['HCKDONCHAT02'], 'CRM chưa có đơn vẫn thấy đơn web');
+  const dk = encodeURIComponent(JSON.stringify({ loai: 'don', ma: 'HCKDONCHAT02' }));
+  assert.strictEqual((await m.qt('action=qtChatTraLoi&phien=' + mo.phien + '&dinhKem=' + dk)).tin.dk.tong, 2480000);
+  const homNay = new Date().toISOString();
+  m.kho.thuocTinh.set('CRM_THU', JSON.stringify([{ ma: '875000001', ngay: homNay, tien: 2480000, trangThai: 'Đang giao' }, { ma: '875000002', ngay: '2026-01-02T03:00:00.000Z', tien: 225000, trangThai: 'Đã giao' }]));
+  assert.deepStrictEqual(await dsMa(), ['HCKDONCHAT02', '875000002'], 'bỏ đơn CRM trùng, giữ đơn CRM cũ');
+});
