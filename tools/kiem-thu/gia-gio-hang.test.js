@@ -426,3 +426,14 @@ test('mỗi đơn chỉ 1 chương trình: phân loại Canxi giá bộ không c
   assert.ok(MC.giftFor(them, {}).soQua, 'đủ quà');
   assert.strictEqual(MC.giamNganh(them), null, 'đã có quà thì không giảm 5%');
 });
+
+test('quà chọn 1 trong nhiều món: đơn ghi đúng món khách chọn, không ghi cụm "hoặc"; quà thường vẫn ghi kèm vị', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const q = MC.giftFor([dong(W, '13899935993', 3)], {});
+  assert.ok(MC.quaLaChon(q));
+  assert.strictEqual(MC.quaMoTa(q, q.vi[1]), q.vi[1]);
+  assert.ok(!/hoặc/.test(MC.quaMoTa(q, q.vi[0])));
+  const t = MC.giftFor([dong(W, '13899935993', 2)], {});
+  assert.ok(!MC.quaLaChon(t));
+  assert.strictEqual(MC.quaMoTa(t, t.vi[0]), t.moTa + ' (' + t.vi[0] + ')');
+});

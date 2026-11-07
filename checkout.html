@@ -23,12 +23,12 @@
 <script src="js/le-hoi.js?v=20261019c" defer></script>
 <script src="js/diachi.js?v=20261008b" defer></script>
 <script src="js/qrcode.min.js" defer></script>
-<script src="js/app.js?v=20261107b" defer></script>
+<script src="js/app.js?v=20261107c" defer></script>
 <script src="js/chat.js?v=20261106c" defer></script>
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
   const { $, $$, fmt, I, productThumb, shortName, Cart, Customer, esc, shipFee, applyCoupon, store, toast, phoneOk, submitOrder, deliveryEstimate, orderSuccessHTML, hoursNote,
-          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, ketHop, byId, isForMom, rankDefault, shipText, ghnInfo, hangCho, traHang, openLogin, GT, taoMaDon } = MC;
+          addrParse, addrStore, addrFull, phoneKey, Session, tierOf, tierBadge, loyaltyApi, openOtp, refreshProfile, giftFor, giftBox, quaLaChon, quaMoTa, ketHop, byId, isForMom, rankDefault, shipText, ghnInfo, hangCho, traHang, openLogin, GT, taoMaDon } = MC;
   let lines = Cart.lines();
   if (!lines.length) { $('#checkoutPage').innerHTML = `<div class="empty card"><div class="emoji">🧺</div><h3>Chưa có sản phẩm để thanh toán</h3><p>Bạn chọn sản phẩm trước nhé!</p><a class="btn btn--primary btn--lg mt-16" href="collections.html">Xem sản phẩm</a></div>`; return; }
   const c = Customer.get() || {}; let coupon = store.get('mc_coupon', ''); let shipMethod = 'standard';
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---- 🎟️ Ví voucher (điểm danh): máy chủ chốt lại khi bấm Đặt hàng (giữ chỗ), mỗi đơn 1 voucher ---- */
   let vcVi = null, vcCfg = { ketHopHang: false }, vcChon = store.get('mc_vc_chon', '');
   MC.DD.cauHinh().then((cf) => { vcCfg = cf || vcCfg; });
-  const itemsHTML = () => `${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}${qua && qua.soQua ? `<div class="it it--gift"><span class="it__gift">🎁</span><div><div class="n">${esc(qua.moTa)}</div><div class="q" id="giftViNote">${esc(quaVi)}</div></div><b class="text-teal">Tặng</b></div>` : ''}`;
+  const itemsHTML = () => `${lines.map((l) => `<div class="it"><img src="${productThumb(l.p)}" alt=""><div><div class="n">${esc(shortName(l.p))}</div><div class="q">${l.variantLabel ? esc(l.variantLabel) + ' · ' : ''}x${l.qty}</div></div><b>${fmt(l.total)}</b></div>`).join('')}${qua && qua.soQua ? `<div class="it it--gift"><span class="it__gift">🎁</span><div>${quaLaChon(qua) ? `<div class="n" id="giftViNote">${esc(quaVi)}</div><div class="q">Quà bạn chọn</div>` : `<div class="n">${esc(qua.moTa)}</div><div class="q" id="giftViNote">${esc(quaVi)}</div>`}</div><b class="text-teal">Tặng</b></div>` : ''}`;
 
   /* ---- Ưu đãi hạng khách hàng: chỉ tính khi số điện thoại đang nhập đã xác thực OTP ---- */
   const loy = SITE.loyalty || {};
@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
       coupon: k.dungVc ? 'VC:' + k.vc.ma : k.dungMa ? k.r.code : '', voucher: k.dungVc ? { ma: k.vc.ma, giam: k.vcAmt } : null,
       hang: k.dungHang ? k.hang.key : '', hangLabel: k.dungHang ? k.hang.label : '', hangTheo: k.dungHang ? (s && phoneKey(s.sdt) === phoneKey(v.phone) ? 'OTP' : 'SĐT') : '', giamHang: k.dungHang ? k.hangAmt : 0,
       token: s ? s.token : '',
-      qua: qua && qua.soQua && k.giamQua ? (qua.themMoTa ? { soQua: 1, ten: 'quà cộng thêm', vi: '', chuongTrinh: qua.chuongTrinh, moTa: qua.themMoTa } : null) : qua && qua.soQua ? { soQua: qua.soQua, ten: qua.ten, vi: quaVi, chuongTrinh: qua.chuongTrinh, moTa: `${qua.moTa} (${quaVi})` } : null,
+      qua: qua && qua.soQua && k.giamQua ? (qua.themMoTa ? { soQua: 1, ten: 'quà cộng thêm', vi: '', chuongTrinh: qua.chuongTrinh, moTa: qua.themMoTa } : null) : qua && qua.soQua ? { soQua: qua.soQua, ten: qua.ten, vi: quaVi, chuongTrinh: qua.chuongTrinh, moTa: quaMoTa(qua, quaVi) } : null,
       items: lines.map((l) => ({ id: l.id, name: l.name, short: shortName(l.p), variant: l.variantLabel, qty: l.qty, price: l.price })),
       subtotal: sub, discount: multi + k.discount + k.giamDiem, ship: k.ship, total: k.total });
     io.disconnect(); $('#stickyOrder')?.remove();
