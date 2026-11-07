@@ -550,3 +550,9 @@ test('mail + Zalo báo đơn: dòng Tổng ghi freeship hoặc số tiền ship 
   await datDon(m, SDT, { ship: 130000, total: 1447000 });
   assert.match(dongTong(), /đã gồm 130\.000đ ship/);
 });
+
+test('Zalo ZBS: ô tổng tiền của mẫu xác nhận đơn chỉ gửi số', async () => {
+  const m = taoMay();
+  const d = await m.bc.goiHam('zbsDuLieuDon_', [{ ma: 'HCKTHU0001', ten: 'Khách', sp: 'Sữa', tong: 448000, tt: 'cod', luc: Date.now() }]);
+  assert.strictEqual(d.total, '448000');
+});
