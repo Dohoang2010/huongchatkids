@@ -1853,6 +1853,7 @@
     if (!l.p || !x.chinh.has(l.p.id)) return false;
     const hs = x.heSo[l.p.id] || {}, k = l.variantLabel || '';
     if (laComboGiam(l.p)) return Number(hs[k]) > 0;
+    if (x.c.tatCaSP && /tặng|\+/i.test(k)) return false;   // phân loại đã kèm quà / giá bộ (vd 1 hộp + 1 lọ D3K2) không tính vào mốc quà cả đơn
     return !(x.soLuong && Number(x.c.chiGiam) > 0 && hs[k] != null && !(Number(hs[k]) > 0));
   }
   /* Dòng được chương trình CHỈ GIẢM % theo phân loại (hệ số > 0) – không coi là "combo giảm sẵn" (nhận mã như thường, nhập mã thì bỏ giảm tự động) */
@@ -1895,10 +1896,9 @@
   function giamNganh(lines, opts) {
     if (opts && opts.coMa && !opts.maShip) return null;
     let tot = null;
-    const quaDon = ctDangChay().filter((x) => x.c.tatCaSP && !Number(x.c.chiGiam) && ctHieuLuc(x, lines));   // đã nhận quà theo cả đơn (vd đơn từ 2 triệu) thì các dòng đó không giảm % nữa – không song song
+    if ((giftFor(lines, opts || {}) || {}).soQua) return null;   // mỗi đơn chỉ 1 chương trình: đơn đã có quà thì không giảm % tự động
     ctDangChay().forEach((x) => {
       const pt = Number(x.c.chiGiam) || 0; if (!pt) return;
-      if (quaDon.length && (lines || []).some((l) => dongTinh(x, l) && quaDon.some((q) => dongTinh(q, l)))) return;
       const dat = ctHieuLuc(x, lines); if (!dat) return;
       const tien = Math.round(ctTien(x, lines) * pt / 100);
       if (tien > 0 && (!tot || tien > tot.tien)) tot = { tien, pt, chuongTrinh: x.c.id, ten: x.c.tenGiam || `Giảm ${pt}%`, lyDo: x.c.moTa || '' };

@@ -335,7 +335,7 @@ test('giảm tự động theo phân loại: chỉ đúng phân loại combo, kh
   const { MC, W } = taoWeb({ gio: gio('10:00'), truocApp: (w) => { w.SU_KIEN = null; w.GIO_VANG = [];
     w.COUPONS = { G10: { type: 'percent', value: 10, loai: 'shop' } };
     const p = w.PRODUCTS.find((x) => x.id === SP), nhan = p.variants.map((v) => v.label);
-    w.QUA_TANG = Object.assign({}, w.QUA_TANG, { chuongTrinh: [{ id: MA, ten: 'Combo giảm 5%', batDau: '2026-01-01T00:00', ketThuc: '2027-12-31T23:59', kieu: 'soLuong', donVi: 'combo',
+    w.QUA_TANG = Object.assign({}, w.QUA_TANG, { enabled: false, chuongTrinh: [{ id: MA, ten: 'Combo giảm 5%', batDau: '2026-01-01T00:00', ketThuc: '2027-12-31T23:59', kieu: 'soLuong', donVi: 'combo',
       chiGiam: 5, bac: [{ muc: 1, soQua: 1 }], muc: 1, soQua: 1, quaTang: [],
       sanPhamChinh: [{ id: SP, bat: true, heSo: Object.fromEntries(nhan.map((l, i) => [l, i === 1 ? 1 : 0])) }] }] }); } });
   const combo = dong(W, SP, 1, 1), thuong = dong(W, SP, 1, 0);
@@ -411,4 +411,18 @@ test('đơn từ 2 triệu toàn web: chọn bình hoặc 10 gói Lotte hồng /
   assert.ok(MC.giamNganh([it]), 'Food 1–2 triệu vẫn giảm 5%');
   const vip = taoWeb({ gio: gg, ...phien(150000000) });
   assert.notStrictEqual((vip.MC.giftFor([dong(vip.W, '13899935993', 3)], {}) || {}).chuongTrinh, CT, 'hạng cao giảm nhiều hơn quà: giữ hạng, bỏ quà');
+});
+
+test('mỗi đơn chỉ 1 chương trình: phân loại Canxi giá bộ không có quà 2 triệu; đơn có quà thì combo không giảm 5% nữa', () => {
+  const { MC, W } = taoWeb({ gio: gio('10:00') });
+  const p = W.PRODUCTS.find((x) => x.id === '26060839019'), cb = W.PRODUCTS.find((x) => x.id === 'combo-vangsua-d3k2');
+  const dongV = (sp, ten, qty = 1) => { const v = sp.variants.find((y) => y.label === ten); return { p: sp, id: sp.id, qty, variantLabel: ten, price: v.price, total: v.price * qty }; };
+  assert.notStrictEqual((MC.giftFor([dongV(p, '1 hộp váng sữa canxi + 1 lọ D3K2')], {}) || {}).chuongTrinh, 'ct-2410-binh-2tr');
+  assert.strictEqual(MC.giftFor([dongV(p, '1 hộp 90 gói')], {}).chuongTrinh, 'ct-2410-binh-2tr', '1 hộp Canxi thường vẫn có quà');
+  assert.strictEqual(MC.giftFor([dongV(p, '2 hộp váng sữa')], {}).chuongTrinh, 'ct-calciumore-d3k2', '2 hộp: chỉ quà D3K2');
+  const combo = dongV(cb, cb.variants[0].label);
+  assert.ok(MC.giamNganh([combo]), 'combo một mình vẫn giảm 5%');
+  const them = [combo, dong(W, '13899935993', 3)];
+  assert.ok(MC.giftFor(them, {}).soQua, 'đủ quà');
+  assert.strictEqual(MC.giamNganh(them), null, 'đã có quà thì không giảm 5%');
 });
