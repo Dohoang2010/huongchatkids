@@ -393,3 +393,22 @@ test('ẩn sản phẩm: không còn trên web, chương trình lấy nó làm q
   const l = { id: sumo.id, p: sumo, qty: 1, variantLabel: 'Thùng 40 gói', price: sumo.price };
   assert.ok(!MC.giftFor([l], {}) || (MC.giftFor([l], {}).chuongTrinh || {}).id !== 'ct-2110-gac-sumo', 'hết quà hộp Lotte');
 });
+
+test('đơn từ 2 triệu toàn web: chọn bình hoặc 10 gói Lotte hồng / cam; không song song với giảm %, hạng cao, mã giảm', () => {
+  const gg = gio('10:00'), CT = 'ct-2410-binh-2tr';
+  const { MC, W } = taoWeb({ gio: gg });
+  const du = dong(W, '13899935993', 3), thieu = dong(W, '13899935993', 2);
+  const q = MC.giftFor([du], {});
+  assert.strictEqual(q.chuongTrinh, CT);
+  assert.strictEqual(q.vi.length, 3, 'chọn 1 trong 3 quà');
+  assert.notStrictEqual(MC.giftFor([thieu], {}).chuongTrinh, CT, 'dưới 2 triệu chưa có quà này');
+  assert.ok(MC.hangKhongUuDai([du]).co(du), 'đang nhận quà thì không cộng ưu đãi hạng');
+  assert.ok(!MC.giftFor([du], { coMa: true, maShip: false }).soQua, 'dùng mã giảm thì không kèm quà');
+  const food = dong(W, 'bo-xuyen-tieu', Math.ceil(2000000 / W.PRODUCTS.find((p) => p.id === 'bo-xuyen-tieu').price));
+  assert.strictEqual(MC.giftFor([food], {}).chuongTrinh, CT);
+  assert.strictEqual(MC.giamNganh([food]), null, 'Food đủ 2 triệu: nhận quà thì không giảm 5% nữa');
+  const it = dong(W, 'bo-xuyen-tieu', Math.ceil(1000000 / W.PRODUCTS.find((p) => p.id === 'bo-xuyen-tieu').price));
+  assert.ok(MC.giamNganh([it]), 'Food 1–2 triệu vẫn giảm 5%');
+  const vip = taoWeb({ gio: gg, ...phien(150000000) });
+  assert.notStrictEqual((vip.MC.giftFor([dong(vip.W, '13899935993', 3)], {}) || {}).chuongTrinh, CT, 'hạng cao giảm nhiều hơn quà: giữ hạng, bỏ quà');
+});

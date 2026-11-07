@@ -514,7 +514,6 @@ window.PRODUCTS = [
   },
   {
     "id": "22686115682",
-    "an": true,
     "slug": "nuoc-ep-lotte-organic-hoa-qua-rau-cu",
     "seoTitle": "Nước ép Lotte Organic hoa quả rau củ cho bé | Hương Chất Kids",
     "name": "Nước Ép Lotte Hoa Quả Và Rau Củ Organic Hỗ Trợ Bé Phát Triển Chiều Cao, Ăn Ngon Miệng, Tăng Cường Sức Khỏe",
@@ -993,7 +992,6 @@ window.PRODUCTS = [
   },
   {
     "id": "23660586997",
-    "an": true,
     "name": "Nước Ép Hữu Cơ LOTTE Lê Và Hoa Chuông (Lotte cam) – Giúp Con Tăng Cường Sức Đề Kháng",
     "short": "Nước ép hữu cơ Lotte Lê & Hoa chuông (cam)",
     "brand": "lotte",
@@ -1199,7 +1197,6 @@ window.PRODUCTS = [
   },
   {
     "id": "41353214697",
-    "an": true,
     "name": "Nước Ép Hữu Cơ LOTTE Táo Và Củ Dền (Lotte xanh) – Bổ Sung Canxi, Hỗ Trợ Phát Triển Chiều Cao",
     "short": "Nước ép hữu cơ Lotte Táo & Củ dền (xanh)",
     "brand": "lotte",
@@ -1560,7 +1557,6 @@ window.PRODUCTS = [
   },
   {
     "id": "25632276959",
-    "an": true,
     "name": "Nước Ép Hữu Cơ LOTTE Nho Và Mận (Lotte hồng) – Bổ Sung Lợi Khuẩn, Giúp Con Ăn Ngon Miệng",
     "short": "Nước ép hữu cơ Lotte Nho & Mận (hồng)",
     "brand": "lotte",
@@ -4009,7 +4005,6 @@ window.PRODUCTS = [
   },
   {
     "id": "combo-lottexanh-d3k2",
-    "an": true,
     "name": "Combo Nước Ép Hữu Cơ Lotte Táo & Củ Dền (Xanh) + Vitamin D3K2 Pure Vitality – Bổ Sung Canxi, Vitamin D3K2 Cho Bé",
     "short": "Combo nước ép Lotte Táo & Củ dền + D3K2",
     "slugCu": "combo-nuoc-ep-lotte-tang-cao-d3k2",
@@ -4865,7 +4860,7 @@ window.BANNERS = [
     "nen": "#FFE6EE",
     "link": "collections.html?ct=ct-2410-binh-lotte",
     "alt": "Quà độc quyền web: tặng bình giữ nhiệt Hương Chất Kids khi mua 3 hộp 10 gói hoặc 1 thùng nước dinh dưỡng Lotte, hoặc hoá đơn từ 2 triệu (không tính Canxi váng sữa) – chỉ 50 suất, vẫn được ưu đãi hạng thành viên",
-    "anTu": "2026-11-06T00:00:00+07:00"
+    "anTu": "2027-01-01T00:00:00+07:00"
   },
   {
     "title": "Canxi Calciumore\nmua 2 tặng D3K2",
@@ -6296,7 +6291,7 @@ window.POSTS = [
    ===================================================================== */
 /* ===ADMIN:QUA_TANG=== (trang quản trị ghi đè khối này – đừng viết ghi chú bên trong) */
 window.QUA_TANG = {
-  "enabled": false,
+  "enabled": true,
   "ketHop": {
     "hangMa": false,
     "quaMa": false,
@@ -7526,7 +7521,7 @@ window.QUA_TANG = {
         {
           "ten": "Bình giữ nhiệt Hương Chất Kids (quà độc quyền web)",
           "bat": true,
-          "gia": 250000
+          "gia": 199000
         }
       ],
       "sanPhamChinh": [
@@ -7571,15 +7566,12 @@ window.QUA_TANG = {
     },
     {
       "id": "ct-2410-binh-2tr",
-      "ten": "Quà độc quyền web · Hoá đơn từ 2 triệu tặng bình giữ nhiệt (50 suất)",
-      "moTa": "Hoá đơn từ 2.000.000đ (không tính Canxi váng sữa) tặng 1 bình giữ nhiệt Hương Chất Kids – quà độc quyền web, 50 suất, vẫn được ưu đãi hạng thành viên",
-      "lyDo": "Hoá đơn từ 2.000.000đ",
+      "ten": "Toàn web · Đơn từ 2 triệu tặng 1 bình giữ nhiệt hoặc 10 gói Lotte hồng / cam",
+      "moTa": "Đơn hàng từ 2.000.000đ tặng 1 bình giữ nhiệt Hương Chất Kids hoặc 10 gói nước dinh dưỡng Lotte hồng / cam (chọn 1 quà)",
+      "lyDo": "Đơn hàng từ 2.000.000đ",
       "kieu": "tien",
       "tatCaSP": true,
-      "truSP": [
-        "26060839019",
-        "combo-vangsua-d3k2"
-      ],
+      "truSP": [],
       "bac": [
         {
           "muc": 2000000,
@@ -7590,15 +7582,13 @@ window.QUA_TANG = {
       "soQua": 1,
       "batDau": "2026-10-24T00:00",
       "ketThuc": "2026-12-31T23:59",
-      "tenQua": "bình giữ nhiệt Hương Chất Kids",
+      "tenQua": "quà (bình giữ nhiệt hoặc 10 gói Lotte hồng / cam)",
       "gioiHan": 50,
-      "giuHang": true,
+      "nhuongHang": true,
       "quaTang": [
-        {
-          "ten": "Bình giữ nhiệt Hương Chất Kids (quà độc quyền web)",
-          "bat": true,
-          "gia": 250000
-        }
+        { "ten": "Bình giữ nhiệt Hương Chất Kids", "bat": true, "gia": 250000 },
+        { "ten": "10 gói Lotte hồng – Nho & Mận", "bat": true, "gia": 448000 },
+        { "ten": "10 gói Lotte cam – Lê & Hoa chuông", "bat": true, "gia": 448000 }
       ],
       "sanPhamChinh": []
     }
