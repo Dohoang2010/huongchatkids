@@ -554,5 +554,5 @@ test('mail + Zalo báo đơn: dòng Tổng ghi freeship hoặc số tiền ship 
 test('Zalo ZBS: ô tổng tiền của mẫu xác nhận đơn chỉ gửi số', async () => {
   const m = taoMay();
   const d = await m.bc.goiHam('zbsDuLieuDon_', [{ ma: 'HCKTHU0001', ten: 'Khách', sp: 'Sữa', tong: 448000, tt: 'cod', luc: Date.now() }]);
-  assert.strictEqual(d.total, '448000');
+  assert.strictEqual(d.total, '448000'); assert.match(d.order_date, /^\d{2}\/\d{2}\/\d{4}$/, 'mẫu Zalo: ngày không kèm giờ');
 });

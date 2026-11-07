@@ -4140,7 +4140,7 @@ function zbsGuiThu_(sdt, loai) {
 function zbsDuLieuDon_(o) {
   var cat = function (x, n) { x = String(x == null ? '' : x).replace(/\s+/g, ' ').trim(); return x.length > n ? x.slice(0, n - 1) + '…' : x; };
   return { customer_name: cat(o.ten || 'bạn', 30), order_code: cat(o.ma, 30), product: cat(o.sp, 200), total: String(Math.round(Number(o.tong) || 0)),
-    payment: o.tt === 'bank' ? 'Chuyển khoản' : 'Thanh toán khi nhận hàng', order_date: Utilities.formatDate(new Date(Number(o.luc) || Date.now()), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy HH:mm') };
+    payment: o.tt === 'bank' ? 'Chuyển khoản' : 'Thanh toán khi nhận hàng', order_date: Utilities.formatDate(new Date(Number(o.luc) || Date.now()), 'Asia/Ho_Chi_Minh', 'dd/MM/yyyy') };
 }
 /* Web gọi sau khi đặt đơn xong: gửi tin xác nhận đơn vào Zalo khách. Chống lạm dụng: mỗi mã đơn 1 lần, mỗi số 3 tin / giờ, cả shop 300 tin / ngày */
 function apiZaloXacNhanDon(p) {
